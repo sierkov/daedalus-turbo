@@ -83,10 +83,10 @@ cp -r /your-cardano-node/immutable /data/cardano-node
 cp -r /your-cardano-node/ledger /data/cardano-node
 ```
 
-copy pooldb from a cardano-wallet instance:
+Optional: copy pooldb from a cardano-wallet instance - needed only if you plan to benchmark cardano-wallet as well:
 ```
 mkdir /data/cardano-wallet
-cp -r /your-cardano-wallet/ /data/cardano-wallet
+cp -r /your-cardano-wallet/stake-pools.sqlite /data/cardano-wallet
 ```
 
 clone this repository and build the docker image:
