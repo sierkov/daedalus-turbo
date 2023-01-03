@@ -48,7 +48,7 @@ docker run -it --rm -v /your-cardano-node/immutable:/data/immutable -v /your-loc
 Within the container run the following commands to create the indices
 and perform a transaction-history reconstruction for your a given stake key:
 ```
-chown -R dev:dev /data/indices
+sudo chown -R dev:dev /data/indices
 ./create-index /data/immutable /data/indices
 ./search-index /data/immutable /data/indices stake1XXXXXX
 ```
@@ -138,4 +138,3 @@ throughput should increase by 250 megabytes/sec for every additional CPU thread.
   So, when benchmarking to reproduce the paper's results,
   please use exactly the same setup as presented in the paper:
   Ubuntu Linux 22.04 LTS as your host OS.
-  
