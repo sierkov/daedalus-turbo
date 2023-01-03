@@ -1,0 +1,23 @@
+FROM ubuntu:22.04
+LABEL MAINTAINER "Alex Sierkov <alex.sierkov@gmail.com>"
+
+RUN apt-get update
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata screen sudo
+RUN ln -fs /usr/share/zoneinfo/Europe/Berlin /etc/localtime
+RUN dpkg-reconfigure --frontend noninteractive tzdata
+RUN cp /etc/sudoers /etc/sudoers.orig
+RUN awk '{ if (/^%sudo/) { print "%sudo\tALL=(ALL:ALL) NOPASSWD:ALL" } else { print } }' /etc/sudoers.orig > /etc/sudoers
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential
+RUN useradd -m -s /bin/bash -G sudo dev
+RUN mkdir /home/dev/dt
+COPY 3rdparty /home/dev/dt/3rdparty
+COPY src /home/dev/dt/src
+COPY lib /home/dev/dt/lib
+COPY Makefile /home/dev/dt
+RUN chown -R dev:dev /home/dev
+
+USER dev
+WORKDIR /home/dev/dt
+RUN make -j all
+WORKDIR /home/dev/dt/src
+CMD [ "/bin/bash" ]

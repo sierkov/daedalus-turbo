@@ -1,0 +1,42 @@
+version: "3.5"
+services:
+  cardano-node:
+    image: inputoutput/cardano-node:1.35.3-configs
+    networks:
+    - internal-net
+    environment:
+      NETWORK: "mainnet"
+    volumes:
+      - /data/cardano-node:/data/db
+      - node-ipc:/ipc
+    restart: on-failure
+    logging:
+      driver: "json-file"
+      options:
+        compress: "true"
+        max-file: "10"
+        max-size: "50m"
+  cardano-wallet:
+    image: inputoutput/cardano-wallet:2022.10.6
+    networks:
+    - internal-net
+    volumes:
+      - /data/cardano-wallet:/wallet-db
+      - node-ipc:/ipc
+    environment:
+      CARDANO_NODE_SOCKET_PATH: "/ipc/node.socket"
+    command: serve --node-socket /ipc/node.socket --database /wallet-db --listen-address 0.0.0.0 --mainnet
+    restart: "no"
+    logging:
+      driver: "json-file"
+      options:
+        compress: "true"
+        max-file: "10"
+        max-size: "50m"
+networks:
+  internal-net:
+    name: internal-net
+    internal: true
+volumes:
+  node-ipc:
+  node-config:
