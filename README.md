@@ -13,9 +13,21 @@ As the project moves forwards, other components will be added. To better underst
   When benchmarking the code, please ensure that all your host's CPUs are available within the docker container!
 - 20GB of free disk space - 10GB for the indices that Daedalus Turbo creates
   and another 10GB for temporary files, which will be deleted once the indices are created.
+- The required RAM depends on the number of threads that one plans to run.
+  Each additional thread requires about 200MB of RAM for the create-index process.
+  So, to run 48 threads about 8GB of RAM are needed.
 - A Cardano stake address for which you can verify a list of associated transactions using an alternative mechanism,
   such as Daedalus wallet itself, one of the light wallets or one of the blockchain explorer websites.
   The stake key must be in BECH32 format for Cardano Reward addresses: a text string starting with the "stake1" prefix.
+
+# Supported Cardano features
+
+For the initial-preview version of the algorithm, only the minimal set of Cardano features is supported:
+- Shelley-era addresses with an explicit stake-key hash (type 1).
+- ADA-only transactions.
+- Withdrawals-only for staking rewards; inflows are ignored.
+
+As the project matures the list of supported Cardano features is expected to grow.
 
 # Test wallet-history reconstruction manually
 
