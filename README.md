@@ -118,6 +118,7 @@ the same hardware config.
   So, if you have 20 threads, ensure your SSD can make 5000 megabytes/sec in sequential read performance.
 - The performance of the method depends on the number of CPU cores you have.
   To fully benefit from the acceleration, benchmarking with 16+ threads is recommended.
-- Use of docker volumes can have lead to lower performance on some platforms, such as Windows.
+- Use of docker volumes can lead to lower performance on some platforms, such as Windows.
   So, when benchmarking to reproduce the paper's results,
-  it is advised to use exactly the same setup as presented in the paper, such as using Ubuntu Linux 22.04 LTS as your host OS.
+  it is advised to use exactly the same setup as presented in the paper:
+  Ubuntu Linux 22.04 LTS as your host OS.
