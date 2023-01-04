@@ -39,14 +39,17 @@ git clone https://github.com/sierkov/daedalus-turbo.git dt
 cd dt
 ```
 
-Run the following commands to prepare and start a container:
+Run the following commands to prepare and start a container while replacing:
+- /your-cardano-node with the path to your directory with a copy of ImmutableDB.
+- /your-indices with the location where you'd like the newly built indices shall be stored.
 ```
 docker build -t dt -f Dockerfile.test .
-docker run -it --rm -v /your-cardano-node/immutable:/data/immutable -v /your-local-folder-in-which-to-save-indices:/data/indices dt
+docker run -it --rm -v /your-cardano-node/immutable:/data/immutable -v /your-indices:/data/indices dt
 ```
 
 Within the container run the following commands to create the indices
-and perform a transaction-history reconstruction for your a given stake key:
+and perform a transaction-history reconstruction for your a given stake key.
+The string stake1XXXXXX must be replaced with the stake key of your choosing.
 ```
 sudo chown -R dev:dev /data/indices
 ./create-index /data/immutable /data/indices
@@ -106,6 +109,7 @@ docker build -t dt -f Dockerfile.test .
 
 create lz4 compressed copies of all immutabledb chunks:
 ```
+sudo chown -R dev:dev /immutable
 docker run --rm -v /data/cardano-node/immutable:/immutable dt ./lz4-compress /immutable
 ```
 
