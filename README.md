@@ -109,8 +109,7 @@ docker build -t dt -f Dockerfile.test .
 
 create lz4 compressed copies of all immutabledb chunks:
 ```
-sudo chown -R dev:dev /immutable
-docker run --rm -v /data/cardano-node/immutable:/immutable dt ./lz4-compress /immutable
+docker run --rm -v /data/cardano-node/immutable:/immutable dt bash -c "sudo chown -R dev:dev /immutable; ./lz4-compress /immutable"
 ```
 
 run the benchmark:
