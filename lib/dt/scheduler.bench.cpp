@@ -8,6 +8,8 @@ using namespace std;
 using namespace boost::ut;
 using namespace daedalus_turbo;
 
+const string DATA_DIR = "./data"s;
+
 suite scheduler_bench_suite = [] {
     "scheduler"_test = [] {
         size_t num_iter = 3;
@@ -15,7 +17,7 @@ suite scheduler_bench_suite = [] {
         "micro_tasks_default"_test = [num_iter, data_multiple] {
             vector<bin_string> chunks;
             bin_string buf;
-            for (const auto &entry: filesystem::directory_iterator("/workspace/data")) {
+            for (const auto &entry: filesystem::directory_iterator(DATA_DIR)) {
                 if (entry.path().extension() != ".chunk") continue;
                 read_whole_file(entry.path().string(), buf);
                 chunks.push_back(buf);

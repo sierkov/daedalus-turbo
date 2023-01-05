@@ -14,9 +14,11 @@ using namespace std;
 using namespace boost::ut;
 using namespace daedalus_turbo;
 
+static const string DATA_DIR = "./data";
+
 suite chunk_registry_suite = [] {
     "create chunk registry"_test = [] {
-        chunk_registry cr("./data");
+        chunk_registry cr(DATA_DIR);
         expect(cr.begin() != cr.end()) << cr.numChunks();
     };
 };

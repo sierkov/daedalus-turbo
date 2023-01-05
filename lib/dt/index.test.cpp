@@ -17,7 +17,7 @@ using namespace std;
 using namespace boost::ut;
 using namespace daedalus_turbo;
 
-const string TMP_DIR = "/workspace/tmp";
+const string TMP_DIR = "/tmp";
 
 struct indexed_type {
     uint8_t val[8];

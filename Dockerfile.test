@@ -14,6 +14,7 @@ COPY 3rdparty /home/dev/dt/3rdparty
 COPY src /home/dev/dt/src
 COPY lib /home/dev/dt/lib
 COPY Makefile /home/dev/dt
+COPY data /home/dev/dt/data
 RUN chown -R dev:dev /home/dev
 
 USER dev

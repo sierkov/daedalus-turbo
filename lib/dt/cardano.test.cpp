@@ -14,7 +14,7 @@ using namespace std;
 using namespace boost::ut;
 using namespace daedalus_turbo;
 
-static const string data_dir = "./data";
+static const string DATA_DIR = "./data";
 
 suite cardano_processor_test = [] {
 
@@ -30,7 +30,7 @@ suite cardano_processor_test = [] {
             };
 
             bin_string chunk;
-            read_whole_file(data_dir + "/03306.chunk", chunk);
+            read_whole_file(DATA_DIR + "/03306.chunk", chunk);
             MyProcessor proc;
             cardano_parser parser(proc);
             cardano_chunk_context chunk_ctx(0);
@@ -51,7 +51,7 @@ suite cardano_processor_test = [] {
             };
 
             bin_string chunk;
-            read_whole_file(data_dir + "/03306.chunk", chunk);
+            read_whole_file(DATA_DIR + "/03306.chunk", chunk);
             MyProcessor proc;
             cardano_parser parser(proc);
             cardano_chunk_context chunk_ctx(0);
@@ -72,7 +72,7 @@ suite cardano_processor_test = [] {
             };
 
             bin_string chunk;
-            read_whole_file(data_dir + "/03000.chunk", chunk);
+            read_whole_file(DATA_DIR + "/03000.chunk", chunk);
             MyProcessor proc;
             cardano_parser parser(proc);
             cardano_chunk_context chunk_ctx(0);
@@ -93,7 +93,7 @@ suite cardano_processor_test = [] {
             };
 
             bin_string chunk;
-            read_whole_file(data_dir + "/00000.chunk", chunk);
+            read_whole_file(DATA_DIR + "/00000.chunk", chunk);
             MyProcessor proc;
             cardano_parser parser(proc);
             cardano_chunk_context chunk_ctx(0);

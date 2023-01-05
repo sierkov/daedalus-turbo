@@ -20,7 +20,8 @@ using namespace std;
 using namespace boost::ut;
 using namespace daedalus_turbo;
 
-static const string TMP_DIR = "/workspace/tmp"s;
+static const string DATA_DIR = "./data"s;
+static const string TMP_DIR = "/tmp"s;
 
 static string create_file(const string &path, const char **bufs, size_t bufs_cnt, size_t buf_size) {
     ofstream of(path, ios::binary);
@@ -45,10 +46,10 @@ static void test_unsorted(merge_sort_func merge_func) {
     size_t item_size = 4;
     vector<string> paths;
     const char *items1[] = { "CCCC", "BBBB" };
-    paths.push_back(create_file("../../tmp/parallel-sort-test-file-1.txt", items1, 2, item_size));
+    paths.push_back(create_file(TMP_DIR + "/parallel-sort-test-file-1.txt", items1, 2, item_size));
     const char *items2[] = { "ZZZZ", "AAAA" };
-    paths.push_back(create_file("../../tmp/parallel-sort-test-file-2.txt", items2, 2, item_size));
-    string out_path = "../../tmp/parallel-sort-test-file-out.txt";
+    paths.push_back(create_file(TMP_DIR + "/parallel-sort-test-file-2.txt", items2, 2, item_size));
+    string out_path = TMP_DIR + "/parallel-sort-test-file-out.txt";
 
     merge_func(out_path, paths, true);
 
@@ -60,10 +61,10 @@ static void test_sorted(merge_sort_func merge_func) {
     size_t item_size = 4;
     vector<string> paths;
     const char *items1[] = { "BBBB", "ZZZZ" };
-    paths.push_back(create_file("../../tmp/parallel-sort-test-file-1.txt", items1, 2, item_size));
+    paths.push_back(create_file(TMP_DIR + "/parallel-sort-test-file-1.txt", items1, 2, item_size));
     const char *items2[] = { "AAAA", "CCCC", "EEEE" };
-    paths.push_back(create_file("../../tmp/parallel-sort-test-file-2.txt", items2, 3, item_size));
-    string out_path = "../../tmp/parallel-sort-test-file-out.txt";
+    paths.push_back(create_file(TMP_DIR + "/parallel-sort-test-file-2.txt", items2, 3, item_size));
+    string out_path = TMP_DIR + "/parallel-sort-test-file-out.txt";
 
     merge_func(out_path, paths, true);
 
@@ -75,10 +76,10 @@ static void test_repeating_items(merge_sort_func merge_func) {
     size_t item_size = 4;
     vector<string> paths;
     const char *items1[] = { "AAAA", "BBBB", "ZZZZ" };
-    paths.push_back(create_file("../../tmp/parallel-sort-test-file-1.txt", items1, 3, item_size));
+    paths.push_back(create_file(TMP_DIR + "/parallel-sort-test-file-1.txt", items1, 3, item_size));
     const char *items2[] = { "AAAA", "CCCC", "EEEE", "ZZZZ" };
-    paths.push_back(create_file("../../tmp/parallel-sort-test-file-2.txt", items2, 4, item_size));
-    string out_path = "../../tmp/parallel-sort-test-file-out.txt";
+    paths.push_back(create_file(TMP_DIR + "/parallel-sort-test-file-2.txt", items2, 4, item_size));
+    string out_path = TMP_DIR + "/parallel-sort-test-file-out.txt";
 
     merge_func(out_path, paths, true);
 
@@ -88,9 +89,9 @@ static void test_repeating_items(merge_sort_func merge_func) {
 
 static void test_empty_files(merge_sort_func merge_func) {
     vector<string> paths;
-    paths.push_back("/workspace/data/parallel-sort-test-2-part1.dt");
-    paths.push_back("/workspace/data/parallel-sort-test-2-part2.dt");
-    string out_path = "../../tmp/parallel-sort-test-2-output.dt";
+    paths.push_back(DATA_DIR + "/parallel-sort-test-2-part1.dt");
+    paths.push_back(DATA_DIR + "/parallel-sort-test-2-part2.dt");
+    string out_path = TMP_DIR + "/parallel-sort-test-2-output.dt";
 
     merge_func(out_path, paths, false);
 }

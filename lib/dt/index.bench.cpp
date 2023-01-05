@@ -22,10 +22,12 @@ struct indexed_type {
     bool special_y;
 };
 
+const string TMP_DIR = "/tmp"s;
+
 suite index_bench_suite = [] {
     "index_writer"_test = [] {
         double throughput = benchmark_throughput("index_writer", 5, [] {
-            index_writer<indexed_type> index("/workspace/tmp/index-bench.tmp"s);
+            index_writer<indexed_type> index(TMP_DIR + "/index-bench.tmp"s);
             size_t num_ops = 10'000'000;
             
             for (size_t i = 0; i < num_ops; ++i) {
@@ -44,10 +46,10 @@ suite index_bench_suite = [] {
     "index_radix_writer"_test = [] {
         double throughput = benchmark_throughput("index_radix_writer", 5, [] {
             vector<string> paths;
-            paths.emplace_back("/workspace/tmp/index-bench-radix-1.tmp");
-            paths.emplace_back("/workspace/tmp/index-bench-radix-2.tmp");
-            paths.emplace_back("/workspace/tmp/index-bench-radix-3.tmp");
-            paths.emplace_back("/workspace/tmp/index-bench-radix-4.tmp");
+            paths.emplace_back(TMP_DIR + "/index-bench-radix-1.tmp");
+            paths.emplace_back(TMP_DIR + "/index-bench-radix-2.tmp");
+            paths.emplace_back(TMP_DIR + "/index-bench-radix-3.tmp");
+            paths.emplace_back(TMP_DIR + "/index-bench-radix-4.tmp");
             index_radix_writer<indexed_type> index(paths);
             size_t num_ops = 5'000'000;
             

@@ -16,6 +16,8 @@ using namespace std;
 using namespace boost::ut;
 using namespace daedalus_turbo;
 
+const string DATA_DIR = "./data"s;
+
 class MyProcessor: public cardano_processor {
 public:
     size_t tx_count = 0;
@@ -53,7 +55,7 @@ static uint64_t process_all_chunks(const string_view &db_path, size_t skip_facto
 suite cardano_bench_suite = [] {
     "cardano"_test = [] {
         "tx counting"_test = [] {
-            double throughput = benchmark_throughput("cardano/count transactions", 3, [] { return process_all_chunks("/workspace/data"sv, 50); } );
+            double throughput = benchmark_throughput("cardano/count transactions", 3, [] { return process_all_chunks(DATA_DIR, 50); } );
             expect(throughput >= 200'000'000.0_d);
         };
     };

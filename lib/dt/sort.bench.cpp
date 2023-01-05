@@ -18,7 +18,8 @@ using namespace std;
 using namespace boost::ut;
 using namespace daedalus_turbo;
 
-static const string work_dir = "/tmp";
+static const string DATA_DIR = "./data"s;
+static const string TMP_DIR = "/tmp"s;
 static vector<string> paths;
 
 static void prepare_test_data(const string &src_path, size_t item_size, size_t num_files) {
@@ -26,7 +27,7 @@ static void prepare_test_data(const string &src_path, size_t item_size, size_t n
     size_t src_size = filesystem::file_size(src_path);
     paths.resize(num_files);
     for (size_t i = 0; i < paths.size(); ++i) {
-        paths[i] = format("%s/parallel-sort-bench-1-in-%d.tmp", work_dir.c_str(), i);
+        paths[i] = format("%s/parallel-sort-bench-1-in-%d.tmp", TMP_DIR.c_str(), i);
         if (filesystem::exists(paths[i])) filesystem::remove(paths[i]);
         filesystem::copy_file(src_path, paths[i]);
         if (filesystem::file_size(paths[i]) != src_size) throw runtime_error("copy_file has failed!");
@@ -36,11 +37,11 @@ static void prepare_test_data(const string &src_path, size_t item_size, size_t n
 static void parallel_sort(merge_sort_func merge_sort, size_t merge_factor) {
     if (merge_factor > paths.size()) throw runtime_error("merge_factor is greater than the preinitialized data collection!");
     vector<string> work_paths(paths.begin(), paths.begin() + merge_factor);
-    merge_sort(work_dir + "/parallel-sort-bench-out.tmp", work_paths, false);
+    merge_sort(TMP_DIR + "/parallel-sort-bench-out.tmp", work_paths, false);
 }
 
 suite parallel_sort_bench_suite = [] {
-    const string sample_path = "/workspace/data/parallel-sort-test-1M.dt";
+    const string sample_path = DATA_DIR + "/parallel-sort-test-1M.dt";
     size_t sample_size = filesystem::file_size(sample_path);
     struct my_val {
         uint8_t data[40];

@@ -18,7 +18,7 @@ using namespace std;
 using namespace boost::ut;
 using namespace daedalus_turbo;
 
-static const string data_dir = "./data"s;
+static const string DATA_DIR = "./data"s;
 
 static size_t parse_all_chunks(const string &db_path, void processor(const bin_string &), size_t skip_factor = 1) {
     bin_string buf;
@@ -52,7 +52,7 @@ suite cbor_bench_suite = [] {
     "parse cardano"_test = [] {
         double throughput = benchmark_throughput("cbor/parse cardano", 3,
             [] {
-                return parse_all_chunks(data_dir, parse_own);
+                return parse_all_chunks(DATA_DIR, parse_own);
             }
         );
         expect(throughput >= 200'000'000.0_d);
