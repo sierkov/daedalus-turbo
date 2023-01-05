@@ -17,6 +17,8 @@ At the moment, this repository contains an implementation of the highly-parallel
 - A Cardano stake address for which you can verify the list of associated transactions using an alternative mechanism,
   such as Daedalus wallet itself, one of the light wallets or one of the blockchain explorer websites.
   The stake key must be in BECH32 format for Cardano Reward addresses: a text string starting with the "stake1" prefix.
+- Optional: if you wish to run the unit tests and microbenchmarks that come with the code,
+  please ensure that [git's LFS plugin](https://git-lfs.com/) is installed. The example data stored in the [data](./data) directory of this repository are managed with it.
 
 # Supported features
 
