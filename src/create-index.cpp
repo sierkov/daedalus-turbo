@@ -81,7 +81,7 @@ int main(int argc, char **argv) {
     ofstream log_stream("./log/create-index.log", ios::app);
     logger_file logger(log_stream);
     indexer idxr(logger);
-    idxr.index(db_path, idx_path, num_threads, lz4, sort);
+    idxr.index(db_path, idx_path, num_threads, sort, lz4);
     if (log) {
         timer_registry::instance().set_attr("threads", to_string(num_threads));
         timer_registry::instance().set_attr("lz4", lz4 ? "1" : "0");
