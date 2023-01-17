@@ -1,3 +1,11 @@
+/*
+ * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ *
+ * This code is distributed under the license specified in:
+ * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
+ */
+
 #include <filesystem>
 #include <boost/ut.hpp>
 #include <dt/benchmark.hpp>
@@ -15,8 +23,8 @@ suite scheduler_bench_suite = [] {
         size_t num_iter = 3;
         size_t data_multiple = 20;
         "micro_tasks_default"_test = [num_iter, data_multiple] {
-            vector<bin_string> chunks;
-            bin_string buf;
+            vector<uint8_vector> chunks;
+            uint8_vector buf;
             for (const auto &entry: filesystem::directory_iterator(DATA_DIR)) {
                 if (entry.path().extension() != ".chunk") continue;
                 read_whole_file(entry.path().string(), buf);
@@ -30,7 +38,7 @@ suite scheduler_bench_suite = [] {
                         s.submit(
                             "lz4_compress", 0,
                             [&chunk]() {
-                                bin_string tmp;
+                                uint8_vector tmp;
                                 lz4_compress(tmp, chunk);
                                 return true;
                             }

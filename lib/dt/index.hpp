@@ -1,11 +1,10 @@
 /*
  * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022 Alex Sierkov (alex at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
  *
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
  */
-
 #ifndef DAEDALUS_TURBO_INDEX_HPP
 #define DAEDALUS_TURBO_INDEX_HPP
 
@@ -128,7 +127,7 @@ namespace daedalus_turbo {
         }
 
         find_result find(const buffer &search_key) {
-            if (search_key.size > sizeof(T)) throw error("search_key is larger than the search type: %zu", search_key.size);
+            if (search_key.size() > sizeof(T)) throw error("search_key is larger than the search type: %zu", search_key.size());
             size_t lo = 0;
             size_t hi = size;
             size_t n_reads = 1; // starts with one because of the final verification read
@@ -139,7 +138,7 @@ namespace daedalus_turbo {
                 size_t i = (hi + lo) / 2;
                 is.seekg(i * sizeof(T), ios::beg);
                 is.read(reinterpret_cast<char *>(&item_buf), sizeof(item_buf));
-                last_cmp = memcmp(search_key.data, &item_buf, search_key.size);
+                last_cmp = memcmp(search_key.data(), &item_buf, search_key.size());
                 if (last_cmp <= 0) {
                     hi = i;
                 } else if (last_cmp > 0) {
@@ -148,14 +147,14 @@ namespace daedalus_turbo {
             }
             is.seekg(lo * sizeof(T), ios::beg);
             is.read(reinterpret_cast<char *>(&item_buf), sizeof(item_buf));
-            last_cmp = memcmp(search_key.data, &item_buf, search_key.size);
+            last_cmp = memcmp(search_key.data(), &item_buf, search_key.size());
             return make_tuple(last_cmp == 0, move(item_buf), n_reads);
         }
 
         find_result next(const buffer &search_key) {
             T item_buf;
             is.read(reinterpret_cast<char *>(&item_buf), sizeof(item_buf));
-            int last_cmp = memcmp(search_key.data, &item_buf, search_key.size);
+            int last_cmp = memcmp(search_key.data(), &item_buf, search_key.size());
             return make_tuple(last_cmp == 0, move(item_buf), 1);
         }
 

@@ -1,11 +1,10 @@
 /*
  * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022 Alex Sierkov (alex at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
  *
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
  */
-
 #ifndef DAEDALUS_TURBO_PARALLEL_SORT_HPP
 #define DAEDALUS_TURBO_PARALLEL_SORT_HPP 1
 
@@ -118,7 +117,7 @@ namespace daedalus_turbo {
     template<typename T, size_t BUF_ITEMS>
     class item_read_stream
     {
-        bin_string _buf;
+        uint8_vector _buf;
         uint8_t *_buf_ptr = nullptr;
         uint8_t *_buf_end = nullptr;
         stdio_stream _s;
@@ -183,7 +182,7 @@ namespace daedalus_turbo {
     template<typename T, size_t BUF_ITEMS>
     class item_write_stream
     {
-        bin_string _buf;
+        uint8_vector _buf;
         uint8_t *_buf_ptr;
         uint8_t *_buf_end;
         stdio_stream _s;
@@ -243,7 +242,7 @@ namespace daedalus_turbo {
         S &_s;
         size_t _offset;
         const size_t _offset_end;
-        bin_string _buf;
+        uint8_vector _buf;
         uint8_t *_buf_ptr;
         uint8_t *_buf_end;;
 
@@ -278,31 +277,6 @@ namespace daedalus_turbo {
         }
 
     };
-
-    string sort_file(const string &path, size_t item_size, bool delete_source = true) {
-        string src_path = path + ".unsorted";
-        filesystem::rename(path, src_path);
-        size_t size = filesystem::file_size(src_path);
-        if (size % item_size != 0) throw error("the file's size must be a multiple of the item_size!");
-        size_t num_items = size / item_size;
-
-        bin_string src_buf(size);
-        read_whole_file(src_path, src_buf);
-        vector<const uint8_t *> items(num_items);
-        for (size_t i = 0; i < num_items; ++i) {
-            items[i] = src_buf.data() + i * item_size;
-        }
-        sort(items.begin(), items.end(), item_comparator(item_size));
-        bin_string dst_buf(size);
-        for (size_t i = 0; i < num_items; ++i) {
-            memcpy(dst_buf.data() + i * item_size, items[i], item_size);
-        }
-        ofstream os(path, ios::binary);
-        os.write(reinterpret_cast<const char *>(dst_buf.data()), size);
-        os.close();
-        if (delete_source) filesystem::remove(src_path);
-        return path;
-    }
 
     template<typename W, typename T>
     size_t merge_sort_queue_writer(W &output_stream, const vector<string> &paths, bool delete_source = true) {

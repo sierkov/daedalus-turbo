@@ -1,11 +1,10 @@
 /*
  * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022 Alex Sierkov (alex at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
  *
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
  */
-
 #ifndef DAEDALUS_TURBO_CHUNK_REGISTRY_HPP
 #define DAEDALUS_TURBO_CHUNK_REGISTRY_HPP
 
@@ -42,7 +41,7 @@ namespace daedalus_turbo {
         bool lz4;
         chunk_map _chunks;
         uint64_t _sizeBytes;
-        bin_string _readBuffer;
+        uint8_vector _readBuffer;
 
     public:
 
@@ -84,19 +83,11 @@ namespace daedalus_turbo {
             return _chunks.end();
         }
 
-        chunk_map::const_reverse_iterator rbegin() const {
-            return _chunks.rbegin();
-        }
-
-        chunk_map::const_reverse_iterator rend() const {
-            return _chunks.rend();
-        }
-
-        size_t numChunks() const {
+        size_t num_chunks() const {
             return _chunks.size();
         }
 
-        size_t numBytes() const {
+        size_t num_bytes() const {
             return _sizeBytes;
         }
 
@@ -124,12 +115,12 @@ namespace daedalus_turbo {
             auto chunk_it = find_chunk(offset);
             if (chunk_it->first + chunk_it->second.size < offset + 1) throw runtime_error("the requested chunk is too small to provide the requested number of bytes");
             if (chunk_it->second.lz4) {
-                bin_string compressed;
+                uint8_vector compressed;
                 read_whole_file(chunk_it->second.path, compressed);
                 lz4_decompress(_readBuffer, compressed);
                 size_t read_offset = offset - chunk_it->first;
                 cbor_parser parser(_readBuffer.data() + read_offset, _readBuffer.size() - read_offset);
-                parser.readValue(value);
+                parser.read(value);
             } else {
                 ifstream is(chunk_it->second.path, ios::binary);
                 if (!is) {
@@ -143,7 +134,7 @@ namespace daedalus_turbo {
                 is.seekg(offset - chunk_it->first, ios::beg);
                 is.read(reinterpret_cast<char *>(_readBuffer.data()), read_size);
                 cbor_parser parser(_readBuffer.data(), read_size);
-                parser.readValue(value);
+                parser.read(value);
             }
         }
     };

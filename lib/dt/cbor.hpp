@@ -1,11 +1,10 @@
 /*
  * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022 Alex Sierkov (alex at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
  *
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
  */
-
 #ifndef DAEDALUS_TURBO_CBOR_HPP
 #define DAEDALUS_TURBO_CBOR_HPP
 
@@ -13,7 +12,6 @@
 #include <stdexcept>
 #include <iomanip>
 #include <memory>
-#include <sstream>
 #include <string>
 #include <variant>
 #include <vector>
@@ -22,14 +20,9 @@
 
 namespace daedalus_turbo {
 
-    class cbor_error: public std::runtime_error {
-    public:
-        cbor_error(const std::string &what)
-            : std::runtime_error(what) {
-        }
-    };
+    using cbor_error = error;
 
-    typedef buffer cbor_buffer;
+    using cbor_buffer = buffer;
     struct cbor_value;
 
     typedef std::vector<cbor_value> cbor_array;
@@ -69,15 +62,13 @@ namespace daedalus_turbo {
         const uint8_t *data;
         size_t size;
         cbor_value_type type;
-        unique_ptr<bin_string> storage = nullptr;
+        unique_ptr<uint8_vector> storage = nullptr;
 
-        cbor_value() {};
-        cbor_value(const cbor_value &) =default;
-        cbor_value(cbor_value &&) =default;
-        cbor_value &operator=(const cbor_value &) =default;
-        cbor_value &operator=(cbor_value &&) =default;
+        cbor_value()
+        {
+        }
 
-        inline bool operator < (const cbor_value &aVal) const {
+        inline bool operator<(const cbor_value &aVal) const {
             size_t minSize = size;
             if (aVal.size < minSize) minSize = aVal.size;
             int res = memcmp(data, aVal.data, minSize);
@@ -140,18 +131,12 @@ namespace daedalus_turbo {
         const size_t _size;
         size_t _offset;
 
-    public:
-
-        cbor_parser(const uint8_t *data, const size_t size)
-            : _data(data), _size(size), _offset(0) {
-        }
-
-        void readUnsignedInt(cbor_value &val, uint8_t augVal, const cbor_buffer &augBuf) {
+        void _read_unsigned_int(cbor_value &val, uint8_t augVal, const cbor_buffer &augBuf) {
             uint64_t x = 0;
-            if (augBuf.size > 0) {
-                for (size_t i = 0; i < augBuf.size; ++i) {
+            if (augBuf.size() > 0) {
+                for (size_t i = 0; i < augBuf.size(); ++i) {
                     x <<= 8;
-                    x |= augBuf.data[i];
+                    x |= augBuf.data()[i];
                 }
             } else {
                 x = augVal;
@@ -160,118 +145,121 @@ namespace daedalus_turbo {
             val.set_content(x);
         }
 
-        void readNegativeInt(cbor_value &val, uint8_t augVal, const cbor_buffer &augBuf) {
-            readUnsignedInt(val, augVal, augBuf);
+        void _read_negative_int(cbor_value &val, uint8_t augVal, const cbor_buffer &augBuf) {
+            _read_unsigned_int(val, augVal, augBuf);
             val.type = CBOR_NINT;
         }
 
-        void readByteString(cbor_value &val, uint8_t augVal, const cbor_buffer &augBuf, bool indefinite) {
+        void _read_byte_string(cbor_value &val, uint8_t augVal, const cbor_buffer &augBuf, bool indefinite) {
             val.type = CBOR_BYTES;
             if (!indefinite) {
                 cbor_value size;
-                readUnsignedInt(size, augVal, augBuf);
+                _read_unsigned_int(size, augVal, augBuf);
                 size_t stringSize = size.uint();
                 if (_offset + stringSize > _size) cbor_error("byte string extends beyond the end of stream");
-                val.set_content(move(cbor_buffer(&_data[_offset], stringSize)));
+                val.set_content(cbor_buffer(&_data[_offset], stringSize));
                 _offset += stringSize;
             } else {
-                unique_ptr<bin_string> storage = make_unique<bin_string>();
+                unique_ptr<uint8_vector> storage = make_unique<uint8_vector>();
                 cbor_value chunk;
                 for (;;) {
-                    readValue(chunk);
+                    read(chunk);
                     if (chunk.type == CBOR_SIMPLE_BREAK) break;
                     if (chunk.type != val.type) throw cbor_error("badly encoded indefinite byte string!");
                     const cbor_buffer &chunk_buf = chunk.buf();
                     size_t chunk_off = storage->size();
-                    storage->resize(storage->size() + chunk_buf.size);
-                    memcpy(storage->data() + chunk_off, chunk_buf.data, chunk_buf.size);
+                    storage->resize(storage->size() + chunk_buf.size());
+                    memcpy(storage->data() + chunk_off, chunk_buf.data(), chunk_buf.size());
                 }
                 storage->shrink_to_fit();
-                val.set_content(move(buffer(storage->data(), storage->size())));
+                val.set_content(buffer(storage->data(), storage->size()));
                 val.storage = move(storage);
             }
         }
 
-        void readTextString(cbor_value &val, uint8_t augVal, const cbor_buffer &augBuf, bool indefinite) {
+        void _read_text_string(cbor_value &val, uint8_t augVal, const cbor_buffer &augBuf, bool indefinite) {
             if (indefinite) throw cbor_error("indefinite text strings are not supported yet");
             cbor_value size;
-            readUnsignedInt(size, augVal, augBuf);
+            _read_unsigned_int(size, augVal, augBuf);
             val.type = CBOR_TEXT;
             size_t stringSize = size.uint();
             if (_offset + stringSize > _size) cbor_error("text string extends beyond the end of stream");
-            val.set_content(move(cbor_buffer(&_data[_offset], stringSize)));
+            val.set_content(cbor_buffer(&_data[_offset], stringSize));
             _offset += stringSize;
         }
 
-        void readArray(cbor_value &val, uint8_t augVal, const cbor_buffer &augBuf, bool indefinite) {
+        void _read_array(cbor_value &val, uint8_t augVal, const cbor_buffer &augBuf, bool indefinite) {
             cbor_array items;
             if (indefinite) {
                 for (;;) {
                     cbor_value item;
-                    readValue(item);
+                    read(item);
                     if (item.type == CBOR_SIMPLE_BREAK) break;
                     items.push_back(move(item));
                 }
             } else {
                 cbor_value size;
-                readUnsignedInt(size, augVal, augBuf);
+                _read_unsigned_int(size, augVal, augBuf);
                 size_t arraySize = size.uint();
                 items.resize(arraySize);
                 for (size_t i = 0; i < arraySize; ++i) {
-                    readValue(items[i]);
+                    read(items[i]);
                 }
             }
             val.type = CBOR_ARRAY;
             val.set_content(move(items));
         }
 
-        void readMap(cbor_value &val, uint8_t augVal, const cbor_buffer &augBuf, bool indefinite) {
+        void _read_map(cbor_value &val, uint8_t augVal, const cbor_buffer &augBuf, bool indefinite) {
             cbor_map map;
             if (indefinite) {
                 for (;;) {
                     cbor_value itemKey, itemValue;
-                    readValue(itemKey);
+                    read(itemKey);
                     if (itemKey.type == CBOR_SIMPLE_BREAK) break;
-                    readValue(itemValue);
-                    map.push_back(move(make_pair(move(itemKey), move(itemValue))));
+                    read(itemValue);
+                    map.push_back(make_pair(move(itemKey), move(itemValue)));
                 }
             } else {
                 cbor_value size;
-                readUnsignedInt(size, augVal, augBuf);
+                _read_unsigned_int(size, augVal, augBuf);
                 size_t mapSize = size.uint();
                 map.reserve(mapSize);
                 for (size_t i = 0; i < mapSize; ++i) {
                     cbor_value itemKey, itemValue;
-                    readValue(itemKey);
-                    readValue(itemValue);
-                    map.push_back(move(make_pair(move(itemKey), move(itemValue))));
+                    read(itemKey);
+                    read(itemValue);
+                    map.push_back(make_pair(move(itemKey), move(itemValue)));
                 }
             }
             val.type = CBOR_MAP;
             val.set_content(move(map));
         }
 
-        void readTaggedValue(cbor_value &val, uint8_t augVal, const cbor_buffer &augBuf) {
+        void _read_tagged_value(cbor_value &val, uint8_t augVal, const cbor_buffer &augBuf) {
             cbor_value tag;
-            readUnsignedInt(tag, augVal, augBuf);
+            _read_unsigned_int(tag, augVal, augBuf);
             unique_ptr<cbor_value> item(new cbor_value());
-            readValue(*item);
+            read(*item);
             val.type = CBOR_TAG;
             cbor_tag new_tag(tag.uint(), move(item));
             val.set_content(move(new_tag));
         }
 
-        void readFloat32(cbor_value &val, uint8_t /*augVal*/, const cbor_buffer &augBuf)
+        void _read_float32(cbor_value &val, uint8_t /*augVal*/, const cbor_buffer &augBuf)
         {
-            if (augBuf.size != 4) throw cbor_error("a float32 value with aug buffer size != 4!");
-            val.type = CBOR_FLOAT32;
-            float tmp;
             static_assert(sizeof(float) == 4);
-            memcpy(&tmp, augBuf.data, sizeof(tmp));
+            if (augBuf.size() != 4) throw cbor_error("a float32 value with aug buffer size != 4!");
+            val.type = CBOR_FLOAT32;
+            uint8_t local_order[sizeof(float)];
+            for (size_t i = 0; i < augBuf.size(); ++i)
+                local_order[i] = augBuf.data()[augBuf.size() - 1 - i];
+            float tmp;
+            memcpy(&tmp, local_order, sizeof(tmp));
             val.set_content(move(tmp));
         }
 
-        void readSimpleValue(cbor_value &val, uint8_t augVal, const cbor_buffer &augBuf, bool) {
+        void _read_simple_value(cbor_value &val, uint8_t augVal, const cbor_buffer &augBuf, bool) {
             switch (augVal) {
                 case 20:
                     val.type = CBOR_SIMPLE_FALSE;
@@ -290,7 +278,7 @@ namespace daedalus_turbo {
                     break;
 
                 case 26:
-                    readFloat32(val, augVal, augBuf);
+                    _read_float32(val, augVal, augBuf);
                     break;
 
                 case 31:
@@ -298,14 +286,17 @@ namespace daedalus_turbo {
                     break;
 
                 default:
-                    std::stringstream ss;
-                    ss << "simple values beyond BREAK are not supported yet! augVal: " << (int)augVal << " augBuf.size: " << augBuf.size;
-                    throw cbor_error(ss.str());
+                    throw cbor_error("simple values beyond BREAK are not supported yet! augVal: %d, augBuf.size: %zu", (int)augVal, augBuf.size());
             }            
         }
 
-        void readValue(cbor_value &val) {
-            //std::cerr << "readValue offset: " << _offset << ", size: " << _size << std::endl;
+    public:
+
+        cbor_parser(const uint8_t *data, const size_t size)
+            : _data(data), _size(size), _offset(0) {
+        }
+
+        void read(cbor_value &val) {
             if (_offset + 1 > _size) throw cbor_error("CBOR value extends beyond the end of stream");
             val.data = &_data[_offset];
             uint8_t hdr = _data[_offset++];
@@ -317,29 +308,25 @@ namespace daedalus_turbo {
             switch (augVal) {
                 case 24:
                     if (_offset + 1 > _size) throw cbor_error("CBOR value extends beyond the end of stream");
-                    augBuf.data = &_data[_offset];
-                    augBuf.size = 1;
+                    augBuf.set(&_data[_offset], 1);
                     _offset += 1;
                     break;
 
                 case 25:
                     if (_offset + 2 > _size) throw cbor_error("CBOR value extends beyond the end of stream");
-                    augBuf.data = &_data[_offset];
-                    augBuf.size = 2;
+                    augBuf.set(&_data[_offset], 2);
                     _offset += 2;
                     break;
 
                 case 26:
                     if (_offset + 4 > _size) throw cbor_error("CBOR value extends beyond the end of stream");
-                    augBuf.data = &_data[_offset];
-                    augBuf.size = 4;
+                    augBuf.set(&_data[_offset], 4);
                     _offset += 4;
                     break;
 
                 case 27:
                     if (_offset + 8 > _size) throw cbor_error("CBOR value extends beyond the end of stream");
-                    augBuf.data = &_data[_offset];
-                    augBuf.size = 8;
+                    augBuf.set(&_data[_offset], 8);
                     _offset += 8;
                     break;
 
@@ -360,35 +347,35 @@ namespace daedalus_turbo {
 
             switch (type) {
                 case 0:
-                    readUnsignedInt(val, augVal, augBuf);
+                    _read_unsigned_int(val, augVal, augBuf);
                     break;
 
                 case 1:
-                    readNegativeInt(val, augVal, augBuf);
+                    _read_negative_int(val, augVal, augBuf);
                     break;
 
                 case 2:
-                    readByteString(val, augVal, augBuf, indefinite);
+                    _read_byte_string(val, augVal, augBuf, indefinite);
                     break;
                 
                 case 3:
-                    readTextString(val, augVal, augBuf, indefinite);
+                    _read_text_string(val, augVal, augBuf, indefinite);
                     break;
 
                 case 4:
-                    readArray(val, augVal, augBuf, indefinite);
+                    _read_array(val, augVal, augBuf, indefinite);
                     break;
 
                 case 5:
-                    readMap(val, augVal, augBuf, indefinite);
+                    _read_map(val, augVal, augBuf, indefinite);
                     break;
 
                 case 6: 
-                    readTaggedValue(val, augVal, augBuf);
+                    _read_tagged_value(val, augVal, augBuf);
                     break;
 
                 case 7:
-                    readSimpleValue(val, augVal, augBuf, indefinite);
+                    _read_simple_value(val, augVal, augBuf, indefinite);
                     break;
 
                 default: throw cbor_error("Internal error: reached an impossible state!");
@@ -406,6 +393,14 @@ namespace daedalus_turbo {
 
     };
 
+    inline bool is_ascii(const buffer &b)
+    {
+        for (const uint8_t *p = b.data(), *end = p + b.size(); p < end; ++p) {
+            if (*p < 32 || *p > 127) return false;
+        }
+        return true;
+    }
+
     inline void print_cbor_value(ostream &os, const cbor_value &val, const size_t max_depth=0, const size_t depth = 0,
         const size_t max_array_to_expand=10, const size_t max_map_to_expand=10)
     {
@@ -422,18 +417,24 @@ namespace daedalus_turbo {
 
             case CBOR_BYTES: {
                 const cbor_buffer &b = val.buf();
-                os << shift_str << "BYTES: " << b.size << " bytes";
-                if (b.size <= 32) os << " data: " << b;
+                os << shift_str << "BYTES: " << b.size() << " bytes";
+                if (b.size() <= 64) {
+                    os << " data: " << b;
+                    if (is_ascii(b)) {
+                        const string_view sv(reinterpret_cast<const char *>(b.data()), b.size());
+                        os << " text: '" << sv << "'";
+                    }
+                }
                 os << endl;
                 break;
             }
 
             case CBOR_TEXT: {
                 const cbor_buffer &b = val.buf();
-                const string_view sv(reinterpret_cast<const char *>(b.data), b.size);
-                os << shift_str << "TEXT: " << b.size << " bytes";
-                if (b.size <= 32) os << " text: " << sv;
-                else os << " text: " << sv.substr(0, 32) << "...";
+                const string_view sv(reinterpret_cast<const char *>(b.data()), b.size());
+                os << shift_str << "TEXT: " << b.size() << " bytes";
+                if (b.size() <= 64) os << " text: '" << sv << "'";
+                else os << " text: '" << sv.substr(0, 64) << "...'";
                 os << endl;
                 break;
             }

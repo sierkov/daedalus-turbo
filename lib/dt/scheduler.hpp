@@ -1,15 +1,15 @@
 /*
  * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022 Alex Sierkov (alex at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
  *
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
  */
-
 #ifndef DAEDALUS_TURBO_SCHEDULER_HPP
 #define DAEDALUS_TURBO_SCHEDULER_HPP 1
 
 #include <any>
+#include <atomic>
 #include <chrono>
 #include <condition_variable>
 #include <functional>
@@ -40,7 +40,7 @@ namespace daedalus_turbo {
         function<void()> task;
 
         scheduled_task(int prio, const string &tg, function<void()> &&t)
-            : priority(prio), task_group(tg), task(move(t))
+            : priority(prio), task_group(tg), task(t)
         {
         }
 
@@ -53,7 +53,12 @@ namespace daedalus_turbo {
     struct scheduled_result {
         int priority;
         string task_group;
-        any result;
+        std::any result;
+
+        scheduled_result(int prio, const string &tg, const std::any &res)
+            : priority(prio), task_group(tg), result(res)
+        {
+        }
 
         bool operator<(const scheduled_result &r) const noexcept
         {
@@ -93,21 +98,25 @@ namespace daedalus_turbo {
         vector<thread> _workers;
         vector<string> _worker_tasks;
         const size_t _num_workers;
-        bool _destroy = false;
+        atomic<bool> _destroy = false;
 
-        void _process_results(unique_lock<auto> &&results_lock)
+        template<typename T>
+        void _process_results(unique_lock<T> &results_lock)
         {
+            if (!results_lock) throw error("the lock must have already been taken!");
             while (!_results.empty()) {
                 auto res = _results.top();
                 _results.pop();
                 results_lock.unlock();
-                observer_list to_notify;
                 {
-                    scoped_lock observers_lock(_observers_mutex);
+                    unique_lock observers_lock(_observers_mutex);
                     auto it = _observers.find(res.task_group);
-                    if (it != _observers.end()) to_notify = it->second;
+                    if (it != _observers.end()) {
+                        observer_list to_notify = it->second;
+                        observers_lock.unlock();
+                        for (const auto &observer: to_notify) observer(res.result);
+                    }
                 }
-                for (const auto &observer: to_notify) observer(res.result);
                 {
                     scoped_lock tasks_lock(_tasks_mutex);
                     auto it = _tasks_cnt.find(res.task_group);
@@ -115,6 +124,14 @@ namespace daedalus_turbo {
                 }
                 results_lock.lock();
             }
+        }
+
+        void _add_result(int priority, const string &task_group, const std::any &res)
+        {
+            unique_lock results_lock(_results_mutex);
+            _results.emplace(priority, task_group, res);
+            results_lock.unlock();
+            _results_cv.notify_one();
         }
 
         void _worker_thread(size_t worker_idx)
@@ -131,6 +148,7 @@ namespace daedalus_turbo {
                 task.task();
                 lock.lock();
                 _worker_tasks[worker_idx] = "";
+                lock.unlock();
             }
         }
 
@@ -150,12 +168,9 @@ namespace daedalus_turbo {
 
         ~scheduler()
         {
-            {
-                scoped_lock lock(_tasks_mutex, _results_mutex);
-                _destroy = true;
-                _tasks_cv.notify_all();
-                _results_cv.notify_all();
-            }
+            _destroy = true;
+            _tasks_cv.notify_all();
+            _results_cv.notify_all();
             for (auto &t: _workers)
                 t.join();
         }
@@ -173,15 +188,10 @@ namespace daedalus_turbo {
         template<typename T, typename ...A>
         void submit(const string &task_group, int priority, T &&action, A &&...args)
         {
-            scoped_lock tasks_lock(_tasks_mutex);
+            unique_lock tasks_lock(_tasks_mutex);
             auto action_call = bind(forward<T>(action), forward<A>(args)...);
             function<void()> task = [this, action_call, task_group, priority]() {
-                any res = action_call();
-                {
-                    scoped_lock results_lock(_results_mutex);
-                    _results.emplace(priority, task_group, res);
-                    _results_cv.notify_one();
-                }
+                _add_result(priority, task_group, action_call());
             };
             _tasks.emplace(priority, task_group, move(task));
             auto it = _tasks_cnt.find(task_group);
@@ -191,13 +201,14 @@ namespace daedalus_turbo {
             } else {
                 it->second++;
             }
+            tasks_lock.unlock();
             _tasks_cv.notify_one();
         }
 
         template<typename T>
         void on_result(const string &task_group, T &&observer)
         {
-            function<void(any &)> notify_call = [this, task_group, observer](any &res) { observer(res); };
+            function<void(any &)> notify_call = [task_group, observer](any &res) { observer(res); };
             const scoped_lock lock(_observers_mutex);
             auto it = _observers.find(task_group);
             if (it == _observers.end()) {
@@ -221,7 +232,7 @@ namespace daedalus_turbo {
             return cnt;
         }
 
-        void process(bool report_progress=true, chrono::milliseconds update_interval_ms=1000ms)
+        void process(bool report_progress=true, chrono::milliseconds update_interval_ms=1000ms, ostream &report_stream=cerr)
         {
             struct task_status {
                 size_t active;
@@ -233,8 +244,8 @@ namespace daedalus_turbo {
             for (;;) {
                 {
                     unique_lock results_lock(_results_mutex);
-                    _results_cv.wait_for(results_lock, update_interval_ms);
-                    if (!_results.empty()) _process_results(move(results_lock));
+                    bool have_work = _results_cv.wait_for(results_lock, update_interval_ms, [&]{ return !_results.empty(); });
+                    if (have_work) _process_results(results_lock);
                 }
                 {
                     scoped_lock lock(_tasks_mutex);
@@ -261,12 +272,12 @@ namespace daedalus_turbo {
                     }
                     const string str = os.str();
                     if (str.size() - 1 > max_str) max_str = str.size() - 1;
-                    cerr << std::left << std::setw(max_str) << str;
+                    report_stream << std::left << std::setw(max_str) << str;
                     next_report = chrono::system_clock::now() + update_interval_ms;
                 }
             }
             if (report_progress) {
-                cerr << '\r' << std::left << std::setw(max_str) << ' ' << '\r';
+                report_stream << '\r' << std::left << std::setw(max_str) << ' ' << '\r';
             }
         }
 

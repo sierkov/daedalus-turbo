@@ -1,11 +1,10 @@
 /*
  * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022 Alex Sierkov (alex at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
  *
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
  */
-
 #ifndef DAEDALUS_TURBO_CARDANO_HPP
 #define DAEDALUS_TURBO_CARDANO_HPP
 
@@ -19,37 +18,12 @@
 #include "cbor.hpp"
 #include "util.hpp"
 
-// virtual functions of functors?
-
 namespace daedalus_turbo {
 
     using namespace std;
 
-    class cardano_hash_28: public array<uint8_t, 28> {
-    public:
-        cardano_hash_28() =default;
-        cardano_hash_28(const cardano_hash_28 &h) =default;
-        cardano_hash_28(cardano_hash_28 &&h) =default;
-
-        cardano_hash_28(const uint8_t *ptr, size_t sz)
-            : array<uint8_t, 28>()
-        {
-            if (sz != size()) throw error("cardano_hash_28 must be exactly of 28 bytes, but got %zu bytes instead", sz);
-            memcpy(data(), ptr, size());
-        }
-
-        cardano_hash_28 &operator=(const cardano_hash_28 &h) {
-            memcpy(data(), h.data(), h.size());
-            return *this;
-        }
-
-        bool operator==(const cardano_hash_28 &h) {
-            return memcmp(data(), h.data(), size()) == 0;
-        }
-    };
-
-    typedef pair<cardano_hash_28, int64_t> CardanoBalance;
-    typedef unordered_map<cardano_hash_28, int64_t> CardanoBalanceMap;
+    using cardano_hash_32 = array<uint8_t, 32>;
+    using cardano_hash_28 = array<uint8_t, 28>;
 
     inline uint64_t slot_to_epoch(uint64_t slot) {
         if (slot <= 208 * 21600) {
@@ -111,8 +85,8 @@ namespace daedalus_turbo {
         cardano_tx_context(cardano_block_context &ctx, uint64_t off, uint64_t idx_, const buffer &tx_hash)
             : block_ctx(ctx), offset(off), idx(idx_)
         {
-            if (tx_hash.size != sizeof(hash)) throw error("incorrectly sized tx hash: %zu bytes!", tx_hash.size);
-            memcpy(hash, tx_hash.data, tx_hash.size);
+            if (tx_hash.size() != sizeof(hash)) throw error("incorrectly sized tx hash: %zu bytes!", tx_hash.size());
+            memcpy(hash, tx_hash.data(), tx_hash.size());
         }
     };
 
@@ -153,14 +127,9 @@ namespace daedalus_turbo {
         void every_chunk(const cardano_chunk_context &/*ctx*/, const buffer &/*chunk*/) {};
         void every_block(const cardano_block_context &/*ctx*/, const cbor_value &/*block_tuple*/) {};
         void every_tx(const cardano_tx_context &/*ctx*/, const cbor_value &/*tx*/, uint64_t /*fees*/) {};
-        void every_tx_cert(const cardano_tx_cert_context &/*ctx*/, const cbor_value &/*cert*/) {};
         void every_tx_input(const cardano_tx_input_context &/*ctx*/, const cbor_buffer &/*tx_hash*/, uint64_t /*tx_out_idx*/) {};
         void every_tx_output(const cardano_tx_output_context &/*ctx*/, const cbor_buffer &/*address*/, uint64_t /*amount*/) {};
         void every_tx_withdrawal(const cardano_tx_context &/*ctx*/, const cbor_buffer &/*address*/, uint64_t /*amount*/) {};
-    };
-
-    class cardano_parser_error: public error
-    {
     };
 
     template<typename Processor>
@@ -174,86 +143,10 @@ namespace daedalus_turbo {
         {
         }
 
-        void parse_tx_cert(const cardano_tx_cert_context &/*tx_cert_ctx*/, const cbor_value &cert_val)
-        {
-            const cbor_array &cert = cert_val.array();
-            if (cert.size() < 2) throw cardano_error("certificate item must have at least two elements!");
-            uint64_t type = cert[0].uint();
-            switch (type) {
-                case 0:
-                case 1:
-                case 2: {
-                    const cbor_array &stake_cred = cert[1].array();
-                    if (stake_cred.size() != 2) throw cardano_error("stake_credential must have exactly two elements!");
-                    uint64_t cred_type = stake_cred[0].uint();
-                    if (cred_type == 0) {
-                        const cbor_buffer &key_hash = stake_cred[1].buf();
-                        if (key_hash.size != 28) throw cardano_error("stake key hash must be 28 bytes!");
-                        /*
-                        uint8_t buf[STAKE_ITEM_SIZE];
-                        stake_cert_item item;
-                        memcpy(item.stake_hash, key_hash.data, key_hash.size);
-                        item.slot = bi.slot;
-                        item.tx_idx = tx_idx;
-                        item.cert_idx = cert_idx;
-                        stake_idx.write(item);
-                        */
-                    }
-                    break;
-                }
-
-                case 3:
-                case 4: {
-                    if (cert[1].type != CBOR_BYTES) throw cardano_error("pool key_hash must be a byte string!");
-                    /*
-                    const cbor_buffer &pool_hash = cert[1].buffer();
-                    uint8_t buf[POOL_ITEM_SIZE];
-                    if (pool_hash.size != 28) throw runtime_error("pool hash hash must be 28 bytes!");
-                    memcpy(buf, pool_hash.data, 28);
-                    memcpy(buf + 28, &tx_offset, 6);
-                    memcpy(buf + 28 + 6, &cert_idx, 2);
-                    pool_idx.write(buf, sizeof(buf));
-                    */
-                    break;
-                }
-            }
-        }
-
         void parse_tx_input(const cardano_tx_input_context &tx_in_ctx, const cbor_value &input)
         {
             const cbor_array &tx_in = input.array();
             switch (tx_in.size()) {
-                case 1: {
-                    // byron tx - ignore it
-                    /*
-                    if (tx_in[0].type != CBOR_ARRAY) throw cardano_error("unexpected byron tx input CBOR type: ", tx_in[0].type);
-                    const cbor_array &byron_tx_in = tx_in[0].array();
-                    if (byron_tx_in.size() != 2) throw cardano_error("unexpected byron tx input array size: ", byron_tx_in.size());
-                    if (byron_tx_in[0].type != CBOR_UINT) throw cardano_error("unexpected byron tx input 0 value type: ", byron_tx_in[0].type);
-                    uint64_t byron_val_0 = byron_tx_in[0].uint();
-                    switch (byron_val_0) {
-                        case 0: {
-                            if (byron_tx_in[1].type != CBOR_TAG) throw cardano_error("unexpected byron tx input 1 value type: ", byron_tx_in[1].type);
-                            const cbor_tag &tx_in_tag = byron_tx_in[1].tag();
-                            if (tx_in_tag.first != 24) throw cardano_error("unexpected byron tx input tag value: ", tx_in_tag.first);
-                            if (tx_in_tag.second->type != CBOR_BYTES) throw cardano_error("unexpected byron tx input tag data type: ", tx_in_tag.second->type);
-                            const cbor_buffer &bytes = tx_in_tag.second->buffer();
-                            cbor_parser parser(bytes.data, bytes.size);
-                            cbor_value tx_val;
-                            parser.readValue(tx_val);
-                            if (tx_val.type != CBOR_ARRAY) throw cardano_error("unexpected byron tx item CBOR type: ", tx_val.type);
-                            const cbor_array &tx_items = tx_val.array();
-                            if (tx_items.size() != 2) throw cardano_error("unexpected byron tx input array size: ", tx_items.size());
-                            processor.every_tx_input(tx_in_ctx, tx_items[0].buffer(), tx_items[1].uint());
-                            break;
-                        }
-
-                        default:
-                            throw cardano_error("unexpected byron tx input val 0 value: ", byron_val_0);
-                    }*/
-                    break;
-                }
-
                 case 2: {
                     processor.every_tx_input(tx_in_ctx, tx_in[0].buf(), tx_in[1].uint());
                     break;
@@ -264,17 +157,35 @@ namespace daedalus_turbo {
             }
         }
 
+        uint64_t extract_tx_output_coin(const cbor_value &coin)
+        {
+            switch (coin.type) {
+                case CBOR_UINT:
+                    return coin.uint();
+                    break;
+
+                case CBOR_ARRAY: {
+                    const cbor_array &value = coin.array();
+                    if (value.size() != 2) throw error("unexpected size of the value array: %zu!", value.size());
+                    return value[0].uint();
+                    break;
+                }
+
+                default:
+                    throw error("unexpected format of the tx output value: CBOR type: %u!", (unsigned)coin.type);
+            }
+        }
+
         void parse_tx_output(const cardano_tx_output_context &tx_out_ctx, const cbor_value &output)
         {
             const cbor_buffer *address = nullptr;
-            // recognize non-ADA transactions as having 0 ADA value
             uint64_t amount = 0;
             switch (output.type) {
                 case CBOR_ARRAY: {
                     const cbor_array &items = output.array();
                     if (items.size() < 2) throw error("unexpected format of a Cardano transaction output!");
                     address = &items[0].buf();
-                    if (items[1].type == CBOR_UINT) amount = items[1].uint();
+                    amount = extract_tx_output_coin(items[1]);
                     break;
                 }
 
@@ -287,7 +198,7 @@ namespace daedalus_turbo {
                                 break;
 
                             case 1:
-                                if (it2->second.type == CBOR_UINT) amount = it2->second.uint();
+                                amount = extract_tx_output_coin(it2->second);
                                 break;
                         }
                     }
@@ -313,7 +224,6 @@ namespace daedalus_turbo {
         {
             const cbor_array *inputs = nullptr;
             const cbor_array *outputs = nullptr;
-            const cbor_array *certs = nullptr;
             const cbor_map *withdrawals = nullptr;
             uint64_t fees = 0;
             if (tx.type == CBOR_ARRAY) {
@@ -327,29 +237,21 @@ namespace daedalus_turbo {
                 for (auto it = items.begin(); it != items.end(); ++it) {
                     uint64_t idx = it->first.uint();
                     switch (idx) {
-                        case 0: {
+                        case 0:
                             inputs = &it->second.array();
                             break;
-                        }
 
-                        case 1: {
+                        case 1:
                             outputs = &it->second.array();
                             break;
-                        }
 
-                        case 2: {
+                        case 2:
                             fees = it->second.uint();
-                            break;
-                        }
-
-                        case 4: {
-                            certs = &it->second.array();                
                             break;
 
                         case 5:
                             withdrawals = &it->second.map();
                             break;
-                        }
                     }
                 }
             } else {
@@ -370,12 +272,6 @@ namespace daedalus_turbo {
             if (fees != 0) {
                 tx_ctx.block_ctx.fees += fees;
             }
-            if (certs != nullptr) {
-                cardano_tx_cert_context tx_cert_ctx(tx_ctx);
-                for (tx_cert_ctx.cert_idx = 0; tx_cert_ctx.cert_idx < certs->size(); tx_cert_ctx.cert_idx++) {
-                    parse_tx_cert(tx_cert_ctx, (*certs)[tx_cert_ctx.cert_idx]);
-                }
-            }
             if (withdrawals != nullptr) {
                 for (const auto &wt : *withdrawals) {
                     parse_tx_withdrawal(tx_ctx, wt.first.buf(), wt.second.uint());
@@ -384,83 +280,88 @@ namespace daedalus_turbo {
             processor.every_tx(tx_ctx, tx, fees);
         }
 
+        void parse_block(cardano_chunk_context &chunk_ctx, const buffer &chunk, const cbor_value &block_tuple)
+        {
+            cardano_block_context block_ctx(chunk_ctx);
+            cardano_tx_context tx_ctx(block_ctx);
+            const cbor_array &items = block_tuple.array();
+            if (items.size() != 2) throw cardano_error("Unsupported block start record count");
+            block_ctx.era = items[0].uint();
+            block_ctx.fees = 0;
+            block_ctx.offset = chunk_ctx.offset + block_tuple.offset(chunk.data());
+            const cbor_array &block = items[1].array();
+            switch (block_ctx.era) {
+                case 0:
+                    return;
+
+                case 1: {
+                    if (block.size() < 2) throw cardano_error("Byron block size has less than 2 elements!");
+                    const cbor_array &header = block[0].array();
+                    if (header.size() < 4) throw cardano_error("Byron block with header size less than 4!");
+                    const cbor_array &consensus_data = header[3].array();
+                    if (consensus_data.size() < 1) throw cardano_error("Byron consensus_data array must contain elements!");
+                    const cbor_array &slotid = consensus_data[0].array();
+                    const cbor_buffer &issuer_vkey = consensus_data[1].buf();
+                    blake2b_best(block_ctx.pool_hash, sizeof(block_ctx.pool_hash), issuer_vkey.data(), issuer_vkey.size());
+                    block_ctx.block_number = 0;
+                    block_ctx.slot = slotid[1].uint();
+                    block_ctx.epoch = slot_to_epoch(block_ctx.slot);
+                    const cbor_array &body = block[1].array();
+                    const cbor_array &transactions = body[0].array();
+                    for (tx_ctx.idx = 0; tx_ctx.idx < transactions.size(); ++tx_ctx.idx) {
+                        const cbor_value &tx = transactions[tx_ctx.idx];
+                        tx_ctx.offset = chunk_ctx.offset + tx.offset(chunk.data());
+                        blake2b_best(tx_ctx.hash, sizeof(tx_ctx.hash), tx.data, tx.size);
+                        // ignore byron transaction since they neither affect stake distribution nor after-shelley wallets
+                        // parse_tx(tx_ctx, tx);
+                    }
+                    break;
+                }
+
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6: {
+                    const cbor_array &header = block[0].array();
+                    const cbor_array &header_body = header[0].array();
+                    block_ctx.block_number = header_body[0].uint();
+                    block_ctx.slot = header_body[1].uint();
+                    block_ctx.epoch = slot_to_epoch(block_ctx.slot);
+                    const cbor_buffer &issuer_vkey = header_body[3].buf();
+                    blake2b_best(block_ctx.pool_hash, sizeof(block_ctx.pool_hash), issuer_vkey.data(), issuer_vkey.size());
+                    const cbor_array &transactions = block[1].array();
+                    for (tx_ctx.idx = 0; tx_ctx.idx < transactions.size(); ++tx_ctx.idx) {
+                        const cbor_value &tx = transactions[tx_ctx.idx];
+                        tx_ctx.offset = chunk_ctx.offset +  tx.offset(chunk.data());
+                        blake2b_best(tx_ctx.hash, sizeof(tx_ctx.hash), tx.data, tx.size);
+                        parse_tx(tx_ctx, tx);
+                    }
+                    break;
+                }
+
+                default:
+                    throw cardano_error("unsupported block era: %u!", block_ctx.era);
+            }
+
+            processor.every_block(block_ctx, block_tuple);
+        }
+
         void parse_chunk(cardano_chunk_context &chunk_ctx, const buffer &chunk)
         {
             processor.every_chunk(chunk_ctx, chunk);
-            cbor_parser parser(chunk.data, chunk.size);
-            cardano_block_context block_ctx(chunk_ctx);
-            cardano_tx_context tx_ctx(block_ctx);
+            cbor_parser parser(chunk.data(), chunk.size());
             cbor_value block_tuple;
             while (!parser.eof()) {
-                parser.readValue(block_tuple);
-                const cbor_array &items = block_tuple.array();
-                if (items.size() != 2) throw cardano_error("Unsupported block start record count");
-                block_ctx.era = items[0].uint();
-                block_ctx.fees = 0;
-                block_ctx.offset = chunk_ctx.offset + block_tuple.offset(chunk.data);
-                const cbor_array &block = items[1].array();
-                switch (block_ctx.era) {
-                    case 0:
-                        continue;
-
-                    case 1: {
-                        if (block.size() < 2) throw cardano_error("Byron block size has less than 2 elements!");
-                        const cbor_array &header = block[0].array();
-                        if (header.size() < 4) throw cardano_error("Byron block with header size less than 4!");
-                        const cbor_array &consensus_data = header[3].array();
-                        if (consensus_data.size() < 1) throw cardano_error("Byron consensus_data array must contain elements!");
-                        const cbor_array &slotid = consensus_data[0].array();
-                        const cbor_buffer &issuer_vkey = consensus_data[1].buf();
-                        blake2b_best(block_ctx.pool_hash, sizeof(block_ctx.pool_hash), issuer_vkey.data, issuer_vkey.size);
-                        block_ctx.block_number = 0;
-                        block_ctx.slot = slotid[1].uint();
-                        block_ctx.epoch = slot_to_epoch(block_ctx.slot);
-                        const cbor_array &body = block[1].array();
-                        const cbor_array &transactions = body[0].array();
-                        for (tx_ctx.idx = 0; tx_ctx.idx < transactions.size(); ++tx_ctx.idx) {
-                            const cbor_value &tx = transactions[tx_ctx.idx];
-                            tx_ctx.offset = chunk_ctx.offset + tx.offset(chunk.data);
-                            blake2b_best(tx_ctx.hash, sizeof(tx_ctx.hash), tx.data, tx.size);
-                            // ignore byron transaction since they neither affect stake distribution nor after-shelley wallets
-                            //parse_tx(tx_ctx, tx);
-                        }
-                        break;
-                    }
-
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 6: {
-                        const cbor_array &header = block[0].array();
-                        const cbor_array &header_body = header[0].array();
-                        block_ctx.block_number = header_body[0].uint();
-                        block_ctx.slot = header_body[1].uint();
-                        block_ctx.epoch = slot_to_epoch(block_ctx.slot);
-                        const cbor_buffer &issuer_vkey = header_body[3].buf();
-                        blake2b_best(block_ctx.pool_hash, sizeof(block_ctx.pool_hash), issuer_vkey.data, issuer_vkey.size);        
-                        const cbor_array &transactions = block[1].array();
-                        for (tx_ctx.idx = 0; tx_ctx.idx < transactions.size(); ++tx_ctx.idx) {
-                            const cbor_value &tx = transactions[tx_ctx.idx];
-                            tx_ctx.offset = chunk_ctx.offset +  tx.offset(chunk.data);
-                            blake2b_best(tx_ctx.hash, sizeof(tx_ctx.hash), tx.data, tx.size);
-                            parse_tx(tx_ctx, tx);
-                        }
-                        break;
-                    }
-
-                    default:
-                        throw cardano_error("unsupported block era: %u!", block_ctx.era);
-                }
-
-                processor.every_block(block_ctx, block_tuple);
+                parser.read(block_tuple);
+                parse_block(chunk_ctx, chunk, block_tuple);
             }
         }
     };
 
-    inline bin_string cardano_parse_address(const string_view &addr_sv)
+    inline uint8_vector cardano_parse_address(const string_view &addr_sv)
     {
-        bin_string addr_buf;
+        uint8_vector addr_buf;
         if (addr_sv.substr(0, 2) == "0x"sv) {
             bytes_from_hex(addr_buf, addr_sv.substr(2));
         } else {
@@ -472,14 +373,5 @@ namespace daedalus_turbo {
     }
 
 }
-
-template<>
-struct std::hash<daedalus_turbo::cardano_hash_28> {
-    size_t operator()(const daedalus_turbo::cardano_hash_28 &h) const noexcept {
-        size_t hash;
-        memcpy(&hash, h.data(), sizeof(hash));
-        return hash;
-    }
-};
 
 #endif // !DAEDALUS_TURBO_CARDANO_HPP

@@ -1,11 +1,10 @@
 /*
  * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022 Alex Sierkov (alex at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
  *
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
  */
-
 #ifndef DAEDALUS_TURBO_INDEX_TYPE_HPP
 #define DAEDALUS_TURBO_INDEX_TYPE_HPP
 
@@ -58,11 +57,6 @@ namespace daedalus_turbo {
         {
             if (size != sizeof(*this)) throw error("invalid size of the binary data: %zu bytes!", size);
             memcpy(this, data, size);
-        }
-
-        block_item &operator=(const block_item &v) {
-            memcpy(this, &v, sizeof(v));
-            return *this;
         }
 
         bool operator<(const block_item &bi) const {

@@ -1,6 +1,6 @@
 /*
  * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022 Alex Sierkov (alex at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
  *
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
@@ -20,8 +20,8 @@ using namespace daedalus_turbo;
 
 static const string DATA_DIR = "./data"s;
 
-static size_t parse_all_chunks(const string &db_path, void processor(const bin_string &), size_t skip_factor = 1) {
-    bin_string buf;
+static size_t parse_all_chunks(const string &db_path, void processor(const uint8_vector &), size_t skip_factor = 1) {
+    uint8_vector buf;
     size_t i = 0;
     size_t total_size = 0;
     for (const auto &entry : filesystem::directory_iterator(db_path)) {
@@ -39,12 +39,12 @@ static size_t parse_all_chunks(const string &db_path, void processor(const bin_s
     return total_size;
 }
 
-static void parse_own(const bin_string &buf)
+static void parse_own(const uint8_vector &buf)
 {
     cbor_value block_tuple;
     cbor_parser parser(buf.data(), buf.size());
     while (!parser.eof()) {
-        parser.readValue(block_tuple);
+        parser.read(block_tuple);
     }
 }
 

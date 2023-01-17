@@ -1,6 +1,6 @@
 /*
  * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022 Alex Sierkov (alex at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
  *
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
@@ -18,7 +18,7 @@ using namespace daedalus_turbo;
 
 const string DATA_DIR = "./data"s;
 
-class MyProcessor: public cardano_processor {
+class my_processor: public cardano_processor {
 public:
     size_t tx_count = 0;
     size_t block_count = 0;
@@ -34,10 +34,10 @@ public:
 
 static uint64_t process_all_chunks(const string_view &db_path, size_t skip_factor = 1)
 {
-    MyProcessor proc;
+    my_processor proc;
     cardano_parser parser(proc);
     cardano_chunk_context chunk_ctx(0);
-    bin_string chunk;
+    uint8_vector chunk;
     size_t total_size = 0;
     size_t i = 0;
     for (const auto &entry : filesystem::directory_iterator(db_path)) {

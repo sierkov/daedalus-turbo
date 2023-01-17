@@ -1,11 +1,10 @@
 /*
  * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022 Alex Sierkov (alex at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
  *
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
  */
-
 #ifndef DAEDALUS_TURBO_UTIL_HPP
 #define DAEDALUS_TURBO_UTIL_HPP 1
 
@@ -63,94 +62,107 @@ namespace daedalus_turbo {
         }
     };
 
-    struct buffer;
+    class buffer;
 
-    class bin_string: public vector<uint8_t>
+    class uint8_vector: public vector<uint8_t>
     {
     public:
-        bin_string() : vector<uint8_t>()
+        uint8_vector() : vector<uint8_t>()
         {
         }
 
-        bin_string(size_t size) : vector<uint8_t>(size)
+        uint8_vector(size_t size) : vector<uint8_t>(size)
         {
         }
 
-        bin_string(const vector<uint8_t> &v) : vector<uint8_t>(v)
+        uint8_vector(const vector<uint8_t> &v) : vector<uint8_t>(v)
         {
         }
 
-        inline bin_string(const buffer &buf);
+        inline uint8_vector(const buffer &buf);
 
-        inline bin_string &operator=(const buffer &buf);
+        inline uint8_vector &operator=(const buffer &buf);
     };
 
-    struct buffer {
-        const uint8_t *data;
-        size_t size;
+    class buffer {
+        const uint8_t *_data;
+        size_t _size;
+
+    public:
 
         buffer()
-            : data(0), size(0)
+            : _data(0), _size(0)
         {
         }
 
-        buffer(const buffer &buf)
-            : data(buf.data), size(buf.size)
+        buffer(const uint8_vector &buf)
+            : _data(buf.data()), _size(buf.size())
         {
         }
 
-        buffer(const bin_string &buf)
-            : data(buf.data()), size(buf.size())
+        buffer(const uint8_t *data, size_t size)
+            : _data(data), _size(size)
         {
         }
 
-        buffer(const uint8_t *aData, size_t aSize)
-            : data(aData), size(aSize)
-        {
-        }
-
-        bool operator < (const buffer &aVal) const {
-            size_t minSize = size;
-            if (aVal.size < minSize) minSize = aVal.size;
-            int res = memcmp(data, aVal.data, minSize);
-            if (res == 0) return size < aVal.size;
+        bool operator<(const buffer &val) const {
+            size_t min_size = _size;
+            if (val._size < min_size) min_size = val._size;
+            int res = memcmp(_data, val._data, min_size);
+            if (res == 0) return _size < val._size;
             return res < 0;
         }
 
         bool operator==(const buffer &b) const {
-            if (size != b.size) return false;
-            return memcmp(data, b.data, size) == 0;
+            if (_size != b._size) return false;
+            return memcmp(_data, b._data, _size) == 0;
         }
 
         bool operator==(const string_view &v) const {
-            if (size != v.size()) return false;
-            return memcmp(data, v.data(), size) == 0;
+            if (_size != v.size()) return false;
+            return memcmp(_data, v.data(), _size) == 0;
+        }
+
+        inline void set(const uint8_t *data, size_t size)
+        {
+            _data = data;
+            _size = size;
+        }
+
+        inline const uint8_t *data() const
+        {
+            return _data;
+        }
+
+        inline size_t size() const
+        {
+            return _size;
         }
 
     };
 
     inline ostream &operator<<(ostream &os, const buffer &buf) {
         os << hex;
-        for (const uint8_t *byte_ptr = buf.data; byte_ptr < buf.data + buf.size; ++byte_ptr) {
+        for (const uint8_t *byte_ptr = buf.data(); byte_ptr < buf.data() + buf.size(); ++byte_ptr) {
             os << setfill('0') << setw(2) << static_cast<int>(*byte_ptr);
         }
         os << dec;
         return os;
     }
 
-    inline bin_string::bin_string(const buffer &buf) : vector<uint8_t>(buf.size)
+    inline uint8_vector::uint8_vector(const buffer &buf) : vector<uint8_t>(buf.size())
     {
-        memcpy(data(), buf.data, buf.size);
+        memcpy(data(), buf.data(), buf.size());
     }
 
-    inline bin_string &bin_string::operator=(const buffer &buf)
+    inline uint8_vector &uint8_vector::operator=(const buffer &buf)
     {
-        resize(buf.size);
-        memcpy(data(), buf.data, buf.size);
+        resize(buf.size());
+        memcpy(data(), buf.data(), buf.size());
         return *this;
     }
 
-    inline ostream &operator<<(ostream &os, const bin_string &buf) {
+    inline ostream &operator<<(ostream &os, const uint8_vector &buf) {
         os << hex;
         for (auto &byte : buf) {
             os << setfill('0') << setw(2) << static_cast<int>(byte);
@@ -281,7 +293,7 @@ namespace daedalus_turbo {
         
     };
 
-    inline void read_whole_file(const string &path, bin_string &buffer) {
+    inline void read_whole_file(const string &path, uint8_vector &buffer) {
         size_t size = filesystem::file_size(path);
         buffer.resize(size);
         ifstream is(path, ios::binary);
@@ -289,7 +301,7 @@ namespace daedalus_turbo {
         if (!is.read(reinterpret_cast<char *>(buffer.data()), size)) throw sys_error("Failed to read from: %s", path.c_str());
     }
 
-    inline void write_whole_file(const string &path, const bin_string &buffer) {
+    inline void write_whole_file(const string &path, const uint8_vector &buffer) {
         ofstream os(path, ios::binary);
         if (!os) throw sys_error("Failed to open for writing: %s", path.c_str());
         if (!os.write(reinterpret_cast<const char *>(buffer.data()), buffer.size())) throw sys_error("Failed to write to: %s", path.c_str());
@@ -319,7 +331,7 @@ namespace daedalus_turbo {
         }
     }
 
-    inline void bytes_from_hex(bin_string &data, const string_view& hex) {
+    inline void bytes_from_hex(uint8_vector &data, const string_view& hex) {
         data.clear();
         if (hex.size() % 2 != 0) throw error("hex string must have an even number of characters but got %zu!", hex.size());
         for (const char *p = hex.data(), *end = hex.data() + hex.size(); p < end; p += 2) {
@@ -328,14 +340,5 @@ namespace daedalus_turbo {
     }
 
 }
-
-template<>
-struct std::hash<daedalus_turbo::buffer> {
-    size_t operator()(const daedalus_turbo::buffer &val) const noexcept {
-        size_t hash;
-        memcpy(&hash, val.data, sizeof(hash));
-        return hash;
-    }
-};
 
 #endif // !DAEDALUS_TURBO_UTIL_HPP

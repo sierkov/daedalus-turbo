@@ -1,6 +1,6 @@
 /*
  * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022 Alex Sierkov (alex at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
  *
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
@@ -21,6 +21,31 @@ using namespace daedalus_turbo;
 static const string DATA_DIR = "./data"s;
 static const string TMP_DIR = "/tmp"s;
 static vector<string> paths;
+
+string sort_file(const string &path, size_t item_size, bool delete_source = true) {
+    string src_path = path + ".unsorted";
+    filesystem::rename(path, src_path);
+    size_t size = filesystem::file_size(src_path);
+    if (size % item_size != 0) throw error("the file's size must be a multiple of the item_size!");
+    size_t num_items = size / item_size;
+
+    uint8_vector src_buf(size);
+    read_whole_file(src_path, src_buf);
+    vector<const uint8_t *> items(num_items);
+    for (size_t i = 0; i < num_items; ++i) {
+        items[i] = src_buf.data() + i * item_size;
+    }
+    sort(items.begin(), items.end(), item_comparator(item_size));
+    uint8_vector dst_buf(size);
+    for (size_t i = 0; i < num_items; ++i) {
+        memcpy(dst_buf.data() + i * item_size, items[i], item_size);
+    }
+    ofstream os(path, ios::binary);
+    os.write(reinterpret_cast<const char *>(dst_buf.data()), size);
+    os.close();
+    if (delete_source) filesystem::remove(src_path);
+    return path;
+}
 
 static void prepare_test_data(const string &src_path, size_t item_size, size_t num_files) {
     sort_file(src_path, item_size);

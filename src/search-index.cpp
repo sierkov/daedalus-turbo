@@ -1,6 +1,6 @@
 /*
  * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022 Alex Sierkov (alex at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
  *
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
     }
     const string db_path = argv[1];
     const string idx_path = argv[2];
-    bin_string addr_buf = cardano_parse_address(string_view(argv[3], strlen(argv[3])));
+    uint8_vector addr_buf = cardano_parse_address(string_view(argv[3], strlen(argv[3])));
     bool lz4 = false;
     for (int i = 4; i < argc; ++i) {
         const string_view arg_i(argv[i], strlen(argv[i]));

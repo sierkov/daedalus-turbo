@@ -1,13 +1,12 @@
 /*
  * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022 Alex Sierkov (alex at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
  *
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
  */
-
 #ifndef DAEDALUS_TURBO_BENCHMARK_HPP
-#define DAEDAULS_TURBO_BENCHMARK_HPP
+#define DAEDALUS_TURBO_BENCHMARK_HPP
 
 #include <chrono>
 #include <iostream>
@@ -29,7 +28,6 @@ namespace daedalus_turbo {
             total_bytes += action();
         }
         const auto stop = std::chrono::high_resolution_clock::now();
-        const auto us = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
         std::chrono::duration<double> sec = stop - start;
         double rate = (double)total_bytes / sec.count();
         string prefix = "";

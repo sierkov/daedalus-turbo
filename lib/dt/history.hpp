@@ -1,11 +1,10 @@
 /*
  * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022 Alex Sierkov (alex at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
  *
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
  */
-
 #ifndef DAEDALUS_TURBO_HISTORY_HPP
 #define DAEDALUS_TURBO_HISTORY_HPP
 
@@ -30,8 +29,8 @@ namespace daedalus_turbo
     using namespace std;
 
     struct transaction {
-        bin_string id;
-        bin_string spent_id;
+        uint8_vector id;
+        uint8_vector spent_id;
         uint64_t amount;
         uint64_t withdraw;
         uint64_t slot;
@@ -66,7 +65,7 @@ namespace daedalus_turbo
     }
 
     struct history {
-        bin_string stake_addr;
+        uint8_vector stake_addr;
         vector<transaction> transactions;
         uint64_t last_slot = 0;
         uint64_t num_disk_reads = 0;
@@ -107,7 +106,7 @@ namespace daedalus_turbo
     inline ostream &operator<<(ostream &os, const history &h)
     {
         if (h.transactions.size() > 0) {
-            set<bin_string> incoming, outgoing;
+            set<uint8_vector> incoming, outgoing;
             uint64_t total_balance = 0;
             for (const auto &tx: h.transactions) {
                 os << tx;
@@ -115,13 +114,14 @@ namespace daedalus_turbo
                 if (tx.spent_id.size() > 0) outgoing.insert(tx.spent_id);
                 else total_balance += tx.amount;
             }
-            os << "transactions affecting stake address incoming: " << incoming.size() << ", outgoing: " << outgoing.size()
-                << ", available balance without rewards: " << total_balance / 1000000 << "." << total_balance % 1000000 << " ADA" << endl;
+            os << "transactions affecting stake address: " << buffer(h.stake_addr)
+                << " incoming: " << incoming.size() << ", outgoing: " << outgoing.size() << "\n"
+                << "available balance without rewards: " << total_balance / 1000000 << "." << total_balance % 1000000 << " ADA" << endl;
             os << "last indexed blockchain slot: " << h.last_slot << ", last epoch: " << slot_to_epoch(h.last_slot)
                 << ", i/o cost (# random reads): " << h.num_disk_reads;
         } else {
-            os << "last indexed blockchain slot: " << h.last_slot << ", last epoch: " << slot_to_epoch(h.last_slot)
-                << ", no matching transactions have been found in the blockchain!";
+            os << "last indexed blockchain slot: " << h.last_slot << ", last epoch: " << slot_to_epoch(h.last_slot) << "\n"
+                << "no transactions affecting stake address " << buffer(h.stake_addr) << " have been found!";
         }
         os << endl;
         return os;
@@ -145,8 +145,8 @@ namespace daedalus_turbo
             addr_match(const buffer &address, const buffer &tx_hash_, uint64_t amount, uint16_t tx_out_idx_, uint64_t withdraw_, const cardano_block_context &block_ctx)
                 : amount(amount), withdraw(withdraw_), tx_out_idx(tx_out_idx_), block(block_ctx)
             {
-                memcpy(stake_addr, address.data, address.size);
-                memcpy(tx_hash, tx_hash_.data, tx_hash_.size);
+                memcpy(stake_addr, address.data(), address.size());
+                memcpy(tx_hash, tx_hash_.data(), tx_hash_.size());
             }
 
             bool operator<(const addr_match &m) const {
@@ -169,18 +169,19 @@ namespace daedalus_turbo
             {
             }
 
-            virtual void every_tx_output(const cardano_tx_output_context &ctx, const cbor_buffer &address, uint64_t amount) {
-                if (address.size != 57 || address.data[0] != 0x01) return;
-                if (memcmp(search_address.data, address.data + 29, search_address.size) != 0) return;
+            void every_tx_output(const cardano_tx_output_context &ctx, const cbor_buffer &address, uint64_t amount) {
+                uint8_t address_type = address.data()[0] >> 4;
+                if (address.size() != 57 || address_type >= 4) return;
+                if (memcmp(search_address.data(), address.data() + 29, search_address.size()) != 0) return;
                 addr_match m(address, buffer(ctx.tx_ctx.hash, sizeof(ctx.tx_ctx.hash)), amount, ctx.out_idx, 0, ctx.tx_ctx.block_ctx);
                 auto [it, ok] = matches.insert(move(m));
                 if (!ok) throw error("failed to insert a matching withdrawal!");
             };
 
-            virtual void every_tx_withdrawal(const cardano_tx_context &ctx, const cbor_buffer &address, uint64_t amount)
+            void every_tx_withdrawal(const cardano_tx_context &ctx, const cbor_buffer &address, uint64_t amount)
             {
-                if (address.size != 29 || address.data[0] != 0xE1) return;
-                if (memcmp(search_address.data, address.data + 1, search_address.size) != 0) return;
+                if (address.size() != 29 || address.data()[0] != 0xE1) return;
+                if (memcmp(search_address.data(), address.data() + 1, search_address.size()) != 0) return;
                 addr_match m(address, buffer(ctx.hash, sizeof(ctx.hash)), 0, 0, amount, ctx.block_ctx);
                 auto [it, ok] = matches.insert(move(m));
                 if (!ok) throw error("failed to insert a matching withdrawal!");
@@ -220,6 +221,8 @@ namespace daedalus_turbo
                     uint64_t tx_offset = unpack_offset(addr_use.tx_offset, sizeof(addr_use.tx_offset));
                     auto bi_it = lower_bound(_block_index.begin(), _block_index.end(), block_item(tx_offset));
                     if (bi_it == _block_index.end()) throw error("unknown offset: %zu!", addr_use.tx_offset);
+                    if (bi_it != _block_index.begin()) bi_it = std::prev(bi_it);
+                    if (!(bi_it->offset <= tx_offset && bi_it->offset + bi_it->size >= tx_offset + 1)) throw error("internal error block metadata does not match the transaction!");
                     ++hist.num_disk_reads;
                     _cr.read(tx_offset, tx);
                     cardano_chunk_context chunk_ctx(bi_it->offset);
@@ -264,8 +267,8 @@ namespace daedalus_turbo
         }
 
         history reconstruct(const buffer &address) {
-            if (address.size != 29 || address.data[0] != 0xE1) throw runtime_error("only shelley stake reward addresses (type 14) are supported!");
-            const buffer stake_addr(address.data + 1, address.size - 1);
+            if (address.size() != 29 || address.data()[0] != 0xE1) throw runtime_error("only shelley stake reward addresses (type 14) are supported!");
+            const buffer stake_addr(address.data() + 1, address.size() - 1);
             return reconstruct_raw_addr(stake_addr);
         }
 
