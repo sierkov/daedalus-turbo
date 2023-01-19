@@ -8,12 +8,14 @@
 
 #include <filesystem>
 #include <iostream>
+#include <ranges>
 #include <dt/lz4.hpp>
 #include <dt/util.hpp>
 #include <dt/scheduler.hpp>
 
 using namespace std;
 using namespace daedalus_turbo;
+namespace rv = std::ranges::views;
 
 static auto &log_stream = cout;
 
@@ -110,10 +112,17 @@ int main(int argc, char **argv)
         }
     }
     t.stop_and_print();
-    log_stream << "\rtotal_chunks: " << total_chunks << ", total_errors: " << total_errors
-        << ", total_uncompressed: " << (double)total_uncompressed / 1'000'000u << "MB "
-        << ", total_compressed: " << (double)total_compressed / 1'000'000u << "MB "
+    log_stream
+        << "errors: " << total_errors << ", chunks: " << total_chunks 
+        << ", uncompressed size: " << (double)total_uncompressed / 1'000'000u << "MB"
+        << ", compressed size: " << (double)total_compressed / 1'000'000u << "MB"
         << ", compression ratio: " << (double)total_uncompressed / total_compressed
         << ", processing throughput: " << (double)total_uncompressed / 1'000'000u / t.stop() << "MB/sec"
         << endl;
+    if (total_errors > 0) {
+        size_t err_idx = 0;
+        for (const auto &r: results | rv::filter([&](const auto &r) { return r.error.size() > 0; }) | rv::take(5)) {
+            cerr << "error " << ++err_idx << "/" << total_errors << ": " << r.error << "\n";
+        }
+    }
 }
