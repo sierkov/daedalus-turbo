@@ -1,7 +1,7 @@
 # Contents
 - [About](#about)
 - [Test it yourself](#test-it-yourself)
-- [Help spread the word](#help-spread-the-word)
+- [Spread the word](#spread-the-word)
 - [Features](#features)
 - [Quality](#quality)
 - [Requirements](#requirements)
@@ -56,8 +56,8 @@ The second command will output to the console the list of transactions related t
 
 N.B.: If the transactions do not match your alternative source, please double check that the copy of the blockchain data that you've passed to the command is up to date!
 
-# Help spread the word
-There are many in the Cardano community, including some of Daedalus's developers, who believe that it's impossible to make it faster. This leads to a situation in which the development activities of the Daedalus team don't go deeper into the area of performance. If you're persuaded by the evidence presented here, do share on social media what you've learned here with those around you. Changing the beliefs of people can sometimes be harder than building top-notch technology. So, every single tweet and Facebook post makes a difference. Thank you!
+# Spread the word
+Many in the Cardano community, including some developers of Daedalus, don't believe that it's possible to make it noticeably faster. This leads to a situation in which the development is not focused on the performance. If you're persuaded by the evidence presented here, share it on social media with those around you. Changing the beliefs of people can be harder than building top-notch technology. So, every single tweet and Facebook post makes a difference. Thank you!
 
 # Features
 The current version of the method supports only a minimal set of Cardano features:
