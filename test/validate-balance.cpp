@@ -53,8 +53,10 @@ struct test_error {
     }
 };
 
-static void sample_test_set(reconstructor &r, const cbor_map &stake, const cbor_map &stake_mark, size_t n_samples)
+static void sample_test_set(reconstructor &r, const cbor_map &stake, const cbor_map &stake_mark, uint64_t ledger_last_slot, size_t n_samples)
 {
+    if (ledger_last_slot != r.last_slot())
+        throw error("ledger snapshot's slot: %llu does not match raw data last slot: %llu", ledger_last_slot, r.last_slot());
     seed_seq seed { 0, 1, 2, 3, 4, 5 };
     default_random_engine rnd(seed);
     uniform_int_distribution<size_t> dist(0, stake.size());
@@ -148,8 +150,10 @@ static void test_random_sample(reconstructor &r, const string &ledger_path, size
         const cbor_value &stake_latest = extract_value(v, stake_latest_path, 0);
         array<size_t, 9> stake_mark_path { 1, 5, 1, 1, 1, 3, 2, 0, 0 };
         const cbor_value &stake_mark = extract_value(v, stake_mark_path, 0);
+        array<size_t, 7> last_slot_path { 1, 5, 1, 1, 0, 0, 0 };
+        const cbor_value &last_slot = extract_value(v, last_slot_path, 0);
         log_stream << "ledger state has been parsed, starting evaluations ..." << endl;
-        sample_test_set(r, stake_latest.map(), stake_mark.map(), n_samples);
+        sample_test_set(r, stake_latest.map(), stake_mark.map(), last_slot.uint(), n_samples);
     }
 }
 

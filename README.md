@@ -60,7 +60,7 @@ N.B.: If the transactions do not match your alternative source, please double ch
 Many in the Cardano community, including some developers of Daedalus, don't believe that it's possible to make it noticeably faster. This leads to a situation in which the development is not focused on the performance. If you're persuaded by the evidence presented here, share it on social media with those around you. Changing the beliefs of people can be harder than building top-notch technology. So, every single tweet and Facebook post makes a difference. Thank you!
 
 # Features
-The current version of the method supports only a minimal set of Cardano features:
+The current version of the method is optimized for personal wallets (wallets with less than a thousand transactions) and supports only a minimal set of Cardano features:
 - ADA-only transactions.
 - Shelley-era addresses with an explicit stake-key hash.
 - Withdrawals-only for staking rewards; inflows are ignored.

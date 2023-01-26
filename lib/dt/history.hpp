@@ -28,6 +28,11 @@ namespace daedalus_turbo
 {
     using namespace std;
 
+    void log_ada_amount(ostream &os, uint64_t amount)
+    {
+        os << amount / 1000000 << "." << std::setfill('0') << std::setw(6) << amount % 1000000 << " ADA";
+    }
+
     struct transaction {
         uint8_vector id;
         uint8_vector spent_id;
@@ -53,14 +58,16 @@ namespace daedalus_turbo
     {
         os << "epoch: " << slot_to_epoch(tx.slot) << ", slot: " << tx.slot << ", tx: " << tx.id;
         if (tx.withdraw > 0) {
-            os << ", widthdraw rewards: " << tx.withdraw / 1000000 << "." << tx.withdraw % 1000000 << " ADA";
+            os << ", widthdraw rewards: ";
+            log_ada_amount(os, tx.withdraw);
         } else {
-            os << ", out: " << tx.out_idx << ", inflow " << tx.amount / 1000000 << "." << tx.amount % 1000000 << " ADA";
+            os << ", out: " << tx.out_idx << ", inflow ";
+            log_ada_amount(os, tx.amount);
         }
         if (tx.spent_id.size() > 0) {
             os << ", spent: " << tx.spent_id;
         }
-        os << endl;
+        os << "\n";
         return os;
     }
 
@@ -75,7 +82,7 @@ namespace daedalus_turbo
         {
         }
 
-        uint64_t utxo_balance()
+        uint64_t utxo_balance() const
         {
             uint64_t bal = 0;
             for (const auto &tx: transactions) {
@@ -84,16 +91,7 @@ namespace daedalus_turbo
             return bal;
         }
 
-        uint64_t utxo_balance_latest()
-        {
-            uint64_t bal = 0;
-            for (const auto &tx: transactions) {
-                if (slot_to_epoch(tx.slot) == slot_to_epoch(last_slot) && tx.spent_id.size() == 0) bal += tx.amount;
-            }
-            return bal;
-        }
-
-        uint64_t reward_withdrawals()
+        uint64_t reward_withdrawals() const
         {
             uint64_t w = 0;
             for (const auto &tx: transactions) {
@@ -107,23 +105,24 @@ namespace daedalus_turbo
     {
         if (h.transactions.size() > 0) {
             set<uint8_vector> incoming, outgoing;
-            uint64_t total_balance = 0;
+            uint64_t total_balance = h.utxo_balance();
             for (const auto &tx: h.transactions) {
                 os << tx;
                 incoming.insert(tx.id);
                 if (tx.spent_id.size() > 0) outgoing.insert(tx.spent_id);
-                else total_balance += tx.amount;
             }
             os << "transactions affecting stake address: " << buffer(h.stake_addr)
                 << " incoming: " << incoming.size() << ", outgoing: " << outgoing.size() << "\n"
-                << "available balance without rewards: " << total_balance / 1000000 << "." << total_balance % 1000000 << " ADA" << endl;
+                << "available balance without rewards: ";
+            log_ada_amount(os, total_balance);
+            os << "\n";
             os << "last indexed blockchain slot: " << h.last_slot << ", last epoch: " << slot_to_epoch(h.last_slot)
                 << ", i/o cost (# random reads): " << h.num_disk_reads;
         } else {
             os << "last indexed blockchain slot: " << h.last_slot << ", last epoch: " << slot_to_epoch(h.last_slot) << "\n"
                 << "no transactions affecting stake address " << buffer(h.stake_addr) << " have been found!";
         }
-        os << endl;
+        os << "\n";
         return os;
     }
 
@@ -204,9 +203,25 @@ namespace daedalus_turbo
             }
         }
 
+        uint64_t last_slot() const
+        {
+            uint64_t last_slot = 0;
+            if (_block_index.size() > 0) last_slot = _block_index.rbegin()->slot;
+            return last_slot;
+        }
+
+        const block_item &find_block(uint64_t tx_offset) {
+            auto bi_it = lower_bound(_block_index.begin(), _block_index.end(), tx_offset, [](const block_item &b, size_t off) { return b.offset + b.size <= off; });
+            if (bi_it == _block_index.end()) throw error("unknown offset: %zu!", tx_offset);
+            if (!(tx_offset >= bi_it->offset && tx_offset < bi_it->offset + bi_it->size)) throw error("internal error block metadata does not match the transaction!");
+            return *bi_it;
+        }
+
         history reconstruct_raw_addr(const buffer &stake_addr) {
             history hist(stake_addr);
-            hist.last_slot = _block_index.rbegin()->slot;
+            if (_block_index.size() == 0) return hist;
+            const block_item &last_block = *_block_index.rbegin();
+            hist.last_slot = last_block.slot;
             
             auto [ ok_addr, addr_use, addr_n_reads ] = _addr_use_idx.find(stake_addr);
             hist.num_disk_reads = addr_n_reads;
@@ -219,14 +234,10 @@ namespace daedalus_turbo
                 uint8_t tx_hash[32];
                 for (;;) {
                     uint64_t tx_offset = unpack_offset(addr_use.tx_offset, sizeof(addr_use.tx_offset));
-                    auto bi_it = lower_bound(_block_index.begin(), _block_index.end(), block_item(tx_offset));
-                    if (bi_it == _block_index.end()) throw error("unknown offset: %zu!", addr_use.tx_offset);
-                    if (bi_it != _block_index.begin()) bi_it = std::prev(bi_it);
-                    if (!(bi_it->offset <= tx_offset && bi_it->offset + bi_it->size >= tx_offset + 1)) throw error("internal error block metadata does not match the transaction!");
-                    ++hist.num_disk_reads;
-                    _cr.read(tx_offset, tx);
-                    cardano_chunk_context chunk_ctx(bi_it->offset);
-                    cardano_block_context block_ctx(chunk_ctx, bi_it->offset, bi_it->era, bi_it->block_number, bi_it->slot, slot_to_epoch(bi_it->slot));
+                    const block_item &bi = find_block(tx_offset);
+                    hist.num_disk_reads += _cr.read(tx_offset, tx, 0x400, 4);
+                    cardano_chunk_context chunk_ctx(bi.offset);
+                    cardano_block_context block_ctx(chunk_ctx, bi.offset, bi.era, bi.block_number, bi.slot, slot_to_epoch(bi.slot));
                     blake2b_best(tx_hash, sizeof(tx_hash), reinterpret_cast<const char *>(tx.data), tx.size);
                     cardano_tx_context tx_ctx(block_ctx, tx_offset, 0, buffer(tx_hash, sizeof(tx_hash)));
                     parser.parse_tx(tx_ctx, tx);
@@ -252,9 +263,8 @@ namespace daedalus_turbo
                         auto [ ok_tx_use, tx_use, tx_n_reads ] = _tx_use_idx.find(buffer(tx_use_key, sizeof(tx_use_key)));
                         hist.num_disk_reads += tx_n_reads;                    
                         if (ok_tx_use) {
-                            ++hist.num_disk_reads;
                             uint64_t tx_offset = unpack_offset(tx_use.tx_offset, sizeof(tx_use.tx_offset));
-                            _cr.read(tx_offset, tx);
+                            hist.num_disk_reads += _cr.read(tx_offset, tx, 0x400, 4);
                             blake2b_best(tx_hash, sizeof(tx_hash), reinterpret_cast<const char *>(tx.data), tx.size);
                             tx_meta.spent_id = buffer(tx_hash, sizeof(tx_hash));
                         }

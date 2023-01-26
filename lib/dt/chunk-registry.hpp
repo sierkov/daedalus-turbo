@@ -36,8 +36,9 @@ namespace daedalus_turbo {
 
     typedef map<uint64_t, chunk_info> chunk_map;
 
+    constexpr size_t MAX_READ_SIZE = 256 * 1024; // Assume the largest block is 256KB - a multiple of the current limit of 88KB
+
     class chunk_registry {
-        const size_t block_max_size = 256 * 1024; // Assume the largest block is 256KB - a multiple of the current limit of 88KB
         bool lz4;
         chunk_map _chunks;
         uint64_t _sizeBytes;
@@ -110,8 +111,9 @@ namespace daedalus_turbo {
             return it->second.path;
         }
 
-        void read(uint64_t offset, cbor_value &value) {
+        size_t read(uint64_t offset, cbor_value &value, const size_t max_read_size=MAX_READ_SIZE, const size_t read_scale_factor=2) {
             if (offset + 1 > _sizeBytes) throw runtime_error("the requested byte range is outside of the allowed bounds");
+            size_t read_attempts = 0;
             auto chunk_it = find_chunk(offset);
             if (chunk_it->first + chunk_it->second.size < offset + 1) throw runtime_error("the requested chunk is too small to provide the requested number of bytes");
             if (chunk_it->second.lz4) {
@@ -129,13 +131,29 @@ namespace daedalus_turbo {
                     throw runtime_error(ss.str());
                 }
                 size_t read_size = chunk_it->second.size - (offset - chunk_it->first);
-                if (read_size > block_max_size) read_size = block_max_size;
-                _readBuffer.resize(read_size);
-                is.seekg(offset - chunk_it->first, ios::beg);
-                is.read(reinterpret_cast<char *>(_readBuffer.data()), read_size);
-                cbor_parser parser(_readBuffer.data(), read_size);
-                parser.read(value);
+                if (read_size > max_read_size) read_size = max_read_size;
+                bool ok = false;
+                while (!ok) {
+                    try {
+                        read_attempts++;
+                        _readBuffer.resize(read_size);
+                        is.seekg(offset - chunk_it->first, ios::beg);
+                        is.read(reinterpret_cast<char *>(_readBuffer.data()), read_size);
+                        cbor_parser parser(_readBuffer.data(), read_size);
+                        parser.read(value);
+                        if (value.size > read_size) throw error("internal error: read value: %zu is larger than it must be: %zu!", value.size, read_size);
+                        ok = true;
+                    } catch (cbor_incomplete_data_error &ex) {
+                        if (read_size < MAX_READ_SIZE) {
+                            read_size *= read_scale_factor;
+                            if (read_size > MAX_READ_SIZE) read_size = MAX_READ_SIZE;
+                        } else {
+                            throw;
+                        }
+                    }
+                }
             }
+            return read_attempts;
         }
     };
 }

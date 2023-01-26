@@ -38,5 +38,13 @@ suite chunk_registry_suite = [] {
             expect(block_tuple.type == CBOR_ARRAY) << block_tuple.type;
             expect(block_tuple.array().size() == 2_u);
         };
+
+        "read_automatic_resizing"_test = [] {
+            chunk_registry cr(DATA_DIR);
+            cbor_value block_tuple;
+            size_t read_attempts = cr.read(27'328'170, block_tuple, 0x10, 4);
+            expect(block_tuple.size > 0x10) << block_tuple.size;
+            expect(read_attempts == 7_u) << read_attempts;
+        };
     };
 };

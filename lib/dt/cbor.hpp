@@ -22,6 +22,14 @@ namespace daedalus_turbo {
 
     using cbor_error = error;
 
+    class cbor_incomplete_data_error: public cbor_error
+    {
+    public:
+        cbor_incomplete_data_error(): cbor_error("CBOR value extends beyond the end of stream")
+        {
+        }
+    };
+
     using cbor_buffer = buffer;
     struct cbor_value;
 
@@ -156,7 +164,7 @@ namespace daedalus_turbo {
                 cbor_value size;
                 _read_unsigned_int(size, augVal, augBuf);
                 size_t stringSize = size.uint();
-                if (_offset + stringSize > _size) cbor_error("byte string extends beyond the end of stream");
+                if (_offset + stringSize > _size) throw cbor_incomplete_data_error();
                 val.set_content(cbor_buffer(&_data[_offset], stringSize));
                 _offset += stringSize;
             } else {
@@ -183,7 +191,7 @@ namespace daedalus_turbo {
             _read_unsigned_int(size, augVal, augBuf);
             val.type = CBOR_TEXT;
             size_t stringSize = size.uint();
-            if (_offset + stringSize > _size) cbor_error("text string extends beyond the end of stream");
+            if (_offset + stringSize > _size) throw cbor_incomplete_data_error();
             val.set_content(cbor_buffer(&_data[_offset], stringSize));
             _offset += stringSize;
         }
@@ -195,7 +203,7 @@ namespace daedalus_turbo {
                     cbor_value item;
                     read(item);
                     if (item.type == CBOR_SIMPLE_BREAK) break;
-                    items.push_back(move(item));
+                    items.emplace_back(move(item));
                 }
             } else {
                 cbor_value size;
@@ -218,18 +226,16 @@ namespace daedalus_turbo {
                     read(itemKey);
                     if (itemKey.type == CBOR_SIMPLE_BREAK) break;
                     read(itemValue);
-                    map.push_back(make_pair(move(itemKey), move(itemValue)));
+                    map.emplace_back(move(itemKey), move(itemValue));
                 }
             } else {
                 cbor_value size;
                 _read_unsigned_int(size, augVal, augBuf);
                 size_t mapSize = size.uint();
-                map.reserve(mapSize);
+                map.resize(mapSize);
                 for (size_t i = 0; i < mapSize; ++i) {
-                    cbor_value itemKey, itemValue;
-                    read(itemKey);
-                    read(itemValue);
-                    map.push_back(make_pair(move(itemKey), move(itemValue)));
+                    read(map[i].first);
+                    read(map[i].second);
                 }
             }
             val.type = CBOR_MAP;
@@ -297,7 +303,7 @@ namespace daedalus_turbo {
         }
 
         void read(cbor_value &val) {
-            if (_offset + 1 > _size) throw cbor_error("CBOR value extends beyond the end of stream");
+            if (_offset + 1 > _size) throw cbor_incomplete_data_error();
             val.data = &_data[_offset];
             uint8_t hdr = _data[_offset++];
             uint8_t type = (hdr >> 5) & 0x7;
@@ -307,25 +313,25 @@ namespace daedalus_turbo {
 
             switch (augVal) {
                 case 24:
-                    if (_offset + 1 > _size) throw cbor_error("CBOR value extends beyond the end of stream");
+                    if (_offset + 1 > _size) throw cbor_incomplete_data_error();
                     augBuf.set(&_data[_offset], 1);
                     _offset += 1;
                     break;
 
                 case 25:
-                    if (_offset + 2 > _size) throw cbor_error("CBOR value extends beyond the end of stream");
+                    if (_offset + 2 > _size) throw cbor_incomplete_data_error();
                     augBuf.set(&_data[_offset], 2);
                     _offset += 2;
                     break;
 
                 case 26:
-                    if (_offset + 4 > _size) throw cbor_error("CBOR value extends beyond the end of stream");
+                    if (_offset + 4 > _size) throw cbor_incomplete_data_error();
                     augBuf.set(&_data[_offset], 4);
                     _offset += 4;
                     break;
 
                 case 27:
-                    if (_offset + 8 > _size) throw cbor_error("CBOR value extends beyond the end of stream");
+                    if (_offset + 8 > _size) throw cbor_incomplete_data_error();
                     augBuf.set(&_data[_offset], 8);
                     _offset += 8;
                     break;
