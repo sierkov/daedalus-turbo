@@ -15,7 +15,7 @@ The goal of Daedalus Turbo project is to drastically (>=10x) improve the blockch
 At the moment, this repository contains an implementation of the highly-parallel wallet-history-reconstruction method described in [2023_Sierkov_WalletHistoryReconstruction](./doc/2023_Sierkov_WalletHistoryReconstruction.pdf) paper.
 On a modern computer, it can often process the whole blockchain and reconstruct a wallet's history in 1 minute or quicker.
 In comparison, Daedalus takes several hours when one adds a new wallet
-even when the blockchain data is already fully synced.
+even when the blockchain data is already fully synced. The blockchain data is assumed to be pre-validated, but that's only for the first milestone. Section 4.2 of the paper provides more details on the potential approaches to data delivery and validation.
 
 As the project moves forward, other components will be added. To better understand the project's scope, it's recommended to read the Introduction section of the paper (one page), and skim through the Results and the Discussion sections. The [roadmap](#roadmap) can help understand the expected timeline of the project.
 
@@ -60,7 +60,7 @@ N.B.: If the transactions do not match your alternative source, please double ch
 Many in the Cardano community, including some developers of Daedalus, don't believe that it's possible to make it noticeably faster. This leads to a situation in which the development is not focused on the performance. If you're persuaded by the evidence presented here, share it on social media with those around you. Changing the beliefs of people can be harder than building top-notch technology. So, every single tweet and Facebook post makes a difference. Thank you!
 
 # Features
-The current version of the method is optimized for personal wallets (wallets with less than a thousand transactions) and supports only a minimal set of Cardano features:
+The current version of the method is optimized for personal wallets (wallets with less than one thousand transactions) and supports only a minimal set of Cardano features:
 - ADA-only transactions.
 - Shelley-era addresses with an explicit stake-key hash.
 - Withdrawals-only for staking rewards; inflows are ignored.
