@@ -52,7 +52,7 @@ sudo chown -R dev:dev /data/indices
 ./create-index /data/immutable /data/indices
 ./search-index /data/immutable /data/indices stake1XXXXXX
 ```
-The second command will output to the console the list of transactions related to the specified stake key along with their metadata.
+The third command will output to the console the list of transactions related to the specified stake key along with their metadata.
 
 N.B.: If the transactions do not match your alternative source, please double check that the copy of the blockchain data that you've passed to the command is up to date!
 
