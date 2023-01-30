@@ -16,23 +16,25 @@ namespace daedalus_turbo {
     struct __attribute__((packed)) addr_use_item {
         uint8_t stake_addr[28];
         uint8_t tx_offset[5];
+        uint8_t tx_size;
 
         bool operator<(const addr_use_item &b) const {
             return memcmp(this, &b, sizeof(*this)) < 0;
         }
     };
-    static_assert(sizeof(addr_use_item) == 33);
+    static_assert(sizeof(addr_use_item) == 34);
 
     struct __attribute__((packed)) tx_use_item {
         uint8_t tx_hash[32];
         uint16_t tx_out_idx;
         uint8_t tx_offset[5];
+        uint8_t tx_size;
 
         bool operator<(const tx_use_item &b) const {
             return memcmp(this, &b, sizeof(*this)) < 0;
         }
     };
-    static_assert(sizeof(tx_use_item) == 39);
+    static_assert(sizeof(tx_use_item) == 40);
 
     struct __attribute__((packed)) block_item {
         uint64_t offset = 0;
@@ -72,10 +74,35 @@ namespace daedalus_turbo {
         return os;
     }
 
-    inline uint64_t unpack_offset(const uint8_t *data, size_t size)
+    inline uint8_t pack_tx_size(size_t sz)
+    {
+        size_t packed_sz = sz >> 8;
+        if (sz & 0xFF) ++packed_sz;
+        return (uint8_t)(packed_sz < 255 ? packed_sz : 255);
+    }
+
+    inline size_t unpack_tx_size(uint8_t packed_sz)
+    {
+        return ((size_t)packed_sz << 8);
+    }
+
+    inline void pack_offset(uint8_t *packed, size_t packed_size, uint64_t offset)
+    {
+        if (packed_size > sizeof(offset)) throw error("target buffer is too large: %zu but must be up to %zu bytes!", packed_size, sizeof(offset));
+        const uint8_t *src_ptr = reinterpret_cast<const uint8_t *>(&offset);
+        for (size_t i = 0; i < packed_size; ++i) {
+            packed[i] = *(src_ptr + packed_size - 1 - i);
+        }
+    }
+
+    inline uint64_t unpack_offset(const uint8_t *packed, size_t packed_size)
     {
         uint64_t offset = 0;
-        memcpy(&offset, data, size);
+        if (packed_size > sizeof(offset)) throw error("target buffer is too large: %zu but must be up to %zu bytes!", packed_size, sizeof(offset));
+        uint8_t *ptr = reinterpret_cast<uint8_t *>(&offset);
+        for (size_t i = 0; i < packed_size; ++i) {
+            *(ptr + packed_size - 1 - i) = packed[i];
+        }
         return offset;
     }
 }

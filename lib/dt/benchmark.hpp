@@ -11,6 +11,7 @@
 #include <chrono>
 #include <iostream>
 #include <string_view>
+#include <boost/ut.hpp>
 
 namespace daedalus_turbo {
     using namespace std;
@@ -47,6 +48,14 @@ namespace daedalus_turbo {
             << endl;
         return rate;
     };
+
+    template<Countable T>
+    static void benchmark(const string_view &name, double min_rate, size_t num_iter, T &&action) {
+        boost::ut::test(name) = [=] {
+            double rate = benchmark_throughput(name, num_iter, action);
+            boost::ut::expect(rate >= min_rate) << rate << " < " << min_rate;
+        };
+    }
 
 }
 

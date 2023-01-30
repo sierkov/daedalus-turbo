@@ -106,7 +106,8 @@ namespace daedalus_turbo {
             tx_use_item &item = tx_use_idx.writable(tx_in_hash.data()[0]);
             memcpy(item.tx_hash, tx_in_hash.data(), tx_in_hash.size());
             item.tx_out_idx = tx_in_out_idx;
-            memcpy(&item.tx_offset, &ctx.tx_ctx.offset, sizeof(item.tx_offset));
+            pack_offset(item.tx_offset, sizeof(item.tx_offset), ctx.tx_ctx.offset);
+            item.tx_size = pack_tx_size(ctx.tx_ctx.size);
             tx_use_idx.next();
         }
 
@@ -116,12 +117,13 @@ namespace daedalus_turbo {
             used_addresses.emplace(address.data() + 1, address.size() - 1);
         }
 
-        void every_tx(const cardano_tx_context &ctx, const cbor_value &/*tx*/, uint64_t /*fees*/)
+        void every_tx(const cardano_tx_context &ctx, const cbor_value &tx, uint64_t /*fees*/)
         {
             for (const auto &addr : used_addresses) {
                 addr_use_item &item = addr_use_idx.writable(addr.data()[0]);
                 memcpy(&item.stake_addr, addr.data(), addr.size());
-                memcpy(&item.tx_offset, &ctx.offset, sizeof(item.tx_offset));
+                pack_offset(item.tx_offset, sizeof(item.tx_offset), ctx.offset);
+                item.tx_size = pack_tx_size(tx.size);
                 addr_use_idx.next();
             }
             used_addresses.clear();
@@ -166,18 +168,14 @@ namespace daedalus_turbo {
             cardano_parser parser(proc);
             uint8_vector buf, compressed;
             for (const auto &chunk: chunks) {
-                try {        
-                    if (chunk.second.lz4) {
-                        read_whole_file(chunk.second.path, compressed);
-                        lz4_decompress(buf, compressed);
-                    } else {
-                        read_whole_file(chunk.second.path, buf);
-                    }
-                    cardano_chunk_context chunk_ctx(chunk.first);
-                    parser.parse_chunk(chunk_ctx, buf);
-                } catch (exception &ex) {
-                    _logger.log("worker error: %s", ex.what());
+                if (chunk.second.lz4) {
+                    read_whole_file(chunk.second.path, compressed);
+                    lz4_decompress(buf, compressed);
+                } else {
+                    read_whole_file(chunk.second.path, buf);
                 }
+                cardano_chunk_context chunk_ctx(chunk.first);
+                parser.parse_chunk(chunk_ctx, buf);
             }
             return proc.blocks();
         }

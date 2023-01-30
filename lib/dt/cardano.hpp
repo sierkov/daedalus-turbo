@@ -74,6 +74,7 @@ namespace daedalus_turbo {
     struct cardano_tx_context {
         cardano_block_context &block_ctx;
         uint64_t offset = 0;
+        uint64_t size = 0;
         uint64_t idx = 0;
         uint8_t hash[32];
 
@@ -82,8 +83,8 @@ namespace daedalus_turbo {
         {
         }
 
-        cardano_tx_context(cardano_block_context &ctx, uint64_t off, uint64_t idx_, const buffer &tx_hash)
-            : block_ctx(ctx), offset(off), idx(idx_)
+        cardano_tx_context(cardano_block_context &ctx, uint64_t off, uint64_t sz, uint64_t idx_, const buffer &tx_hash)
+            : block_ctx(ctx), offset(off), size(sz), idx(idx_)
         {
             if (tx_hash.size() != sizeof(hash)) throw error("incorrectly sized tx hash: %zu bytes!", tx_hash.size());
             memcpy(hash, tx_hash.data(), tx_hash.size());
@@ -334,6 +335,7 @@ namespace daedalus_turbo {
                     for (tx_ctx.idx = 0; tx_ctx.idx < transactions.size(); ++tx_ctx.idx) {
                         const cbor_value &tx = transactions[tx_ctx.idx];
                         tx_ctx.offset = chunk_ctx.offset +  tx.offset(chunk.data());
+                        tx_ctx.size = tx.size;
                         blake2b_best(tx_ctx.hash, sizeof(tx_ctx.hash), tx.data, tx.size);
                         parse_tx(tx_ctx, tx);
                     }

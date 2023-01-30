@@ -92,5 +92,17 @@ suite scheduler_suite = [] {
             expect(progress.str().size() > 0_u);
             expect(s.num_workers() == 16);
         };
+        "exceptions"_test = [] {
+            scheduler s;
+            size_t num_ok = 0, num_err = 0;
+            s.on_result("bad_actor", [&](const any &res) {
+                if (res.type() == typeid(scheduled_task_error)) ++num_err;
+                else ++num_ok;
+            });
+            s.submit("bad_actor", 100, []() { throw error("Ha ha! I told ya!"); return true; });
+            s.process();
+            expect(num_ok == 0_u);
+            expect(num_err == 1_u);
+        };
     };
 };

@@ -34,6 +34,11 @@ namespace daedalus_turbo {
 
     using namespace std;
 
+    class scheduled_task_error: public error {
+    public:
+        using error::error;
+    };
+
     struct scheduled_task {
         int priority;
         string task_group;
@@ -114,7 +119,12 @@ namespace daedalus_turbo {
                     if (it != _observers.end()) {
                         observer_list to_notify = it->second;
                         observers_lock.unlock();
-                        for (const auto &observer: to_notify) observer(res.result);
+                        try {
+                            for (const auto &observer: to_notify) observer(res.result);
+                        } catch (...) {
+                            if (res.result.type() == typeid(scheduled_task_error)) throw std::any_cast<scheduled_task_error>(res.result);
+                            else throw;
+                        }
                     }
                 }
                 {
@@ -191,7 +201,11 @@ namespace daedalus_turbo {
             unique_lock tasks_lock(_tasks_mutex);
             auto action_call = bind(forward<T>(action), forward<A>(args)...);
             function<void()> task = [this, action_call, task_group, priority]() {
-                _add_result(priority, task_group, action_call());
+                try {
+                    _add_result(priority, task_group, action_call());
+                } catch (std::exception &ex) {
+                    _add_result(priority, task_group, std::make_any<scheduled_task_error>("task from group '%s' has failed with '%s' error!", task_group.c_str(), ex.what()));
+                }
             };
             _tasks.emplace(priority, task_group, move(task));
             auto it = _tasks_cnt.find(task_group);

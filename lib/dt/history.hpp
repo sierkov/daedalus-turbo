@@ -15,6 +15,7 @@
 #include <iostream>
 #include <set>
 #include <string>
+#include <utility>
 
 #include <dt/bech32.hpp>
 #include <dt/cardano.hpp>
@@ -76,6 +77,9 @@ namespace daedalus_turbo
         vector<transaction> transactions;
         uint64_t last_slot = 0;
         uint64_t num_disk_reads = 0;
+        uint64_t num_idx_reads = 0;
+        uint64_t total_utxo_balance = 0;
+        uint64_t total_withdrawals = 0;
 
         history(const buffer &address)
             : stake_addr(address), transactions()
@@ -84,42 +88,40 @@ namespace daedalus_turbo
 
         uint64_t utxo_balance() const
         {
-            uint64_t bal = 0;
-            for (const auto &tx: transactions) {
-                if (tx.spent_id.size() == 0) bal += tx.amount;
-            }
-            return bal;
+            return total_utxo_balance;
         }
 
         uint64_t reward_withdrawals() const
         {
-            uint64_t w = 0;
-            for (const auto &tx: transactions) {
-                if (tx.withdraw > 0) w += tx.withdraw;
-            }
-            return w;
+            return total_withdrawals;
+        }
+
+        void add_tx(transaction &&tx)
+        {
+            if (tx.spent_id.size() == 0) total_utxo_balance += tx.amount;
+            if (tx.withdraw > 0) total_withdrawals += tx.withdraw;
+            transactions.emplace_back(tx);
         }
     };
 
     inline ostream &operator<<(ostream &os, const history &h)
     {
         if (h.transactions.size() > 0) {
-            set<uint8_vector> incoming, outgoing;
-            uint64_t total_balance = h.utxo_balance();
+            size_t spent_cnt = 0;
             for (const auto &tx: h.transactions) {
                 os << tx;
-                incoming.insert(tx.id);
-                if (tx.spent_id.size() > 0) outgoing.insert(tx.spent_id);
+                if (tx.spent_id.size() > 0) ++spent_cnt;
             }
-            os << "transactions affecting stake address: " << buffer(h.stake_addr)
-                << " incoming: " << incoming.size() << ", outgoing: " << outgoing.size() << "\n"
+            os << "transactions affecting stake address " << buffer(h.stake_addr)
+                << ": " << h.transactions.size() << " of them spent: " << spent_cnt << "\n"
                 << "available balance without rewards: ";
-            log_ada_amount(os, total_balance);
+            log_ada_amount(os, h.utxo_balance());
             os << "\n";
-            os << "last indexed blockchain slot: " << h.last_slot << ", last epoch: " << slot_to_epoch(h.last_slot)
-                << ", i/o cost (# random reads): " << h.num_disk_reads;
+            os << "last indexed slot: " << h.last_slot << ", last epoch: " << slot_to_epoch(h.last_slot)
+                << ", # random reads: " << h.num_disk_reads
+                << " of them from indices: " << h.num_idx_reads << " (" << fixed << setprecision(1) << 100 * (double)h.num_idx_reads / h.num_disk_reads << "%)";
         } else {
-            os << "last indexed blockchain slot: " << h.last_slot << ", last epoch: " << slot_to_epoch(h.last_slot) << "\n"
+            os << "last indexed slot: " << h.last_slot << ", last epoch: " << slot_to_epoch(h.last_slot) << "\n"
                 << "no transactions affecting stake address " << buffer(h.stake_addr) << " have been found!";
         }
         os << "\n";
@@ -149,12 +151,23 @@ namespace daedalus_turbo
             }
 
             bool operator<(const addr_match &m) const {
-                return block.era < m.block.era
-                    || block.slot < m.block.slot
-                    || memcmp(tx_hash, m.tx_hash, sizeof(tx_hash)) < 0
+                return memcmp(tx_hash, m.tx_hash, sizeof(tx_hash)) < 0
                     || tx_out_idx < m.tx_out_idx
                     || withdraw < m.withdraw;
-            }    
+            }
+        };
+
+        struct spent_tx_check {
+            const addr_match *match;
+            uint64_t tx_offset;
+            size_t tx_size;
+            bool do_check;
+
+            spent_tx_check(const addr_match &m, bool chk, uint64_t tx_off=0, size_t tx_sz=0)
+                : match(&m), tx_offset(tx_off), tx_size(tx_sz), do_check(chk)
+            {
+            }
+            
         };
 
         class addr_matcher: public cardano_processor {
@@ -174,7 +187,7 @@ namespace daedalus_turbo
                 if (memcmp(search_address.data(), address.data() + 29, search_address.size()) != 0) return;
                 addr_match m(address, buffer(ctx.tx_ctx.hash, sizeof(ctx.tx_ctx.hash)), amount, ctx.out_idx, 0, ctx.tx_ctx.block_ctx);
                 auto [it, ok] = matches.insert(move(m));
-                if (!ok) throw error("failed to insert a matching withdrawal!");
+                if (!ok) throw error("failed to insert a matching transaction - already exists!");
             };
 
             void every_tx_withdrawal(const cardano_tx_context &ctx, const cbor_buffer &address, uint64_t amount)
@@ -183,7 +196,7 @@ namespace daedalus_turbo
                 if (memcmp(search_address.data(), address.data() + 1, search_address.size()) != 0) return;
                 addr_match m(address, buffer(ctx.hash, sizeof(ctx.hash)), 0, 0, amount, ctx.block_ctx);
                 auto [it, ok] = matches.insert(move(m));
-                if (!ok) throw error("failed to insert a matching withdrawal!");
+                if (!ok) throw error("failed to insert a matching withdrawal - already exists!");
             }
         };
 
@@ -224,7 +237,7 @@ namespace daedalus_turbo
             hist.last_slot = last_block.slot;
             
             auto [ ok_addr, addr_use, addr_n_reads ] = _addr_use_idx.find(stake_addr);
-            hist.num_disk_reads = addr_n_reads;
+            hist.num_idx_reads = hist.num_disk_reads = addr_n_reads;
             if (ok_addr) {
                 set<addr_match> matches;
                 addr_matcher proc(matches, stake_addr);
@@ -235,41 +248,55 @@ namespace daedalus_turbo
                 for (;;) {
                     uint64_t tx_offset = unpack_offset(addr_use.tx_offset, sizeof(addr_use.tx_offset));
                     const block_item &bi = find_block(tx_offset);
-                    hist.num_disk_reads += _cr.read(tx_offset, tx, 0x400, 4);
+                    hist.num_disk_reads += _cr.read(tx_offset, tx, unpack_tx_size(addr_use.tx_size), 2);
                     cardano_chunk_context chunk_ctx(bi.offset);
                     cardano_block_context block_ctx(chunk_ctx, bi.offset, bi.era, bi.block_number, bi.slot, slot_to_epoch(bi.slot));
                     blake2b_best(tx_hash, sizeof(tx_hash), reinterpret_cast<const char *>(tx.data), tx.size);
-                    cardano_tx_context tx_ctx(block_ctx, tx_offset, 0, buffer(tx_hash, sizeof(tx_hash)));
+                    cardano_tx_context tx_ctx(block_ctx, tx_offset, tx.size, 0, buffer(tx_hash, sizeof(tx_hash)));
                     parser.parse_tx(tx_ctx, tx);
-                    ++hist.num_disk_reads;
+                    // do not count disk read since it is not a random but a sequential one!
                     auto next_res = _addr_use_idx.next(stake_addr);
                     if (!std::get<0>(next_res)) break;
                     addr_use = std::get<1>(next_res);
                 }
 
+                vector<spent_tx_check> spent_checks;
+                spent_checks.reserve(matches.size());
+
                 for (auto it = matches.begin(); it != matches.end(); it++) {
                     if (sizeof(it->tx_hash) != 32) throw runtime_error("unexpected tx_hash of size different from 32 bytes!");
-                    transaction tx_meta;
-                    tx_meta.slot = it->block.slot;
-                    tx_meta.id = buffer(it->tx_hash, sizeof(it->tx_hash));
-                    tx_meta.out_idx = it->tx_out_idx;
-                    tx_meta.amount = it->amount;
-                    tx_meta.withdraw = it->withdraw;
                     if (it->withdraw == 0) {
-                        tx_meta.id = buffer(it->tx_hash, sizeof(it->tx_hash));
                         uint8_t tx_use_key[32 + 2];
                         memcpy(tx_use_key, it->tx_hash, sizeof(it->tx_hash));
                         memcpy(tx_use_key + sizeof(it->tx_hash), &it->tx_out_idx, 2);
                         auto [ ok_tx_use, tx_use, tx_n_reads ] = _tx_use_idx.find(buffer(tx_use_key, sizeof(tx_use_key)));
-                        hist.num_disk_reads += tx_n_reads;                    
+                        hist.num_disk_reads += tx_n_reads;
+                        hist.num_idx_reads += tx_n_reads;
                         if (ok_tx_use) {
-                            uint64_t tx_offset = unpack_offset(tx_use.tx_offset, sizeof(tx_use.tx_offset));
-                            hist.num_disk_reads += _cr.read(tx_offset, tx, 0x400, 4);
-                            blake2b_best(tx_hash, sizeof(tx_hash), reinterpret_cast<const char *>(tx.data), tx.size);
-                            tx_meta.spent_id = buffer(tx_hash, sizeof(tx_hash));
+                            spent_checks.emplace_back(*it, true, unpack_offset(tx_use.tx_offset, sizeof(tx_use.tx_offset)), unpack_tx_size(tx_use.tx_size));
+                        } else {
+                            spent_checks.emplace_back(*it, false);
                         }
+                    } else {
+                        spent_checks.emplace_back(*it, false);
                     }
-                    hist.transactions.push_back(move(tx_meta));
+                }
+
+                // order by tx_offset to improve disk access performance
+                sort(spent_checks.begin(), spent_checks.end(), [](const auto &a, const auto &b) { return a.tx_offset < b.tx_offset; });
+                for (const auto &chk: spent_checks) {
+                    transaction tx_meta;
+                    if (chk.do_check) {
+                        hist.num_disk_reads += _cr.read(chk.tx_offset, tx, chk.tx_size, 2);
+                        blake2b_best(tx_hash, sizeof(tx_hash), reinterpret_cast<const char *>(tx.data), tx.size);
+                        tx_meta.spent_id = buffer(tx_hash, sizeof(tx_hash));
+                    }
+                    tx_meta.id = buffer(chk.match->tx_hash, sizeof(chk.match->tx_hash));
+                    tx_meta.slot = chk.match->block.slot;
+                    tx_meta.out_idx = chk.match->tx_out_idx;
+                    tx_meta.amount = chk.match->amount;
+                    tx_meta.withdraw = chk.match->withdraw;
+                    hist.add_tx(move(tx_meta));
                 }
             }
             sort(hist.transactions.begin(), hist.transactions.end(), [](const auto &a, const auto &b) { return a < b; });

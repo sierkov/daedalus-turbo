@@ -41,8 +41,8 @@ namespace daedalus_turbo {
     class chunk_registry {
         bool lz4;
         chunk_map _chunks;
-        uint64_t _sizeBytes;
-        uint8_vector _readBuffer;
+        uint64_t _size_bytes;
+        uint8_vector _read_buffer;
 
     public:
 
@@ -73,7 +73,7 @@ namespace daedalus_turbo {
                 _chunks.insert(chunk_map::value_type(offset, chunk_info(path, size, lz4)));
                 offset += size;
             }
-            _sizeBytes = offset;
+            _size_bytes = offset;
         }
 
         chunk_map::const_iterator begin() const {
@@ -89,11 +89,11 @@ namespace daedalus_turbo {
         }
 
         size_t num_bytes() const {
-            return _sizeBytes;
+            return _size_bytes;
         }
 
         chunk_map::const_iterator find_chunk(uint64_t offset) {
-            if (offset >= _sizeBytes) throw runtime_error("the requested offset is outside of the allowed bounds");
+            if (offset >= _size_bytes) throw runtime_error("the requested offset is outside of the allowed bounds");
             chunk_map::const_iterator it = _chunks.lower_bound(offset);
             if (it == _chunks.end()) {
                 it = prev(it);
@@ -111,17 +111,21 @@ namespace daedalus_turbo {
             return it->second.path;
         }
 
-        size_t read(uint64_t offset, cbor_value &value, const size_t max_read_size=MAX_READ_SIZE, const size_t read_scale_factor=2) {
-            if (offset + 1 > _sizeBytes) throw runtime_error("the requested byte range is outside of the allowed bounds");
+        size_t read(uint64_t offset, cbor_value &value, const size_t read_size=MAX_READ_SIZE, const size_t read_scale_factor=2) {
+            return read(offset, value, _read_buffer, read_size, read_scale_factor);
+        }
+
+        size_t read(uint64_t offset, cbor_value &value, uint8_vector &read_buffer, const size_t max_read_size=MAX_READ_SIZE, const size_t read_scale_factor=2) {
+            if (offset + 1 > _size_bytes) throw runtime_error("the requested byte range is outside of the allowed bounds");
             size_t read_attempts = 0;
             auto chunk_it = find_chunk(offset);
             if (chunk_it->first + chunk_it->second.size < offset + 1) throw runtime_error("the requested chunk is too small to provide the requested number of bytes");
             if (chunk_it->second.lz4) {
                 uint8_vector compressed;
                 read_whole_file(chunk_it->second.path, compressed);
-                lz4_decompress(_readBuffer, compressed);
+                lz4_decompress(read_buffer, compressed);
                 size_t read_offset = offset - chunk_it->first;
-                cbor_parser parser(_readBuffer.data() + read_offset, _readBuffer.size() - read_offset);
+                cbor_parser parser(read_buffer.data() + read_offset, read_buffer.size() - read_offset);
                 parser.read(value);
             } else {
                 ifstream is(chunk_it->second.path, ios::binary);
@@ -136,10 +140,10 @@ namespace daedalus_turbo {
                 while (!ok) {
                     try {
                         read_attempts++;
-                        _readBuffer.resize(read_size);
+                        read_buffer.resize(read_size);
                         is.seekg(offset - chunk_it->first, ios::beg);
-                        is.read(reinterpret_cast<char *>(_readBuffer.data()), read_size);
-                        cbor_parser parser(_readBuffer.data(), read_size);
+                        is.read(reinterpret_cast<char *>(read_buffer.data()), read_size);
+                        cbor_parser parser(read_buffer.data(), read_size);
                         parser.read(value);
                         if (value.size > read_size) throw error("internal error: read value: %zu is larger than it must be: %zu!", value.size, read_size);
                         ok = true;
