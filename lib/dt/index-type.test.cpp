@@ -32,18 +32,32 @@ suite index_type_suite = [] {
             expect(unpack_tx_size(64) == 16384);
         };
         "pack_offset"_test = [] {
-            uint8_t tx_off[5];
-            pack_offset(tx_off, sizeof(tx_off), 0xAADEADBEAF);
-            expect(tx_off[0] == 0xAA);
-            expect(tx_off[1] == 0xDE);
-            expect(tx_off[2] == 0xAD);
-            expect(tx_off[3] == 0xBE);
-            expect(tx_off[4] == 0xAF);
+            {
+                uint8_t tx_off[5];
+                pack_offset(tx_off, sizeof(tx_off), 0xAADEADBEAF);
+                expect(tx_off[0] == 0xAA);
+                expect(tx_off[1] == 0xDE);
+                expect(tx_off[2] == 0xAD);
+                expect(tx_off[3] == 0xBE);
+                expect(tx_off[4] == 0xAF);
+            }
+            {
+                uint8_t exp[8] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x00 };
+                uint8_t tx_off[8];
+                pack_offset(tx_off, sizeof(tx_off), 2048);
+                expect(memcmp(exp, tx_off, sizeof(tx_off)) == 0);
+            }
         };
         "unpack_offset"_test = [] {
-            uint8_t tx_off[5] = { 0xAA, 0xDE, 0xAD, 0xBE, 0xAF };
-            pack_offset(tx_off, sizeof(tx_off), 0xAADEADBEAF);
-            expect(unpack_offset(tx_off, sizeof(tx_off)) == 0xAADEADBEAF);
+            {
+                uint8_t tx_off[5] = { 0xAA, 0xDE, 0xAD, 0xBE, 0xAF };
+                pack_offset(tx_off, sizeof(tx_off), 0xAADEADBEAF);
+                expect(unpack_offset(tx_off, sizeof(tx_off)) == 0xAADEADBEAF);
+            }
+            {
+                uint8_t tx_off[8] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x00 };
+                expect(unpack_offset(tx_off, sizeof(tx_off)) == 2048);
+            }
         };
     };
 };

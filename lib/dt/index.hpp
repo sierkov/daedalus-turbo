@@ -113,51 +113,56 @@ namespace daedalus_turbo {
         string _path;
         ifstream _is;
         size_t _cache_sparcity;
-        map<size_t, T> _cache;
+        map<size_t, T> _marker_cache;
+        vector<T> _leaf_cache;
+        size_t _leaf_cache_lo;
+        size_t _leaf_cache_sz;
         size_t _size;
 
     public:
         using find_result = tuple<bool, T, size_t>;
 
-        index_reader(const string &path, size_t cache_sparcity=32)
-            : _path(path), _is(path, ios::binary), _cache_sparcity(cache_sparcity), _cache()
+        index_reader(const string &path, size_t final_read_size=0x10000)
+            : _path(path), _is(path, ios::binary), _cache_sparcity(final_read_size / sizeof(T)), _marker_cache(), _leaf_cache(_cache_sparcity)
         {
             if (!_is) throw sys_error("failed to open file: %s", path.c_str());
             size_t file_size = filesystem::file_size(path);
             if (file_size % sizeof(T) != 0) throw error("the size of file %s is not evenly divisible by %zu!", path.c_str(), sizeof(T));
             _size =  file_size / sizeof(T);
+            _leaf_cache_lo = _size;
+            _leaf_cache_sz = 0;
         }
 
         find_result find(const buffer &search_key) {
             if (search_key.size() > sizeof(T)) throw error("search_key is larger than the search type: %zu", search_key.size());
             bool match = false;
-            T match_item;
+            T match_item {};
             size_t n_reads = 0;
             size_t lo = 0;
             size_t hi = _size;
-            size_t item_cache_lo = _size;
-            T item_cache[_cache_sparcity];
             T item_buf;
             while (lo < hi) {
                 size_t i = (hi + lo) / 2;
-                if (hi - lo >= _cache_sparcity) {
-                    auto cache_it = _cache.find(i);
-                    if (cache_it != _cache.end()) {
+                if (hi - lo > _cache_sparcity) {
+                    auto cache_it = _marker_cache.find(i);
+                    if (cache_it != _marker_cache.end()) {
                         item_buf = cache_it->second;
                     } else {
                         ++n_reads;
                         _is.seekg(i * sizeof(T), ios::beg);
                         _is.read(reinterpret_cast<char *>(&item_buf), sizeof(item_buf));
-                        _cache.emplace(i, item_buf);
+                        _marker_cache.emplace(i, item_buf);
                     }
                 } else {
-                    if (i < item_cache_lo || i >= item_cache_lo + _cache_sparcity) {
+                    if (i < _leaf_cache_lo || i >= _leaf_cache_lo + _leaf_cache_sz) {
+                        _leaf_cache_lo = lo;
+                        _leaf_cache_sz = _cache_sparcity;
+                        if (_leaf_cache_lo + _leaf_cache_sz > _size) _leaf_cache_sz = _size - _leaf_cache_lo;
                         ++n_reads;
-                        _is.seekg(lo * sizeof(T), ios::beg);
-                        _is.read(reinterpret_cast<char *>(item_cache), sizeof(item_cache));
-                        item_cache_lo = lo;
+                        _is.seekg(_leaf_cache_lo * sizeof(T), ios::beg);
+                        _is.read(reinterpret_cast<char *>(_leaf_cache.data()), sizeof(T) * _leaf_cache_sz);
                     }
-                    item_buf = item_cache[i - item_cache_lo];
+                    item_buf = _leaf_cache[i - _leaf_cache_lo];
                 }
                 int cmp = memcmp(search_key.data(), &item_buf, search_key.size());
                 if (cmp <= 0) {

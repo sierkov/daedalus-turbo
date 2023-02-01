@@ -31,7 +31,7 @@ suite index_type_bench_suite = [] {
             [=] {
                 uint8_t tx_offset[5] = { 0xDE, 0xAD, 0xBE, 0xAF, 0x00 };
                 for (size_t i = 0; i < num_evals; ++i)
-                    uint64_t tx_off = unpack_offset(tx_offset, sizeof(tx_offset));
+                    unpack_offset(tx_offset, sizeof(tx_offset));
                 return sizeof(tx_offset) * num_evals;
             }
         );

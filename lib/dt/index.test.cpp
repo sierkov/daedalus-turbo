@@ -12,6 +12,8 @@
 #include <string>
 #include <boost/ut.hpp>
 #include <dt/index.hpp>
+#include <dt/index-type.hpp>
+#include <dt/util.hpp>
 
 using namespace std;
 using namespace boost::ut;
@@ -96,8 +98,40 @@ suite index_writer_suite = [] {
                 expect(is.eof() == false);
                 is.read(reinterpret_cast<char *>(&buf), sizeof(buf));
                 expect(is.eof() == true);
+            }    
+        };
+        "index reader can find all elements"_test = [] {
+            const string idx_path = TMP_DIR + "/index-test-reader.tmp";
+            using index_type = array<uint8_t, 8>;
+            size_t num_items = 0x100000;
+            {
+                index_writer<index_type> idx(idx_path);
+                for (size_t i = 0; i < num_items; i += 2) {
+                    index_type &item = idx.writable();
+                    pack_offset(item.data(), item.size(), i);
+                    idx.next();
+                }
             }
-            
+            {
+                index_reader<index_type> reader(idx_path);
+                index_type item;
+                for (size_t i = 0; i < num_items; i += 2) {
+                    pack_offset(item.data(), item.size(), i);
+                    auto [ ok, found_item, num_reads ] = reader.find(buffer(item.data(), item.size()));
+                    size_t unpacked = unpack_offset(found_item.data(), found_item.size());
+                    expect(ok) << "can't find " << i;
+                    if (ok) expect(unpacked == i) << unpacked << "!=" << i;
+                }
+            }
+            {
+                index_reader<index_type> reader(idx_path);
+                index_type item;
+                for (size_t i = 1; i < num_items; i += 2) {
+                    pack_offset(item.data(), item.size(), i);
+                    auto [ ok, found_item, num_reads ] = reader.find(buffer(item.data(), item.size()));
+                    expect(!ok) << "found " << i;
+                }
+            }
         };
     };    
 };
