@@ -170,6 +170,7 @@ All experiment data will be saved into log directory next to the run-bench.sh sc
 Optionally, run the benchmarks of Cardano Wallet:
 ```
 cd experiments/bench-cardano-wallet
+echo "the word list to add a test wallet to cardano wallet" > .secret
 bash run-bench.sh
 ```
 Expect the bench-cardano-wallet benchmark to take about ten hours when using exactly
