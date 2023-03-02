@@ -38,7 +38,7 @@ namespace daedalus_turbo
         uint8_vector id;
         uint8_vector spent_id;
         uint64_t amount;
-        uint64_t withdraw;
+        uint64_t withdraw = 0;
         uint64_t slot;
         uint16_t out_idx;
 
@@ -59,7 +59,7 @@ namespace daedalus_turbo
     {
         os << "epoch: " << slot_to_epoch(tx.slot) << ", slot: " << tx.slot << ", tx: " << tx.id;
         if (tx.withdraw > 0) {
-            os << ", widthdraw rewards: ";
+            os << ", withdraw rewards: ";
             log_ada_amount(os, tx.withdraw);
         } else {
             os << ", out: " << tx.out_idx << ", inflow ";
@@ -78,6 +78,8 @@ namespace daedalus_turbo
         uint64_t last_slot = 0;
         uint64_t num_disk_reads = 0;
         uint64_t num_idx_reads = 0;
+        uint64_t total_tx_outputs = 0;
+        uint64_t total_tx_outputs_unspent = 0;
         uint64_t total_utxo_balance = 0;
         uint64_t total_withdrawals = 0;
 
@@ -98,8 +100,12 @@ namespace daedalus_turbo
 
         void add_tx(transaction &&tx)
         {
-            if (tx.spent_id.size() == 0) total_utxo_balance += tx.amount;
+            if (tx.spent_id.size() == 0) {
+                total_utxo_balance += tx.amount;
+                ++total_tx_outputs_unspent;
+            }
             if (tx.withdraw > 0) total_withdrawals += tx.withdraw;
+            else ++total_tx_outputs;
             transactions.emplace_back(tx);
         }
     };
@@ -107,13 +113,11 @@ namespace daedalus_turbo
     inline ostream &operator<<(ostream &os, const history &h)
     {
         if (h.transactions.size() > 0) {
-            size_t spent_cnt = 0;
             for (const auto &tx: h.transactions) {
-                os << tx;
-                if (tx.spent_id.size() > 0) ++spent_cnt;
+                if (tx.withdraw == 0) os << tx;
             }
-            os << "transactions affecting stake address " << buffer(h.stake_addr)
-                << ": " << h.transactions.size() << " of them spent: " << spent_cnt << "\n"
+            os << "transaction outputs affecting stake address " << buffer(h.stake_addr)
+                << ": " << h.total_tx_outputs << " of them unspent: " << h.total_tx_outputs_unspent << "\n"
                 << "available balance without rewards: ";
             log_ada_amount(os, h.utxo_balance());
             os << "\n";
