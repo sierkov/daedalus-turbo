@@ -81,10 +81,10 @@ precisely matched the stake recorded in the ledger snapshot produced by Cardano 
 The development of the project is organized into the following milestones:
 | Milestone | ETA | Status |
 | --------- | --- | ------ |
-| M1: Show that transaction history can be reconstructed 10x quicker | February 2023 | Ready, In Review |
-| M2: Analyze the scalability of the Cardano network protocol and prepare requirements for the accelerated one | May 2023 | Planned |
-| M3: Full POC of Daedalus Turbo: fast blockchain data delivery and transaction-history reconstruction | February 2024 | Planned |
-| M4: Integrate the POC into the official Daedalus builds | January 2025 | Planned |
+| M1: Show that transaction history can be reconstructed 10x quicker | February 2023 | Ready, review passed |
+| M2: Analyze the scalability of the Cardano network protocol and prepare requirements for the accelerated one | June 2023 | In progress |
+| M3: Full POC of Daedalus Turbo: fast blockchain data delivery and transaction-history reconstruction | March 2024 | Planned |
+| M4: Integrate the POC into the official Daedalus builds | February 2025 | Planned |
 
 Due to the experimental nature of the project, the ETAs are tentative.
 The development can go both faster and slower than expected.
