@@ -1,0 +1,20 @@
+version: "3.5"
+services:
+  cardano-node:
+    image: inputoutput/cardano-node:1.35.5
+    environment:
+      NETWORK: "mainnet"
+    expose:
+      - 3001
+    logging:
+      driver: "json-file"
+      options:
+        compress: "true"
+        max-file: "10"
+        max-size: "50m"
+  tcpdump:
+    image: nicolaka/netshoot
+    network_mode: "service:cardano-node"
+    volumes:
+    - ./data:/data
+    command: /bin/bash -c "tcpdump -n -q -l ip > /data/sync-tcpdump.log"
