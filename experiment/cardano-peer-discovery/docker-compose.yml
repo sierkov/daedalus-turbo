@@ -17,4 +17,9 @@ services:
     network_mode: "service:cardano-node"
     volumes:
     - ./data:/data
-    command: /bin/bash -c "tcpdump -n -q -l ip > /data/sync-tcpdump.log"
+    command: /bin/bash -c "tcpdump -n -q -l tcp > /data/sync-tcpdump.log"
+  trackdns:
+    image: nicolaka/netshoot
+    volumes:
+    - ./:/workspace
+    command: /bin/bash /workspace/track-dns.sh /workspace/data/dns.log
