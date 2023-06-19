@@ -10,16 +10,17 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+
 #include <boost/ut.hpp>
+
 #include <dt/index.hpp>
 #include <dt/index-type.hpp>
 #include <dt/util.hpp>
 
-using namespace std;
 using namespace boost::ut;
 using namespace daedalus_turbo;
 
-const string TMP_DIR = "/tmp";
+const std::string TMP_DIR = "/tmp";
 
 struct indexed_type {
     uint8_t val[8];
@@ -29,7 +30,7 @@ static_assert(sizeof(indexed_type) == 8_u);
 suite index_writer_suite = [] {
     "index"_test = [] {
         "index_writer sorts outputs on flush"_test = [] {
-            const string idx_path = TMP_DIR + "/index-test.tmp";
+            const std::string idx_path = TMP_DIR + "/index-test.tmp";
             constexpr size_t item_size = 8;
             indexed_type item1 { { 0x93, 0xF9, 0x03, 0x01, 0x3F, 0x01, 0xD1, 0xAE } };
             indexed_type item2 { { 0x6F, 0x2D, 0x0F, 0x07, 0xC0, 0x00, 0x70, 0x02 } };
@@ -47,7 +48,7 @@ suite index_writer_suite = [] {
             }
             idx.flush();
 
-            ifstream is(idx_path, ios::binary);
+            std::ifstream is(idx_path, std::ios::binary);
             char buf[item_size];
             for (size_t i = 0; i < item_cnt; ++i) {
                 is.read(buf, item_size);
@@ -60,10 +61,10 @@ suite index_writer_suite = [] {
         };
         "index_radix_writer sorts outputs on flush"_test = [] {
             constexpr size_t paths_cnt = 2;
-            vector<string> paths;
+            std::vector<std::string> paths;
             paths.emplace_back(TMP_DIR + "/index_radix_writer-test-1.tmp");
             paths.emplace_back(TMP_DIR + "/index_radix_writer-test-2.tmp");
-            if (paths.size() != paths_cnt) throw error("paths.size() must be %zu but got %zu!", paths_cnt, paths.size());
+            if (paths.size() != paths_cnt) throw error_fmt("paths.size() must be {} but got {}!", paths_cnt, paths.size());
             indexed_type item1 { { 0xAA, 0xF9, 0x03, 0x01, 0x3F, 0x01, 0xD1, 0xAE } };
             indexed_type item2 { { 0x6F, 0x2D, 0x0F, 0x07, 0xC0, 0x00, 0x70, 0x02 } };
             indexed_type item3 { { 0x93, 0x28, 0x01, 0x80, 0xDE, 0x00, 0x55, 0x6B } };
@@ -85,7 +86,7 @@ suite index_writer_suite = [] {
 
             for (size_t i = 0; i < paths.size(); ++i) {
                 const auto &path = paths[i];
-                ifstream is(path, ios::binary);
+                std::ifstream is(path, std::ios::binary);
                 indexed_type buf;
                 for (size_t j = 0; j < item_cnt_stream; ++j) {
                     is.read(reinterpret_cast<char *>(&buf), sizeof(buf));
@@ -101,8 +102,8 @@ suite index_writer_suite = [] {
             }    
         };
         "index reader can find all elements"_test = [] {
-            const string idx_path = TMP_DIR + "/index-test-reader.tmp";
-            using index_type = array<uint8_t, 8>;
+            const std::string idx_path = TMP_DIR + "/index-test-reader.tmp";
+            using index_type = std::array<uint8_t, 8>;
             size_t num_items = 0x100000;
             {
                 index_writer<index_type> idx(idx_path);

@@ -22,6 +22,7 @@
 #include <thread>
 #include <unordered_map>
 #include <vector>
+
 #include <dt/util.hpp>
 
 namespace daedalus_turbo {
@@ -32,19 +33,19 @@ namespace daedalus_turbo {
         constexpr std::size_t hardware_destructive_interference_size = 64;
 #   endif
 
-    using namespace std;
+    using scheduler_error = error_fmt;
 
-    class scheduled_task_error: public error {
+    class scheduled_task_error: public error_fmt {
     public:
-        using error::error;
+        using error_fmt::error_fmt;
     };
 
     struct scheduled_task {
         int priority;
-        string task_group;
-        function<void()> task;
+        std::string task_group;
+        std::function<void()> task;
 
-        scheduled_task(int prio, const string &tg, function<void()> &&t)
+        scheduled_task(int prio, const std::string &tg, std::function<void()> &&t)
             : priority(prio), task_group(tg), task(t)
         {
         }
@@ -57,10 +58,10 @@ namespace daedalus_turbo {
 
     struct scheduled_result {
         int priority;
-        string task_group;
+        std::string task_group;
         std::any result;
 
-        scheduled_result(int prio, const string &tg, const std::any &res)
+        scheduled_result(int prio, const std::string &tg, const std::any &res)
             : priority(prio), task_group(tg), result(res)
         {
         }
@@ -73,7 +74,7 @@ namespace daedalus_turbo {
 
     /*
      * Design objectives:
-     * - allow for parallel execution of multiple heteregeneous task gorups when resources allow.
+     * - allow for parallel execution of multiple heterogeneous task groups when resources allow.
      * - always provide resources to the highest-priority task group first
      * - allow external observers to schedule further tasks
      * - allow external observers to be notified of task completions within a task group
@@ -85,50 +86,48 @@ namespace daedalus_turbo {
      */
 
     class scheduler {
-        alignas(hardware_destructive_interference_size) mutex _tasks_mutex;
-        alignas(hardware_destructive_interference_size) condition_variable _tasks_cv;
-        priority_queue<scheduled_task> _tasks;
-        unordered_map<string, size_t> _tasks_cnt;
+    protected:
+        alignas(hardware_destructive_interference_size) std::mutex _tasks_mutex;
+        alignas(hardware_destructive_interference_size) std::condition_variable _tasks_cv;
+        std::priority_queue<scheduled_task> _tasks;
+        std::unordered_map<std::string, size_t> _tasks_cnt;
 
-        using observer_list = vector<function<void(any &)>>;
-        using observer_map = unordered_map<string, observer_list>;
-        alignas(hardware_destructive_interference_size) mutex _observers_mutex;
+        using observer_list = std::vector<std::function<void(std::any &)>>;
+        using observer_map = std::unordered_map<std::string, observer_list>;
+        alignas(hardware_destructive_interference_size) std::mutex _observers_mutex;
         observer_map _observers;
 
-        alignas(hardware_destructive_interference_size) mutex _results_mutex;
-        alignas(hardware_destructive_interference_size) condition_variable _results_cv;
-        priority_queue<scheduled_result> _results;
+        alignas(hardware_destructive_interference_size) std::mutex _results_mutex;
+        alignas(hardware_destructive_interference_size) std::condition_variable _results_cv;
+        std::priority_queue<scheduled_result> _results;
 
-        thread _manager;
-        vector<thread> _workers;
-        vector<string> _worker_tasks;
+        std::thread _manager;
+        std::vector<std::thread> _workers;
+        std::vector<std::string> _worker_tasks;
         const size_t _num_workers;
-        atomic<bool> _destroy = false;
+        std::atomic<bool> _destroy = false;
 
         template<typename T>
-        void _process_results(unique_lock<T> &results_lock)
+        void _process_results(std::unique_lock<T> &results_lock)
         {
-            if (!results_lock) throw error("the lock must have already been taken!");
+            if (!results_lock) throw scheduler_error("the lock must have already been taken!");
             while (!_results.empty()) {
                 auto res = _results.top();
                 _results.pop();
                 results_lock.unlock();
                 {
-                    unique_lock observers_lock(_observers_mutex);
+                    std::unique_lock observers_lock(_observers_mutex);
                     auto it = _observers.find(res.task_group);
                     if (it != _observers.end()) {
                         observer_list to_notify = it->second;
                         observers_lock.unlock();
-                        try {
-                            for (const auto &observer: to_notify) observer(res.result);
-                        } catch (...) {
-                            if (res.result.type() == typeid(scheduled_task_error)) throw std::any_cast<scheduled_task_error>(res.result);
-                            else throw;
-                        }
+                        for (const auto &observer: to_notify) observer(res.result);
+                    } else {
+                        if (res.result.type() == typeid(scheduled_task_error)) throw std::any_cast<scheduled_task_error>(res.result);
                     }
                 }
                 {
-                    scoped_lock tasks_lock(_tasks_mutex);
+                    std::scoped_lock tasks_lock(_tasks_mutex);
                     auto it = _tasks_cnt.find(res.task_group);
                     if (it != _tasks_cnt.end()) it->second--;
                 }
@@ -136,21 +135,20 @@ namespace daedalus_turbo {
             }
         }
 
-        void _add_result(int priority, const string &task_group, const std::any &res)
+        void _add_result(int priority, const std::string &task_group, const std::any &res)
         {
-            unique_lock results_lock(_results_mutex);
+            std::unique_lock results_lock(_results_mutex);
             _results.emplace(priority, task_group, res);
             results_lock.unlock();
             _results_cv.notify_one();
         }
 
-        void _worker_thread(size_t worker_idx)
+        bool _worker_try_execute(size_t worker_idx)
         {
-            for (;;) {
-                unique_lock lock(_tasks_mutex);
-                _tasks_cv.wait(lock, [&] { return _destroy || (!_tasks.empty()); });
-                if (_destroy) break;
-                if (_tasks.empty()) continue;
+            std::unique_lock lock(_tasks_mutex);
+            _tasks_cv.wait(lock, [&] { return _destroy || (!_tasks.empty()); });
+            if (_destroy) return false;
+            if (!_tasks.empty()) {
                 auto task = _tasks.top();
                 _tasks.pop();
                 _worker_tasks[worker_idx] = task.task_group;
@@ -159,6 +157,13 @@ namespace daedalus_turbo {
                 lock.lock();
                 _worker_tasks[worker_idx] = "";
                 lock.unlock();
+            }
+            return true;
+        }
+
+        void _worker_thread(size_t worker_idx)
+        {
+            while (_worker_try_execute(worker_idx)) {
             }
         }
 
@@ -170,8 +175,14 @@ namespace daedalus_turbo {
                 _results_mutex(), _results_cv(), _results(),
                 _workers(), _worker_tasks(), _num_workers(num_workers)
         {
-            for (size_t i = 0; i < num_workers; ++i) {
-                _workers.emplace_back([this, i]() { _worker_thread(i); });
+            if (num_workers == 0) throw error_fmt("the number of worker threads must be greater than zero!");
+            // One worker is a special case handled by the process method itself
+            if (num_workers >= 2) {
+                for (size_t i = 0; i < num_workers; ++i) {
+                    _workers.emplace_back([this, i]() { _worker_thread(i); });
+                    _worker_tasks.push_back("");
+                }
+            } else {
                 _worker_tasks.push_back("");
             }
         }
@@ -187,7 +198,7 @@ namespace daedalus_turbo {
 
         static inline size_t default_worker_count()
         {
-            return thread::hardware_concurrency();
+            return std::thread::hardware_concurrency();
         }
 
         size_t num_workers() const
@@ -196,22 +207,22 @@ namespace daedalus_turbo {
         }
 
         template<typename T, typename ...A>
-        void submit(const string &task_group, int priority, T &&action, A &&...args)
+        void submit(const std::string &task_group, int priority, T &&action, A &&...args)
         {
-            unique_lock tasks_lock(_tasks_mutex);
-            auto action_call = bind(forward<T>(action), forward<A>(args)...);
-            function<void()> task = [this, action_call, task_group, priority]() {
+            std::unique_lock tasks_lock(_tasks_mutex);
+            auto action_call = std::bind(std::forward<T>(action), std::forward<A>(args)...);
+            std::function<void()> task = [this, action_call, task_group, priority]() {
                 try {
                     _add_result(priority, task_group, action_call());
                 } catch (std::exception &ex) {
-                    _add_result(priority, task_group, std::make_any<scheduled_task_error>("task from group '%s' has failed with '%s' error!", task_group.c_str(), ex.what()));
+                    _add_result(priority, task_group, std::make_any<scheduled_task_error>("task from group '{}' has failed with '{}' error!", task_group, ex.what()));
                 }
             };
-            _tasks.emplace(priority, task_group, move(task));
+            _tasks.emplace(priority, task_group, std::move(task));
             auto it = _tasks_cnt.find(task_group);
             if (it == _tasks_cnt.end()) {
                 auto [ new_it, ok ] = _tasks_cnt.emplace(task_group, 1);
-                if (!ok) throw error("Internal error: task count operation failed!");
+                if (!ok) throw scheduler_error("Internal error: task count operation failed!");
             } else {
                 it->second++;
             }
@@ -220,50 +231,53 @@ namespace daedalus_turbo {
         }
 
         template<typename T>
-        void on_result(const string &task_group, T &&observer)
+        void on_result(const std::string &task_group, T &&observer)
         {
-            function<void(any &)> notify_call = [task_group, observer](any &res) { observer(res); };
-            const scoped_lock lock(_observers_mutex);
+            std::function<void(std::any &)> notify_call = [task_group, observer](std::any &res) { observer(res); };
+            const std::scoped_lock lock(_observers_mutex);
             auto it = _observers.find(task_group);
             if (it == _observers.end()) {
                 auto [new_it, ok] = _observers.emplace(task_group, 0);
-                if (!ok) throw error("Internal error: cannot add new observer!");
+                if (!ok) throw scheduler_error("Internal error: cannot add new observer!");
                 it = new_it;
             }
-            it->second.push_back(move(notify_call));
+            it->second.push_back(std::move(notify_call));
         }
 
         // task_count is decremented only after all observers are notified of completion.
         // The code of observers should be aware of that!
-        size_t task_count(const string &task_group)
+        size_t task_count(const std::string &task_group)
         {
             size_t cnt = 0;
             {
-                scoped_lock lock(_tasks_mutex);
+                std::scoped_lock lock(_tasks_mutex);
                 auto it = _tasks_cnt.find(task_group);
                 if (it != _tasks_cnt.end()) cnt = it->second;
             }
             return cnt;
         }
 
-        void process(bool report_progress=true, chrono::milliseconds update_interval_ms=1000ms, ostream &report_stream=cerr)
+        void process(bool report_progress=true, std::chrono::milliseconds update_interval_ms=std::chrono::milliseconds {1000 },
+            std::ostream &report_stream=std::cerr)
         {
             struct task_status {
                 size_t active;
                 size_t pending;
             };
             size_t max_str = 0;
-            map<string, task_status> status;
-            auto next_report = chrono::system_clock::now() + update_interval_ms;
+            std::map<std::string, task_status> status;
+            auto next_report = std::chrono::system_clock::now() + update_interval_ms;
             for (;;) {
+                // Special case, in one-worker mode execute tasks in the loop
+                if (_num_workers == 1) _worker_try_execute(0);
                 {
-                    unique_lock results_lock(_results_mutex);
+                    std::unique_lock results_lock(_results_mutex);
                     bool have_work = _results_cv.wait_for(results_lock, update_interval_ms, [&]{ return !_results.empty(); });
                     if (have_work) _process_results(results_lock);
                 }
                 {
-                    scoped_lock lock(_tasks_mutex);
-                    if (_tasks.size() == 0 || (report_progress && chrono::system_clock::now() >= next_report)) {
+                    std::scoped_lock lock(_tasks_mutex);
+                    if (_tasks.size() == 0 || (report_progress && std::chrono::system_clock::now() >= next_report)) {
                         status.clear();
                         for (const auto &tc: _tasks_cnt) {
                             if (tc.second > 0) {
@@ -278,16 +292,16 @@ namespace daedalus_turbo {
                         if (status.size() == 0) break;
                     }
                 }
-                if (report_progress && chrono::system_clock::now() >= next_report) {
-                    ostringstream os;
+                if (report_progress && std::chrono::system_clock::now() >= next_report) {
+                    std::ostringstream os;
                     os << "\r";
                     for (const auto &t: status) {
                         os << t.first << ": [" << t.second.active << "/" << t.second.pending << "] ";
                     }
-                    const string str = os.str();
+                    const std::string str = os.str();
                     if (str.size() - 1 > max_str) max_str = str.size() - 1;
                     report_stream << std::left << std::setw(max_str) << str;
-                    next_report = chrono::system_clock::now() + update_interval_ms;
+                    next_report = std::chrono::system_clock::now() + update_interval_ms;
                 }
             }
             if (report_progress) {

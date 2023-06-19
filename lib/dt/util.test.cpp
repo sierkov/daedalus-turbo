@@ -7,43 +7,41 @@
  */
 
 #include <boost/ut.hpp>
+
 #include <dt/util.hpp>
 
+using namespace std::literals;
 using namespace boost::ut;
 using namespace daedalus_turbo;
 
 suite util_suite = [] {
     "util"_test = [] {
-        "format"_test = [] {
-            expect(format("Hello %02hhX\n", (char)0x16) == "Hello 16\n"s);
-            expect(format("Hello %zu", (size_t)0x123456789ABC) == "Hello 20015998343868"s);
-        };
 
-        "Exception"_test = [] {
+        "error"_test = [] {
             auto my_throw = [] {
                 errno = ENOENT;
-                throw error("My Bad: %s!", "ABC");
+                throw error_fmt("My Bad: {}!", "ABC");
             };
-            expect(throws<error>(my_throw));
-            string msg;
+            expect(throws<error_fmt>(my_throw));
+            std::string msg;
             try {
                 my_throw();
-            } catch (error &ex) {
+            } catch (error_fmt &ex) {
                 msg = ex.what();
             }
             expect(msg == "My Bad: ABC!"s) << msg;
         };
 
-        "sys_error"_test = [] {
+        "error_sys_fmt"_test = [] {
             auto my_throw = [] {
                 errno = ENOENT;
-                throw sys_error("My Bad: %s!", "ABC");
+                throw error_sys_fmt("My Bad: {}!", "ABC");
             };
-            expect(throws<sys_error>(my_throw));
-            string msg;
+            expect(throws<error_sys_fmt>(my_throw));
+            std::string msg;
             try {
                 my_throw();
-            } catch (sys_error &ex) {
+            } catch (error_sys_fmt &ex) {
                 msg = ex.what();
             }
             expect(msg == "My Bad: ABC!, errno: 2, strerror: No such file or directory"s) << msg;

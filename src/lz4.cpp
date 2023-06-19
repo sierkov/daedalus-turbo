@@ -75,7 +75,7 @@ int main(int argc, char **argv)
         cerr << "unsupported command: " << cmd << endl;
         return 1;
     }
-    timer t("main");
+    timer t("main", log_stream);
     vector<compress_result> results;
     scheduler sched;
     if (cmd == "compress") {
@@ -99,7 +99,7 @@ int main(int argc, char **argv)
         sched.on_result("decompress", [&](any &res) { results.push_back(any_cast<compress_result>(res)); });
         for (const auto & [ src_path, dst_path] : chunks) sched.submit("decompress", 0, decompress_chunk, src_path, dst_path);
     } else {
-        throw error("unsupported command: %s", cmd.c_str());
+        throw error_fmt("unsupported command: {}", cmd);
     }
     sched.process();
     size_t total_chunks = results.size(), total_errors = 0, total_uncompressed = 0, total_compressed = 0;

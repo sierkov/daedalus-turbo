@@ -10,7 +10,10 @@
 
 #include <chrono>
 #include <iostream>
+#include <sstream>
+#include <string>
 #include <string_view>
+
 #include <boost/ut.hpp>
 
 namespace daedalus_turbo {
@@ -19,6 +22,39 @@ namespace daedalus_turbo {
     template<typename T>
     concept Countable = requires(T a) {
         { a() + 1 };
+    };
+
+    inline std::string humanize_rate(double rate)
+    {
+        std::string prefix { "" };
+        size_t rate_view = rate;
+        if (rate > 10'000'000'000) {
+            prefix = "G";
+            rate_view /= 1'000'000'000;
+        } else if (rate > 10'000'000) {
+            prefix = "M";
+            rate_view /= 1'000'000;
+        } else if (rate > 10'000) {
+            prefix = "K";
+            rate_view /= 1'000;
+        }
+        std::ostringstream ss;
+        ss << rate_view << " " << prefix;
+        return ss.str();
+    }
+
+    template<typename T>
+    static double benchmark_rate(const string_view &name, size_t num_iter, T &&action) {
+        const auto start = std::chrono::high_resolution_clock::now();
+        for (size_t i = 0; i < num_iter; ++i) {
+            action();
+        }
+        const auto stop = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> sec = stop - start;
+        double rate = (double)num_iter / sec.count();
+        std::clog << "[" << name << "] " << humanize_rate(rate) << "iter/sec"
+            << ", total iters: " << num_iter << '\n';
+        return rate;
     };
 
     template<Countable T>
@@ -31,19 +67,7 @@ namespace daedalus_turbo {
         const auto stop = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> sec = stop - start;
         double rate = (double)total_bytes / sec.count();
-        string prefix = "";
-        size_t rate_view = rate;
-        if (rate > 10'000'000'000) {
-            prefix = "G";
-            rate_view /= 1'000'000'000;
-        } else if (rate > 10'000'000) {
-            prefix = "M";
-            rate_view /= 1'000'000;
-        } else if (rate > 10'000) {
-            prefix = "K";
-            rate_view /= 1'000;
-        }
-        std::clog << "[" << name << "] " << rate_view << " " << prefix << "bytes/sec"
+        std::clog << "[" << name << "] " << humanize_rate(rate) << "bytes/sec"
             << ", total bytes: " << total_bytes
             << endl;
         return rate;
@@ -53,6 +77,14 @@ namespace daedalus_turbo {
     static void benchmark(const string_view &name, double min_rate, size_t num_iter, T &&action) {
         boost::ut::test(name) = [=] {
             double rate = benchmark_throughput(name, num_iter, action);
+            boost::ut::expect(rate >= min_rate) << rate << " < " << min_rate;
+        };
+    }
+
+    template<typename T>
+    static void benchmark_r(const string_view &name, double min_rate, size_t num_iter, T &&action) {
+        boost::ut::test(name) = [=] {
+            double rate = benchmark_rate(name, num_iter, action);
             boost::ut::expect(rate >= min_rate) << rate << " < " << min_rate;
         };
     }

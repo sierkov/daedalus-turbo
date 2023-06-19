@@ -1,7 +1,10 @@
 
+SHELL := /bin/bash
 C_FLAGS := -W -Wall
-LD_DEPS := 3rdparty/blake2/blake2b.o 3rdparty/lz4/lz4.o 3rdparty/lz4/lz4hc.o
-LD_FLAGS := $(LD_DEPS)
+LD_DEPS := 3rdparty/blake2/blake2b.o 3rdparty/lz4/lz4.o 3rdparty/lz4/lz4hc.o 3rdparty/monocypher/src/monocypher-ed25519.o 3rdparty/monocypher/src/monocypher.o
+LD_DEPS := $(LD_DEPS) $(patsubst %.c, %.o, $(filter-out %/test.c, $(wildcard 3rdparty/vrf03/*.c)))
+LD_FLAGS := -L3rdparty/zstd/lib -lzstd
+BUILT_DEPS := 3rdparty/zstd.built
 GXX := g++
 GCC := gcc
 
@@ -18,18 +21,18 @@ ifdef OPT
 	C_FLAGS := $(C_FLAGS) -O1
 endif
 
-CXX_FLAGS := $(C_FLAGS) -std=c++20 -Ilib -I3rdparty
+CXX_FLAGS := $(C_FLAGS) -std=c++20 -Ilib -I3rdparty -I3rdparty/zstd/lib -I3rdparty/monocypher/src -DFMT_HEADER_ONLY
 
 SOURCES := $(filter-out %.bench.cpp, $(filter-out %.test.cpp, $(wildcard src/*.cpp)))
 TARGETS := $(filter-out %/run-tests, $(basename $(SOURCES)))
 ITEST_SOURCES := $(wildcard test/*.cpp)
 ITEST_TARGETS := $(patsubst %.cpp, %, $(ITEST_SOURCES))
-TEST_TARGET := ./src/run-tests
+TEST_TARGET := src/run-tests
 TEST_SOURCES := $(wildcard lib/dt/*.test.cpp) src/run-tests.cpp
 TEST_OBJECTS := $(patsubst %.cpp, %.o, $(TEST_SOURCES))
 TEST_PROF := $(patsubst %.o, %.gcda, $(TEST_OBJECTS)) $(patsubst %.o, %.gcno, $(TEST_OBJECTS)) \
 	$(patsubst %.o, %.gcda, $(LD_DEPS)) $(patsubst %.o, %.gcno, $(LD_DEPS))
-BENCH_TARGET := ./src/run-bench
+BENCH_TARGET := src/run-bench
 BENCH_SOURCES := $(wildcard lib/dt/*.bench.cpp) src/run-tests.cpp
 BENCH_OBJECTS := $(patsubst %.cpp, %.o, $(BENCH_SOURCES))
 DEPS := $(wildcard lib/dt/*.hpp)
@@ -40,6 +43,7 @@ all: $(TARGETS)
 
 clean:
 	$(RM) $(TEST_TARGET) $(BENCH_TARGET) $(TARGETS) $(ITEST_TARGETS) $(TEST_OBJECTS) $(BENCH_OBJECTS) $(LD_DEPS) $(TEST_PROF)
+	test -f 3rdparty/zstd.built && make -C 3rdparty/zstd clean && rm 3rdparty/zstd.built || true
 
 bench: $(BENCH_TARGET)
 
@@ -56,17 +60,21 @@ itest: $(ITEST_TARGETS)
 coverage:
 	gcovr --html-details out/coverage.html
 
-$(BENCH_TARGET): $(BENCH_OBJECTS) $(LD_DEPS)
-	$(GXX) -o $@ $(CXX_FLAGS) $^
+3rdparty/zstd.built:
+	make -j -C 3rdparty/zstd
+	touch 3rdparty/zstd.built
 
-$(TEST_TARGET): $(TEST_OBJECTS) $(LD_DEPS)
-	$(GXX) -o $@ $(CXX_FLAGS) $^
+$(BENCH_TARGET): $(BENCH_OBJECTS) $(LD_DEPS) $(BUILT_DEPS)
+	$(GXX) -o $@ $(CXX_FLAGS) $(filter-out %.built, $(filter-out %.hpp, $^)) $(LD_FLAGS)
+
+$(TEST_TARGET): $(TEST_OBJECTS) $(LD_DEPS) $(BUILT_DEPS)
+	$(GXX) -o $@ $(CXX_FLAGS) $(filter-out %.built, $(filter-out %.hpp, $^)) $(LD_FLAGS)
 
 %.o: %.c
-	$(GCC) -c -o $@ $(C_FLAGS) $<
+	$(GCC) -c -o $@ $(C_FLAGS) -Wno-unused-function -Wno-array-parameter -Wno-unused-value $<
 
 %.o: %.cpp $(DEPS)
 	$(GXX) -c -o $@ $(CXX_FLAGS) $<
 
-%: %.cpp $(DEPS) $(LD_DEPS)
-	$(GXX) -o $@ $(CXX_FLAGS) $< $(LD_FLAGS)
+%: %.cpp $(DEPS) $(LD_DEPS) $(BUILT_DEPS)
+	$(GXX) -o $@ $(CXX_FLAGS) $(filter-out %.built, $(filter-out %.hpp, $^)) $(LD_FLAGS)

@@ -7,25 +7,26 @@
  */
 
 #include <filesystem>
+
 #include <boost/ut.hpp>
+
 #include <dt/benchmark.hpp>
 #include <dt/lz4.hpp>
 #include <dt/scheduler.hpp>
 
-using namespace std;
 using namespace boost::ut;
 using namespace daedalus_turbo;
 
-const string DATA_DIR = "./data"s;
+const std::string DATA_DIR = "./data"s;
 
 suite scheduler_bench_suite = [] {
     "scheduler"_test = [] {
         size_t num_iter = 3;
         size_t data_multiple = 20;
         "micro_tasks_default"_test = [num_iter, data_multiple] {
-            vector<uint8_vector> chunks;
+            std::vector<uint8_vector> chunks;
             uint8_vector buf;
-            for (const auto &entry: filesystem::directory_iterator(DATA_DIR)) {
+            for (const auto &entry: std::filesystem::directory_iterator(DATA_DIR)) {
                 if (entry.path().extension() != ".chunk") continue;
                 read_whole_file(entry.path().string(), buf);
                 chunks.push_back(buf);

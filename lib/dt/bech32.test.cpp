@@ -6,18 +6,20 @@
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
  */
 
+#include <array>
 #include <string_view>
 #include <tuple>
+
 #include <boost/ut.hpp>
+
 #include <dt/bech32.hpp>
 #include <dt/blake2b.hpp>
 #include <dt/util.hpp>
 
-using namespace std;
 using namespace boost::ut;
 using namespace daedalus_turbo;
 
-static bech32 own_match(const string_view &text, const buffer &exp)
+static bech32 own_match(const std::string_view &text, const buffer &exp)
 {
     bech32 addr(text, false);
     expect(addr.size() == exp.size()) << addr.size() << " != " << exp.size();
@@ -28,10 +30,10 @@ static bech32 own_match(const string_view &text, const buffer &exp)
 suite bech32_suite = [] {
     "bech32"_test = [] {
         auto payment_vk = bech32("addr_vk1w0l2sr2zgfm26ztc6nl9xy8ghsk5sh6ldwemlpmp9xylzy4dtf7st80zhd"sv);
-        array<uint8_t, 28> payment_hash;
+        std::array<uint8_t, 28> payment_hash;
         blake2b_best(payment_hash.data(), payment_hash.size(), payment_vk.data(), payment_vk.size());
         auto stake_vk = bech32("stake_vk1px4j0r2fk7ux5p23shz8f3y5y2qam7s954rgf3lg5merqcj6aetsft99wu"sv);
-        array<uint8_t, 28> stake_hash;
+        std::array<uint8_t, 28> stake_hash;
         blake2b_best(stake_hash.data(), stake_hash.size(), stake_vk.data(), stake_vk.size());
         auto script_hash = bech32("script1cda3khwqv60360rp5m7akt50m6ttapacs8rqhn5w342z7r35m37"sv);
 
@@ -155,13 +157,13 @@ suite bech32_suite = [] {
         };
 
         "throws error on wrong chars"_test = [&] {
-            expect(throws<error>([] { bech32 addr("stake178phkx6acpnf78fuvxn0mk!ew3l0fd058hzquvz7w36x4gtcccycj5", false); }));
+            expect(throws<error_fmt>([] { bech32 addr("stake178phkx6acpnf78fuvxn0mk!ew3l0fd058hzquvz7w36x4gtcccycj5", false); }));
             expect(boost::ut::nothrow([] { bech32 addr("stake178phkx6acpnf78fuvxn0mkew3l0fd058hzquvz7w36x4gtcccycj5", false); }));
         };
 
         "throws error on unknown prefix"_test = [&] {
             expect(boost::ut::nothrow([] { bech32 addr("stake178phkx6acpnf78fuvxn0mkew3l0fd058hzquvz7w36x4gtcccycj5", true); }));
-            expect(throws<error>([] { bech32 addr("new178phkx6acpnf78fuvxn0mk!ew3l0fd058hzquvz7w36x4gtcccycj5", true); }));
+            expect(throws<error_fmt>([] { bech32 addr("new178phkx6acpnf78fuvxn0mk!ew3l0fd058hzquvz7w36x4gtcccycj5", true); }));
         };
     };
 };

@@ -7,23 +7,24 @@
  */
 
 #include <string_view>
+
 #include <boost/ut.hpp>
+
 #include <dt/benchmark.hpp>
 #include <dt/cardano.hpp>
 #include <dt/util.hpp>
 
-using namespace std;
 using namespace boost::ut;
 using namespace daedalus_turbo;
 
-const string DATA_DIR = "./data"s;
+const std::string DATA_DIR = "./data"s;
 
 class my_processor: public cardano_processor {
 public:
     size_t tx_count = 0;
     size_t block_count = 0;
 
-    void every_block(const cardano_block_context &/*block_ctx*/, const cbor_value &/*block_tuple*/) {
+    void every_block(const cardano_block_context &/*block_ctx*/, const cbor_value &/*block_tuple*/, const cbor_array &) {
         block_count++;
     }
 
@@ -32,7 +33,7 @@ public:
     }
 };
 
-static uint64_t process_all_chunks(const string_view &db_path, size_t skip_factor = 1)
+static uint64_t process_all_chunks(const std::string_view &db_path, size_t skip_factor = 1)
 {
     my_processor proc;
     cardano_parser parser(proc);
@@ -40,10 +41,10 @@ static uint64_t process_all_chunks(const string_view &db_path, size_t skip_facto
     uint8_vector chunk;
     size_t total_size = 0;
     size_t i = 0;
-    for (const auto &entry : filesystem::directory_iterator(db_path)) {
+    for (const auto &entry : std::filesystem::directory_iterator(db_path)) {
         if (entry.path().extension() != ".chunk") continue;
         if (i++ % skip_factor != 0) continue;
-        string path = entry.path().string();
+        std::string path = entry.path().string();
         read_whole_file(path, chunk);
         total_size += chunk.size();
         parser.parse_chunk(chunk_ctx, chunk);

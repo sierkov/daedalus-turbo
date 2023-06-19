@@ -27,12 +27,6 @@
 
 namespace daedalus_turbo
 {
-    using namespace std;
-
-    void log_ada_amount(ostream &os, uint64_t amount)
-    {
-        os << amount / 1000000 << "." << std::setfill('0') << std::setw(6) << amount % 1000000 << " ADA";
-    }
 
     struct transaction {
         uint8_vector id;
@@ -55,15 +49,13 @@ namespace daedalus_turbo
         }
     };
 
-    inline ostream &operator<<(ostream &os, const transaction &tx)
+    inline std::ostream &operator<<(std::ostream &os, const transaction &tx)
     {
         os << "epoch: " << slot_to_epoch(tx.slot) << ", slot: " << tx.slot << ", tx: " << tx.id;
         if (tx.withdraw > 0) {
-            os << ", withdraw rewards: ";
-            log_ada_amount(os, tx.withdraw);
+            os << ", withdraw rewards: " << cardano_amount(tx.withdraw);
         } else {
-            os << ", out: " << tx.out_idx << ", inflow ";
-            log_ada_amount(os, tx.amount);
+            os << ", out: " << tx.out_idx << ", inflow: " << cardano_amount(tx.amount);
         }
         if (tx.spent_id.size() > 0) {
             os << ", spent: " << tx.spent_id;
@@ -74,7 +66,7 @@ namespace daedalus_turbo
 
     struct history {
         uint8_vector stake_addr;
-        vector<transaction> transactions;
+        std::vector<transaction> transactions;
         uint64_t last_slot = 0;
         uint64_t num_disk_reads = 0;
         uint64_t num_idx_reads = 0;
@@ -100,17 +92,20 @@ namespace daedalus_turbo
 
         void add_tx(transaction &&tx)
         {
-            if (tx.spent_id.size() == 0) {
-                total_utxo_balance += tx.amount;
-                ++total_tx_outputs_unspent;
-            }
-            if (tx.withdraw > 0) total_withdrawals += tx.withdraw;
-            else ++total_tx_outputs;
+            if (tx.withdraw == 0) {
+                ++total_tx_outputs;
+                if (tx.spent_id.size() == 0) {
+                    total_utxo_balance += tx.amount;
+                    ++total_tx_outputs_unspent;
+                }
+            } else {
+                total_withdrawals += tx.withdraw;
+            } 
             transactions.emplace_back(tx);
         }
     };
 
-    inline ostream &operator<<(ostream &os, const history &h)
+    inline std::ostream &operator<<(std::ostream &os, const history &h)
     {
         if (h.transactions.size() > 0) {
             for (const auto &tx: h.transactions) {
@@ -118,12 +113,11 @@ namespace daedalus_turbo
             }
             os << "transaction outputs affecting stake address " << buffer(h.stake_addr)
                 << ": " << h.total_tx_outputs << " of them unspent: " << h.total_tx_outputs_unspent << "\n"
-                << "available balance without rewards: ";
-            log_ada_amount(os, h.utxo_balance());
+                << "available balance without rewards: " << cardano_amount(h.utxo_balance());
             os << "\n";
             os << "last indexed slot: " << h.last_slot << ", last epoch: " << slot_to_epoch(h.last_slot)
                 << ", # random reads: " << h.num_disk_reads
-                << " of them from indices: " << h.num_idx_reads << " (" << fixed << setprecision(1) << 100 * (double)h.num_idx_reads / h.num_disk_reads << "%)";
+                << " of them from indices: " << h.num_idx_reads << " (" << std::fixed << std::setprecision(1) << 100 * (double)h.num_idx_reads / h.num_disk_reads << "%)";
         } else {
             os << "last indexed slot: " << h.last_slot << ", last epoch: " << slot_to_epoch(h.last_slot) << "\n"
                 << "no transactions affecting stake address " << buffer(h.stake_addr) << " have been found!";
@@ -137,7 +131,7 @@ namespace daedalus_turbo
         chunk_registry _cr;
         index_reader<addr_use_item> _addr_use_idx;
         index_reader<tx_use_item> _tx_use_idx;
-        vector<block_item> _block_index;
+        std::vector<block_item> _block_index;
 
         struct addr_match {
             uint8_t stake_addr[28];
@@ -175,12 +169,12 @@ namespace daedalus_turbo
         };
 
         class addr_matcher: public cardano_processor {
-            set<addr_match> &matches;
+            std::set<addr_match> &matches;
             const buffer search_address;
 
         public:
 
-            addr_matcher(set<addr_match> &matches_, const buffer &addr)
+            addr_matcher(std::set<addr_match> &matches_, const buffer &addr)
                 : matches(matches_), search_address(addr)
             {
             }
@@ -190,8 +184,8 @@ namespace daedalus_turbo
                 if (address.size() != 57 || address_type >= 4) return;
                 if (memcmp(search_address.data(), address.data() + 29, search_address.size()) != 0) return;
                 addr_match m(address, buffer(ctx.tx_ctx.hash, sizeof(ctx.tx_ctx.hash)), amount, ctx.out_idx, 0, ctx.tx_ctx.block_ctx);
-                auto [it, ok] = matches.insert(move(m));
-                if (!ok) throw error("failed to insert a matching transaction - already exists!");
+                auto [it, ok] = matches.insert(std::move(m));
+                if (!ok) throw error_fmt("failed to insert a matching transaction - already exists!");
             };
 
             void every_tx_withdrawal(const cardano_tx_context &ctx, const cbor_buffer &address, uint64_t amount)
@@ -199,24 +193,24 @@ namespace daedalus_turbo
                 if (address.size() != 29 || address.data()[0] != 0xE1) return;
                 if (memcmp(search_address.data(), address.data() + 1, search_address.size()) != 0) return;
                 addr_match m(address, buffer(ctx.hash, sizeof(ctx.hash)), 0, 0, amount, ctx.block_ctx);
-                auto [it, ok] = matches.insert(move(m));
-                if (!ok) throw error("failed to insert a matching withdrawal - already exists!");
+                auto [it, ok] = matches.insert(std::move(m));
+                if (!ok) throw error_fmt("failed to insert a matching withdrawal - already exists!");
             }
         };
 
     public:
 
-        reconstructor(const string &db_path, const string &idx_path, bool lz4=false)
+        reconstructor(const std::string &db_path, const std::string &idx_path, bool lz4=false)
             : _cr(db_path, lz4), _addr_use_idx(idx_path + "/addruse/index.bin"), _tx_use_idx(idx_path + "/txuse/index.bin"), _block_index()
         {
-            const string block_index_path = idx_path + "/block/index.bin";
-            size_t block_index_size = filesystem::file_size(block_index_path);
-            if (block_index_size % sizeof(block_item) != 0) throw error("File size of %s must divide without remainder by %zu", block_index_path.c_str(), sizeof(block_item));
+            const std::string block_index_path = idx_path + "/block/index.bin";
+            size_t block_index_size = std::filesystem::file_size(block_index_path);
+            if (block_index_size % sizeof(block_item) != 0) throw error_fmt("File size of {} must divide without remainder by {}", block_index_path, sizeof(block_item));
             _block_index.resize(block_index_size / sizeof(block_item));
             if (block_index_size > 0) {
-                ifstream is(block_index_path, ios::binary);
+                std::ifstream is(block_index_path, std::ios::binary);
                 if (!is.read(reinterpret_cast<char *>(_block_index.data()), block_index_size))
-                    throw sys_error("Read from %s has failed!", block_index_path.c_str());
+                    throw error_sys_fmt("Read from {} has failed!", block_index_path);
             }
         }
 
@@ -229,8 +223,8 @@ namespace daedalus_turbo
 
         const block_item &find_block(uint64_t tx_offset) {
             auto bi_it = lower_bound(_block_index.begin(), _block_index.end(), tx_offset, [](const block_item &b, size_t off) { return b.offset + b.size <= off; });
-            if (bi_it == _block_index.end()) throw error("unknown offset: %zu!", tx_offset);
-            if (!(tx_offset >= bi_it->offset && tx_offset < bi_it->offset + bi_it->size)) throw error("internal error block metadata does not match the transaction!");
+            if (bi_it == _block_index.end()) throw error_fmt("unknown offset: {}!", tx_offset);
+            if (!(tx_offset >= bi_it->offset && tx_offset < bi_it->offset + bi_it->size)) throw error_fmt("internal error block metadata does not match the transaction!");
             return *bi_it;
         }
 
@@ -243,7 +237,7 @@ namespace daedalus_turbo
             auto [ ok_addr, addr_use, addr_n_reads ] = _addr_use_idx.find(stake_addr);
             hist.num_idx_reads = hist.num_disk_reads = addr_n_reads;
             if (ok_addr) {
-                set<addr_match> matches;
+                std::set<addr_match> matches;
                 addr_matcher proc(matches, stake_addr);
                 cardano_parser parser(proc);
 
@@ -264,11 +258,11 @@ namespace daedalus_turbo
                     addr_use = std::get<1>(next_res);
                 }
 
-                vector<spent_tx_check> spent_checks;
+                std::vector<spent_tx_check> spent_checks;
                 spent_checks.reserve(matches.size());
 
                 for (auto it = matches.begin(); it != matches.end(); it++) {
-                    if (sizeof(it->tx_hash) != 32) throw runtime_error("unexpected tx_hash of size different from 32 bytes!");
+                    if (sizeof(it->tx_hash) != 32) throw error_fmt("unexpected tx_hash of size different from 32 bytes!");
                     if (it->withdraw == 0) {
                         uint8_t tx_use_key[32 + 2];
                         memcpy(tx_use_key, it->tx_hash, sizeof(it->tx_hash));
@@ -287,7 +281,7 @@ namespace daedalus_turbo
                 }
 
                 // order by tx_offset to improve disk access performance
-                sort(spent_checks.begin(), spent_checks.end(), [](const auto &a, const auto &b) { return a.tx_offset < b.tx_offset; });
+                std::sort(spent_checks.begin(), spent_checks.end(), [](const auto &a, const auto &b) { return a.tx_offset < b.tx_offset; });
                 for (const auto &chk: spent_checks) {
                     transaction tx_meta;
                     if (chk.do_check) {
@@ -300,15 +294,15 @@ namespace daedalus_turbo
                     tx_meta.out_idx = chk.match->tx_out_idx;
                     tx_meta.amount = chk.match->amount;
                     tx_meta.withdraw = chk.match->withdraw;
-                    hist.add_tx(move(tx_meta));
+                    hist.add_tx(std::move(tx_meta));
                 }
             }
-            sort(hist.transactions.begin(), hist.transactions.end(), [](const auto &a, const auto &b) { return a < b; });
+            std::sort(hist.transactions.begin(), hist.transactions.end(), [](const auto &a, const auto &b) { return a < b; });
             return hist;
         }
 
         history reconstruct(const buffer &address) {
-            if (address.size() != 29 || address.data()[0] != 0xE1) throw runtime_error("only shelley stake reward addresses (type 14) are supported!");
+            if (address.size() != 29 || address.data()[0] != 0xE1) throw error_fmt("only shelley stake reward addresses (type 14) are supported!");
             const buffer stake_addr(address.data() + 1, address.size() - 1);
             return reconstruct_raw_addr(stake_addr);
         }

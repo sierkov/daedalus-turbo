@@ -72,7 +72,7 @@ static std::array<cardano_hash_28, 50> top_stake_keys = {
 
 static void warn_top_stake_key(const buffer &addr)
 {
-    if (addr.size() != top_stake_keys[0].size()) throw error("unexpected address size %zu while expected %zu!", addr.size(), top_stake_keys[0].size());
+    if (addr.size() != top_stake_keys[0].size()) throw error_fmt("unexpected address size {} while expected {}!", addr.size(), top_stake_keys[0].size());
     auto it = std::find_if(top_stake_keys.begin(), top_stake_keys.end(),
         [&](const cardano_hash_28 &sk) { return memcmp(sk.data(), addr.data(), addr.size()) == 0; });
     if (it != top_stake_keys.end()) {
@@ -113,7 +113,7 @@ int main(int argc, char **argv) {
             break;
 
         default:
-            throw error("expected a stake key of 28 or 29 bytes but got: %zu!", addr_buf.size());
+            throw error_fmt("expected a stake key of 28 or 29 bytes but got: {}!", addr_buf.size());
     }
     return 0;
 }

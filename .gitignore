@@ -7,10 +7,12 @@ log
 **/.secret
 **/.gdbinit
 **/*.exe
+**/*.torrent
 **/*.prof
 **/*.log
 **/*.out
 **/*.ipynb
+**/*.iso
 **/adhoc-*
 doc/**/*.aux
 doc/**/*.bbl
@@ -26,3 +28,5 @@ doc/**/*.toc
 doc/**/*.run.xml
 doc/**/*.synctex.gz
 doc/**/figures/*.svg
+doc/**/figures/*.pdf
+src/adhoc*.*

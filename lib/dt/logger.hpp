@@ -12,26 +12,31 @@
 #include <sstream>
 #include <string_view>
 
-namespace daedalus_turbo {
+#include <dt/util.hpp>
 
-    using std::ostream;
-    using std::ostringstream;
-    using std::string_view;
+namespace daedalus_turbo {
 
     class logger_base {
     public:
         virtual ~logger_base() {};
-        virtual void log_write(const string_view &) =0;
+        virtual void log_write(const std::string_view &) =0;
 
         template<typename... Args>
         void log(const char *fmt, Args&&... a)
         {
             auto now = std::chrono::system_clock::now();
             auto in_time_t = std::chrono::system_clock::to_time_t(now);
-            ostringstream os;
+            std::ostringstream os;
             os << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %X")
-                << ": " << format(fmt, forward<Args>(a)...) << '\n';
+                << ": " << format(fmt::runtime(fmt), std::forward<Args>(a)...) << '\n';
             log_write(os.str());
+        }
+
+        void log(const std::string_view &s)
+        {
+            std::string log_s { s };
+            log_s += '\n';
+            log_write(log_s);
         }
     };
 
@@ -42,24 +47,25 @@ namespace daedalus_turbo {
         {
         }
 
-        void log_write(const string_view &) override
+        void log_write(const std::string_view &) override
         {
         }
 
     };
 
     class logger_file: public logger_base {
-        ostream &_log_stream;
+        std::ostream &_log_stream;
 
     public:
 
-        logger_file(ostream &log_stream) : _log_stream(log_stream)
+        logger_file(std::ostream &log_stream) : _log_stream(log_stream)
         {
         }
 
-        virtual void log_write(const string_view &line) override
+        virtual void log_write(const std::string_view &line) override
         {
             _log_stream << line;
+            _log_stream.flush();
         }
 
     };

@@ -9,22 +9,23 @@
 #include <fstream>
 #include <vector>
 #include <string>
+
 #include <boost/ut.hpp>
+
 #include <dt/benchmark.hpp>
 #include <dt/cbor.hpp>
 #include <dt/util.hpp>
 
-using namespace std;
 using namespace boost::ut;
 using namespace daedalus_turbo;
 
 static const string DATA_DIR = "./data"s;
 
-static size_t parse_all_chunks(const string &db_path, void processor(const uint8_vector &), size_t skip_factor = 1) {
+static size_t parse_all_chunks(const std::string &db_path, void processor(const uint8_vector &), size_t skip_factor = 1) {
     uint8_vector buf;
     size_t i = 0;
     size_t total_size = 0;
-    for (const auto &entry : filesystem::directory_iterator(db_path)) {
+    for (const auto &entry: std::filesystem::directory_iterator(db_path)) {
         if (entry.path().extension() != ".chunk") continue;
         if (i++ % skip_factor != 0) continue;
         string path = entry.path().string();
@@ -32,8 +33,8 @@ static size_t parse_all_chunks(const string &db_path, void processor(const uint8
             read_whole_file(path, buf);
             total_size += buf.size();
             processor(buf);
-        } catch (exception &ex) {
-            throw runtime_error("error parsing chunk " + path + ": " + ex.what());
+        } catch (std::exception &ex) {
+            throw error_fmt("error parsing chunk {}: {}", path, ex.what());
         }    
     }
     return total_size;

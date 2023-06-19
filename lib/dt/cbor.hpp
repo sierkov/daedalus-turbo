@@ -9,10 +9,13 @@
 #define DAEDALUS_TURBO_CBOR_HPP
 
 #include <map>
+#include <span>
 #include <stdexcept>
 #include <iomanip>
 #include <memory>
+#include <source_location>
 #include <string>
+#include <string_view>
 #include <variant>
 #include <vector>
 
@@ -20,7 +23,7 @@
 
 namespace daedalus_turbo {
 
-    using cbor_error = error;
+    using cbor_error = error_fmt;
 
     class cbor_incomplete_data_error: public cbor_error
     {
@@ -33,9 +36,21 @@ namespace daedalus_turbo {
     using cbor_buffer = buffer;
     struct cbor_value;
 
-    typedef std::vector<cbor_value> cbor_array;
     typedef std::pair<cbor_value, cbor_value> cbor_map_value;
     typedef std::vector<cbor_map_value> cbor_map;
+
+    struct cbor_array: public std::vector<cbor_value>
+    {
+        const cbor_value &at(size_t pos, const std::source_location loc = std::source_location::current()) const
+        {
+            try {
+                return std::vector<cbor_value>::at(pos);
+            } catch (std::out_of_range &ex) {
+                throw cbor_error("invalid element index {} in the array of size {} in file {} line {}!",
+                                 pos, size(), loc.file_name(), loc.line());
+            }
+        }
+    };
 
     enum cbor_value_type {
         CBOR_UINT,
@@ -55,7 +70,7 @@ namespace daedalus_turbo {
         CBOR_FLOAT64
     };
 
-    typedef pair<uint64_t, unique_ptr<cbor_value>> cbor_tag;
+    typedef std::pair<uint64_t, std::unique_ptr<cbor_value>> cbor_tag;
 
     typedef std::variant<
             uint64_t,
@@ -70,10 +85,14 @@ namespace daedalus_turbo {
         const uint8_t *data;
         size_t size;
         cbor_value_type type;
-        unique_ptr<uint8_vector> storage = nullptr;
+        std::unique_ptr<uint8_vector> storage = nullptr;
 
         cbor_value()
         {
+        }
+
+        const cbor_buffer data_buf() const {
+            return cbor_buffer(data, size);
         }
 
         inline bool operator<(const cbor_value &aVal) const {
@@ -84,38 +103,50 @@ namespace daedalus_turbo {
             return res < 0;
         }
 
-        inline uint64_t uint() const
+        inline uint64_t uint(const std::source_location &loc = std::source_location::current()) const
         {
-            return get<uint64_t>(content);
+            return get<uint64_t>(CBOR_UINT, loc);
         }
 
-        inline uint64_t nint() const
+        inline uint64_t nint(const std::source_location &loc = std::source_location::current()) const
         {
-            return get<uint64_t>(content) + 1;
+            return get<uint64_t>(CBOR_NINT, loc) + 1;
         }
 
-        inline float float32() const {
-            return get<float>(content);
+        inline float float32(const std::source_location &loc = std::source_location::current()) const {
+            return get<float>(CBOR_FLOAT32, loc);
         }
 
-        inline const cbor_buffer &buf() const
+        inline const cbor_buffer &buf(const std::source_location &loc = std::source_location::current()) const
         {
-            return get<cbor_buffer>(content);
+            return get_ref<cbor_buffer>(CBOR_BYTES, loc);
         }
 
-        inline const cbor_array &array() const
+        inline std::string_view text(const std::source_location &loc = std::source_location::current()) const
         {
-            return get<cbor_array>(content);
+            const auto &buf = get_ref<cbor_buffer>(CBOR_TEXT, loc);
+            return std::string_view(reinterpret_cast<const char *>(buf.data()), buf.size());
         }
 
-        inline const cbor_map &map() const
+        inline const std::span<const uint8_t> span(const std::source_location &loc = std::source_location::current()) const
         {
-            return get<cbor_map>(content);
+            const auto &buf = get_ref<cbor_buffer>(CBOR_BYTES, loc);
+            return std::span<const uint8_t>(buf.data(), buf.size());
         }
 
-        inline const cbor_tag &tag() const
+        inline const cbor_array &array(const std::source_location &loc = std::source_location::current()) const
         {
-            return get<cbor_tag>(content);
+            return get_ref<cbor_array>(CBOR_ARRAY, loc);
+        }
+
+        inline const cbor_map &map(const std::source_location &loc = std::source_location::current()) const
+        {
+            return get_ref<cbor_map>(CBOR_MAP, loc);
+        }
+
+        inline const cbor_tag &tag(const std::source_location &loc = std::source_location::current()) const
+        {
+            return get_ref<cbor_tag>(CBOR_TAG, loc);
         }
 
         inline size_t offset(const uint8_t *base) const noexcept
@@ -126,10 +157,37 @@ namespace daedalus_turbo {
         template<typename T>
         inline void set_content(T &&val)
         {
-            content = move(val);
+            content = std::move(val);
+        }
+
+        inline const std::span<const uint8_t> raw_span() const
+        {
+            return std::span<const uint8_t>(data, size);
         }
 
     private:
+
+        template<typename T>
+        inline const T get(cbor_value_type exp_type, const std::source_location &loc = std::source_location::current()) const
+        {
+            try {
+                return std::get<T>(content);
+            } catch (std::bad_variant_access &ex) {
+                throw cbor_error("invalid cbor value access, expecting type {} while the present type is {} in file {} line {}!",
+                                 (unsigned)exp_type, (unsigned)type, loc.file_name(), loc.line());
+            }
+        }
+
+        template<typename T>
+        inline const T &get_ref(cbor_value_type exp_type, const std::source_location &loc = std::source_location::current()) const
+        {
+            try {
+                return std::get<T>(content);
+            } catch (std::bad_variant_access &ex) {
+                throw cbor_error("invalid cbor value access, expecting type {} while the present type is {} in file {} line {}!",
+                                 (unsigned)exp_type, (unsigned)type, loc.file_name(), loc.line());
+            }
+        }
 
         cbor_value_content content;
     };
@@ -168,7 +226,7 @@ namespace daedalus_turbo {
                 val.set_content(cbor_buffer(&_data[_offset], stringSize));
                 _offset += stringSize;
             } else {
-                unique_ptr<uint8_vector> storage = make_unique<uint8_vector>();
+                std::unique_ptr<uint8_vector> storage = std::make_unique<uint8_vector>();
                 cbor_value chunk;
                 for (;;) {
                     read(chunk);
@@ -203,7 +261,7 @@ namespace daedalus_turbo {
                     cbor_value item;
                     read(item);
                     if (item.type == CBOR_SIMPLE_BREAK) break;
-                    items.emplace_back(move(item));
+                    items.emplace_back(std::move(item));
                 }
             } else {
                 cbor_value size;
@@ -215,7 +273,7 @@ namespace daedalus_turbo {
                 }
             }
             val.type = CBOR_ARRAY;
-            val.set_content(move(items));
+            val.set_content(std::move(items));
         }
 
         void _read_map(cbor_value &val, uint8_t augVal, const cbor_buffer &augBuf, bool indefinite) {
@@ -226,7 +284,7 @@ namespace daedalus_turbo {
                     read(itemKey);
                     if (itemKey.type == CBOR_SIMPLE_BREAK) break;
                     read(itemValue);
-                    map.emplace_back(move(itemKey), move(itemValue));
+                    map.emplace_back(std::move(itemKey), std::move(itemValue));
                 }
             } else {
                 cbor_value size;
@@ -239,17 +297,17 @@ namespace daedalus_turbo {
                 }
             }
             val.type = CBOR_MAP;
-            val.set_content(move(map));
+            val.set_content(std::move(map));
         }
 
         void _read_tagged_value(cbor_value &val, uint8_t augVal, const cbor_buffer &augBuf) {
             cbor_value tag;
             _read_unsigned_int(tag, augVal, augBuf);
-            unique_ptr<cbor_value> item(new cbor_value());
+            std::unique_ptr<cbor_value> item(new cbor_value());
             read(*item);
             val.type = CBOR_TAG;
-            cbor_tag new_tag(tag.uint(), move(item));
-            val.set_content(move(new_tag));
+            cbor_tag new_tag(tag.uint(), std::move(item));
+            val.set_content(std::move(new_tag));
         }
 
         void _read_float32(cbor_value &val, uint8_t /*augVal*/, const cbor_buffer &augBuf)
@@ -262,7 +320,7 @@ namespace daedalus_turbo {
                 local_order[i] = augBuf.data()[augBuf.size() - 1 - i];
             float tmp;
             memcpy(&tmp, local_order, sizeof(tmp));
-            val.set_content(move(tmp));
+            val.set_content(std::move(tmp));
         }
 
         void _read_simple_value(cbor_value &val, uint8_t augVal, const cbor_buffer &augBuf, bool) {
@@ -292,7 +350,7 @@ namespace daedalus_turbo {
                     break;
 
                 default:
-                    throw cbor_error("simple values beyond BREAK are not supported yet! augVal: %d, augBuf.size: %zu", (int)augVal, augBuf.size());
+                    throw cbor_error("simple values beyond BREAK are not supported yet! augVal: {}, augBuf.size: {}", (int)augVal, augBuf.size());
             }            
         }
 
@@ -314,25 +372,25 @@ namespace daedalus_turbo {
             switch (augVal) {
                 case 24:
                     if (_offset + 1 > _size) throw cbor_incomplete_data_error();
-                    augBuf.set(&_data[_offset], 1);
+                    augBuf = buffer(&_data[_offset], 1);
                     _offset += 1;
                     break;
 
                 case 25:
                     if (_offset + 2 > _size) throw cbor_incomplete_data_error();
-                    augBuf.set(&_data[_offset], 2);
+                    augBuf = buffer(&_data[_offset], 2);
                     _offset += 2;
                     break;
 
                 case 26:
                     if (_offset + 4 > _size) throw cbor_incomplete_data_error();
-                    augBuf.set(&_data[_offset], 4);
+                    augBuf = buffer(&_data[_offset], 4);
                     _offset += 4;
                     break;
 
                 case 27:
                     if (_offset + 8 > _size) throw cbor_incomplete_data_error();
-                    augBuf.set(&_data[_offset], 8);
+                    augBuf = buffer(&_data[_offset], 8);
                     _offset += 8;
                     break;
 
@@ -399,6 +457,15 @@ namespace daedalus_turbo {
 
     };
 
+    inline const cbor_value &extract_value(const cbor_value &v, const std::span<size_t> &path, size_t idx=0)
+    {
+        if (idx >= path.size()) return v;
+        if (v.type != CBOR_ARRAY) throw cbor_error("at path index {}: value must be an array but got CBOR type: {}!", idx, (unsigned)v.type);
+        const cbor_array &a = v.array();
+        if (a.size() <= path[idx]) throw cbor_error("at path index {}: requested index {} but got an array of size {} only!", idx, path[idx], a.size());
+        return extract_value(a[path[idx]], path, idx + 1);
+    }
+
     inline bool is_ascii(const buffer &b)
     {
         for (const uint8_t *p = b.data(), *end = p + b.size(); p < end; ++p) {
@@ -407,63 +474,62 @@ namespace daedalus_turbo {
         return true;
     }
 
-    inline void print_cbor_value(ostream &os, const cbor_value &val, const size_t max_depth=0, const size_t depth = 0,
-        const size_t max_array_to_expand=10, const size_t max_map_to_expand=10)
+    inline void print_cbor_value(std::ostream &os, const cbor_value &val, const size_t max_depth=0, const size_t depth = 0, const size_t max_list_to_expand=10)
     {
-        string shift_str = "";
+        std::string shift_str = "";
         for (size_t i = 0; i < depth * 4; ++i) shift_str += ' ';
         switch (val.type) {
             case CBOR_UINT:
-                os << shift_str << "UINT: " << val.uint() << endl;
+                os << shift_str << "UINT: " << val.uint() << '\n';
                 break;
 
             case CBOR_NINT:
-                os << shift_str << "NINT: -" << val.nint() << endl;
+                os << shift_str << "NINT: -" << val.nint() << '\n';
                 break;
 
             case CBOR_BYTES: {
                 const cbor_buffer &b = val.buf();
                 os << shift_str << "BYTES: " << b.size() << " bytes";
-                if (b.size() <= 64) {
-                    os << " data: " << b;
-                    if (is_ascii(b)) {
-                        const string_view sv(reinterpret_cast<const char *>(b.data()), b.size());
-                        os << " text: '" << sv << "'";
-                    }
+                os << " data: " << b;
+                if (is_ascii(b)) {
+                    const std::string_view sv(reinterpret_cast<const char *>(b.data()), b.size());
+                    os << " text: '" << sv << "'";
                 }
-                os << endl;
+                os << '\n';
                 break;
             }
 
             case CBOR_TEXT: {
                 const cbor_buffer &b = val.buf();
-                const string_view sv(reinterpret_cast<const char *>(b.data()), b.size());
+                const std::string_view sv(reinterpret_cast<const char *>(b.data()), b.size());
                 os << shift_str << "TEXT: " << b.size() << " bytes";
                 if (b.size() <= 64) os << " text: '" << sv << "'";
                 else os << " text: '" << sv.substr(0, 64) << "...'";
-                os << endl;
+                os << '\n';
                 break;
             }
 
             case CBOR_ARRAY: {
                 const cbor_array &a = val.array();
-                os << shift_str << "ARRAY: " << a.size() << " elements, data size: " << val.size << endl;
-                if (a.size() <= max_array_to_expand && depth < max_depth) {
-                    for (size_t i = 0; i < a.size(); ++i)
-                        print_cbor_value(os, a[i], max_depth, depth + 1, max_array_to_expand, max_map_to_expand);
+                os << shift_str << "ARRAY: " << a.size() << " elements, data size: " << val.size << '\n';
+                if ((max_list_to_expand == 0 || a.size() <= max_list_to_expand) && depth < max_depth) {
+                    for (size_t i = 0; i < a.size(); ++i) {
+                        os << shift_str << "    VAL " << i << ":\n";
+                        print_cbor_value(os, a[i], max_depth, depth + 2, max_list_to_expand);
+                    }
                 }
                 break;
             }
 
             case CBOR_MAP: {
                 const cbor_map &m = val.map();
-                os << shift_str << "MAP: " << m.size() << " elements, data size: " << val.size << endl;
-                if (m.size() <= max_map_to_expand && depth + 1 < max_depth) {
+                os << shift_str << "MAP: " << m.size() << " elements, data size: " << val.size << '\n';
+                if ((max_list_to_expand == 0 || m.size() <= max_list_to_expand) && depth + 1 < max_depth) {
                     for (size_t i = 0; i < m.size(); ++i) {
-                        os << shift_str << "    KEY:" << endl;
-                        print_cbor_value(os, m[i].first, max_depth, depth + 2, max_array_to_expand, max_map_to_expand);
-                        os << shift_str << "    VAL:" << endl;
-                        print_cbor_value(os, m[i].second, max_depth, depth + 2, max_array_to_expand, max_map_to_expand);
+                        os << shift_str << "    KEY " << i << ":\n";
+                        print_cbor_value(os, m[i].first, max_depth, depth + 2, max_list_to_expand);
+                        os << shift_str << "    VAL " << i << ":\n";
+                        print_cbor_value(os, m[i].second, max_depth, depth + 2, max_list_to_expand);
                     }
                 }
                 break;
@@ -471,23 +537,29 @@ namespace daedalus_turbo {
 
             case CBOR_TAG: {
                 const cbor_tag &t = val.tag();
-                os << shift_str << "TAG: " << t.first << " data size: " << val.size << endl;
+                os << shift_str << "TAG: " << t.first << " data size: " << val.size << '\n';
                 if (depth < max_depth) {
-                    print_cbor_value(os, *t.second, max_depth, depth + 1, max_array_to_expand, max_map_to_expand);
+                    print_cbor_value(os, *t.second, max_depth, depth + 1, max_list_to_expand);
                 }
                 break;
             }
 
             case CBOR_SIMPLE_NULL:
-                os << shift_str << "NULL" << endl;
+                os << shift_str << "NULL\n";
                 break;
 
             default: {
-                throw error("Unsupported CBOR type: %u!", (unsigned)val.type);
+                throw cbor_error("Unsupported CBOR type: {}!", (unsigned)val.type);
             }
         }
     }
 
+}
+
+namespace fmt {
+    template<>
+    struct formatter<daedalus_turbo::cbor_value_type>: public formatter<unsigned> {
+    };
 }
 
 #endif //!DAEDALUS_TURBO_CBOR_HPP

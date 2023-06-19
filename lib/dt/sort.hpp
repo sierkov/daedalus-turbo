@@ -20,14 +20,12 @@
 #include <sstream>
 #include <vector>
 
-#include "scheduler.hpp"
-#include "util.hpp"
+#include <dt/scheduler.hpp>
+#include <dt/util.hpp>
 
 namespace daedalus_turbo {
 
-    using namespace std;
-
-    typedef string (*merge_sort_func)(const string &out_path, const vector<string> &paths, bool delete_source);
+    typedef std::string (*merge_sort_func)(const std::string &out_path, const std::vector<std::string> &paths, bool delete_source);
 
     class stdio_stream {
         FILE *_s = 0;
@@ -71,7 +69,7 @@ namespace daedalus_turbo {
         void close()
         {
             if (_s) {
-                if (fclose(_s) != 0) throw sys_error("Failed to close file!");
+                if (fclose(_s) != 0) throw error_sys_fmt("Failed to close file!");
                 _s = 0;
             }            
         }
@@ -81,9 +79,9 @@ namespace daedalus_turbo {
             close();
             _eof = false;
             _s = fopen(path, mode);
-            if (!_s) throw sys_error("Failed to open file %s with mode %s", path, mode);
+            if (!_s) throw error_fmt("Failed to open file {} with mode {}", path, mode);
             if (!buffered) {
-                if (setvbuf(_s, NULL, _IONBF, 0) != 0) throw sys_error("Failed to remove stdio buffering");
+                if (std::setvbuf(_s, NULL, _IONBF, 0) != 0) throw error_sys_fmt("Failed to remove stdio buffering");
             }
         }
 
@@ -93,23 +91,23 @@ namespace daedalus_turbo {
 
         void seek(size_t offset)
         {
-            if (fseek(_s, offset, SEEK_SET) != 0)
-                throw sys_error("file seek operation failed!");
+            if (std::fseek(_s, offset, SEEK_SET) != 0)
+                throw error_sys_fmt("file seek operation failed!");
         }
 
         size_t read(uint8_t *data, size_t size)
         {
-            if (!_s) throw error("a read request on a non-opened stream!");
-            size_t n_read = fread(data, 1, size, _s);
+            if (!_s) throw error_fmt("a read request on a non-opened stream!");
+            size_t n_read = std::fread(data, 1, size, _s);
             if (n_read != size) _eof = true;
             return n_read;
         }
 
         void write(const uint8_t *data, size_t size)
         {
-            if (!_s) throw error("a read request on a non-opened stream!");
-            size_t n_written = fwrite(data, 1, size, _s);
-            if (n_written != size) throw sys_error("write failed!");
+            if (!_s) throw error_fmt("a read request on a non-opened stream!");
+            size_t n_written = std::fwrite(data, 1, size, _s);
+            if (n_written != size) throw error_sys_fmt("write failed!");
         }
 
     };
@@ -131,7 +129,7 @@ namespace daedalus_turbo {
         }
 
         item_read_stream(item_read_stream &&v)
-            : _buf(move(v._buf)), _buf_ptr(v._buf_ptr), _buf_end(v._buf_end), _s(move(v._s)), _eof(v._eof)
+            : _buf(std::move(v._buf)), _buf_ptr(v._buf_ptr), _buf_end(v._buf_end), _s(std::move(v._s)), _eof(v._eof)
         {
         }
 
@@ -140,10 +138,10 @@ namespace daedalus_turbo {
         
         item_read_stream &operator=(item_read_stream &&v)
         {
-            _buf = move(v._buf);
+            _buf = std::move(v._buf);
             _buf_ptr = v._buf_ptr;
             _buf_end = v._buf_end;
-            _s = move(v._s);
+            _s = std::move(v._s);
             _eof = v._eof;
             return *this;
         }
@@ -218,18 +216,18 @@ namespace daedalus_turbo {
 
     class stdio_stream_sync
     {
-        alignas(hardware_destructive_interference_size) mutex _mutex;
+        alignas(hardware_destructive_interference_size) std::mutex _mutex;
         stdio_stream _stream;
 
     public:
         stdio_stream_sync(stdio_stream &&stream)
-            : _stream(move(stream))
+            : _stream(std::move(stream))
         {
         }
 
         void write(size_t offset, const uint8_t *data, size_t size)
         {
-            scoped_lock lock(_mutex);
+            std::scoped_lock lock(_mutex);
             _stream.seek(offset);
             _stream.write(data, size);
         }
@@ -252,7 +250,7 @@ namespace daedalus_turbo {
             : _s(stream), _offset(start_offset), _offset_end(end_offset),
                 _buf(sizeof(T) * BUF_ITEMS), _buf_ptr(_buf.data()), _buf_end(_buf_ptr + _buf.size())
         {
-            if (_offset > _offset_end) throw error("start_offset: %zu must be smaller than or equal to end_offset: %zu", start_offset, end_offset);
+            if (_offset > _offset_end) throw error_fmt("start_offset: {} must be smaller than or equal to end_offset: {}", start_offset, end_offset);
         }
 
         ~item_seeking_write_stream()
@@ -270,7 +268,7 @@ namespace daedalus_turbo {
         }
 
         void write(const T &data) {
-            if (_offset + _buf_ptr - _buf.data() + sizeof(T) > _offset_end) throw error("a potential write past the end offset!");
+            if (_offset + _buf_ptr - _buf.data() + sizeof(T) > _offset_end) throw error_fmt("a potential write past the end offset!");
             memcpy(_buf_ptr, &data, sizeof(T));
             _buf_ptr += sizeof(T);
             if (_buf_ptr >= _buf_end) flush();
@@ -279,7 +277,7 @@ namespace daedalus_turbo {
     };
 
     template<typename W, typename T>
-    size_t merge_sort_queue_writer(W &output_stream, const vector<string> &paths, bool delete_source = true) {
+    size_t merge_sort_queue_writer(W &output_stream, const std::vector<std::string> &paths, bool delete_source = true) {
         constexpr auto item_size = sizeof(T);
         item_read_stream<T, 400> streams[paths.size()];
         size_t total_in_size = 0;
@@ -291,17 +289,17 @@ namespace daedalus_turbo {
             {
             }
 
-            Item(Item &&i) : val(move(i.val)), stream_idx(i.stream_idx)
+            Item(Item &&i) : val(std::move(i.val)), stream_idx(i.stream_idx)
             {
             }
 
-            Item(T &&v, size_t idx) : val(move(v)), stream_idx(idx)
+            Item(T &&v, size_t idx) : val(std::move(v)), stream_idx(idx)
             {
             }
 
             Item &operator=(Item &&i)
             {
-                val = move(i.val);
+                val = std::move(i.val);
                 stream_idx = i.stream_idx;
                 return *this;
             }
@@ -312,59 +310,59 @@ namespace daedalus_turbo {
                 return !(val < v.val);
             }
         };
-        using ItemQueue = priority_queue<Item>;
+        using ItemQueue = std::priority_queue<Item>;
         ItemQueue items_to_consider;
         for (size_t i = 0; i < paths.size(); ++i) {
-            size_t f_size = filesystem::file_size(paths[i]);
-            if (f_size % item_size != 0) throw error("file size must be a multiple of item_size!");
+            size_t f_size = std::filesystem::file_size(paths[i]);
+            if (f_size % item_size != 0) throw error_fmt("file size must be a multiple of item_size!");
             total_in_size += f_size;
             streams[i].open(paths[i].c_str());
             T val;
-            if (streams[i].read(val)) items_to_consider.emplace(move(val), i);
+            if (streams[i].read(val)) items_to_consider.emplace(std::move(val), i);
         }
 
         while (items_to_consider.size() > 0) {
             Item next(items_to_consider.top());
             items_to_consider.pop();
             output_stream.write(next.val);
-            if (streams[next.stream_idx].read(next.val)) items_to_consider.push(move(next));
+            if (streams[next.stream_idx].read(next.val)) items_to_consider.push(std::move(next));
         }
         for (size_t i = 0; i < paths.size(); ++i) {
             streams[i].close();
-            if (delete_source) filesystem::remove(paths[i]);
+            if (delete_source) std::filesystem::remove(paths[i]);
         }
         return total_in_size;
     }
 
     template<typename T>
-    string merge_sort_files(const string &out_path, const vector<string> &paths, bool delete_source = true) {
+    std::string merge_sort_files(const std::string &out_path, const std::vector<std::string> &paths, bool delete_source = true) {
         using write_stream = item_write_stream<T, 10000>;
         write_stream os;
         os.open(out_path.c_str());
         size_t total_in_size = merge_sort_queue_writer<write_stream, T>(os, paths, delete_source);
         os.close();
-        if (filesystem::file_size(out_path) != total_in_size) {
-            throw error("%s: size: %zu  != total input size: %zu", out_path.c_str(), filesystem::file_size(out_path), total_in_size);
+        if (std::filesystem::file_size(out_path) != total_in_size) {
+            throw error_fmt("{}: size: {} != total input size: {}", out_path, std::filesystem::file_size(out_path), total_in_size);
         }
         return out_path;
     }
 
     template<typename T>
-    string merge_sort_radix(const string &out_path, const vector<string> &paths, const vector<string> &radix_suffixes, bool delete_source = true)
+    std::string merge_sort_radix(const std::string &out_path, const std::vector<std::string> &paths, const std::vector<std::string> &radix_suffixes, bool delete_source = true)
     {
         stdio_stream_sync sync_stream(stdio_stream(out_path.c_str(), "wb", false));
         size_t num_radixes = radix_suffixes.size();
         size_t radix_size[num_radixes];
         using write_stream = item_seeking_write_stream<T, stdio_stream_sync, 10000>;
-        vector<write_stream> _write_streams;
-        vector<string> radix_paths[num_radixes];
+        std::vector<write_stream> _write_streams;
+        std::vector<std::string> radix_paths[num_radixes];
 
         memset(radix_size, 0, sizeof(radix_size));
         for (size_t ri = 0; ri < num_radixes; ++ri) {
             for (const auto &p: paths) {
-                string radix_path = p + radix_suffixes[ri];
-                radix_size[ri] += filesystem::file_size(radix_path);
-                radix_paths[ri].push_back(move(radix_path));
+                std::string radix_path = p + radix_suffixes[ri];
+                radix_size[ri] += std::filesystem::file_size(radix_path);
+                radix_paths[ri].push_back(std::move(radix_path));
             }
         }
         size_t offset = 0;

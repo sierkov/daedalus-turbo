@@ -7,16 +7,18 @@
  */
 
 #include <string_view>
+
 #include <boost/ut.hpp>
+
 #include <dt/lz4.hpp>
 
-using namespace std;
+using namespace std::literals;
 using namespace boost::ut;
 using namespace daedalus_turbo;
 
 suite lz4_suite = [] {
     "lz4"_test = [] {
-        const string_view test_data = "some text\0\x11\xFE"sv;
+        const std::string_view test_data = "some text\0\x11\xFE"sv;
         uint8_vector orig, compressed;
         orig.resize(test_data.size());
         memcpy(orig.data(), test_data.data(), test_data.size());

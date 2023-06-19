@@ -7,10 +7,12 @@
  */
 
 #include <string_view>
+
 #include <boost/ut.hpp>
+
 #include <dt/cbor.hpp>
 
-using namespace std;
+using namespace std::literals;
 using namespace boost::ut;
 using namespace daedalus_turbo;
 
@@ -22,7 +24,7 @@ inline cbor_value parse_cbor(const uint8_t *data, size_t size)
     return val;
 }
 
-inline cbor_value parse_cbor(const string_view &bytes)
+inline cbor_value parse_cbor(const std::string_view &bytes)
 {
     cbor_parser parser(reinterpret_cast<const uint8_t*>(bytes.data()), bytes.size());
     cbor_value val;
@@ -193,6 +195,15 @@ suite cbor_parser_suite = [] {
                 expect(item2[1].type == CBOR_UINT);
                 expect(item2[1].uint() == 3);
             }
+        };
+
+        "array_checked_at"_test = [] {
+            cbor_value val = parse_cbor("\x83\x01\x02\x03"sv);
+            expect(val.type == CBOR_ARRAY);
+            const cbor_array &items = val.array();
+            expect(items.size() == 3);
+            expect(boost::ut::nothrow([&] { items.at(2); }));
+            expect(throws<cbor_error>([&] { items.at(3); }));
         };
     };
 

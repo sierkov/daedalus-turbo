@@ -7,11 +7,12 @@
  */
 
 #include <iostream>
+
 #include <boost/ut.hpp>
+
 #include <dt/benchmark.hpp>
 #include <dt/index.hpp>
 
-using namespace std;
 using namespace boost::ut;
 using namespace daedalus_turbo;
 
@@ -22,7 +23,7 @@ struct indexed_type {
     bool special_y;
 };
 
-const string TMP_DIR = "/tmp"s;
+const std::string TMP_DIR = "/tmp"s;
 
 suite index_bench_suite = [] {
     "index_writer"_test = [] {
@@ -45,7 +46,7 @@ suite index_bench_suite = [] {
     
     "index_radix_writer"_test = [] {
         double throughput = benchmark_throughput("index_radix_writer", 5, [] {
-            vector<string> paths;
+            std::vector<std::string> paths;
             paths.emplace_back(TMP_DIR + "/index-bench-radix-1.tmp");
             paths.emplace_back(TMP_DIR + "/index-bench-radix-2.tmp");
             paths.emplace_back(TMP_DIR + "/index-bench-radix-3.tmp");

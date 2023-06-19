@@ -16,25 +16,25 @@
 #include <string>
 #include <sstream>
 
-#include "cbor.hpp"
-#include "lz4.hpp"
+#include <dt/error.hpp>
+#include <dt/cbor.hpp>
+#include <dt/lz4.hpp>
 
 namespace daedalus_turbo {
-    using namespace std;
 
     struct chunk_info {
-        string id;
-        string path;
+        std::string id;
+        std::string path;
         uint64_t size;
         bool lz4;
 
-        chunk_info(const filesystem::path &aPath, uint64_t aSize, bool lz4_)
+        chunk_info(const std::filesystem::path &aPath, uint64_t aSize, bool lz4_)
             : id(aPath.stem().string()), path(aPath.string()), size(aSize), lz4(lz4_)
         {
         }
     };
 
-    typedef map<uint64_t, chunk_info> chunk_map;
+    typedef std::map<uint64_t, chunk_info> chunk_map;
 
     constexpr size_t MAX_READ_SIZE = 256 * 1024; // Assume the largest block is 256KB - a multiple of the current limit of 88KB
 
@@ -46,11 +46,11 @@ namespace daedalus_turbo {
 
     public:
 
-        chunk_registry(const string &path, bool lz4_=false)
+        chunk_registry(const std::string &path, bool lz4_=false)
             : lz4(lz4_)
         {
-            set<filesystem::path> sortedChunks;
-            for (const auto &entry : filesystem::directory_iterator(path)) {
+            std::set<std::filesystem::path> sortedChunks;
+            for (const auto &entry : std::filesystem::directory_iterator(path)) {
                 if (lz4) {
                     if (entry.path().extension() != ".lz4") continue;
                 } else {
@@ -62,12 +62,12 @@ namespace daedalus_turbo {
             for (const auto &path : sortedChunks) {
                 uint64_t size;
                 if (lz4) {
-                    ifstream is(path, ios::binary);
-                    if (!is) throw sys_error("failed to open for reading: %s", path.c_str());
+                    std::ifstream is(path, std::ios::binary);
+                    if (!is) throw error_sys_fmt("failed to open for reading: {}", path.string());
                     is.read(reinterpret_cast<char *>(&size), sizeof(size));
                     is.close();
                 } else {
-                    size = filesystem::file_size(path);
+                    size = std::filesystem::file_size(path);
                 }
                 
                 _chunks.insert(chunk_map::value_type(offset, chunk_info(path, size, lz4)));
@@ -93,20 +93,20 @@ namespace daedalus_turbo {
         }
 
         chunk_map::const_iterator find_chunk(uint64_t offset) {
-            if (offset >= _size_bytes) throw runtime_error("the requested offset is outside of the allowed bounds");
+            if (offset >= _size_bytes) throw error_fmt("the requested offset is outside of the allowed bounds");
             chunk_map::const_iterator it = _chunks.lower_bound(offset);
             if (it == _chunks.end()) {
                 it = prev(it);
-                if (offset + 1 > it->first + it->second.size) throw runtime_error("no relevant chunk was found!");
+                if (offset + 1 > it->first + it->second.size) throw error_fmt("no relevant chunk was found!");
             }
             if (offset < it->first) {
-                if (it == _chunks.begin()) throw runtime_error("no relevant chunk was found!");
+                if (it == _chunks.begin()) throw error_fmt("no relevant chunk was found!");
                 it--;
             }
             return it;
         }
 
-        const string find_chunk_name(uint64_t offset) {
+        const std::string find_chunk_name(uint64_t offset) {
             auto it = find_chunk(offset);
             return it->second.path;
         }
@@ -116,10 +116,10 @@ namespace daedalus_turbo {
         }
 
         size_t read(uint64_t offset, cbor_value &value, uint8_vector &read_buffer, const size_t max_read_size=MAX_READ_SIZE, const size_t read_scale_factor=2) {
-            if (offset + 1 > _size_bytes) throw runtime_error("the requested byte range is outside of the allowed bounds");
+            if (offset + 1 > _size_bytes) throw error_fmt("the requested byte range is outside of the allowed bounds");
             size_t read_attempts = 0;
             auto chunk_it = find_chunk(offset);
-            if (chunk_it->first + chunk_it->second.size < offset + 1) throw runtime_error("the requested chunk is too small to provide the requested number of bytes");
+            if (chunk_it->first + chunk_it->second.size < offset + 1) throw error_fmt("the requested chunk is too small to provide the requested number of bytes");
             if (chunk_it->second.lz4) {
                 uint8_vector compressed;
                 read_whole_file(chunk_it->second.path, compressed);
@@ -128,12 +128,8 @@ namespace daedalus_turbo {
                 cbor_parser parser(read_buffer.data() + read_offset, read_buffer.size() - read_offset);
                 parser.read(value);
             } else {
-                ifstream is(chunk_it->second.path, ios::binary);
-                if (!is) {
-                    stringstream ss;
-                    ss << "Can't open file " << chunk_it->second.path;
-                    throw runtime_error(ss.str());
-                }
+                std::ifstream is(chunk_it->second.path, std::ios::binary);
+                if (!is) throw error_fmt("Can't open file {}", chunk_it->second.path);
                 size_t read_size = chunk_it->second.size - (offset - chunk_it->first);
                 if (read_size > max_read_size) read_size = max_read_size;
                 bool ok = false;
@@ -141,11 +137,11 @@ namespace daedalus_turbo {
                     try {
                         read_attempts++;
                         read_buffer.resize(read_size);
-                        is.seekg(offset - chunk_it->first, ios::beg);
+                        is.seekg(offset - chunk_it->first, std::ios::beg);
                         is.read(reinterpret_cast<char *>(read_buffer.data()), read_size);
                         cbor_parser parser(read_buffer.data(), read_size);
                         parser.read(value);
-                        if (value.size > read_size) throw error("internal error: read value: %zu is larger than it must be: %zu!", value.size, read_size);
+                        if (value.size > read_size) throw error_fmt("internal error: read value: {} is larger than it must be: {}!", value.size, read_size);
                         ok = true;
                     } catch (cbor_incomplete_data_error &ex) {
                         if (read_size < MAX_READ_SIZE) {

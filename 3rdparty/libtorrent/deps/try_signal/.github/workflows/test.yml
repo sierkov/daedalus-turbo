@@ -1,0 +1,88 @@
+name: Tests
+
+on:
+   push:
+      branches: master
+   pull_request:
+
+concurrency:
+   group: ${{ github.ref }}-${{ github.workflow }}-${{ github.event_name }}
+   cancel-in-progress: true
+
+jobs:
+
+  build:
+    name: build
+    runs-on: ${{ matrix.os }}
+    continue-on-error: true
+
+    strategy:
+       matrix:
+          os: [ ubuntu-latest, macos-latest, windows-latest ]
+          model: [ 32, 64 ]
+
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
+      with:
+         submodules: true
+
+    - name: Set up MinGW
+      if: runner.os == 'Windows'
+      uses: egor-tensin/setup-mingw@v2
+      with:
+        platform: x64
+
+    - name: update package lists (Linux)
+      if: runner.os == 'Linux'
+      continue-on-error: true
+      run: |
+        sudo apt update
+
+    - name: update package lists (MacOS)
+      if: runner.os == 'macOS'
+      continue-on-error: true
+      run: |
+        brew update
+
+    - name: dependencies (linux)
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt install libboost-tools-dev
+
+    - name: dependencies (windows)
+      if: runner.os == 'Windows'
+      shell: cmd
+      run: |
+        git clone --depth=1 --branch=boost-1.78.0 https://github.com/boostorg/boost.git
+        cd boost
+        git submodule update --init tools/build
+        bootstrap.bat
+
+    - name: dependencies (MacOS)
+      if: runner.os == 'macOS'
+      run: |
+        brew install boost-build
+
+    - name: build and test
+      if: runner.os == 'Windows'
+      shell: cmd
+      run: |
+        set BOOST_BUILD_PATH=boost\tools\build
+        set BOOST_ROOT=boost
+        .\boost\b2.exe cxxstd=11 address-model=${{ matrix.model }} warnings=all warnings-as-errors=on stage_test
+        .\test.exe
+
+    - name: build and test
+      if: runner.os != 'Windows'
+      run: |
+        b2 cxxstd=11 address-model=${{ matrix.model }} warnings=all warnings-as-errors=on stage_test
+        ./test
+
+    - name: build and test (mingw)
+      if: runner.os == 'Windows'
+      run: |
+        set BOOST_BUILD_PATH=boost\tools\build
+        set BOOST_ROOT=boost
+        .\boost\b2.exe cxxstd=11 toolset=gcc address-model=${{ matrix.model }} warnings=all warnings-as-errors=on stage_test
+        .\test

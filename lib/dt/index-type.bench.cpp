@@ -7,10 +7,10 @@
  */
 
 #include <boost/ut.hpp>
+
 #include <dt/benchmark.hpp>
 #include <dt/index-type.hpp>
 
-using namespace std;
 using namespace boost::ut;
 using namespace daedalus_turbo;
 
