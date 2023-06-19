@@ -10,14 +10,19 @@
 - [Benchmark reproduction](#benchmark-reproduction)
 
 # About
-The goal of Daedalus Turbo project is to drastically (>=10x) improve the blockchain synchronization speed of the Daedalus wallet, the primary fully-decentralized wallet of Cardano blockchain.
+Daedalus Turbo is an open-source project that aims to drastically (>=10x) improve blockchain synchronization performance of the Daedalus wallet, the primary fully-decentralized wallet of the Cardano blockchain. The project has a two-year schedule presented in its [roadmap](#roadmap),
+and its technical approach is explained in the following research reports:
+1. [Highly Parallel Reconstruction of Wallet History in the Cardano Blockchain](./doc/2023_Sierkov_WalletHistoryReconstruction.pdf);
+2. [Scalability of Bulk Synchronization in the Cardano Blockchain](./doc/2023_Sierkov_CardanoBulkSynchronization.pdf).
 
-At the moment, this repository contains an implementation of the highly-parallel wallet-history-reconstruction method described in [2023_Sierkov_WalletHistoryReconstruction](./doc/2023_Sierkov_WalletHistoryReconstruction.pdf) paper.
-On a modern computer, it can often process the whole blockchain and reconstruct a wallet's history in 1 minute or quicker.
-In comparison, Daedalus takes several hours when one adds a new wallet
-even when the blockchain data is already fully synced. The blockchain data is assumed to be pre-validated, but that's only for the first milestone. Section 4.2 of the paper provides more details on the potential approaches to data delivery and validation.
+This repository currently contains an implementation of the highly-parallel wallet-history-reconstruction method presented in the [first research report](./doc/2023_Sierkov_WalletHistoryReconstruction.pdf).
+On a modern computer, it can often process the whole blockchain and reconstruct a wallet's history in a minute or quicker.
+In comparison, Daedalus takes several hours when one adds a new wallet,
+even when the blockchain data is already fully synced. As the project moves forward, other components will be added.
 
-As the project moves forward, other components will be added. To better understand the project's scope, it's recommended to read the Introduction section of the paper (one page), and skim through the Results and the Discussion sections. The [roadmap](#roadmap) can help understand the expected timeline of the project.
+The code currently assumes blockchain data to be pre-validated. However, in the future, the project plans to support two validation methods:
+- Parallel Ouroboros-Praos-like validation, as explained in section 4.6 of the [second research report](./doc/2023_Sierkov_CardanoBulkSynchronization.pdf);
+- [Mithril](https://mithril.network/doc/).
 
 # Test it yourself
 Check that you are ready for the test:
@@ -82,7 +87,7 @@ The development of the project is organized into the following milestones:
 | Milestone | ETA | Status |
 | --------- | --- | ------ |
 | M1: Show that transaction history can be reconstructed 10x quicker | February 2023 | Ready, review passed |
-| M2: Analyze the scalability of the Cardano network protocol and prepare requirements for the accelerated one | June 2023 | In progress |
+| M2: Analyze the scalability of the Cardano network protocol and prepare requirements for the accelerated one | June 2023 | Ready, in review |
 | M3: Full POC of Daedalus Turbo: fast blockchain data delivery and transaction-history reconstruction | March 2024 | Planned |
 | M4: Integrate the POC into the official Daedalus builds | February 2025 | Planned |
 
@@ -101,10 +106,24 @@ throughput should increase by about 250 megabytes/sec for every additional CPU t
   please use exactly the same setup as presented in the paper:
   Ubuntu Linux 22.04 LTS as your host OS.
 
-# Benchmark reproduction
+# Experiment reproduction
+The [experiment](./experiment/) directory contains source code of benchmarks and experiments discussed in the project's research reports.
 
-Start a new AMD EPYC 7443P instance with Ubuntu 22.04 LTS as the image.
-An instance with exactly the same configuration as in the paper can be rented at [Vultr](https://www.vultr.com/products/bare-metal).
+## Hardware and reproducibility
+
+To ensure that all experiments are reproducible, they were performed
+on bare-metal servers rented at [Vultr](https://www.vultr.com/products/bare-metal). Bare-metal servers reduce the possibility of alternative workloads
+affecting experiment results.
+
+Specifically, a server with a 24-core AMD EPYC 7443P CPU is used.
+This variant was chosen to better highlight the benefits of parallel processing.
+At the same time, since the primary users of Daedalus wallets are consumers, 
+where applicable the experiments were additionally run with
+a reduced thread count of eight to simulate consumer-grade laptops.
+
+## Highly-parallel wallet-history reconstruction in Cardano blockchain
+
+Start a new bare-metal server with an AMD EPYC 7443P CPU running under Ubuntu 22.04 LTS. Servers with exactly the same configuration as in the paper can be rented at [Vultr](https://www.vultr.com/products/bare-metal).
 
 create a raid0 disk array and mount it under /data:
 ```
