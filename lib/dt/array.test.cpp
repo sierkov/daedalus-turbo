@@ -32,6 +32,21 @@ suite array_suite = [] {
             expect(a[3] == 4);
         };
 
+        "initialize size_t"_test = [] {
+            array<size_t, 10> a { 1, 5, 1, 1, 1, 3, 1, 1, 4, 0 };
+            expect(a.size() == 10);
+            expect(a[0] == 1);
+            expect(a[1] == 5);
+            expect(a[2] == 1);
+            expect(a[3] == 1);
+            expect(a[4] == 1);
+            expect(a[5] == 3);
+            expect(a[6] == 1);
+            expect(a[7] == 1);
+            expect(a[8] == 4);
+            expect(a[9] == 0);
+        };
+
         "construct_span"_test = [] {
             array<uint8_t, 4> a { 1, 2, 3, 4 };
             array<uint8_t, 4> b { 9, 8, 7, 6 };
@@ -41,6 +56,22 @@ suite array_suite = [] {
             expect(c[1] == 8);
             expect(c[2] == 7);
             expect(c[3] == 6);
+        };
+
+        "construct size_t span"_test = [] {
+            std::array<size_t, 10> tmp { 1, 5, 1, 1, 1, 3, 1, 1, 4, 0 };
+            array<size_t, 10> a { std::span(tmp) };
+            expect(a.size() == 10);
+            expect(a[0] == 1);
+            expect(a[1] == 5);
+            expect(a[2] == 1);
+            expect(a[3] == 1);
+            expect(a[4] == 1);
+            expect(a[5] == 3);
+            expect(a[6] == 1);
+            expect(a[7] == 1);
+            expect(a[8] == 4);
+            expect(a[9] == 0);
         };
 
         "assign_span"_test = [] {
@@ -56,6 +87,25 @@ suite array_suite = [] {
             expect(a[1] == 8);
             expect(a[2] == 7);
             expect(a[3] == 6);
+        };
+
+        "assign size_t span"_test = [] {
+            std::array<size_t, 10> tmp { 1, 5, 1, 1, 1, 3, 1, 1, 4, 0 };
+            array<size_t, 10> a {};
+            expect(a.size() == 10);
+            for (size_t i = 0; i < a.size(); ++i)
+                expect(a[i] == 0);
+            a = std::span(tmp);
+            expect(a[0] == 1);
+            expect(a[1] == 5);
+            expect(a[2] == 1);
+            expect(a[3] == 1);
+            expect(a[4] == 1);
+            expect(a[5] == 3);
+            expect(a[6] == 1);
+            expect(a[7] == 1);
+            expect(a[8] == 4);
+            expect(a[9] == 0);
         };
     };  
 };

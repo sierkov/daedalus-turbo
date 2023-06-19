@@ -25,19 +25,19 @@ namespace daedalus_turbo {
 
         array(std::initializer_list<T> s) {
             if (s.size() != SZ) throw array_error("span must of size {} but got {}", SZ, s.size());
-            memcpy(this, std::data(s), SZ);
+            memcpy(this, std::data(s), SZ * sizeof(T));
         }
 
-        array(const std::span<const uint8_t> &s)
+        array(const std::span<const T> &s)
         {
             if (s.size() != SZ) throw array_error("span must of size {} but got {}", SZ, s.size());
-            memcpy(this, s.data(), SZ);
+            memcpy(this, std::data(s), SZ * sizeof(T));
         }
 
-        array &operator=(const std::span<const uint8_t> &s)
+        array &operator=(const std::span<const T> &s)
         {
             if (s.size() != SZ) throw array_error("span must of size {} but got {}", SZ, s.size());
-            memcpy(this, s.data(), SZ);
+            memcpy(this, std::data(s), SZ * sizeof(T));
             return *this;
         }
 
