@@ -7,14 +7,8 @@
 
 ## From "Networking scalability of Cardano blockchain" paper
 
-- networking-cost simulation
-- max number of simultaneous turbo wallets
-- stake-pool incentives calculations
-- [cardano-topology](./cardano-topology/) - the code to collect all IP addresses with which a Cardano node instance establishes TCP connections during the synchronization process.
-- cardano-blockfetch (haskell+rust) - measure the peak bandwidth of Cardano Node?
-- cardano-chainsync (haskell+rust) - measure the peak bandwidth of Cardano Node?
-- [bittorrent-watcher](./bittorrent-watcher/) - the code measuring performance of data-delivery using BitTorrent v2 protocol as implemented in [libtorrent](https://libtorrent.org/).
-- [mithril-compression](./mithril-snapshot/) - the code comparing the compression ratio and compression/decompression speed of per-chunk [Zstandard](https://github.com/facebook/zstd) compression versus tar+gzip as used by Mithril in April of 2023.
+- [cardano-peer-discovery](./cardano-peer-discovery/) - capture and analyze network traffic during Cardano Node synchronization from scratch.
+- [compression](./compression/) - measure the compression ratio and compression/decompression speed of per-chunk [Zstandard](https://github.com/facebook/zstd) compression.
 
 ## Replicating the hardware environment used in performance-focused experiments
 To ensure that all experiments are reproducible, they were performed
