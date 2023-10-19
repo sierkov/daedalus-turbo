@@ -25,7 +25,7 @@ Currently supported:
 - Direct reconstruction from compressed blockchain data.
 
 In active development:
-- Synchronization of blockchain data over network.
+- Synchronization of compressed blockchain data over network.
 - Parallel Ouroboros-Praos-like validation of blockchain data.
 - Desktop Cardano Explorer app.
 
@@ -37,7 +37,7 @@ As the project matures and moves through its [roadmap](#roadmap), the list of su
 
 # Requirements
 - 8+-core CPU.
-- 8+GB of RAM. The precise amount depends on the number of simultaneous execution threads your CPU can handle. The higher the count, the more RAM is needed.
+- 8+GB of RAM. The precise amount depends on the number of simultaneous execution threads your CPU can handle. The higher the number, the more RAM is needed.
 - a fast SSD with ~60GB of free space:
   - ~50GB for the compressed blockchain data and search indices.
   - ~10GB for temporary use during indexing.
@@ -95,7 +95,7 @@ To find information about a given transaction, run:
 Many in the Cardano community, including some developers of Daedalus, don't believe that it's possible to make it noticeably faster. This leads to a situation in which the development is not focused on its performance. If you're persuaded by the evidence presented here, share it on social media with those around you. Changing the beliefs of people can be harder than building top-notch technology. So, every single tweet and Facebook post makes a difference. Thank you!
 
 # Quality
-The code has been tested using a sample of ten thousand randomly-selected stake keys. For 100% of those, the reconstructed ADA balance (excluding rewards) precisely matched the stake recorded in the ledger snapshot produced by Cardano Node. The testing was performed with slot number 94348799 at the tip of the blockchain. The code of the test is located in the [test](test/) directory of this repository.
+The code has been tested using a sample of ten thousand randomly-selected stake keys. For 100% of those, the reconstructed ADA balance (excluding rewards) precisely matched the stake recorded in the ledger snapshot produced by Cardano Node. The testing was performed with slot number 106012751 at the tip of the blockchain. The code of the test is located in the [test](test/) directory of this repository.
 
 # Roadmap
 The development of the project is organized into the following milestones:
