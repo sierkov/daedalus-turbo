@@ -459,8 +459,8 @@ namespace fmt {
                 for (const auto &[offset, tx]: h.transactions)
                    out_it = fmt::format_to(out_it, "{}", tx);
             }
-            out_it = fmt::format_to(out_it, "transaction outputs affecting stake address {}: {} of them unspent: {}\n",
-                h.id.hash.span(), h.total_tx_outputs, h.total_tx_outputs_unspent);
+            out_it = fmt::format_to(out_it, "transaction outputs affecting {}: {} of them unspent: {}\n",
+                h.id, h.total_tx_outputs, h.total_tx_outputs_unspent);
             out_it = fmt::format_to(out_it, "available balance without rewards: {}\n", daedalus_turbo::cardano::amount { h.utxo_balance() });
             if (h.balance_assets.size() > 0)
                 out_it = fmt::format_to(out_it, "asset balances: {}\n", h.balance_assets);

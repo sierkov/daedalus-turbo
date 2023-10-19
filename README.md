@@ -62,16 +62,18 @@ git clone https://github.com/sierkov/daedalus-turbo.git dt
 cd dt
 ```
 
-Build and start a Docker container. Replace */cardano-node/data* with the path to Cardano Node chain data.
+Build and start a Docker container. Replace */cardano-node* with the path to the Cardano Node data directory.
 ```
 docker build -t dt -f Dockerfile.test .
-docker run -it --rm -v /cardano-node/data:/data/node dt
+docker run -it --rm -v /cardano-node:/node dt
 ```
+N.B.: If the Cardano Node is still running during this test, it may be necessary to run the below command, sync-local, several times.
+That is because both immutable and volatile data are used, and Cardano Node's volatile files may be temporarily in an inconsistent state.
 
 Convert the blockchain to the compressed format and build search indices.
 This command works incrementally, so on successive runs it will reprocess only new and updated chunks.
 ```
-./dt sync-local /data/node /data/compressed /data/indices
+./dt sync-local /node /data/compressed /data/indices
 ```
 
 To reconstruct the latest balance and transaction history of a given stake key, run:

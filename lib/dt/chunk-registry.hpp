@@ -428,8 +428,10 @@ namespace daedalus_turbo {
             uint64_t prev_slot = 0;
             _parse_chunk(chunk, raw_data, [&](const auto &blk) {
                 if (blk.era() > 0) {
-                    if (blk.slot() > 0 && blk.slot() <= prev_slot)
-                        throw error("chunk {} at {}: a block's slot {} is not greater than the slot of the prev block {}!", rel_path, offset, blk.slot(), prev_slot);
+                    // Equal slot numbers are allowed here since they may be present in Cardano Node's volatile files.
+                    // Parallel validation step will handle such cases with more precision in the future.
+                    if (blk.slot() > 0 && blk.slot() < prev_slot)
+                        throw error("chunk {} at {}: a block's slot {} is less than the slot of the prev block {}!", rel_path, offset, blk.slot(), prev_slot);
                     else
                         prev_slot = blk.slot();
                 }

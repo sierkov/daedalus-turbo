@@ -163,7 +163,7 @@ namespace daedalus_turbo {
                         task_res = task.task();
                     } catch (std::exception &ex) {
                         task_res = std::make_any<scheduled_task_error>("task: '{}' error: '{}' of type: '{}'!", task_name, ex.what(), typeid(ex).name());
-                        logger::error("worker-{} task {} failed: {}", worker_idx, task_name, ex.what());
+                        logger::warn("worker-{} task {} failed: {}", worker_idx, task_name, ex.what());
                     }
                     lock.lock();
                     _worker_tasks[worker_idx] = "";
@@ -310,13 +310,6 @@ namespace daedalus_turbo {
                     bool have_work = _results_cv.wait_for(results_lock, update_interval_ms, [&]{ return !_results.empty(); });
                     if (have_work)
                         _process_results(results_lock);
-                }
-                // Special case, in one-worker mode execute tasks in the loop
-                if (_num_workers == 1 && !_tasks.empty()) _worker_try_execute(0);
-                {
-                    std::unique_lock results_lock(_results_mutex);
-                    bool have_work = _results_cv.wait_for(results_lock, update_interval_ms, [&]{ return !_results.empty(); });
-                    if (have_work) _process_results(results_lock);
                 }
             }
             if (report_progress)

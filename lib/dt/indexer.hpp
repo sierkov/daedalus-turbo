@@ -48,10 +48,14 @@ namespace daedalus_turbo::indexer {
                     throw error("can't increase the max number of open files to {}!", min_no_open_files);
 #           else
                 struct rlimit lim;
-                lim.rlim_cur = min_no_open_files;
-                lim.rlim_max = min_no_open_files;
-                if (setrlimit(RLIMIT_NOFILE, &lim) != 0)
-                    throw error_sys("failed to increase the max number of open files to {}", min_no_open_files);
+                if (getrlimit(RLIMIT_NOFILE, &lim) != 0)
+                    throw error_sys("getrlimit failed");
+                if (lim.rlim_cur < min_no_open_files || lim.rlim_max < min_no_open_files) {
+                    lim.rlim_cur = min_no_open_files;
+                    lim.rlim_max = min_no_open_files;
+                    if (setrlimit(RLIMIT_NOFILE, &lim) != 0)
+                        throw error_sys("failed to increase the max number of open files to {}", min_no_open_files);
+                }
 #           endif
         }
 

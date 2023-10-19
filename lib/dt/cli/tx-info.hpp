@@ -36,7 +36,7 @@ namespace daedalus_turbo::cli::tx_info {
                 throw error("unknown transaction hash {}", tx_hash.span());
             history_mock_block block { tx_info.block_info, tx_info.tx_raw, tx_info.offset };
             auto tx = cardano::make_tx(tx_info.tx_raw, block);
-            std::cout << tx->to_json() << '\n';
+            std::cout << tx->to_json() << std::endl;
         }
     };
 }

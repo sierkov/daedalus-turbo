@@ -158,8 +158,10 @@ namespace daedalus_turbo::index {
                 _os.write(data.data(), data_size);
             }
             _os.write(_cnts.data(), sizeof(_cnts[0]) * _cnts.size());
-            for (const auto &chunk_list: _parts)
-                _os.write(chunk_list.data(), sizeof(chunk_list[0]) * chunk_list.size());
+            for (const auto &chunk_list: _parts) {
+                if (!chunk_list.empty())
+                    _os.write(chunk_list.data(), sizeof(chunk_list[0]) * chunk_list.size());
+            }
             _os.write(&meta_off, sizeof(meta_off));
             _os.close();
         }

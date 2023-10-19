@@ -6,7 +6,7 @@
  * This code uses a binary dump of the ledger state produced by Cardano Node.
  * Moreover, at the moment it relies on the relative ordering of the data structures.
  * So, it can be very brittle.
- * The code has been tested with the ledger snapshot at end of epoch 415 (last slot 94348799). */
+ * The code has been tested with the ledger snapshot at end of epoch 432 (last slot 106012751). */
 #include <algorithm>
 #include <array>
 #include <fstream>

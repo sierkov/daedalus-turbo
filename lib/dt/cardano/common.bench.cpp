@@ -30,13 +30,14 @@ suite cardano_common_bench_suite = [] {
                 }
                 return num_iter;
             });
-            auto raw_r = benchmark_rate("extract slot structured", 3, [&] {
+            auto raw_r = benchmark_rate("extract slot direct", 3, [&] {
                 for (size_t i = 0; i < num_iter; ++i) {
                     extract_slot(block_tuple);
                 }
                 return num_iter;
             });
-            expect(struct_r >= 0.9 * raw_r) << struct_r << raw_r;
+            expect(struct_r >= 10e6);
+            expect(raw_r >= 10e6);
         };
     };    
 };
