@@ -143,8 +143,8 @@ namespace daedalus_turbo {
                 throw error("internal error: duplicate chunk offset: {} size: {}", inserted_chunk.offset, inserted_chunk.data_size);
             _end_offset += inserted_chunk.data_size;
             _files.emplace(inserted_chunk.rel_path());
-            if (!inserted_chunk.is_volatile() && (_max_immutable == nullptr || _max_immutable->offset < inserted_chunk.offset))
-                _max_immutable = &inserted_chunk;
+            if (!inserted_chunk.is_volatile() && (_max_immutable_off == 0 || _max_immutable_off < inserted_chunk.offset))
+                _max_immutable_off = inserted_chunk.offset;
             if (!empty_volatile) {
                 uint64_t chunk_epoch = inserted_chunk.epoch();
                 auto &epoch_data = _epochs[chunk_epoch];
@@ -243,10 +243,10 @@ namespace daedalus_turbo {
                 _files.erase(chunk_it->second.rel_path());
                 chunk_it = _chunks.erase(chunk_it);
             }
-            _max_immutable = nullptr;
+            _max_immutable_off = 0;
             for (auto last_it = _chunks.rbegin(); last_it != _chunks.rend(); last_it++) {
                 if (!last_it->second.is_volatile()) {
-                    _max_immutable = &last_it->second;
+                    _max_immutable_off = last_it->first;
                     break;
                 }
             }
@@ -406,17 +406,83 @@ namespace daedalus_turbo {
     protected:
         scheduler &_sched;
 
-        void _parse_chunk(const chunk_info &chunk, const buffer &raw_data, const block_processor &blk_proc)
+        void _parse_immutable_chunk(const chunk_info &chunk, const buffer &raw_data, const block_processor &blk_proc)
         {
             cbor_parser parser { raw_data };
             cbor_value block_tuple {};
             while (!parser.eof()) {
                 parser.read(block_tuple);
                 auto blk = cardano::make_block(block_tuple, chunk.offset + block_tuple.data - raw_data.data());
-                if (!chunk.is_volatile() || _max_immutable == nullptr || _max_immutable->last_slot < blk->slot()) {
-                    blk_proc(*blk);
+                blk_proc(*blk);
+            }
+        }
+
+        using block_hash_list = std::vector<cardano_hash_32>;
+        using block_followers_map = std::map<cardano_hash_32, block_hash_list>;
+
+        static block_hash_list _max_segment(const cardano_hash_32 &start_hash, const block_followers_map &followers)
+        {
+            block_hash_list segment {};
+            segment.emplace_back(start_hash);
+            auto it = followers.find(start_hash);
+            if (it != followers.end()) {
+                block_hash_list max_segment {};
+                for (const auto &hash: it->second) {
+                    auto seg = _max_segment(hash, followers);
+                    if (max_segment.size() < seg.size())
+                        max_segment = seg;
+                }
+                for (const auto &hash: max_segment)
+                    segment.emplace_back(hash);
+            }
+            return segment;
+        }
+
+        void _parse_volatile_chunk(const chunk_info &chunk, const buffer &raw_data, const block_processor &blk_proc)
+        {
+            if (_max_immutable_off == 0)
+                throw error("volatile chunks must be processed only after immutable ones!");
+            cbor_parser parser { raw_data };
+            // cardano::block_base keeps a reference to block_tuple cbor_value, so need to keep them
+            std::vector<std::unique_ptr<cbor_value>> cbor {};
+            std::map<cardano_hash_32, std::unique_ptr<cardano::block_base>> blocks {};
+            while (!parser.eof()) {
+                auto block_tuple_ptr = std::make_unique<cbor_value>();
+                parser.read(*block_tuple_ptr);
+                auto blk = cardano::make_block(*block_tuple_ptr, chunk.offset + block_tuple_ptr->data - raw_data.data());
+                if (blk->slot() <= find(_max_immutable_off).last_slot)
+                    continue;
+                blocks.try_emplace(blk->hash(), std::move(blk));
+                cbor.emplace_back(std::move(block_tuple_ptr));
+            }
+            
+            block_followers_map followers {};
+            block_hash_list segments {};
+            for (const auto &[hash, blk]: blocks)  {
+                if (blocks.find(blk->prev_hash()) == blocks.end()) {
+                    segments.emplace_back(hash);
+                } else {
+                    followers[blk->prev_hash()].emplace_back(hash);
                 }
             }
+            if (!segments.empty()) {
+                block_hash_list max_segment {};
+                for (const auto &start_hash: segments) {
+                    auto seg = _max_segment(start_hash, followers);
+                    if (max_segment.size() < seg.size())
+                        max_segment = seg;
+                }
+                for (const auto &hash: max_segment)
+                    blk_proc(*blocks.at(hash));
+            }
+        }
+
+        void _parse_chunk(const chunk_info &chunk, const buffer &raw_data, const block_processor &blk_proc)
+        {
+            if (chunk.is_volatile())
+                _parse_volatile_chunk(chunk, raw_data, blk_proc);
+            else
+                _parse_immutable_chunk(chunk, raw_data, blk_proc);
         }
 
         chunk_info _parse_normal(uint64_t offset, const std::string &rel_path,
@@ -428,9 +494,7 @@ namespace daedalus_turbo {
             uint64_t prev_slot = 0;
             _parse_chunk(chunk, raw_data, [&](const auto &blk) {
                 if (blk.era() > 0) {
-                    // Equal slot numbers are allowed here since they may be present in Cardano Node's volatile files.
-                    // Parallel validation step will handle such cases with more precision in the future.
-                    if (blk.slot() > 0 && blk.slot() < prev_slot)
+                    if (blk.slot() > 0 && blk.slot() <= prev_slot)
                         throw error("chunk {} at {}: a block's slot {} is less than the slot of the prev block {}!", rel_path, offset, blk.slot(), prev_slot);
                     else
                         prev_slot = blk.slot();
@@ -453,7 +517,7 @@ namespace daedalus_turbo {
         chunk_map _chunks {};
         epoch_map _epochs {};
         file_set _files {};
-        const chunk_info *_max_immutable = nullptr;
+        uint64_t _max_immutable_off = 0;
         uint64_t _end_offset = 0;
         const std::string _ext = ".zstd";
         static thread_local uint8_vector _read_buffer;
