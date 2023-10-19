@@ -1,17 +1,11 @@
-/*
- * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
+/* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
- *
  * This code is distributed under the license specified in:
- * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
- */
-
+ * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #include <array>
 #include <string_view>
 #include <tuple>
-
 #include <boost/ut.hpp>
-
 #include <dt/bech32.hpp>
 #include <dt/blake2b.hpp>
 #include <dt/util.hpp>
@@ -157,13 +151,13 @@ suite bech32_suite = [] {
         };
 
         "throws error on wrong chars"_test = [&] {
-            expect(throws<error_fmt>([] { bech32 addr("stake178phkx6acpnf78fuvxn0mk!ew3l0fd058hzquvz7w36x4gtcccycj5", false); }));
+            expect(throws<error>([] { bech32 addr("stake178phkx6acpnf78fuvxn0mk!ew3l0fd058hzquvz7w36x4gtcccycj5", false); }));
             expect(boost::ut::nothrow([] { bech32 addr("stake178phkx6acpnf78fuvxn0mkew3l0fd058hzquvz7w36x4gtcccycj5", false); }));
         };
 
         "throws error on unknown prefix"_test = [&] {
             expect(boost::ut::nothrow([] { bech32 addr("stake178phkx6acpnf78fuvxn0mkew3l0fd058hzquvz7w36x4gtcccycj5", true); }));
-            expect(throws<error_fmt>([] { bech32 addr("new178phkx6acpnf78fuvxn0mk!ew3l0fd058hzquvz7w36x4gtcccycj5", true); }));
+            expect(throws<error>([] { bech32 addr("new178phkx6acpnf78fuvxn0mk!ew3l0fd058hzquvz7w36x4gtcccycj5", true); }));
         };
     };
 };

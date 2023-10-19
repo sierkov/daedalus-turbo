@@ -1,0 +1,59 @@
+@startuml
+
+database ImmutableDB
+database LedgerDB
+
+package "DaedalusTurbo" {
+
+    package "Turbo Mode Switcher" {
+        () "Wallet\nHTTP\nAPI" as WHA
+        () "Mode\nSwitch\nAPI" as MSA
+        [Mode Switcher] as MS
+        MSA -- MS
+        WHA -- MS
+    }
+
+    [Indexer]
+    [Fetcher]
+    [Validator]
+    [API]
+
+    database IndexDB
+
+    Fetcher ..> ImmutableDB : update
+    Fetcher ..> LedgerDB : update
+
+    Validator ..> ImmutableDB : use
+    Validator ..> LedgerDB : use
+
+    Indexer ..> ImmutableDB : use
+    Indexer ..> IndexDB : update
+
+    API ..> Fetcher : use
+    API ..> Validator : use
+    API ..> Indexer : use
+    WHA -- API
+}
+
+package "Cardano Wallet" {
+    () "Node\nUnix\nSocket\nAPI" as NUSA
+
+    [Cardano Wallet] as CW
+    [Cardano Node] as CN
+    database WalletDB
+
+    WHA -- CW
+    NUSA -- CN
+
+    CN ..> ImmutableDB : update
+    CN ..> LedgerDB : update
+
+    CW ..> NUSA: use
+    CW ..> WalletDB : update
+}
+
+[Daedalus UI] as DUI
+DUI ..> WHA : use
+DUI ..> MSA : use
+
+@enduml

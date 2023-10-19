@@ -1,63 +1,55 @@
-/*
- * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
+/* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
- *
  * This code is distributed under the license specified in:
- * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
- */
-
+ * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #include <string_view>
-
 #include <boost/ut.hpp>
-
 #include <dt/benchmark.hpp>
 #include <dt/cardano.hpp>
+#include <dt/file.hpp>
 #include <dt/util.hpp>
 
+using namespace std::literals;
 using namespace boost::ut;
 using namespace daedalus_turbo;
 
-const std::string DATA_DIR = "./data"s;
-
-class my_processor: public cardano_processor {
-public:
-    size_t tx_count = 0;
-    size_t block_count = 0;
-
-    void every_block(const cardano_block_context &/*block_ctx*/, const cbor_value &/*block_tuple*/, const cbor_array &) {
-        block_count++;
+namespace {
+    static uint64_t lazy_process_chunks(const std::string_view &db_path, size_t skip_factor = 1)
+    {
+        size_t total_size = 0;
+        size_t i = 0;
+        uint8_vector chunk {};
+        cbor_value block_tuple {};
+        for (const auto &entry : std::filesystem::directory_iterator(db_path)) {
+            if (entry.path().extension() != ".chunk") continue;
+            if (i++ % skip_factor != 0) continue;
+            file::read(entry.path().string(), chunk);
+            cbor_parser parser { chunk };
+            while (!parser.eof()) {
+                parser.read(block_tuple);
+                auto blk = cardano::make_block(block_tuple, block_tuple.data - chunk.data());
+            }
+            total_size += chunk.size();
+        }
+        return total_size;
     }
 
-    void every_tx(const cardano_tx_context &/*tx_ctx*/, const cbor_value &/*tx*/, uint64_t) {
-        tx_count++;
+    static uint64_t extract_epoch(const std::string_view &db_dir)
+    {
+        size_t total_size = 0;
+        for (const auto &entry : std::filesystem::directory_iterator(db_dir)) {
+            if (entry.path().extension() != ".chunk") continue;
+            cardano::extract_epoch(entry.path().string());
+            total_size += entry.file_size();
+        }
+        return total_size;
     }
-};
-
-static uint64_t process_all_chunks(const std::string_view &db_path, size_t skip_factor = 1)
-{
-    my_processor proc;
-    cardano_parser parser(proc);
-    cardano_chunk_context chunk_ctx(0);
-    uint8_vector chunk;
-    size_t total_size = 0;
-    size_t i = 0;
-    for (const auto &entry : std::filesystem::directory_iterator(db_path)) {
-        if (entry.path().extension() != ".chunk") continue;
-        if (i++ % skip_factor != 0) continue;
-        std::string path = entry.path().string();
-        read_whole_file(path, chunk);
-        total_size += chunk.size();
-        parser.parse_chunk(chunk_ctx, chunk);
-        chunk_ctx.offset += chunk.size();
-    }
-    return total_size;
 }
 
 suite cardano_bench_suite = [] {
     "cardano"_test = [] {
-        "tx counting"_test = [] {
-            double throughput = benchmark_throughput("cardano/count transactions", 3, [] { return process_all_chunks(DATA_DIR, 50); } );
-            expect(throughput >= 200'000'000.0_d);
-        };
+        static const std::string DATA_DIR { "./data/immutable"s };
+        benchmark("cardano/lazy parse tx count"sv, 100'000'000.0, 3, [] { return lazy_process_chunks(DATA_DIR, 50); } );
+        benchmark("cardano/extract-epoch-new"sv, 100'000'000.0, 3, [] { return extract_epoch(DATA_DIR); });
     };
 };

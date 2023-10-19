@@ -1,298 +1,162 @@
-/*
- * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
+/* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
- *
  * This code is distributed under the license specified in:
- * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
- */
+ * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_INDEXER_HPP
 #define DAEDALUS_TURBO_INDEXER_HPP
 
+#ifndef _WIN32
+#   include <sys/resource.h>
+#endif
 #include <algorithm>
 #include <chrono>
+#include <cstdio>
 #include <ctime>
 #include <execution>
 #include <filesystem>
-#include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <mutex>
 #include <string>
 #include <string_view>
 #include <thread>
 #include <vector>
-
 #include <dt/cardano.hpp>
 #include <dt/chunk-registry.hpp>
-#include <dt/index.hpp>
-#include <dt/index-type.hpp>
+#include <dt/file.hpp>
+#include <dt/index/common.hpp>
+#include <dt/index/block-meta.hpp>
+#include <dt/index/pay-ref.hpp>
+#include <dt/index/stake-ref.hpp>
+#include <dt/index/tx.hpp>
+#include <dt/index/txo-use.hpp>
 #include <dt/logger.hpp>
-#include <dt/lz4.hpp>
-#include <dt/sort.hpp>
 #include <dt/scheduler.hpp>
-#include <dt/util.hpp>
 
-namespace daedalus_turbo {
+namespace daedalus_turbo::indexer {
 
-    struct index_config {
-        std::string base_path;
-        std::string addr_use_path;
-        std::string tx_use_path;
-        std::string block_path;
+    using indexer_list = std::vector<std::unique_ptr<index::indexer_base>>;
+    using chunk_indexer_list = std::vector<std::unique_ptr<index::chunk_indexer_base>>;
+    constexpr int min_no_open_files = 2048;
 
-        index_config(const std::string &idx_path)
-            : base_path(idx_path), addr_use_path(idx_path + "/addruse"), tx_use_path(idx_path + "/txuse"), block_path(idx_path + "/block")
+    struct incremental: public chunk_registry {
+        incremental(scheduler &sched, const std::string &db_dir, indexer_list &indexers)
+            : chunk_registry { sched, db_dir }, _indexers { indexers }
         {
-            create_directories();
+#           ifdef _WIN32
+                if (_setmaxstdio(min_no_open_files) < min_no_open_files)
+                    throw error("can't increase the max number of open files to {}!", min_no_open_files);
+#           else
+                struct rlimit lim;
+                lim.rlim_cur = min_no_open_files;
+                lim.rlim_max = min_no_open_files;
+                if (setrlimit(RLIMIT_NOFILE, &lim) != 0)
+                    throw error_sys("failed to increase the max number of open files to {}", min_no_open_files);
+#           endif
         }
 
-        void create_directories() {
-            if (!std::filesystem::exists(base_path)) std::filesystem::create_directory(base_path);
-            for (const auto &path : { addr_use_path, tx_use_path, block_path }) {
-            if (!std::filesystem::exists(path)) std::filesystem::create_directory(path);
+        void import(const chunk_registry &src_cr)
+        {
+            uint8_vector raw_data {}, compressed_data {};
+            for (const auto &[last_byte_offset, src_chunk]: src_cr.chunks()) {
+                file::read_raw(src_cr.full_path(src_chunk.rel_path()), compressed_data);
+                zstd::decompress(raw_data, compressed_data);
+                auto dst_chunk = parse(src_chunk.offset, src_chunk.orig_rel_path, raw_data, compressed_data.size());
+                file::write(full_path(dst_chunk.rel_path()), compressed_data);
+                add(std::move(dst_chunk), false);
             }
-        }
-    };
-
-    class chain_indexer: public cardano_processor {
-        std::set<cbor_buffer> used_addresses;
-        index_radix_writer<tx_use_item> tx_use_idx;
-        index_radix_writer<addr_use_item> addr_use_idx;
-        std::vector<block_item> _blocks;
-        logger_base &_logger;
-
-        static std::vector<std::string> make_radix_paths(const std::string &path, size_t num_writers)
-        {
-            std::vector<std::string> paths;
-            paths.reserve(num_writers);
-            for (size_t i = 0; i < num_writers; ++i)
-                paths.emplace_back(path + ".radix-" + std::to_string(i));
-            return paths;
+            save_state();
         }
 
-    public:
-
-        chain_indexer(const index_config &cfg, const std::string &path_suffix, size_t num_merge_threads, logger_base &logger)
-            : tx_use_idx(make_radix_paths(cfg.tx_use_path + path_suffix, num_merge_threads)),
-                addr_use_idx(make_radix_paths(cfg.addr_use_path + path_suffix, num_merge_threads)),
-                _blocks(), _logger(logger)
+        chunk_info parse(uint64_t offset, const std::string &rel_path, const buffer &raw_data, size_t compressed_size) override
         {
-        }
-
-        void every_tx_output(const cardano_tx_output_context &/*ctx*/, const cbor_buffer &address, uint64_t /*amount*/)
-        {
-            switch ((address.data()[0] >> 4) & 0xF) {
-                case 0b0000: // base address: keyhash28,keyhash28
-                case 0b0001: // base address: scripthash28,keyhash28
-                case 0b0010: // base address: keyhash28,scripthash28
-                case 0b0011: // base address: scripthash28,scripthash28
-                {
-                    if (address.size() < 57) {
-                        _logger.log("worker warning: unsupported address size {} for type {}", address.size(), address.data()[0]);
-                        break;
-                    }
-                    used_addresses.emplace(address.data() + 29, 28);
-                    break;
-                }
-            }
-        }
-        
-        void every_tx_input(const cardano_tx_input_context &ctx, const cbor_buffer &tx_in_hash, uint64_t tx_in_out_idx)
-        {
-            if (tx_in_out_idx > 65535) throw error_fmt("tx_out_idx is too large!");
-            tx_use_item &item = tx_use_idx.writable(tx_in_hash.data()[0]);
-            memcpy(item.tx_hash, tx_in_hash.data(), tx_in_hash.size());
-            item.tx_out_idx = tx_in_out_idx;
-            pack_offset(item.tx_offset, sizeof(item.tx_offset), ctx.tx_ctx.offset);
-            item.tx_size = pack_tx_size(ctx.tx_ctx.size);
-            tx_use_idx.next();
-        }
-
-        void every_tx_withdrawal(const cardano_tx_context &/*ctx*/, const cbor_buffer &address, uint64_t /*amount*/)
-        {
-            if (address.size() != 29 || address.data()[0] != 0xE1) return;
-            used_addresses.emplace(address.data() + 1, address.size() - 1);
-        }
-
-        void every_tx(const cardano_tx_context &ctx, const cbor_value &tx, uint64_t /*fees*/)
-        {
-            for (const auto &addr : used_addresses) {
-                addr_use_item &item = addr_use_idx.writable(addr.data()[0]);
-                memcpy(&item.stake_addr, addr.data(), addr.size());
-                pack_offset(item.tx_offset, sizeof(item.tx_offset), ctx.offset);
-                item.tx_size = pack_tx_size(tx.size);
-                addr_use_idx.next();
-            }
-            used_addresses.clear();
-        }
-
-        void every_block(const cardano_block_context &ctx, const cbor_value &block_tuple, const cbor_array &)
-        {
-            block_item item;
-            memcpy(&item.offset, &ctx.offset, sizeof(item.offset));
-            item.size = block_tuple.size;
-            item.block_number = ctx.block_number;
-            item.slot = ctx.slot;
-            memcpy(item.pool_hash, ctx.pool_hash.data(), ctx.pool_hash.size());
-            item.era = ctx.era;
-            _blocks.push_back(std::move(item));
-        }
-
-        const std::vector<block_item> &blocks() const
-        {
-            return _blocks;
-        }
-
-    };
-
-    class indexer
-    {
-        logger_base &_logger;
-
-        struct task_result {
-            std::string path_suffix;
-            std::vector<block_item> blocks;
-        };
-
-    public:
-
-        indexer(logger_base &logger) : _logger(logger)
-        {
-        }
-
-        std::vector<block_item> index_chunk(const std::vector<chunk_map::value_type> &chunks, const index_config &cfg, const std::string &path_suffix, size_t num_merge_threads)
-        {
-            chain_indexer proc(cfg, path_suffix, num_merge_threads, _logger);
-            cardano_parser parser(proc);
-            uint8_vector buf, compressed;
-            for (const auto &chunk: chunks) {
-                try {
-                    if (chunk.second.lz4) {
-                        read_whole_file(chunk.second.path, compressed);
-                        lz4_decompress(buf, compressed);
-                    } else {
-                        read_whole_file(chunk.second.path, buf);
-                    }
-                    cardano_chunk_context chunk_ctx(chunk.first);
-                    parser.parse_chunk(chunk_ctx, buf);
-                } catch (std::exception &ex) {
-                    throw error_fmt("chunk {} indexing failed: {}", chunk.second.path, ex.what());
-                }
-            }
-            return proc.blocks();
-        }
-
-        template<typename T, typename S>
-        static size_t radix_final_merge(std::shared_ptr<S> out_stream, size_t start_offset, size_t end_offset,
-            const std::vector<std::string> &paths, bool delete_source)
-        {
-            using write_stream = item_seeking_write_stream<T, S, 10000>;
-            write_stream os(*out_stream, start_offset, end_offset);
-            return merge_sort_queue_writer<write_stream, T>(os, paths, delete_source);
-        }
-
-        template<typename T, typename S>
-        static void schedule_final_radix_merge(scheduler &sched, const std::string &new_task_group, int new_task_prio, std::shared_ptr<S> &out_stream, size_t num_radix,
-            std::vector<std::string> *radix_paths, size_t *radix_size)
-        {
-            size_t offset = 0;
-            for (size_t ri = 0; ri < num_radix; ++ri) {
-                std::vector<std::string> &task_paths = radix_paths[ri];
-                size_t task_size = radix_size[ri];
-                sched.submit(new_task_group, new_task_prio, [=]() {
-                    return radix_final_merge<T>(out_stream, offset, offset + task_size, task_paths, true);
-                });
-                offset += task_size;
-            }
-        }
-
-        template<typename T>
-        static void schedule_final_radix_merge_when_done(scheduler &sched, const std::string &new_task_group, std::vector<std::string> &chunks,
-            const std::string &final_path, int priority, size_t todo_cnt)
-        {
-            if (todo_cnt > 1) return;
-            if (chunks.size() > 0) {
-                size_t num_radix = sched.num_workers();
-                std::vector<std::string> radix_paths[num_radix];
-                size_t radix_size[num_radix];
-                for (size_t ri = 0; ri < num_radix; ++ri) {
-                    std::string radix_suffix = ".radix-"s + std::to_string(ri);
-                    transform(chunks.begin(), chunks.end(), std::back_inserter(radix_paths[ri]),
-                        [&radix_suffix](const std::string &p) { return p + radix_suffix; }
-                    );
-                    radix_size[ri] = 0;
-                    for (const auto &p: radix_paths[ri]) {
-                        size_t file_size = std::filesystem::file_size(p);
-                        radix_size[ri] += file_size;
-                    }
-                }
-                std::shared_ptr<stdio_stream_sync> out_stream = std::make_shared<stdio_stream_sync>(stdio_stream(final_path.c_str(), "wb", false));
-                schedule_final_radix_merge<T>(sched, new_task_group, priority, out_stream, num_radix, radix_paths, radix_size);
-            } else {
-                throw error_fmt("must have some chunks to merge!");
-            }
-        }
-
-        void index(const std::string &db_path, const std::string idx_path, size_t num_threads=scheduler::default_worker_count(), bool sort=true, bool lz4=false)
-        {
-            index_config cfg(idx_path);
-            scheduler sched(num_threads);
-            timer t("everything");
-            timer t2("preprocesss");
-            chunk_registry cr(db_path, lz4);
-            size_t num_merge_threads = sched.num_workers();
-
-            std::vector<std::string> addr_use_chunks, tx_use_chunks;
-            std::vector<block_item> blocks;
-
-            sched.on_result("preprocess", [&](std::any &res) {
-                size_t todo_cnt = sched.task_count("preprocess");
-                if (sort) {
-                    task_result tr(std::any_cast<task_result>(res));
-                    tx_use_chunks.push_back(cfg.tx_use_path + tr.path_suffix);
-                    schedule_final_radix_merge_when_done<tx_use_item>(sched, "merge_tx_use", tx_use_chunks, cfg.tx_use_path + "/index.bin", 90, todo_cnt);
-                    addr_use_chunks.push_back(cfg.addr_use_path + tr.path_suffix);
-                    schedule_final_radix_merge_when_done<addr_use_item>(sched, "merge_addr_use", addr_use_chunks, cfg.addr_use_path + "/index.bin", 50, todo_cnt);
-                    copy(tr.blocks.begin(), tr.blocks.end(), std::back_inserter(blocks));
-                    if (todo_cnt == 1) {
-                        sched.submit("merge_block_metadata", 10, [&blocks, &cfg]() {
-                            std::sort(blocks.begin(), blocks.end());
-                            std::string out_path = cfg.block_path + "/index.bin";
-                            std::ofstream os(out_path, std::ios::binary);
-                            if (!os) throw error_sys_fmt("can't open {} for writing", out_path);
-                            if (!os.write(reinterpret_cast<const char *>(blocks.data()), blocks.size() * sizeof(block_item))) throw error_sys_fmt("write to {} has failed", out_path);
-                            os.close();
-                            return out_path;
-                        });
-                    }
-                }
-                if (todo_cnt <= 1) t2.stop();
+            chunk_indexer_list chunk_indexers {};
+            for (auto &idxr: _indexers)
+                chunk_indexers.emplace_back(idxr->make_chunk_indexer("update", offset));
+            auto info = _parse_normal(offset, rel_path, raw_data, compressed_size, [&chunk_indexers](const auto &blk) {
+                for (auto &idxr: chunk_indexers)
+                    idxr->index(blk);
             });
-
-            size_t task_size = 0;
-            size_t task_idx = 0;
-            std::vector<chunk_map::value_type> task;
-            for (auto it = cr.begin(); it != cr.end(); it++) {
-                task_size += it->second.size;
-                task.emplace_back(*it);
-                if (task_size >= 256'000'000 || next(it) == cr.end()) {
-                    std::string out_path_suffix = "/preprocess-" + std::to_string(task_idx) + ".tmp";
-                    sched.submit("preprocess", 100, [this, task, &cfg, out_path_suffix, num_merge_threads]() {
-                        task_result tr;
-                        tr.path_suffix = out_path_suffix;
-                        tr.blocks = index_chunk(task, cfg, out_path_suffix, num_merge_threads);
-                        return tr;
-                    });
-                    task_size = 0;
-                    task.clear();
-                    ++task_idx;
-                }
+            {
+                std::scoped_lock lk { _updates_mutex };
+                _updates.emplace(offset);
             }
-            sched.process();
-            t2.stop_and_print();
+            return info;
         }
 
+        file_set truncate(size_t max_end_offset, bool del=true) override
+        {
+            auto deleted_files = chunk_registry::truncate(max_end_offset, del);
+            timer t { fmt::format("truncate indices to max offset {}", max_end_offset) };
+            for (auto &idxr_ptr: _indexers) {
+                _sched.submit("truncate-init-" + idxr_ptr->name(), 25, [this, &idxr_ptr] {
+                    idxr_ptr->truncate("", num_bytes());
+                    idxr_ptr->truncate("delta", num_bytes());
+                    return true;
+                });
+            }
+            _sched.process(true);
+            return deleted_files;
+        }
+
+        void save_state() override
+        {
+            timer t { "update indices" };
+            chunk_registry::save_state();
+            for (auto &idxr_ptr: _indexers) {
+                _sched.submit("finalize-init-" + idxr_ptr->name(), 25, [this, &idxr_ptr] {
+                    idxr_ptr->finalize("update", _updates);
+                    return true;
+                });
+            }
+            _sched.process(true);
+            // combine delta in base in case when delta is already too big to accommodate for another update
+            for (auto &idxr_ptr: _indexers) {
+                if (idxr_ptr->disk_size("delta") >= idxr_ptr->disk_size("") / 8) {
+                    _sched.submit("combine-base-init-" + idxr_ptr->name(), 25, [&idxr_ptr] {
+                        idxr_ptr->combine("", "delta");
+                        return true;
+                    });
+                }
+            }
+            _sched.process(true);
+            _updates.clear();
+            for (auto &idxr_ptr: _indexers) {
+                _sched.submit("combine-delta-init-" + idxr_ptr->name(), 25, [&idxr_ptr] {
+                    idxr_ptr->combine("delta", "update");
+                    return true;
+                });
+            }
+            _sched.process(true);
+        }
+    
+    private:
+        indexer_list &_indexers;
+        alignas(mutex::padding) std::mutex _updates_mutex {};
+        index::chunk_id_list _updates {};
     };
 
+    inline indexer_list default_list(scheduler &sched, const std::string &idx_dir)
+    {
+        indexer::indexer_list indexers {};
+        indexers.emplace_back(std::make_unique<index::block_meta::indexer>(sched, idx_dir, "block-meta"));
+        indexers.emplace_back(std::make_unique<index::stake_ref::indexer>(sched, idx_dir, "stake-ref"));
+        indexers.emplace_back(std::make_unique<index::pay_ref::indexer>(sched, idx_dir, "pay-ref"));
+        indexers.emplace_back(std::make_unique<index::tx::indexer>(sched, idx_dir, "tx"));
+        indexers.emplace_back(std::make_unique<index::txo_use::indexer>(sched, idx_dir, "txo-use"));
+        return indexers;
+    }
+
+    inline std::vector<std::string> multi_reader_paths(const std::string &base_path, const std::string &idx_name)
+    {
+        std::vector<std::string> slices {};
+        for (const auto &slice_id: { "", "delta" }) {
+            auto slice_path = index::indexer_base::reader_path(base_path, idx_name, slice_id);
+            if (index::writer<int>::exists(slice_path))
+                slices.emplace_back(std::move(slice_path));
+        }
+        return slices;
+    }
 }
 
 #endif // !DAEDALUS_TURBO_INDEXER_HPP

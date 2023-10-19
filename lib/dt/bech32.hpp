@@ -1,10 +1,7 @@
-/*
- * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
+/* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
- *
  * This code is distributed under the license specified in:
- * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
- */
+ * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_BECH32_HPP
 #define DAEDALUS_TURBO_BECH32_HPP
 
@@ -12,11 +9,9 @@
 #include <algorithm>
 #include <cctype>
 #include <string_view>
-
 #include "util.hpp"
 
 namespace daedalus_turbo {
-
     using namespace std::literals;
 
     class bech32 {
@@ -63,7 +58,7 @@ namespace daedalus_turbo {
                 case '7': return 24 + 6;
                 case 'l': return 24 + 7;
             }
-            throw error_fmt("Unsupported Bech32 data char: '{}'", k);
+            throw error("Unsupported Bech32 data char: '{}'", k);
         }
 
         static uint32_t polymod(const std::vector<uint8_t> &vals)
@@ -100,19 +95,19 @@ namespace daedalus_turbo {
         bech32(const std::string_view &sv, bool check_prefix=false)
         {
             auto sep_pos = sv.find(_sep);
-            if (sep_pos == sv.npos) throw error_fmt("Can't find Bech32 separator '{}' in '{}'", _sep, sv);
+            if (sep_pos == sv.npos) throw error("Can't find Bech32 separator '{}' in '{}'", _sep, sv);
             const std::string_view &prefix = sv.substr(0, sep_pos);
             if (check_prefix) {
                 if (find(_known_prefixes.begin(), _known_prefixes.end(), prefix) == _known_prefixes.end()) {
-                    throw error_fmt("unsupported Bech32 prefix: {}!", prefix);
+                    throw error("unsupported Bech32 prefix: {}!", prefix);
                 }
             }
 
             const std::string_view &data = sv.substr(sep_pos + 1);
             std::vector<uint8_t> u5_data;
             for (auto k: data) u5_data.push_back(decode_char(k));
-            if (u5_data.size() < 6) throw error_fmt("bech32 data part must be at least 6 characters long: {}", data);
-            if (!verify(prefix, u5_data)) throw error_fmt("bech32 checksum verification failed: {}", data);
+            if (u5_data.size() < 6) throw error("bech32 data part must be at least 6 characters long: {}", data);
+            if (!verify(prefix, u5_data)) throw error("bech32 checksum verification failed: {}", data);
 
             uint32_t acc = 0;
             uint32_t bits = 0;
@@ -125,14 +120,19 @@ namespace daedalus_turbo {
                 bits += 5;
                 while (bits >= 8) {
                     bits -= 8;
-                    if (_sz >= sizeof(_buf)) throw error_fmt("bech32 payload must not exceed 57 bytes! {}", data);
+                    if (_sz >= sizeof(_buf)) throw error("bech32 payload must not exceed 57 bytes! {}", data);
                     _buf[_sz++] = (acc >> bits) & 0xFF;
                 }
             }
             if (bits > 0) {
-                if (bits >= 5) throw error_fmt("should not contain incomplete bytes with more than filled 5 bits: {}", data);
-                if ((acc & ((1 << bits) - 1)) != 0) throw error_fmt("all the bits in the incomplete byte must be 0: {}", data);
+                if (bits >= 5) throw error("should not contain incomplete bytes with more than filled 5 bits: {}", data);
+                if ((acc & ((1 << bits) - 1)) != 0) throw error("all the bits in the incomplete byte must be 0: {}", data);
             }
+        }
+
+        buffer data_buf() const
+        {
+            return buffer { _buf, _sz };
         }
 
         size_t size() const
@@ -144,9 +144,7 @@ namespace daedalus_turbo {
         {
             return _buf;
         }
-
     };
-
 }
 
 #endif // !DAEDALUS_TURBO_BECH32_HPP

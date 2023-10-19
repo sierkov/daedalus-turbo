@@ -1,75 +1,107 @@
-/*
- * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
+/* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
- *
  * This code is distributed under the license specified in:
- * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
- */
+ * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_LOGGER_HPP
-#define DAEDALUS_TURBO_LOGGER_HPP 1
+#define DAEDALUS_TURBO_LOGGER_HPP
 
-#include <iostream>
-#include <sstream>
-#include <string_view>
+#include <optional>
+#define SPDLOG_FMT_EXTERNAL 1
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <dt/error.hpp>
+#include <dt/format.hpp>
+#include <dt/mutex.hpp>
 
-#include <dt/util.hpp>
+namespace daedalus_turbo::logger {
 
-namespace daedalus_turbo {
-
-    class logger_base {
-    public:
-        virtual ~logger_base() {};
-        virtual void log_write(const std::string_view &) =0;
-
-        template<typename... Args>
-        void log(const char *fmt, Args&&... a)
-        {
-            auto now = std::chrono::system_clock::now();
-            auto in_time_t = std::chrono::system_clock::to_time_t(now);
-            std::ostringstream os;
-            os << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %X")
-                << ": " << format(fmt::runtime(fmt), std::forward<Args>(a)...) << '\n';
-            log_write(os.str());
-        }
-
-        void log(const std::string_view &s)
-        {
-            std::string log_s { s };
-            log_s += '\n';
-            log_write(log_s);
-        }
+    enum class level {
+        trace, debug, info, warn, error
     };
 
-    class logger_null: public logger_base {
-    public:
-
-        logger_null()
-        {
+    inline spdlog::logger &get()
+    {
+        static std::optional<spdlog::logger> logger {};
+        if (!logger) {
+            alignas(mutex::padding) static std::mutex m {};
+            std::scoped_lock lk { m };
+            // double check since another thread could have already started initializing logger
+            if (!logger) {
+                auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+                console_sink->set_level(spdlog::level::info);
+                console_sink->set_pattern("[%^%l%$] %v");
+                auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("./log/dt.log");
+                file_sink->set_level(spdlog::level::trace);
+                file_sink->set_pattern("[%Y-%m-%d %T %z] [%P:%t] [%n] [%l] %v");
+                logger = spdlog::logger("dt", { console_sink, file_sink });
+                logger->set_level(spdlog::level::trace);
+                logger->flush_on(spdlog::level::info);
+                spdlog::flush_every(std::chrono::seconds(1));
+            }
         }
+        return *logger;
+    }
 
-        void log_write(const std::string_view &) override
-        {
+    template<typename... Args>
+    inline void log(const level &lev, const std::string_view &fmt, Args&&... a)
+    {
+        auto msg = format(fmt::runtime(fmt), std::forward<Args>(a)...);
+        switch (lev) {
+            case level::trace:
+                get().trace(msg);
+                break;
+
+            case level::debug:
+                get().debug(msg);
+                break;
+
+            case level::info:
+                get().info(msg);
+                break;
+
+            case level::warn:
+                get().warn(msg);
+                break;
+
+            case level::error:
+                get().error(msg);
+                break;
+
+            default:
+                throw error("unsupported log level: {}", (int)lev);
         }
+    }
 
-    };
+    template<typename... Args>
+    inline void trace(const std::string_view &fmt, Args&&... a)
+    {
+        get().trace(format(fmt::runtime(fmt), std::forward<Args>(a)...));
+    }
 
-    class logger_file: public logger_base {
-        std::ostream &_log_stream;
+    template<typename... Args>
+    inline void debug(const std::string_view &fmt, Args&&... a)
+    {
+        get().debug(format(fmt::runtime(fmt), std::forward<Args>(a)...));
+    }
 
-    public:
+    template<typename... Args>
+    inline void info(const std::string_view &fmt, Args&&... a)
+    {
+        get().info(format(fmt::runtime(fmt), std::forward<Args>(a)...));
+    }
 
-        logger_file(std::ostream &log_stream) : _log_stream(log_stream)
-        {
-        }
+    template<typename... Args>
+    inline void warn(const std::string_view &fmt, Args&&... a)
+    {
+        get().warn(format(fmt::runtime(fmt), std::forward<Args>(a)...));
+    }
 
-        virtual void log_write(const std::string_view &line) override
-        {
-            _log_stream << line;
-            _log_stream.flush();
-        }
-
-    };
-
+    template<typename... Args>
+    inline void error(const std::string_view &fmt, Args&&... a)
+    {
+        get().error(format(fmt::runtime(fmt), std::forward<Args>(a)...));
+    }
 }
 
 #endif // !DAEDALUS_TURBO_LOGGER_HPP

@@ -1,12 +1,9 @@
-/*
- * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
+/* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
- *
  * This code is distributed under the license specified in:
- * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
- */
+ * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_KES_HPP
-#define DAEDALUS_TURBO_KES_HPP 1
+#define DAEDALUS_TURBO_KES_HPP
 
 #include <array>
 #include <span>
@@ -15,15 +12,11 @@
 #include <dt/util.hpp>
 
 namespace daedalus_turbo {
-
     using kes_vkey = ed25519_vkey;
     using kes_vkey_span = std::span<const uint8_t, sizeof(kes_vkey)>;
 
     template <size_t DEPTH>
-    class kes_signature
-    {
-    public:
-
+    struct kes_signature {
         static constexpr size_t size()
         {
             return sizeof(ed25519_signature) + DEPTH * 2 * sizeof(ed25519_vkey);
@@ -37,7 +30,7 @@ namespace daedalus_turbo {
             : _sigma(bytes.subspan(0, kes_signature<DEPTH - 1>::size()))
         {
             if (bytes.size() != kes_signature<DEPTH>::size())
-                throw error_fmt("KES signature of depth {} is expected to have {} bytes but got only {}!", DEPTH, kes_signature<DEPTH>::size(), bytes.size());
+                throw error("KES signature of depth {} is expected to have {} bytes but got only {}!", DEPTH, kes_signature<DEPTH>::size(), bytes.size());
             span_memcpy(_lhs_vk, bytes.subspan(kes_signature<DEPTH - 1>::size(), sizeof(_lhs_vk)));
             span_memcpy(_rhs_vk, bytes.subspan(kes_signature<DEPTH - 1>::size() + sizeof(_lhs_vk), sizeof(_lhs_vk)));
         }
@@ -45,7 +38,7 @@ namespace daedalus_turbo {
         kes_signature &operator=(const std::span<const uint8_t> &bytes)
         {
             if (bytes.size() != kes_signature<DEPTH>::size())
-                throw error_fmt("KES signature of depth {} is expected to have {} bytes but got only {}!", DEPTH, kes_signature<DEPTH>::size(), bytes.size());
+                throw error("KES signature of depth {} is expected to have {} bytes but got only {}!", DEPTH, kes_signature<DEPTH>::size(), bytes.size());
             _sigma = bytes.subspan(0, kes_signature<DEPTH - 1>::size());
             span_memcpy(_lhs_vk, bytes.subspan(kes_signature<DEPTH - 1>::size(), sizeof(_lhs_vk)));
             span_memcpy(_rhs_vk, bytes.subspan(kes_signature<DEPTH - 1>::size() + sizeof(_lhs_vk), sizeof(_lhs_vk)));
@@ -68,19 +61,14 @@ namespace daedalus_turbo {
                 return _sigma.verify(period - split, _rhs_vk, msg);
             }
         }
-
     private:
-
         kes_signature<DEPTH - 1> _sigma {};
         blake2b_256_hash _lhs_vk {};
         blake2b_256_hash _rhs_vk {};
     };
 
     template <>
-    class kes_signature<0>
-    {
-    public:
-
+    struct kes_signature<0> {
         static constexpr size_t size()
         {
             return sizeof(ed25519_signature);
@@ -93,29 +81,26 @@ namespace daedalus_turbo {
         kes_signature(const std::span<const uint8_t> &bytes)
         {
             if (bytes.size() != kes_signature<0>::size())
-                throw error_fmt("KES signature of depth {} is expected to have {} bytes but got only {}!", 0, kes_signature<0>::size(), bytes.size());
+                throw error("KES signature of depth {} is expected to have {} bytes but got only {}!", 0, kes_signature<0>::size(), bytes.size());
             span_memcpy(_signature, bytes);
         }
 
         kes_signature &operator=(const std::span<const uint8_t> &bytes)
         {
             if (bytes.size() != kes_signature<0>::size())
-                throw error_fmt("KES signature of depth {} is expected to have {} bytes but got only {}!", 0, kes_signature<0>::size(), bytes.size());
+                throw error("KES signature of depth {} is expected to have {} bytes but got only {}!", 0, kes_signature<0>::size(), bytes.size());
             span_memcpy(_signature, bytes);
             return *this;
         }
 
         bool verify(size_t period, const kes_vkey_span &vkey, const std::span<const uint8_t> &msg) const
         {
-            if (period != 0) throw error_fmt("period value must be 0 but got: {}", period);
-            return ed25519_verify(_signature, vkey, msg);
+            if (period != 0) throw error("period value must be 0 but got: {}", period);
+            return ed25519::verify(_signature, vkey, msg);
         }
-
     private:
-
         ed25519_signature _signature {};
     };
-
 }
 
 #endif //!DAEDALUS_TURBO_KES_HPP

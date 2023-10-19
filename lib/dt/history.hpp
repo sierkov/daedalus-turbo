@@ -1,83 +1,234 @@
-/*
- * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
+/* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
- *
  * This code is distributed under the license specified in:
- * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
- */
+ * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_HISTORY_HPP
 #define DAEDALUS_TURBO_HISTORY_HPP
 
 #include <chrono>
 #include <filesystem>
-#include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <set>
 #include <string>
 #include <utility>
-
+#include <unordered_map>
 #include <dt/bech32.hpp>
 #include <dt/cardano.hpp>
 #include <dt/cbor.hpp>
 #include <dt/chunk-registry.hpp>
-#include <dt/index.hpp>
-#include <dt/index-type.hpp>
+#include <dt/index/block-meta.hpp>
+#include <dt/index/pay-ref.hpp>
+#include <dt/index/stake-ref.hpp>
+#include <dt/index/tx.hpp>
+#include <dt/index/txo-use.hpp>
+#include <dt/indexer.hpp>
+#include <dt/json.hpp>
+#include <dt/scheduler.hpp>
 #include <dt/util.hpp>
 
-namespace daedalus_turbo
-{
+namespace daedalus_turbo {
+    struct history_mock_block: public cardano::block_base {
+        history_mock_block(const index::block_meta::item &block_meta, const cbor_value &tx, uint64_t tx_offset)
+            : cardano::block_base { tx, block_meta.offset, block_meta.era, tx }, _block_meta { block_meta }, _tx { tx }, _tx_offset { tx_offset }
+        {
+        }
+
+        cardano_hash_32 hash() const override
+        {
+            throw cardano_error("internal error: hash() unsupported for partial blocks!");
+        }
+
+        const cbor_buffer &prev_hash() const override
+        {
+            throw cardano_error("internal error: prev_hash() unsupported for partial blocks!");
+        }
+
+        uint64_t height() const override
+        {
+            throw cardano_error("internal error: height() unsupported for partial blocks!");
+        }
+
+        const cardano::slot slot() const override
+        {
+            return cardano::slot { _block_meta.slot };
+        }
+
+        uint64_t value_offset(const cbor_value &v) const override
+        {
+            if (&v != &_tx)
+                throw cardano_error("internal error: value_offset can be computed only for the referenced tx value!");
+            return _tx_offset;
+        }
+    private:
+        const index::block_meta::item &_block_meta;
+        const cbor_value &_tx;
+        uint64_t _tx_offset;
+    };
+
+    struct transaction_output {
+        uint64_t use_offset = 0;
+        uint16_t out_idx = 0;
+        cardano::tx_size use_size {};
+        cardano::amount amount {};
+        cardano::multi_balance assets {};
+    };
+
+    struct transaction_input {
+        uint64_t tx_offset = 0;
+        const transaction_output *output = nullptr;
+    };
 
     struct transaction {
-        uint8_vector id;
-        uint8_vector spent_id;
-        uint64_t amount;
-        uint64_t withdraw = 0;
-        uint64_t slot;
-        uint16_t out_idx;
+        std::vector<transaction_output> outputs {};
+        std::vector<transaction_input> inputs {};
+        cardano::tx_size size {};
+        cardano_hash_32 hash {};
+        cardano::slot slot {};
 
-        bool operator<(const transaction &tx) const
+        bool operator<(const auto &b) const
         {
-            if (slot < tx.slot) return true;
-            if (slot == tx.slot) {
-                size_t min_size = std::min(id.size(), tx.id.size());
-                int cmp = memcmp(id.data(), tx.id.data(), min_size);
-                if (cmp < 0) return true;
-                if (cmp == 0 && id.size() < tx.id.size()) return true;
+            return slot < b.slot;
+        }
+
+        cardano::multi_balance_change balance_change() const
+        {
+            cardano::multi_balance_change changes {};
+            for (const auto &out: outputs) {
+                changes["ADA"] += out.amount;
+                for (const auto &[asset_name, amount]: out.assets) {
+                    changes[asset_name] += amount;
+                }
             }
-            return false;
+            for (const auto &in: inputs) {
+                changes["ADA"] -= (int64_t)in.output->amount;
+                for (const auto &[asset_name, amount]: in.output->assets) {
+                    changes[asset_name] -= amount;
+                }
+            }
+            return changes;
+        }
+
+        inline json::object to_json() const
+        {
+            json::object j {
+                { "hash", fmt::format("{}", hash.span()) },
+                { "slot", slot.to_json() },
+                { "balanceChange", fmt::format("{}", balance_change()) },
+                { "spentInputs", inputs.size() },
+                { "newOutputs", outputs.size() }
+            };
+            return j;
         }
     };
 
-    inline std::ostream &operator<<(std::ostream &os, const transaction &tx)
-    {
-        os << "epoch: " << slot_to_epoch(tx.slot) << ", slot: " << tx.slot << ", tx: " << tx.id;
-        if (tx.withdraw > 0) {
-            os << ", withdraw rewards: " << cardano_amount(tx.withdraw);
-        } else {
-            os << ", out: " << tx.out_idx << ", inflow: " << cardano_amount(tx.amount);
-        }
-        if (tx.spent_id.size() > 0) {
-            os << ", spent: " << tx.spent_id;
-        }
-        os << "\n";
-        return os;
-    }
+    using transaction_map = std::map<uint64_t, transaction>;
 
+    struct reconstructor;
+
+    template<typename T>
     struct history {
-        uint8_vector stake_addr;
-        std::vector<transaction> transactions;
-        uint64_t last_slot = 0;
+        T id {};
+        transaction_map transactions {};
+        cardano::slot last_slot {};
         uint64_t num_disk_reads = 0;
         uint64_t num_idx_reads = 0;
         uint64_t total_tx_outputs = 0;
         uint64_t total_tx_outputs_unspent = 0;
         uint64_t total_utxo_balance = 0;
+        cardano::multi_balance balance_assets {};
         uint64_t total_withdrawals = 0;
+        bool full_history = false;
 
-        history(const buffer &address)
-            : stake_addr(address), transactions()
+        template<typename IDX>
+        bool find_incoming_txos(index::reader_multi<IDX> &ref_idx)
         {
+            timer t { "find referenced tx outputs", logger::level::debug };
+            IDX search_item { id };
+            auto [ ref_count, ref_item ] = ref_idx.find(search_item);
+            for (;;) {
+                auto it = transactions.emplace_hint(transactions.end(), (uint64_t)ref_item.offset, transaction { .size=ref_item.size });
+                it->second.outputs.emplace_back(0, ref_item.out_idx);
+                if (--ref_count == 0) break;
+                ref_idx.read(ref_item);
+            }
+            return transactions.size() > 0;
+        }
+
+        std::vector<uint64_t> find_used_txos(scheduler &sched, const index::reader_multi_mt<index::txo_use::item> &txo_use_idx)
+        {
+            timer t { "identify used tx outputs", logger::level::debug };
+            std::vector<uint64_t> txo_tasks {};
+            size_t num_parts = sched.num_workers();
+            txo_tasks.reserve(transactions.size());
+            for (const auto &it: transactions) txo_tasks.emplace_back(it.first);
+            sched.on_result("search-txo-use", [&](const auto &res) {
+                if (res.type() == typeid(scheduled_task_error)) {
+                    logger::error("search-txo-use stake id: {} error: {}", id, std::any_cast<scheduled_task_error>(res).what());
+                    return;
+                }
+                auto task_n_reads = std::any_cast<size_t>(res);
+                num_disk_reads += task_n_reads;
+                num_idx_reads += task_n_reads;
+            });
+            for (size_t i = 0; i < num_parts; ++i) {
+                size_t start_idx = i * txo_tasks.size() / num_parts;
+                size_t end_idx = (i + 1) * txo_tasks.size() / num_parts;
+                sched.submit("search-txo-use", 100, [this, start_idx, end_idx, &txo_tasks, &txo_use_idx]() {
+                    auto txo_use_data = txo_use_idx.init_thread();
+                    index::txo_use::item search_item {};
+                    for (size_t j = start_idx; j < end_idx; ++j) {
+                        auto &txo_item = transactions.at(txo_tasks[j]);
+                        search_item.hash = txo_item.hash;
+                        for (auto &out: txo_item.outputs) {
+                            search_item.out_idx = out.out_idx;
+                            auto [ use_count, use_item ] = txo_use_idx.find(search_item, txo_use_data);
+                            if (use_count > 0) {
+                                if (use_count > 1)
+                                    throw error("internal error: multiple txo-use entries for the same tx offset {}!", txo_tasks[j]);
+                                out.use_offset = use_item.offset;
+                                out.use_size = use_item.size;
+                            }
+                        }
+                    }
+                    return txo_use_data.num_reads;
+                });
+            }
+            sched.process(false);
+            return txo_tasks;
+        }
+
+        void add_spending_txs(std::vector<uint64_t> &txo_tasks)
+        {
+            timer t { "add spending transactions", logger::level::debug };
+            // use txo_tasks because txos map is being updated in this loop
+            for (auto tx_off: txo_tasks) {
+                auto &txo_item = transactions.at(tx_off);
+                for (const auto &out: txo_item.outputs) {
+                    if (out.use_offset != 0) {
+                        auto it = transactions.emplace_hint(transactions.end(), out.use_offset, transaction { .size=out.use_size });
+                        it->second.inputs.emplace_back(tx_off, &out);
+                    }
+                }
+            }
+        }
+
+        inline void fill_raw_tx_data(scheduler &sched, chunk_registry &cr, const reconstructor &r, const bool spending_only=false);
+
+        void compute_balances()
+        {
+            timer t { "compute account balance", logger::level::debug };
+            for (const auto &[offset, tx]: transactions) {
+                for (const auto &out: tx.outputs) {
+                    total_tx_outputs++;
+                    if (out.use_offset != 0) continue;
+                    total_tx_outputs_unspent++;
+                    total_utxo_balance += out.amount;
+                    for (const auto &[asset_name, amount]: out.assets) {
+                        balance_assets[asset_name] += amount;
+                    }
+                }
+            }
         }
 
         uint64_t utxo_balance() const
@@ -90,127 +241,55 @@ namespace daedalus_turbo
             return total_withdrawals;
         }
 
-        void add_tx(transaction &&tx)
+        inline json::object to_json() const
         {
-            if (tx.withdraw == 0) {
-                ++total_tx_outputs;
-                if (tx.spent_id.size() == 0) {
-                    total_utxo_balance += tx.amount;
-                    ++total_tx_outputs_unspent;
-                }
-            } else {
-                total_withdrawals += tx.withdraw;
-            } 
-            transactions.emplace_back(tx);
+            json::array txs {};
+            for (const auto &[offset, tx]: transactions) {
+                txs.emplace_back(tx.to_json());
+            }
+            return json::object {
+                { "id", id.to_json() },
+                { "txCount", transactions.size() },
+                { "balance", fmt::format("{}", cardano::amount { total_utxo_balance }) },
+                { "assets", balance_assets.to_json() },
+                { "withdrawals", total_withdrawals },
+                { "transactions", std::move(txs) }
+            };
         }
+
+    private:
+        struct parse_task {
+            chunk_registry::chunk_info chunk {};
+            std::vector<typename transaction_map::value_type *> tasks {};
+        };
+        using parse_tasks = std::map<uint64_t, parse_task>;
     };
 
-    inline std::ostream &operator<<(std::ostream &os, const history &h)
-    {
-        if (h.transactions.size() > 0) {
-            for (const auto &tx: h.transactions) {
-                if (tx.withdraw == 0) os << tx;
-            }
-            os << "transaction outputs affecting stake address " << buffer(h.stake_addr)
-                << ": " << h.total_tx_outputs << " of them unspent: " << h.total_tx_outputs_unspent << "\n"
-                << "available balance without rewards: " << cardano_amount(h.utxo_balance());
-            os << "\n";
-            os << "last indexed slot: " << h.last_slot << ", last epoch: " << slot_to_epoch(h.last_slot)
-                << ", # random reads: " << h.num_disk_reads
-                << " of them from indices: " << h.num_idx_reads << " (" << std::fixed << std::setprecision(1) << 100 * (double)h.num_idx_reads / h.num_disk_reads << "%)";
-        } else {
-            os << "last indexed slot: " << h.last_slot << ", last epoch: " << slot_to_epoch(h.last_slot) << "\n"
-                << "no transactions affecting stake address " << buffer(h.stake_addr) << " have been found!";
-        }
-        os << "\n";
-        return os;
-    }
+    struct reconstructor {
+        struct find_tx_res {
+            uint64_t offset = 0;
+            cbor_value tx_raw {};
+            index::block_meta::item block_info {};
 
-    class reconstructor
-    {
-        chunk_registry _cr;
-        index_reader<addr_use_item> _addr_use_idx;
-        index_reader<tx_use_item> _tx_use_idx;
-        std::vector<block_item> _block_index;
-
-        struct addr_match {
-            uint8_t stake_addr[28];
-            uint8_t tx_hash[32];
-            uint64_t amount;
-            uint64_t withdraw;
-            uint64_t tx_out_idx;
-            cardano_block_context block;
-            
-            addr_match(const buffer &address, const buffer &tx_hash_, uint64_t amount, uint16_t tx_out_idx_, uint64_t withdraw_, const cardano_block_context &block_ctx)
-                : amount(amount), withdraw(withdraw_), tx_out_idx(tx_out_idx_), block(block_ctx)
+            explicit operator bool() const
             {
-                memcpy(stake_addr, address.data(), address.size());
-                memcpy(tx_hash, tx_hash_.data(), tx_hash_.size());
-            }
-
-            bool operator<(const addr_match &m) const {
-                return memcmp(tx_hash, m.tx_hash, sizeof(tx_hash)) < 0
-                    || tx_out_idx < m.tx_out_idx
-                    || withdraw < m.withdraw;
+                return offset > 0;
             }
         };
 
-        struct spent_tx_check {
-            const addr_match *match;
-            uint64_t tx_offset;
-            size_t tx_size;
-            bool do_check;
-
-            spent_tx_check(const addr_match &m, bool chk, uint64_t tx_off=0, size_t tx_sz=0)
-                : match(&m), tx_offset(tx_off), tx_size(tx_sz), do_check(chk)
-            {
-            }
-            
-        };
-
-        class addr_matcher: public cardano_processor {
-            std::set<addr_match> &matches;
-            const buffer search_address;
-
-        public:
-
-            addr_matcher(std::set<addr_match> &matches_, const buffer &addr)
-                : matches(matches_), search_address(addr)
-            {
-            }
-
-            void every_tx_output(const cardano_tx_output_context &ctx, const cbor_buffer &address, uint64_t amount) {
-                uint8_t address_type = address.data()[0] >> 4;
-                if (address.size() != 57 || address_type >= 4) return;
-                if (memcmp(search_address.data(), address.data() + 29, search_address.size()) != 0) return;
-                addr_match m(address, buffer(ctx.tx_ctx.hash, sizeof(ctx.tx_ctx.hash)), amount, ctx.out_idx, 0, ctx.tx_ctx.block_ctx);
-                auto [it, ok] = matches.insert(std::move(m));
-                if (!ok) throw error_fmt("failed to insert a matching transaction - already exists!");
-            };
-
-            void every_tx_withdrawal(const cardano_tx_context &ctx, const cbor_buffer &address, uint64_t amount)
-            {
-                if (address.size() != 29 || address.data()[0] != 0xE1) return;
-                if (memcmp(search_address.data(), address.data() + 1, search_address.size()) != 0) return;
-                addr_match m(address, buffer(ctx.hash, sizeof(ctx.hash)), 0, 0, amount, ctx.block_ctx);
-                auto [it, ok] = matches.insert(std::move(m));
-                if (!ok) throw error_fmt("failed to insert a matching withdrawal - already exists!");
-            }
-        };
-
-    public:
-
-        reconstructor(const std::string &db_path, const std::string &idx_path, bool lz4=false)
-            : _cr(db_path, lz4), _addr_use_idx(idx_path + "/addruse/index.bin"), _tx_use_idx(idx_path + "/txuse/index.bin"), _block_index()
+        reconstructor(scheduler &sched, chunk_registry &cr, const std::string &idx_path)
+            : _sched { sched }, _cr { cr },
+                _stake_ref_idx { indexer::multi_reader_paths(idx_path, "stake-ref") },
+                _pay_ref_idx { indexer::multi_reader_paths(idx_path, "pay-ref") },
+                _tx_idx { indexer::multi_reader_paths(idx_path, "tx") },
+                _txo_use_idx { indexer::multi_reader_paths(idx_path, "txo-use") },
+                _block_index {}
         {
-            const std::string block_index_path = idx_path + "/block/index.bin";
-            size_t block_index_size = std::filesystem::file_size(block_index_path);
-            if (block_index_size % sizeof(block_item) != 0) throw error_fmt("File size of {} must divide without remainder by {}", block_index_path, sizeof(block_item));
-            _block_index.resize(block_index_size / sizeof(block_item));
-            if (block_index_size > 0) {
-                std::ifstream is(block_index_path, std::ios::binary);
-                if (!is.read(reinterpret_cast<char *>(_block_index.data()), block_index_size))
-                    throw error_sys_fmt("Read from {} has failed!", block_index_path);
+            index::reader_multi<index::block_meta::item> block_meta_idx { indexer::multi_reader_paths(idx_path, "block-meta") };
+            _block_index.reserve(block_meta_idx.size());
+            index::block_meta::item item {};
+            while (block_meta_idx.read(item)) {
+                _block_index.emplace_back(std::move(item));
             }
         }
 
@@ -221,94 +300,174 @@ namespace daedalus_turbo
             return last_slot;
         }
 
-        const block_item &find_block(uint64_t tx_offset) {
-            auto bi_it = lower_bound(_block_index.begin(), _block_index.end(), tx_offset, [](const block_item &b, size_t off) { return b.offset + b.size <= off; });
-            if (bi_it == _block_index.end()) throw error_fmt("unknown offset: {}!", tx_offset);
-            if (!(tx_offset >= bi_it->offset && tx_offset < bi_it->offset + bi_it->size)) throw error_fmt("internal error block metadata does not match the transaction!");
+        const index::block_meta::item &find_block(uint64_t tx_offset) const {
+            auto bi_it = lower_bound(_block_index.begin(), _block_index.end(), tx_offset, [](const auto &b, size_t off) { return b.offset + b.size - 1 < off; });
+            if (bi_it == _block_index.end())
+                throw error("unknown offset: {}!", tx_offset);
+            if (!(tx_offset >= bi_it->offset && tx_offset < bi_it->offset + bi_it->size))
+                throw error("internal error block metadata does not match the transaction!");
             return *bi_it;
         }
 
-        history reconstruct_raw_addr(const buffer &stake_addr) {
-            history hist(stake_addr);
+        find_tx_res find_tx(const buffer &tx_hash)
+        {
+            find_tx_res res {};
+            auto [ txo_count, txo_item ] = _tx_idx.find(index::tx::item { tx_hash });
+            if (txo_count == 0) return res;
+            res.offset = txo_item.offset;
+            res.block_info = find_block(txo_item.offset);
+            _cr.read(txo_item.offset, res.tx_raw, (size_t)txo_item.size);
+            return res;
+        }
+
+        history<stake_ident> find_stake_balance(const stake_ident &stake_id)
+        {
+            return _balance(_stake_ref_idx, stake_id);
+        }
+
+        history<stake_ident> find_stake_history(const stake_ident &stake_id)
+        {
+            return _history(_stake_ref_idx, stake_id);
+        }
+
+        history<pay_ident> find_pay_history(const pay_ident &pay_id)
+        {
+            return _history(_pay_ref_idx, pay_id);
+        }
+
+    private:
+        scheduler &_sched;
+        chunk_registry &_cr;
+        index::reader_multi<index::stake_ref::item> _stake_ref_idx;
+        index::reader_multi<index::pay_ref::item> _pay_ref_idx;
+        index::reader_multi<index::tx::item> _tx_idx;
+        index::reader_multi_mt<index::txo_use::item> _txo_use_idx;
+        std::vector<index::block_meta::item> _block_index;
+
+        template<typename IDX, typename ID>
+        const history<ID> _history(index::reader_multi<IDX> &ref_idx, const ID &id)
+        {
+            timer t { "history reconstruction", logger::level::debug };
+            history<ID> hist { id };
             if (_block_index.size() == 0) return hist;
-            const block_item &last_block = *_block_index.rbegin();
+            const auto &last_block = *_block_index.rbegin();
             hist.last_slot = last_block.slot;
-            
-            auto [ ok_addr, addr_use, addr_n_reads ] = _addr_use_idx.find(stake_addr);
-            hist.num_idx_reads = hist.num_disk_reads = addr_n_reads;
-            if (ok_addr) {
-                std::set<addr_match> matches;
-                addr_matcher proc(matches, stake_addr);
-                cardano_parser parser(proc);
-
-                cbor_value tx;
-                uint8_t tx_hash[32];
-                for (;;) {
-                    uint64_t tx_offset = unpack_offset(addr_use.tx_offset, sizeof(addr_use.tx_offset));
-                    const block_item &bi = find_block(tx_offset);
-                    hist.num_disk_reads += _cr.read(tx_offset, tx, unpack_tx_size(addr_use.tx_size), 2);
-                    cardano_chunk_context chunk_ctx(bi.offset);
-                    cardano_block_context block_ctx(chunk_ctx, bi.offset, bi.era, bi.block_number, bi.slot, slot_to_epoch(bi.slot));
-                    blake2b_best(tx_hash, sizeof(tx_hash), reinterpret_cast<const char *>(tx.data), tx.size);
-                    cardano_tx_context tx_ctx(block_ctx, tx_offset, tx.size, 0, buffer(tx_hash, sizeof(tx_hash)));
-                    parser.parse_tx(tx_ctx, tx);
-                    // do not count disk read since it is not a random but a sequential one!
-                    auto next_res = _addr_use_idx.next(stake_addr);
-                    if (!std::get<0>(next_res)) break;
-                    addr_use = std::get<1>(next_res);
-                }
-
-                std::vector<spent_tx_check> spent_checks;
-                spent_checks.reserve(matches.size());
-
-                for (auto it = matches.begin(); it != matches.end(); it++) {
-                    if (sizeof(it->tx_hash) != 32) throw error_fmt("unexpected tx_hash of size different from 32 bytes!");
-                    if (it->withdraw == 0) {
-                        uint8_t tx_use_key[32 + 2];
-                        memcpy(tx_use_key, it->tx_hash, sizeof(it->tx_hash));
-                        memcpy(tx_use_key + sizeof(it->tx_hash), &it->tx_out_idx, 2);
-                        auto [ ok_tx_use, tx_use, tx_n_reads ] = _tx_use_idx.find(buffer(tx_use_key, sizeof(tx_use_key)));
-                        hist.num_disk_reads += tx_n_reads;
-                        hist.num_idx_reads += tx_n_reads;
-                        if (ok_tx_use) {
-                            spent_checks.emplace_back(*it, true, unpack_offset(tx_use.tx_offset, sizeof(tx_use.tx_offset)), unpack_tx_size(tx_use.tx_size));
-                        } else {
-                            spent_checks.emplace_back(*it, false);
-                        }
-                    } else {
-                        spent_checks.emplace_back(*it, false);
-                    }
-                }
-
-                // order by tx_offset to improve disk access performance
-                std::sort(spent_checks.begin(), spent_checks.end(), [](const auto &a, const auto &b) { return a.tx_offset < b.tx_offset; });
-                for (const auto &chk: spent_checks) {
-                    transaction tx_meta;
-                    if (chk.do_check) {
-                        hist.num_disk_reads += _cr.read(chk.tx_offset, tx, chk.tx_size, 2);
-                        blake2b_best(tx_hash, sizeof(tx_hash), reinterpret_cast<const char *>(tx.data), tx.size);
-                        tx_meta.spent_id = buffer(tx_hash, sizeof(tx_hash));
-                    }
-                    tx_meta.id = buffer(chk.match->tx_hash, sizeof(chk.match->tx_hash));
-                    tx_meta.slot = chk.match->block.slot;
-                    tx_meta.out_idx = chk.match->tx_out_idx;
-                    tx_meta.amount = chk.match->amount;
-                    tx_meta.withdraw = chk.match->withdraw;
-                    hist.add_tx(std::move(tx_meta));
-                }
+            if (!hist.find_incoming_txos(ref_idx)) return hist;
+            hist.fill_raw_tx_data(_sched, _cr, *this);
+            {
+                auto txo_tasks = hist.find_used_txos(_sched, _txo_use_idx);
+                hist.add_spending_txs(txo_tasks);
             }
-            std::sort(hist.transactions.begin(), hist.transactions.end(), [](const auto &a, const auto &b) { return a < b; });
+            hist.fill_raw_tx_data(_sched, _cr, *this, true);
+            hist.compute_balances();
+            hist.full_history = true;
             return hist;
         }
 
-        history reconstruct(const buffer &address) {
-            if (address.size() != 29 || address.data()[0] != 0xE1) throw error_fmt("only shelley stake reward addresses (type 14) are supported!");
-            const buffer stake_addr(address.data() + 1, address.size() - 1);
-            return reconstruct_raw_addr(stake_addr);
+        template<typename IDX, typename ID>
+        const history<ID> _balance(index::reader_multi<IDX> &ref_idx, const ID &id)
+        {
+            return _history(ref_idx, id);
         }
-
     };
 
+    template<typename T>
+    inline void history<T>::fill_raw_tx_data(scheduler &sched, chunk_registry &cr, const reconstructor &r, const bool spending_only)
+    {
+        timer t1 { "fill_raw_tx_data - full", logger::level::debug };
+        // group txos by their chunk based on their offsets
+        parse_tasks chunk_tasks {};
+        for (auto &tx_it: transactions) {
+            if (spending_only && tx_it.second.outputs.size() > 0)
+                continue;
+            const auto &chunk = cr.find(tx_it.first);
+            auto [task_it, created] = chunk_tasks.emplace(chunk.offset, parse_task {});
+            if (created) task_it->second.chunk = chunk;
+            task_it->second.tasks.emplace_back(&tx_it);
+        }
+
+        timer t2 { fmt::format("fill_raw_tx_data - {} load and parse tasks", chunk_tasks.size()), logger::level::debug };
+        // extract transaction data
+        if (!chunk_tasks.empty()) {
+            for (auto &[chunk_offset, chunk_info]: chunk_tasks) {
+                sched.submit("parse-chunk", 100, [&]() {
+                    size_t updates = 0;
+                    auto data = file::read(cr.full_path(chunk_info.chunk.rel_path()));
+                    buffer buf { data };
+                    cbor_value tx_raw {};
+                    for (auto tx_ptr: chunk_info.tasks) {
+                        auto &[tx_offset, tx_item] = *tx_ptr;
+                        if (tx_offset < chunk_offset) throw error("task offset: {} < chunk_offset: {}!", tx_offset, chunk_offset);
+                        size_t tx_size = (size_t)tx_item.size;
+                        size_t tx_chunk_offset = tx_offset - chunk_offset;
+                        // tx_size is imprecise so bound it down to the chunk size
+                        if (tx_size > buf.size() - tx_chunk_offset) tx_size = buf.size() - tx_chunk_offset;
+                        auto tx_buf = buf.subbuf(tx_chunk_offset, tx_size);
+                        cbor_parser tx_parser { tx_buf };
+                        try {
+                            tx_parser.read(tx_raw);
+                            const index::block_meta::item &block_meta = r.find_block(tx_offset);
+                            history_mock_block mock_blk { block_meta, tx_raw, tx_offset };
+                            auto tx = cardano::make_tx(tx_raw, mock_blk);
+                            tx_item.hash = tx->hash();
+                            tx_item.slot = block_meta.slot;
+                            if (tx_item.outputs.size() > 0) {
+                                tx->foreach_output([&](const auto &out) {
+                                    auto tx_out_it = std::lower_bound(tx_item.outputs.begin(), tx_item.outputs.end(), out.idx, [&](const auto &el, const auto &v) { return el.out_idx < v; });
+                                    if (tx_out_it == tx_item.outputs.end() || tx_out_it->out_idx != out.idx) return;
+                                    updates++;
+                                    tx_out_it->amount = out.amount;
+                                    if (out.assets != nullptr) {
+                                        for (const auto &[policy_id, policy_assets]: *out.assets) {
+                                            for (const auto &[asset_name, amount]: policy_assets.map()) {
+                                                tx_out_it->assets[cardano::asset_name(policy_id.buf(), asset_name.buf())] = amount.uint();
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        } catch (std::exception &ex) {
+                            throw error("cannot parse tx {} at offset {} size {}: {}", tx_offset, (size_t)tx_item.size, ex.what());
+                        }
+                    }
+                    return updates;
+                });
+            }
+            sched.process(false);
+            num_disk_reads += chunk_tasks.size();
+        }
+    }
+
+}
+
+namespace fmt {
+    template<>
+    struct formatter<daedalus_turbo::transaction>: public formatter<size_t> {
+        template<typename FormatContext>
+        auto format(const auto &tx, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "slot: {} balance change: {} hash: {} new inputs: {} spent outputs: {} \n",
+                tx.slot, tx.balance_change(), tx.hash.span(), tx.outputs.size(), tx.inputs.size());
+        }
+    };
+
+    template<typename T>
+    struct formatter<daedalus_turbo::history<T>>: public formatter<size_t> {
+        template<typename FormatContext>
+        auto format(const auto &h, FormatContext &ctx) const -> decltype(ctx.out()) {
+            auto out_it = ctx.out();
+            if (h.full_history) {
+                for (const auto &[offset, tx]: h.transactions)
+                   out_it = fmt::format_to(out_it, "{}", tx);
+            }
+            out_it = fmt::format_to(out_it, "transaction outputs affecting stake address {}: {} of them unspent: {}\n",
+                h.id.hash.span(), h.total_tx_outputs, h.total_tx_outputs_unspent);
+            out_it = fmt::format_to(out_it, "available balance without rewards: {}\n", daedalus_turbo::cardano::amount { h.utxo_balance() });
+            if (h.balance_assets.size() > 0)
+                out_it = fmt::format_to(out_it, "asset balances: {}\n", h.balance_assets);
+            return fmt::format_to(out_it, "last indexed slot: {}, last epoch: {}, # random reads: {} of them from indices: {} ({:0.1f}%)\n",
+                h.last_slot, h.last_slot.epoch(), h.num_disk_reads, h.num_idx_reads, 100 * (double)h.num_idx_reads / h.num_disk_reads);
+        }
+    };
 }
 
 #endif // !DAEDALUS_TURBO_HISTORY_HPP

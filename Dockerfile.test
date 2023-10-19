@@ -1,14 +1,18 @@
 FROM ubuntu:22.04
 LABEL MAINTAINER "Alex Sierkov <alex.sierkov@gmail.com>"
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata screen sudo
+RUN apt-get install -y tzdata screen sudo gnupg2 ca-certificates vim-nox
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 31F54F3E108EAD31
+RUN echo "deb https://ppa.launchpadcontent.net/mhier/libboost-latest/ubuntu/ jammy main" >> /etc/apt/sources.list.d/mhier-ubuntu-libboost-latest-jammy.list
+RUN apt-get update
 RUN ln -fs /usr/share/zoneinfo/Europe/Berlin /etc/localtime
 RUN dpkg-reconfigure --frontend noninteractive tzdata
 RUN cp /etc/sudoers /etc/sudoers.orig
 RUN awk '{ if (/^%sudo/) { print "%sudo\tALL=(ALL:ALL) NOPASSWD:ALL" } else { print } }' /etc/sudoers.orig > /etc/sudoers
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential
 RUN useradd -m -s /bin/bash -G sudo dev
+RUN apt-get install -y build-essential gdb libboost1.81-all-dev libsodium-dev libzstd-dev libssl-dev libfmt-dev libspdlog-dev
 RUN mkdir /home/dev/dt
 COPY 3rdparty /home/dev/dt/3rdparty
 COPY src /home/dev/dt/src
@@ -21,5 +25,6 @@ RUN chown -R dev:dev /home/dev
 USER dev
 WORKDIR /home/dev/dt
 RUN make -j all
+COPY docker-test.sh /home/dev
 WORKDIR /home/dev/dt/src
-CMD [ "/bin/bash" ]
+CMD [ "/bin/bash", "/home/dev/docker-test.sh" ]

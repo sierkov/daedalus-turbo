@@ -1,19 +1,13 @@
-/*
- * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
+/* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
- *
  * This code is distributed under the license specified in:
- * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
- */
-
+ * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #include <chrono>
 #include <cstring>
 #include <iostream>
 #include <source_location>
 #include <string_view>
-
 #include <boost/ut.hpp>
-
 #include <dt/benchmark.hpp>
 #include <dt/error.hpp>
 
@@ -29,14 +23,14 @@ suite error_bench_suite = [] {
     "error"_test = [] {
         benchmark_r("construct one-param", 1'000'000.0, 1'000'000,
             [] {
-                error_fmt("Hello {}!", "world");
+                error("Hello {}!", "world");
             }
         );
         benchmark_r("construct, throw, and catch", 100'000.0, 100'000,
             [] {
                 try {
-                    throw error_fmt("Hello {}!", "world");
-                } catch (error_fmt &ex) {
+                    throw error("Hello {}!", "world");
+                } catch (error &ex) {
                 }
             }
         );

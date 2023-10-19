@@ -1,13 +1,8 @@
-/*
- * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
+/* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
- *
  * This code is distributed under the license specified in:
- * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
- */
-
+ * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #include <boost/ut.hpp>
-
 #include <dt/benchmark.hpp>
 #include <dt/util.hpp>
 #include <dt/vrf.hpp>

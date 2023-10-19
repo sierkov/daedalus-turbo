@@ -1,13 +1,8 @@
-/*
- * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
+/* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
- *
  * This code is distributed under the license specified in:
- * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
- */
-
+ * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #include <boost/ut.hpp>
-
 #include <dt/array.hpp>
 
 using namespace boost::ut;
@@ -74,6 +69,16 @@ suite array_suite = [] {
             expect(a[9] == 0);
         };
 
+        "construct_string_view"_test = [] {
+            using namespace std::literals;
+            array<uint8_t, 4> a { "\x01\x02\x03\x04"sv };
+            expect(a.size() == 4);
+            expect(a[0] == 1);
+            expect(a[1] == 2);
+            expect(a[2] == 3);
+            expect(a[3] == 4);
+        };
+
         "assign_span"_test = [] {
             array<uint8_t, 4> a { 1, 2, 3, 4 };
             array<uint8_t, 4> b { 9, 8, 7, 6 };
@@ -106,6 +111,18 @@ suite array_suite = [] {
             expect(a[7] == 1);
             expect(a[8] == 4);
             expect(a[9] == 0);
+        };
+
+        "assign_string_view"_test = [] {
+            using namespace std::literals;
+            array<uint8_t, 4> a {};
+            expect(a.size() == 4);
+            for (const auto v: a) expect(v == 0);
+            a = "\x01\x02\x03\x04"sv;
+            expect(a[0] == 1);
+            expect(a[1] == 2);
+            expect(a[2] == 3);
+            expect(a[3] == 4);
         };
     };  
 };

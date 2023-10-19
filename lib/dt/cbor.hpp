@@ -1,10 +1,7 @@
-/*
- * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
+/* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
- *
  * This code is distributed under the license specified in:
- * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
- */
+ * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_CBOR_HPP
 #define DAEDALUS_TURBO_CBOR_HPP
 
@@ -18,16 +15,12 @@
 #include <string_view>
 #include <variant>
 #include <vector>
-
 #include "util.hpp"
 
 namespace daedalus_turbo {
+    using cbor_error = error;
 
-    using cbor_error = error_fmt;
-
-    class cbor_incomplete_data_error: public cbor_error
-    {
-    public:
+    struct cbor_incomplete_data_error: public cbor_error {
         cbor_incomplete_data_error(): cbor_error("CBOR value extends beyond the end of stream")
         {
         }
@@ -41,15 +34,7 @@ namespace daedalus_turbo {
 
     struct cbor_array: public std::vector<cbor_value>
     {
-        const cbor_value &at(size_t pos, const std::source_location loc = std::source_location::current()) const
-        {
-            try {
-                return std::vector<cbor_value>::at(pos);
-            } catch (std::out_of_range &ex) {
-                throw cbor_error("invalid element index {} in the array of size {} in file {} line {}!",
-                                 pos, size(), loc.file_name(), loc.line());
-            }
-        }
+        inline const cbor_value &at(size_t pos, const std::source_location loc = std::source_location::current()) const;
     };
 
     enum cbor_value_type {
@@ -60,11 +45,11 @@ namespace daedalus_turbo {
         CBOR_ARRAY,
         CBOR_MAP,
         CBOR_TAG,
-        CBOR_SIMPLE_FALSE,
         CBOR_SIMPLE_TRUE,
         CBOR_SIMPLE_NULL,
         CBOR_SIMPLE_UNDEFINED,
         CBOR_SIMPLE_BREAK,
+        CBOR_SIMPLE_FALSE,
         CBOR_FLOAT16,
         CBOR_FLOAT32,
         CBOR_FLOAT64
@@ -128,10 +113,9 @@ namespace daedalus_turbo {
             return std::string_view(reinterpret_cast<const char *>(buf.data()), buf.size());
         }
 
-        inline const std::span<const uint8_t> span(const std::source_location &loc = std::source_location::current()) const
+        inline const buffer &span(const std::source_location &loc = std::source_location::current()) const
         {
-            const auto &buf = get_ref<cbor_buffer>(CBOR_BYTES, loc);
-            return std::span<const uint8_t>(buf.data(), buf.size());
+            return  get_ref<cbor_buffer>(CBOR_BYTES, loc);
         }
 
         inline const cbor_array &array(const std::source_location &loc = std::source_location::current()) const
@@ -192,10 +176,20 @@ namespace daedalus_turbo {
         cbor_value_content content;
     };
 
+    inline const cbor_value &cbor_array::at(size_t pos, const std::source_location loc) const
+    {
+        try {
+            return std::vector<cbor_value>::at(pos);
+        } catch (std::out_of_range &ex) {
+            throw cbor_error("invalid element index {} in the array of size {} in file {} line {}!",
+                                pos, size(), loc.file_name(), loc.line());
+        }
+    }
+
     class cbor_parser {
         const uint8_t *_data;
         const size_t _size;
-        size_t _offset;
+        size_t _offset = 0;
 
         void _read_unsigned_int(cbor_value &val, uint8_t augVal, const cbor_buffer &augBuf) {
             uint64_t x = 0;
@@ -239,7 +233,7 @@ namespace daedalus_turbo {
                 }
                 storage->shrink_to_fit();
                 val.set_content(buffer(storage->data(), storage->size()));
-                val.storage = move(storage);
+                val.storage = std::move(storage);
             }
         }
 
@@ -356,8 +350,8 @@ namespace daedalus_turbo {
 
     public:
 
-        cbor_parser(const uint8_t *data, const size_t size)
-            : _data(data), _size(size), _offset(0) {
+        cbor_parser(const buffer &buf): _data(buf.data()), _size(buf.size())
+        {
         }
 
         void read(cbor_value &val) {
@@ -457,6 +451,26 @@ namespace daedalus_turbo {
 
     };
 
+    inline std::vector<size_t> parse_value_path(const std::string_view text)
+    {
+        std::vector<size_t> value_path;
+        std::string_view text_path { text };
+        while (text_path.size() > 0) {
+            size_t next_pos = text_path.find('.');
+            std::string idx_text;
+            if (next_pos != std::string_view::npos) {
+                idx_text = text_path.substr(0, next_pos);
+                text_path = text_path.substr(next_pos + 1);
+            } else {
+                idx_text = text_path;
+                text_path = text_path.substr(0, 0);
+            }
+            size_t idx = std::stoull(idx_text);
+            value_path.push_back(idx);
+        }
+        return value_path;
+    }
+
     inline const cbor_value &extract_value(const cbor_value &v, const std::span<size_t> &path, size_t idx=0)
     {
         if (idx >= path.size()) return v;
@@ -474,22 +488,22 @@ namespace daedalus_turbo {
         return true;
     }
 
-    inline void print_cbor_value(std::ostream &os, const cbor_value &val, const size_t max_depth=0, const size_t depth = 0, const size_t max_list_to_expand=10)
+    inline void print_cbor_value(std::ostream &os, const cbor_value &val, const cbor_value &base, const size_t max_depth=0, const size_t depth = 0, const size_t max_list_to_expand=10)
     {
         std::string shift_str = "";
         for (size_t i = 0; i < depth * 4; ++i) shift_str += ' ';
         switch (val.type) {
             case CBOR_UINT:
-                os << shift_str << "UINT: " << val.uint() << '\n';
+                os << shift_str << "UINT: " << val.uint() << " offset: " << (val.data - base.data) << " size: " << val.size << '\n';
                 break;
 
             case CBOR_NINT:
-                os << shift_str << "NINT: -" << val.nint() << '\n';
+                os << shift_str << "NINT: -" << val.nint() << " offset: " << (val.data - base.data) << " size: " << val.size << '\n';
                 break;
 
             case CBOR_BYTES: {
                 const cbor_buffer &b = val.buf();
-                os << shift_str << "BYTES: " << b.size() << " bytes";
+                os << shift_str << "BYTES offset: " << (val.data - base.data) << " " << b.size() << " bytes";
                 os << " data: " << b;
                 if (is_ascii(b)) {
                     const std::string_view sv(reinterpret_cast<const char *>(b.data()), b.size());
@@ -502,7 +516,7 @@ namespace daedalus_turbo {
             case CBOR_TEXT: {
                 const cbor_buffer &b = val.buf();
                 const std::string_view sv(reinterpret_cast<const char *>(b.data()), b.size());
-                os << shift_str << "TEXT: " << b.size() << " bytes";
+                os << shift_str << "TEXT offset: " << (val.data - base.data) << " " << b.size() << " bytes";
                 if (b.size() <= 64) os << " text: '" << sv << "'";
                 else os << " text: '" << sv.substr(0, 64) << "...'";
                 os << '\n';
@@ -511,11 +525,11 @@ namespace daedalus_turbo {
 
             case CBOR_ARRAY: {
                 const cbor_array &a = val.array();
-                os << shift_str << "ARRAY: " << a.size() << " elements, data size: " << val.size << '\n';
+                os << shift_str << "ARRAY: " << a.size() << " elements, offset: " << (val.data - base.data) << " data size: " << val.size << '\n';
                 if ((max_list_to_expand == 0 || a.size() <= max_list_to_expand) && depth < max_depth) {
                     for (size_t i = 0; i < a.size(); ++i) {
                         os << shift_str << "    VAL " << i << ":\n";
-                        print_cbor_value(os, a[i], max_depth, depth + 2, max_list_to_expand);
+                        print_cbor_value(os, a[i], base, max_depth, depth + 2, max_list_to_expand);
                     }
                 }
                 break;
@@ -523,13 +537,13 @@ namespace daedalus_turbo {
 
             case CBOR_MAP: {
                 const cbor_map &m = val.map();
-                os << shift_str << "MAP: " << m.size() << " elements, data size: " << val.size << '\n';
+                os << shift_str << "MAP: " << m.size() << " elements, offset: " << (val.data - base.data) << " data size: " << val.size << '\n';
                 if ((max_list_to_expand == 0 || m.size() <= max_list_to_expand) && depth + 1 < max_depth) {
                     for (size_t i = 0; i < m.size(); ++i) {
                         os << shift_str << "    KEY " << i << ":\n";
-                        print_cbor_value(os, m[i].first, max_depth, depth + 2, max_list_to_expand);
+                        print_cbor_value(os, m[i].first, base, max_depth, depth + 2, max_list_to_expand);
                         os << shift_str << "    VAL " << i << ":\n";
-                        print_cbor_value(os, m[i].second, max_depth, depth + 2, max_list_to_expand);
+                        print_cbor_value(os, m[i].second, base, max_depth, depth + 2, max_list_to_expand);
                     }
                 }
                 break;
@@ -537,15 +551,15 @@ namespace daedalus_turbo {
 
             case CBOR_TAG: {
                 const cbor_tag &t = val.tag();
-                os << shift_str << "TAG: " << t.first << " data size: " << val.size << '\n';
+                os << shift_str << "TAG: " << t.first << " offset: " << (val.data - base.data) << " data size: " << val.size << '\n';
                 if (depth < max_depth) {
-                    print_cbor_value(os, *t.second, max_depth, depth + 1, max_list_to_expand);
+                    print_cbor_value(os, *t.second, base, max_depth, depth + 1, max_list_to_expand);
                 }
                 break;
             }
 
             case CBOR_SIMPLE_NULL:
-                os << shift_str << "NULL\n";
+                os << shift_str << "NULL" << " offset: " << (val.data - base.data) << '\n';
                 break;
 
             default: {

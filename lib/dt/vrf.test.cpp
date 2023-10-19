@@ -1,18 +1,11 @@
-/*
- * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
+/* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
- *
  * This code is distributed under the license specified in:
- * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
- */
-
-extern "C" {
-#   include <endian.h>
-}
-
+ * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #include <span>
 #include <boost/ut.hpp>
 #include <dt/blake2b.hpp>
+#include <dt/file.hpp>
 #include <dt/vrf.hpp>
 #include <dt/util.hpp>
 
@@ -63,6 +56,82 @@ suite vrf_suite = [] {
             auto result = bytes_from_hex("2031837f582cd17a9af9e0c7ef5a6540e3453ed894b62c293686ca3c1e319dde9d0aa489a4b59a9594fc2328bc3deff3c8a0929a369a72b1180a596e016b5ded");
             auto msg = bytes_from_hex("af82");
             expect(vrf03_verify(result, vkey, proof, msg)) << "VRF verification failed";
+        };
+
+        "verify-praos-leader-vrf"_test = [&] {
+            auto vkey = file::read("./data/vrf-vkey.bin");
+            auto proof = file::read("./data/vrf-leader-proof.bin");
+            auto result = file::read("./data/vrf-leader-result.bin");
+            uint64_t slot = 4492800;
+            auto uc_nonce = bytes_from_hex("12dd0a6a7d0e222a97926da03adb5a7768d31cc7c5c2bd6828e14a7d25fa3a60");
+            auto epoch_nonce = bytes_from_hex("1a3be38bcbb7911969283716ad7aa550250226b76a61fc51cc9a9a35d9276d81");
+            auto vrf_input = vrf_make_seed(uc_nonce, slot, epoch_nonce);
+            expect(vrf03_verify(result, vkey, proof, vrf_input)) << "leader VRF verification failed with input:" << vrf_input;
+        };
+
+        "verify-praos-nonce-vrf"_test = [&] {
+            auto vkey = file::read("./data/vrf-vkey.bin");
+            auto proof = file::read("./data/vrf-nonce-proof.bin");
+            auto result = file::read("./data/vrf-nonce-result.bin");
+            uint64_t slot = 4492800;
+            auto uc_nonce = bytes_from_hex("81e47a19e6b29b0a65b9591762ce5143ed30d0261e5d24a3201752506b20f15c");
+            auto epoch_nonce = bytes_from_hex("1a3be38bcbb7911969283716ad7aa550250226b76a61fc51cc9a9a35d9276d81");
+            auto vrf_input = vrf_make_seed(uc_nonce, slot, epoch_nonce);
+            expect(vrf03_verify(result, vkey, proof, vrf_input)) << "nonce VRF verification failed with input:" << vrf_input;
+        };
+
+        "vrf-nonce-from-vrf-result"_test = [] {
+            auto vrf_out = file::read("./data/vrf-nonce-result.bin");
+            expect(vrf_out.size() == 64) << vrf_out.size();
+            auto eta_exp = bytes_from_hex("44ce562e2e41da07693b78411c39f68999a1ba0c46f5144f1fab42889edf6311");
+            auto eta = blake2b<blake2b_256_hash>(vrf_out);
+            expect(eta_exp == eta) << "Failed to construct nonce from VRF output: expected:" << eta_exp << "got:" << eta;
+        };
+
+        "vrf-nonce-accumulate"_test = [] {
+            auto eta_prev = bytes_from_hex("1a3be38bcbb7911969283716ad7aa550250226b76a61fc51cc9a9a35d9276d81");
+            auto eta_new = bytes_from_hex("44ce562e2e41da07693b78411c39f68999a1ba0c46f5144f1fab42889edf6311");
+            auto eta_next_exp = bytes_from_hex("2af15f57076a8ff225746624882a77c8d2736fe41d3db70154a22b50af851246");
+            auto eta_next = vrf_nonce_accumulate(eta_prev, eta_new);
+            expect(eta_next == eta_next_exp) << "VRF accumulation failed: expected:" << eta_next_exp << "got:" << eta_next;
+        };
+
+        "vrf-nonce-epoch-transition-210"_test = [] {
+            // ηc ⭒ ηh ⭒ extraEntropy
+            auto eta_c = bytes_from_hex("a9543bc3820138abfaaad606d19c50df70c896336a88ab01da0eb34c1129bf31");
+            auto eta_h = bytes_from_hex("dfc1d6e6dbce685b5cf85899c6e3c89539b081c62222265910423ced4096390a");
+            auto eta_next_exp = bytes_from_hex("ddf346732e6a47323b32e1e3eeb7a45fad678b7f533ef1f2c425e13c704ba7e3");
+            auto eta_next = vrf_nonce_accumulate(eta_c, eta_h);
+            expect(eta_next == eta_next_exp) << "VRF epoch transition failed: expected:" << eta_next_exp << "got:" << eta_next;
+        };
+
+        "vrf-nonce-epoch-transition-259"_test = [] {
+            auto eta_c = bytes_from_hex("d1340a9c1491f0face38d41fd5c82953d0eb48320d65e952414a0c5ebaf87587");
+            auto eta_h = bytes_from_hex("ee91d679b0a6ce3015b894c575c799e971efac35c7a8cbdc2b3f579005e69abd");
+            auto entropy = bytes_from_hex("d982e06fd33e7440b43cefad529b7ecafbaa255e38178ad4189a37e4ce9bf1fa");
+            auto eta_next_exp = bytes_from_hex("0022cfa563a5328c4fb5c8017121329e964c26ade5d167b1bd9b2ec967772b60");
+            auto eta_next = vrf_nonce_accumulate(vrf_nonce_accumulate(eta_c, eta_h), entropy);
+            expect(eta_next == eta_next_exp) << "VRF epoch transition failed: expected:" << eta_next_exp << "got:" << eta_next;
+        };
+
+        "era-6-make-input"_test = [&] {
+            auto epoch_nonce = bytes_from_hex("cffa84169d13ef1106db5a72b491d27b2193317698762e5b3f362d0c50963426");
+            auto slot = 74260800;
+            auto input_exp = bytes_from_hex("8ac7a6f38d371aa567176db414ae07d8540b920d29f260d0770553c8c1fd79dc");
+            auto vrf_input = vrf_make_input(slot, epoch_nonce);
+            expect(input_exp == vrf_input) << vrf_input << "!=" << input_exp;
+        };
+
+        "era-6-vrf_nonce-value-76314088"_test = [&] {
+            auto vrf_result = bytes_from_hex("96891e4739ecab42e5d54a1b2593ab84b57a0bcdd6a3cabaa2fb84d3c205cf365398130d9bba22408cfe9b18e5fbbff672bb8fd073d703894fe3bea4739742c1");
+            auto nonce_exp = bytes_from_hex("f0a84689ddeec829b99ecf1462423df8db218ce46a60987135d54634163a9182");
+            expect(nonce_exp == vrf_nonce_value(vrf_result));
+        };
+
+        "era-6-vrf_nonce-value-77165950"_test = [&] {
+            auto vrf_result = bytes_from_hex("a5f7a9efbcd6e2b4c6159c352acb1ae042043b9d04af4f72cee126dffde9062593b4a1d56942b95b220ba439e5ca8fea86106771996155cfec0a4b18e1322238");
+            auto nonce_exp = bytes_from_hex("9fda26c536a6dc10094563625cb04c4f92e01731e3df0ba94721e2ddba5c5632");
+            expect(nonce_exp == vrf_nonce_value(vrf_result));
         };
         
     };

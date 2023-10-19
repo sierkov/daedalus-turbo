@@ -10,9 +10,11 @@ log
 **/*.torrent
 **/*.prof
 **/*.log
+**/*.o
 **/*.out
 **/*.ipynb
 **/*.iso
+**/.DS_Store
 **/adhoc-*
 doc/**/*.aux
 doc/**/*.bbl

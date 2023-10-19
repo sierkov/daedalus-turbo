@@ -1,15 +1,9 @@
-/*
- * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
+/* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
- *
  * This code is distributed under the license specified in:
- * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
- */
-
+ * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #include <string_view>
-
 #include <boost/ut.hpp>
-
 #include <dt/cbor.hpp>
 
 using namespace std::literals;
@@ -18,7 +12,7 @@ using namespace daedalus_turbo;
 
 inline cbor_value parse_cbor(const uint8_t *data, size_t size)
 {
-    cbor_parser parser(data, size);
+    cbor_parser parser(buffer { data, size });
     cbor_value val;
     parser.read(val);
     return val;
@@ -26,8 +20,8 @@ inline cbor_value parse_cbor(const uint8_t *data, size_t size)
 
 inline cbor_value parse_cbor(const std::string_view &bytes)
 {
-    cbor_parser parser(reinterpret_cast<const uint8_t*>(bytes.data()), bytes.size());
-    cbor_value val;
+    cbor_value val {};
+    cbor_parser parser { bytes };
     parser.read(val);
     return val;
 }

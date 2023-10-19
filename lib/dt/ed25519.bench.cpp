@@ -1,18 +1,13 @@
-/*
- * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
+/* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
- *
  * This code is distributed under the license specified in:
- * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
- */
-
+ * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #include <array>
-
 #include <boost/ut.hpp>
-
 #include <dt/benchmark.hpp>
 #include <dt/blake2b.hpp>
 #include <dt/ed25519.hpp>
+#include <dt/scheduler.hpp>
 
 using namespace boost::ut;
 using namespace daedalus_turbo;
@@ -25,26 +20,55 @@ suite ed25519_bench_suite = [] {
                                  0xdb, 0xcb, 0xe7, 0x10, 0xb6, 0x29, 0x76, 0x55, 0x35, 0x59, 0x11, 0x33, 0xb4, 0xf2, 0xb6, 0xe6,
                                  0xad, 0xfa, 0xb9, 0x33, 0xa8, 0x96, 0xda, 0x75, 0xf2, 0xcd, 0x5d, 0xb3, 0xa3, 0x35, 0x4a, 0x27,
                                  0x3d, 0x3e, 0x37, 0xc7, 0x28, 0xca, 0x98, 0x07, 0x53, 0x8d, 0x83, 0x8f, 0xef, 0xbb, 0x2f, 0x00 };
+        ed25519_signature sig_invalid { 0xa0, 0xdb, 0x79, 0x88, 0x7b, 0xcb, 0xb9, 0x2e, 0xe9, 0xcf, 0xe9, 0x0e, 0x83, 0x2c, 0x75, 0xab,
+                                 0xdb, 0xcb, 0xe7, 0x10, 0xb6, 0x29, 0x76, 0x55, 0x35, 0x59, 0x11, 0x33, 0xb4, 0xf2, 0xb6, 0xe6,
+                                 0xad, 0xfa, 0xb9, 0x33, 0xa8, 0x96, 0xda, 0x75, 0xf2, 0xcd, 0x5d, 0xb3, 0xa3, 0x35, 0x4a, 0x27,
+                                 0x3d, 0x3e, 0x37, 0xc7, 0x28, 0xca, 0x98, 0x07, 0x53, 0x8d, 0x83, 0x8f, 0xef, 0xbb, 0x2f, 0xff };
         std::array<uint8_t, 84> msg { 0xa3, 0x00, 0x81, 0x82, 0x58, 0x20, 0xc1, 0xa1, 0xff, 0x8e, 0x54, 0x99, 0xc3, 0x9f, 0xfa, 0x4c,
                                  0x70, 0x67, 0x43, 0x78, 0x5e, 0x62, 0x17, 0xa3, 0x3d, 0xf4, 0x8c, 0xef, 0x73, 0x42, 0xd0, 0xc4,
                                  0x52, 0x60, 0x51, 0x58, 0x50, 0xa1, 0x00, 0x01, 0x81, 0x82, 0x58, 0x1d, 0x61, 0xc2, 0x6a, 0xc0,
                                  0x99, 0x31, 0xf2, 0xff, 0x67, 0x58, 0x57, 0x30, 0x9b, 0xe6, 0xea, 0xf2, 0xd4, 0xbc, 0x18, 0xd2,
                                  0xdd, 0x33, 0xf5, 0x29, 0x0f, 0xc3, 0xa2, 0xad, 0xd1, 0x1a, 0x01, 0x54, 0x45, 0x60, 0x02, 0x1a,
                                  0x00, 0x0a, 0xae, 0x60 };
-        size_t num_evals = 1'000;
-        expect(benchmark_throughput("ed25519/raw", 5, [=] {
+        scheduler sched {};
+        for (const auto &[name, hash_func, verify_func]: {
+                std::make_tuple("ed25519-sodium", blake2b_sodium, ed25519::verify)
+            }) {
+            size_t num_evals = 1'000;
+            benchmark(std::string { name } + "/raw", 100'000.0, 5, [&] {
                 for (size_t i = 0; i < num_evals; ++i) {
-                    ed25519_verify(sig, vk, msg);
+                    verify_func(sig, vk, msg);
                 }
                 return msg.size() * num_evals;
-            }) >= 100'000.0_d);
-        expect(benchmark_throughput("ed25519/hash", 5, [=] {
+            });
+            benchmark(std::string { name } + "/raw-invalid", 100'000.0, 5, [&] {
+                for (size_t i = 0; i < num_evals; ++i) {
+                    verify_func(sig_invalid, vk, msg);
+                }
+                return msg.size() * num_evals;
+            });
+            benchmark(std::string { name } + "/hash", 100'000.0, 5, [&] {
                 blake2b_256_hash hash;
                 for (size_t i = 0; i < num_evals; ++i) {
-                    blake2b(hash, msg);
-                    ed25519_verify(sig, vk, hash);
+                    hash_func(hash.data(), hash.size(), msg.data(), msg.size());
+                    verify_func(sig, vk, hash);
                 }
                 return msg.size() * num_evals;
-            }) >= 100'000.0_d);
+            });
+            size_t num_evals_par = 100;
+            benchmark(name + std::string { "-parallel" }, 500'000.0, 3, [&] {
+                for (size_t i = 0; i < num_evals_par; ++i)
+                    sched.submit("hash", 100, [&]() {
+                        blake2b_256_hash hash;
+                        for (size_t i = 0; i < num_evals; ++i) {
+                            hash_func(hash.data(), hash.size(), msg.data(), msg.size());
+                            verify_func(sig, vk, hash);
+                        }
+                        return true;
+                    });
+                sched.process(false);
+                return msg.size() * num_evals * num_evals_par;
+            });
+        }
     };
 };

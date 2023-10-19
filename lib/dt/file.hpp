@@ -1,0 +1,237 @@
+/* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * This code is distributed under the license specified in:
+ * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
+#ifndef DAEDALUS_TURBO_FILE_HPP
+#define DAEDALUS_TURBO_FILE_HPP
+
+#include <cstdio>
+#include <atomic>
+#include <filesystem>
+#include <fstream>
+#include <string>
+#include <dt/util.hpp>
+#include <dt/zstd.hpp>
+
+namespace daedalus_turbo::file {
+
+    struct tmp {
+        tmp(const std::string &name): _path { (std::filesystem::temp_directory_path() / name).string() }
+        {
+        }
+
+        ~tmp()
+        {
+            if (std::filesystem::exists(_path)) std::filesystem::remove(_path);
+        }
+
+        const std::string &path() const
+        {
+            return _path;
+        }
+
+        operator const std::string &() const
+        {
+            return _path;
+        }
+
+    private:
+        std::string _path;
+    };
+
+    struct stream {
+        static size_t open_files()
+        {
+            return _open_files;
+        }
+    protected:
+        static std::atomic_size_t _open_files;
+    };
+
+    // C-style IO is used since on Mac OS the standard C++ library has very slow I/O performance.
+    // At the same time C-style IO works well on Mac, Linux, and Windows.
+    struct read_stream: protected stream {
+        read_stream(const std::string &path): _path { path }
+        {
+            _f = std::fopen(_path.c_str(), "rb");
+            if (_f == NULL)
+                throw error_sys("failed to open file {}", _path);
+            if (std::setvbuf(_f, NULL, _IONBF, 0) != 0)
+                throw error_sys("failed to disable read buffering for {}", _path);
+            _open_files++;
+        }
+
+        ~read_stream()
+        {
+            if (!_closed)
+                close();
+        }
+
+        void close()
+        {
+            _closed = true;
+            if (_f != NULL) {
+                if (std::fclose(_f) != 0)
+                    throw error("failed to close file {}!", _path);
+            }
+            _open_files--;
+        }
+
+        void seek(std::streampos off)
+        {
+#if     _WIN32
+            if (_fseeki64(_f, off, SEEK_SET) != 0)
+#else
+            if (fseek(_f, off, SEEK_SET) != 0)
+#endif
+                throw error_sys("failed to seek in {}", _path);
+        }
+
+        void read(void *data, size_t num_bytes)
+        {
+            if (std::fread(data, 1, num_bytes, _f) != num_bytes)
+                throw error_sys("failed to read {} bytes from {}", num_bytes, _path);
+        }
+
+    protected:
+        std::FILE *_f = NULL;
+        std::string _path {};
+        bool _closed = false;
+    };
+
+    // C-style IO is used since on Mac OS the standard C++ library has very slow I/O performance.
+    // At the same time C-style IO works well on Mac, Linux, and Windows.
+    struct write_stream: protected stream {
+        write_stream(const std::string &path, std::ios_base::openmode mode=std::ios::binary): _path { path }
+        {
+            if (mode != std::ios::binary)
+                throw error("unsupported write_stream mode: {}!", (int)mode);
+            _f = std::fopen(_path.c_str(), "wb");
+            if (_f == NULL)
+                throw error_sys("failed to open file {}", _path);
+            if (std::setvbuf(_f, NULL, _IONBF, 0) != 0)
+                throw error_sys("failed to disable write buffering for {}", _path);
+            _open_files++;
+        }
+
+        write_stream(write_stream &&ws)
+            : _f { ws._f }, _path { std::move(ws._path) }, _closed { ws._closed }
+        {
+            ws._f = NULL;
+        }
+
+        ~write_stream()
+        {
+            if (!_closed)
+                close();
+        }
+
+        void close()
+        {
+            _closed = true;
+            if (_f != NULL) {
+                if (std::fclose(_f) != 0)
+                    throw error("failed to close file {}!", _path);
+            }
+            _open_files--;
+        }
+
+        void seek(std::streampos off)
+        {
+#if     _WIN32
+            if (_fseeki64(_f, off, SEEK_SET) != 0)
+#else
+            if (fseek(_f, off, SEEK_SET) != 0)
+#endif
+                throw error_sys("failed to seek in {}", _path);
+        }
+
+        uint64_t tellp()
+        {
+#if     _WIN32
+            auto pos = _ftelli64(_f);
+#else
+            auto pos = ftell(_f);
+#endif
+            if (pos < 0)
+                throw error_sys("failed to tell the stream position in {}", _path);
+            return pos;
+        }
+
+        void write(const void *data, size_t num_bytes)
+        {
+            if (std::fwrite(data, 1, num_bytes, _f) != num_bytes)
+                throw error_sys("failed to write {} bytes to {}", num_bytes, _path);
+        }
+
+    protected:
+        FILE *_f = NULL;
+        std::string _path {};
+        bool _closed = false;
+    };
+
+    inline void read_raw(const std::string &path, uint8_vector &buffer) {
+        auto file_size = std::filesystem::file_size(path);
+        buffer.resize(file_size);
+        read_stream is { path };
+        is.read(buffer.data(), buffer.size());
+    }
+
+    inline uint8_vector read_raw(const std::string &path)
+    {
+        uint8_vector buf;
+        read_raw(path, buf);
+        return buf;
+    }
+
+    inline void read(const std::string &path, uint8_vector &buffer) {
+        read_raw(path, buffer);
+        static const std::string zstd_suffix { ".zstd" };
+        if (path.size() > 5 && path.substr(path.size() - 5) == zstd_suffix) {
+            uint8_vector decompressed;
+            zstd::decompress(decompressed, buffer);
+            buffer = std::move(decompressed);
+        }
+    }
+
+    inline uint8_vector read(const std::string &path)
+    {
+        uint8_vector buf;
+        read(path, buf);
+        return buf;
+    }
+
+    template<typename T>
+    inline void read_span(const std::span<T> &v, const std::string &path, size_t num_items=0)
+    {
+        if (num_items == 0)
+            num_items = std::filesystem::file_size(path) / sizeof(T);
+        if (v.size() != num_items)
+            throw error("span size: {} != item count in the file: {}", v.size(), num_items);
+        read_stream is { path };
+        is.read(v.data(), v.size() * sizeof(T));
+    }
+
+    template<typename T>
+    inline void read_vector(std::vector<T> &v, const std::string &path, size_t num_items=0)
+    {
+        if (num_items == 0)
+            num_items = std::filesystem::file_size(path) / sizeof(T);
+        v.resize(num_items);
+        read_span<T>(v, path, num_items);
+    }
+
+    template<typename T>
+    inline void write_vector(const std::string &path, const std::vector<T> &v)
+    {
+        write_stream os { path };
+        os.write(v.data(), v.size() * sizeof(T));
+    }
+
+    inline void write(const std::string &path, const buffer &buffer) {
+        write_stream os { path };
+        os.write(buffer.data(), buffer.size());
+    }
+}
+
+#endif // !DAEDALUS_TURBO_FILE_HPP

@@ -1,13 +1,10 @@
-/*
- * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
+/* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
- *
  * This code is distributed under the license specified in:
- * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
- */
-
+ * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #include <span>
 #include <boost/ut.hpp>
+#include <dt/file.hpp>
 #include <dt/kes.hpp>
 #include <dt/util.hpp>
 
@@ -16,9 +13,9 @@ using namespace daedalus_turbo;
 
 suite kes_suite = [] {
     "kes"_test = [] {
-        auto vkey_data = read_whole_file("./data/kes-vkey.bin");
-        auto sig_data = read_whole_file("./data/kes-sig.bin");
-        auto msg_data = read_whole_file("./data/kes-msg.bin");
+        auto vkey_data = file::read("./data/kes-vkey.bin");
+        auto sig_data = file::read("./data/kes-sig.bin");
+        auto msg_data = file::read("./data/kes-msg.bin");
         "construct"_test = [&] {
             expect(boost::ut::nothrow([&]{ kes_signature<6> sig(sig_data); })) << "constructor failed";
             

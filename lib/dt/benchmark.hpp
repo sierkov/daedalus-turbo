@@ -1,10 +1,7 @@
-/*
- * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
+/* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
- *
  * This code is distributed under the license specified in:
- * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
- */
+ * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_BENCHMARK_HPP
 #define DAEDALUS_TURBO_BENCHMARK_HPP
 
@@ -13,7 +10,6 @@
 #include <sstream>
 #include <string>
 #include <string_view>
-
 #include <boost/ut.hpp>
 
 namespace daedalus_turbo {
@@ -28,7 +24,13 @@ namespace daedalus_turbo {
     {
         std::string prefix { "" };
         size_t rate_view = rate;
-        if (rate > 10'000'000'000) {
+        if (rate > 10'000'000'000'000) {
+            prefix = "P";
+            rate_view /= 1'000'000'000'000'000;
+        } else if (rate > 10'000'000'000'000) {
+            prefix = "T";
+            rate_view /= 1'000'000'000'000;
+        } else if (rate > 10'000'000'000) {
             prefix = "G";
             rate_view /= 1'000'000'000;
         } else if (rate > 10'000'000) {
@@ -43,18 +45,27 @@ namespace daedalus_turbo {
         return ss.str();
     }
 
-    template<typename T>
+    template<Countable T>
     static double benchmark_rate(const string_view &name, size_t num_iter, T &&action) {
         const auto start = std::chrono::high_resolution_clock::now();
+        uint64_t total_iters = 0;
         for (size_t i = 0; i < num_iter; ++i) {
-            action();
+            total_iters += action();
         }
         const auto stop = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> sec = stop - start;
-        double rate = (double)num_iter / sec.count();
-        std::clog << "[" << name << "] " << humanize_rate(rate) << "iter/sec"
-            << ", total iters: " << num_iter << '\n';
+        double rate = (double)total_iters / sec.count();
+        std::clog << "[" << name << "] " << humanize_rate(rate) << "iters/sec"
+            << ", total iters: " << total_iters << '\n';
         return rate;
+    };
+
+    template<typename T>
+    static double benchmark_rate(const string_view &name, size_t num_iter, T &&action) {
+        return benchmark_rate(name, num_iter, [&] {
+            action();
+            return 1;
+        });
     };
 
     template<Countable T>
@@ -88,7 +99,6 @@ namespace daedalus_turbo {
             boost::ut::expect(rate >= min_rate) << rate << " < " << min_rate;
         };
     }
-
 }
 
 #endif // !DAEDALUS_TURBO_BENCHMARK_HPP

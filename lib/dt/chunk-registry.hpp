@@ -1,159 +1,467 @@
-/*
- * This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
+/* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
- *
  * This code is distributed under the license specified in:
- * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
- */
+ * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_CHUNK_REGISTRY_HPP
 #define DAEDALUS_TURBO_CHUNK_REGISTRY_HPP
 
 #include <algorithm>
-#include <filesystem>
-#include <fstream>
-#include <set>
 #include <map>
+#include <set>
 #include <string>
-#include <sstream>
-
-#include <dt/error.hpp>
-#include <dt/cbor.hpp>
-#include <dt/lz4.hpp>
+#include <dt/cardano.hpp>
+#include <dt/file.hpp>
+#include <dt/json.hpp>
+#include <dt/scheduler.hpp>
+#include <dt/timer.hpp>
 
 namespace daedalus_turbo {
+    struct chunk_registry {
+        // A multiple of SSD sector size and larger than Cardano's largest block
+        static constexpr size_t max_read_size = 1 << 18;
 
-    struct chunk_info {
-        std::string id;
-        std::string path;
-        uint64_t size;
-        bool lz4;
-
-        chunk_info(const std::filesystem::path &aPath, uint64_t aSize, bool lz4_)
-            : id(aPath.stem().string()), path(aPath.string()), size(aSize), lz4(lz4_)
-        {
-        }
-    };
-
-    typedef std::map<uint64_t, chunk_info> chunk_map;
-
-    constexpr size_t MAX_READ_SIZE = 256 * 1024; // Assume the largest block is 256KB - a multiple of the current limit of 88KB
-
-    class chunk_registry {
-        bool lz4;
-        chunk_map _chunks;
-        uint64_t _size_bytes;
-        uint8_vector _read_buffer;
-
-    public:
-
-        chunk_registry(const std::string &path, bool lz4_=false)
-            : lz4(lz4_)
-        {
-            std::set<std::filesystem::path> sortedChunks;
-            for (const auto &entry : std::filesystem::directory_iterator(path)) {
-                if (lz4) {
-                    if (entry.path().extension() != ".lz4") continue;
-                } else {
-                    if (entry.path().extension() != ".chunk") continue;
-                }
-                sortedChunks.insert(entry.path());
-            }
+        struct chunk_info {
+            std::string orig_rel_path {};
+            size_t data_size = 0;
+            size_t compressed_size = 0;
+            size_t num_blocks = 0;
+            cardano::slot first_slot {};
+            cardano::slot last_slot {};
+            cardano_hash_32 data_hash {};
+            cardano_hash_32 prev_block_hash {};
+            cardano_hash_32 last_block_hash {};
             uint64_t offset = 0;
-            for (const auto &path : sortedChunks) {
-                uint64_t size;
-                if (lz4) {
-                    std::ifstream is(path, std::ios::binary);
-                    if (!is) throw error_sys_fmt("failed to open for reading: {}", path.string());
-                    is.read(reinterpret_cast<char *>(&size), sizeof(size));
-                    is.close();
-                } else {
-                    size = std::filesystem::file_size(path);
-                }
-                
-                _chunks.insert(chunk_map::value_type(offset, chunk_info(path, size, lz4)));
-                offset += size;
+
+            std::string rel_path() const
+            {
+                return fmt::format("{}/{}.zstd", is_volatile() ? "volatile" : "immutable", data_hash.span());
             }
-            _size_bytes = offset;
+
+            bool is_volatile() const
+            {
+                static std::string match { "volatile" };
+                return orig_rel_path.size() > match.size() && orig_rel_path.substr(0, match.size()) == match;
+            }
+
+            uint64_t epoch() const
+            {
+                return first_slot.epoch();
+            }
+
+            static chunk_info from_json(const json::object &j)
+            {
+                chunk_info chunk {};
+                chunk.orig_rel_path = json::value_to<std::string_view>(j.at("relPath"));
+                chunk.data_size = json::value_to<size_t>(j.at("size"));
+                chunk.compressed_size = json::value_to<size_t>(j.at("compressedSize"));
+                chunk.num_blocks = json::value_to<size_t>(j.at("numBlocks"));
+                chunk.first_slot = json::value_to<uint64_t>(j.at("firstSlot"));
+                chunk.last_slot = json::value_to<uint64_t>(j.at("lastSlot"));
+                chunk.data_hash = bytes_from_hex(json::value_to<std::string_view>(j.at("hash")));
+                chunk.prev_block_hash = bytes_from_hex(json::value_to<std::string_view>(j.at("prevBlockHash")));
+                chunk.last_block_hash = bytes_from_hex(json::value_to<std::string_view>(j.at("lastBlockHash")));
+                return chunk;
+            }
+
+            json::object to_json() const
+            {
+                return json::object {
+                    { "relPath", orig_rel_path },
+                    { "size", data_size },
+                    { "compressedSize", compressed_size },
+                    { "numBlocks", num_blocks },
+                    { "firstSlot", (size_t)first_slot },
+                    { "lastSlot", (size_t)last_slot },
+                    { "hash", fmt::format("{}", data_hash.span()) },
+                    { "prevBlockHash", fmt::format("{}", prev_block_hash.span()) },
+                    { "lastBlockHash", fmt::format("{}", last_block_hash.span()) }
+                };
+            }
+        };
+        using chunk_map = std::map<uint64_t, chunk_info>;
+
+        struct epoch_info {
+            size_t num_blocks = 0;
+            cardano::slot first_slot {};
+            cardano::slot last_slot {};
+            cardano_hash_32 prev_block_hash {};
+            cardano_hash_32 last_block_hash {};
+            std::vector<const chunk_info *> chunk_ids {};
+            uint64_t start_offset = 0;
+            uint64_t end_offset = 0;
+        };
+        using epoch_map = std::map<size_t, epoch_info>;
+
+        using file_set = std::set<std::string>;
+
+        template<typename T>
+        using parse_res = std::map<std::string, std::vector<T>>;
+
+        using block_processor = std::function<void(const cardano::block_base &)>;
+
+        static std::filesystem::path init_db_dir(const std::string &db_dir)
+        {
+            if (!std::filesystem::exists(db_dir))
+                std::filesystem::create_directories(db_dir);
+            return std::filesystem::canonical(db_dir);
         }
 
-        chunk_map::const_iterator begin() const {
-            return _chunks.begin();
+        chunk_registry(scheduler &sched, const std::string &db_dir)
+            : _sched { sched },
+                _db_dir { init_db_dir(db_dir) },
+                _state_path { (_db_dir / "state.json").string() }
+        {
         }
 
-        chunk_map::const_iterator end() const {
-            return _chunks.end();
+        virtual ~chunk_registry()
+        {
         }
 
-        size_t num_chunks() const {
+        void add(chunk_info &&chunk, bool strict=true)
+        {
+            if (chunk.data_size == 0)
+                throw error("empty chunks are not allowed: {}!", chunk.orig_rel_path);
+            if (chunk.offset != _end_offset)
+                throw error("{} expected offset {} does not match the actual one {}!", chunk.orig_rel_path, chunk.offset, _end_offset);
+            auto last_it = _chunks.rbegin();
+            while (last_it != _chunks.rend() && last_it->second.num_blocks == 0)
+                last_it++;
+            bool empty_volatile = chunk.is_volatile() && chunk.num_blocks == 0;
+            if (last_it != _chunks.rend() && strict && !empty_volatile) {
+                const auto &last = last_it->second;
+                if (chunk.first_slot <= last.last_slot)
+                    throw error("{} the new chunk's first slot {} is less than the last slot in the registry {}",
+                        chunk.orig_rel_path, chunk.first_slot, last.last_slot);
+                if (last.last_block_hash != chunk.prev_block_hash)
+                    throw error("{} prev_block_hash {} does not match the prev chunk's ({}) last_block_hash of the last block {}",
+                        chunk.orig_rel_path, chunk.prev_block_hash.span(), last.orig_rel_path, last.last_block_hash.span());
+            }
+            auto [it, created] = _chunks.try_emplace(chunk.offset + chunk.data_size - 1, std::move(chunk));
+            // use it->second instead of chunk since it has been passed by move reference above
+            const auto &inserted_chunk = it->second;
+            if (!created)
+                throw error("internal error: duplicate chunk offset: {} size: {}", inserted_chunk.offset, inserted_chunk.data_size);
+            _end_offset += inserted_chunk.data_size;
+            _files.emplace(inserted_chunk.rel_path());
+            if (!inserted_chunk.is_volatile() && (_max_immutable == nullptr || _max_immutable->offset < inserted_chunk.offset))
+                _max_immutable = &inserted_chunk;
+            if (!empty_volatile) {
+                uint64_t chunk_epoch = inserted_chunk.epoch();
+                auto &epoch_data = _epochs[chunk_epoch];
+                epoch_data.num_blocks += inserted_chunk.num_blocks;
+                if (!epoch_data.chunk_ids.empty() && strict && !empty_volatile) {
+                    const auto &last = *epoch_data.chunk_ids.back();
+                    if (inserted_chunk.offset < epoch_data.end_offset)
+                        throw error("the new chunk's offset {} is less than the epochs existing end offset {}",
+                            chunk.offset, epoch_data.end_offset);
+                    if (inserted_chunk.first_slot <= last.last_slot)
+                        throw error("the new chunk's first slot {} is less than the last slot in the epoch {}",
+                            chunk.first_slot, last.last_slot);
+                    if (last.last_block_hash != chunk.prev_block_hash)
+                        throw error("the new chunk's prev_block_hash {} does not match last_block_hash of the epoch's last block {}",
+                            chunk.prev_block_hash.span(), last.last_block_hash.span());
+                }
+                if (epoch_data.chunk_ids.empty()) {
+                    epoch_data.first_slot = inserted_chunk.first_slot;
+                    epoch_data.prev_block_hash = inserted_chunk.prev_block_hash;
+                    epoch_data.start_offset = inserted_chunk.offset;
+                }
+                epoch_data.last_slot = inserted_chunk.last_slot;
+                epoch_data.last_block_hash = inserted_chunk.last_block_hash;
+                epoch_data.end_offset = inserted_chunk.offset + inserted_chunk.data_size;
+                epoch_data.chunk_ids.emplace_back(&inserted_chunk);
+            }
+        }
+
+        const chunk_map &chunks() const
+        {
+            return _chunks;
+        }
+
+        const epoch_map &epochs() const
+        {
+            return _epochs;
+        }
+
+        const std::string rel_path(const std::filesystem::path &full_path) const
+        {
+            auto canon_path = std::filesystem::weakly_canonical(full_path);
+            const auto canon_str = canon_path.string();
+            auto canon_simple_path = std::filesystem::weakly_canonical(_db_dir / "a");
+            auto canon_simple_str = canon_simple_path.string();
+            canon_simple_str = canon_simple_str.substr(0, canon_simple_str.size() - 1);
+            if (canon_str.size() <= canon_simple_str.size()
+                    || canon_str.substr(0, canon_simple_str.size()) != canon_simple_str)
+                throw error("the supplied path '{}' is not inside the host direactory '{}'", canon_str, canon_simple_str);
+            return canon_str.substr(canon_simple_str.size());
+        }
+
+        const std::string full_path(const std::filesystem::path &rel_path) const
+        {
+            auto canon_path = std::filesystem::weakly_canonical(_db_dir  / rel_path);
+            if (canon_path.string().size() < _db_dir.string().size()
+                    || canon_path.string().substr(0, _db_dir.string().size()) != _db_dir.string())
+                throw error("a relative path '{}' produced a full path '{}' which is not inside the host direactory '{}'", rel_path.string(), canon_path.string(), _db_dir.string());
+            auto save_dir = canon_path.parent_path();
+            if (!std::filesystem::exists(save_dir))
+                std::filesystem::create_directories(save_dir);
+            return canon_path.string();
+        }
+
+        virtual file_set truncate(size_t max_end_offset, bool del=true)
+        {
+            file_set deleted_chunks {};
+            if (max_end_offset >= _end_offset)
+                return deleted_chunks;
+            timer t { fmt::format("truncate chunk registry to size {}", max_end_offset) };
+            auto chunk_it = _find_it(max_end_offset);
+            if (chunk_it->second.offset < max_end_offset)
+                max_end_offset = chunk_it->second.offset;
+            for (auto epoch_it = _epochs.find(chunk_it->second.epoch()); epoch_it != _epochs.end(); ) {
+                if (chunk_it->second.offset <= epoch_it->second.start_offset) {
+                    epoch_it = _epochs.erase(epoch_it);
+                } else {
+                    std::vector<const chunk_info *> ok_chunks {};
+                    for (const auto &chunk_ptr: epoch_it->second.chunk_ids) {
+                        if (chunk_ptr->offset < max_end_offset) {
+                            ok_chunks.emplace_back(chunk_ptr);
+                        } else {
+                            epoch_it->second.num_blocks -= chunk_ptr->num_blocks;
+                        }
+                    }
+                    epoch_it->second.end_offset = max_end_offset;
+                    epoch_it->second.last_block_hash = ok_chunks.back()->last_block_hash;
+                    epoch_it->second.last_slot = ok_chunks.back()->last_slot;
+                    epoch_it->second.chunk_ids = std::move(ok_chunks);
+                    epoch_it++;
+                }
+            }
+            while (chunk_it != _chunks.end()) {
+                auto canon_path = full_path(chunk_it->second.rel_path());
+                deleted_chunks.emplace(canon_path);
+                if (del) std::filesystem::remove(canon_path);
+                _files.erase(chunk_it->second.rel_path());
+                chunk_it = _chunks.erase(chunk_it);
+            }
+            _max_immutable = nullptr;
+            for (auto last_it = _chunks.rbegin(); last_it != _chunks.rend(); last_it++) {
+                if (!last_it->second.is_volatile()) {
+                    _max_immutable = &last_it->second;
+                    break;
+                }
+            }
+            if (!_chunks.empty()) {
+                const auto &last_chunk = _chunks.rbegin()->second;
+                _end_offset = last_chunk.offset + last_chunk.data_size;
+            } else {
+                _end_offset = 0;
+            }
+            return deleted_chunks;
+        }
+
+        cardano::slot max_slot() const
+        {
+            if (_chunks.size() == 0)
+                return 0;
+            return _chunks.rbegin()->second.last_slot;
+        }
+
+        size_t num_bytes() const
+        {
+            return _end_offset;
+        }
+
+        size_t num_chunks() const
+        {
             return _chunks.size();
         }
 
-        size_t num_bytes() const {
-            return _size_bytes;
+        const chunk_info &find(uint64_t offset) const
+        {
+            auto it = _find_it(offset);
+            return it->second;
         }
 
-        chunk_map::const_iterator find_chunk(uint64_t offset) {
-            if (offset >= _size_bytes) throw error_fmt("the requested offset is outside of the allowed bounds");
-            chunk_map::const_iterator it = _chunks.lower_bound(offset);
-            if (it == _chunks.end()) {
-                it = prev(it);
-                if (offset + 1 > it->first + it->second.size) throw error_fmt("no relevant chunk was found!");
-            }
-            if (offset < it->first) {
-                if (it == _chunks.begin()) throw error_fmt("no relevant chunk was found!");
-                it--;
-            }
-            return it;
+        const chunk_map::const_iterator find(const buffer &data_hash) const
+        {
+            return std::find_if(_chunks.begin(), _chunks.end(),
+                [&](const auto &el) { return el.second.data_hash == data_hash; });
         }
 
-        const std::string find_chunk_name(uint64_t offset) {
-            auto it = find_chunk(offset);
-            return it->second.path;
+        void read(uint64_t offset, cbor_value &value, const size_t read_size=max_read_size)
+        {
+            read(offset, value, _read_buffer, read_size);
         }
 
-        size_t read(uint64_t offset, cbor_value &value, const size_t read_size=MAX_READ_SIZE, const size_t read_scale_factor=2) {
-            return read(offset, value, _read_buffer, read_size, read_scale_factor);
+        void read(uint64_t offset, cbor_value &value, uint8_vector &read_buffer, size_t read_size=max_read_size)
+        {
+            if (offset >= _end_offset)
+                throw error("the requested offset {} is larger than the maximum one: {}", offset, _end_offset);
+            const auto &chunk = find(offset);
+            if (offset >= chunk.offset + chunk.data_size)
+                throw error("the requested chunk segment is too small to parse it");
+            file::read(full_path(chunk.rel_path()), read_buffer);
+            size_t read_offset = offset - chunk.offset;
+            if (read_offset + read_size > read_buffer.size())
+                read_size = read_buffer.size() - read_offset;
+            cbor_parser parser(buffer { read_buffer.data() + read_offset, read_size });
+            parser.read(value);
         }
 
-        size_t read(uint64_t offset, cbor_value &value, uint8_vector &read_buffer, const size_t max_read_size=MAX_READ_SIZE, const size_t read_scale_factor=2) {
-            if (offset + 1 > _size_bytes) throw error_fmt("the requested byte range is outside of the allowed bounds");
-            size_t read_attempts = 0;
-            auto chunk_it = find_chunk(offset);
-            if (chunk_it->first + chunk_it->second.size < offset + 1) throw error_fmt("the requested chunk is too small to provide the requested number of bytes");
-            if (chunk_it->second.lz4) {
-                uint8_vector compressed;
-                read_whole_file(chunk_it->second.path, compressed);
-                lz4_decompress(read_buffer, compressed);
-                size_t read_offset = offset - chunk_it->first;
-                cbor_parser parser(read_buffer.data() + read_offset, read_buffer.size() - read_offset);
-                parser.read(value);
-            } else {
-                std::ifstream is(chunk_it->second.path, std::ios::binary);
-                if (!is) throw error_fmt("Can't open file {}", chunk_it->second.path);
-                size_t read_size = chunk_it->second.size - (offset - chunk_it->first);
-                if (read_size > max_read_size) read_size = max_read_size;
-                bool ok = false;
-                while (!ok) {
-                    try {
-                        read_attempts++;
-                        read_buffer.resize(read_size);
-                        is.seekg(offset - chunk_it->first, std::ios::beg);
-                        is.read(reinterpret_cast<char *>(read_buffer.data()), read_size);
-                        cbor_parser parser(read_buffer.data(), read_size);
-                        parser.read(value);
-                        if (value.size > read_size) throw error_fmt("internal error: read value: {} is larger than it must be: {}!", value.size, read_size);
-                        ok = true;
-                    } catch (cbor_incomplete_data_error &ex) {
-                        if (read_size < MAX_READ_SIZE) {
-                            read_size *= read_scale_factor;
-                            if (read_size > MAX_READ_SIZE) read_size = MAX_READ_SIZE;
-                        } else {
-                            throw;
-                        }
+        template<typename T>
+        parse_res<T> parallel_parse(const std::function<T(const std::string &chunk_path, cardano::block_base &blk)> &act, bool progress=false)
+        {
+            parse_res<T> results {};
+            _sched.on_result("parse-chunk", [&](const auto &res) {
+                if (res.type() == typeid(scheduled_task_error)) throw std::any_cast<scheduled_task_error>(res);
+                const auto &[chunk_path, chunk_res] = std::any_cast<typename parse_res<T>::value_type>(res);
+                auto &chunk_res_all = results[chunk_path];
+                for (const auto &r: chunk_res) chunk_res_all.emplace_back(r);
+            });
+            for (const auto &[chunk_offset, chunk_info]: _chunks) {
+                _sched.submit("parse-chunk", 100, [this, chunk_offset, chunk_info, &act]() {
+                    std::vector<T> res {};
+                    auto data = file::read(full_path(chunk_info.rel_path()));
+                    buffer buf { data };
+                    cbor_parser block_parser { buf };
+                    cbor_value block_tuple;
+                    auto canon_path = full_path(chunk_info.rel_path());
+                    while (!block_parser.eof()) {
+                        block_parser.read(block_tuple);
+                        auto blk = cardano::make_block(block_tuple, chunk_offset + block_tuple.data - buf.data());
+                        res.emplace_back(act(canon_path, *blk));
                     }
+                    return typename parse_res<T>::value_type { canon_path, std::move(res) };
+                });
+            }
+            _sched.process(progress);
+            return results;
+        }
+
+        virtual chunk_info parse(uint64_t offset, const std::string &rel_path, const buffer &raw_data, size_t compressed_size)
+        {
+            static auto noop = [](const auto &){};
+            return _parse_normal(offset, rel_path, raw_data, compressed_size, noop);
+        }
+
+        void init_state(bool strict=true, bool reuse_state=true, bool save=true)
+        {
+            timer t { "chunk-registry init state", logger::level::debug };
+            if (reuse_state)
+                load_state(strict);
+            // give subclasses the time to update their data structures if some chunks weren't loaded / didn't match the state
+            truncate(_end_offset);
+            if (save)
+                save_state();
+            logger::debug("chunk-registry data size: {} num chunks: {}", num_bytes(), num_chunks());
+        }
+
+        void load_state(bool strict=true)
+        {
+            timer t { "chunk-registry load state from " + _state_path, logger::level::debug };
+            _chunks.clear();
+            _files.clear();
+            _epochs.clear();
+            _end_offset = 0;
+            if (std::filesystem::exists(_state_path)) {
+                auto json = file::read(_state_path);
+                auto j_chunks = json::parse(json.span().string_view()).as_array();
+                uint64_t start_offset = 0;
+                for (const auto &j: j_chunks) {
+                    auto chunk = chunk_info::from_json(j.as_object());
+                    auto path = full_path(chunk.rel_path());
+                    std::error_code ec {};
+                    uint64_t file_size = std::filesystem::file_size(path, ec);
+                    if (ec) {
+                        logger::info("load_state: file access error for {}: {} - ignoring it and the following chunks!",
+                                        chunk.rel_path(), ec.message());
+                        break;
+                    }
+                    if (file_size != chunk.compressed_size) {
+                        logger::info("load_state: file size mismatch for {}: recorded: {} vs actual: {}: ignoring it and the following chunks!",
+                                        chunk.rel_path(), chunk.compressed_size, file_size);
+                        break;
+                    }
+                    chunk.offset = start_offset;
+                    start_offset += chunk.data_size;
+                    add(std::move(chunk), strict);
                 }
             }
-            return read_attempts;
+        }
+
+        virtual void save_state()
+        {
+            std::ostringstream json_s {};
+            json_s << "[\n";
+            for (const auto &[max_offset, chunk]: _chunks) {
+                json_s << "  " << json::serialize(chunk.to_json());
+                if (chunk.offset + chunk.data_size < _end_offset)
+                    json_s << ',';
+                json_s << '\n';
+            }
+            json_s << "]\n";
+            file::write(_state_path, json_s.str());
+        }
+
+    protected:
+        scheduler &_sched;
+
+        void _parse_chunk(const chunk_info &chunk, const buffer &raw_data, const block_processor &blk_proc)
+        {
+            cbor_parser parser { raw_data };
+            cbor_value block_tuple {};
+            while (!parser.eof()) {
+                parser.read(block_tuple);
+                auto blk = cardano::make_block(block_tuple, chunk.offset + block_tuple.data - raw_data.data());
+                if (!chunk.is_volatile() || _max_immutable == nullptr || _max_immutable->last_slot < blk->slot()) {
+                    blk_proc(*blk);
+                }
+            }
+        }
+
+        chunk_info _parse_normal(uint64_t offset, const std::string &rel_path,
+            const buffer &raw_data, size_t compressed_size, const block_processor &extra_proc)
+        {
+            chunk_info chunk { rel_path, raw_data.size(), compressed_size };
+            chunk.offset = offset;
+            blake2b(chunk.data_hash, raw_data);
+            uint64_t prev_slot = 0;
+            _parse_chunk(chunk, raw_data, [&](const auto &blk) {
+                if (blk.era() > 0) {
+                    if (blk.slot() > 0 && blk.slot() <= prev_slot)
+                        throw error("chunk {} at {}: a block's slot {} is not greater than the slot of the prev block {}!", rel_path, offset, blk.slot(), prev_slot);
+                    else
+                        prev_slot = blk.slot();
+                }
+                if (chunk.num_blocks == 0) {
+                    chunk.prev_block_hash = blk.prev_hash();
+                    chunk.first_slot = blk.slot();
+                }
+                chunk.num_blocks++;
+                chunk.last_block_hash = blk.hash();
+                chunk.last_slot = blk.slot();
+                extra_proc(blk);
+            });
+            return chunk;
+        }
+
+    private:
+        const std::filesystem::path _db_dir;
+        const std::string _state_path;
+        chunk_map _chunks {};
+        epoch_map _epochs {};
+        file_set _files {};
+        const chunk_info *_max_immutable = nullptr;
+        uint64_t _end_offset = 0;
+        const std::string _ext = ".zstd";
+        static thread_local uint8_vector _read_buffer;
+
+        chunk_map::const_iterator _find_it(uint64_t offset) const
+        {
+            auto it = _chunks.lower_bound(offset);
+            if (it == _chunks.end())
+                throw error("no chunk matches offset: {}!", offset);
+            return it;
         }
     };
 }
