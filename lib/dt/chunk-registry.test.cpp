@@ -51,8 +51,8 @@ suite chunk_registry_suite = [] {
         
         {
             static std::string tmp_data_dir { "./tmp/chunk-registry"s };
-            if (std::filesystem::exists(tmp_data_dir))
-                std::filesystem::remove_all(tmp_data_dir);
+            std::filesystem::remove_all(tmp_data_dir);
+            std::filesystem::create_directories(tmp_data_dir);
             std::filesystem::copy(data_dir, tmp_data_dir, std::filesystem::copy_options::recursive | std::filesystem::copy_options::overwrite_existing);
             chunk_registry cr { sched, tmp_data_dir };
             cr.init_state(false, true, false);
