@@ -119,7 +119,6 @@ namespace daedalus_turbo::sync::local {
             if (std::filesystem::exists(_state_path)) {
                 auto json = file::read(_state_path);
                 auto j_chunks = json::parse(json.span().string_view()).as_array();
-                size_t max_offset = 0;
                 for (const auto &j_chunk: j_chunks) {
                     auto chunk = source_chunk_info::from_json(j_chunk.as_object());
                     logger::trace("import chunk_info path: {} data_size: {} update_time: {}", chunk.rel_path, chunk.data_size, chunk.update_time);
@@ -133,7 +132,6 @@ namespace daedalus_turbo::sync::local {
                                         chunk.offset, _cr.num_bytes());
                         break;
                     }
-                    max_offset += chunk.data_size;
                     _source_chunks.try_emplace(std::move(full_path), std::move(chunk));
                 }
             }
