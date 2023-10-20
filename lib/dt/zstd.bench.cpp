@@ -23,10 +23,10 @@ suite zstd_bench_suite = [] {
         if (data.size() > (1 << 22))
             data.resize(1 << 24);
         for (const auto &[zstd_level, exp_throughput]: {
-            perf_exp { 1, 500e6 },
-            perf_exp { 3, 300e6 },
+            perf_exp { 1, 300e6 },
+            perf_exp { 3, 200e6 },
             perf_exp { 9, 50e6 },
-            perf_exp { 22, 5e6 }
+            perf_exp { 22, 2e6 }
         }) {
             uint8_vector compressed {};
             benchmark("zstd::compress level " + std::to_string(zstd_level), exp_throughput, 3, [&] {
