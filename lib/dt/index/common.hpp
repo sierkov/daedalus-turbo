@@ -6,6 +6,7 @@
 #define DAEDALUS_TURBO_INDEX_COMMON_HPP
 
 #include <atomic>
+#include <concepts>
 #include <memory>
 #include <mutex>
 #include <set>
@@ -23,11 +24,12 @@ namespace daedalus_turbo::index {
         T max_item {};
     };
 
+    static constexpr size_t max_parts = 256;
+
     // Each partition can be written only from a single thread to minimize cross-thread synchronization
     template<typename T>
     struct writer {
         static constexpr size_t default_chunk_size = 0x1000;
-        static constexpr size_t max_parts = 256;
 
         static uint64_t disk_size(const std::string &path)
         {
@@ -248,7 +250,6 @@ namespace daedalus_turbo::index {
     template<class T>
     struct reader_mt {
         using find_result = std::tuple<size_t, T>;
-        static constexpr size_t max_parts = writer<T>::max_parts;
 
         struct thread_data {
             std::vector<size_t> offsets {};
@@ -603,19 +604,42 @@ namespace daedalus_turbo::index {
                 _readers.emplace_back(std::make_unique<reader_mt<T>>(p));
         }
 
-        thread_data init_thread() const
+        thread_data init_thread(size_t part_no=max_parts) const
         {
             thread_data t {};
             t.data.reserve(_readers.size());
             for (const auto &reader: _readers) {
-                t.data.emplace_back(std::make_unique<typename reader_mt<T>::thread_data>(reader->init_thread()));
+                t.data.emplace_back(std::make_unique<typename reader_mt<T>::thread_data>(reader->init_thread(part_no)));
             }
             t.matches.resize(_readers.size());
             return t;
         }
 
+        bool eof_part(size_t part_no, thread_data &t) const
+        {
+            for (size_t ri = 0; ri < _readers.size(); ++ri) {
+                auto &reader = _readers.at(ri);
+                auto &data = *(t.data.at(ri));
+                if (!reader->eof_part(part_no, data))
+                    return false;
+            }
+            return true;
+        }
+
+        bool eof(thread_data &t) const
+        {
+            for (size_t ri = 0; ri < _readers.size(); ++ri) {
+                auto &reader = _readers.at(ri);
+                auto &data = *(t.data.at(ri));
+                if (!reader->eof(data))
+                    return false;
+            }
+            return true;
+        }
+
         reader_mt<T>::find_result find(const T &search_item, thread_data &t) const
         {
+            size_t total_match_count = 0;
             t.next_match_count = 0;
             t.num_reads = 0;
             T first_item {};
@@ -624,6 +648,7 @@ namespace daedalus_turbo::index {
                 auto &data = *(t.data.at(ri));
                 auto [ match_count, match_item ] = reader->find(search_item, data);
                 if (match_count) {
+                    total_match_count += match_count;
                     if (t.next_match_count == 0) {
                         first_item = match_item;
                         t.matches.at(ri) = match_count - 1;
@@ -637,7 +662,18 @@ namespace daedalus_turbo::index {
                 }
                 t.num_reads += data.num_reads;
             }
-            return typename reader_mt<T>::find_result { t.next_match_count + 1, first_item };
+            return typename reader_mt<T>::find_result { total_match_count, first_item };
+        }
+
+        bool read_part(size_t part_no, T &item, thread_data &t) const
+        {
+            for (size_t ri = 0; ri < _readers.size(); ++ri) {
+                auto &reader = _readers.at(ri);
+                auto &data = *(t.data.at(ri));
+                if (reader->read_part(part_no, item, data))
+                    return true;
+            }
+            return false;
         }
 
         bool read(T &item, thread_data &t) const
@@ -675,6 +711,11 @@ namespace daedalus_turbo::index {
         reader_multi(const std::span<const std::string> &paths)
             : _reader { paths }, _data { _reader.init_thread() }
         {
+        }
+
+        bool eof()
+        {
+            return _reader.eof(_data);
         }
 
         reader_mt<T>::find_result find(const T &search_item)
@@ -748,6 +789,50 @@ namespace daedalus_turbo::index {
         const size_t _part_range;
     };
 
+    struct epoch_observer {
+        virtual void mark_epoch(uint64_t epoch, uint64_t chunk_id) =0;
+    };
+
+    template<typename T>
+    struct chunk_indexer_multi_epoch: public chunk_indexer_base {
+        chunk_indexer_multi_epoch(epoch_observer &observer, uint64_t chunk_id, const std::string &idx_path, size_t)
+            : _epoch_observer { observer }, _chunk_id { chunk_id }, _idx_base_path { idx_path }
+        {}
+
+        ~chunk_indexer_multi_epoch() override
+        {
+            for (auto &[epoch, data]: _idxs) {
+                std::sort(data.begin(), data.end());
+                file::write_vector(fmt::format("{}-{}.bin", _idx_base_path, epoch), data);
+            }
+        }
+    protected:
+        epoch_observer &_epoch_observer;
+        uint64_t _chunk_id;
+        std::string _idx_base_path;
+        std::map<uint64_t, std::vector<T>> _idxs {};
+
+        virtual void _index_epoch(const cardano::block_base &blk, std::vector<T> &idx) =0;
+
+        std::vector<T> &_epoch_data(uint64_t epoch)
+        {
+            auto [it, created] = _idxs.try_emplace(epoch);
+            if (created)
+                _epoch_observer.mark_epoch(epoch, _chunk_id);
+            return it->second;
+        }
+
+        void _index(const cardano::block_base &blk) override
+        {
+            try {
+                auto &data = _epoch_data(blk.slot().epoch());
+                _index_epoch(blk, data);
+            } catch (std::exception &ex) {
+                logger::warn("multi_epoch index {} indexing error: {}", _idx_base_path, ex.what());
+            }
+        }
+    };
+
     using chunk_id_list = std::set<uint64_t>;
 
     struct indexer_base {
@@ -770,6 +855,11 @@ namespace daedalus_turbo::index {
             return fmt::format("{}/{}/index{}{}", idx_dir, idx_name, sep, slice_id);
         }
 
+        static std::string chunk_path(const std::string &idx_dir, const std::string &idx_name, const std::string &slice_id, uint64_t chunk_id)
+        {
+            return fmt::format("{}-{}", reader_path(idx_dir, idx_name, slice_id), chunk_id);
+        }
+
         virtual ~indexer_base()
         {}
 
@@ -783,6 +873,11 @@ namespace daedalus_turbo::index {
             index::writer<int>::remove(reader_path(slice_id));
         }
 
+        virtual std::string chunk_path(const std::string &slice_id, uint64_t chunk_id) const
+        {
+            return chunk_path(_idx_dir, _idx_name, slice_id, chunk_id);
+        }
+
         virtual uint64_t disk_size(const std::string &slice_id) const =0;
         virtual void finalize(const std::string &slice_id, const chunk_id_list &chunks) =0;
         virtual std::unique_ptr<chunk_indexer_base> make_chunk_indexer(const std::string &slice_id, uint64_t chunk_id) =0;
@@ -793,43 +888,24 @@ namespace daedalus_turbo::index {
         scheduler &_sched;
         std::string _idx_dir;
         std::string _idx_name;
-
-        std::string _chunk_path(const std::string &slice_id, uint64_t chunk_id) const
-        {
-            return fmt::format("{}-{}", reader_path(slice_id), chunk_id);
-        }
     };
 
     extern const size_t two_step_merge_num_files;
 
     template<typename T, typename ChunkIndexer>
-    struct indexer_no_offset: public indexer_base {
+    struct indexer_merging: public indexer_base {
         using indexer_base::indexer_base;
 
-        void finalize(const std::string &slice_id, const chunk_id_list &chunk_ids) override
+        uint64_t disk_size(const std::string &slice_id="") const override
         {
-            std::vector<std::string> chunks {};
-            size_t slice_size = 0;
-            for (const auto &chunk_id: chunk_ids) {
-                auto path = _chunk_path(slice_id, chunk_id);
-                slice_size += writer<T>::disk_size(path);
-                chunks.emplace_back(path);
-            }
-            _merge_index("merge-" + _idx_name, slice_size >> 20, chunks, reader_path(slice_id));
-        }
-
-        virtual std::unique_ptr<chunk_indexer_base> make_chunk_indexer(const std::string &slice_id, uint64_t chunk_id) override
-        {
-            return std::make_unique<ChunkIndexer>(_chunk_path(slice_id, chunk_id), _sched.num_workers());
+            return writer<T>::disk_size(reader_path(slice_id));
         }
 
         index::reader<T> make_reader(const std::string slice_id="") const
         {
             return index::reader<T> { reader_path(slice_id) };
         }
-
     protected:
-
         struct merge_item {
             T val;
             size_t stream_idx;
@@ -895,7 +971,7 @@ namespace daedalus_turbo::index {
             // Tasks are added to a running scheduler here.
             // So, if they are very quick task_count() == 0 can be reached before all task have been scheduled
             auto scheduled = std::make_shared<std::atomic_bool>(false);
-            _sched.on_result(task_group, [this, scheduled, out_idx, task_group, readers, chunks](const auto &res) mutable {
+            _sched.on_result(task_group, [this, scheduled, out_idx, task_group, readers, chunks, final_path](const auto &res) mutable {
                 if (res.type() == typeid(scheduled_task_error)) {
                     logger::error("task {} {}", task_group, std::any_cast<scheduled_task_error>(res).what());
                     return;
@@ -906,6 +982,7 @@ namespace daedalus_turbo::index {
                 out_idx->commit();
                 for (const auto &path: chunks)
                     index::writer<T>::remove(path);
+                logger::debug("merged {} chunks into {}", chunks.size(), final_path);
             });
             for (size_t pi = 0; pi < num_parts; ++pi) {
                 _sched.submit(task_group, task_prio, [=]() {
@@ -975,6 +1052,80 @@ namespace daedalus_turbo::index {
         }
     };
 
+    template<typename T, typename ChunkIndexer>
+    struct indexer_no_offset: public indexer_merging<T, ChunkIndexer> {
+        using indexer_merging<T, ChunkIndexer>::indexer_merging;
+
+        void finalize(const std::string &slice_id, const chunk_id_list &chunk_ids) override
+        {
+            std::vector<std::string> chunks {};
+            size_t slice_size = 0;
+            for (const auto &chunk_id: chunk_ids) {
+                auto path = indexer_merging<T, ChunkIndexer>::chunk_path(slice_id, chunk_id);
+                if (writer<T>::exists(path)) {
+                    slice_size += writer<T>::disk_size(path);
+                    chunks.emplace_back(path);
+                }
+            }
+            indexer_merging<T, ChunkIndexer>::_merge_index("merge-" + indexer_merging<T, ChunkIndexer>::_idx_name,
+                slice_size >> 20, chunks, indexer_merging<T, ChunkIndexer>::reader_path(slice_id));
+        }
+
+        std::unique_ptr<chunk_indexer_base> make_chunk_indexer(const std::string &slice_id, uint64_t chunk_id) override
+        {
+            return std::make_unique<ChunkIndexer>(indexer_merging<T, ChunkIndexer>::chunk_path(slice_id, chunk_id),
+                indexer_merging<T, ChunkIndexer>::_sched.num_workers());
+        }
+    };
+
+    using epoch_chunks = std::map<uint64_t, std::vector<uint64_t>>;
+
+    template<typename T, std::derived_from<chunk_indexer_multi_epoch<T>> ChunkIndexer>
+    struct indexer_multi_epoch: public indexer_merging<T, ChunkIndexer>, public epoch_observer {
+        using indexer_merging<T, ChunkIndexer>::indexer_merging;
+
+        void mark_epoch(uint64_t epoch, uint64_t chunk_id) override
+        {
+            auto [it, created] = _updated_epochs.try_emplace(epoch);
+            it->second.emplace_back(chunk_id);
+        }
+
+        void finalize(const std::string &/*slice_id*/, const chunk_id_list &/*chunk_ids*/) override
+        {
+            // do nothing, processing if any must be done by the owner of the instance
+            _updated_epochs.clear();
+        }
+
+        std::unique_ptr<chunk_indexer_base> make_chunk_indexer(const std::string &slice_id, uint64_t chunk_id) override
+        {
+            return std::make_unique<ChunkIndexer>(*this, chunk_id,
+                indexer_merging<T, ChunkIndexer>::chunk_path(slice_id, chunk_id),
+                indexer_merging<T, ChunkIndexer>::_sched.num_workers());
+        }
+    
+        void combine(const std::string &/*out_slice_id*/, const std::string &/*del_slice_id*/) override
+        {
+            // update-only index, so delete permanently-stored segments once processed
+            /*for (const auto &slice_id: { out_slice_id, del_slice_id }) {
+                auto slice_path = indexer_merging<T, ChunkIndexer>::reader_path(slice_id);
+                if (index::writer<T>::exists(slice_path))
+                    index::writer<T>::remove(slice_path);
+            }*/
+        }
+
+        void truncate(const std::string &, uint64_t) override
+        {
+            // update-only index, do nothing
+        }
+
+        const epoch_chunks &updated_epochs() const
+        {
+            return _updated_epochs;
+        }
+    private:
+        epoch_chunks _updated_epochs {};
+    };
+
     template<typename T>
     concept HasOffsetField = requires(T a) {
         { a.offset + 1 };
@@ -983,11 +1134,6 @@ namespace daedalus_turbo::index {
     template<HasOffsetField T, typename ChunkIndexer>
     struct indexer_offset: public indexer_no_offset<T, ChunkIndexer> {
         using indexer_no_offset<T, ChunkIndexer>::indexer_no_offset;
-
-        uint64_t disk_size(const std::string &slice_id="") const override
-        {
-            return writer<T>::disk_size(indexer_no_offset<T, ChunkIndexer>::reader_path(slice_id));
-        }
 
         void combine(const std::string &out_slice_id, const std::string &del_slice_id) override
         {
@@ -1069,8 +1215,10 @@ namespace daedalus_turbo::index {
                 return;
             if (new_end_offset > 0) {
                 auto reader = std::make_shared<index::reader_mt<T>>(src_path);
-                // skip filtering if max_offset is known to be less or equal to new_end_offset
-                if (buffer::to<uint64_t>(reader->get_meta("max_offset")) < new_end_offset)
+                auto index_max_offset = buffer::to<uint64_t>(reader->get_meta("max_offset"));
+                bool truncation_needed = index_max_offset >= new_end_offset;
+                logger::trace("truncate {} - current max offset: {} truncation needed: {}", src_path, index_max_offset, truncation_needed);
+                if (!truncation_needed)
                     return;
                 size_t num_parts = reader->num_parts();
                 auto writer = std::make_shared<index::writer<T>>(src_path + "-new", num_parts);

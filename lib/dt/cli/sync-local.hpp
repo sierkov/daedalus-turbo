@@ -7,37 +7,33 @@
 
 #include <dt/cli.hpp>
 #include <dt/sync/local.hpp>
+#include <dt/validator.hpp>
 
 namespace daedalus_turbo::cli::sync_local {
     struct cmd: public command {
         const command_info &info() const override
         {
             static const command_info i {
-                "sync-local", "<cardano-node-dir> <compressed-dir> <idx-dir> [--zstd-max-level=3]",
-                "create a compressed copy and index new data from Cardano Node data"
+                "sync-local", "<node-dir> <data-dir>",
+                "synchronize from a local Cardano Node in <node-dir> into <data-dir>"
             };
             return i;
         }
 
         void run(const arguments &args) const override
         {
-            if (args.size() < 3) _throw_usage();
+            if (args.size() < 2) _throw_usage();
             const auto &node_dir = args.at(0);
-            const auto &db_dir = args.at(1);
-            const std::string idx_dir =  args.at(2);
+            const auto &data_dir = args.at(1);
+            const std::string db_dir = data_dir + "/compressed";
+            const std::string idx_dir = data_dir + "/index";
             size_t zstd_max_level = 3;
             bool strict = true;
-            size_t num_threads = scheduler::default_worker_count();
-            if (args.size() > 3) {
-                static std::string_view p_threads { "--threads=" };
+            if (args.size() > 2) {
                 static std::string_view p_zstd { "--zstd-max-level=" };
                 static std::string_view p_no_strict { "--no-strict" };
-                for (const auto &arg: std::ranges::subrange(args.begin() + 3, args.end())) {
-                    if (arg.substr(0, p_threads.size()) == p_threads) {
-                        size_t user_threads = std::stoul(arg.substr(p_threads.size()));
-                        if (user_threads > 0 && user_threads < scheduler::default_worker_count())
-                            num_threads = user_threads;
-                    } else if (arg.substr(0, p_zstd.size()) == p_zstd) {
+                for (const auto &arg: std::ranges::subrange(args.begin() + 2, args.end())) {
+                    if (arg.substr(0, p_zstd.size()) == p_zstd) {
                         size_t user_zstd_level = std::stoul(arg.substr(p_zstd.size()));
                         if (user_zstd_level <= 22)
                             zstd_max_level = user_zstd_level;
@@ -49,10 +45,9 @@ namespace daedalus_turbo::cli::sync_local {
                 }
             }
             timer tc { "sync-local" };
-            scheduler sched { num_threads };
-            auto indexers = indexer::default_list(sched, idx_dir);
-            indexer::incremental idxr { sched, db_dir, indexers };
-            sync::local::syncer syncr { sched, idxr, node_dir, strict, zstd_max_level };
+            scheduler sched {};
+            validator::incremental idxr { sched, db_dir, idx_dir };
+            sync::local::syncer syncr { sched, idxr, node_dir, strict, zstd_max_level, std::chrono::seconds { 0 } };
             auto res = syncr.sync();
             logger::info("errors: {} updated: {} deleted: {} dist: {} db_last_slot: {} cycle time: {}",
                     res.errors.size(), res.updated.size(), res.deleted.size(), syncr.size(), res.last_slot, tc.stop(false));

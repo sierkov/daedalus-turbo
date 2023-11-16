@@ -4,6 +4,7 @@
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #include <dt/cli/pay-history.hpp>
 #include <dt/cli/stake-history.hpp>
+#include <dt/cli/sync-http.hpp>
 #include <dt/cli/sync-local.hpp>
 #include <dt/cli/tx-info.hpp>
 
@@ -13,6 +14,7 @@ int main(int argc, char **argv)
     return run(argc, argv, make_command_list(
         std::make_unique<pay_history::cmd>(),
         std::make_unique<stake_history::cmd>(),
+        std::make_unique<sync_http::cmd>(),
         std::make_unique<sync_local::cmd>(),
         std::make_unique<tx_info::cmd>()
     ));

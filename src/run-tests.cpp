@@ -5,14 +5,13 @@
 #include <iostream>
 #include <boost/ut.hpp>
 
-using namespace std;
 using namespace boost::ut;
 
 int main(int argc, char **argv)
 {
     std::ios_base::sync_with_stdio(false);
     if (argc >= 2) {
-        cerr << "using test-filter mask: " << argv[1] << endl;
+        std::cerr << "using test-filter mask: " << argv[1] << '\n';
         cfg<override> = { .filter = argv[1] };
     }
 }

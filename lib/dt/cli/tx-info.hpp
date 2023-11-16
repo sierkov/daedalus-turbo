@@ -12,25 +12,21 @@ namespace daedalus_turbo::cli::tx_info {
     struct cmd: public command {
         const command_info &info() const override
         {
-            static const command_info i { "tx-info", "<compressed-dir> <index-dir> <tx-hash>", "show information about a transaction given its hash" };
+            static const command_info i { "tx-info", "<data-dir> <tx-hash>", "show information about a transaction given its hash" };
             return i;
         }
 
         void run(const arguments &args) const override
         {
-            if (args.size() < 3) _throw_usage();
-            const std::string &db_path = args.at(0);
-            const std::string &idx_path = args.at(1);
-            const auto tx_hash = bytes_from_hex(args.at(2));
-            size_t num_threads = scheduler::default_worker_count();
-            if (args.size() >= 4) {
-                size_t user_threads = std::stoull(args.at(3));
-                if (user_threads > 0 && user_threads < scheduler::default_worker_count()) num_threads = user_threads;
-            }
-            scheduler sched { num_threads };
-            daedalus_turbo::chunk_registry cr { sched, db_path };
-            cr.init_state();
-            reconstructor r { sched, cr, idx_path };
+            if (args.size() < 2) _throw_usage();
+            const std::string &data_dir = args.at(0);
+            const std::string db_dir = data_dir + "/compressed";
+            const std::string idx_dir = data_dir + "/index";
+            const auto tx_hash = bytes_from_hex(args.at(1));
+            scheduler sched {};
+            daedalus_turbo::chunk_registry cr { sched, db_dir };
+            cr.init_state(true, true, false);
+            reconstructor r { sched, cr, idx_dir };
             auto tx_info = r.find_tx(tx_hash);
             if (!tx_info)
                 throw error("unknown transaction hash {}", tx_hash.span());

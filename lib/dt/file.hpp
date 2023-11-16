@@ -55,7 +55,7 @@ namespace daedalus_turbo::file {
         {
             _f = std::fopen(_path.c_str(), "rb");
             if (_f == NULL)
-                throw error_sys("failed to open file {}", _path);
+                throw error_sys("failed to open a file for reading {}", _path);
             if (std::setvbuf(_f, NULL, _IONBF, 0) != 0)
                 throw error_sys("failed to disable read buffering for {}", _path);
             _open_files++;
@@ -104,11 +104,14 @@ namespace daedalus_turbo::file {
     struct write_stream: protected stream {
         write_stream(const std::string &path, std::ios_base::openmode mode=std::ios::binary): _path { path }
         {
+            auto dir_path = std::filesystem::path { _path }.parent_path();
+            if (!std::filesystem::exists(dir_path))
+                std::filesystem::create_directories(dir_path);
             if (mode != std::ios::binary)
                 throw error("unsupported write_stream mode: {}!", (int)mode);
             _f = std::fopen(_path.c_str(), "wb");
             if (_f == NULL)
-                throw error_sys("failed to open file {}", _path);
+                throw error_sys("failed to open a file for writing {}", _path);
             if (std::setvbuf(_f, NULL, _IONBF, 0) != 0)
                 throw error_sys("failed to disable write buffering for {}", _path);
             _open_files++;

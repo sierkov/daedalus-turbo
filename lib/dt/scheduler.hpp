@@ -9,6 +9,7 @@
 #include <atomic>
 #include <chrono>
 #include <condition_variable>
+#include <cstdlib>
 #include <filesystem>
 #include <functional>
 #include <iomanip>
@@ -112,8 +113,12 @@ namespace daedalus_turbo {
                 {
                     std::scoped_lock tasks_lock(_tasks_mutex);
                     auto it = _tasks_cnt.find(res.task_group);
-                    if (it != _tasks_cnt.end())
-                        it->second--;
+                    if (it != _tasks_cnt.end()) {
+                        if (it->second == 1)
+                            _tasks_cnt.erase(it);
+                        else
+                            it->second--;
+                    }
                 }
                 {
                     std::unique_lock observers_lock { _observers_mutex };
@@ -179,18 +184,30 @@ namespace daedalus_turbo {
             while (_worker_try_execute(worker_idx)) {
             }
         }
+
+        static size_t _find_num_workers(size_t user_num_workers)
+        {
+            const char *env_workers_str = std::getenv("DT_WORKERS");
+            if (env_workers_str != nullptr) {
+                size_t env_workers = std::stoul(env_workers_str);
+                if (env_workers != 0)
+                    return env_workers;
+            }
+            return user_num_workers;
+        }
     public:
-        scheduler(size_t num_workers=scheduler::default_worker_count())
+        scheduler(size_t user_num_workers=scheduler::default_worker_count())
             : _tasks_mutex(), _tasks_cv(), _tasks(), _tasks_cnt(),
                 _observers_mutex(), _observers(),
                 _results_mutex(), _results_cv(), _results(),
-                _workers(), _worker_tasks(), _num_workers(num_workers)
+                _workers(), _worker_tasks(),
+                _num_workers { _find_num_workers(user_num_workers) }
         {
-            if (num_workers == 0)
+            if (_num_workers == 0)
                 throw error("the number of worker threads must be greater than zero!");
             // One worker is a special case handled by the process method itself
-            if (num_workers >= 2) {
-                for (size_t i = 0; i < num_workers; ++i) {
+            if (_num_workers >= 2) {
+                for (size_t i = 0; i < _num_workers; ++i) {
                     _workers.emplace_back([this, i]() { _worker_thread(i); });
                     _worker_tasks.push_back("");
                 }
@@ -252,11 +269,29 @@ namespace daedalus_turbo {
             return cnt;
         }
 
+        size_t task_count()
+        {
+            size_t cnt = 0;
+            {
+                std::scoped_lock lock(_tasks_mutex);
+                for (const auto &[task_name, task_cnt]: _tasks_cnt)
+                    cnt += task_cnt;
+            }
+            return cnt;
+        }
+
         void process(bool report_progress=true, std::chrono::milliseconds update_interval_ms=std::chrono::milliseconds { 1000 },
             std::ostream &report_stream=std::cerr)
         {
-            _process(report_progress, report_stream, update_interval_ms);
-            _observers.clear();
+            logger::debug("scheduler::process started tasks: {}", task_count());
+            try {
+                _process(report_progress, report_stream, update_interval_ms);
+                _observers.clear();
+            } catch (std::exception &ex) {
+                _observers.clear();
+                logger::error("scheduler::process failed: {}", ex.what());
+            }
+            logger::debug("scheduler::process done remaining tasks: {}", task_count());
         }
     private:
         void _process(bool report_progress, std::ostream &report_stream, std::chrono::milliseconds update_interval_ms)

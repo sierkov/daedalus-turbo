@@ -156,6 +156,80 @@ namespace daedalus_turbo::cardano::shelley {
             }
         }
 
+        const cardano::amount fee() const override
+        {
+            for (const auto &[entry_type, entry]: _tx.map()) {
+                if (entry_type.uint() == 2)
+                    return cardano::amount { entry.uint() };
+            }
+            throw error("a shelley+ transaction has no fee information: {} at offset {}!", hash(), offset());
+        }
+
+        void foreach_stake_reg(const std::function<void(const stake_ident &)> &observer) const override
+        {
+            _foreach_cert(0, [&observer](const auto &cert) {
+                const auto &stake_cred = cert.at(1).array();
+                observer(stake_ident { stake_cred.at(1).buf(), stake_cred.at(0).uint() == 1 });
+            });
+        }
+
+        void foreach_stake_unreg(const std::function<void(const stake_ident &)> &observer) const override
+        {
+            _foreach_cert(1, [&observer](const auto &cert) {
+                const auto &stake_cred = cert.at(1).array();
+                observer(stake_ident { stake_cred.at(1).buf(), stake_cred.at(0).uint() == 1 });
+            });
+        }
+
+        void foreach_stake_deleg(const std::function<void(const stake_deleg &)> &observer) const override
+        {
+            _foreach_cert(2, [&observer](const auto &cert) {
+                const auto &stake_cred = cert.at(1).array();
+                observer(stake_deleg { stake_ident { stake_cred.at(1).buf(), stake_cred.at(0).uint() == 1 }, cert.at(2).buf() });
+            });
+        }
+
+        void foreach_pool_reg(const std::function<void(const pool_reg &)> &observer) const override
+        {
+            _foreach_cert(3, [&observer](const auto &cert) {
+                pool_reg params {
+                    cert.at(1).buf(),
+                    cert.at(3).uint(),
+                    cert.at(4).uint(),
+                    cert.at(5).tag().second->array().at(0).uint(),
+                    cert.at(5).tag().second->array().at(1).uint(),
+                    cardano::address { cert.at(6).buf() }.stake_id()
+                };
+                const auto &owners = cert.at(7).array();
+                for (const auto &addr: owners)
+                    params.owners.emplace(stake_ident { addr.buf(), false });
+                observer(params);
+            });
+        }
+
+        void foreach_pool_unreg(const std::function<void(const pool_unreg &)> &observer) const override
+        {
+            _foreach_cert(4, [&observer](const auto &cert) {
+                observer(pool_unreg { cert.at(1).buf(), cert.at(2).uint() });
+            });
+        }
+
+        void foreach_instant_reward(const std::function<void(const instant_reward &)> &observer) const override
+        {
+            _foreach_cert(6, [&observer](const auto &cert) {
+                const auto &reward = cert.at(1).array();
+                auto source_raw = reward.at(0).uint();
+                if (source_raw > 1)
+                    throw error("unexpected value of reward source: {}!", source_raw);
+                auto source = reward.at(0).uint() == 0 ? reward_source::reserves : reward_source::treasury;
+                std::map<stake_ident, cardano::amount> rewards {};
+                for (const auto &[stake_cred, coin]: reward.at(1).map()) {
+                    rewards.try_emplace(stake_ident { stake_cred.array().at(1).buf(), stake_cred.array().at(0).uint() == 1 }, coin.uint());
+                }
+                observer(instant_reward { source, std::move(rewards) });
+            });
+        }
+
         vkey_wit_ok vkey_witness_ok() const override
         {
             if (!_wit) throw cardano_error("vkey_witness_ok called on a transaction without witness data!");
@@ -188,6 +262,22 @@ namespace daedalus_turbo::cardano::shelley {
                 }
             }
             return ok;
+        }
+    protected:
+        void _foreach_cert(uint64_t cert_type, const std::function<void(const cbor_array &)> &observer) const
+        {
+            const cbor_array *certs = nullptr;
+            for (const auto &[entry_type, entry]: _tx.map()) {
+                if (entry_type.uint() == 4)
+                    certs = &entry.array();
+            }
+            if (certs != nullptr) {
+                for (const auto &cert_raw: *certs) {
+                    const auto &cert = cert_raw.array();
+                    if (cert.at(0).uint() == cert_type)
+                        observer(cert);
+                }
+            }
         }
     };
 

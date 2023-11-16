@@ -7,13 +7,12 @@
 #include <dt/file.hpp>
 #include <dt/zstd.hpp>
 
-using namespace std;
 using namespace boost::ut;
 using namespace daedalus_turbo;
 
 suite zstd_suite = [] {
     "zstd"_test = [] {
-        static const uint8_vector orig {"some text\0\x11\xFE"sv };
+        static const uint8_vector orig { std::string_view { "some text\0\x11\xFE" } };
         uint8_vector compressed {};
 
         "compress"_test = [&] {

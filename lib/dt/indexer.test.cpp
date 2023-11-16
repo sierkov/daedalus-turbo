@@ -16,16 +16,14 @@ suite indexer_suite = [] {
         static const std::string idx_dir { "./tmp/index" };
         "incremental"_test = [=] {
             static const std::string tmp_db_dir { "./tmp/compressed" };
-            if (std::filesystem::exists(tmp_db_dir))
-                std::filesystem::remove_all(tmp_db_dir);
-            if (std::filesystem::exists(idx_dir + "/txo-use"))
-                std::filesystem::remove_all(idx_dir + "/txo-use");
+            std::filesystem::remove_all(tmp_db_dir);
+            std::filesystem::remove_all(idx_dir + "/txo-use");
             {
                 scheduler sched {};
                 chunk_registry src_cr { sched, db_dir };
                 src_cr.init_state(false, true, false);
-                indexer_list indexers {};
-                indexers.emplace_back(std::make_unique<index::txo_use::indexer>(sched, idx_dir, "txo-use"));
+                indexer_map indexers {};
+                indexers.emplace(std::make_unique<index::txo_use::indexer>(sched, idx_dir, "txo-use"));
                 incremental idxr { sched, tmp_db_dir, indexers };
                 idxr.import(src_cr);
             }

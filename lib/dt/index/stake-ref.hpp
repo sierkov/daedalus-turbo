@@ -45,7 +45,8 @@ namespace daedalus_turbo::index::stake_ref {
                     cardano::address addr { tx_out.address };
                     if (!addr.has_stake_id()) return;
                     const auto id = addr.stake_id();
-                    _idx.emplace_part(id.hash.data()[0] / _part_range, std::move(id), tx.offset(), tx.size(), tx_out.idx);
+                    _idx.emplace_part(id.hash.data()[0] / _part_range,
+                        std::move(id), tx.offset(), tx.size(), tx_out.idx);
                 });
             });
         }

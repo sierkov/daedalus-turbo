@@ -9,7 +9,7 @@
 
 namespace daedalus_turbo {
     struct timer {
-        timer(const std::string_view &title, logger::level lev=logger::level::info)
+        timer(const std::string_view &title, logger::level lev=logger::level::debug)
             : _title { title }, _level { lev }, _start_time { std::chrono::system_clock::now() }
         {
         }

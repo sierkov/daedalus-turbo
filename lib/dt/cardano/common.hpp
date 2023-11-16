@@ -8,6 +8,7 @@
 #include <ctime>
 #include <functional>
 #include <optional>
+#include <set>
 #include <span>
 #include <dt/cardano/type.hpp>
 #include <dt/cbor.hpp>
@@ -96,6 +97,9 @@ namespace daedalus_turbo {
 }
 
 namespace daedalus_turbo::cardano {
+    using stake_ident = daedalus_turbo::stake_ident;
+    using pay_ident = daedalus_turbo::pay_ident;
+
     inline std::string asset_name(const buffer &policy_id, const buffer &asset_name)
     {
         return fmt::format("{} {}", buffer_readable { asset_name }, policy_id.span());
@@ -171,6 +175,15 @@ namespace daedalus_turbo::cardano {
             }
         }
 
+        uint64_t epoch_slot() const
+        {
+            if (_slot <= 208 * 21600) {
+                return _slot % 21600;
+            } else {
+                return (_slot - 208 * 21600) % 432000;
+            }
+        }
+
         uint64_t unixtime() const
         {
             if (_slot >= _shelley_begin_slot) {
@@ -203,7 +216,7 @@ namespace daedalus_turbo::cardano {
             };
         }
     private:
-        static constexpr uint64_t _shelley_begin_ts = 1596051891;
+        static constexpr uint64_t _shelley_begin_ts = 1596051891 + 7200;
         static constexpr uint64_t _shelley_begin_slot = 208 * 21600;
     };
 
@@ -227,7 +240,7 @@ namespace daedalus_turbo::cardano {
                 case 0b0001: // base address: scripthash28,keyhash28
                 case 0b0010: // base address: keyhash28,scripthash28
                 case 0b0011: // base address: scripthash28,scripthash28
-                    if (bytes.size() < 57) throw cardano_error("shelley base address must have at least 57 bytes", bytes);
+                    if (bytes.size() < 57) throw cardano_error("shelley base address must have at least 57 bytes: {}!", bytes);
                     break;
 
                 case 0b1000: // byron
@@ -308,6 +321,19 @@ namespace daedalus_turbo::cardano {
                 case 0b0010: // base address: keyhash28,scripthash28
                 case 0b0011: // base address: scripthash28,scripthash28
                     return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        bool has_pointer() const
+        {
+            switch (type) {
+                case 0b0100: // pointer key
+                case 0b0101: // pointer script
+                    return true;
+                    break;
 
                 default:
                     return false;
@@ -411,6 +437,35 @@ namespace daedalus_turbo::cardano {
         uint16_t _out_idx;
     };
 
+    struct __attribute__((packed)) epoch {
+        static void check(uint64_t epoch)
+        {
+            if (epoch >= (1U << 16))
+                throw error("epoch number is too big: {}!", epoch);
+        }
+
+        epoch() =default;
+
+        epoch(uint64_t epoch): _epoch(static_cast<uint16_t>(epoch))
+        {
+            check(epoch);
+        }
+
+        epoch &operator=(uint64_t epoch)
+        {
+            check(epoch);
+            _epoch = static_cast<uint16_t>(epoch);
+            return *this;
+        }
+
+        operator uint64_t() const
+        {
+            return _epoch;
+        }
+    private:
+        uint16_t _epoch = 0;
+    };
+
     struct tx_input {
         const buffer &tx_hash;
         const cardano::tx_out_idx txo_idx;
@@ -438,6 +493,33 @@ namespace daedalus_turbo::cardano {
         const cardano::address &address;
         const cardano::amount amount;
         const cardano::tx_out_idx idx;
+    };
+
+    struct stake_deleg {
+        stake_ident stake_id {};
+        cardano_hash_28 pool_id {};
+    };
+
+    struct pool_reg {
+        cardano_hash_28 pool_id {};
+        uint64_t pledge = 0;
+        uint64_t cost = 0;
+        uint64_t margin_num = 0;
+        uint64_t margin_denom = 0;
+        stake_ident reward_id {};
+        std::set<stake_ident> owners {};
+    };
+
+    struct pool_unreg {
+        cardano_hash_28 pool_id {};
+        cardano::epoch epoch {};
+    };
+
+    enum class reward_source { reserves, treasury };
+
+    struct instant_reward {
+        reward_source source {};
+        std::map<stake_ident, cardano::amount> rewards {};
     };
 
     struct kes_signature {
@@ -525,6 +607,11 @@ namespace daedalus_turbo::cardano {
             return _offset + (v.data - _block_tuple.data);
         }
 
+        inline cardano::pool_hash issuer_hash() const
+        {
+            return blake2b<cardano::pool_hash>(issuer_vkey());
+        }
+
         inline uint64_t offset() const
         {
             return _offset;
@@ -560,6 +647,17 @@ namespace daedalus_turbo::cardano {
         virtual void foreach_input(const std::function<void(const tx_input &)> &) const {}
         virtual void foreach_output(const std::function<void(const tx_output &)> &) const {}
         virtual void foreach_withdrawal(const std::function<void(const tx_withdrawal &)> &) const {}
+        virtual void foreach_stake_reg(const std::function<void(const stake_ident &)> &) const {}
+        virtual void foreach_stake_unreg(const std::function<void(const stake_ident &)> &) const {}
+        virtual void foreach_stake_deleg(const std::function<void(const stake_deleg &)> &) const {}
+        virtual void foreach_pool_reg(const std::function<void(const pool_reg &)> &) const {}
+        virtual void foreach_pool_unreg(const std::function<void(const pool_unreg &)> &) const {}
+        virtual void foreach_instant_reward(const std::function<void(const instant_reward &)> &) const {}
+
+        virtual const cardano::amount fee() const
+        {
+            return cardano::amount {};
+        }
 
         virtual const cardano_hash_32 &hash() const
         {

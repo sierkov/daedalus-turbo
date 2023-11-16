@@ -117,7 +117,7 @@ suite index_common_suite = [] {
             writer<index_item>::remove(idx_path.path());
         };
 
-        "multi-item entries work"_test = [] {
+        "multi-part indices work"_test = [] {
             file::tmp idx_path_1 { "index-writer-1-multi-index-test" };
             size_t num_items_1 = 0x39873; // more than the default chunk_size to test all branches of index search
             {
@@ -140,16 +140,26 @@ suite index_common_suite = [] {
                 std::array<std::string, 2> paths { idx_path_1, idx_path_2 };
                 reader_multi<index_item> reader { paths };
                 expect(reader.size() == num_items_1 + num_items_2);
-                index_item search_item { 0xDEADBEAF };
-                auto [ found_cnt, found_item ] = reader.find(search_item);
-                expect(found_cnt == num_items_1 - 2 + num_items_2 - 2) << found_cnt;
-                expect(found_item == search_item);
-                for (size_t i = 1; i < found_cnt; ++i) {
-                    expect(reader.read(found_item));
+                // successful search
+                {
+                    index_item search_item { 0xDEADBEAF };
+                    auto [ found_cnt, found_item ] = reader.find(search_item);
+                    expect(found_cnt == num_items_1 - 2 + num_items_2 - 2) << found_cnt;
                     expect(found_item == search_item);
+                    for (size_t i = 1; i < found_cnt; ++i) {
+                        expect(reader.read(found_item));
+                        expect(found_item == search_item);
+                    }
+                    expect(reader.read(found_item));
+                    expect(found_item != search_item);
                 }
-                expect(reader.read(found_item));
-                expect(found_item != search_item);
+
+                // missing-item search
+                {
+                    index_item missing_item { 0xDEADBEEE };
+                    auto [ found_cnt, found_item ] = reader.find(missing_item);
+                    expect(found_cnt == 0) << found_cnt;
+                }
             }
             writer<index_item>::remove(idx_path_1.path());
             writer<index_item>::remove(idx_path_2.path());

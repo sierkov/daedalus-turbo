@@ -6,6 +6,7 @@
 #define DAEDALUS_TURBO_FORMAT_HPP
 
 #include <array>
+#include <set>
 #include <span>
 #include <string>
 #include <vector>
@@ -39,13 +40,26 @@ namespace fmt {
     struct formatter<std::span<const uint8_t, SZ>>: public formatter<std::span<const uint8_t>> {
     };
 
-    template<>
-    struct formatter<std::vector<std::string>>: public formatter<int> {
+    template<typename T>
+    struct formatter<std::vector<T>>: public formatter<int> {
         template<typename FormatContext>
-        auto format(const auto &vec, FormatContext &ctx) const -> decltype(ctx.out()) {
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
             auto out_it = ctx.out();
-            for (auto it = vec.begin(); it != vec.end(); it++) {
-                const std::string sep { std::next(it) == vec.end() ? "" : ", " };
+            for (auto it = v.begin(); it != v.end(); it++) {
+                const std::string sep { std::next(it) == v.end() ? "" : ", " };
+                out_it = fmt::format_to(out_it, "{}{}", *it, sep);
+            }
+            return out_it;
+        }
+    };
+
+    template<typename T>
+    struct formatter<std::set<T>>: public formatter<int> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            auto out_it = ctx.out();
+            for (auto it = v.begin(); it != v.end(); it++) {
+                const std::string sep { std::next(it) == v.end() ? "" : ", " };
                 out_it = fmt::format_to(out_it, "{}{}", *it, sep);
             }
             return out_it;

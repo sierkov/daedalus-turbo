@@ -7,10 +7,10 @@ LD_FLAGS := $(LDFLAGS) -lzstd -lsodium -lfmt -lspdlog
 RM := rm -rf
 
 ifeq ($(OS),Windows_NT)
-	LD_FLAGS := $(LD_FLAGS) -lboost_coroutine-mt  -lboost_json-mt -lboost_system-mt -lwsock32 -lws2_32
+	LD_FLAGS := $(LD_FLAGS) -lboost_coroutine-mt  -lboost_json-mt  -lboost_url-mt -lboost_system-mt -lwsock32 -lws2_32
 	C_FLAGS := $(C_FLAGS)
 else
-	LD_FLAGS := $(LD_FLAGS) -lboost_coroutine -lboost_json -lboost_system
+	LD_FLAGS := $(LD_FLAGS) -lboost_coroutine -lboost_json -lboost_url -lboost_system
 	UNAME_S := $(shell uname -s)
     ifeq ($(UNAME_S),Darwin)
 		GXX := clang++

@@ -26,17 +26,21 @@ namespace daedalus_turbo::logger {
         if (!logger) {
             alignas(mutex::padding) static std::mutex m {};
             std::scoped_lock lk { m };
-            // double check since another thread could have already started initializing logger
+            // checking again since another thread could have already started initializing the logger
             if (!logger) {
                 auto console_sink = std::make_shared<spdlog::sinks::stderr_color_sink_mt>();
                 console_sink->set_level(spdlog::level::info);
                 console_sink->set_pattern("[%^%l%$] %v");
-                auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("./log/dt.log");
+                const char *log_path = "./log/dt.log";
+                const char *env_log_path = std::getenv("DT_LOG");
+                if (env_log_path != nullptr)
+                    log_path = env_log_path;
+                auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(log_path);
                 file_sink->set_level(spdlog::level::trace);
                 file_sink->set_pattern("[%Y-%m-%d %T %z] [%P:%t] [%n] [%l] %v");
                 logger = spdlog::logger("dt", { console_sink, file_sink });
                 logger->set_level(spdlog::level::trace);
-                logger->flush_on(spdlog::level::info);
+                logger->flush_on(spdlog::level::debug);
                 spdlog::flush_every(std::chrono::seconds(1));
             }
         }

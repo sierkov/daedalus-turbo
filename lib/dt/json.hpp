@@ -6,9 +6,15 @@
 #define DAEDALUS_TURBO_JSON_HPP
 
 #include <boost/json.hpp>
+#include <dt/util.hpp>
 
-namespace daedalus_turbo {
-    namespace json = boost::json;
+namespace daedalus_turbo::json {
+    using namespace boost::json;
+
+    inline json::value parse(const buffer &buf, json::storage_ptr sp={})
+    {
+        return boost::json::parse(boost::json::string_view { reinterpret_cast<const char *>(buf.data()), buf.size() }, sp);
+    }
 }
 
-#endif // !DAEDALUS_TURBO_HTTP_API_HPP
+#endif // !DAEDALUS_TURBO_JSON_HPP

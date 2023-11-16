@@ -192,7 +192,7 @@ namespace daedalus_turbo {
             canon_simple_str = canon_simple_str.substr(0, canon_simple_str.size() - 1);
             if (canon_str.size() <= canon_simple_str.size()
                     || canon_str.substr(0, canon_simple_str.size()) != canon_simple_str)
-                throw error("the supplied path '{}' is not inside the host direactory '{}'", canon_str, canon_simple_str);
+                throw error("the supplied path '{}' is not inside the host directory '{}'", canon_str, canon_simple_str);
             return canon_str.substr(canon_simple_str.size());
         }
 
@@ -344,25 +344,28 @@ namespace daedalus_turbo {
             return _parse_normal(offset, rel_path, raw_data, compressed_size, noop);
         }
 
-        void init_state(bool strict=true, bool reuse_state=true, bool save=true)
+        file_set init_state(bool strict=true, bool reuse_state=true, bool save=true)
         {
+            file_set deletable_chunks {};
             timer t { "chunk-registry init state", logger::level::debug };
             if (reuse_state)
-                load_state(strict);
+                deletable_chunks = load_state(strict);
             // give subclasses the time to update their data structures if some chunks weren't loaded / didn't match the state
             truncate(_end_offset);
             if (save)
                 save_state();
             logger::debug("chunk-registry data size: {} num chunks: {}", num_bytes(), num_chunks());
+            return deletable_chunks;
         }
 
-        void load_state(bool strict=true)
+        file_set load_state(bool strict=true)
         {
             timer t { "chunk-registry load state from " + _state_path, logger::level::debug };
             _chunks.clear();
             _files.clear();
             _epochs.clear();
             _end_offset = 0;
+            file_set known_chunks {}, deletable_chunks {};
             if (std::filesystem::exists(_state_path)) {
                 auto json = file::read(_state_path);
                 auto j_chunks = json::parse(json.span().string_view()).as_array();
@@ -374,19 +377,26 @@ namespace daedalus_turbo {
                     uint64_t file_size = std::filesystem::file_size(path, ec);
                     if (ec) {
                         logger::info("load_state: file access error for {}: {} - ignoring it and the following chunks!",
-                                        chunk.rel_path(), ec.message());
+                            chunk.rel_path(), ec.message());
                         break;
                     }
                     if (file_size != chunk.compressed_size) {
                         logger::info("load_state: file size mismatch for {}: recorded: {} vs actual: {}: ignoring it and the following chunks!",
-                                        chunk.rel_path(), chunk.compressed_size, file_size);
+                            chunk.rel_path(), chunk.compressed_size, file_size);
                         break;
                     }
                     chunk.offset = start_offset;
                     start_offset += chunk.data_size;
                     add(std::move(chunk), strict);
+                    known_chunks.emplace(std::move(path));
                 }
             }
+            for (const auto &entry: std::filesystem::recursive_directory_iterator { _db_dir }) {
+                auto path = full_path(entry.path().string());
+                if (entry.is_regular_file() && entry.path().extension() == ".zstd" && !known_chunks.contains(path))
+                    deletable_chunks.emplace(std::move(path));
+            }
+            return deletable_chunks;
         }
 
         virtual void save_state()

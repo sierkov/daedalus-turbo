@@ -20,7 +20,7 @@
 #include <dt/index/block-meta.hpp>
 #include <dt/index/pay-ref.hpp>
 #include <dt/index/stake-ref.hpp>
-#include <dt/index/tx.hpp>
+#include <dt/index/txo.hpp>
 #include <dt/index/txo-use.hpp>
 #include <dt/indexer.hpp>
 #include <dt/json.hpp>
@@ -146,11 +146,11 @@ namespace daedalus_turbo {
             timer t { "find referenced tx outputs", logger::level::debug };
             IDX search_item { id };
             auto [ ref_count, ref_item ] = ref_idx.find(search_item);
-            for (;;) {
+            for (size_t i = 0; i < ref_count; i++) {
                 auto it = transactions.emplace_hint(transactions.end(), (uint64_t)ref_item.offset, transaction { .size=ref_item.size });
                 it->second.outputs.emplace_back(0, ref_item.out_idx);
-                if (--ref_count == 0) break;
-                ref_idx.read(ref_item);
+                if (i < ref_count - 1)
+                    ref_idx.read(ref_item);
             }
             return transactions.size() > 0;
         }
@@ -231,9 +231,9 @@ namespace daedalus_turbo {
             }
         }
 
-        uint64_t utxo_balance() const
+        cardano::amount utxo_balance() const
         {
-            return total_utxo_balance;
+            return cardano::amount { total_utxo_balance };
         }
 
         uint64_t reward_withdrawals() const
@@ -281,7 +281,7 @@ namespace daedalus_turbo {
             : _sched { sched }, _cr { cr },
                 _stake_ref_idx { indexer::multi_reader_paths(idx_path, "stake-ref") },
                 _pay_ref_idx { indexer::multi_reader_paths(idx_path, "pay-ref") },
-                _tx_idx { indexer::multi_reader_paths(idx_path, "tx") },
+                _txo_idx { indexer::multi_reader_paths(idx_path, "txo") },
                 _txo_use_idx { indexer::multi_reader_paths(idx_path, "txo-use") },
                 _block_index {}
         {
@@ -312,11 +312,11 @@ namespace daedalus_turbo {
         find_tx_res find_tx(const buffer &tx_hash)
         {
             find_tx_res res {};
-            auto [ txo_count, txo_item ] = _tx_idx.find(index::tx::item { tx_hash });
+            auto [ txo_count, txo_item ] = _txo_idx.find(index::txo::item { tx_hash });
             if (txo_count == 0) return res;
             res.offset = txo_item.offset;
             res.block_info = find_block(txo_item.offset);
-            _cr.read(txo_item.offset, res.tx_raw, (size_t)txo_item.size);
+            _cr.read(txo_item.offset, res.tx_raw);
             return res;
         }
 
@@ -340,7 +340,7 @@ namespace daedalus_turbo {
         chunk_registry &_cr;
         index::reader_multi<index::stake_ref::item> _stake_ref_idx;
         index::reader_multi<index::pay_ref::item> _pay_ref_idx;
-        index::reader_multi<index::tx::item> _tx_idx;
+        index::reader_multi<index::txo::item> _txo_idx;
         index::reader_multi_mt<index::txo_use::item> _txo_use_idx;
         std::vector<index::block_meta::item> _block_index;
 
@@ -427,7 +427,7 @@ namespace daedalus_turbo {
                                 });
                             }
                         } catch (std::exception &ex) {
-                            throw error("cannot parse tx {} at offset {} size {}: {}", tx_offset, (size_t)tx_item.size, ex.what());
+                            throw error("cannot parse tx at offset {} size {}: {}", tx_offset, (size_t)tx_item.size, ex.what());
                         }
                     }
                     return updates;
@@ -445,8 +445,8 @@ namespace fmt {
     struct formatter<daedalus_turbo::transaction>: public formatter<size_t> {
         template<typename FormatContext>
         auto format(const auto &tx, FormatContext &ctx) const -> decltype(ctx.out()) {
-            return fmt::format_to(ctx.out(), "slot: {} balance change: {} hash: {} new inputs: {} spent outputs: {} \n",
-                tx.slot, tx.balance_change(), tx.hash.span(), tx.outputs.size(), tx.inputs.size());
+            return fmt::format_to(ctx.out(), "slot: {}/{} hash: {} balance change: {}\n",
+                tx.slot.epoch(), tx.slot, tx.hash.span(), tx.balance_change());
         }
     };
 
@@ -465,7 +465,8 @@ namespace fmt {
             if (h.balance_assets.size() > 0)
                 out_it = fmt::format_to(out_it, "asset balances: {}\n", h.balance_assets);
             return fmt::format_to(out_it, "last indexed slot: {}, last epoch: {}, # random reads: {} of them from indices: {} ({:0.1f}%)\n",
-                h.last_slot, h.last_slot.epoch(), h.num_disk_reads, h.num_idx_reads, 100 * (double)h.num_idx_reads / h.num_disk_reads);
+                h.last_slot, h.last_slot.epoch(), h.num_disk_reads, h.num_idx_reads,
+                h.num_disk_reads > 0 ? 100 * (double)h.num_idx_reads / h.num_disk_reads: 0.0);
         }
     };
 }

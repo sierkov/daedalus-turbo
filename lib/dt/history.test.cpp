@@ -21,7 +21,7 @@ suite history_suite = [] {
                 std::filesystem::remove_all(dir_path);
         }
         "simple reconstruction"_test = [] {
-            scheduler sched { 1 };
+            scheduler sched {};
             chunk_registry src_cr { sched, db_dir };
             src_cr.init_state(false, true, false);
             auto indexers = indexer::default_list(sched, idx_dir);
@@ -39,9 +39,18 @@ suite history_suite = [] {
             const auto &e2 = r.find_block(162'930'893 + 30028);
             expect(e1.slot == e2.slot) << e1.slot << " " << e2.slot;
 
-            history hist = r.find_stake_history(cardano::address { cardano::address_buf { "stake1uxw70wgydj63u4faymujuunnu9w2976pfeh89lnqcw03pksulgcrg" } }.stake_id());
-            expect(hist.utxo_balance() == 32'476'258'673_ull) << hist.utxo_balance();
-            expect(hist.transactions.size() == 2_u) << hist.transactions.size();
+            // known-item search
+            {
+                history hist = r.find_stake_history(cardano::address { cardano::address_buf { "stake1uxw70wgydj63u4faymujuunnu9w2976pfeh89lnqcw03pksulgcrg" } }.stake_id());
+                expect(hist.utxo_balance() == 32'476'258'673_ull) << hist.utxo_balance();
+                expect(hist.transactions.size() == 2_u) << hist.transactions.size();
+            }
+            
+            // missing-item search
+            {
+                history hist = r.find_stake_history(cardano::address { cardano::address_buf { "0xE10001020304050607080910111213141516171819202122232425262728" } }.stake_id());
+                expect(hist.transactions.size() == 0_u) << hist.transactions.size();
+            }
         };
     };
 };

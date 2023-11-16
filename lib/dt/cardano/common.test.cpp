@@ -98,6 +98,38 @@ suite cardano_common_suite = [] {
             expect(boost::ut::throws<error>([]() { cardano::tx_out_idx { 65536 }; }));
             expect(boost::ut::throws<error>([]() { cardano::tx_out_idx { 100000 }; }));
         };
+        "stake_deleg"_test = [] {
+            auto chunk = file::read("./data/chunk-registry/immutable/9C5C0267DCA941851D0330E19B91712618EB6DB4BF17E458BCF00829F84CF3CF.zstd");
+            cbor_parser parser { chunk };
+            cbor_value block_tuple {};
+            size_t num_delegs = 0;
+            while (!parser.eof()) {
+                parser.read(block_tuple);
+                auto blk = cardano::make_block(block_tuple, block_tuple.data - chunk.data());
+                blk->foreach_tx([&](const auto &tx) {
+                    tx.foreach_stake_deleg([&](const auto &) {
+                        num_delegs++;
+                    });
+                });
+            }
+            expect(num_delegs == 208_u);
+        };
+        "pool_reg"_test = [] {
+            auto chunk = file::read("./data/chunk-registry/immutable/DF597E3FA352A7BD2F021733804C33729EBAA3DCAA9C0643BD263EFA09497B03.zstd");
+            cbor_parser parser { chunk };
+            cbor_value block_tuple {};
+            size_t num_regs = 0;
+            while (!parser.eof()) {
+                parser.read(block_tuple);
+                auto blk = cardano::make_block(block_tuple, block_tuple.data - chunk.data());
+                blk->foreach_tx([&](const auto &tx) {
+                    tx.foreach_pool_reg([&](const auto &) {
+                        num_regs++;
+                    });
+                });
+            }
+            expect(num_regs == 2_u);
+        };
         "extract_epoch"_test = [] {
             expect(cardano::extract_epoch("./data/chunk-registry/immutable/526D236112DB8E38E66F37D330C85AFE0C268D81DF853DDDE4E88551EB9B0637.zstd") == 0_ull);
             expect(cardano::extract_epoch("./data/chunk-registry/immutable/DF597E3FA352A7BD2F021733804C33729EBAA3DCAA9C0643BD263EFA09497B03.zstd") == 222_ull);

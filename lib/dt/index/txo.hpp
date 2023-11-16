@@ -2,27 +2,26 @@
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
-#ifndef DAEDALUS_TURBO_INDEX_TXO_USE_HPP
-#define DAEDALUS_TURBO_INDEX_TXO_USE_HPP
+#ifndef DAEDALUS_TURBO_INDEX_TXO_HPP
+#define DAEDALUS_TURBO_INDEX_TXO_HPP
 
 #include <dt/cardano.hpp>
 #include <dt/index/common.hpp>
 
-namespace daedalus_turbo::index::txo_use {
-
+namespace daedalus_turbo::index::txo {
     struct __attribute__((packed)) item {
-        cardano_hash_32 hash;
-        cardano::tx_out_idx out_idx;
+        cardano_hash_32 hash {};
+        cardano::tx_out_idx out_idx {};
+        uint64_t amount = 0;
         uint64_t offset = 0;
-        cardano::tx_size size {};
-        cardano::epoch epoch {};
+        stake_ident stake_id {};
         
         bool operator<(const auto &b) const
         {
             int cmp = memcmp(hash.data(), b.hash.data(), hash.size());
             if (cmp != 0) return cmp < 0;
             if (out_idx != b.out_idx) return out_idx < b.out_idx;
-            return offset < b.offset;
+            return amount < b.amount;
         }
 
         bool index_less(const item &b) const
@@ -46,15 +45,10 @@ namespace daedalus_turbo::index::txo_use {
         void _index(const cardano::block_base &blk) override
         {
             blk.foreach_tx([&](const auto &tx) {
-                // necessary since some transactions contain duplicate inputs and Cardano Node allows it!
-                std::set<std::pair<cardano_hash_32, cardano::tx_out_idx>> inputs {};
-                tx.foreach_input([&](const auto &tx_in) {
-                    inputs.emplace(tx_in.tx_hash, tx_in.txo_idx);
+                tx.foreach_output([&](const auto &txo) {
+                    if (txo.address.has_stake_id())
+                        _idx.emplace_part(tx.hash().data()[0] / _part_range, tx.hash(), txo.idx, txo.amount, tx.offset(), txo.address.stake_id());
                 });
-                for (const auto &[tx_hash, txo_idx]: inputs) {
-                    _idx.emplace_part(tx_hash[0] / _part_range,
-                        tx_hash, txo_idx, tx.offset(), tx.size(), blk.slot().epoch());
-                }
             });
         }
     };
@@ -62,4 +56,4 @@ namespace daedalus_turbo::index::txo_use {
     using indexer = indexer_offset<item, chunk_indexer>;
 }
 
-#endif //!DAEDALUS_TURBO_INDEX_TXO_USE_HPP
+#endif //!DAEDALUS_TURBO_INDEX_TXO_HPP

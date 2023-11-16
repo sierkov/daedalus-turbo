@@ -125,5 +125,36 @@ suite index_common_bench_suite = [] {
                 });
             }
         }
+
+        "multi-part indices"_test = [] {
+            size_t num_parts = 8;
+            size_t num_items = 0x39873;
+            std::vector<std::string> paths {};
+            for (size_t pi = 0; pi < num_parts; ++pi) {
+                auto path = fmt::format("./tmp/index-writer-{}-multi-index-bench", pi);
+                paths.emplace_back(path);
+                writer<index_item> idx { path };
+                for (size_t j = 0; j < num_items; j++)
+                    idx.emplace(j * (pi + 1));
+            }
+            {
+                reader_multi<index_item> reader { paths };
+                expect(reader.size() == num_items * num_parts);
+                std::seed_seq seed { 0, 1, 2, 3, 4, 5 };
+                std::default_random_engine rnd(seed);
+                std::uniform_int_distribution<size_t> dist(0, num_items * num_parts);
+                size_t sample_size = 10'000;
+                benchmark_r("multi-part index random search", 1'000.0, 3, [&] {
+                    index_item item {};
+                    for (size_t i = 1; i < sample_size; ++i) {
+                        item.offset = dist(rnd);
+                        reader.find(item);
+                    }
+                    return sample_size;
+                });
+            }
+            for (const auto &path: paths)
+                writer<index_item>::remove(path);
+        };
     };    
 };

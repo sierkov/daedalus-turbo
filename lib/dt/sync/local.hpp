@@ -28,7 +28,12 @@ namespace daedalus_turbo::sync::local {
                 _strict { strict }
         {
             logger::debug("syncer zstd (level-immutable: {} level-volatile: {})", _zstd_level_immutable, _zstd_level_volatile);
-            _cr.init_state(_strict);
+            auto deletable_chunks = _cr.init_state(_strict);
+            auto delete_time = std::chrono::system_clock::now() + _delete_delay;
+            for (auto &&path: deletable_chunks) {
+                logger::trace("unkown chunk found at startup {} - scheduling it for deletion", path);
+                _deleted_chunks.try_emplace(std::move(path), delete_time);
+            }
             _load_state();
         }
 
@@ -252,10 +257,11 @@ namespace daedalus_turbo::sync::local {
                 });
                 size_t task_size = 0;
                 std::vector<chunk_update> task {};
+                bool small_tasks = updated_chunks.size() / 4 <= _sched.num_workers();
                 for (auto it = updated_chunks.begin(); it != updated_chunks.end(); it++) {
                     task_size += it->data_size;
                     task.emplace_back(std::move(*it));
-                    if (task_size >= 256'000'000 || std::next(it) == updated_chunks.end()) {
+                    if (small_tasks || task_size >= 256'000'000 || std::next(it) == updated_chunks.end()) {
                         _sched.submit(task_name, task_size >> 20, [this, task] {
                             std::vector<analyze_res> results {};
                             for (const auto &update: task) {
@@ -309,7 +315,7 @@ namespace daedalus_turbo::sync::local {
             _refresh_sources(_volatile_path, ".dat", "copy-volatile", source_offset, updated, deletable, errors);
             // when the source has a shorter chain must truncate
             if (source_offset != _cr.num_bytes()) {
-                for (auto &&del_path: _cr.truncate(source_offset))
+                for (auto &&del_path: _cr.truncate(source_offset, false))
                     deletable.emplace(std::move(del_path));
             }
             auto deleted = _delete_obsolete(deletable);

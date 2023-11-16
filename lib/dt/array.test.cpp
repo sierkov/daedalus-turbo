@@ -124,5 +124,10 @@ suite array_suite = [] {
             expect(a[2] == 3);
             expect(a[3] == 4);
         };
+
+        "uint8_t array can be formatted"_test = [] {
+            auto data = array<uint8_t, 4>::from_hex("f0e1d2c3");
+            expect(fmt::format("{}", data) == "F0E1D2C3");
+        };
     };  
 };
