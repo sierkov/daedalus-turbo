@@ -44,6 +44,7 @@ namespace daedalus_turbo::sync::local {
 
         sync_res sync()
         {
+            _cr.clean_up();
             auto res = _refresh();
             _save_state();
             return res;

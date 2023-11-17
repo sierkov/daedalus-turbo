@@ -863,6 +863,22 @@ namespace daedalus_turbo::index {
         virtual ~indexer_base()
         {}
 
+        virtual void clean_up() const
+        {
+            for (const auto &entry: std::filesystem::directory_iterator { fmt::format("{}/{}", _idx_dir, _idx_name) }) {
+                if (!entry.is_regular_file() || entry.path().extension() != ".data")
+                    continue;
+                auto filename = entry.path().filename().string();
+                size_t sep_cnt = 0;
+                for (size_t pos = filename.find('-'); pos != filename.npos; pos = filename.find('-', pos + 1))
+                    sep_cnt++;
+                if (sep_cnt < 2)
+                    continue;
+                logger::debug("removing an unmerged index chunk: {}", entry.path().string());
+                std::filesystem::remove(entry.path());
+            }
+        }
+
         virtual std::string reader_path(const std::string &slice_id="") const
         {
             return reader_path(_idx_dir, _idx_name, slice_id);
