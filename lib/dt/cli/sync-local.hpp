@@ -7,7 +7,7 @@
 
 #include <dt/cli.hpp>
 #include <dt/sync/local.hpp>
-#include <dt/validator.hpp>
+#include <dt/indexer.hpp>
 
 namespace daedalus_turbo::cli::sync_local {
     struct cmd: public command {
@@ -46,7 +46,8 @@ namespace daedalus_turbo::cli::sync_local {
             }
             timer tc { "sync-local" };
             scheduler sched {};
-            validator::incremental idxr { sched, db_dir, idx_dir };
+            auto indexers = indexer::default_list(sched, idx_dir);
+            indexer::incremental idxr { sched, db_dir, indexers };
             sync::local::syncer syncr { sched, idxr, node_dir, strict, zstd_max_level, std::chrono::seconds { 0 } };
             auto res = syncr.sync();
             logger::info("errors: {} updated: {} deleted: {} dist: {} db_last_slot: {} cycle time: {}",
