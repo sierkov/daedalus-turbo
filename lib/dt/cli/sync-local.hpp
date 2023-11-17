@@ -6,8 +6,9 @@
 #define DAEDALUS_TURBO_CLI_SYNC_LOCAL_HPP
 
 #include <dt/cli.hpp>
+#include <dt/requirements.hpp>
 #include <dt/sync/local.hpp>
-#include <dt/indexer.hpp>
+#include <dt/validator.hpp>
 
 namespace daedalus_turbo::cli::sync_local {
     struct cmd: public command {
@@ -25,6 +26,7 @@ namespace daedalus_turbo::cli::sync_local {
             if (args.size() < 2) _throw_usage();
             const auto &node_dir = args.at(0);
             const auto &data_dir = args.at(1);
+            requirements::check(data_dir);
             const std::string db_dir = data_dir + "/compressed";
             const std::string idx_dir = data_dir + "/index";
             size_t zstd_max_level = 3;
@@ -46,8 +48,7 @@ namespace daedalus_turbo::cli::sync_local {
             }
             timer tc { "sync-local" };
             scheduler sched {};
-            auto indexers = indexer::default_list(sched, idx_dir);
-            indexer::incremental idxr { sched, db_dir, indexers };
+            validator::incremental idxr { sched, db_dir, idx_dir };
             sync::local::syncer syncr { sched, idxr, node_dir, strict, zstd_max_level, std::chrono::seconds { 0 } };
             auto res = syncr.sync();
             logger::info("errors: {} updated: {} deleted: {} dist: {} db_last_slot: {} cycle time: {}",
