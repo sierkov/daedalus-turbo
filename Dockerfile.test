@@ -25,6 +25,7 @@ RUN chown -R dev:dev /home/dev
 USER dev
 WORKDIR /home/dev/dt
 RUN make -j all
+RUN mkdir log
 COPY docker-test.sh /home/dev
 WORKDIR /home/dev/dt/src
 CMD [ "/bin/bash", "/home/dev/docker-test.sh" ]
