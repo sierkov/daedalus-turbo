@@ -63,7 +63,10 @@ docker build -t dt -f Dockerfile.test .
 docker run -it --rm dt
 ```
 
-Download the Cardano blockchain from a demo compressing proxy server, [turbo1.daedalusturbo.org](http://turbo1.daedalusturbo.org/), and construct search indices. This command works incrementally, so on successive runs it will reprocess only new and updated chunks. The resulting data is stored in /data/cardano directory inside the container.
+Download the Cardano blockchain from a demo compressing server, [turbo1.daedalusturbo.org](http://turbo1.daedalusturbo.org/) and construct search indices.
+- This command works incrementally, so on successive runs it will reprocess only new and updated chunks.
+- The resulting data is stored in /data/cardano directory inside the container.
+- The command should take between 20 and 60 minutes to synchronize the whole Cardano blockchain from scratch. The precise time will depend on the speed of your Internet connection, the number of CPU cores, and the current load on the demo server.
 ```
 ./dt sync-http /data/cardano
 ```
@@ -72,17 +75,17 @@ Do not hesitate to open a GitHub issue if networking issues persist for 24 hours
 
 To reconstruct the latest balance and transaction history of a given stake key, run:
 ```
-./dt stake-history /data/compressed /data/indices stake1uxw70wgydj63u4faymujuunnu9w2976pfeh89lnqcw03pksulgcrg
+./dt stake-history /data/cardano stake1uxw70wgydj63u4faymujuunnu9w2976pfeh89lnqcw03pksulgcrg
 ```
 
 To reconstruct the latest balance and transaction history of a given payment key, run:
 ```
-./dt pay-history /data/compressed /data/indices addr1q86j2ywajjgswgg6a6j6rvf0kzhhrqlma7ucx0f2w0v7stuau7usgm94re2n6fhe9ee88c2u5ta5znnwwtlxpsulzrdqv6rmuj
+./dt pay-history /data/cardano addr1q86j2ywajjgswgg6a6j6rvf0kzhhrqlma7ucx0f2w0v7stuau7usgm94re2n6fhe9ee88c2u5ta5znnwwtlxpsulzrdqv6rmuj
 ```
 
 To find information about a given transaction, run:
 ```
-./dt tx-info /data/compressed /data/indices 76e95c61138f8b58c0eecaa380e58f00374f05f9b8522d2299897d83c88993a7
+./dt tx-info /data/cardano 76e95c61138f8b58c0eecaa380e58f00374f05f9b8522d2299897d83c88993a7
 ```
 
 # Spread the word
