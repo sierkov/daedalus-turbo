@@ -66,6 +66,12 @@ namespace daedalus_turbo::indexer {
 #           endif
         }
 
+        void clean_up() const override
+        {
+            for (auto &[name, idxr_ptr]: _indexers)
+                idxr_ptr->clean_up();
+        }
+
         void import(const chunk_registry &src_cr)
         {
             uint8_vector raw_data {}, compressed_data {};

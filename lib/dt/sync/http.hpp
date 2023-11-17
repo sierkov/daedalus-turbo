@@ -16,7 +16,7 @@ namespace daedalus_turbo::sync::http {
         {
             auto deletable_chunks = _cr.init_state();
             for (auto &&path: deletable_chunks) {
-                logger::trace("unkown chunk found at startup {} - scheduling it for deletion", path);
+                logger::trace("unknown chunk found at startup {} - scheduling it for deletion", path);
                 _deletable_chunks.emplace(std::move(path));
             }
         }
@@ -24,6 +24,7 @@ namespace daedalus_turbo::sync::http {
         void sync()
         {
             timer t { "http synchronization" };
+            _cr.clean_up();
             auto epoch_groups = _get_json<json::array>("/chain.json");
             if (epoch_groups.empty())
                 throw error("the remote chain is empty - nothing to synchronize!");
@@ -33,12 +34,12 @@ namespace daedalus_turbo::sync::http {
                 auto deleted_chunks = _cr.truncate(task->start_offset, false);
                 auto updated_chunks = _download_data(epoch_groups, task->start_epoch);
                 _cr.save_state();
+                for (auto &&path: deleted_chunks)
+                    _deletable_chunks.emplace(std::move(path));
+                // process updated after deleted to remove updated chunks for the to-be-deleted list
                 for (auto &&path: updated_chunks) {
                     logger::trace("updated chunk: {}", path);
-                }
-                for (auto &&path: deleted_chunks) {
-                    if (!updated_chunks.contains(path))
-                        _deletable_chunks.emplace(std::move(path));
+                    _deletable_chunks.erase(path);
                 }
             } else {
                 logger::info("local chain is up to date - nothing to do");

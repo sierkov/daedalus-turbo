@@ -173,6 +173,10 @@ namespace daedalus_turbo {
             }
         }
 
+        virtual void clean_up() const
+        {
+        }
+
         const chunk_map &chunks() const
         {
             return _chunks;
