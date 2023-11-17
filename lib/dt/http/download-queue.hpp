@@ -10,6 +10,10 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#ifdef __clang__
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
 #define BOOST_ASIO_HAS_STD_INVOKE_RESULT 1
 #ifndef BOOST_ALLOW_DEPRECATED_HEADERS
 #   define BOOST_ALLOW_DEPRECATED_HEADERS
@@ -20,6 +24,9 @@
 #ifdef DT_CLEAR_BOOST_DEPRECATED_HEADERS
 #   undef BOOST_ALLOW_DEPRECATED_HEADERS
 #   undef DT_CLEAR_BOOST_DEPRECATED_HEADERS
+#endif
+#ifdef __clang__
+#   pragma GCC diagnostic pop
 #endif
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
@@ -36,7 +43,7 @@ namespace daedalus_turbo::http {
     using tcp = boost::asio::ip::tcp;
 
     struct download_queue {
-        static constexpr size_t max_io_threads = 1;
+        static constexpr size_t max_io_threads = 2;
 
         struct network_error: error {
             using error::error;
@@ -161,7 +168,7 @@ namespace daedalus_turbo::http {
                 if (empty())
                     *_shutdown = true;
                 logger::debug("download queue filled: requests: {}, I/O threads scheduled/active: {}/{} shutdown: {}",
-                    size(), _max_io_threads, _sched.task_count(_task_name), *_shutdown);
+                    size(), _max_io_threads, _sched.task_count(_task_name), static_cast<bool>(*_shutdown));
             }
         }
 
@@ -300,9 +307,14 @@ namespace daedalus_turbo::http {
                 } catch (std::exception &ex) {
                     logger::error("download handler failed: {}", ex.what());
                 }
+                auto &p = logger::progress::get();
                 if (_complete && _requests_active == 0 && _queue_size == 0) {
                     *_shutdown = true;
+                    p.retire("download-queue");
+                } else {
+                    p.update("download-queue", fmt::format("{}", size()));
                 }
+                p.inform();
             });
             _queue_size++;
         }

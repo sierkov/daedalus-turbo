@@ -17,16 +17,16 @@ The code currently validates the blockchain data only for general consistency: t
 
 # Features
 Currently supported:
-- Reconstruction of balances and transaction history of stake addresses.
-- Reconstruction of balances and transaction history of payment addresses.
-- Quick search for transaction data and metadata.
+- Incremental synchronization and indexing of compressed blockchain data over the network.
+- Incremental synchronization and indexing from a local Cardano Node instance.
+- Reconstruction of balances and transaction histories of stake addresses.
+- Reconstruction of balances and transaction histories of payment addresses.
+- Quick search for transaction data.
 - ADA and non-ADA assets.
-- Incremental compression and indexing of blockchain data from a local Cardano Node instance.
 - Direct reconstruction from compressed blockchain data.
 
 In active development:
-- Synchronization of compressed blockchain data over network.
-- Parallel Ouroboros-Praos-like validation of blockchain data.
+- Parallelized Ouroboros-Praos validation of blockchain data.
 - Computation of staking rewards.
 - Desktop Cardano Explorer app.
 

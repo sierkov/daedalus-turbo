@@ -791,10 +791,18 @@ namespace daedalus_turbo::cardano {
 
 namespace fmt {
     template<>
-    struct formatter<const daedalus_turbo::cardano::slot>: public formatter<uint64_t> {
+    struct formatter<daedalus_turbo::cardano::slot>: public formatter<uint64_t> {
         template<typename FormatContext>
-        auto format(const auto a, FormatContext &ctx) const -> decltype(ctx.out()) {
-            return fmt::format_to(ctx.out(), "{}", (uint64_t)a);
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "{}", static_cast<uint64_t>(v));
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::cardano::epoch>: public formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "{}", static_cast<uint64_t>(v));
         }
     };
 
@@ -824,10 +832,6 @@ namespace fmt {
         auto format(const auto &id, FormatContext &ctx) const -> decltype(ctx.out()) {
             return fmt::format_to(ctx.out(), "pay_ident(id: {}, type: {})", id.hash.span(), id.type_name());
         }
-    };
-
-    template<>
-    struct formatter<daedalus_turbo::cardano::slot>: public formatter<const daedalus_turbo::cardano::slot> {
     };
 
     template<>

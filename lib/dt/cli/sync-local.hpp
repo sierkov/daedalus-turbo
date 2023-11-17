@@ -6,6 +6,7 @@
 #define DAEDALUS_TURBO_CLI_SYNC_LOCAL_HPP
 
 #include <dt/cli.hpp>
+#include <dt/requirements.hpp>
 #include <dt/sync/local.hpp>
 #include <dt/indexer.hpp>
 
@@ -25,6 +26,7 @@ namespace daedalus_turbo::cli::sync_local {
             if (args.size() < 2) _throw_usage();
             const auto &node_dir = args.at(0);
             const auto &data_dir = args.at(1);
+            requirements::check(data_dir);
             const std::string db_dir = data_dir + "/compressed";
             const std::string idx_dir = data_dir + "/index";
             size_t zstd_max_level = 3;

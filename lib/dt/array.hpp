@@ -56,10 +56,14 @@ namespace daedalus_turbo {
             static_assert(sizeof(*this) == SZ * sizeof(T));
             if (s.size() != SZ)
                 throw array_error("span must be of size {} but got {}", SZ, s.size());
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wclass-memaccess"
+#ifndef __clang__
+#   pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wclass-memaccess"
+#endif
             memcpy(this, std::data(s), SZ * sizeof(T));
-#pragma GCC diagnostic pop
+#ifndef __clang__
+#   pragma GCC diagnostic pop
+#endif
         }
 
         array(const std::span<const T> &s)

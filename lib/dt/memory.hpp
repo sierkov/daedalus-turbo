@@ -21,12 +21,26 @@ namespace daedalus_turbo::memory {
 #       ifdef _WIN32
             PROCESS_MEMORY_COUNTERS_EX pmc {};
             GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
-            return pmc.PeakWorkingSetSize >> 20;
+            return static_cast<size_t>(pmc.PeakWorkingSetSize >> 20);
 #       else
             struct rusage ru {};
             if (getrusage(RUSAGE_SELF, &ru) != 0)
                 throw error_sys("getrusage failed");
-            return (size_t)(ru.ru_maxrss >> 10);
+            return static_cast<size_t>(ru.ru_maxrss >> 10);
+#       endif
+    }
+
+    inline size_t physical_mb()
+    {
+#       ifdef _WIN32
+            MEMORYSTATUSEX status;
+            status.dwLength = sizeof(status);
+            GlobalMemoryStatusEx(&status);
+            return static_cast<size_t>(status.ullTotalPhys >> 20);
+#       else
+            long pages = sysconf(_SC_PHYS_PAGES);
+            long page_size = sysconf(_SC_PAGE_SIZE);
+            return static_cast<size_t>((pages * page_size) >> 20);
 #       endif
     }
 }

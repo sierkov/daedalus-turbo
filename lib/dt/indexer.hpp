@@ -28,7 +28,7 @@
 #include <dt/index/block-meta.hpp>
 #include <dt/index/pay-ref.hpp>
 #include <dt/index/stake-ref.hpp>
-#include <dt/index/txo.hpp>
+#include <dt/index/tx.hpp>
 #include <dt/index/txo-use.hpp>
 #include <dt/logger.hpp>
 #include <dt/scheduler.hpp>
@@ -195,7 +195,7 @@ namespace daedalus_turbo::indexer {
         indexers.emplace(std::make_unique<index::block_meta::indexer>(sched, idx_dir, "block-meta"));
         indexers.emplace(std::make_unique<index::stake_ref::indexer>(sched, idx_dir, "stake-ref"));
         indexers.emplace(std::make_unique<index::pay_ref::indexer>(sched, idx_dir, "pay-ref"));
-        indexers.emplace(std::make_unique<index::txo::indexer>(sched, idx_dir, "txo"));
+        indexers.emplace(std::make_unique<index::tx::indexer>(sched, idx_dir, "tx"));
         indexers.emplace(std::make_unique<index::txo_use::indexer>(sched, idx_dir, "txo-use"));
         return indexers;
     }

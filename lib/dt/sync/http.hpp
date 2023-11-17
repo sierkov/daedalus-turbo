@@ -29,6 +29,7 @@ namespace daedalus_turbo::sync::http {
                 throw error("the remote chain is empty - nothing to synchronize!");
             auto task = _find_sync_start_position(epoch_groups);
             if (task) {
+                logger::info("synchronization starts from chain offset {} in epoch {}", task->start_offset, task->start_epoch);
                 auto deleted_chunks = _cr.truncate(task->start_offset, false);
                 auto updated_chunks = _download_data(epoch_groups, task->start_epoch);
                 _cr.save_state();
@@ -39,6 +40,8 @@ namespace daedalus_turbo::sync::http {
                     if (!updated_chunks.contains(path))
                         _deletable_chunks.emplace(std::move(path));
                 }
+            } else {
+                logger::info("local chain is up to date - nothing to do");
             }
             for (auto &&path: _deletable_chunks) {
                 logger::trace("deleting chunk: {}", path);
@@ -159,8 +162,8 @@ namespace daedalus_turbo::sync::http {
                 task.start_epoch = last_synced_epoch_it->first + 1;
                 task.start_offset = new_end_offset;
             }
-            logger::info("remote chain size: {} synchronization starts from offset {} in epoch {}",
-                remote_chain_size, task.start_offset, task.start_epoch);
+            cardano::slot remote_slot { json::value_to<uint64_t>(epoch_groups.back().at("lastSlot")) };
+            logger::info("remote chain size: {} latest epoch: {} slot: {}", remote_chain_size, remote_slot.epoch(), remote_slot);
             if (remote_chain_size == 0 || remote_chain_size == task.start_offset)
                 return std::optional<sync_task> {};
             return task;
@@ -238,7 +241,7 @@ namespace daedalus_turbo::sync::http {
                         _dlq.download(data_url, [this, chunk, save_task, max_offset, save_path](daedalus_turbo::http::download_queue::result &&res) {
                             if (res) {
                                 const auto &compressed = res.body;
-                                _sched.submit(save_task, 100 + 100 * (max_offset - chunk.offset) / max_offset, [this, chunk, save_path, compressed]() {
+                                _sched.submit(save_task, 100 + 100 * (max_offset - chunk.offset) / max_offset, [chunk, save_path, compressed]() {
                                     file::write(save_path, compressed);
                                     return saved_chunk { std::move(save_path), std::move(chunk) };
                                 });
@@ -278,6 +281,7 @@ namespace daedalus_turbo::sync::http {
             for (const auto &group: epoch_groups)
                 max_offset += json::value_to<uint64_t>(group.at("size"));
             uint64_t start_offset = 0;
+            logger::info("downloading metadata about the synchronized epochs");
             _dlq.start();
             std::map<uint64_t, uint64_t> epoch_offsets {};
             for (const auto &group: epoch_groups) {
