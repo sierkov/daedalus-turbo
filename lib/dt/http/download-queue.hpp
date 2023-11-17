@@ -10,6 +10,10 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#ifdef __clang__
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
 #define BOOST_ASIO_HAS_STD_INVOKE_RESULT 1
 #ifndef BOOST_ALLOW_DEPRECATED_HEADERS
 #   define BOOST_ALLOW_DEPRECATED_HEADERS
@@ -20,6 +24,9 @@
 #ifdef DT_CLEAR_BOOST_DEPRECATED_HEADERS
 #   undef BOOST_ALLOW_DEPRECATED_HEADERS
 #   undef DT_CLEAR_BOOST_DEPRECATED_HEADERS
+#endif
+#ifdef __clang__
+#   pragma GCC diagnostic pop
 #endif
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
@@ -161,7 +168,7 @@ namespace daedalus_turbo::http {
                 if (empty())
                     *_shutdown = true;
                 logger::debug("download queue filled: requests: {}, I/O threads scheduled/active: {}/{} shutdown: {}",
-                    size(), _max_io_threads, _sched.task_count(_task_name), *_shutdown);
+                    size(), _max_io_threads, _sched.task_count(_task_name), static_cast<bool>(*_shutdown));
             }
         }
 
