@@ -128,7 +128,14 @@ namespace daedalus_turbo::sync::http {
                 throw error("failed to fetch information about the necessary epochs - try again later");
             if (last_synced_epoch_it != _cr.epochs().end()) {
                 for (auto it = std::next(last_synced_epoch_it); it != _cr.epochs().end(); it++) {
-                    auto epoch_meta = _get_json<json::object>(fmt::format("/epoch-{}.json", it->first));
+                    static std::string_view volatile_prefix { "volatile/" };
+                    auto epoch_meta = json::parse(_epoch_json_cache.at(it->first)).as_object();
+                    auto &epoch_chunks = epoch_meta.at("chunks").as_array();
+                    if (epoch_chunks.empty())
+                        break;
+                    // volatile chunks require context dependent parsing, so boundary checks are insufficient and chunks must be compared
+                    if (static_cast<std::string_view>(epoch_chunks.back().at("relPath").as_string()).substr(0, volatile_prefix.size()) == volatile_prefix)
+                        break;
                     if (it->second.prev_block_hash != bytes_from_hex((std::string_view)epoch_meta.at("prevBlockHash").as_string()))
                         break;
                     if (it->second.last_block_hash != bytes_from_hex((std::string_view)epoch_meta.at("lastBlockHash").as_string()))
@@ -139,7 +146,7 @@ namespace daedalus_turbo::sync::http {
                 uint64_t new_end_offset = last_synced_epoch_it->second.end_offset;
                 auto next_epoch_it = std::next(last_synced_epoch_it);
                 if (next_epoch_it != _cr.epochs().end()) {
-                    const auto epoch = _get_json<json::object>(fmt::format("/epoch-{}.json", next_epoch_it->first));
+                    const auto epoch = json::parse(_epoch_json_cache.at(next_epoch_it->first)).as_object();
                     uint8_vector data {}, compressed {};
                     for (const auto &chunk: epoch.at("chunks").as_array()) {
                         auto data_hash = bytes_from_hex(json::value_to<std::string_view>(chunk.at("hash")));
