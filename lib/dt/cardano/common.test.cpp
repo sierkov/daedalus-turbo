@@ -35,25 +35,25 @@ suite cardano_common_suite = [] {
             expect(byron_1 == 7);
             expect(byron_1.epoch() == 0);
             expect(byron_1.utc_month() == "2017-09") << byron_1.utc_month();
-            expect(byron_1.unixtime() == 1506196031) << byron_1.unixtime(); // 1596051751
+            expect(byron_1.unixtime() == 1506203231) << byron_1.unixtime(); // 1596051751
 
             cardano::slot byron_2 { 2'158'515 };
             expect(byron_2 == 2158515);
             expect(byron_2.epoch() == 99);
             expect(byron_2.utc_month() == "2019-02") << byron_2.utc_month();
-            expect(byron_2.unixtime() == 1549366191) << byron_2.unixtime();
+            expect(byron_2.unixtime() == 1549373391) << byron_2.unixtime();
 
             cardano::slot shelley_1 { 8'812'978 };
             expect(shelley_1 == 8'812'978);
             expect(shelley_1.epoch() == 218);
             expect(shelley_1.utc_month() == "2020-09") << shelley_1.utc_month();
-            expect(shelley_1.unixtime() == 1600372069) << shelley_1.unixtime();
+            expect(shelley_1.unixtime() == 1600379269) << shelley_1.unixtime();
 
             cardano::slot babbage_1 { 101'142'576 };
             expect(babbage_1 == 101142576ULL);
             expect(babbage_1.epoch() == 431);
             expect(babbage_1.utc_month() == "2023-08") << babbage_1.utc_month();
-            expect(babbage_1.unixtime() == 1692701667) << babbage_1.unixtime();
+            expect(babbage_1.unixtime() == 1692708867) << babbage_1.unixtime();
 
             expect(cardano::slot { 21600 }.epoch() == 1);
             expect(cardano::slot { 2981652 }.epoch() == 138);

@@ -289,7 +289,8 @@ namespace daedalus_turbo {
                 _observers.clear();
             } catch (std::exception &ex) {
                 _observers.clear();
-                logger::error("scheduler::process failed: {}", ex.what());
+                logger::warn("scheduler::process failed: {}", ex.what());
+                throw;
             }
             logger::debug("scheduler::process done remaining tasks: {}", task_count());
         }
