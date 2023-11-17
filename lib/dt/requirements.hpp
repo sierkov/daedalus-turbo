@@ -20,6 +20,8 @@ namespace daedalus_turbo::requirements {
         logger::debug("detected physical RAM: {} MiB", avail_ram);
         if (avail_ram < 8192)
             logger::warn("8192+ MiB of physical RAM are expected but only {} MiB available - expect degraded performance!", avail_ram);
+        // filesystem::space requires the directory to exist
+        std::filesystem::create_directories(data_dir);
         auto storage = std::filesystem::space(data_dir);
         auto avail_storage = storage.available >> 30;
         logger::debug("storage capacity: {} free: {} available: {} checked: {} GiB", storage.capacity, storage.free, storage.available, avail_storage);
