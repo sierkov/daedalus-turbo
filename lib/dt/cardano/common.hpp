@@ -946,6 +946,51 @@ namespace fmt {
     };
 
     template<>
+    struct formatter<daedalus_turbo::cardano::tx_input>: public formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "{} #{}", v.tx_hash, v.txo_idx);
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::cardano::tx_output>: public formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            auto out_it = fmt::format_to(ctx.out(), "address: {}\n        amount: {}", v.address, v.amount);
+            if (v.assets != nullptr) {
+                out_it = fmt::format_to(out_it, "\n        assets (name, policy id, amount): [\n");
+                for (const auto &[policy_id, p_assets]: *v.assets) {
+                    for (const auto &[asset, coin]: p_assets.map()) {
+                        std::string readable_name = fmt::format("{}", daedalus_turbo::buffer_readable { asset.buf() });
+                        out_it = fmt::format_to(out_it, "            {} {} {}\n", readable_name, policy_id.buf(), daedalus_turbo::cardano::amount_pure { coin.uint() });
+                    }
+                }
+                out_it = fmt::format_to(out_it, "        ]");
+            }
+            return out_it;
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::cardano::tx>: public formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            const auto &slot = v.block().slot();
+            auto out_it = fmt::format_to(ctx.out(), "tx hash: {} offset: {} size: {}\ntimestamp: {} UTC epoch: {} slot: {}\ninputs: [\n",
+                v.hash(), v.offset(), v.size(), slot.timestamp(), slot.epoch(), slot);
+            v.foreach_input([&](const auto &i) {
+                out_it = fmt::format_to(out_it, "    {}\n", i);
+            });     
+            out_it = fmt::format_to(out_it, "]\noutputs: [\n");
+            v.foreach_output([&](const auto &o) {
+                fmt::format_to(out_it, "    {}\n", o);
+            });
+            return fmt::format_to(out_it, "]");
+        }
+    };
+
+    template<>
     struct formatter<daedalus_turbo::cardano::address>: public formatter<const daedalus_turbo::cardano::address> {
     };
 }

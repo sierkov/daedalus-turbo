@@ -26,7 +26,7 @@ namespace daedalus_turbo::requirements {
         auto avail_storage = storage.available >> 30;
         logger::debug("storage capacity: {} free: {} available: {} checked: {} GiB", storage.capacity, storage.free, storage.available, avail_storage);
         if (avail_storage < 60)
-            logger::warn("60+ GiB of available storage are recommended but only {} GiB available - the operation may fail!", avail_storage);
+            logger::warn("60+ GiB of available storage is recommended but only {} GiB available - the operation may fail!", avail_storage);
     }
 }
 

@@ -85,7 +85,7 @@ To reconstruct the latest balance and transaction history of a given payment key
 
 To find information about a given transaction, run:
 ```
-./dt tx-info /data/cardano 76e95c61138f8b58c0eecaa380e58f00374f05f9b8522d2299897d83c88993a7
+./dt tx-info /data/cardano 357D47E9916B7FE949265F23120AEED873B35B97FB76B9410C323DDAB5B96D1A
 ```
 
 # Spread the word
