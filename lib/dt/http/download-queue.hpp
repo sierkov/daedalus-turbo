@@ -43,7 +43,7 @@ namespace daedalus_turbo::http {
     using tcp = boost::asio::ip::tcp;
 
     struct download_queue {
-        static constexpr size_t max_io_threads = 1;
+        static constexpr size_t max_io_threads = 2;
 
         struct network_error: error {
             using error::error;
@@ -307,9 +307,14 @@ namespace daedalus_turbo::http {
                 } catch (std::exception &ex) {
                     logger::error("download handler failed: {}", ex.what());
                 }
+                auto &p = logger::progress::get();
                 if (_complete && _requests_active == 0 && _queue_size == 0) {
                     *_shutdown = true;
+                    p.retire("download-queue");
+                } else {
+                    p.update("download-queue", fmt::format("{}", size()));
                 }
+                p.inform();
             });
             _queue_size++;
         }

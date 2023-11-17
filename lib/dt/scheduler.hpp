@@ -301,8 +301,9 @@ namespace daedalus_turbo {
                 size_t active;
                 size_t pending;
             };
-            size_t max_str = 0;
             std::map<std::string, task_status> status {};
+            logger::progress::state_map active_state {}, retiring_state {};
+            auto &progress = logger::progress::get();
             auto next_report = std::chrono::system_clock::now() + update_interval_ms;
             for (;;) {
                 {
@@ -322,18 +323,18 @@ namespace daedalus_turbo {
                     }
                 }
                 if (report_progress && std::chrono::system_clock::now() >= next_report) {
-                    std::ostringstream os;
-                    os << "\r";
                     size_t todo_cnt = 0;
+                    active_state.clear();
                     for (const auto &t: status) {
                         todo_cnt += t.second.active;
                         todo_cnt += t.second.pending;
-                        os << t.first << ": [" << t.second.active << "/" << t.second.pending << "] ";
+                        active_state.emplace(fmt::format("threads/{}", t.first), fmt::format("{}/{}", t.second.active, t.second.pending));
                     }
-                    const std::string str = os.str();
-                    if (str.size() - 1 > max_str)
-                        max_str = str.size() - 1;
-                    report_stream << std::left << std::setw(max_str) << str;
+                    for (const auto &[name, val]: active_state)
+                        retiring_state.erase(name);
+                    progress.update(active_state, retiring_state);
+                    progress.inform(report_stream);
+                    retiring_state = std::move(active_state);
                     next_report = std::chrono::system_clock::now() + update_interval_ms;
                     logger::debug("scheduler tasks: {} open files: {} peak RAM use: {} MB",
                         todo_cnt, file::stream::open_files(), memory::max_usage_mb());
@@ -348,8 +349,8 @@ namespace daedalus_turbo {
                         _process_results(results_lock);
                 }
             }
-            if (report_progress)
-                report_stream << '\r' << std::left << std::setw(max_str) << ' ' << '\r';
+            progress.retire(retiring_state);
+            progress.inform(report_stream);
         }
     };
 }

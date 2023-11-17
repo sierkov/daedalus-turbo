@@ -281,6 +281,7 @@ namespace daedalus_turbo::sync::http {
             for (const auto &group: epoch_groups)
                 max_offset += json::value_to<uint64_t>(group.at("size"));
             uint64_t start_offset = 0;
+            logger::info("downloading metadata about the synchronized epochs");
             _dlq.start();
             std::map<uint64_t, uint64_t> epoch_offsets {};
             for (const auto &group: epoch_groups) {
