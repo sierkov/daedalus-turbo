@@ -133,22 +133,23 @@ namespace {
 int main(int argc, char **argv)
 try {
     std::ios_base::sync_with_stdio(false);
-    if (argc < 4) {
-        logger::error("Usage: validate-balance <compressed-dir> <indices-dir> <ledger-snapshot> [<sample-ratio>]");
+    if (argc < 3) {
+        logger::error("Usage: validate-balance <data-dir> <ledger-snapshot> [<sample-ratio>]");
         return 1;
     }
-    const std::string immutable_path { argv[1] };
-    const std::string indices_path { argv[2] };
-    const std::string ledger_path { argv[3] };
+    const std::string data_dir { argv[1] };
+    const auto db_dir = data_dir + "/compressed";
+    const auto idx_dir = data_dir + "/index";
+    const std::string ledger_path { argv[2] };
     double sample_pct = 0.001;
-    if (argc == 5)
-        sample_pct = std::stod(argv[4]);
+    if (argc == 4)
+        sample_pct = std::stod(argv[3]);
     timer t { "complete test" };
     auto [ledger_stake_dist, ledger_slot] = parse_ledger_snapshot(ledger_path);
     scheduler sched {};
-    chunk_registry cr { sched, immutable_path };
+    chunk_registry cr { sched, db_dir };
     cr.init_state();
-    reconstructor r { sched, cr, indices_path };
+    reconstructor r { sched, cr, idx_dir };
     if (ledger_slot != r.last_slot())
         throw error("ledger last slot: {} does not match raw data last slot: {}", ledger_slot, r.last_slot());
     verify_sample(r, ledger_stake_dist, sample_pct);
