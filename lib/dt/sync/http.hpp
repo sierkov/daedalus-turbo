@@ -242,7 +242,7 @@ namespace daedalus_turbo::sync::http {
                         _dlq.download(data_url, [this, chunk, save_task, max_offset, save_path](daedalus_turbo::http::download_queue::result &&res) {
                             if (res) {
                                 const auto &compressed = res.body;
-                                _sched.submit(save_task, 100 + 100 * (max_offset - chunk.offset) / max_offset, [chunk, save_path, compressed]() {
+                                _sched.submit(save_task, 200 + 100 * (max_offset - chunk.offset) / max_offset, [chunk, save_path, compressed]() {
                                     file::write(save_path, compressed);
                                     return saved_chunk { std::move(save_path), std::move(chunk) };
                                 });

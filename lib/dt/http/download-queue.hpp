@@ -43,7 +43,7 @@ namespace daedalus_turbo::http {
     using tcp = boost::asio::ip::tcp;
 
     struct download_queue {
-        static constexpr size_t max_io_threads = 2;
+        static constexpr size_t max_io_threads = 1;
 
         struct network_error: error {
             using error::error;
