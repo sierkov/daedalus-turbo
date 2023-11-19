@@ -5,6 +5,7 @@
 #ifndef DAEDALUS_TURBO_LOGGER_HPP
 #define DAEDALUS_TURBO_LOGGER_HPP
 
+#include <map>
 #include <optional>
 #define SPDLOG_FMT_EXTERNAL 1
 #include <spdlog/spdlog.h>
