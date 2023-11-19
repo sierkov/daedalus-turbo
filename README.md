@@ -57,33 +57,33 @@ git clone https://github.com/sierkov/daedalus-turbo.git dt
 cd dt
 ```
 
-Build and start a Docker container.
+Build and start a Docker container:
 ```
 docker build -t dt -f Dockerfile.test .
 docker run -it --rm dt
 ```
 
-Download the Cardano blockchain from a demo compressing server, [turbo1.daedalusturbo.org](http://turbo1.daedalusturbo.org/) and construct search indices.
+Download the Cardano blockchain from a demo compressing server, [turbo1.daedalusturbo.org](http://turbo1.daedalusturbo.org/) and construct search indices:
 - This command works incrementally, so on successive runs it will reprocess only new and updated chunks.
 - The resulting data is stored in /data/cardano directory inside the container.
 - The command should take between 20 and 60 minutes to synchronize the whole Cardano blockchain from scratch. The precise time will depend on the speed of your Internet connection, the number of CPU cores, and the current load on the demo server.
+- If you encounter network errors during the execution of the sync-http command, please check if the demo compressing server is currently available by opening its address in your web browser.
+Do not hesitate to open a GitHub issue if networking issues persist for 24 hours.
 ```
 ./dt sync-http /data/cardano
 ```
-P.S. If you encounter network errors during the execution of the sync-http command, please check if the demo compressing server is currently available by opening its address in your web browser.
-Do not hesitate to open a GitHub issue if networking issues persist for 24 hours.
 
-To reconstruct the latest balance and transaction history of a given stake key, run:
+Reconstruct the latest balance and transaction history of a stake key:
 ```
 ./dt stake-history /data/cardano stake1uxw70wgydj63u4faymujuunnu9w2976pfeh89lnqcw03pksulgcrg
 ```
 
-To reconstruct the latest balance and transaction history of a given payment key, run:
+Reconstruct the latest balance and transaction history of a payment key:
 ```
 ./dt pay-history /data/cardano addr1q86j2ywajjgswgg6a6j6rvf0kzhhrqlma7ucx0f2w0v7stuau7usgm94re2n6fhe9ee88c2u5ta5znnwwtlxpsulzrdqv6rmuj
 ```
 
-To find information about a given transaction, run:
+Show information about a transaction:
 ```
 ./dt tx-info /data/cardano 357D47E9916B7FE949265F23120AEED873B35B97FB76B9410C323DDAB5B96D1A
 ```
