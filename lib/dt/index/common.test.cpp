@@ -165,6 +165,36 @@ suite index_common_suite = [] {
             writer<index_item>::remove(idx_path_2.path());
         };
 
+        "multi-part indices one item per slice"_test = [] {
+            file::tmp idx_path_1 { "index-writer-1-multi-index-test" };
+            {
+                writer<index_item> idx { idx_path_1 };
+                idx.emplace(0x0ULL);
+                idx.emplace(0xDEADBEAFULL);
+                idx.emplace(0xFFFFFFFFULL);
+            }
+            file::tmp idx_path_2 { "index-writer-2-multi-index-test" };
+            {
+                writer<index_item> idx { idx_path_2 };
+                idx.emplace(0x11111111ULL);
+                idx.emplace(0xDEADBEAFULL);
+                idx.emplace(0xEEEEEEEEULL);
+            }
+            {
+                std::array<std::string, 2> paths { idx_path_1, idx_path_2 };
+                reader_multi<index_item> reader { paths };
+                expect(reader.size() == 6_u);
+                index_item search_item { 0xDEADBEAF };
+                auto [ found_cnt, found_item ] = reader.find(search_item);
+                expect(found_cnt == 2_u);
+                expect(found_item == search_item);
+                expect(reader.read(found_item));
+                expect(found_item == search_item);
+            }
+            writer<index_item>::remove(idx_path_1.path());
+            writer<index_item>::remove(idx_path_2.path());
+        };
+
         "index metadata"_test = [] {
             file::tmp idx_path { "index-writer-test" };
             {

@@ -648,14 +648,14 @@ namespace daedalus_turbo::index {
                 auto &data = *(t.data.at(ri));
                 auto [ match_count, match_item ] = reader->find(search_item, data);
                 if (match_count) {
-                    total_match_count += match_count;
-                    if (t.next_match_count == 0) {
+                    if (total_match_count == 0) {
                         first_item = match_item;
                         t.matches.at(ri) = match_count - 1;
                     } else {
                         reader->seek_part(data.next_part_idx, reader->offset_part(data.next_part_idx, data) - 1, data);
                         t.matches.at(ri) = match_count;
                     }
+                    total_match_count += match_count;
                     t.next_match_count += t.matches.at(ri);
                 } else {
                     t.matches.at(ri) = 0;
