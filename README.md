@@ -60,7 +60,7 @@ cd dt
 Build and start a Docker container:
 ```
 docker build -t dt -f Dockerfile.test .
-docker run -it --rm dt
+docker run -it dt
 ```
 
 Download the Cardano blockchain from a demo compressing server, [turbo1.daedalusturbo.org](http://turbo1.daedalusturbo.org/) and construct search indices:
