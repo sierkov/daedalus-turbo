@@ -3,7 +3,6 @@
 - [Features](#features)
 - [Requirements](#requirements)
 - [Test it yourself](#test-it-yourself)
-- [Spread the word](#spread-the-word)
 - [Quality](#quality)
 - [Roadmap](#roadmap)
 - [Benchmarks](#benchmarks)
@@ -24,11 +23,11 @@ Currently supported:
 - Quick search for transaction data.
 - ADA and non-ADA assets.
 - Direct reconstruction from compressed blockchain data.
+- Blockchain Explorer Desktop User Interface.
 
 In active development:
 - Parallelized Ouroboros-Praos validation of blockchain data.
 - Computation of staking rewards.
-- Desktop Cardano Explorer app.
 
 Currently not supported:
 - Validation of Plutus and other scripts.
@@ -41,11 +40,14 @@ As the project matures and moves through its [roadmap](#roadmap), the list of su
 - a fast SSD with ~60GB of free space:
   - ~50GB for the compressed blockchain data and search indices.
   - ~10GB for temporary use during indexing.
+- a fast Internet connection (250 Mbps or better) to enjoy the initial synchronization times of 1 hour or less.
 
 # Test it yourself
 
+## Command line interface
+
 ### Prerequisites
-To run this test you need the following software packages installed:
+To test the command line interface, you need the following software packages installed:
 - [Git](https://git-scm.com/) to get a copy of this repository.
 - [Docker](https://www.docker.com/products/docker-desktop/) to launch the software in an isolated environment.
 
@@ -87,6 +89,70 @@ Show information about a transaction:
 ```
 ./dt tx-info /data/cardano 357D47E9916B7FE949265F23120AEED873B35B97FB76B9410C323DDAB5B96D1A
 ```
+
+## Blockchain Explorer Desktop User Interface
+
+### Prerequisites
+To test the desktop user interface, you need the following packages:
+- A working C++ compiler supporting C++20 standard.
+- [Git](https://git-scm.com/)
+- [CMake](https://cmake.org/download/) version 3.28 or later
+- [Node.JS](https://nodejs.org/en/download/current) version 20
+- [Boost](https://www.boost.org/) version 1.83 or later
+- [Fmt](https://github.com/fmtlib/fmt) version 8.1.1 or later
+- [Libsodium](https://github.com/jedisct1/libsodium) version 1.0.18 or later
+- [Spdlog](https://github.com/gabime/spdlog) version 1.9.2 or later
+- [Zstd](https://github.com/facebook/zstd) version 1.4.8 or later
+
+For example, on Mac OS, the dependencies can be installed with the following command:
+```
+brew install llvm@17 node@20 cmake pkg-config boost fmt libsodium spdlog zstd
+```
+
+### Build
+
+Clone this repository and make it your working directory:
+```
+git clone https://github.com/sierkov/daedalus-turbo.git dt
+cd dt
+```
+
+Generate build scripts:
+```
+cmake -B cmake-build-release
+```
+
+Compile the API:
+```
+cmake --build cmake-build-release -j -t dt
+```
+
+Install the necessary Node.JS modules:
+```
+cd ui
+npm i
+cd ..
+```
+
+### Launch
+
+Launch the local API server and store blockchain data in the "data-dir" directory:
+```
+./cmake-build-release/dt http-api <data-dir>
+```
+Please, note that the storage device on which "data-dir" is locate should have at least 60 GB of free space.
+
+From a separate terminal window, while the http API is running, start the UI:
+```
+cd ui
+npm start
+```
+
+During the first run, the API server will download the Cardano blockchain data, which may take a while.
+If your test PC fulfills the [hardware requirements](#requirements), the initial synchronization should less than one hour. The successive runs will sync only the updates since the previous sync.
+
+Once you are done with testing the UI, do not forget to terminate the local API server by closing the terminal
+in which you started it.
 
 # Spread the word
 Many in the Cardano community, including some developers of Daedalus, don't believe that it's possible to make it noticeably faster. This leads to a situation in which the development is not focused on its performance. If you're persuaded by the evidence presented here, share it on social media with those around you. Changing the beliefs of people can be harder than building top-notch technology. So, every single tweet and Facebook post makes a difference. Thank you!
