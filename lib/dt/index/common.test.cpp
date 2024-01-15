@@ -205,7 +205,8 @@ suite index_common_suite = [] {
             {
                 reader_mt<index_item> reader { idx_path };
                 expect(reader.get_meta("hello") == std::string_view { "world!" });
-                expect(buffer::to<uint64_t>(reader.get_meta("offset")) == 0xDEADBEAF);
+                auto offset = reader.get_meta("offset").to<uint64_t>();
+                expect(offset == 0xDEADBEAF) << offset;
             }
             writer<index_item>::remove(idx_path.path());
         };

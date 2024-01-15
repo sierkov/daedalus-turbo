@@ -14,16 +14,18 @@ extern "C" {
 #include <dt/array.hpp>
 #include <dt/blake2b.hpp>
 #include <dt/ed25519.hpp>
+#include <dt/rational.hpp>
 #include <dt/util.hpp>
 
 namespace daedalus_turbo {
     using vrf_result = array<uint8_t, 64>;
     using vrf_vkey = array<uint8_t, 32>;
     using vrf_proof = array<uint8_t, 80>;
+    using vrf_nonce = array<uint8_t, 32>;
 
-    inline blake2b_256_hash vrf_make_input(uint64_t slot, const buffer nonce)
+    inline blake2b_256_hash vrf_make_input(uint64_t slot, const buffer &nonce)
     {
-        std::array<uint8_t, 8 + 32> data {};
+        array<uint8_t, 8 + 32> data {};
         uint64_t be_slot = host_to_net<uint64_t>(slot);
         static_assert(8 == sizeof(be_slot), "uint64_t must be 8 bytes");
         memcpy(data.data(), &be_slot, sizeof(be_slot));
@@ -32,9 +34,9 @@ namespace daedalus_turbo {
         return blake2b<blake2b_256_hash>(data);
     }
 
-    inline blake2b_256_hash vrf_make_seed(const buffer uc_nonce, uint64_t slot, const buffer nonce)
+    inline blake2b_256_hash vrf_make_seed(const buffer &uc_nonce, uint64_t slot, const buffer &nonce)
     {
-        std::array<uint8_t, 8 + 32> data {};
+        array<uint8_t, 8 + 32> data {};
         uint64_t be_slot = host_to_net<uint64_t>(slot);
         static_assert(8 == sizeof(be_slot), "uint64_t must be 8 bytes");
         memcpy(data.data(), &be_slot, sizeof(be_slot));
@@ -47,27 +49,36 @@ namespace daedalus_turbo {
         return seed_tmp;
     }
 
-    inline blake2b_256_hash vrf_extended_hash(const buffer vrf_result, uint8_t extension)
-    {
-        std::array<uint8_t, 65> data;
-        if (vrf_result.size() != 64) throw error("vrf_result must be 64 bytes but got {}!", vrf_result.size());
+    inline blake2b_256_hash vrf_extended_hash(const buffer &result, uint8_t extension)
+    {   
+        array<uint8_t, 65> data;
+        if (result.size() != 64) throw error("result must be 64 bytes but got {}!", result.size());
         data[0] = extension;
-        memcpy(data.data() + 1, vrf_result.data(), vrf_result.size());
-        auto tmp_hash = blake2b<blake2b_256_hash>(data);
-        return blake2b<blake2b_256_hash>(tmp_hash);
+        memcpy(data.data() + 1, result.data(), result.size());
+        return blake2b<blake2b_256_hash>(data);
     }
 
-    inline blake2b_256_hash vrf_nonce_value(const buffer vrf_result)
+    inline vrf_nonce vrf_nonce_value(const buffer &result)
     {
-        return vrf_extended_hash(vrf_result, 'N');
+        return blake2b<vrf_nonce>(vrf_extended_hash(result, 'N'));
     }
 
-    inline blake2b_256_hash vrf_leader_value(const buffer vrf_result)
+    inline vrf_nonce vrf_leader_value(const buffer &result)
     {
-        return vrf_extended_hash(vrf_result, 'L');
+        return vrf_extended_hash(result, 'L');
     }
 
-    inline void vrf_nonce_accumulate(const std::span<uint8_t> output, const buffer &nonce_prev, const buffer &nonce_new)
+    inline cpp_int vrf_leader_value_nat(const buffer &data)
+    {
+        cpp_int leader_val {};
+        for (size_t i = 0; i < data.size(); ++i) {
+            leader_val <<= 8;
+            leader_val += *static_cast<const uint8_t*>(data.data() + i);
+        }
+        return leader_val;
+    }
+
+    inline void vrf_nonce_accumulate(const std::span<uint8_t> &output, const buffer &nonce_prev, const buffer &nonce_new)
     {
         if (nonce_prev.size() != 32) throw error("prev_nonce must be of 32 bytes but got {}!", nonce_prev.size());
         if (nonce_new.size() != 32) throw error("prev_nonce must be of 32 bytes but got {}!", nonce_new.size());
@@ -94,6 +105,21 @@ namespace daedalus_turbo {
         bool ok = crypto_vrf_ietfdraft03_verify(res.data(), vkey.data(), proof.data(), msg.data(), msg.size()) == 0;
         if (ok) ok = memcmp(res.data(), exp_res.data(), res.size()) == 0;
         return ok;
+    }
+
+    inline bool vrf_leader_is_eligible(const buffer &result, const double f, const rational &leader_stake_rel)
+    {
+        if (result.size() != sizeof(vrf_result) && result.size() != sizeof(vrf_nonce))
+            throw error("vrf result must have {} or {} bytes but got {}!", sizeof(vrf_result), sizeof(vrf_nonce), result.size());
+        using boost::multiprecision::cpp_int;
+        cpp_int max_val { 1 };
+        max_val <<= 8 * result.size();
+        auto leader_val = vrf_leader_value_nat(result);
+        rational p { leader_val, max_val };
+        auto p_d = static_cast<double>(p);
+        auto ls_d = static_cast<double>(leader_stake_rel);
+        auto threshold = 1.0 - std::pow(static_cast<double>(1.0 - f), ls_d);
+        return p_d < threshold;
     }
 }
 

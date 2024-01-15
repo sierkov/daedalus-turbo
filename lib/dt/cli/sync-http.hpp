@@ -6,6 +6,7 @@
 #define DAEDALUS_TURBO_CLI_SYNC_HTTP_HPP
 
 #include <dt/cli.hpp>
+#include <dt/indexer.hpp>
 #include <dt/requirements.hpp>
 #include <dt/sync/http.hpp>
 
@@ -13,7 +14,10 @@ namespace daedalus_turbo::cli::sync_http {
     struct cmd: public command {
         const command_info &info() const override
         {
-            static const command_info i { "sync-http", "<data-dir> [--host=<host>]", "synchronize blockchain over Turbo protocol from <host> into <data-dir>" };
+            static const command_info i {
+                "sync-http", "<data-dir> [--host=<host>]",
+                "synchronize blockchain over Turbo protocol from <host> into <data-dir>"
+            };
             return i;
         }
 
@@ -25,9 +29,9 @@ namespace daedalus_turbo::cli::sync_http {
             const std::string db_dir = data_dir + "/compressed";
             const std::string idx_dir = data_dir + "/index";
             std::string host = "turbo1.daedalusturbo.org";
-            if (args.size() > 2) {
+            if (args.size() > 1) {
                 static std::string_view p_host { "--host=" };
-                for (const auto &arg: std::ranges::subrange(args.begin() + 2, args.end())) {
+                for (const auto &arg: std::ranges::subrange(args.begin() + 1, args.end())) {
                     if (arg.substr(0, p_host.size()) == p_host) {
                         host = arg.substr(p_host.size());
                     } else {
@@ -38,8 +42,8 @@ namespace daedalus_turbo::cli::sync_http {
             timer tc { fmt::format("sync-http {} -> {}, {}", host, db_dir, idx_dir) };
             scheduler sched {};
             auto indexers = indexer::default_list(sched, idx_dir);
-            indexer::incremental idxr { sched, db_dir, indexers };
-            sync::http::syncer syncr { sched, idxr, host };
+            indexer::incremental cr { sched, db_dir, indexers };
+            sync::http::syncer syncr { sched, cr, host };
             syncr.sync();
         }
     };

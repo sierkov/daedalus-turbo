@@ -78,7 +78,9 @@ namespace daedalus_turbo {
                 };
             }
         };
+
         using chunk_map = std::map<uint64_t, chunk_info>;
+        using chunk_list = std::vector<chunk_info>;
 
         struct epoch_info {
             size_t num_blocks = 0;
@@ -173,7 +175,12 @@ namespace daedalus_turbo {
             }
         }
 
-        virtual void clean_up() const
+        virtual void set_progress(const std::string &, progress::info &)
+        {
+            // ignore
+        }
+
+        virtual void clean_up()
         {
         }
 
@@ -185,6 +192,14 @@ namespace daedalus_turbo {
         const epoch_map &epochs() const
         {
             return _epochs;
+        }
+
+        const std::optional<chunk_info> last_chunk() const
+        {
+            std::optional<chunk_info> chunk {};
+            if (!_chunks.empty())
+                chunk.emplace(_chunks.rbegin()->second);
+            return chunk;
         }
 
         const std::string rel_path(const std::filesystem::path &full_path) const
@@ -317,7 +332,8 @@ namespace daedalus_turbo {
         {
             parse_res<T> results {};
             _sched.on_result("parse-chunk", [&](const auto &res) {
-                if (res.type() == typeid(scheduled_task_error)) throw std::any_cast<scheduled_task_error>(res);
+                if (res.type() == typeid(scheduled_task_error))
+                    return;
                 const auto &[chunk_path, chunk_res] = std::any_cast<typename parse_res<T>::value_type>(res);
                 auto &chunk_res_all = results[chunk_path];
                 for (const auto &r: chunk_res) chunk_res_all.emplace_back(r);
@@ -342,7 +358,7 @@ namespace daedalus_turbo {
             return results;
         }
 
-        virtual chunk_info parse(uint64_t offset, const std::string &rel_path, const buffer &raw_data, size_t compressed_size)
+        virtual chunk_info parse(uint64_t offset, const std::string &rel_path, const buffer &raw_data, size_t compressed_size) const
         {
             static auto noop = [](const auto &){};
             return _parse_normal(offset, rel_path, raw_data, compressed_size, noop);
@@ -355,14 +371,15 @@ namespace daedalus_turbo {
             if (reuse_state)
                 deletable_chunks = load_state(strict);
             // give subclasses the time to update their data structures if some chunks weren't loaded / didn't match the state
-            truncate(_end_offset);
+            for (auto &&path: truncate(_end_offset, false))
+                deletable_chunks.emplace(std::move(path));
             if (save)
                 save_state();
             logger::debug("chunk-registry data size: {} num chunks: {}", num_bytes(), num_chunks());
             return deletable_chunks;
         }
 
-        file_set load_state(bool strict=true)
+        virtual file_set load_state(bool strict=true)
         {
             timer t { "chunk-registry load state from " + _state_path, logger::level::debug };
             _chunks.clear();
@@ -395,6 +412,7 @@ namespace daedalus_turbo {
                     known_chunks.emplace(std::move(path));
                 }
             }
+            logger::info("chunk_registry has data up to offset {}", _end_offset);
             for (const auto &entry: std::filesystem::recursive_directory_iterator { _db_dir }) {
                 auto path = full_path(entry.path().string());
                 if (entry.is_regular_file() && entry.path().extension() == ".zstd" && !known_chunks.contains(path))
@@ -405,6 +423,7 @@ namespace daedalus_turbo {
 
         virtual void save_state()
         {
+            timer t { "chunk_registry::save_state" };
             std::ostringstream json_s {};
             json_s << "[\n";
             for (const auto &[max_offset, chunk]: _chunks) {
@@ -419,15 +438,20 @@ namespace daedalus_turbo {
 
     protected:
         scheduler &_sched;
+        const std::filesystem::path _db_dir;
 
-        void _parse_immutable_chunk(const chunk_info &chunk, const buffer &raw_data, const block_processor &blk_proc)
+        void _parse_immutable_chunk(const chunk_info &chunk, const buffer &raw_data, const block_processor &blk_proc) const
         {
             cbor_parser parser { raw_data };
             cbor_value block_tuple {};
             while (!parser.eof()) {
                 parser.read(block_tuple);
                 auto blk = cardano::make_block(block_tuple, chunk.offset + block_tuple.data - raw_data.data());
-                blk_proc(*blk);
+                try {
+                    blk_proc(*blk);
+                } catch (std::exception &ex) {
+                    throw error("failed parsing block at slot {}/{} and offset {}: {}", blk->slot().epoch(), blk->slot(), blk->offset(), ex.what());
+                }
             }
         }
 
@@ -452,7 +476,7 @@ namespace daedalus_turbo {
             return segment;
         }
 
-        void _parse_volatile_chunk(const chunk_info &chunk, const buffer &raw_data, const block_processor &blk_proc)
+        void _parse_volatile_chunk(const chunk_info &chunk, const buffer &raw_data, const block_processor &blk_proc) const
         {
             if (_max_immutable_off == 0)
                 throw error("volatile chunks must be processed only after immutable ones!");
@@ -491,7 +515,7 @@ namespace daedalus_turbo {
             }
         }
 
-        void _parse_chunk(const chunk_info &chunk, const buffer &raw_data, const block_processor &blk_proc)
+        void _parse_chunk(const chunk_info &chunk, const buffer &raw_data, const block_processor &blk_proc) const
         {
             if (chunk.is_volatile())
                 _parse_volatile_chunk(chunk, raw_data, blk_proc);
@@ -500,7 +524,7 @@ namespace daedalus_turbo {
         }
 
         chunk_info _parse_normal(uint64_t offset, const std::string &rel_path,
-            const buffer &raw_data, size_t compressed_size, const block_processor &extra_proc)
+            const buffer &raw_data, size_t compressed_size, const block_processor &extra_proc) const
         {
             chunk_info chunk { rel_path, raw_data.size(), compressed_size };
             chunk.offset = offset;
@@ -526,7 +550,6 @@ namespace daedalus_turbo {
         }
 
     private:
-        const std::filesystem::path _db_dir;
         const std::string _state_path;
         chunk_map _chunks {};
         epoch_map _epochs {};

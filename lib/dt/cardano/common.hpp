@@ -8,6 +8,7 @@
 #include <ctime>
 #include <functional>
 #include <optional>
+#include <ranges>
 #include <set>
 #include <span>
 #include <dt/cardano/type.hpp>
@@ -15,6 +16,8 @@
 #include <dt/file.hpp>
 #include <dt/format.hpp>
 #include <dt/json.hpp>
+#include <dt/logger.hpp>
+#include <dt/rational.hpp>
 #include <dt/util.hpp>
 #include <dt/zstd.hpp>
 
@@ -143,11 +146,20 @@ namespace daedalus_turbo::cardano {
     struct multi_balance: public std::map<std::string, uint64_t> {
         using std::map<std::string, uint64_t>::map;
 
-        inline json::object to_json() const;
+        inline json::object to_json(size_t offset=0, size_t max_items=1000) const;
     };
     
     struct __attribute__((packed)) slot {
         uint64_t _slot = 0;
+
+        static cardano::slot from_epoch(uint64_t epoch)
+        {
+            if (epoch <= 208) {
+                return cardano::slot { epoch * 21600 };
+            } else {
+                return cardano::slot { (epoch - 208) * 432000 + 208 * 21600 };
+            }
+        }
 
         slot() =default;
         
@@ -220,11 +232,46 @@ namespace daedalus_turbo::cardano {
         static constexpr uint64_t _shelley_begin_slot = 208 * 21600;
     };
 
+    struct stake_pointer {
+        cardano::slot slot {};
+        uint64_t tx_idx {};
+        uint64_t cert_idx {};
+
+        bool operator<(const auto &b) const
+        {
+            if (slot != b.slot)
+                return slot < b.slot;
+            if (tx_idx != b.tx_idx)
+                return tx_idx < b.tx_idx;
+            return cert_idx < b.cert_idx;
+        }
+
+        bool operator==(const auto &b) const
+        {
+            return slot == b.slot && tx_idx == b.tx_idx && cert_idx == b.cert_idx;
+        }
+
+        json::object to_json() const
+        {
+            return json::object {
+                { "slot", static_cast<uint64_t>(slot) },
+                { "txIdx", tx_idx },
+                { "certIdx", cert_idx }
+            };
+        }
+    };
+
+    struct stake_ident_hybrid: std::variant<stake_ident, stake_pointer> {
+        using std::variant<stake_ident, stake_pointer>::variant;
+    };
+
     struct address {
+        buffer bytes;
         buffer data;
         uint8_t type = 0;
 
-        address(const buffer &bytes): data { bytes.data() + 1, bytes.size() - 1 }
+        address(const buffer &bytes_)
+            : bytes { bytes_ }, data { bytes.data() + 1, bytes.size() - 1 }
         {
             if (bytes.size() < 2) throw cardano_error("cardano address must have at least two bytes!");
             type = (bytes.data()[0] >> 4) & 0xF;
@@ -265,6 +312,8 @@ namespace daedalus_turbo::cardano {
                 case 0b0001: // base address: scripthash28,keyhash28
                 case 0b0010: // base address: keyhash28,scripthash28
                 case 0b0011: // base address: scripthash28,scripthash28
+                case 0b0100: // pointer key
+                case 0b0101: // pointer script
                     return pay_ident { data.subbuf(0, 28), (type & 0x1) > 0 ? pay_ident::ident_type::SHELLEY_SCRIPT : pay_ident::ident_type::SHELLEY_KEY };
 
                 case 0b1000: { // byron
@@ -276,6 +325,22 @@ namespace daedalus_turbo::cardano {
                     throw cardano_error("unsupported address for type: {}!", type);
             }
         }
+
+        const stake_pointer pointer() const
+        {
+            stake_pointer p {};
+            if (data.size() < 28 + 3)
+                throw error("pointer data is too small - expect 31+ bytes but got: {}", data.size());
+            auto ptr = data.subspan(28, data.size() - 28);
+            uint64_t rel_slot = 0;
+            auto sz1 = _read_var_uint_be(rel_slot, ptr);
+            p.slot = rel_slot;
+            auto sz2 = _read_var_uint_be(p.tx_idx, ptr.subspan(sz1, ptr.size() - sz1));
+            _read_var_uint_be(p.cert_idx, ptr.subspan(sz1 + sz2, ptr.size() - sz1 - sz2));
+            //if (slot < rel_slot)
+            //    logger::debug("slot: {} invalid relative slot {} in a pointer address", slot, rel_slot);
+            return p;
+        };
 
         const stake_ident stake_id() const
         {
@@ -320,6 +385,8 @@ namespace daedalus_turbo::cardano {
                 case 0b0001: // base address: scripthash28,keyhash28
                 case 0b0010: // base address: keyhash28,scripthash28
                 case 0b0011: // base address: scripthash28,scripthash28
+                case 0b0100: // pointer key
+                case 0b0101: // pointer script
                     return true;
 
                 default:
@@ -382,11 +449,37 @@ namespace daedalus_turbo::cardano {
             if (!type_str) throw cardano_error("unsupported address type: {}!", type);
             json::object res {
                 { "type", type_str },
-                { "data", fmt::format("{}", data) }
+                { "data", fmt::format("{}", bytes) }
             };
-            if (has_stake_id()) res.emplace("stakeId", stake_id().to_json());
-            if (has_pay_id()) res.emplace("payId", pay_id().to_json());
+            if (has_stake_id())
+                res.emplace("stakeId", stake_id().to_json());
+            if (has_pay_id())
+                res.emplace("payId", pay_id().to_json());
+            if (has_pointer())
+                res.emplace("stakePointer", pointer().to_json());
             return res;
+        }
+    private:
+        size_t _read_var_uint_be(uint64_t &x, const buffer &buf) const
+        {
+            if (buf.size() == 0)
+                throw cardano_error("can't read a variable integer from an empty buffer!");
+            x = 0;
+            uint64_t val = static_cast<uint64_t>(buf[0]);
+            size_t num_read = 1;
+            for (;;) {
+                x |= val & 0x7F;
+                if (val & 0x80) {
+                    if (buf.size() < num_read + 1)
+                        throw error("the buffer is too small: {}!", buf.size());
+                    val = static_cast<uint64_t>(buf[num_read]);
+                    num_read++;
+                } else {
+                    break;
+                }
+                x <<= 7;
+            }
+            return num_read;
         }
     };
 
@@ -435,6 +528,33 @@ namespace daedalus_turbo::cardano {
         }
     private:
         uint16_t _out_idx;
+    };
+
+    struct __attribute__((packed)) cert_idx {
+
+        cert_idx(): _idx { 0 } {}
+
+        cert_idx(size_t idx)
+        {
+            if (idx >= (1U << 16))
+                throw error("tx out idx is too big: {}!", idx);
+            _idx = idx;
+        }
+
+        cert_idx &operator=(size_t idx)
+        {
+            if (idx >= (1U << 16))
+                throw error("tx out idx is too big: {}!", idx);
+            _idx = idx;
+            return *this;
+        }
+
+        operator std::size_t() const
+        {
+            return _idx;
+        }
+    private:
+        uint16_t _idx;
     };
 
     struct __attribute__((packed)) epoch {
@@ -495,9 +615,100 @@ namespace daedalus_turbo::cardano {
         const cardano::tx_out_idx idx;
     };
 
+    struct protocol_version {
+        uint64_t major = 1;
+        uint64_t minor = 0;
+
+        bool operator==(const auto &b) const
+        {
+            return major == b.major && minor == b.minor;
+        }
+
+        bool aggregated_rewards() const
+        {
+            return major > 2;
+        }
+
+        bool forgo_reward_prefilter() const
+        {
+            return major > 6;
+        }
+    };
+
+    using nonce = std::optional<cardano_hash_32>;
+
+    struct param_update {
+        cardano::pool_hash pool_id {};
+        uint64_t epoch = 0;
+        std::optional<uint64_t> min_fee_a {};
+        std::optional<uint64_t> min_fee_b {};
+        std::optional<uint64_t> max_block_body_size {};
+        std::optional<uint64_t> max_transaction_size {};
+        std::optional<uint64_t> max_block_header_size {};
+        std::optional<uint64_t> key_deposit {};
+        std::optional<uint64_t> pool_deposit {};
+        std::optional<uint64_t> max_epoch {};
+        std::optional<uint64_t> n_opt {};
+        std::optional<rational> pool_pledge_influence {};
+        std::optional<rational> expansion_rate {};
+        std::optional<rational> treasury_growth_rate {};
+        std::optional<rational> decentralization {};
+        std::optional<cardano::nonce> extra_entropy {};
+        std::optional<protocol_version> protocol_ver {};
+        std::optional<uint64_t> min_utxo_value {};
+
+        bool operator==(const auto &b) const
+        {
+            if (!_is_equal(min_fee_a, b.min_fee_a))
+                return false;
+            if (!_is_equal(min_fee_b, b.min_fee_b))
+                return false;
+            if (!_is_equal(max_block_body_size, b.max_block_body_size))
+                return false;
+            if (!_is_equal(max_transaction_size, b.max_transaction_size))
+                return false;
+            if (!_is_equal(max_block_header_size, b.max_block_header_size))
+                return false;
+            if (!_is_equal(key_deposit, b.key_deposit))
+                return false;
+            if (!_is_equal(pool_deposit, b.pool_deposit))
+                return false;
+            if (!_is_equal(max_epoch, b.max_epoch))
+                return false;
+            if (!_is_equal(n_opt, b.n_opt))
+                return false;
+            if (!_is_equal(pool_pledge_influence, b.pool_pledge_influence))
+                return false;
+            if (!_is_equal(expansion_rate, b.expansion_rate))
+                return false;
+            if (!_is_equal(treasury_growth_rate, b.treasury_growth_rate))
+                return false;
+            if (!_is_equal(decentralization, b.decentralization))
+                return false;
+            if (!_is_equal(extra_entropy, b.extra_entropy))
+                return false;
+            if (!_is_equal(protocol_ver, b.protocol_ver))
+                return false;
+            if (!_is_equal(min_utxo_value, b.min_utxo_value))
+                return false;
+            return true;
+        }
+    private:
+        template<typename T>
+        static bool _is_equal(const std::optional<T> &a, const std::optional<T> &b)
+        {
+            if (a.has_value() != b.has_value())
+                return false;
+            if (a.has_value() && *a != *b)
+                return false;
+            return true;
+        }
+    };
+
     struct stake_deleg {
         stake_ident stake_id {};
         cardano_hash_28 pool_id {};
+        size_t cert_idx = 0;
     };
 
     struct pool_reg {
@@ -525,7 +736,7 @@ namespace daedalus_turbo::cardano {
     struct kes_signature {
         const buffer &vkey;
         const buffer &vkey_sig;
-        const buffer &vkey_cold;
+        const buffer &vkey_cold; // issuer_vkey
         const buffer &sig;
         const buffer header_body;
         uint64_t counter = 0;
@@ -575,6 +786,15 @@ namespace daedalus_turbo::cardano {
         virtual const cbor_buffer &prev_hash() const =0;
         virtual const cardano::slot slot() const =0;
         virtual void foreach_tx(const std::function<void(const tx &)> &) const;
+
+        virtual void foreach_invalid_tx(const std::function<void(const tx &)> &) const
+        {
+        }
+
+        virtual const protocol_version protocol_ver() const
+        {
+            return protocol_version {};
+        }
 
         virtual const buffer issuer_vkey() const
         {
@@ -638,7 +858,8 @@ namespace daedalus_turbo::cardano {
             }
         };
 
-        tx(const cbor_value &tx, const block_base &blk, const cbor_value *wit=nullptr): _tx { tx }, _blk { blk }, _wit { wit }
+        tx(const cbor_value &tx, const block_base &blk, const cbor_value *wit=nullptr, size_t idx=0)
+            : _tx { tx }, _blk { blk }, _wit { wit }, _idx { idx }
         {
         }
 
@@ -647,12 +868,15 @@ namespace daedalus_turbo::cardano {
         virtual void foreach_input(const std::function<void(const tx_input &)> &) const {}
         virtual void foreach_output(const std::function<void(const tx_output &)> &) const {}
         virtual void foreach_withdrawal(const std::function<void(const tx_withdrawal &)> &) const {}
-        virtual void foreach_stake_reg(const std::function<void(const stake_ident &)> &) const {}
-        virtual void foreach_stake_unreg(const std::function<void(const stake_ident &)> &) const {}
+        virtual void foreach_stake_reg(const std::function<void(const stake_ident &, size_t)> &) const {}
+        virtual void foreach_stake_unreg(const std::function<void(const stake_ident &, size_t)> &) const {}
         virtual void foreach_stake_deleg(const std::function<void(const stake_deleg &)> &) const {}
         virtual void foreach_pool_reg(const std::function<void(const pool_reg &)> &) const {}
+        virtual void foreach_param_update(const std::function<void(const param_update &)> &) const {}
         virtual void foreach_pool_unreg(const std::function<void(const pool_unreg &)> &) const {}
         virtual void foreach_instant_reward(const std::function<void(const instant_reward &)> &) const {}
+        virtual void foreach_collateral(const std::function<void(const tx_input &)> &) const {}
+        virtual void foreach_collateral_return(const std::function<void(const tx_output &)> &) const {}
 
         virtual const cardano::amount fee() const
         {
@@ -706,10 +930,16 @@ namespace daedalus_turbo::cardano {
         {
             return _blk;
         }
+
+        inline size_t index() const
+        {
+            return _idx;
+        }
     protected:
         const cbor_value &_tx;
         const block_base &_blk;
         const cbor_value *_wit = nullptr;
+        const size_t _idx;
         mutable std::optional<cardano_hash_32> _cached_hash {};
     };
 
@@ -794,7 +1024,7 @@ namespace fmt {
     struct formatter<daedalus_turbo::cardano::slot>: public formatter<uint64_t> {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
-            return fmt::format_to(ctx.out(), "{}", static_cast<uint64_t>(v));
+            return fmt::format_to(ctx.out(), "{}/{}/{}", v.epoch(), static_cast<uint64_t>(v), v.epoch_slot());
         }
     };
 
@@ -815,15 +1045,11 @@ namespace fmt {
     };
 
     template<>
-    struct formatter<const daedalus_turbo::stake_ident>: public formatter<uint64_t> {
+    struct formatter<daedalus_turbo::stake_ident>: public formatter<uint64_t> {
         template<typename FormatContext>
         auto format(const auto &id, FormatContext &ctx) const -> decltype(ctx.out()) {
             return fmt::format_to(ctx.out(), "stake_ident(id: {}, type: {})", id.hash.span(), id.script ? "script" : "key");
         }
-    };
-
-    template<>
-    struct formatter<daedalus_turbo::stake_ident>: public formatter<const daedalus_turbo::stake_ident> {
     };
 
     template<>
@@ -873,6 +1099,8 @@ namespace fmt {
             if (change < 0) {
                 sign = '-';
                 change = -change;
+            } else if (change == 0) {
+                sign = ' ';
             }
             int64_t full = change / 1'000'000;
             int64_t rem = change % 1'000'000;
@@ -907,13 +1135,9 @@ namespace fmt {
     };
 
     template<>
-    struct formatter<const daedalus_turbo::cardano::address> {
-        constexpr auto parse(format_parse_context &ctx) -> decltype(ctx.begin()) {
-            return ctx.begin();
-        }
-
+    struct formatter<daedalus_turbo::cardano::address>: formatter<uint64_t> {
         template<typename FormatContext>
-        auto format(const daedalus_turbo::cardano::address addr, FormatContext &ctx) const -> decltype(ctx.out()) {
+        auto format(const daedalus_turbo::cardano::address &addr, FormatContext &ctx) const -> decltype(ctx.out()) {
             using daedalus_turbo::buffer;
             switch (addr.type) {
                 case 0b1000:
@@ -937,7 +1161,7 @@ namespace fmt {
 
                 case 0b0100:
                 case 0b0101:
-                    return fmt::format_to(ctx.out(), "shelley-pointer/{}-{}", (addr.type & 1) ? "script" : "key", addr.data);
+                    return fmt::format_to(ctx.out(), "shelley-pointer/pay_{}:{}-stake_ptr:{}", (addr.type & 1) ? "script" : "key", addr.data.subspan(0, 28), addr.pointer());
 
                 default:
                     throw daedalus_turbo::cardano_error("unsupported address type: {}!", addr.type);
@@ -991,7 +1215,106 @@ namespace fmt {
     };
 
     template<>
-    struct formatter<daedalus_turbo::cardano::address>: public formatter<const daedalus_turbo::cardano::address> {
+    struct formatter<daedalus_turbo::cardano::protocol_version>: public formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "{}.{}", v.major, v.minor);
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::cardano::nonce>: public formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            if (v)
+                return fmt::format_to(ctx.out(), "{}", *v);
+            else
+                return fmt::format_to(ctx.out(), "disabled");
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::cardano::reward_source>: public formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            switch (v) {
+                case daedalus_turbo::cardano::reward_source::reserves:
+                    return fmt::format_to(ctx.out(), "reward_source::reserves");
+
+                case daedalus_turbo::cardano::reward_source::treasury:
+                    return fmt::format_to(ctx.out(), "reward_source::treasury");
+
+                default:
+                    throw daedalus_turbo::error("unsupported reward_source value: {}", static_cast<int>(v));
+                    break;
+            }
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::cardano::stake_pointer>: public formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "stake-pointer(slot: {} tx_idx: {} cert_idx: {})", v.slot, v.tx_idx, v.cert_idx);
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::cardano::stake_ident_hybrid>: public formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            switch (v.index()) {
+                case 0:
+                    return fmt::format_to(ctx.out(), "{}", std::get<daedalus_turbo::cardano::stake_ident>(v));
+
+                case 1:
+                    return fmt::format_to(ctx.out(), "{}", std::get<daedalus_turbo::cardano::stake_pointer>(v));
+
+                default:
+                    throw daedalus_turbo::error("unsupported stake_ident_hybrid index: {}", v.index());
+            }
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::cardano::param_update>: public formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            auto out_it = fmt::format_to(ctx.out(), "param_update from {} for epoch {} [", v.pool_id, v.epoch);
+            if (v.min_fee_a)
+                out_it = fmt::format_to(out_it, "min_fee_a: {} ", *v.min_fee_a);
+            if (v.min_fee_b)
+                out_it = fmt::format_to(out_it, "min_fee_a: {} ", *v.min_fee_b);
+            if (v.max_block_body_size)
+                out_it = fmt::format_to(out_it, "max_block_body_size: {} ", *v.max_block_body_size);
+            if (v.max_transaction_size)
+                out_it = fmt::format_to(out_it, "max_transaction_size: {} ", *v.max_transaction_size);
+            if (v.max_block_header_size)
+                out_it = fmt::format_to(out_it, "max_block_header_size: {} ", *v.max_block_header_size);
+            if (v.key_deposit)
+                out_it = fmt::format_to(out_it, "key_deposit: {} ", *v.key_deposit);
+            if (v.pool_deposit)
+                out_it = fmt::format_to(out_it, "pool_deposit: {} ", *v.pool_deposit);
+            if (v.max_epoch)
+                out_it = fmt::format_to(out_it, "max_epoch: {} ", *v.max_epoch);
+            if (v.n_opt)
+                out_it = fmt::format_to(out_it, "n_opt: {} ", *v.n_opt);
+            if (v.pool_pledge_influence)
+                out_it = fmt::format_to(out_it, "pool_pledge_influence: {} ", *v.pool_pledge_influence);
+            if (v.expansion_rate)
+                out_it = fmt::format_to(out_it, "expansion_rate: {} ", *v.expansion_rate);
+            if (v.treasury_growth_rate)
+                out_it = fmt::format_to(out_it, "treasury_growth_rate: {} ", *v.treasury_growth_rate);
+            if (v.decentralization)
+                out_it = fmt::format_to(out_it, "decentralization: {} ", *v.decentralization);
+            if (v.extra_entropy)
+                out_it = fmt::format_to(out_it, "extra_entropy: {} ", *v.extra_entropy);
+            if (v.protocol_ver)
+                out_it = fmt::format_to(out_it, "protocol_ver: {}", *v.protocol_ver);
+            if (v.min_utxo_value)
+                out_it = fmt::format_to(out_it, "min_utxo_value: {} ", *v.min_utxo_value);
+            return fmt::format_to(out_it, "]");
+        }
     };
 }
 
@@ -1025,11 +1348,18 @@ namespace daedalus_turbo::cardano {
         return json::string { fmt::format("{}", *this) };
     }
 
-    inline json::object multi_balance::to_json() const
+    inline json::object multi_balance::to_json(size_t offset, size_t max_items) const
     {
         json::object j {};
+        size_t end_offset = offset + max_items;
+        if (end_offset > size())
+            end_offset = size();
+        size_t i = 0;
         for (const auto &[asset_name, amount]: *this) {
-            j.emplace(asset_name, amount);
+            if (i >= offset)
+                j.emplace(asset_name, amount);
+            if (++i >= end_offset)
+                break;
         }
         return j;
     }
@@ -1052,6 +1382,45 @@ namespace daedalus_turbo::cardano {
         }
         return j;
     }
+}
+
+namespace std {
+    template<>
+    struct hash<daedalus_turbo::cardano::pool_hash> {
+        size_t operator()(const auto &h) const noexcept
+        {
+            return daedalus_turbo::buffer { h.data(), 8 }.to<size_t>();
+        }
+    };
+
+    template<>
+    struct hash<daedalus_turbo::cardano::stake_pointer> {
+        size_t operator()(const auto &stake_ptr) const noexcept
+        {
+            return (static_cast<uint64_t>(stake_ptr.slot) << 16) | ((stake_ptr.tx_idx & 0xFF) << 8) | (stake_ptr.cert_idx & 0xFF);
+        }
+    };
+
+    template<>
+    struct hash<daedalus_turbo::cardano::stake_ident> {
+        size_t operator()(const auto &stake_id) const noexcept
+        {
+            return daedalus_turbo::buffer { stake_id.hash.data(), 8 }.to<size_t>();
+        }
+    };
+
+    template<>
+    struct hash<daedalus_turbo::cardano::stake_ident_hybrid> {
+        size_t operator()(const auto &id) const noexcept
+        {
+            if (holds_alternative<daedalus_turbo::cardano::stake_ident>(id))
+                return hash<daedalus_turbo::cardano::stake_ident> {} (get<daedalus_turbo::cardano::stake_ident>(id));
+            else if (holds_alternative<daedalus_turbo::cardano::stake_pointer>(id))
+                return hash<daedalus_turbo::cardano::stake_pointer> {} (get<daedalus_turbo::cardano::stake_pointer>(id));
+            else
+                return 0;
+        }
+    };
 }
 
 #endif // !DAEDALUS_TURBO_CARDANO_COMMON_HPP

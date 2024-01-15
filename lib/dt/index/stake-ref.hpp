@@ -55,4 +55,15 @@ namespace daedalus_turbo::index::stake_ref {
     using indexer = indexer_offset<item, chunk_indexer>;
 }
 
+namespace fmt {
+    template<>
+    struct formatter<daedalus_turbo::index::stake_ref::item>: public formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "stake-ref::item(id: {}, offset: {}, size: {}, out_idx: {})",
+                v.id, static_cast<uint64_t>(v.offset), static_cast<size_t>(v.size), static_cast<size_t>(v.out_idx));
+        }
+    };
+}
+
 #endif //!DAEDALUS_TURBO_INDEX_STAKE_REF_HPP

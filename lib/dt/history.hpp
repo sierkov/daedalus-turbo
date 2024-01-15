@@ -122,7 +122,26 @@ namespace daedalus_turbo {
         }
     };
 
-    using transaction_map = std::map<uint64_t, transaction>;
+    struct transaction_map: std::map<uint64_t, transaction> {
+        using std::map<uint64_t, transaction>::map;
+
+        inline json::array to_json(size_t offset=0, size_t max_items=1000) const
+        {
+            size_t end_offset = offset + max_items;
+            if (end_offset > size())
+                end_offset = size();
+            json::array txs {};
+            // transactions are returned in descending order!
+            size_t i = 0;
+            for (const auto &[cr_offset, tx]: *this | std::views::reverse) {
+                if (i >= offset)
+                    txs.emplace_back(tx.to_json());
+                if (++i >= end_offset)
+                    break;
+            }
+            return txs;
+        }
+    };
 
     struct reconstructor;
 
@@ -158,43 +177,20 @@ namespace daedalus_turbo {
         std::vector<uint64_t> find_used_txos(scheduler &sched, const index::reader_multi_mt<index::txo_use::item> &txo_use_idx)
         {
             timer t { "identify used tx outputs", logger::level::debug };
+            auto &p = progress::get();
+            size_t num_txos = 0;
             std::vector<uint64_t> txo_tasks {};
-            size_t num_parts = sched.num_workers();
             txo_tasks.reserve(transactions.size());
-            for (const auto &it: transactions) txo_tasks.emplace_back(it.first);
-            sched.on_result("search-txo-use", [&](const auto &res) {
-                if (res.type() == typeid(scheduled_task_error)) {
-                    logger::error("search-txo-use stake id: {} error: {}", id, std::any_cast<scheduled_task_error>(res).what());
-                    return;
-                }
-                auto task_n_reads = std::any_cast<size_t>(res);
-                num_disk_reads += task_n_reads;
-                num_idx_reads += task_n_reads;
-            });
-            for (size_t i = 0; i < num_parts; ++i) {
-                size_t start_idx = i * txo_tasks.size() / num_parts;
-                size_t end_idx = (i + 1) * txo_tasks.size() / num_parts;
-                sched.submit("search-txo-use", 100, [this, start_idx, end_idx, &txo_tasks, &txo_use_idx]() {
-                    auto txo_use_data = txo_use_idx.init_thread();
-                    index::txo_use::item search_item {};
-                    for (size_t j = start_idx; j < end_idx; ++j) {
-                        auto &txo_item = transactions.at(txo_tasks[j]);
-                        search_item.hash = txo_item.hash;
-                        for (auto &out: txo_item.outputs) {
-                            search_item.out_idx = out.out_idx;
-                            auto [ use_count, use_item ] = txo_use_idx.find(search_item, txo_use_data);
-                            if (use_count > 0) {
-                                if (use_count > 1)
-                                    throw error("internal error: multiple txo-use entries for the same tx offset {}!", txo_tasks[j]);
-                                out.use_offset = use_item.offset;
-                                out.use_size = use_item.size;
-                            }
-                        }
-                    }
-                    return txo_use_data.num_reads;
-                });
+            for (const auto &it: transactions) {
+                txo_tasks.emplace_back(it.first);
+                num_txos += it.second.outputs.size();
             }
-            sched.process(false);
+            if (transactions.size() < 100000)
+                _find_used_txos_small(p, sched, txo_tasks, txo_use_idx);
+            else
+                _find_used_txos_large(p, sched, num_txos, txo_use_idx);
+            p.update("find spent txos", "100.000%");
+            p.inform();
             return txo_tasks;
         }
 
@@ -241,19 +237,16 @@ namespace daedalus_turbo {
             return total_withdrawals;
         }
 
-        inline json::object to_json() const
+        inline json::object to_json(size_t max_items=1000) const
         {
-            json::array txs {};
-            for (const auto &[offset, tx]: transactions) {
-                txs.emplace_back(tx.to_json());
-            }
             return json::object {
                 { "id", id.to_json() },
                 { "txCount", transactions.size() },
                 { "balance", fmt::format("{}", cardano::amount { total_utxo_balance }) },
-                { "assets", balance_assets.to_json() },
+                { "assetCount", balance_assets.size() },
+                { "assets", balance_assets.to_json(0, max_items) },
                 { "withdrawals", total_withdrawals },
-                { "transactions", std::move(txs) }
+                { "transactions", transactions.to_json(0, max_items) }
             };
         }
 
@@ -263,6 +256,84 @@ namespace daedalus_turbo {
             std::vector<typename transaction_map::value_type *> tasks {};
         };
         using parse_tasks = std::map<uint64_t, parse_task>;
+
+        void _find_used_txos_small(progress &p, scheduler &sched, std::vector<uint64_t> &txo_tasks, const index::reader_multi_mt<index::txo_use::item> &txo_use_idx)
+        {
+            size_t num_parts = sched.num_workers();
+            std::atomic_size_t num_ready { 0 };
+            sched.on_result("search-txo-use", [&](const auto &res) {
+                if (res.type() == typeid(scheduled_task_error))
+                    return;
+                auto task_n_reads = std::any_cast<size_t>(res);
+                num_disk_reads += task_n_reads;
+                num_idx_reads += task_n_reads;
+            });
+            for (size_t i = 0; i < num_parts; ++i) {
+                size_t start_idx = i * txo_tasks.size() / num_parts;
+                size_t end_idx = (i + 1) * txo_tasks.size() / num_parts;
+                sched.submit("search-txo-use", 100, [this, start_idx, end_idx, &txo_tasks, &txo_use_idx, &p, &num_ready]() {
+                    auto txo_use_data = txo_use_idx.init_thread();
+                    index::txo_use::item search_item {};
+                    for (size_t j = start_idx; j < end_idx; ++j) {
+                        auto &txo_item = transactions.at(txo_tasks[j]);
+                        search_item.hash = txo_item.hash;
+                        for (auto &out: txo_item.outputs) {
+                            search_item.out_idx = out.out_idx;
+                            auto [ use_count, use_item ] = txo_use_idx.find(search_item, txo_use_data);
+                            if (use_count > 0) {
+                                if (use_count > 1)
+                                    throw error("internal error: multiple txo-use entries for the same tx offset {}!", txo_tasks[j]);
+                                out.use_offset = use_item.offset;
+                                out.use_size = use_item.size;
+                            }
+                        }
+                        if (num_ready.fetch_add(1) % 1000 == 0) {
+                            p.update("find spent txos", fmt::format("{:0.3f}%", static_cast<double>(++num_ready) * 100 / transactions.size()));
+                            p.inform();
+                        }
+                    }
+                    return txo_use_data.num_reads;
+                });
+            }
+            sched.process(false);
+        }
+
+        void _find_used_txos_large(progress &p, scheduler &sched, size_t num_txos, const index::reader_multi_mt<index::txo_use::item> &txo_use_idx)
+        {
+            std::atomic_size_t num_ready { 0 };
+            sched.on_result("search-txo-use", [&](const auto &res) {
+                if (res.type() == typeid(scheduled_task_error))
+                    return;
+                auto task_n_reads = std::any_cast<size_t>(res);
+                num_disk_reads += task_n_reads;
+                num_idx_reads += task_n_reads;
+            });
+            size_t num_parts = txo_use_idx.num_parts();
+            for (size_t pi = 0; pi < num_parts; ++pi) {
+                sched.submit("search-txo-use", 100, [this, pi, num_txos, &txo_use_idx, &p, &num_ready]() {
+                    auto txo_use_data = txo_use_idx.init_thread(pi);
+                    index::txo_use::item item {};
+                    while (txo_use_idx.read_part(pi, item, txo_use_data)) {
+                        auto it = transactions.find(item.offset);
+                        if (it == transactions.end())
+                            continue;
+                        auto &txo_item = it->second;
+                        for (auto &out: txo_item.outputs) {
+                            if (item.out_idx != out.out_idx)
+                                continue;
+                            out.use_offset = item.offset;
+                            out.use_size = item.size;
+                            if (num_ready.fetch_add(1) % 1000 == 0) {
+                                p.update("find spent txos", fmt::format("{:0.3f}%", static_cast<double>(++num_ready) * 100 / num_txos));
+                                p.inform();
+                            }
+                        }
+                    }
+                    return txo_use_data.num_reads;
+                });
+            }
+            sched.process(false);
+        }
     };
 
     struct reconstructor {
@@ -348,11 +419,14 @@ namespace daedalus_turbo {
         const history<ID> _history(index::reader_multi<IDX> &ref_idx, const ID &id)
         {
             timer t { "history reconstruction", logger::level::debug };
+            progress_guard pg { "fetch incoming txos", "find spent txos", "load spent txo data" };
             history<ID> hist { id };
-            if (_block_index.size() == 0) return hist;
+            if (_block_index.size() == 0)
+                return hist;
             const auto &last_block = *_block_index.rbegin();
             hist.last_slot = last_block.slot;
-            if (!hist.find_incoming_txos(ref_idx)) return hist;
+            if (!hist.find_incoming_txos(ref_idx))
+                return hist;
             hist.fill_raw_tx_data(_sched, _cr, *this);
             {
                 auto txo_tasks = hist.find_used_txos(_sched, _txo_use_idx);
@@ -375,6 +449,7 @@ namespace daedalus_turbo {
     inline void history<T>::fill_raw_tx_data(scheduler &sched, chunk_registry &cr, const reconstructor &r, const bool spending_only)
     {
         timer t1 { "fill_raw_tx_data - full", logger::level::debug };
+        const std::string progress_id { spending_only ? "load spent txo data" : "fetch incoming txos" };
         // group txos by their chunk based on their offsets
         parse_tasks chunk_tasks {};
         for (auto &tx_it: transactions) {
@@ -388,7 +463,13 @@ namespace daedalus_turbo {
 
         timer t2 { fmt::format("fill_raw_tx_data - {} load and parse tasks", chunk_tasks.size()), logger::level::debug };
         // extract transaction data
+        auto &p = progress::get();
         if (!chunk_tasks.empty()) {
+            size_t num_ready = 0;
+            sched.on_result("parse-chunk", [&](const auto &) {
+                p.update(progress_id, fmt::format("{:0.3f}%", static_cast<double>(++num_ready) * 100 / chunk_tasks.size()));
+                p.inform();
+            });
             for (auto &[chunk_offset, chunk_info]: chunk_tasks) {
                 sched.submit("parse-chunk", 100, [&]() {
                     size_t updates = 0;
@@ -435,7 +516,9 @@ namespace daedalus_turbo {
             }
             sched.process(false);
             num_disk_reads += chunk_tasks.size();
-        }
+        }            
+        p.update(progress_id, "100.000%");
+        p.inform();
     }
 
 }

@@ -2,8 +2,8 @@
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
-#ifndef DAEDALUS_TURBO_CLI_DEBUG_TX_INFO_HPP
-#define DAEDALUS_TURBO_CLI_DEBUG_TX_INFO_HPP
+#ifndef DAEDALUS_TURBO_CLI_TX_INFO_HPP
+#define DAEDALUS_TURBO_CLI_TX_INFO_HPP
 
 #include <dt/cli.hpp>
 #include <dt/history.hpp>
@@ -37,4 +37,4 @@ namespace daedalus_turbo::cli::tx_info {
     };
 }
 
-#endif // !DAEDALUS_TURBO_CLI_DEBUG_TX_INFO_HPP
+#endif // !DAEDALUS_TURBO_CLI_TX_INFO_HPP

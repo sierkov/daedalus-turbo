@@ -236,7 +236,7 @@ namespace daedalus_turbo::cardano::byron {
             const auto &outputs = _tx.array().at(1).array();
             for (size_t i = 0; i < outputs.size(); i++) {
                 const auto &out = outputs.at(i).array();
-                observer(tx_output { out.at(0).array().at(0).tag().second->buf() , out.at(1).uint(), i });
+                observer(tx_output { out.at(0).array().at(0).tag().second->buf(), cardano::amount { out.at(1).uint() }, i });
             }
         }
 

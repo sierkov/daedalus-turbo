@@ -62,6 +62,7 @@ suite vrf_suite = [] {
             auto vkey = file::read("./data/vrf-vkey.bin");
             auto proof = file::read("./data/vrf-leader-proof.bin");
             auto result = file::read("./data/vrf-leader-result.bin");
+        
             uint64_t slot = 4492800;
             auto uc_nonce = bytes_from_hex("12dd0a6a7d0e222a97926da03adb5a7768d31cc7c5c2bd6828e14a7d25fa3a60");
             auto epoch_nonce = bytes_from_hex("1a3be38bcbb7911969283716ad7aa550250226b76a61fc51cc9a9a35d9276d81");
@@ -86,6 +87,17 @@ suite vrf_suite = [] {
             auto eta_exp = bytes_from_hex("44ce562e2e41da07693b78411c39f68999a1ba0c46f5144f1fab42889edf6311");
             auto eta = blake2b<blake2b_256_hash>(vrf_out);
             expect(eta_exp == eta) << "Failed to construct nonce from VRF output: expected:" << eta_exp << "got:" << eta;
+        };
+
+        "vrf-leader-result-epoch-209"_test = [] {
+            auto vkey = vrf_vkey::from_hex("6D930CC9D1BAADE5CD1C70FBC025D3377CE946760C48E511D1ABDF8ACFF6FF1C");
+            auto result = vrf_result::from_hex("95FAE02F6724F6401EDAF4F2E847AE1E6792D1842FBAD2B828DD2D54811F49DC014B3DD435059E667C40F86625809338B2AE048FA87C0C85DE6C1F40C70EEC32");
+            auto proof = vrf_proof::from_hex("2456E5E98914B9A8F8D0367AC4C06EDE978CA7BEF8B602D79B3309DCD0F9E7B3FF1DE476F10AC393861A93330190F69C002E9F40F9D9AA2F0215DCED3423789C3FFDD95C8B25EE7FCD36229DCDB3530A");
+            auto uc_nonce = vrf_nonce::from_hex("12dd0a6a7d0e222a97926da03adb5a7768d31cc7c5c2bd6828e14a7d25fa3a60");
+            uint64_t slot = 4924800;
+            auto epoch_nonce = vrf_nonce::from_hex("ea98cb2dac7208296ac89030f24cdc0dc6fbfebc4bf1f5b7a8331ec47e3bb311");
+            auto vrf_input = vrf_make_seed(uc_nonce, slot, epoch_nonce);
+            expect(vrf03_verify(result, vkey, proof, vrf_input)) << "leader VRF verification failed with input:" << vrf_input;
         };
 
         "vrf-nonce-accumulate"_test = [] {
@@ -133,6 +145,40 @@ suite vrf_suite = [] {
             auto nonce_exp = bytes_from_hex("9fda26c536a6dc10094563625cb04c4f92e01731e3df0ba94721e2ddba5c5632");
             expect(nonce_exp == vrf_nonce_value(vrf_result));
         };
-        
+
+        "era 6 vrf_leader_value"_test = [&] {
+            auto result = vrf_result::from_hex("288899B5EB24C0D3F7A81EB60549B6EA8461320B6FBF369831D11864EFD3DFD7A6198A7A2C9DE8F85307FA83A8F6ECC51A3DFFBB6510480D96D0C149781C0463");
+            auto exp_value = vrf_nonce::from_hex("0003b2d342e4f2fe108b32434d5d92f4b729f28257dcbff5a67ccbeda24cdd4e");
+            auto act_value = vrf_leader_value(result);
+            expect(act_value == exp_value) << fmt::format("{}", act_value);
+        };
+
+        "era 6 vrf_leader_value #2"_test = [&] {
+            auto result = vrf_result::from_hex("8acb3e9bdf8b0826cd5ab0d25063618169d1fcbf82e654f7133edef22270d9b8674061a64d8a3ae26ed3d5d94b61ac89ea48d3d378ab1f21c3e9950bbb1fb6b2");
+            auto exp_value = vrf_nonce::from_hex("00003eddb685ab0c3bf94e97df66c820ef1c3dd11c628a3199933ee701657202");
+            auto act_value = vrf_leader_value(result);
+            expect(act_value == exp_value) << fmt::format("{}", act_value);
+        };
+
+        "era 6 vrf_leader_value_nat #2"_test = [&] {
+            auto leader_val_bin = vrf_nonce::from_hex("00003eddb685ab0c3bf94e97df66c820ef1c3dd11c628a3199933ee701657202");
+            boost::multiprecision::cpp_int exp_value { "433885643539428655897425832779001864058115449749788967874334011813097986" };
+            auto act_value = vrf_leader_value_nat(leader_val_bin);
+            expect(act_value == exp_value) << act_value;
+        };
+
+        "vrf leader-eligibility"_test = [&] {
+            auto result = file::read("./data/vrf2-leader-result.bin");
+            expect(result.size() == 64_u);
+            rational leader_stake_rel { 124'225'808'029'661, 17'260'167'504'454'384 };
+            expect(vrf_leader_is_eligible(result, 0.05, leader_stake_rel));
+        };
+
+        "vrf leader-eligibility-epoch"_test = [&] {
+            auto result = vrf_result::from_hex("288899B5EB24C0D3F7A81EB60549B6EA8461320B6FBF369831D11864EFD3DFD7A6198A7A2C9DE8F85307FA83A8F6ECC51A3DFFBB6510480D96D0C149781C0463");
+            expect(result.size() == 64_u);
+            rational leader_stake_rel { 32451895600839, 12521840766545450 };
+            expect(vrf_leader_is_eligible(vrf_leader_value(result), 0.05, leader_stake_rel));
+        };
     };
 };

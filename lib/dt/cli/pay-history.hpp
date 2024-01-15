@@ -26,7 +26,7 @@ namespace daedalus_turbo::cli::pay_history {
             const std::string db_dir = data_dir + "/compressed";
             const std::string idx_dir = data_dir + "/index";
             cardano::address_buf addr_raw { args.at(1) };
-            if (addr_raw.size() == 28) addr_raw.insert(addr_raw.begin(), 0xE1);
+            if (addr_raw.size() == 28) addr_raw.insert(addr_raw.begin(), 0x61);
             scheduler sched {};
             daedalus_turbo::chunk_registry cr { sched, db_dir };
             cr.init_state(true, true, false);

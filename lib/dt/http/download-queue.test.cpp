@@ -25,7 +25,7 @@ suite http_download_queue_suite = [] {
                     ++num_oks;
             };
             for (size_t epoch = 0; epoch <= 447; ++epoch)
-                dlq.download(fmt::format("http://turbo1.daedalusturbo.org/epoch-{}.json", epoch), handler);
+                dlq.download(fmt::format("http://turbo1.daedalusturbo.org/epoch-{}.json", epoch), 0, handler);
             dlq.complete();
             sched.process();
             expect(num_errors == 0_u);
@@ -44,7 +44,7 @@ suite http_download_queue_suite = [] {
                 else
                     ++num_oks;
             };
-            dlq.download("http://turbo1.daedalusturbo.org/epoch-unknown.json", handler);
+            dlq.download("http://turbo1.daedalusturbo.org/epoch-unknown.json", 0, handler);
             dlq.complete();
             sched.process();
             // despite 3 retries, only the most recent error shall be reported

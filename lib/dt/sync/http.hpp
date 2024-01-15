@@ -8,11 +8,12 @@
 #include <dt/cardano.hpp>
 #include <dt/http/download-queue.hpp>
 #include <dt/indexer.hpp>
+#include <dt/progress.hpp>
 
 namespace daedalus_turbo::sync::http {
     struct syncer {
-        syncer(scheduler &sched, chunk_registry &cr, const std::string &src_host)
-            : _sched { sched }, _cr { cr }, _host { src_host }, _dlq { _sched }
+        syncer(scheduler &sched, indexer::incremental &cr, const std::string &src_host, bool report_progress=true)
+            : _sched { sched }, _cr { cr }, _host { src_host }, _report_progress { report_progress }, _dlq { _sched }
         {
             auto deletable_chunks = _cr.init_state();
             for (auto &&path: deletable_chunks) {
@@ -32,11 +33,15 @@ namespace daedalus_turbo::sync::http {
             if (task) {
                 logger::info("synchronization starts from chain offset {} in epoch {}", task->start_offset, task->start_epoch);
                 auto deleted_chunks = _cr.truncate(task->start_offset, false);
-                auto updated_chunks = _download_data(epoch_groups, task->start_epoch);
+                progress_guard pg { "download", "parse", "merge" };
+                sync_progress progress {};
+                progress.merge.completed = task->start_offset;
+                _cr.set_progress("merge", progress.merge);
+                auto updated_chunks = _download_data(progress, epoch_groups, task->start_epoch);
                 _cr.save_state();
                 for (auto &&path: deleted_chunks)
                     _deletable_chunks.emplace(std::move(path));
-                // process updated after deleted to remove updated chunks for the to-be-deleted list
+                // remove updated chunks from the to-be-deleted list
                 for (auto &&path: updated_chunks) {
                     logger::trace("updated chunk: {}", path);
                     _deletable_chunks.erase(path);
@@ -60,9 +65,16 @@ namespace daedalus_turbo::sync::http {
             uint64_t start_offset = 0;
         };
 
+        struct sync_progress {
+            progress::info download {};
+            progress::info parse {};
+            progress::info merge {};
+        };
+
         scheduler &_sched;
-        chunk_registry & _cr;
+        indexer::incremental &_cr;
         std::string _host;
+        const bool _report_progress;
         daedalus_turbo::http::download_queue _dlq;
         chunk_registry::file_set _deletable_chunks {};
         alignas(mutex::padding) std::mutex _epoch_json_cache_mutex {};
@@ -114,20 +126,27 @@ namespace daedalus_turbo::sync::http {
                     break;
                 last_synced_epoch_it = last_it;
             }
+            auto &progress = progress::get();
+            progress.update("download-metadata", "0.000%");
+            progress::info dm_progress {};
             _dlq.start();
             if (last_synced_epoch_it != _cr.epochs().end()) {
                 for (auto it = std::next(last_synced_epoch_it); it != _cr.epochs().end(); it++) {
                     uint64_t epoch = it->first;
-                    _dlq.download(fmt::format("http://{}/epoch-{}.json", _host, epoch), [this, epoch](auto &&res) {
+                    dm_progress.total++;
+                    _dlq.download(fmt::format("http://{}/epoch-{}.json", _host, epoch), epoch, [this, &dm_progress, &progress, epoch](auto &&res) {
                         if (res) {
                             std::scoped_lock lk { _epoch_json_cache_mutex };
                             _epoch_json_cache[epoch] = std::move(res.body);
+                            dm_progress.completed++;
+                            progress.update("download-metadata", fmt::format("{:0.3f}%", static_cast<double>(dm_progress.completed) * 100 / dm_progress.total));
                         }
                     });
                 }
             }
             _dlq.complete();
-            _sched.process(true);
+            _sched.process(_report_progress);
+            progress.retire("download-metadata");
             if (!_dlq.success())
                 throw error("failed to fetch information about the necessary epochs - try again later");
             if (last_synced_epoch_it != _cr.epochs().end()) {
@@ -174,13 +193,21 @@ namespace daedalus_turbo::sync::http {
 
         chunk_registry::chunk_info _parse_local_chunk(const chunk_registry::chunk_info &chunk, const std::string &save_path)
         {
-            auto compressed = file::read_raw(save_path);
-            uint8_vector data {};
-            zstd::decompress(data, compressed);
-            auto parsed_chunk = _cr.parse(chunk.offset, chunk.orig_rel_path, data, compressed.size());
-            if (parsed_chunk.data_hash != chunk.data_hash)
-                throw error("data hash does not match for the chunk: {}", save_path);
-            return parsed_chunk;
+            try {
+                auto compressed = file::read_raw(save_path);
+                uint8_vector data {};
+                zstd::decompress(data, compressed);
+                auto parsed_chunk = _cr.parse(chunk.offset, chunk.orig_rel_path, data, compressed.size());
+                if (parsed_chunk.data_hash != chunk.data_hash)
+                    throw error("data hash does not match for the chunk: {}", save_path);
+                return parsed_chunk;
+            } catch (std::exception &ex) {
+                std::filesystem::path orig_path { save_path };
+                auto debug_path = _cr.full_path(fmt::format("error/{}", orig_path.filename().string()));
+                logger::warn("moving an unparsable chunk {} to {}", save_path, debug_path);
+                std::filesystem::rename(save_path, debug_path);
+                throw error("can't parse {}: {}", save_path, ex.what());
+            }
         }
 
         void _register_parsed_chunks(std::vector<chunk_registry::chunk_info> &new_chunks, chunk_registry::file_set &updated_chunks)
@@ -197,7 +224,7 @@ namespace daedalus_turbo::sync::http {
             }
         }
 
-        void _download_chunks(const download_task_list &download_tasks, uint64_t max_offset, chunk_registry::file_set &updated_chunks)
+        void _download_chunks(sync_progress &sp, const download_task_list &download_tasks, uint64_t max_offset, chunk_registry::file_set &updated_chunks)
         {
             timer t { fmt::format("download chunks: {}", download_tasks.size()) };
             struct saved_chunk {
@@ -208,20 +235,21 @@ namespace daedalus_turbo::sync::http {
             const std::string save_task = "save";
             std::vector<chunk_registry::chunk_info> new_chunks {};
             std::vector<saved_chunk> volatile_chunks {};
+            auto &progress = progress::get();
             std::function<void(const std::any&)> parsed_proc = [&](const std::any &res) {
-                if (res.type() == typeid(scheduled_task_error)) {
-                    logger::error("chunk task failed: {}", std::any_cast<scheduled_task_error>(res).what());
+                if (res.type() == typeid(scheduled_task_error))
                     return;
-                }
                 const auto &chunk = std::any_cast<chunk_registry::chunk_info>(res);
                 new_chunks.emplace_back(chunk);
+                sp.parse.completed += chunk.compressed_size;
+                progress.update("parse", fmt::format("{:0.3f}%", static_cast<double>(sp.parse.completed) * 100 / sp.parse.total));
             };
             std::function<void(const std::any&)> saved_proc = [&](const auto &res) {
-                if (res.type() == typeid(scheduled_task_error)) {
-                    logger::error("chunk task failed: {}", std::any_cast<scheduled_task_error>(res).what());
+                if (res.type() == typeid(scheduled_task_error))
                     return;
-                }
                 const auto &chunk = std::any_cast<saved_chunk>(res);
+                sp.download.completed += chunk.info.compressed_size;
+                progress.update("download", fmt::format("{:0.3f}%", static_cast<double>(sp.download.completed) * 100 / sp.download.total));
                 if (!chunk.info.is_volatile()) {
                     _sched.submit(parse_task, 100 + 100 * (max_offset - chunk.info.offset) / max_offset, [this, chunk]() {
                         return _parse_local_chunk(chunk.info, chunk.path);
@@ -234,18 +262,26 @@ namespace daedalus_turbo::sync::http {
             _sched.on_result(save_task, saved_proc);
             {
                 timer t { "download all chunks and parse immutable ones" };
+                // compute totals before starting the execution to ensure correct progress percentages
+                sp.merge.total = max_offset;
+                for (const auto &chunk: download_tasks) {
+                    sp.download.total += chunk.compressed_size;
+                    sp.parse.total += chunk.compressed_size;
+                }
                 _dlq.start();
                 for (const auto &chunk: download_tasks) {
                     auto data_url = fmt::format("http://{}/{}", _host, chunk.rel_path());
                     auto save_path = _cr.full_path(chunk.rel_path());
                     if (!std::filesystem::exists(save_path)) {
-                        _dlq.download(data_url, [this, chunk, save_task, max_offset, save_path](daedalus_turbo::http::download_queue::result &&res) {
+                        _dlq.download(data_url, chunk.offset, [this, data_url, chunk, save_task, max_offset, save_path](daedalus_turbo::http::download_queue::result &&res) {
                             if (res) {
                                 const auto &compressed = res.body;
                                 _sched.submit(save_task, 200 + 100 * (max_offset - chunk.offset) / max_offset, [chunk, save_path, compressed]() {
                                     file::write(save_path, compressed);
                                     return saved_chunk { std::move(save_path), std::move(chunk) };
                                 });
+                            } else {
+                                logger::error("download of {} failed: {}", data_url, res.error);
                             }
                         });
                     } else {
@@ -254,7 +290,7 @@ namespace daedalus_turbo::sync::http {
                 }
                 _dlq.complete();
             }
-            _sched.process(true);
+            _sched.process(_report_progress);
             if (!_dlq.success())
                 throw error("download of chunks has failed - try again later");
             _register_parsed_chunks(new_chunks, updated_chunks);
@@ -268,13 +304,13 @@ namespace daedalus_turbo::sync::http {
                             return _parse_local_chunk(chunk.info, chunk.path);
                         });
                     }
-                    _sched.process(true);
+                    _sched.process(_report_progress);
                 }
                 _register_parsed_chunks(new_chunks, updated_chunks);
             }
         }
 
-        chunk_registry::file_set _download_data(const json::array &epoch_groups, size_t first_synced_epoch)
+        chunk_registry::file_set _download_data(sync_progress &sp, const json::array &epoch_groups, size_t first_synced_epoch)
         {
             timer t { "download data" };
             std::vector<chunk_registry::chunk_info> download_tasks {};
@@ -293,7 +329,7 @@ namespace daedalus_turbo::sync::http {
                         epoch_offsets[epoch_id] = start_offset;
                         if (!_epoch_json_cache.contains(epoch_id)) {
                             auto epoch_url = fmt::format("http://{}/epoch-{}.json", _host, epoch_id);
-                            _dlq.download(epoch_url, [this, epoch_id](auto &&res) {
+                            _dlq.download(epoch_url, epoch_id, [this, epoch_id](auto &&res) {
                                 if (res) {
                                     std::scoped_lock { _epoch_json_cache_mutex };
                                     _epoch_json_cache[epoch_id] = std::move(res.body);
@@ -305,7 +341,7 @@ namespace daedalus_turbo::sync::http {
                 }
             }
             _dlq.complete();
-            _sched.process(true);
+            _sched.process(_report_progress);
             if (!_dlq.success())
                 throw error("failed to download epoch information - try again later");
             for (const auto &[epoch_id, epoch_start_offset]: epoch_offsets) {
@@ -327,7 +363,7 @@ namespace daedalus_turbo::sync::http {
             }
             chunk_registry::file_set updated_chunks {};
             logger::info("downloading and parsing the differing chunks: {}", download_tasks.size());
-            _download_chunks(download_tasks, max_offset, updated_chunks);
+            _download_chunks(sp, download_tasks, max_offset, updated_chunks);
             return updated_chunks;
         }
     };

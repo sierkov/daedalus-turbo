@@ -25,7 +25,7 @@ static std::string no_error_msg {
 };
 
 template<typename F>
-inline void expect_throws_msg(F &f, const std::string &exp_msg, const std::source_location &src_loc=std::source_location::current())
+inline void expect_throws_msg(const F &f, const std::initializer_list<std::string> &matches, const std::source_location &src_loc=std::source_location::current())
 {
     expect(boost::ut::throws<error>(f)) << "no exception has been thrown";
     std::optional<std::string> msg {};
@@ -35,8 +35,17 @@ inline void expect_throws_msg(F &f, const std::string &exp_msg, const std::sourc
         msg = ex.what();
     }
     expect((bool)msg) << "exception message is empty";
-    if (msg)
-        expect(*msg == exp_msg) << "received:" << *msg << "expected:" << exp_msg << src_loc.file_name() << src_loc.line();
+    if (msg) {
+        for (const auto &match: matches) {
+            expect(msg->find(match) != msg->npos) << fmt::format("'{}' does not contain '{}' from {}:{}", *msg, match, src_loc.file_name(), src_loc.line());
+        }
+    }
+}
+
+template<typename F>
+inline void expect_throws_msg(const F &f, const std::string &match, const std::source_location &src_loc=std::source_location::current())
+{
+    expect_throws_msg(f, { match }, src_loc);
 }
 
 suite error_suite = [] {
@@ -68,7 +77,7 @@ suite error_suite = [] {
         };
         "error_src_loc"_test = [] {
             auto f = [&] { throw error_src_loc(std::source_location::current(), "Hello {}!", "world"); };
-            expect_throws_msg(f, "Hello world! at lib/dt/error.test.cpp:70");
+            expect_throws_msg(f, { "Hello world!", "lib/dt/error.test.cpp:79" });
         };
     };
 };

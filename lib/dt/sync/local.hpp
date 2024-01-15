@@ -44,9 +44,15 @@ namespace daedalus_turbo::sync::local {
 
         sync_res sync()
         {
+            timer t { "sync::local::sync" };
             _cr.clean_up();
+            progress::get().update("parse", "0.000%");
+            progress::get().update("merge", "0.000%");
+            _cr.set_progress("merge", _progress.merge);
             auto res = _refresh();
             _save_state();
+            progress::get().retire("parse");
+            progress::get().retire("merge");
             return res;
         }
     private:
@@ -100,6 +106,11 @@ namespace daedalus_turbo::sync::local {
             bool updated = false;
         };
 
+        struct sync_progress {
+            progress::info parse {};
+            progress::info merge {};
+        };
+
         scheduler &_sched;
         chunk_registry &_cr;
         const std::filesystem::path _node_path;
@@ -109,6 +120,7 @@ namespace daedalus_turbo::sync::local {
         std::chrono::milliseconds _delete_delay;
         std::map<std::string, source_chunk_info> _source_chunks {};
         std::map<std::string, std::chrono::time_point<std::chrono::system_clock>> _deleted_chunks {};
+        sync_progress _progress {};
         const size_t _zstd_level_immutable;
         const size_t _zstd_level_volatile;
         const bool _strict;
@@ -145,7 +157,7 @@ namespace daedalus_turbo::sync::local {
 
         void _save_state()
         {
-            timer t { "local::syncer::save_state", logger::level::debug };
+            timer t { "sync::local::save_state", logger::level::debug };
             _cr.save_state();
             std::ostringstream json_s {};
             json_s << "[\n";
@@ -239,6 +251,9 @@ namespace daedalus_turbo::sync::local {
             }
             std::vector<analyze_res> analyzed_chunks {};
             uint64_t updated_min_offset = _cr.num_bytes();
+            _progress.parse.total = source_offset;
+            _progress.parse.completed = updated_min_offset;
+            _progress.merge.total = source_offset;
             {
                 timer t { fmt::format("process updated chunks from {}", dir_path.string()) };
                 _sched.on_result(task_name, [&](const auto &res) {
@@ -254,7 +269,9 @@ namespace daedalus_turbo::sync::local {
                         if (a_res.updated && updated_min_offset > a_res.dist_info.offset)
                             updated_min_offset = a_res.dist_info.offset;
                         analyzed_chunks.emplace_back(a_res);
+                        _progress.parse.completed += a_res.dist_info.data_size;
                     }
+                    progress::get().update("parse", fmt::format("{:0.3f}%", static_cast<double>(_progress.parse.completed) * 100 / _progress.parse.total));
                 });
                 size_t task_size = 0;
                 std::vector<chunk_update> task {};
@@ -308,11 +325,14 @@ namespace daedalus_turbo::sync::local {
 
         sync_res _refresh()
         {
+            timer t { "sync::local::_refresh" };
             std::vector<std::string> errors {};
             std::vector<std::string> updated {};
             chunk_registry::file_set deletable {};
             uint64_t source_offset = 0;
+            logger::info("parsing immutable chunks");
             _refresh_sources(_immutable_path, ".chunk", "copy-immutable", source_offset, updated, deletable, errors);
+            logger::info("parsing volatile chunks");
             _refresh_sources(_volatile_path, ".dat", "copy-volatile", source_offset, updated, deletable, errors);
             // when the source has a shorter chain must truncate
             if (source_offset != _cr.num_bytes()) {

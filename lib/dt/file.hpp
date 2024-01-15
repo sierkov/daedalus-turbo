@@ -63,18 +63,17 @@ namespace daedalus_turbo::file {
 
         ~read_stream()
         {
-            if (!_closed)
-                close();
+            close();
         }
 
         void close()
         {
-            _closed = true;
             if (_f != NULL) {
                 if (std::fclose(_f) != 0)
                     throw error("failed to close file {}!", _path);
+                _f = NULL;
+                _open_files--;
             }
-            _open_files--;
         }
 
         void seek(std::streampos off)
@@ -96,7 +95,6 @@ namespace daedalus_turbo::file {
     protected:
         std::FILE *_f = NULL;
         std::string _path {};
-        bool _closed = false;
     };
 
     // C-style IO is used since on Mac OS the standard C++ library has very slow I/O performance.
@@ -118,25 +116,24 @@ namespace daedalus_turbo::file {
         }
 
         write_stream(write_stream &&ws)
-            : _f { ws._f }, _path { std::move(ws._path) }, _closed { ws._closed }
+            : _f { ws._f }, _path { std::move(ws._path) }
         {
             ws._f = NULL;
         }
 
         ~write_stream()
         {
-            if (!_closed)
                 close();
         }
 
         void close()
         {
-            _closed = true;
             if (_f != NULL) {
                 if (std::fclose(_f) != 0)
                     throw error("failed to close file {}!", _path);
+                _f = NULL;
+                _open_files--;
             }
-            _open_files--;
         }
 
         void seek(std::streampos off)
@@ -170,7 +167,6 @@ namespace daedalus_turbo::file {
     protected:
         FILE *_f = NULL;
         std::string _path {};
-        bool _closed = false;
     };
 
     inline void read_raw(const std::string &path, uint8_vector &buffer) {
@@ -227,13 +223,19 @@ namespace daedalus_turbo::file {
     template<typename T>
     inline void write_vector(const std::string &path, const std::vector<T> &v)
     {
-        write_stream os { path };
+        auto tmp_path = fmt::format("{}.tmp", path);
+        write_stream os { tmp_path };
         os.write(v.data(), v.size() * sizeof(T));
+        os.close();
+        std::filesystem::rename(tmp_path, path);
     }
 
     inline void write(const std::string &path, const buffer &buffer) {
-        write_stream os { path };
+        auto tmp_path = fmt::format("{}.tmp", path);
+        write_stream os { tmp_path };
         os.write(buffer.data(), buffer.size());
+        os.close();
+        std::filesystem::rename(tmp_path, path);
     }
 }
 

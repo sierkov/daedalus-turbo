@@ -44,7 +44,7 @@ namespace {
     };
     using stake_list = std::vector<stake_item>;
 
-    static void verify_sample(reconstructor &r, const stake_list &stake_dist, double sample_pct)
+    static void verify_sample(reconstructor &r, const stake_list &stake_dist, double min_pct, double max_pct)
     {
         timer t { "verify sample" };
         std::seed_seq seed { 0, 1, 2, 3, 4, 5 };
@@ -55,13 +55,14 @@ namespace {
         std::vector<test_error> errors {};
         size_t num_except = 0;
 
-        logger::info("distribution size: {} sample size: {}% estimated number of ids: {}",
+        auto sample_pct = max_pct - min_pct;
+        logger::info("distribution size: {} sample size: {:0.2f}% estimated number of ids: {}",
             stake_dist.size(), sample_pct * 100, static_cast<size_t>(stake_dist.size() * sample_pct));
         size_t sample_no = 0;
         for (const auto &item: stake_dist) {
-            if (sample_pct < 1.0) {
+            if (min_pct > 0.0 || max_pct < 1.0) {
                 auto pass = dist(rnd);
-                if (pass >= sample_pct)
+                if (pass < min_pct || pass >= max_pct)
                     continue;
             }
             sample_no++;
@@ -134,16 +135,19 @@ int main(int argc, char **argv)
 try {
     std::ios_base::sync_with_stdio(false);
     if (argc < 3) {
-        logger::error("Usage: validate-balance <data-dir> <ledger-snapshot> [<sample-ratio>]");
+        logger::error("Usage: validate-balance <data-dir> <ledger-snapshot> [<sample-ratio-max>] [<sample-ratio-min>]");
         return 1;
     }
     const std::string data_dir { argv[1] };
     const auto db_dir = data_dir + "/compressed";
     const auto idx_dir = data_dir + "/index";
     const std::string ledger_path { argv[2] };
-    double sample_pct = 0.001;
-    if (argc == 4)
-        sample_pct = std::stod(argv[3]);
+    double min_pct = 0.0;
+    double max_pct = 0.001;
+    if (argc >= 4)
+        max_pct = std::stod(argv[3]);
+    if (argc >= 5)
+        min_pct = std::stod(argv[4]);
     timer t { "complete test" };
     auto [ledger_stake_dist, ledger_slot] = parse_ledger_snapshot(ledger_path);
     scheduler sched {};
@@ -152,7 +156,7 @@ try {
     reconstructor r { sched, cr, idx_dir };
     if (ledger_slot != r.last_slot())
         throw error("ledger last slot: {} does not match raw data last slot: {}", ledger_slot, r.last_slot());
-    verify_sample(r, ledger_stake_dist, sample_pct);
+    verify_sample(r, ledger_stake_dist, min_pct, max_pct);
 } catch (std::exception &ex) {
     logger::error("exception in main: {}", ex.what());
 }

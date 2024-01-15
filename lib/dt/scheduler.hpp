@@ -25,6 +25,7 @@
 #include <dt/logger.hpp>
 #include <dt/memory.hpp>
 #include <dt/mutex.hpp>
+#include <dt/progress.hpp>
 #include <dt/util.hpp>
 
 namespace daedalus_turbo {
@@ -86,7 +87,7 @@ namespace daedalus_turbo {
         std::priority_queue<scheduled_task> _tasks;
         std::unordered_map<std::string, size_t> _tasks_cnt;
 
-        using observer_list = std::list<std::function<void (const std::any &)>>;
+        using observer_list = std::list<std::function<void (std::any &&)>>;
         using observer_map = std::unordered_map<std::string, observer_list>;
         alignas(mutex::padding) std::mutex _observers_mutex;
         observer_map _observers;
@@ -95,11 +96,15 @@ namespace daedalus_turbo {
         alignas(mutex::padding) std::condition_variable _results_cv;
         std::priority_queue<scheduled_result> _results;
 
+        alignas(mutex::padding) std::mutex _retiring_mutex {};
+        std::vector<std::string> _retiring_observers {};
+
         std::thread _manager;
         std::vector<std::thread> _workers;
         std::vector<std::string> _worker_tasks;
         const size_t _num_workers;
         std::atomic<bool> _destroy = false;
+        std::atomic_size_t _num_errors = 0;
 
         template<typename T>
         void _process_results(std::unique_lock<T> &results_lock)
@@ -127,7 +132,7 @@ namespace daedalus_turbo {
                         observers_lock.unlock();
                         // assumes that the observer list for a task group is configured before task submission
                         for (const auto &observer: it->second)
-                            observer(res.result);
+                            observer(std::move(res.result));
                     } else {
                         if (res.result.type() == typeid(scheduled_task_error))
                             throw std::any_cast<scheduled_task_error>(res.result);
@@ -168,6 +173,7 @@ namespace daedalus_turbo {
                         task_res = task.task();
                     } catch (std::exception &ex) {
                         task_res = std::make_any<scheduled_task_error>("task: '{}' error: '{}' of type: '{}'!", task_name, ex.what(), typeid(ex).name());
+                        _num_errors++;
                         logger::warn("worker-{} task {} failed: {}", worker_idx, task_name, ex.what());
                     }
                     lock.lock();
@@ -246,13 +252,20 @@ namespace daedalus_turbo {
             _tasks_cv.notify_one();
         }
 
-        void on_result(const std::string &task_group, const std::function<void (const std::any &)> &observer)
+        void on_result(const std::string &task_group, const std::function<void (std::any &&)> &observer, bool ignore_if_exists=false)
         {
             if (task_count(task_group) != 0)
                 throw error("observers for task '{}' must be configured before task submission!", task_group);
             const std::scoped_lock lock { _observers_mutex };
             auto [ it, created ] = _observers.emplace(task_group, 0);
-            it->second.emplace_front(observer);
+            if (!ignore_if_exists || created)
+                it->second.emplace_front(observer);
+        }
+
+        void clear_observers(const std::string &task_group)
+        {
+            std::scoped_lock lk { _retiring_mutex };
+            _retiring_observers.emplace_back(task_group);
         }
 
         // task_count is decremented only after all observers are notified of completion.
@@ -280,10 +293,10 @@ namespace daedalus_turbo {
             return cnt;
         }
 
-        void process(bool report_progress=true, std::chrono::milliseconds update_interval_ms=std::chrono::milliseconds { 1000 },
-            std::ostream &report_stream=std::cerr)
+        bool process_ok(bool report_progress, std::chrono::milliseconds update_interval_ms, std::ostream &report_stream)
         {
             logger::debug("scheduler::process started tasks: {}", task_count());
+            _num_errors = 0;
             try {
                 _process(report_progress, report_stream, update_interval_ms);
                 _observers.clear();
@@ -293,8 +306,40 @@ namespace daedalus_turbo {
                 throw;
             }
             logger::debug("scheduler::process done remaining tasks: {}", task_count());
+            return _num_errors == 0;
+        }
+
+        void process(bool report_progress=true, std::chrono::milliseconds update_interval_ms=std::chrono::milliseconds { 1000 },
+            std::ostream &report_stream=std::cerr)
+        {
+            if (!process_ok(report_progress, update_interval_ms, report_stream))
+                throw error("some scheduled tasks have failed, please consult logs for more details");
+        }
+
+        void process_once()
+        {
+            return _process_once(std::chrono::milliseconds { 50 });
         }
     private:
+        void _process_once(std::chrono::milliseconds update_interval_ms)
+        {
+            {
+                std::scoped_lock lk { _retiring_mutex, _observers_mutex };
+                for (const auto &task_group: _retiring_observers)
+                    _observers.erase(task_group);
+                _retiring_observers.clear();
+            }
+            // Special case, in the single-worker mode, the tasks are executed in the loop
+            if (_num_workers == 1 && !_tasks.empty())
+                _worker_try_execute(0);
+            {
+                std::unique_lock results_lock(_results_mutex);
+                bool have_work = _results_cv.wait_for(results_lock, update_interval_ms, [&]{ return !_results.empty(); });
+                if (have_work)
+                    _process_results(results_lock);
+            }
+        }
+
         void _process(bool report_progress, std::ostream &report_stream, std::chrono::milliseconds update_interval_ms)
         {
             struct task_status {
@@ -302,8 +347,8 @@ namespace daedalus_turbo {
                 size_t pending;
             };
             std::map<std::string, task_status> status {};
-            logger::progress::state_map active_state {}, retiring_state {};
-            auto &progress = logger::progress::get();
+            progress::state_map active_state {}, retiring_state {};
+            auto &progress = progress::get();
             auto next_report = std::chrono::system_clock::now() + update_interval_ms;
             for (;;) {
                 {
@@ -332,24 +377,16 @@ namespace daedalus_turbo {
                     }
                     for (const auto &[name, val]: active_state)
                         retiring_state.erase(name);
-                    progress.update(active_state, retiring_state);
+                    //progress.update(active_state, retiring_state);
                     progress.inform(report_stream);
                     retiring_state = std::move(active_state);
                     next_report = std::chrono::system_clock::now() + update_interval_ms;
                     logger::debug("scheduler tasks: {} open files: {} peak RAM use: {} MB",
                         todo_cnt, file::stream::open_files(), memory::max_usage_mb());
                 }
-                // Special case, in one-worker mode execute tasks in the loop
-                if (_num_workers == 1 && !_tasks.empty())
-                    _worker_try_execute(0);
-                {
-                    std::unique_lock results_lock(_results_mutex);
-                    bool have_work = _results_cv.wait_for(results_lock, update_interval_ms, [&]{ return !_results.empty(); });
-                    if (have_work)
-                        _process_results(results_lock);
-                }
+                _process_once(update_interval_ms);
             }
-            progress.retire(retiring_state);
+            //progress.retire(retiring_state);
             progress.inform(report_stream);
         }
     };

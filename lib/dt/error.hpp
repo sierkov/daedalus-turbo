@@ -7,23 +7,18 @@
 
 #include <cerrno>
 #include <cstring>
-#include <cstdarg>
-#include <exception>
-#include <string>
-#include <utility>
 #include <source_location>
 #include <dt/format.hpp>
 
 namespace daedalus_turbo {
-    struct error: public std::runtime_error {
+    struct error: std::runtime_error {
         template<typename... Args>
-        error(const std::string &fmt, Args&&... a)
-            : std::runtime_error { format(fmt::runtime(fmt), std::forward<Args>(a)...) }
+        error(const char *fmt, Args&&... a): std::runtime_error { format(fmt::runtime(fmt), std::forward<Args>(a)...) }
         {
         }
     };
 
-    struct error_sys: public error {
+    struct error_sys: error {
         template<typename... Args>
         error_sys(const char *fmt, Args&&... a)
             : error { "{}, errno: {}, strerror: {}", format(fmt::runtime(fmt), std::forward<Args>(a)...), errno, std::strerror(errno) }
@@ -31,7 +26,7 @@ namespace daedalus_turbo {
         }
     };
 
-    struct error_src_loc: public error {
+    struct error_src_loc: error {
         template<typename... Args>
         error_src_loc(const std::source_location &loc, const char *fmt, Args&&... a)
             : error { "{} at {}:{}", format(fmt::runtime(fmt), std::forward<Args>(a)...), loc.file_name(), loc.line() }

@@ -16,80 +16,18 @@
 #include <dt/mutex.hpp>
 
 namespace daedalus_turbo::logger {
-
-    struct progress {
-        using state_map = std::map<std::string, std::string>;
-
-        static progress &get()
-        {
-            static std::optional<progress> p {};
-            if (!p) {
-                alignas(mutex::padding) static std::mutex m {};
-                std::scoped_lock lk { m };
-                // checking again since another thread could have already started initializing the logger
-                if (!p)
-                    p.emplace();
-            }
-            return *p;
-        }
-
-        void update(const std::string &name, const std::string &value)
-        {
-            std::scoped_lock lk { _state_mutex };
-            _state[name] = value;
-        }
-
-        void update(const state_map &updates)
-        {
-            std::scoped_lock lk { _state_mutex };
-            for (const auto &[name, value]: updates)
-                _state[name] = value;
-        }
-
-        void update(const state_map &updates, const state_map &retiring)
-        {
-            std::scoped_lock lk { _state_mutex };
-            for (const auto &[name, value]: retiring)
-                _state.erase(name);
-            for (const auto &[name, value]: updates)
-                _state[name] = value;
-        }
-
-        void retire(const std::string &name)
-        {
-            std::scoped_lock lk { _state_mutex };
-            _state.erase(name);
-        }
-
-        void retire(const state_map &retiring)
-        {
-            std::scoped_lock lk { _state_mutex };
-            for (const auto &[name, value]: retiring)
-                _state.erase(name);
-        }
-
-        void inform(std::ostream &stream=std::cerr)
-        {
-            std::string str {};
-            {
-                std::scoped_lock lk { _state_mutex };
-                for (const auto &[name, val]: _state)
-                    str += fmt::format("{}: [{}] ", name, val);
-            }
-            // adjust for the invisible \r
-            if (str.size() > _max_str)
-                _max_str = str.size();
-            stream << fmt::format("{:<{}}\r", str, _max_str);
-        }
-    private:
-        alignas(mutex::padding) std::mutex _state_mutex {};
-        state_map _state {};
-        size_t _max_str = 0;
-    };
-
     enum class level {
         trace, debug, info, warn, error
     };
+
+    inline const char *log_path()
+    {
+        const char *log_path = "./log/dt.log";
+        const char *env_log_path = std::getenv("DT_LOG");
+        if (env_log_path != nullptr)
+            log_path = env_log_path;
+        return log_path;
+    }
 
     inline spdlog::logger &get()
     {
@@ -102,11 +40,7 @@ namespace daedalus_turbo::logger {
                 auto console_sink = std::make_shared<spdlog::sinks::stderr_color_sink_mt>();
                 console_sink->set_level(spdlog::level::info);
                 console_sink->set_pattern("[%^%l%$] %v");
-                const char *log_path = "./log/dt.log";
-                const char *env_log_path = std::getenv("DT_LOG");
-                if (env_log_path != nullptr)
-                    log_path = env_log_path;
-                auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(log_path);
+                auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(log_path());
                 file_sink->set_level(spdlog::level::trace);
                 file_sink->set_pattern("[%Y-%m-%d %T %z] [%P:%t] [%n] [%l] %v");
                 logger = spdlog::logger("dt", { console_sink, file_sink });
@@ -148,34 +82,64 @@ namespace daedalus_turbo::logger {
         }
     }
 
+    inline void trace(const std::string_view &msg)
+    {
+        get().trace(msg);
+    }
+
     template<typename... Args>
     inline void trace(const std::string_view &fmt, Args&&... a)
     {
-        get().trace(format(fmt::runtime(fmt), std::forward<Args>(a)...));
+        trace(format(fmt::runtime(fmt), std::forward<Args>(a)...));
+    }
+
+    inline void debug(const std::string_view &msg)
+    {
+        get().debug(msg);
     }
 
     template<typename... Args>
     inline void debug(const std::string_view &fmt, Args&&... a)
     {
-        get().debug(format(fmt::runtime(fmt), std::forward<Args>(a)...));
+        debug(format(fmt::runtime(fmt), std::forward<Args>(a)...));
+    }
+
+    inline void info(const std::string_view &msg)
+    {
+        get().info(msg);
     }
 
     template<typename... Args>
     inline void info(const std::string_view &fmt, Args&&... a)
     {
-        get().info(format(fmt::runtime(fmt), std::forward<Args>(a)...));
+        info(format(fmt::runtime(fmt), std::forward<Args>(a)...));
+    }
+
+    inline void warn(const std::string_view &msg)
+    {
+        get().warn(msg);
     }
 
     template<typename... Args>
     inline void warn(const std::string_view &fmt, Args&&... a)
     {
-        get().warn(format(fmt::runtime(fmt), std::forward<Args>(a)...));
+        warn(format(fmt::runtime(fmt), std::forward<Args>(a)...));
+    }
+
+    inline void error(const std::string_view &msg)
+    {
+        get().error(msg);
     }
 
     template<typename... Args>
     inline void error(const std::string_view &fmt, Args&&... a)
     {
-        get().error(format(fmt::runtime(fmt), std::forward<Args>(a)...));
+        error(format(fmt::runtime(fmt), std::forward<Args>(a)...));
+    }
+
+    inline void flush()
+    {
+        get().flush();
     }
 }
 

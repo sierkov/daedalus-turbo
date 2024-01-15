@@ -53,6 +53,17 @@ namespace daedalus_turbo {
     struct uint8_vector: public std::vector<uint8_t> {
         using std::vector<uint8_t>::vector;
 
+        static uint8_vector from_hex(const std::string_view& hex)
+        {
+            uint8_vector data {};
+            if (hex.size() % 2 != 0)
+                throw error("hex string must have an even number of characters but got {}!", hex.size());
+            for (const char *p = hex.data(), *end = hex.data() + hex.size(); p < end; p += 2) {
+                data.push_back(uint_from_hex(*p) << 4 | uint_from_hex(*(p + 1)));
+            }
+            return data;
+        }
+
         inline uint8_vector(const buffer &buf);
         inline uint8_vector &operator=(const buffer &buf);
         inline const buffer span() const;
@@ -67,17 +78,7 @@ namespace daedalus_turbo {
             return buffer { reinterpret_cast<const uint8_t *>(&val), sizeof(val) };
         }
 
-        template<typename M>
-        static M to(const buffer &buf)
-        {
-            M val {};
-            if (buf.size() != sizeof(val))
-                throw error("metadata size: {} does not match the type's size: {}!", buf.size(), sizeof(val));
-            memcpy(&val, buf.data(), buf.size());
-            return val;
-        }
-
-        buffer(const std::span<const uint8_t> s): std::span<const uint8_t>(s)
+        buffer(const std::span<const uint8_t> &s): std::span<const uint8_t>(s)
         {
         }
 
@@ -91,6 +92,11 @@ namespace daedalus_turbo {
         {
         }
 
+        buffer(const void *data, size_t sz)
+            : std::span<const uint8_t>(reinterpret_cast<const uint8_t*>(data), sz)
+        {
+        }
+
         bool operator<(const buffer &rhs) const noexcept
         {
             size_t min_size = size();
@@ -98,6 +104,14 @@ namespace daedalus_turbo {
             int cmp = memcmp(data(), rhs.data(), min_size);
             if (cmp == 0) return size() < rhs.size();
             return cmp < 0;
+        }
+
+        template<typename M>
+        const M to() const
+        {
+            if (size() != sizeof(M))
+                throw error("buffer size: {} does not match the type's size: {}!", size(), sizeof(M));
+            return *reinterpret_cast<const M*>(data());
         }
 
         inline std::string_view string_view() const
@@ -219,18 +233,14 @@ namespace daedalus_turbo {
         return memcmp(dst.data(), src.data(), dst.size());
     }
 
-    inline void bytes_from_hex(uint8_vector &data, const std::string_view& hex) {
-        data.clear();
-        if (hex.size() % 2 != 0) throw error("hex string must have an even number of characters but got {}!", hex.size());
-        for (const char *p = hex.data(), *end = hex.data() + hex.size(); p < end; p += 2) {
-            data.push_back(uint_from_hex(*p) << 4 | uint_from_hex(*(p + 1)));
-        }
+    inline void bytes_from_hex(uint8_vector &data, const std::string_view& hex)
+    {
+        data = uint8_vector::from_hex(hex);
     }
 
-    inline uint8_vector bytes_from_hex(const std::string_view& hex) {
-        uint8_vector data;
-        bytes_from_hex(data, hex);
-        return data;
+    inline uint8_vector bytes_from_hex(const std::string_view& hex)
+    {
+        return uint8_vector::from_hex(hex);
     }
 
     template<class ForwardIt, class T, class Compare>
@@ -247,6 +257,14 @@ namespace daedalus_turbo {
 namespace fmt {
     template<>
     struct formatter<daedalus_turbo::buffer>: public formatter<std::span<const uint8_t>> {
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::uint8_vector>: public formatter<std::span<const uint8_t>> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "{}", v.span());
+        }
     };
 
     template<>

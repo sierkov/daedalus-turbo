@@ -10,6 +10,28 @@ using namespace daedalus_turbo;
 
 suite cardano_common_suite = [] {
     "cardano::common"_test = [] {
+        "address pointer"_test = [] {
+            auto buf = uint8_vector::from_hex("4186880a8bb19ec8742db9076795c5107f7ffc65a889e7b0980ffeaca20c0c0c");
+            cardano::address addr { buf };
+            expect(addr.has_pay_id());
+            expect(addr.pay_id() == cardano::pay_ident { cardano::key_hash::from_hex("86880a8bb19ec8742db9076795c5107f7ffc65a889e7b0980ffeaca2") });
+            expect(addr.has_pointer());
+            auto ptr = addr.pointer();
+            expect(ptr.slot == 12_u);
+            expect(ptr.tx_idx == 12_u);
+            expect(ptr.cert_idx == 12_u);
+        };
+        "address pointer 2"_test = [] {
+            auto buf = uint8_vector::from_hex("41fbfce15acccb420982704c9e591f83ab3315c3314a18ecf65346e0858292b3380b00");
+            cardano::address addr { buf };
+            expect(addr.has_pay_id());
+            expect(addr.pay_id() == cardano::pay_ident { cardano::key_hash::from_hex("fbfce15acccb420982704c9e591f83ab3315c3314a18ecf65346e085") });
+            expect(addr.has_pointer());
+            auto ptr = addr.pointer();
+            expect(ptr.slot == 4495800_u);
+            expect(ptr.tx_idx == 11_u);
+            expect(ptr.cert_idx == 0_u);
+        };
         "amount"_test = [] {
             {
                 cardano::amount a { 1'010 };
@@ -61,6 +83,12 @@ suite cardano_common_suite = [] {
             expect(cardano::slot { 4492800 }.epoch() == 208);
             expect(cardano::slot { 75745595 }.epoch() == 372);
             expect(cardano::slot { 75772873 }.epoch() == 373);
+
+            expect(cardano::slot::from_epoch(0) == 0);
+            expect(cardano::slot::from_epoch(208) == 208 * 21600);
+            expect(cardano::slot::from_epoch(213) == 6652800_u);
+            expect(cardano::slot::from_epoch(214) == 7084800_u);
+            expect(cardano::slot::from_epoch(215) == 7516800_u);
         };
         "tx_size"_test = [] {
             for (const auto &[sz, exp_sz]: {

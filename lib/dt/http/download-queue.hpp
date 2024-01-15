@@ -9,6 +9,7 @@
 #include <functional>
 #include <iostream>
 #include <memory>
+#include <optional>
 #include <string>
 #ifdef __clang__
 #   pragma GCC diagnostic push
@@ -33,6 +34,7 @@
 #include <boost/beast/version.hpp>
 #include <boost/url.hpp>
 #include <dt/logger.hpp>
+#include <dt/memory.hpp>
 #include <dt/mutex.hpp>
 #include <dt/scheduler.hpp>
 
@@ -62,17 +64,24 @@ namespace daedalus_turbo::http {
 
         struct request {
             std::string url {};
+            uint64_t priority = 0;
             std::function<void(result &&)> handler {};
             std::vector<std::string> errors {};
+
+            bool operator<(const request &b) const
+            {
+                return priority > b.priority;
+            }
         };
 
         download_queue(scheduler &sched, size_t max_requests=0, size_t task_prio=1000, const std::string &task_name="download")
             : _sched { sched }, _task_name { task_name }, _task_prio { task_prio }, _resolver { _ioc },
-                _requests_max { max_requests == 0 ? std::max<size_t>(_sched.num_workers() * 3, 96) : max_requests },
+                _requests_max { _max_allowed_requests(max_requests) },
                 _max_io_threads { max_io_threads }, _shutdown { std::make_shared<std::atomic_bool>(false) }
         {
             if (_max_io_threads == 0)
                 throw error("max_io_threads cannot be zero!");
+            logger::debug("created download queue with {} max active requests", _requests_max);
             auto shutdown_copy = _shutdown;
             _ioc_process = [&, shutdown_copy] {
                 size_t num_done = 0;
@@ -80,9 +89,9 @@ namespace daedalus_turbo::http {
                     {
                         std::scoped_lock lk { _queue_mutex };
                         while (_requests_active < _requests_max && !_queue.empty()) {
-                            auto req = _queue.front();
+                            auto req = _queue.top();
                             _download(std::move(req));
-                            _queue.pop_front();
+                            _queue.pop();
                             --_queue_size;
                         }
                     }
@@ -122,9 +131,9 @@ namespace daedalus_turbo::http {
                 _sched.submit(_task_name, _task_prio, _ioc_process);
         }
 
-        void download(const std::string &url, const std::function<void(result &&)> &handler)
+        void download(const std::string &url, uint64_t priority, const std::function<void(result &&)> &handler)
         {
-            _add_request(url, handler);
+            _add_request(url, priority, handler);
         }
 
         std::string download_sync(const std::string &url)
@@ -190,7 +199,7 @@ namespace daedalus_turbo::http {
         std::atomic_bool _success = true;
         std::function<std::any()> _ioc_process {};
         alignas(mutex::padding) std::mutex _queue_mutex {};
-        std::deque<request> _queue {};
+        std::priority_queue<request> _queue {};
         // keep the size separately in an atomic var to not acquire mutex for read access to the size
         std::atomic_size_t _queue_size = 0;
 
@@ -229,12 +238,12 @@ namespace daedalus_turbo::http {
             void _handle_error(const std::string &error, bool recoverable=true)
             {
                 _req.errors.emplace_back(error);
-                if (_req.errors.size() < 3 && recoverable) {
+                if (_req.errors.size() < 10 && recoverable) {
                     logger::debug("retrying after a recoverable download issue with {}: {} num_errors: {}", _req.url, error, _req.errors.size());
                     _dlq._reinsert_request(std::move(_req));
                 } else {
-                    logger::warn("download error {}: {}", _req.url, error);
-                    _req.handler(result { .url=_req.url, .error=error });
+                    logger::warn("download error {} priority {}: {}", _req.url, _req.priority, error);
+                    _dlq._report_failure(_req, result { .url=_req.url, .error=error });
                 }
             }
 
@@ -282,55 +291,77 @@ namespace daedalus_turbo::http {
                     return;
                 }
                 std::string body = boost::beast::buffers_to_string(res.body().data());
-                _req.handler(result { std::move(_req.url), std::move(body) });
+                _dlq._report_success(_req, result { std::move(_req.url), std::move(body) });
                 _stream.socket().shutdown(tcp::socket::shutdown_both, ec);
                 if(ec && ec != beast::errc::not_connected)
                     logger::warn("socket shutdown failure: {}", ec.message());
             }
         };
 
-        void _add_request(const std::string &url, const std::function<void(result &&)> &orig_handler)
+        static size_t _sys_max_requests()
+        {
+            // One cardano chunk can take 30-40 MB compressed.
+            // Thus, 100 in-memory buffers can tak 3-4 GB of RAM and requires to chose the parameter carefully
+            auto avail_ram = memory::physical_mb();
+            if (avail_ram <= 4096)
+                return 8;
+            if (avail_ram <= 8192)
+                return 24;
+            if (avail_ram <= 16384)
+                return 48;
+            return 96;
+        }
+
+        static size_t _max_allowed_requests(size_t user_max_requests)
+        {
+            auto sys_max_requests = _sys_max_requests();
+            if (user_max_requests == 0 || user_max_requests > sys_max_requests)
+                return sys_max_requests;
+            return user_max_requests;
+        }
+
+        void _add_request(const std::string &url, uint64_t priority, const std::function<void(result &&)> &orig_handler)
         {
             if (_complete)
                 throw error("the queue is complete, can't add new tasks!");
             std::scoped_lock lk { _queue_mutex };
-            _queue.emplace_back(url, [this, orig_handler](result &&res) {
-                --_requests_active;
-                if (res) {
-                    logger::trace("downloaded {}: {} bytes, remaining requests: {}", res.url, res.body.size(), size());
-                } else {
-                    _success = false;
-                    logger::trace("download of {} failed: {}, remaining requests: {}", res.url, res.error, size());
-                }
-                try {
-                    orig_handler(std::move(res));
-                } catch (std::exception &ex) {
-                    logger::error("download handler failed: {}", ex.what());
-                }
-                auto &p = logger::progress::get();
-                if (_complete && _requests_active == 0 && _queue_size == 0) {
-                    *_shutdown = true;
-                    p.retire("download-queue");
-                } else {
-                    p.update("download-queue", fmt::format("{}", size()));
-                }
-                p.inform();
-            });
+            _queue.emplace(url, priority, orig_handler);
             _queue_size++;
+        }
+
+        void _report_success(const request &req, result &&res)
+        {
+            --_requests_active;
+            logger::trace("downloaded {}: {} bytes, remaining requests: {}", res.url, res.body.size(), size());
+            req.handler(std::move(res));
+            if (_complete && _requests_active == 0 && _queue_size == 0)
+                *_shutdown = true;
+        }
+
+        void _report_failure(const request &req, result &&res)
+        {
+            --_requests_active;
+            _success = false;
+            logger::trace("download of {} failed: {}, remaining requests: {}", res.url, res.error, size());
+            req.handler(std::move(res));
+            if (_complete && _requests_active == 0 && _queue_size == 0)
+                *_shutdown = true;
         }
 
         void _reinsert_request(request &&req)
         {
-            {
-                std::scoped_lock lk { _queue_mutex };
-                --_requests_active;
-                _queue.emplace_back(std::move(req));
-                _queue_size++;
-            }
+            std::scoped_lock lk { _queue_mutex };
+            --_requests_active;
+            // ensure that failing request won't be retried immediately
+            if (!_queue.empty())
+                req.priority = _queue.top().priority * 2;
+            _queue.emplace(std::move(req));
+            _queue_size++;
         }
 
         void _download(request &&req)
         {
+            // expects that _queue_mutex is acquired and held by its caller
             ++_requests_active;
             std::make_shared<session>(*this, _ioc, _resolver)->download(std::move(req));
         }

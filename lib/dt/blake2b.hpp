@@ -15,6 +15,7 @@ namespace daedalus_turbo
 {
     using blake2b_224_hash = array<uint8_t, 28>;
     using blake2b_256_hash = array<uint8_t, 32>;
+    using blake2b_64_hash = array<uint8_t, 8>;
 
     inline void blake2b_sodium(void *out, size_t out_len, const void *in, size_t in_len)
     {

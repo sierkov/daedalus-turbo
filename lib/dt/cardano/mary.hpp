@@ -51,9 +51,9 @@ namespace daedalus_turbo::cardano::mary {
         static void _extract_assets(const cbor_value &address, const cbor_value &value, size_t idx, const std::function<void(const cardano::tx_output &)> &observer)
         {
             if (value.type == CBOR_UINT) {
-                observer(tx_output { address.buf(), value.uint(), idx });
+                observer(tx_output { address.buf(), cardano::amount { value.uint() }, idx });
             } else {
-                observer(tx_output { address.buf(), value.array().at(0).uint(), idx, &value.array().at(1).map() });
+                observer(tx_output { address.buf(), cardano::amount { value.array().at(0).uint() }, idx, &value.array().at(1).map() });
             }
         }
     };
@@ -65,7 +65,7 @@ namespace daedalus_turbo::cardano::mary {
         if (txs.size() != wits.size())
             throw error("slot: {}, the number of transactions {} does not match the number of witnesses {}", (uint64_t)slot(), txs.size(), wits.size());
         for (size_t i = 0; i < txs.size(); ++i) {
-            observer(tx { txs.at(i), *this, &wits.at(i) });
+            observer(tx { txs.at(i), *this, &wits.at(i), i });
         }
     }
 }

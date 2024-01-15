@@ -9,7 +9,6 @@
 #include <dt/index/common.hpp>
 
 namespace daedalus_turbo::index::tx {
-
     struct __attribute__((packed)) item {
         cardano_hash_32 hash;
         uint64_t offset = 0;
@@ -46,6 +45,17 @@ namespace daedalus_turbo::index::tx {
     };
 
     using indexer = indexer_offset<item, chunk_indexer>;
+}
+
+namespace fmt {
+    template<>
+    struct formatter<daedalus_turbo::index::tx::item>: public formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "tx::item(hash: {} offset: {} size: {})",
+                v.hash, v.offset, static_cast<size_t>(v.size));
+        }
+    };
 }
 
 #endif //!DAEDALUS_TURBO_INDEX_TX_HPP

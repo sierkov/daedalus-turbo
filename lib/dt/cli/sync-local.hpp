@@ -6,9 +6,9 @@
 #define DAEDALUS_TURBO_CLI_SYNC_LOCAL_HPP
 
 #include <dt/cli.hpp>
+#include <dt/indexer.hpp>
 #include <dt/requirements.hpp>
 #include <dt/sync/local.hpp>
-#include <dt/indexer.hpp>
 
 namespace daedalus_turbo::cli::sync_local {
     struct cmd: public command {
@@ -49,10 +49,10 @@ namespace daedalus_turbo::cli::sync_local {
             timer tc { "sync-local" };
             scheduler sched {};
             auto indexers = indexer::default_list(sched, idx_dir);
-            indexer::incremental idxr { sched, db_dir, indexers };
-            sync::local::syncer syncr { sched, idxr, node_dir, strict, zstd_max_level, std::chrono::seconds { 0 } };
+            indexer::incremental cr { sched, db_dir, indexers };
+            sync::local::syncer syncr { sched, cr, node_dir, strict, zstd_max_level, std::chrono::seconds { 0 } };
             auto res = syncr.sync();
-            logger::info("errors: {} updated: {} deleted: {} dist: {} db_last_slot: {} cycle time: {}",
+            logger::info("errors: {} chunks: {} deleted: {} dist: {} db_last_slot: {} cycle time: {}",
                     res.errors.size(), res.updated.size(), res.deleted.size(), syncr.size(), res.last_slot, tc.stop(false));
             std::sort(res.errors.begin(), res.errors.end());
             for (const auto &err: res.errors)

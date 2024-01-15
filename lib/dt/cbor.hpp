@@ -76,6 +76,25 @@ namespace daedalus_turbo {
         {
         }
 
+        static std::string &type_name(enum cbor_value_type type)
+        {
+            static std::array<std::string, 15> names {
+                "unsigned integer", "negative integer", "bytes", "text",
+                "array", "map", "tag", "true",
+                "null", "undefined", "break", "false",
+                "float16", "float32", "float64"
+            };
+            size_t type_idx = static_cast<size_t>(type);
+            if (type_idx >= names.size())
+                throw error("unsupported CBOR type index: {}", type_idx);
+            return names[type_idx];
+        }
+
+        const std::string &type_name() const
+        {
+            return type_name(type);
+        }   
+
         const cbor_buffer data_buf() const {
             return cbor_buffer(data, size);
         }
@@ -158,7 +177,7 @@ namespace daedalus_turbo {
                 return std::get<T>(content);
             } catch (std::bad_variant_access &ex) {
                 throw cbor_error("invalid cbor value access, expecting type {} while the present type is {} in file {} line {}!",
-                                 (unsigned)exp_type, (unsigned)type, loc.file_name(), loc.line());
+                                 type_name(exp_type), type_name(), loc.file_name(), loc.line());
             }
         }
 
@@ -169,7 +188,7 @@ namespace daedalus_turbo {
                 return std::get<T>(content);
             } catch (std::bad_variant_access &ex) {
                 throw cbor_error("invalid cbor value access, expecting type {} while the present type is {} in file {} line {}!",
-                                 (unsigned)exp_type, (unsigned)type, loc.file_name(), loc.line());
+                                 type_name(exp_type), type_name(), loc.file_name(), loc.line());
             }
         }
 

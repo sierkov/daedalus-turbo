@@ -21,9 +21,9 @@ namespace daedalus_turbo::cli {
     using arguments = std::vector<std::string>;
 
     struct command_info {
-        std::string_view name;
-        std::string_view usage;
-        std::string_view descr;
+        std::string name {};
+        std::string usage {};
+        std::string descr {};
     };
 
     struct command {
@@ -80,6 +80,9 @@ namespace daedalus_turbo::cli {
             cmd_it->second->run(args);
         } catch (const std::exception &ex) {
             logger::error("{}: {}", cmd, ex.what());
+            return 1;
+        } catch (...) {
+            logger::error("unrecognized exception at caught at main!");
             return 1;
         }
         return 0;

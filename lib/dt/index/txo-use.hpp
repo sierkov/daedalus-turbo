@@ -11,7 +11,7 @@
 namespace daedalus_turbo::index::txo_use {
 
     struct __attribute__((packed)) item {
-        cardano_hash_32 hash;
+        cardano::tx_hash hash;
         cardano::tx_out_idx out_idx;
         uint64_t offset = 0;
         cardano::tx_size size {};
@@ -56,10 +56,31 @@ namespace daedalus_turbo::index::txo_use {
                         tx_hash, txo_idx, tx.offset(), tx.size(), blk.slot().epoch());
                 }
             });
+            blk.foreach_invalid_tx([&](const auto &tx) {
+                std::set<std::pair<cardano_hash_32, cardano::tx_out_idx>> inputs {};
+                tx.foreach_collateral([&](const auto &tx_in) {
+                    inputs.emplace(tx_in.tx_hash, tx_in.txo_idx);
+                });
+                for (const auto &[tx_hash, txo_idx]: inputs) {
+                    _idx.emplace_part(tx_hash[0] / _part_range,
+                        tx_hash, txo_idx, tx.offset(), tx.size(), blk.slot().epoch());
+                }
+            });
         }
     };
 
     using indexer = indexer_offset<item, chunk_indexer>;
+}
+
+namespace fmt {
+    template<>
+    struct formatter<daedalus_turbo::index::txo_use::item>: public formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "txo_use::item(hash: {} out_idx: {} offset: {} size: {} epoch: {})",
+                v.hash, static_cast<size_t>(v.out_idx), static_cast<uint64_t>(v.offset), static_cast<size_t>(v.size), static_cast<uint64_t>(v.epoch));
+        }
+    };
 }
 
 #endif //!DAEDALUS_TURBO_INDEX_TXO_USE_HPP
