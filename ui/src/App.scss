@@ -1,0 +1,37 @@
+h1 {
+    margin: 0 0 32px 0;
+}
+h2 {
+    margin: 0 0 16px 0;
+}
+h3, .h3 {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 600;
+    color: #fff;
+}
+.app {
+    margin: 16px;
+}
+.background {
+    width: 100%;
+    min-height: calc(100vh);
+    background-image: url("/static/background.png");
+    background-size: cover;
+}
+.content {
+    padding: 0 32px 0 32px;
+}
+.page-content {
+    padding-bottom: 32px;
+}
+.content-centered {
+    display: flex;
+    flex-direction: column;
+    min-width: calc(100vw - 2 * 32px);
+    height: calc(100vh);
+    justify-content: center;
+    align-items: center;
+    padding: 0 32px 0 32px;
+}

@@ -1,0 +1,12 @@
+.sync {
+    display: flex;
+    flex-direction: column;
+    min-width: calc(100vw - 2*16px);
+    height: calc(100vh - 50px - 70px - 144px);
+    justify-content: center;
+    align-items: center;
+    .logo-large {
+        height: 96px;
+        margin-bottom: 32px;
+    }
+}

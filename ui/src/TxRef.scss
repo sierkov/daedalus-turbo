@@ -1,0 +1,30 @@
+.tx-ref {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    min-height: 50px;
+    margin-bottom: 5px;
+    color: #b2b2b2;
+    padding: 0;
+
+    .timestamp {
+        min-width: 150px;
+        flex: 0 0 150px;
+        margin-right: 16px;
+    }
+    .txo {
+        min-width: 150px;
+        flex: 0 1 570px;
+        margin-right: 16px;
+        overflow: hidden;
+    }
+    .balance {
+        min-width: 150px;
+        flex: 1 1 auto;
+        overflow: hidden;
+        overflow-wrap: anywhere;
+    }
+    a, a:visited, a:focus, a:hover, p {
+        color: #b2b2b2;
+    }
+}
