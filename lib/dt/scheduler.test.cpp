@@ -96,7 +96,7 @@ suite scheduler_suite = [] {
                 else ++num_ok;
             });
             s.submit("bad_actor", 100, []() { throw error("Ha ha! I told ya!"); return true; });
-            s.process();
+            expect(!s.process_ok());
             expect(num_ok == 0_u);
             expect(num_err == 1_u);
         };

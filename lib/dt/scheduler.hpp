@@ -293,7 +293,8 @@ namespace daedalus_turbo {
             return cnt;
         }
 
-        bool process_ok(bool report_progress, std::chrono::milliseconds update_interval_ms, std::ostream &report_stream)
+        bool process_ok(bool report_progress=true, std::chrono::milliseconds update_interval_ms=std::chrono::milliseconds { 1000 },
+            std::ostream &report_stream=std::cerr)
         {
             logger::debug("scheduler::process started tasks: {}", task_count());
             _num_errors = 0;

@@ -25,8 +25,10 @@ target_link_libraries(lib PUBLIC 3rdparty)
 add_executable(dt src/dt.cpp)
 target_link_libraries(dt PUBLIC lib 3rdparty)
 
-add_executable(dt-debug src/dt-debug.cpp)
-target_link_libraries(dt-debug PUBLIC lib 3rdparty)
+if (EXISTS ${CMAKE_SOURCE_DIR}/src/dt-debug.cpp)
+    add_executable(dt-debug src/dt-debug.cpp)
+    target_link_libraries(dt-debug PUBLIC lib 3rdparty)
+endif()
 
 file(GLOB_RECURSE TEST_SRCS lib/dt/*.test.cpp)
 add_executable(run-test src/run-tests.cpp ${TEST_SRCS})
@@ -38,7 +40,7 @@ target_link_libraries(run-bench PUBLIC lib 3rdparty)
 
 message("copying test data ...")
 file(COPY data DESTINATION .)
-if (EXISTS ${CMAKE_SOURC_DIR}/publisher)
+if (EXISTS ${CMAKE_SOURCE_DIR}/publisher)
     file(COPY publisher DESTINATION .)
 endif()
 
