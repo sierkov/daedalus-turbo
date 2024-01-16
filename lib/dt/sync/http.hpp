@@ -13,7 +13,7 @@
 namespace daedalus_turbo::sync::http {
     struct syncer {
         syncer(scheduler &sched, indexer::incremental &cr, const std::string &src_host, bool report_progress=true)
-            : _sched { sched }, _cr { cr }, _host { src_host }, _report_progress { report_progress }, _dlq { _sched }
+            : _sched { sched }, _cr { cr }, _host { src_host }, _report_progress { report_progress }, _dlq {}
         {
             auto deletable_chunks = _cr.init_state();
             for (auto &&path: deletable_chunks) {
@@ -60,6 +60,8 @@ namespace daedalus_turbo::sync::http {
         }
 
     private:
+        using download_queue = daedalus_turbo::http::download_queue;
+
         struct sync_task {
             uint64_t start_epoch = 0;
             uint64_t start_offset = 0;
@@ -75,14 +77,28 @@ namespace daedalus_turbo::sync::http {
         indexer::incremental &_cr;
         std::string _host;
         const bool _report_progress;
-        daedalus_turbo::http::download_queue _dlq;
+        download_queue _dlq;
         chunk_registry::file_set _deletable_chunks {};
         alignas(mutex::padding) std::mutex _epoch_json_cache_mutex {};
         std::map<uint64_t, std::string> _epoch_json_cache {};
 
         std::string _get_sync(const std::string &target)
         {
-            return _dlq.download_sync(fmt::format("http://{}{}", _host, target));
+            file::tmp tmp { "sync-http-download-sync.bin" };
+            std::atomic_bool ready { false };
+            std::optional<std::string> err {};
+            auto url = fmt::format("http://{}{}", _host, target);
+            _dlq.download(url, tmp.path(), 0, [&](const auto &res) {
+                err = std::move(res.error);
+                ready = true;
+            });;
+            while (!ready) {
+                std::this_thread::sleep_for(std::chrono::milliseconds { 100 });
+            }
+            if (err)
+                throw error("download of {} failed: {}", url, *err);
+            auto buf = file::read(tmp.path());
+            return std::string { buf.span().string_view() };
         }
 
         void _get_sync(const std::string &target, uint8_vector &data)
@@ -129,26 +145,26 @@ namespace daedalus_turbo::sync::http {
             auto &progress = progress::get();
             progress.update("download-metadata", "0.000%");
             progress::info dm_progress {};
-            _dlq.start();
             if (last_synced_epoch_it != _cr.epochs().end()) {
                 for (auto it = std::next(last_synced_epoch_it); it != _cr.epochs().end(); it++) {
                     uint64_t epoch = it->first;
                     dm_progress.total++;
-                    _dlq.download(fmt::format("http://{}/epoch-{}.json", _host, epoch), epoch, [this, &dm_progress, &progress, epoch](auto &&res) {
+                    auto save_path = _cr.full_path(fmt::format("remote/epoch-{}.json", epoch));
+                    _dlq.download(fmt::format("http://{}/epoch-{}.json", _host, epoch), save_path, epoch, [this, &dm_progress, &progress, epoch, save_path](auto &&res) {
                         if (res) {
-                            std::scoped_lock lk { _epoch_json_cache_mutex };
-                            _epoch_json_cache[epoch] = std::move(res.body);
+                            auto buf = file::read(save_path);
+                            {
+                                std::scoped_lock lk { _epoch_json_cache_mutex };
+                                _epoch_json_cache[epoch] = buf.span().string_view();
+                            }
                             dm_progress.completed++;
                             progress.update("download-metadata", fmt::format("{:0.3f}%", static_cast<double>(dm_progress.completed) * 100 / dm_progress.total));
                         }
                     });
                 }
             }
-            _dlq.complete();
-            _sched.process(_report_progress);
+            _dlq.process(_report_progress);
             progress.retire("download-metadata");
-            if (!_dlq.success())
-                throw error("failed to fetch information about the necessary epochs - try again later");
             if (last_synced_epoch_it != _cr.epochs().end()) {
                 for (auto it = std::next(last_synced_epoch_it); it != _cr.epochs().end(); it++) {
                     static std::string_view volatile_prefix { "volatile/" };
@@ -268,31 +284,25 @@ namespace daedalus_turbo::sync::http {
                     sp.download.total += chunk.compressed_size;
                     sp.parse.total += chunk.compressed_size;
                 }
-                _dlq.start();
                 for (const auto &chunk: download_tasks) {
                     auto data_url = fmt::format("http://{}/{}", _host, chunk.rel_path());
                     auto save_path = _cr.full_path(chunk.rel_path());
                     if (!std::filesystem::exists(save_path)) {
-                        _dlq.download(data_url, chunk.offset, [this, data_url, chunk, save_task, max_offset, save_path](daedalus_turbo::http::download_queue::result &&res) {
+                        _dlq.download(data_url, save_path + ".tmp", chunk.offset, [this, chunk, saved_proc, save_path](download_queue::result &&res) {
                             if (res) {
-                                const auto &compressed = res.body;
-                                _sched.submit(save_task, 200 + 100 * (max_offset - chunk.offset) / max_offset, [chunk, save_path, compressed]() {
-                                    file::write(save_path, compressed);
-                                    return saved_chunk { std::move(save_path), std::move(chunk) };
-                                });
+                                std::filesystem::rename(res.save_path, save_path);
+                                saved_proc(saved_chunk { save_path, chunk });
                             } else {
-                                logger::error("download of {} failed: {}", data_url, res.error);
+                                logger::error("download of {} failed: {}", res.url, *res.error);
                             }
                         });
                     } else {
                         saved_proc(saved_chunk { save_path, chunk });
                     }
                 }
-                _dlq.complete();
             }
+            _dlq.process(_report_progress, &_sched);
             _sched.process(_report_progress);
-            if (!_dlq.success())
-                throw error("download of chunks has failed - try again later");
             _register_parsed_chunks(new_chunks, updated_chunks);
             if (!volatile_chunks.empty()) {
                 {
@@ -319,7 +329,6 @@ namespace daedalus_turbo::sync::http {
                 max_offset += json::value_to<uint64_t>(group.at("size"));
             uint64_t start_offset = 0;
             logger::info("downloading metadata about the synchronized epochs");
-            _dlq.start();
             std::map<uint64_t, uint64_t> epoch_offsets {};
             for (const auto &group: epoch_groups) {
                 for (const auto &epoch: group.at("epochs").as_array()) {
@@ -329,10 +338,12 @@ namespace daedalus_turbo::sync::http {
                         epoch_offsets[epoch_id] = start_offset;
                         if (!_epoch_json_cache.contains(epoch_id)) {
                             auto epoch_url = fmt::format("http://{}/epoch-{}.json", _host, epoch_id);
-                            _dlq.download(epoch_url, epoch_id, [this, epoch_id](auto &&res) {
+                            auto save_path = _cr.full_path(fmt::format("remote/epoch-{}.json", epoch_id));
+                            _dlq.download(epoch_url, save_path, epoch_id, [this, epoch_id, save_path](auto &&res) {
                                 if (res) {
+                                    auto buf = file::read(save_path);
                                     std::scoped_lock { _epoch_json_cache_mutex };
-                                    _epoch_json_cache[epoch_id] = std::move(res.body);
+                                    _epoch_json_cache[epoch_id] = buf.span().string_view();
                                 }
                             });
                         }
@@ -340,10 +351,8 @@ namespace daedalus_turbo::sync::http {
                     start_offset += epoch_size;
                 }
             }
-            _dlq.complete();
+            _dlq.process(_report_progress, &_sched);
             _sched.process(_report_progress);
-            if (!_dlq.success())
-                throw error("failed to download epoch information - try again later");
             for (const auto &[epoch_id, epoch_start_offset]: epoch_offsets) {
                 auto epoch = json::parse(_epoch_json_cache.at(epoch_id)).as_object();
                 uint64_t chunk_start_offset = epoch_start_offset;

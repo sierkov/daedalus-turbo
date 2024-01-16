@@ -14,7 +14,6 @@
 #include <dt/zstd.hpp>
 
 namespace daedalus_turbo::file {
-
     struct tmp {
         tmp(const std::string &name): _path { (std::filesystem::temp_directory_path() / name).string() }
         {
@@ -35,6 +34,32 @@ namespace daedalus_turbo::file {
             return _path;
         }
 
+    private:
+        std::string _path;
+    };
+
+    struct tmp_directory {
+        tmp_directory(const std::string &name)
+            : _path { (std::filesystem::temp_directory_path() / name).string() }
+        {
+            std::filesystem::create_directories(_path);
+        }
+
+        ~tmp_directory()
+        {
+            if (std::filesystem::exists(_path))
+                std::filesystem::remove_all(_path);
+        }
+
+        const std::string &path() const
+        {
+            return _path;
+        }
+
+        operator const std::string &() const
+        {
+            return _path;
+        }
     private:
         std::string _path;
     };

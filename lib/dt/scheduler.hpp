@@ -317,12 +317,12 @@ namespace daedalus_turbo {
                 throw error("some scheduled tasks have failed, please consult logs for more details");
         }
 
-        void process_once()
+        bool process_once()
         {
             return _process_once(std::chrono::milliseconds { 50 });
         }
     private:
-        void _process_once(std::chrono::milliseconds update_interval_ms)
+        bool _process_once(std::chrono::milliseconds update_interval_ms)
         {
             {
                 std::scoped_lock lk { _retiring_mutex, _observers_mutex };
@@ -333,12 +333,11 @@ namespace daedalus_turbo {
             // Special case, in the single-worker mode, the tasks are executed in the loop
             if (_num_workers == 1 && !_tasks.empty())
                 _worker_try_execute(0);
-            {
-                std::unique_lock results_lock(_results_mutex);
-                bool have_work = _results_cv.wait_for(results_lock, update_interval_ms, [&]{ return !_results.empty(); });
-                if (have_work)
-                    _process_results(results_lock);
-            }
+            std::unique_lock results_lock(_results_mutex);
+            bool have_work = _results_cv.wait_for(results_lock, update_interval_ms, [&]{ return !_results.empty(); });
+            if (have_work)
+                _process_results(results_lock);
+            return have_work;
         }
 
         void _process(bool report_progress, std::ostream &report_stream, std::chrono::milliseconds update_interval_ms)

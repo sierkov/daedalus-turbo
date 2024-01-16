@@ -10,54 +10,45 @@ using namespace daedalus_turbo;
 using namespace daedalus_turbo::http;
 
 suite http_download_queue_suite = [] {
-    "http::download_queue"_test = [] {
-        "parallel download"_test = [] {
-            scheduler sched {};
-            download_queue dlq { sched };
-            dlq.start();
+    const std::string tmp_dir { "./tmp/test-download-queue-ng" };
+    std::filesystem::create_directories(tmp_dir);
+    "http::download_queue"_test = [&] {
+        "parallel download"_test = [&] {
+            download_queue dlq {};
             size_t num_errors = 0;
             size_t num_oks = 0;
             auto handler = [&](auto &&res) {
-                const auto &[url, body, error] = std::any_cast<download_queue::result>(res);
-                if (!error.empty())
+                const auto &r = std::any_cast<download_queue::result>(res);
+                if (r.error)
                     ++num_errors;
                 else
                     ++num_oks;
             };
             for (size_t epoch = 0; epoch <= 447; ++epoch)
-                dlq.download(fmt::format("http://turbo1.daedalusturbo.org/epoch-{}.json", epoch), 0, handler);
-            dlq.complete();
-            sched.process();
+                dlq.download(fmt::format("http://turbo1.daedalusturbo.org/epoch-{}.json", epoch), fmt::format("{}/epoch-{}.json", tmp_dir, epoch), 0, handler);
+            dlq.process();
             expect(num_errors == 0_u);
             expect(num_oks == 448_u);
         };
-        "retry on recoverable errors"_test = [] {
-            scheduler sched {};
-            download_queue dlq { sched };
-            dlq.start();
+        "retry on recoverable errors"_test = [&] {
+            download_queue dlq {};
             size_t num_errors = 0;
             size_t num_oks = 0;
             auto handler = [&](auto &&res) {
-                const auto &[url, body, error] = std::any_cast<download_queue::result>(res);
-                if (!error.empty())
+                const auto &r = std::any_cast<download_queue::result>(res);
+                if (r.error)
                     ++num_errors;
                 else
                     ++num_oks;
             };
-            dlq.download("http://turbo1.daedalusturbo.org/epoch-unknown.json", 0, handler);
-            dlq.complete();
-            sched.process();
-            // despite 3 retries, only the most recent error shall be reported
+            dlq.download("http://turbo1.daedalusturbo.org/epoch-unknown.json", tmp_dir + "/epoch-unknown", 0, handler);
+            expect(dlq.process_ok() == false);
             expect(num_errors == 1_u);
             expect(num_oks == 0_u);
         };
         "empty queue finishes"_test = [] {
-            scheduler sched {};
-            download_queue dlq { sched };
-            dlq.start();
-            dlq.complete();
-            sched.process();
-            expect(true);
+            download_queue dlq {};
+            expect(dlq.process_ok());
         };
     };
 };

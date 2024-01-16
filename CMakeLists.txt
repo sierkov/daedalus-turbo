@@ -31,11 +31,11 @@ if (EXISTS ${CMAKE_SOURCE_DIR}/src/dt-debug.cpp)
 endif()
 
 file(GLOB_RECURSE TEST_SRCS lib/dt/*.test.cpp)
-add_executable(run-test src/run-tests.cpp ${TEST_SRCS})
+add_executable(run-test src/run-test.cpp ${TEST_SRCS})
 target_link_libraries(run-test PUBLIC lib 3rdparty)
 
 file(GLOB_RECURSE BENCH_SRCS lib/dt/*.bench.cpp)
-add_executable(run-bench src/run-tests.cpp ${BENCH_SRCS})
+add_executable(run-bench src/run-test.cpp ${BENCH_SRCS})
 target_link_libraries(run-bench PUBLIC lib 3rdparty)
 
 message("copying test data ...")
@@ -45,9 +45,9 @@ if (EXISTS ${CMAKE_SOURCE_DIR}/publisher)
 endif()
 
 if (CMAKE_BUILD_TYPE STREQUAL Coverage)
-    target_compile_options(lib PRIVATE --coverage)
-    target_compile_options(run-test PRIVATE --coverage)
-    target_link_options(run-test PRIVATE --coverage)
+    target_compile_options(lib PRIVATE -g --coverage)
+    target_compile_options(run-test PRIVATE -g --coverage)
+    target_link_options(run-test PRIVATE -g --coverage)
     add_custom_command(TARGET run-test PRE_BUILD COMMAND
             find ${CMAKE_BINARY_DIR} -type f -name '*.gcda' -exec rm {} +)
     find_program(GCOVR_PATH gcovr)
