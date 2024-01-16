@@ -136,11 +136,11 @@ cd ..
 
 ### Launch
 
-Launch the local API server and store blockchain data in the "data-dir" directory:
+Launch the local API server which will store the downloaded blockchain data in "data-dir" directory:
 ```
-./cmake-build-release/dt http-api <data-dir>
+./cmake-build-release/dt http-api data-dir
 ```
-Please, note that the storage device on which "data-dir" is locate should have at least 60 GB of free space.
+Please, note that the storage device on which "data-dir" is located should have at least 60 GB of free space.
 
 From a separate terminal window, while the http API is running, start the UI:
 ```
@@ -148,11 +148,10 @@ cd ui
 npm start
 ```
 
-During the first run, the API server will download the Cardano blockchain data, which may take a while.
-If your test PC fulfills the [hardware requirements](#requirements), the initial synchronization should less than one hour. The successive runs will sync only the updates since the previous sync.
+During the first run, the API server will download the complete Cardano blockchain data, which may take a while.
+If your test PC fulfills the [hardware requirements](#requirements), the initial synchronization should take less than one hour. The successive runs will sync only the updates since the previous sync.
 
-Once you are done with testing the UI, do not forget to terminate the local API server by closing the terminal
-in which you started it.
+Once you are done with testing the UI, stop the local API server by using Ctrl-C or closing the terminal in which you started it.
 
 # Spread the word
 Many in the Cardano community, including some developers of Daedalus, don't believe that it's possible to make it noticeably faster. This leads to a situation in which the development is not focused on its performance. If you're persuaded by the evidence presented here, share it on social media with those around you. Changing the beliefs of people can be harder than building top-notch technology. So, every single tweet and Facebook post makes a difference. Thank you!
