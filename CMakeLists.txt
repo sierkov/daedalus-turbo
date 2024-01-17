@@ -30,6 +30,11 @@ if (EXISTS ${CMAKE_SOURCE_DIR}/src/dt-debug.cpp)
     target_link_libraries(dt-debug PUBLIC lib 3rdparty)
 endif()
 
+if (EXISTS ${CMAKE_SOURCE_DIR}/test/validate-balance.cpp)
+    add_executable(validate-balance test/validate-balance.cpp)
+    target_link_libraries(validate-balance PUBLIC lib 3rdparty)
+endif()
+
 file(GLOB_RECURSE TEST_SRCS lib/dt/*.test.cpp)
 add_executable(run-test src/run-test.cpp ${TEST_SRCS})
 target_link_libraries(run-test PUBLIC lib 3rdparty)

@@ -40,7 +40,7 @@ namespace daedalus_turbo::cli::sync_http {
                 }
             }
             timer tc { fmt::format("sync-http {} -> {}, {}", host, db_dir, idx_dir) };
-            scheduler sched {};
+            scheduler sched { std::max(scheduler::default_worker_count() - 1, static_cast<size_t>(1)) };
             auto indexers = indexer::default_list(sched, idx_dir);
             indexer::incremental cr { sched, db_dir, indexers };
             sync::http::syncer syncr { sched, cr, host };

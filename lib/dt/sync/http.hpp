@@ -25,6 +25,7 @@ namespace daedalus_turbo::sync::http {
         void sync()
         {
             timer t { "http synchronization" };
+            progress_guard pg { "download", "parse", "merge" };
             _cr.clean_up();
             auto epoch_groups = _get_json<json::array>("/chain.json");
             if (epoch_groups.empty())
@@ -33,7 +34,6 @@ namespace daedalus_turbo::sync::http {
             if (task) {
                 logger::info("synchronization starts from chain offset {} in epoch {}", task->start_offset, task->start_epoch);
                 auto deleted_chunks = _cr.truncate(task->start_offset, false);
-                progress_guard pg { "download", "parse", "merge" };
                 sync_progress progress {};
                 progress.merge.completed = task->start_offset;
                 _cr.set_progress("merge", progress.merge);
@@ -248,7 +248,6 @@ namespace daedalus_turbo::sync::http {
                 chunk_registry::chunk_info info {};
             };
             const std::string parse_task = "parse";
-            const std::string save_task = "save";
             std::vector<chunk_registry::chunk_info> new_chunks {};
             std::vector<saved_chunk> volatile_chunks {};
             auto &progress = progress::get();
@@ -275,7 +274,6 @@ namespace daedalus_turbo::sync::http {
                 }
             };
             _sched.on_result(parse_task, parsed_proc);
-            _sched.on_result(save_task, saved_proc);
             {
                 timer t { "download all chunks and parse immutable ones" };
                 // compute totals before starting the execution to ensure correct progress percentages
@@ -300,22 +298,21 @@ namespace daedalus_turbo::sync::http {
                         saved_proc(saved_chunk { save_path, chunk });
                     }
                 }
+                _dlq.process(_report_progress, &_sched);
+                _sched.process(_report_progress);
+                _register_parsed_chunks(new_chunks, updated_chunks);
             }
-            _dlq.process(_report_progress, &_sched);
-            _sched.process(_report_progress);
-            _register_parsed_chunks(new_chunks, updated_chunks);
+            
             if (!volatile_chunks.empty()) {
-                {
-                    timer t { "parse volatile chunks" };
-                    new_chunks.clear();
-                    _sched.on_result(parse_task, parsed_proc);
-                    for (auto &&chunk: volatile_chunks) {
-                        _sched.submit(parse_task, 100 + 100 * (max_offset - chunk.info.offset) / max_offset, [this, chunk]() {
-                            return _parse_local_chunk(chunk.info, chunk.path);
-                        });
-                    }
-                    _sched.process(_report_progress);
+                timer t { "parse volatile chunks" };
+                new_chunks.clear();
+                _sched.on_result(parse_task, parsed_proc);
+                for (auto &&chunk: volatile_chunks) {
+                    _sched.submit(parse_task, 100 + 100 * (max_offset - chunk.info.offset) / max_offset, [this, chunk]() {
+                        return _parse_local_chunk(chunk.info, chunk.path);
+                    });
                 }
+                _sched.process(_report_progress);
                 _register_parsed_chunks(new_chunks, updated_chunks);
             }
         }

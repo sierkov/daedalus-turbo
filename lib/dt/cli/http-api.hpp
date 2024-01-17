@@ -36,7 +36,7 @@ namespace daedalus_turbo::cli::http_api {
                 static std::string_view p_host { "--host=" };
                 static std::string_view p_ip { "--ip=" };
                 static std::string_view p_port { "--port=" };
-                for (const auto &arg: std::ranges::subrange(args.begin() + 2, args.end())) {
+                for (const auto &arg: std::ranges::subrange(args.begin() + 1, args.end())) {
                     if (arg.substr(0, p_host.size()) == p_host) {
                         host = arg.substr(p_host.size());
                     } else if (arg.substr(0, p_ip.size()) == p_ip) {

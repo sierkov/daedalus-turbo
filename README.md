@@ -59,10 +59,14 @@ git clone https://github.com/sierkov/daedalus-turbo.git dt
 cd dt
 ```
 
-Build and start a Docker container:
+Build the test Docker container:
 ```
 docker build -t dt -f Dockerfile.test .
-docker run -it dt
+```
+
+Start the test container, with `<cardano-dir>` being the host's directory to store the blockchain data:
+```
+docker run -it --rm -v <cardano-dir>:/data/cardano dt
 ```
 
 Download the Cardano blockchain from a demo compressing server, [turbo1.daedalusturbo.org](http://turbo1.daedalusturbo.org/) and construct search indices:
@@ -95,36 +99,16 @@ Show information about a transaction:
 ### Prerequisites
 To test the desktop user interface, you need the following packages:
 - A working C++ compiler supporting C++20 standard.
-- [Git](https://git-scm.com/)
-- [CMake](https://cmake.org/download/) version 3.28 or later
-- [Node.JS](https://nodejs.org/en/download/current) version 20
-- [Boost](https://www.boost.org/) version 1.83 or later
-- [Fmt](https://github.com/fmtlib/fmt) version 8.1.1 or later
-- [Libsodium](https://github.com/jedisct1/libsodium) version 1.0.18 or later
-- [Spdlog](https://github.com/gabime/spdlog) version 1.9.2 or later
-- [Zstd](https://github.com/facebook/zstd) version 1.4.8 or later
+- [Git](https://git-scm.com/) to get a copy of this repository.
+- [Docker](https://www.docker.com/products/docker-desktop/) to launch the software in an isolated environment.
+- [Node.JS](https://nodejs.org/en/download/current) to start the user interface.
 
-For example, on Mac OS, the dependencies can be installed with the following command:
-```
-brew install llvm@17 node@20 cmake pkg-config boost fmt libsodium spdlog zstd
-```
 
 ### Build
 
-Clone this repository and make it your working directory:
+Build the test Docker container:
 ```
-git clone https://github.com/sierkov/daedalus-turbo.git dt
-cd dt
-```
-
-Generate build scripts:
-```
-cmake -B cmake-build-release
-```
-
-Compile the API:
-```
-cmake --build cmake-build-release -j -t dt
+docker build -t dt -f Dockerfile.test .
 ```
 
 Install the necessary Node.JS modules:
@@ -136,11 +120,10 @@ cd ..
 
 ### Launch
 
-Launch the local API server which will store the downloaded blockchain data in "data-dir" directory:
+Launch the local API server which will store the downloaded blockchain data into the host's `<cardano-dir>` directory and will be listening at the address 127.0.0.1:55556 of the host machine:
 ```
-./cmake-build-release/dt http-api data-dir
+docker run -it --rm -v <cardano-dir>:/data/cardano -p 127.0.0.1:55556:55556 dt ./dt http-api /data/cardano --ip=0.0.0.0
 ```
-Please, note that the storage device on which "data-dir" is located should have at least 60 GB of free space.
 
 From a separate terminal window, while the http API is running, start the UI:
 ```

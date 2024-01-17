@@ -108,7 +108,7 @@ namespace daedalus_turbo::http_api {
         };
 
         const std::string _db_dir, _idx_dir, _host;
-        scheduler _sched {};
+        scheduler _sched { std::max(scheduler::default_worker_count() - 2, static_cast<size_t>(1)) };
         indexer::indexer_map _indexers {};
         std::unique_ptr<indexer::incremental> _cr {};
         std::unique_ptr<reconstructor> _reconst {};
