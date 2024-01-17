@@ -36,7 +36,8 @@ export default function Home() {
             }
         }
     }, []);
-    let homeComponent, forceContinue;
+    const [forceContinue, setForceContinue] = useState(false);
+    let homeComponent;
     if (statusInfo?.apiError?.length > 0) {
         const issues = [
             { description: statusInfo.apiError, canProceed: false }
@@ -48,7 +49,7 @@ export default function Home() {
         ];
         homeComponent = <Error issues={issues} />;
     } else if (statusInfo?.requirements?.issues?.length > 0 && !forceContinue) {
-        homeComponent = <Error issues={statusInfo?.requirements?.issues} />;
+        homeComponent = <Error issues={statusInfo?.requirements?.issues} onContinue={() => setForceContinue(true) }  />;
     } else if (statusInfo?.ready) {
         homeComponent = <Dashboard />;
     } else if (statusInfo?.progress && Object.keys(statusInfo?.progress).length > 0) {
