@@ -47,7 +47,7 @@ namespace daedalus_turbo::cli::sync_local {
                 }
             }
             timer tc { "sync-local" };
-            scheduler sched {};
+            scheduler sched { std::max(scheduler::default_worker_count() - 1, static_cast<size_t>(1)) };
             auto indexers = indexer::default_list(sched, idx_dir);
             indexer::incremental cr { sched, db_dir, indexers };
             sync::local::syncer syncr { sched, cr, node_dir, strict, zstd_max_level, std::chrono::seconds { 0 } };
