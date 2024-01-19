@@ -45,7 +45,8 @@ namespace daedalus_turbo::index {
             if (num_parts == 0)
                 num_parts = reader->num_parts();
             if (num_parts != reader->num_parts())
-                throw error("chunk {} has a partition count: {} different for other chunks: {}!", reader->num_parts(), num_parts);
+                throw error("chunk {} has a partition count: {} different for other chunks: {}!",
+                        chunks[i], reader->num_parts(), num_parts);
         }
         auto out_idx = std::make_shared<index::writer<T>>(final_path, num_parts);
         // Tasks are added to a running scheduler here.
