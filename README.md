@@ -98,13 +98,18 @@ Show information about a transaction:
 
 ### Prerequisites
 To test the desktop user interface, you need the following packages:
-- A working C++ compiler supporting C++20 standard.
 - [Git](https://git-scm.com/) to get a copy of this repository.
 - [Docker](https://www.docker.com/products/docker-desktop/) to launch the software in an isolated environment.
 - [Node.JS](https://nodejs.org/en/download/current) to start the user interface.
 
 
 ### Build
+
+Clone this repository and make it your working directory:
+```
+git clone https://github.com/sierkov/daedalus-turbo.git dt
+cd dt
+```
 
 Build the test Docker container:
 ```
