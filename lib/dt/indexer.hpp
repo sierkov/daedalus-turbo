@@ -245,7 +245,8 @@ namespace daedalus_turbo::indexer {
         mutable merger::tree _slices {};
         std::optional<progress_info> _progress {};
 
-        size_t _schedule_premerge(std::unique_lock<auto> &&updates_lk, bool skippable=false) const
+        //size_t _schedule_premerge(std::unique_lock<auto> &&updates_lk, bool skippable=false) const
+        size_t _schedule_premerge(std::unique_lock<std::mutex> &&updates_lk, bool skippable=false) const
         {
             if (skippable && _sched.task_count() >= _sched.num_workers())
                 return 0;
