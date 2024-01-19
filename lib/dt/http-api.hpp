@@ -156,80 +156,86 @@ namespace daedalus_turbo::http_api {
                 { "error", msg }
             };
         }
+
+        void _process_request(const std::string &target)
+        {
+            json::value resp {};
+            try {
+                timer t { fmt::format("handling request {}", target) };
+                const auto [req_id, params] = _parse_target(target);
+                logger::info("begin processing request {} with params {}", req_id, params);
+                if (req_id == "tx" && params.size() == 1 && params[0].size() == 2 * 32) {
+                    resp = _api_tx_info(uint8_vector::from_hex(params[0]));
+                } else if (req_id == "stake" && params.size() == 1) {
+                    auto bytes = uint8_vector::from_hex(params[0]);
+                    cardano::address addr { bytes };
+                    if (!addr.has_stake_id())
+                        throw error("provided address does not have a stake-key component: {}", bytes);
+                    resp = _api_stake_id_info(addr.stake_id());
+                } else if (req_id == "stake-assets" && params.size() == 3) {
+                    auto bytes = uint8_vector::from_hex(params.at(0));
+                    cardano::address addr { bytes };
+                    if (!addr.has_stake_id())
+                        throw error("provided address does not have a stake-key component: {}", bytes);
+                    auto offset = std::stoull(static_cast<std::string>(params.at(1)));
+                    auto count = std::stoull(static_cast<std::string>(params.at(2)));
+                    resp = _api_stake_assets(addr.stake_id(), offset, count);
+                } else if (req_id == "stake-txs" && params.size() == 3) {
+                    auto bytes = uint8_vector::from_hex(params.at(0));
+                    cardano::address addr { bytes };
+                    if (!addr.has_stake_id())
+                        throw error("provided address does not have a stake-key component: {}", bytes);
+                    auto offset = std::stoull(static_cast<std::string>(params.at(1)));
+                    auto count = std::stoull(static_cast<std::string>(params.at(2)));
+                    resp = _api_stake_txs(addr.stake_id(), offset, count);
+                } else if (req_id == "pay" && params.size() == 1) {
+                    auto bytes = uint8_vector::from_hex(params[0]);
+                    cardano::address addr { bytes };
+                    if (!addr.has_pay_id())
+                        throw error("provided address does not have a payment-key component: {}", bytes);
+                    resp = _api_pay_id_info(addr.pay_id());
+                } else if (req_id == "pay-assets" && params.size() == 3) {
+                    auto bytes = uint8_vector::from_hex(params.at(0));
+                    cardano::address addr { bytes };
+                    if (!addr.has_pay_id())
+                        throw error("provided address does not have a payment-key component: {}", bytes);
+                    auto offset = std::stoull(static_cast<std::string>(params.at(1)));
+                    auto count = std::stoull(static_cast<std::string>(params.at(2)));
+                    resp = _api_pay_assets(addr.pay_id(), offset, count);
+                } else if (req_id == "pay-txs" && params.size() == 3) {
+                    auto bytes = uint8_vector::from_hex(params.at(0));
+                    cardano::address addr { bytes };
+                    if (!addr.has_pay_id())
+                        throw error("provided address does not have a pay-key component: {}", bytes);
+                    auto offset = std::stoull(static_cast<std::string>(params.at(1)));
+                    auto count = std::stoull(static_cast<std::string>(params.at(2)));
+                    resp = _api_pay_txs(addr.pay_id(), offset, count);
+                } else if (req_id == "sync") {
+                    resp = _api_sync();
+                } else {
+                    throw error("unsupported endpoint '{}'", req_id);
+                }
+                logger::info("request {} succeeded in {:0.3f} secs", target, t.stop());
+            } catch (std::exception &ex) {
+                resp = _error_response(fmt::format("request {} failed: {}", target, ex.what()));
+            }
+            {
+                std::scoped_lock lk { _results_mutex };
+                _results[target] = std::move(resp);
+            }
+        }
         
         void _worker_thread()
         {
             for (;;) {
                 std::unique_lock lock { _queue_mutex };
-                _queue_cv.wait(lock, [&] { return !_queue.empty(); });
-                if (_queue.empty())
-                    continue;
-                const auto target = _queue.front();
-                _queue.pop_front();
-                lock.unlock();
-                json::value resp {};
-                try {
-                    timer t { fmt::format("handling request {}", target) };
-                    const auto [req_id, params] = _parse_target(target);
-                    logger::info("begin processing request {} with params {}", req_id, params);
-                    if (req_id == "tx" && params.size() == 1 && params[0].size() == 2 * 32) {
-                        resp = _api_tx_info(uint8_vector::from_hex(params[0]));
-                    } else if (req_id == "stake" && params.size() == 1) {
-                        auto bytes = uint8_vector::from_hex(params[0]);
-                        cardano::address addr { bytes };
-                        if (!addr.has_stake_id())
-                            throw error("provided address does not have a stake-key component: {}", bytes);
-                        resp = _api_stake_id_info(addr.stake_id());
-                    } else if (req_id == "stake-assets" && params.size() == 3) {
-                        auto bytes = uint8_vector::from_hex(params.at(0));
-                        cardano::address addr { bytes };
-                        if (!addr.has_stake_id())
-                            throw error("provided address does not have a stake-key component: {}", bytes);
-                        auto offset = std::stoull(static_cast<std::string>(params.at(1)));
-                        auto count = std::stoull(static_cast<std::string>(params.at(2)));
-                        resp = _api_stake_assets(addr.stake_id(), offset, count);
-                    } else if (req_id == "stake-txs" && params.size() == 3) {
-                        auto bytes = uint8_vector::from_hex(params.at(0));
-                        cardano::address addr { bytes };
-                        if (!addr.has_stake_id())
-                            throw error("provided address does not have a stake-key component: {}", bytes);
-                        auto offset = std::stoull(static_cast<std::string>(params.at(1)));
-                        auto count = std::stoull(static_cast<std::string>(params.at(2)));
-                        resp = _api_stake_txs(addr.stake_id(), offset, count);
-                    } else if (req_id == "pay" && params.size() == 1) {
-                        auto bytes = uint8_vector::from_hex(params[0]);
-                        cardano::address addr { bytes };
-                        if (!addr.has_pay_id())
-                            throw error("provided address does not have a payment-key component: {}", bytes);
-                        resp = _api_pay_id_info(addr.pay_id());
-                    } else if (req_id == "pay-assets" && params.size() == 3) {
-                        auto bytes = uint8_vector::from_hex(params.at(0));
-                        cardano::address addr { bytes };
-                        if (!addr.has_pay_id())
-                            throw error("provided address does not have a payment-key component: {}", bytes);
-                        auto offset = std::stoull(static_cast<std::string>(params.at(1)));
-                        auto count = std::stoull(static_cast<std::string>(params.at(2)));
-                        resp = _api_pay_assets(addr.pay_id(), offset, count);
-                    } else if (req_id == "pay-txs" && params.size() == 3) {
-                        auto bytes = uint8_vector::from_hex(params.at(0));
-                        cardano::address addr { bytes };
-                        if (!addr.has_pay_id())
-                            throw error("provided address does not have a pay-key component: {}", bytes);
-                        auto offset = std::stoull(static_cast<std::string>(params.at(1)));
-                        auto count = std::stoull(static_cast<std::string>(params.at(2)));
-                        resp = _api_pay_txs(addr.pay_id(), offset, count);
-                    } else if (req_id == "sync") {
-                        resp = _api_sync();
-                    } else {
-                        throw error("unsupported endpoint '{}'", req_id);
-                    }
-                    logger::info("request {} succeeded in {:0.3f} secs", target, t.stop());
-                } catch (std::exception &ex) {
-                    resp = _error_response(fmt::format("request {} failed: {}", target, ex.what()));
-                }
-                {
-                    std::unique_lock results_lock(_results_mutex);
-                    _results[target] = std::move(resp);
+                bool have_work = _queue_cv.wait_for(lock, std::chrono::seconds { 1 }, [&]{ return !_queue.empty(); });
+                logger::debug("http-api worker thread waiting for tasks returned with {}", have_work);
+                if (have_work) {
+                    const auto target = _queue.front();
+                    _queue.pop_front();
+                    lock.unlock();
+                    _process_request(target);
                 }
             }
         }

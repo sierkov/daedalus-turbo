@@ -79,11 +79,17 @@ namespace daedalus_turbo::http {
         bool process_ok(bool report_progress=false, scheduler *sched = nullptr)
         {
             _report = report_progress;
+            std::chrono::milliseconds wait_duration { 100 };
             for (;;) {
-                if (_queue_size == 0 && _active_conns == 0)
+                auto queue_sz = _queue_size.load();
+                auto n_conns = _active_conns.load();
+                logger::debug("download_queue::process_ok queue_size: {} active_conns: {}", queue_sz, n_conns);
+                if (queue_sz == 0 && n_conns == 0)
                     break;
-                if (sched == nullptr || !sched->process_once())
-                    std::this_thread::sleep_for(std::chrono::milliseconds { 100 });
+                if (sched != nullptr)
+                    sched->process_once(wait_duration);
+                else
+                    std::this_thread::sleep_for(wait_duration);
             }
             return _success;
         }
@@ -157,6 +163,7 @@ namespace daedalus_turbo::http {
             {
                 _dlq._report_result(std::move(_req), result { .url=_req.url, .error=error }, recoverable);
                 if (_stream) {
+                    logger::debug("{}: closing the connection after an error", _req.url);
                     _stream->close();
                     _stream.reset();
                 }
@@ -173,6 +180,7 @@ namespace daedalus_turbo::http {
                     _host = host;
                     _port = port;
                     if (_stream) {
+                        logger::debug("{}: closing the connection because the target endpoint has changed", _req.url);
                         _stream->close();
                         _stream.reset();
                     }
@@ -188,7 +196,6 @@ namespace daedalus_turbo::http {
                 }
                 _connect_endpoint.emplace(results);
                 _connect();
-                
             }
 
             void _connect()
@@ -259,7 +266,7 @@ namespace daedalus_turbo::http {
                     body_size = std::filesystem::file_size(_req.save_path);
                 auto http_status = _http_parser->get().result_int();
                 if (!_http_parser->keep_alive()) {
-                    logger::trace("{}: remote turns down keep-alive, closing the connection", _req.url);
+                    logger::debug("{}: remote turns down keep-alive, closing the connection", _req.url);
                     _stream->close();
                     _stream.reset();
                 }
@@ -295,7 +302,6 @@ namespace daedalus_turbo::http {
         std::atomic_bool _shutdown { false };
         std::atomic_bool _success { true };
         alignas(mutex::padding) std::mutex _queue_mutex {};
-        alignas(mutex::padding) std::condition_variable _queue_cv {};
         std::priority_queue<request> _queue {};
         std::atomic_size_t _active_conns { 0 };
         std::atomic_size_t _queue_size { 0 };
@@ -337,25 +343,27 @@ namespace daedalus_turbo::http {
 
         void _add_request(request &&req)
         {
-            {
-                std::scoped_lock lk { _queue_mutex };
-                _queue.emplace(std::move(req));
-                _queue_size = _queue.size();
-            }
-            _queue_cv.notify_one();
+            std::scoped_lock lk { _queue_mutex };
+            _queue.emplace(std::move(req));
+            _queue_size = _queue.size();
         }
 
         std::optional<request> _take_request()
-        {       
-            std::unique_lock lock { _queue_mutex };
-            if (!_shutdown && !_queue.empty()) {
-                auto req = _queue.top();
-                _queue.pop();
-                _queue_size = _queue.size();
-                _active_conns++;
-                return { std::move(req) };
+        {
+            std::optional<request> res {};
+            {
+                logger::debug("download_queue::_take_request begin wait for the mutex");
+                std::scoped_lock lock { _queue_mutex };
+                if (!_shutdown && !_queue.empty()) {
+                    auto req = _queue.top();
+                    _queue.pop();
+                    _queue_size = _queue.size();
+                    _active_conns++;
+                    res.emplace(std::move(req));
+                }
             }
-            return {};
+            logger::debug("download_queue::_take_request released mutex and returning: {}", static_cast<bool>(res));
+            return res;
         }
 
         void _report_result(request &&req, result &&res, bool recoverable=false)

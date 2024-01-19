@@ -317,26 +317,32 @@ namespace daedalus_turbo {
                 throw error("some scheduled tasks have failed, please consult logs for more details");
         }
 
-        bool process_once()
+        bool process_once(std::chrono::milliseconds wait_interval_ms=std::chrono::milliseconds { 50 })
         {
-            return _process_once(std::chrono::milliseconds { 50 });
+            return _process_once(wait_interval_ms);
         }
     private:
-        bool _process_once(std::chrono::milliseconds update_interval_ms)
+        bool _process_once(const std::chrono::milliseconds &wait_interval_ms)
         {
             {
-                std::scoped_lock lk { _retiring_mutex, _observers_mutex };
-                for (const auto &task_group: _retiring_observers)
-                    _observers.erase(task_group);
-                _retiring_observers.clear();
+                std::scoped_lock lk { _retiring_mutex };
+                if (!_retiring_observers.empty()) {
+                    {
+                        std::scoped_lock ob_lk { _observers_mutex };
+                        for (const auto &task_group: _retiring_observers)
+                            _observers.erase(task_group);
+                    }
+                    _retiring_observers.clear();
+                }
             }
             // Special case, in the single-worker mode, the tasks are executed in the loop
             if (_num_workers == 1 && !_tasks.empty())
                 _worker_try_execute(0);
             std::unique_lock results_lock(_results_mutex);
-            bool have_work = _results_cv.wait_for(results_lock, update_interval_ms, [&]{ return !_results.empty(); });
+            bool have_work = _results_cv.wait_for(results_lock, wait_interval_ms, [&]{ return !_results.empty(); });
             if (have_work)
                 _process_results(results_lock);
+            logger::trace("scheduler::process_once did_work: {}", have_work);
             return have_work;
         }
 
