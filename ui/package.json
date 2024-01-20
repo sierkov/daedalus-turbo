@@ -9,7 +9,7 @@
     "pkg-mac-clean": "rm -rf ./dt-ui-darwin-arm64 ./etc/dt-ui.app ./dt-ui.dmg",
     "pkg-mac-ui": "npm run pkg-mac-clean && npm run build && electron-packager . --overwrite --icon=./etc/logo.icns",
     "pkg-mac-app": "npm run pkg-mac-ui && node ./script/mac-copy-libs.js ../cmake-build-release/dt ./dt-ui-darwin-arm64/dt-ui.app/Contents/MacOS",
-    "pkg-mac": "npm run pkg-mac-app && mv ./dt-ui-darwin-arm64/dt-ui.app ./etc && appdmg ./etc/appdmg.json ./dt-ui.dmg"
+    "pkg-mac": "npm run pkg-mac-app && mv ./dt-ui-darwin-arm64/dt-ui.app ./etc && appdmg ./etc/appdmg.json ./dt-ui.dmg && rm -rf ./etc/dt-ui.app"
   },
   "private": true,
   "devDependencies": {
