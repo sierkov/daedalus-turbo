@@ -23,7 +23,7 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const startAPI = () => {
   if (api.dev)
     return;
-  const args = [ 'http-api', api.dataDir, '--ip=' + api.host, '--port=' + api.port ];
+  const args = [ 'http-api', api.dataDir, '--ip=' + api.ip, '--port=' + api.port ];
   const env = { DT_LOG: api.logPath };
   console.log('starting the DT API server', api.cmd, args, env, { stdio: 'inherit' });
   try {
