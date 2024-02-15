@@ -12,19 +12,18 @@ using namespace daedalus_turbo::indexer;
 
 suite indexer_suite = [] {
     "indexer"_test = [] {
-        static const std::string db_dir { "./data/chunk-registry" };
-        static const std::string idx_dir { "./tmp/index" };
+        static const std::string src_dir { "./data/chunk-registry" };
+        static const std::string data_dir { "./tmp/indexer" };
+        static const auto idx_dir = indexer::incremental::storage_dir(data_dir);
         "incremental"_test = [=] {
-            static const std::string tmp_db_dir { "./tmp/compressed" };
-            std::filesystem::remove_all(tmp_db_dir);
-            std::filesystem::remove_all(idx_dir + "/txo-use");
+            std::filesystem::remove_all(data_dir);
             {
                 scheduler sched {};
-                chunk_registry src_cr { sched, db_dir };
-                src_cr.init_state(false, true, false);
+                chunk_registry src_cr { sched, src_dir };
+                src_cr.init_state(false, true);
                 indexer_map indexers {};
                 indexers.emplace(std::make_unique<index::txo_use::indexer>(sched, idx_dir, "txo-use"));
-                incremental idxr { sched, tmp_db_dir, indexers };
+                incremental idxr { sched, data_dir, indexers };
                 idxr.import(src_cr);
             }
             {

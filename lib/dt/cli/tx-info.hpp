@@ -20,13 +20,11 @@ namespace daedalus_turbo::cli::tx_info {
         {
             if (args.size() < 2) _throw_usage();
             const std::string &data_dir = args.at(0);
-            const std::string db_dir = data_dir + "/compressed";
-            const std::string idx_dir = data_dir + "/index";
             const auto tx_hash = bytes_from_hex(args.at(1));
             scheduler sched {};
-            daedalus_turbo::chunk_registry cr { sched, db_dir };
-            cr.init_state(true, true, false);
-            reconstructor r { sched, cr, idx_dir };
+            daedalus_turbo::chunk_registry cr { sched, data_dir };
+            cr.init_state();
+            reconstructor r { sched, cr };
             auto tx_info = r.find_tx(tx_hash);
             if (!tx_info)
                 throw error("unknown transaction hash {}", tx_hash.span());

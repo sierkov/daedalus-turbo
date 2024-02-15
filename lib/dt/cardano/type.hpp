@@ -28,6 +28,7 @@ namespace daedalus_turbo {
     using cardano_vrf_proof_span = std::span<const uint8_t, sizeof(cardano_vrf_proof)>;
 
     namespace cardano {
+        using vkey = cardano_vkey;
         using key_hash = cardano_hash_28;
         using script_hash = cardano_hash_28;
         using pool_hash = cardano_hash_28;

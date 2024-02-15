@@ -33,6 +33,7 @@
 #include <boost/beast/http.hpp>
 #include <boost/beast/version.hpp>
 #include <boost/url.hpp>
+#include <dt/file.hpp>
 #include <dt/logger.hpp>
 #include <dt/memory.hpp>
 #include <dt/mutex.hpp>
@@ -79,7 +80,6 @@ namespace daedalus_turbo::http {
         bool process_ok(bool report_progress=false, scheduler *sched = nullptr)
         {
             _report = report_progress;
-            std::chrono::milliseconds wait_duration { 100 };
             for (;;) {
                 auto queue_sz = _queue_size.load();
                 auto n_conns = _active_conns.load();
@@ -87,9 +87,9 @@ namespace daedalus_turbo::http {
                 if (queue_sz == 0 && n_conns == 0)
                     break;
                 if (sched != nullptr)
-                    sched->process_once(wait_duration);
+                    sched->process_once();
                 else
-                    std::this_thread::sleep_for(wait_duration);
+                    std::this_thread::sleep_for(scheduler::default_wait_interval);
             }
             return _success;
         }
@@ -234,7 +234,7 @@ namespace daedalus_turbo::http {
                     return;
                 }
                 {
-                    beast::error_code open_ec {};
+                    //beast::error_code open_ec {};
                     _http_parser.emplace();
                     _http_parser->body_limit(1 << 26);
                     /*_http_parser->get().body().open(_req.save_path.c_str(), beast::file_mode::write, open_ec);

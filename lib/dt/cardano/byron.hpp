@@ -51,6 +51,15 @@ namespace daedalus_turbo::cardano::byron {
     struct boundary_block: public block_base {
         using block_base::block_base;
 
+        static cardano::block_hash padded_hash(uint8_t magic, const buffer &data)
+        {
+            uint8_vector padded(data.size() + 2);
+            padded[0] = 0x82;
+            padded[1] = magic;
+            memcpy(padded.data() + 2, data.data(), data.size());
+            return blake2b<cardano::block_hash>(padded);
+        }
+
         uint64_t height() const override
         {
             return slot();
@@ -58,12 +67,13 @@ namespace daedalus_turbo::cardano::byron {
 
         cardano_hash_32 hash() const override
         {
-            const cbor_value &header = _block.array().at(0);
-            uint8_vector byron_header(header.size + 2);
-            byron_header[0] = 0x82;
-            byron_header[1] = 0x01;
-            memcpy(byron_header.data() + 2, header.data, header.size);
-            return blake2b<cardano_hash_32>(byron_header);
+            return padded_hash(0x00, _block.array().at(0).raw_span());
+        }
+
+        const buffer issuer_vkey() const override
+        {
+            static auto dummy = cardano::vkey::from_hex("0000000000000000000000000000000000000000000000000000000000000000");
+            return dummy.span();
         }
 
         const cbor_buffer &prev_hash() const override
@@ -90,12 +100,22 @@ namespace daedalus_turbo::cardano::byron {
         {
             return consensus().at(0).uint();
         }
+
+        bool signature_ok() const override
+        {
+            return true;
+        }
     };
 
     struct tx;
 
     struct block: public boundary_block {
         using boundary_block::boundary_block;
+
+        cardano_hash_32 hash() const override
+        {
+            return padded_hash(0x01, _block.array().at(0).raw_span());
+        }
 
         size_t tx_count() const override
         {
@@ -112,6 +132,11 @@ namespace daedalus_turbo::cardano::byron {
         inline const cbor_array &body() const
         {
             return _block.array().at(1).array();
+        }
+
+        inline const cbor_array &update_proposals() const
+        {
+            return body().at(3).array();
         }
 
         const cbor_value &protocol_magic_raw() const
@@ -209,7 +234,7 @@ namespace daedalus_turbo::cardano::byron {
             return data;
         }
 
-        bool signature_ok() const
+        bool signature_ok() const override
         {
             const auto s = signature();
             return ed25519::verify(s.signature(), s.delegate_vkey(), make_signed_data());
@@ -238,6 +263,13 @@ namespace daedalus_turbo::cardano::byron {
                 const auto &out = outputs.at(i).array();
                 observer(tx_output { out.at(0).array().at(0).tag().second->buf(), cardano::amount { out.at(1).uint() }, i });
             }
+        }
+
+        vkey_wit_cnt witness_count() const override
+        {
+            if (!_wit)
+                throw cardano_error("vkey_witness_ok called on a transaction without witness data!");
+            return vkey_wit_cnt { _wit->array().size() };
         }
 
         vkey_wit_ok vkey_witness_ok() const override

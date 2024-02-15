@@ -10,7 +10,7 @@
 
 namespace daedalus_turbo::index::txo_use {
 
-    struct __attribute__((packed)) item {
+    struct item {
         cardano::tx_hash hash;
         cardano::tx_out_idx out_idx;
         uint64_t offset = 0;

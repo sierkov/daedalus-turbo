@@ -17,9 +17,11 @@ RUN mkdir /home/dev/dt
 COPY 3rdparty /home/dev/dt/3rdparty
 COPY src /home/dev/dt/src
 COPY lib /home/dev/dt/lib
-COPY CMakeLists.txt /home/dev/dt
+COPY etc /home/dev/dt/etc
 COPY data /home/dev/dt/data
 COPY test /home/dev/dt/test
+COPY CMakeLists.txt /home/dev/dt
+COPY docker-test.sh /home/dev
 RUN chown -R dev:dev /home/dev
 
 USER dev
@@ -27,6 +29,6 @@ WORKDIR /home/dev/dt
 RUN cmake -B cmake-build-release
 RUN cmake --build cmake-build-release -j3 -t dt
 RUN mkdir log
-COPY docker-test.sh /home/dev
 WORKDIR /home/dev/dt/cmake-build-release
+ENV DT_LOG=/home/dev/dt/log/dt.log
 CMD [ "/bin/bash", "/home/dev/docker-test.sh" ]

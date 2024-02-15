@@ -56,6 +56,7 @@ namespace daedalus_turbo::index {
     };
 
     static constexpr size_t max_parts = 256;
+    static constexpr size_t default_parts = 16;
 
     // Each partition can be written only from a single thread to minimize cross-thread synchronization
     template<typename T>
@@ -207,7 +208,6 @@ namespace daedalus_turbo::index {
                     throw error("internal error: metadata name must not exceed 255 bytes but got {}", name.size());
                 if (data.size() > 255)
                     throw error("internal error: metadata value must not exceed 255 bytes but got {}", data.size());
-                //logger::trace("index {} meta item '{}': '{}'", _data_path, name, data.span());
                 uint8_t name_size = name.size();
                 uint8_t data_size = data.size();
                 meta_buf << buffer::from(name_size)
@@ -216,7 +216,6 @@ namespace daedalus_turbo::index {
                     << data.span();
             }
             meta_buf << buffer { _cnts.data(), sizeof(_cnts[0]) * _cnts.size() };
-            size_t num_items = std::accumulate(_cnts.begin(), _cnts.end(), 0);
             for (const auto &chunk_list: _parts) {
                 if (!chunk_list.empty())
                     meta_buf << buffer { chunk_list.data(), sizeof(chunk_list[0]) * chunk_list.size() };
@@ -228,9 +227,6 @@ namespace daedalus_turbo::index {
             _free_off = _os.tellp();
             _os.close();
             std::filesystem::rename(_data_path + ".tmp", _data_path);
-            //logger::trace("index commit {} meta hash {} meta data {}", _data_path, meta_hash, meta_buf.span());
-            logger::debug("written index {} size: {} num_parts: {} chunk_size: {} meta size: {} num items: {}",
-                _data_path, _free_off, _num_parts, _chunk_size, meta_size, num_items);
         }
 
         void _flush_part(size_t part_id)
@@ -256,8 +252,6 @@ namespace daedalus_turbo::index {
                 if (fact_off != _free_off)
                     throw error("internal error with {}: expected file position {} but got {}", _path, (size_t)_free_off, fact_off);
                 auto packed_hash = blake2b<blake2b_64_hash>(comp_data);
-                //logger::trace("index {} part {} saving chunk {} at offset {} size {} hash {}",
-                //    _data_path, part_id, part.size(), _free_off, comp_data.size(), packed_hash);
                 part.emplace_back(_free_off, comp_data.size(), buf.at(cnt_todo - 1), packed_hash);
                 _free_off += comp_data.size();
                 _os.write(comp_data.data(), comp_data.size());
@@ -348,7 +342,6 @@ namespace daedalus_turbo::index {
             _is.read(meta_buf.data(), meta_buf_size);
             _is.read(&meta_hash, sizeof(meta_hash));
             auto meta_hash_computed = blake2b<blake2b_64_hash>(meta_buf);
-            //logger::trace("index read {} meta hash {} meta computed hash {} meta data {}", _data_path, meta_hash, meta_hash_computed, meta_buf.span());
             if (meta_hash_computed != meta_hash)
                 throw error("{}: metadata hash mismatch computed: {} vs stored: {}", _data_path, meta_hash_computed, meta_hash);
             _is.seek(meta_off);
@@ -378,9 +371,6 @@ namespace daedalus_turbo::index {
             _is.read(_cnts.data(), sizeof(_cnts[0]) * _num_parts);
             _chunk_lists.resize(_num_parts);
             _max_items.resize(_num_parts);
-            auto num_items = std::accumulate(_cnts.begin(), _cnts.end(), 0);
-            logger::debug("opened index {} size: {} num_parts: {} chunk_size: {} meta size: {} num items: {}",
-                _data_path, data_size, _num_parts, _chunk_size, meta_cnt, num_items);
             for (size_t p = 0; p < _num_parts; ++p) {
                 size_t chunk_cnt = _cnts.at(p);
                 if (chunk_cnt > 0) {
@@ -608,10 +598,7 @@ namespace daedalus_turbo::index {
             auto packed_hash = blake2b<blake2b_64_hash>(t.read_buf);
             if (packed_hash != chunk.packed_hash)
                 throw error("corrupted chunk data in index {} part {} chunk {} at offset {} size {} hash {} while expected hash {}",
-                        _data_path, part_idx, new_chunk_idx, chunk.file_offset, chunk.packed_size, packed_hash, chunk.packed_hash);
-            //logger::trace("index {} part {} reading chunk {} from offset {} size {} hash {}",
-            //    _data_path, part_idx, new_chunk_idx, chunk.file_offset, chunk.packed_size, packed_hash);
-            
+                        _data_path, part_idx, new_chunk_idx, chunk.file_offset, chunk.packed_size, packed_hash, chunk.packed_hash);            
             std::span<uint8_t> cache_buf { reinterpret_cast<uint8_t *>(cache.data()), sizeof(T) * cache.size() };
             zstd::decompress(cache_buf, t.read_buf);
             t.num_reads++;
@@ -693,7 +680,7 @@ namespace daedalus_turbo::index {
         reader_multi_mt(const std::span<const std::string> &paths): _readers {}
         {
             if (paths.size() == 0)
-                throw error("multi-party index with no slices! Is the data_dir correct?");
+                throw error("multi-part index with no slices! Is the data_dir correct?");
             _readers.reserve(paths.size());
             for (const auto &p: paths)
                 _readers.emplace_back(std::make_unique<reader_mt<T>>(p));

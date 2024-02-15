@@ -4,7 +4,11 @@ pkg_check_modules(FMT REQUIRED fmt>=8.1.1)
 pkg_check_modules(SODIUM REQUIRED libsodium>=1.0.18)
 pkg_check_modules(SPDLOG REQUIRED spdlog>=1.9.2)
 pkg_check_modules(ZSTD REQUIRED libzstd>=1.4.8)
-add_library(lib OBJECT dt/lib.cpp)
+
+file(GLOB_RECURSE LIB_SRCS dt/*.cpp)
+list(FILTER LIB_SRCS EXCLUDE REGEX "\\.test\\.cpp$")
+list(FILTER LIB_SRCS EXCLUDE REGEX "\\.bench\\.cpp$")
+add_library(lib OBJECT ${LIB_SRCS})
 target_include_directories(lib PUBLIC .)
 target_link_libraries(lib PUBLIC
     Boost::json Boost::coroutine Boost::url

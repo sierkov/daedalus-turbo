@@ -24,14 +24,12 @@ namespace daedalus_turbo::cli::stake_history {
             if (args.size() < 2) _throw_usage();
             timer t { "reconstruction and serialization", logger::level::debug };
             const auto &data_dir = args.at(0);
-            const std::string db_dir = data_dir + "/compressed";
-            const std::string idx_dir = data_dir + "/index";
             cardano::address_buf addr_raw { args.at(1) };
             if (addr_raw.size() == 28) addr_raw.insert(addr_raw.begin(), 0xE1);
             scheduler sched {};
-            daedalus_turbo::chunk_registry cr { sched, db_dir };
-            cr.init_state(true, true, false);
-            reconstructor r { sched, cr, idx_dir };
+            daedalus_turbo::chunk_registry cr { sched, data_dir };
+            cr.init_state();
+            reconstructor r { sched, cr };
             cardano::address addr { addr_raw.span() };
             auto id = addr.stake_id();
             _warn_top_stake_key(id.hash);

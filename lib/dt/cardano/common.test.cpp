@@ -127,7 +127,7 @@ suite cardano_common_suite = [] {
             expect(boost::ut::throws<error>([]() { cardano::tx_out_idx { 100000 }; }));
         };
         "stake_deleg"_test = [] {
-            auto chunk = file::read("./data/chunk-registry/immutable/9C5C0267DCA941851D0330E19B91712618EB6DB4BF17E458BCF00829F84CF3CF.zstd");
+            auto chunk = file::read("./data/chunk-registry/compressed/immutable/9C5C0267DCA941851D0330E19B91712618EB6DB4BF17E458BCF00829F84CF3CF.zstd");
             cbor_parser parser { chunk };
             cbor_value block_tuple {};
             size_t num_delegs = 0;
@@ -143,7 +143,7 @@ suite cardano_common_suite = [] {
             expect(num_delegs == 208_u);
         };
         "pool_reg"_test = [] {
-            auto chunk = file::read("./data/chunk-registry/immutable/DF597E3FA352A7BD2F021733804C33729EBAA3DCAA9C0643BD263EFA09497B03.zstd");
+            auto chunk = file::read("./data/chunk-registry/compressed/immutable/DF597E3FA352A7BD2F021733804C33729EBAA3DCAA9C0643BD263EFA09497B03.zstd");
             cbor_parser parser { chunk };
             cbor_value block_tuple {};
             size_t num_regs = 0;
@@ -159,13 +159,13 @@ suite cardano_common_suite = [] {
             expect(num_regs == 2_u);
         };
         "extract_epoch"_test = [] {
-            expect(cardano::extract_epoch("./data/chunk-registry/immutable/526D236112DB8E38E66F37D330C85AFE0C268D81DF853DDDE4E88551EB9B0637.zstd") == 0_ull);
-            expect(cardano::extract_epoch("./data/chunk-registry/immutable/DF597E3FA352A7BD2F021733804C33729EBAA3DCAA9C0643BD263EFA09497B03.zstd") == 222_ull);
-            expect(cardano::extract_epoch("./data/chunk-registry/immutable/BA19B67C08713E930BF42C2CA5DE03EA7679C07198611062235F89B267B2E558.zstd") == 247_ull);
-            expect(cardano::extract_epoch("./data/chunk-registry/immutable/7C46426DDF73FFFAD5970B0F1C0983A3A98F5AC3EC080BDFB59DBF86AC1AE9A1.zstd") == 267_ull);
-            expect(cardano::extract_epoch("./data/chunk-registry/immutable/1A6CC809A5297CFC502B229B4CD31A9B00B71638CEAEDE45409D4F0EBC534356.zstd") == 297_ull);
-            expect(cardano::extract_epoch("./data/chunk-registry/immutable/47F62675C9B0161211B9261B7BB1CF801EDD4B9C0728D9A6C7A910A1581EED41.zstd") == 362_ull);
-            expect(cardano::extract_epoch("./data/chunk-registry/immutable/9C5C0267DCA941851D0330E19B91712618EB6DB4BF17E458BCF00829F84CF3CF.zstd") == 368_ull);
+            expect(cardano::extract_epoch("./data/chunk-registry/compressed/immutable/526D236112DB8E38E66F37D330C85AFE0C268D81DF853DDDE4E88551EB9B0637.zstd") == 0_ull);
+            expect(cardano::extract_epoch("./data/chunk-registry/compressed/immutable/DF597E3FA352A7BD2F021733804C33729EBAA3DCAA9C0643BD263EFA09497B03.zstd") == 222_ull);
+            expect(cardano::extract_epoch("./data/chunk-registry/compressed/immutable/BA19B67C08713E930BF42C2CA5DE03EA7679C07198611062235F89B267B2E558.zstd") == 247_ull);
+            expect(cardano::extract_epoch("./data/chunk-registry/compressed/immutable/7C46426DDF73FFFAD5970B0F1C0983A3A98F5AC3EC080BDFB59DBF86AC1AE9A1.zstd") == 267_ull);
+            expect(cardano::extract_epoch("./data/chunk-registry/compressed/immutable/1A6CC809A5297CFC502B229B4CD31A9B00B71638CEAEDE45409D4F0EBC534356.zstd") == 297_ull);
+            expect(cardano::extract_epoch("./data/chunk-registry/compressed/immutable/47F62675C9B0161211B9261B7BB1CF801EDD4B9C0728D9A6C7A910A1581EED41.zstd") == 362_ull);
+            expect(cardano::extract_epoch("./data/chunk-registry/compressed/immutable/9C5C0267DCA941851D0330E19B91712618EB6DB4BF17E458BCF00829F84CF3CF.zstd") == 368_ull);
         };
     };  
 };

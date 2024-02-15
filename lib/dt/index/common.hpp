@@ -7,6 +7,7 @@
 
 #include <dt/index/io.hpp>
 #include <dt/index/merge.hpp>
+#include <dt/mutex.hpp>
 
 namespace daedalus_turbo::index {
     struct chunk_indexer_base {
@@ -69,31 +70,32 @@ namespace daedalus_turbo::index {
 
     template<typename T>
     struct chunk_indexer_multi_epoch: public chunk_indexer_base {
-        chunk_indexer_multi_epoch(epoch_observer &observer, uint64_t chunk_id, const std::string &idx_path, size_t)
+        chunk_indexer_multi_epoch(epoch_observer &observer, uint64_t chunk_id, const std::string &idx_path)
             : _epoch_observer { observer }, _chunk_id { chunk_id }, _idx_base_path { idx_path }
         {}
 
         ~chunk_indexer_multi_epoch() override
         {
             for (auto &[epoch, data]: _idxs) {
-                std::sort(data.begin(), data.end());
-                file::write_vector(fmt::format("{}-{}.bin", _idx_base_path, epoch), data);
+                if (!data.empty()) {
+                    _epoch_observer.mark_epoch(epoch, _chunk_id);
+                    std::sort(data.begin(), data.end());
+                    _writer(fmt::format("{}-{}.bin", _idx_base_path, epoch), data);
+                }
             }
         }
     protected:
         epoch_observer &_epoch_observer;
         uint64_t _chunk_id;
         std::string _idx_base_path;
+        std::function<void(const std::string &, const std::vector<T> &)> _writer { file::write_vector<T> };
         std::map<uint64_t, std::vector<T>> _idxs {};
 
         virtual void _index_epoch(const cardano::block_base &blk, std::vector<T> &idx) =0;
 
         std::vector<T> &_epoch_data(uint64_t epoch)
         {
-            auto [it, created] = _idxs.try_emplace(epoch);
-            if (created)
-                _epoch_observer.mark_epoch(epoch, _chunk_id);
-            return it->second;
+            return _idxs[epoch];
         }
 
         void _index(const cardano::block_base &blk) override
@@ -107,9 +109,23 @@ namespace daedalus_turbo::index {
         }
     };
 
+    template<typename T>
+    struct chunk_indexer_multi_epoch_zpp: chunk_indexer_multi_epoch<T> {
+        chunk_indexer_multi_epoch_zpp(epoch_observer &observer, uint64_t chunk_id, const std::string &idx_path)
+            : chunk_indexer_multi_epoch<T> { observer, chunk_id, idx_path }
+        {
+            chunk_indexer_multi_epoch<T>::_writer = file::write_zpp<std::vector<T>>;
+        }
+    };
+
     using chunk_id_list = std::set<uint64_t>;
 
     struct indexer_base {
+        static std::string chunk_dir(const std::string &idx_dir, const std::string &idx_name)
+        {
+            return fmt::format("{}/{}", idx_dir, idx_name);
+        }
+
         static std::string reader_path(const std::string &idx_dir, const std::string &idx_name, const std::string &slice_id="")
         {
             const std::string_view sep { slice_id.empty() ? "" : "-" };
@@ -124,9 +140,7 @@ namespace daedalus_turbo::index {
         indexer_base(scheduler &sched, const std::string &idx_dir, const std::string &idx_name)
             : _sched { sched }, _idx_dir { idx_dir }, _idx_name { idx_name }
         {
-            std::filesystem::path rp { reader_path() };
-            if (!std::filesystem::exists(rp.parent_path()))
-                std::filesystem::create_directories(rp.parent_path());
+            std::filesystem::create_directories(chunk_dir());
         }
 
         virtual ~indexer_base()
@@ -142,6 +156,11 @@ namespace daedalus_turbo::index {
             return _idx_dir;
         }
 
+        const std::string chunk_dir() const
+        {
+            return chunk_dir(_idx_dir, _idx_name);
+        }
+
         bool exists(const std::string &slice_id) const
         {
             return index::writer<int>::exists(reader_path(_idx_dir, _idx_name, slice_id));
@@ -153,12 +172,17 @@ namespace daedalus_turbo::index {
 
         virtual void merge(const std::string &/*task_group*/, size_t /*task_prio*/, const std::vector<std::string> &/*chunks*/, const std::string &/*final_path*/)
         {
-            throw error("not implemented");
+            throw error("merge not implemented");
+        }
+
+        virtual size_t merge_task_count(const std::vector<std::string> &/*chunks*/) const
+        {
+            throw error("merge_task_count not implemented");
         }
 
         virtual void clean_up() const
         {
-            for (const auto &entry: std::filesystem::directory_iterator { fmt::format("{}/{}", _idx_dir, _idx_name) }) {
+            for (const auto &entry: std::filesystem::directory_iterator(chunk_dir())) {
                 if (!entry.is_regular_file())
                     continue;
                 if (entry.path().extension() != ".data") {
@@ -221,6 +245,11 @@ namespace daedalus_turbo::index {
             merge_one_step<T>(_sched, task_group, task_prio, chunks, final_path);
         }
 
+        size_t merge_task_count(const std::vector<std::string> &chunks) const override
+        {
+            return merge_estimate_task_count<T>(chunks);
+        }
+
         bool mergeable() const override
         {
             return true;
@@ -233,8 +262,7 @@ namespace daedalus_turbo::index {
 
         std::unique_ptr<chunk_indexer_base> make_chunk_indexer(const std::string &slice_id, uint64_t chunk_id) override
         {
-            return std::make_unique<ChunkIndexer>(indexer_merging<T, ChunkIndexer>::chunk_path(slice_id, chunk_id),
-                indexer_merging<T, ChunkIndexer>::_sched.num_workers());
+            return std::make_unique<ChunkIndexer>(indexer_merging<T, ChunkIndexer>::chunk_path(slice_id, chunk_id), default_parts);
         }
     };
 
@@ -242,7 +270,13 @@ namespace daedalus_turbo::index {
     using epoch_chunks = std::map<uint64_t, chunk_list>;
 
     template<typename T, std::derived_from<chunk_indexer_multi_epoch<T>> ChunkIndexer>
-    struct indexer_multi_epoch: public indexer_merging<T, ChunkIndexer>, public epoch_observer {
+    struct indexer_multi_epoch: indexer_merging<T, ChunkIndexer>, epoch_observer {
+        indexer_multi_epoch(scheduler &sched, const std::string &idx_dir, const std::string &idx_name)
+            : indexer_merging<T, ChunkIndexer> { sched, idx_dir, idx_name }
+        {
+            //_register_available_chunks();
+        }
+
         using indexer_merging<T, ChunkIndexer>::indexer_merging;
 
         bool mergeable() const override
@@ -252,6 +286,7 @@ namespace daedalus_turbo::index {
 
         void mark_epoch(uint64_t epoch, uint64_t chunk_id) override
         {
+            std::scoped_lock lk { _updated_epochs_mutex };
             auto [it, created] = _updated_epochs.try_emplace(epoch);
             it->second.emplace_back(chunk_id);
         }
@@ -265,8 +300,7 @@ namespace daedalus_turbo::index {
         std::unique_ptr<chunk_indexer_base> make_chunk_indexer(const std::string &slice_id, uint64_t chunk_id) override
         {
             return std::make_unique<ChunkIndexer>(*this, chunk_id,
-                indexer_merging<T, ChunkIndexer>::chunk_path(slice_id, chunk_id),
-                indexer_merging<T, ChunkIndexer>::_sched.num_workers());
+                indexer_merging<T, ChunkIndexer>::chunk_path(slice_id, chunk_id));
         }
 
         void truncate(const std::string &, uint64_t) override
@@ -279,7 +313,35 @@ namespace daedalus_turbo::index {
             return _updated_epochs;
         }
     private:
+        alignas(mutex::padding) std::mutex _updated_epochs_mutex {};
         epoch_chunks _updated_epochs {};
+
+        void _register_available_chunks()
+        {
+            for (const auto &e: std::filesystem::directory_iterator(indexer_merging<T, ChunkIndexer>::chunk_dir())) {
+                if (!e.is_regular_file() || e.path().extension() != ".bin")
+                    continue;
+                const auto stem = e.path().stem().string();
+                std::vector<std::string> parts {};
+                for (size_t pos = 0, sep_idx = stem.find('-', pos); pos < stem.size(); sep_idx = stem.find('-', pos)) {
+                    if (sep_idx != stem.npos) {
+                        parts.emplace_back(stem.substr(pos, sep_idx - pos));
+                        pos = sep_idx + 1;
+                    } else {
+                        parts.emplace_back(stem.substr(pos, stem.size() - pos));
+                        pos = stem.size();
+                    }
+                }
+                static std::string_view p0_match { "index" };
+                static std::string_view p1_match { "update" };
+                if (parts.size() == 4 && parts[0] == p0_match && parts[1] == p1_match) {
+                    uint64_t chunk_id = std::stoull(parts[2]);
+                    uint64_t epoch = std::stoull(parts[3]);
+                    // no need to lock the mutex since this method is called from the constructor
+                    _updated_epochs[epoch].emplace_back(chunk_id);
+                }
+            }
+        }
     };
 
     template<typename T>

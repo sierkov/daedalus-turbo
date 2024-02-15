@@ -9,6 +9,7 @@ extern "C" {
 #   include <sodium.h>
 };
 #include <dt/array.hpp>
+#include <dt/ed25519.hpp>
 #include <dt/util.hpp>
 
 namespace daedalus_turbo
@@ -19,6 +20,7 @@ namespace daedalus_turbo
 
     inline void blake2b_sodium(void *out, size_t out_len, const void *in, size_t in_len)
     {
+        ed25519::init();
         if (crypto_generichash(reinterpret_cast<unsigned char*>(out), out_len, reinterpret_cast<const unsigned char *>(in), in_len, nullptr, 0) != 0)
             throw error("libsodium error: can't compute hash!");
     }

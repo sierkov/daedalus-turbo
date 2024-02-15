@@ -10,7 +10,7 @@
 
 namespace daedalus_turbo::index::stake_ref {
 
-    struct __attribute__((packed)) item {        
+    struct item {
         stake_ident id;
         uint64_t offset = 0;
         cardano::tx_size size {};

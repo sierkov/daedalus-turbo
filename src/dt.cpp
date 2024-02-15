@@ -9,6 +9,7 @@
 #include <dt/cli/sync-local.hpp>
 #include <dt/cli/truncate.hpp>
 #include <dt/cli/tx-info.hpp>
+#include <dt/cli/validate.hpp>
 
 int main(int argc, char **argv)
 {
@@ -20,6 +21,7 @@ int main(int argc, char **argv)
         std::make_unique<sync_http::cmd>(),
         std::make_unique<sync_local::cmd>(),
         std::make_unique<truncate::cmd>(),
-        std::make_unique<tx_info::cmd>()
+        std::make_unique<tx_info::cmd>(),
+        std::make_unique<validate::cmd>()
     ));
 }

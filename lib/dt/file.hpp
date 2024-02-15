@@ -10,6 +10,7 @@
 #include <filesystem>
 #include <fstream>
 #include <string>
+#include <zpp_bits.h>
 #include <dt/util.hpp>
 #include <dt/zstd.hpp>
 
@@ -69,8 +70,26 @@ namespace daedalus_turbo::file {
         {
             return _open_files;
         }
+
+        static size_t max_open_files()
+        {
+            return _max_open_files;
+        }
     protected:
         static std::atomic_size_t _open_files;
+        static std::atomic_size_t _max_open_files;
+
+        static void _report_open_file()
+        {
+            auto open = ++_open_files;
+            for (;;) {
+                auto max = _max_open_files.load();
+                if (open <= max)
+                    break;
+                if (_max_open_files.compare_exchange_weak(max, open))
+                    break;
+            }
+        }
     };
 
     // C-style IO is used since on Mac OS the standard C++ library has very slow I/O performance.
@@ -83,7 +102,7 @@ namespace daedalus_turbo::file {
                 throw error_sys("failed to open a file for reading {}", _path);
             if (std::setvbuf(_f, NULL, _IONBF, 0) != 0)
                 throw error_sys("failed to disable read buffering for {}", _path);
-            _open_files++;
+            _report_open_file();
         }
 
         ~read_stream()
@@ -128,7 +147,7 @@ namespace daedalus_turbo::file {
         write_stream(const std::string &path, std::ios_base::openmode mode=std::ios::binary): _path { path }
         {
             auto dir_path = std::filesystem::path { _path }.parent_path();
-            if (!std::filesystem::exists(dir_path))
+            if (!dir_path.empty())
                 std::filesystem::create_directories(dir_path);
             if (mode != std::ios::binary)
                 throw error("unsupported write_stream mode: {}!", (int)mode);
@@ -137,7 +156,7 @@ namespace daedalus_turbo::file {
                 throw error_sys("failed to open a file for writing {}", _path);
             if (std::setvbuf(_f, NULL, _IONBF, 0) != 0)
                 throw error_sys("failed to disable write buffering for {}", _path);
-            _open_files++;
+            _report_open_file();
         }
 
         write_stream(write_stream &&ws)
@@ -210,8 +229,8 @@ namespace daedalus_turbo::file {
 
     inline void read(const std::string &path, uint8_vector &buffer) {
         read_raw(path, buffer);
-        static const std::string zstd_suffix { ".zstd" };
-        if (path.size() > 5 && path.substr(path.size() - 5) == zstd_suffix) {
+        thread_local std::string_view match { ".zstd" };
+        if (path.size() > 5 && path.substr(path.size() - 5) == match) {
             uint8_vector decompressed;
             zstd::decompress(decompressed, buffer);
             buffer = std::move(decompressed);
@@ -246,11 +265,40 @@ namespace daedalus_turbo::file {
     }
 
     template<typename T>
+    inline void read_zpp(T &v, const std::string &path)
+    {
+        uint8_vector zpp_data {};
+        {
+            auto zstd_data = file::read_raw(path);
+            zstd::decompress(zpp_data, zstd_data);
+        }
+        zpp::bits::in in { zpp_data };
+        in(v).or_throw();
+    }
+
+    template<typename T>
     inline void write_vector(const std::string &path, const std::vector<T> &v)
     {
         auto tmp_path = fmt::format("{}.tmp", path);
         write_stream os { tmp_path };
         os.write(v.data(), v.size() * sizeof(T));
+        os.close();
+        std::filesystem::rename(tmp_path, path);
+    }
+
+    template<typename T>
+    inline void write_zpp(const std::string &path, const T &v)
+    {
+        uint8_vector zstd_data {};
+        {
+            uint8_vector zpp_data {};
+            zpp::bits::out out { zpp_data };
+            out(v).or_throw();
+            zstd::compress(zstd_data, zpp_data, 3);
+        }
+        auto tmp_path = fmt::format("{}.tmp", path);
+        write_stream os { tmp_path };
+        os.write(zstd_data.data(), zstd_data.size());
         os.close();
         std::filesystem::rename(tmp_path, path);
     }

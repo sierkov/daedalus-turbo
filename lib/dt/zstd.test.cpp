@@ -30,7 +30,7 @@ suite zstd_suite = [] {
             zstd::stream_decompressor dec {};
             // the loop checks the reuse correctness
             for (size_t i=0; i < 10; ++i) {
-                file::read_stream is { "./data/chunk-registry/immutable/9C5C0267DCA941851D0330E19B91712618EB6DB4BF17E458BCF00829F84CF3CF.zstd" };
+                file::read_stream is { "./data/chunk-registry/compressed/immutable/9C5C0267DCA941851D0330E19B91712618EB6DB4BF17E458BCF00829F84CF3CF.zstd" };
                 uint8_vector buf {};
                 expect(dec.read_start(buf, is) == 42052372_ull);
                 expect(buf.size() > 10) << buf.size();

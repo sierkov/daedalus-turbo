@@ -348,15 +348,15 @@ namespace daedalus_turbo {
             }
         };
 
-        reconstructor(scheduler &sched, chunk_registry &cr, const std::string &idx_path)
-            : _sched { sched }, _cr { cr },
-                _stake_ref_idx { indexer::multi_reader_paths(idx_path, "stake-ref") },
-                _pay_ref_idx { indexer::multi_reader_paths(idx_path, "pay-ref") },
-                _tx_idx { indexer::multi_reader_paths(idx_path, "tx") },
-                _txo_use_idx { indexer::multi_reader_paths(idx_path, "txo-use") },
+        reconstructor(scheduler &sched, chunk_registry &cr)
+            : _sched { sched }, _cr { cr }, _idx_dir { indexer::incremental::storage_dir(_cr.data_dir()) },
+                _stake_ref_idx { indexer::multi_reader_paths(_idx_dir, "stake-ref") },
+                _pay_ref_idx { indexer::multi_reader_paths(_idx_dir, "pay-ref") },
+                _tx_idx { indexer::multi_reader_paths(_idx_dir, "tx") },
+                _txo_use_idx { indexer::multi_reader_paths(_idx_dir, "txo-use") },
                 _block_index {}
         {
-            index::reader_multi<index::block_meta::item> block_meta_idx { indexer::multi_reader_paths(idx_path, "block-meta") };
+            index::reader_multi<index::block_meta::item> block_meta_idx { indexer::multi_reader_paths(_idx_dir, "block-meta") };
             _block_index.reserve(block_meta_idx.size());
             index::block_meta::item item {};
             while (block_meta_idx.read(item)) {
@@ -409,6 +409,7 @@ namespace daedalus_turbo {
     private:
         scheduler &_sched;
         chunk_registry &_cr;
+        const std::filesystem::path _idx_dir;
         index::reader_multi<index::stake_ref::item> _stake_ref_idx;
         index::reader_multi<index::pay_ref::item> _pay_ref_idx;
         index::reader_multi<index::tx::item> _tx_idx;

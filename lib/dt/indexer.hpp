@@ -37,20 +37,6 @@
 #include <dt/scheduler.hpp>
 
 namespace daedalus_turbo::indexer {
-    inline std::vector<std::string> multi_reader_slices(const std::string &base_path, const std::string &idx_name)
-    {
-        std::vector<std::string> slices {};
-        auto dir_path = std::filesystem::path { base_path } / idx_name;
-        for (const auto &entry: std::filesystem::directory_iterator(dir_path)) {
-            if (!entry.is_regular_file() || !entry.path().filename().string().starts_with("index-slice-") || entry.path().extension() != ".data")
-                continue;
-            auto slice_name = entry.path().filename().string();
-            slices.emplace_back(slice_name.substr(6, slice_name.size() - 6 - 5));
-        }
-        std::sort(slices.begin(), slices.end());
-        return slices;
-    }
-
     inline std::vector<std::string> multi_reader_paths(const std::string &base_path, const std::string &idx_name)
     {
         std::vector<std::string> slices {};
@@ -67,6 +53,7 @@ namespace daedalus_turbo::indexer {
 
     using chunk_indexer_list = std::vector<std::unique_ptr<index::chunk_indexer_base>>;
     constexpr int min_no_open_files = 2048;
+    using slice_list = std::vector<merger::slice>;
 
     struct indexer_map: public std::map<std::string, std::unique_ptr<index::indexer_base>> {
         using std::map<std::string, std::unique_ptr<index::indexer_base>>::map;
@@ -78,8 +65,15 @@ namespace daedalus_turbo::indexer {
     };
 
     struct incremental: public chunk_registry {
-        incremental(scheduler &sched, const std::string &db_dir, indexer_map &indexers)
-            : chunk_registry { sched, db_dir }, _indexers { indexers }, _index_state_path { (_db_dir / "indexer-state.json").string() }
+        static std::string storage_dir(const std::string &data_dir)
+        {
+            return chunk_registry::init_db_dir(data_dir + "/index");
+        }
+
+        incremental(scheduler &sched, const std::string &data_dir, indexer_map &indexers)
+            : chunk_registry { sched, data_dir }, _indexers { indexers },
+                _idx_dir { storage_dir(data_dir) },
+                _index_state_path { (_idx_dir / "state.json").string() }
         {
 #           ifdef _WIN32
                 if (_setmaxstdio(min_no_open_files) < min_no_open_files)
@@ -88,13 +82,19 @@ namespace daedalus_turbo::indexer {
                 struct rlimit lim;
                 if (getrlimit(RLIMIT_NOFILE, &lim) != 0)
                     throw error_sys("getrlimit failed");
+                logger::trace("before RLIMIT_NOFILE to cur: {} max: {}", lim.rlim_cur, lim.rlim_max);
                 if (lim.rlim_cur < min_no_open_files || lim.rlim_max < min_no_open_files) {
                     lim.rlim_cur = min_no_open_files;
                     lim.rlim_max = min_no_open_files;
+                    logger::trace("setting RLIMIT_NOFILE to cur: {} max: {}", lim.rlim_cur, lim.rlim_max);
                     if (setrlimit(RLIMIT_NOFILE, &lim) != 0)
                         throw error_sys("failed to increase the max number of open files to {}", min_no_open_files);
+                    if (getrlimit(RLIMIT_NOFILE, &lim) != 0)
+                        throw error_sys("getrlimit failed");
+                    logger::trace("after RLIMIT_NOFILE to cur: {} max: {}", lim.rlim_cur, lim.rlim_max);
                 }
 #           endif
+            _update_mergeable();
         }
 
         void clean_up() override
@@ -104,42 +104,10 @@ namespace daedalus_turbo::indexer {
                 idxr_ptr->clean_up();
         }
 
-        file_set load_state(bool strict=true) override
-        {
-            auto deletable_files = chunk_registry::load_state(strict);
-            if (std::filesystem::exists(_index_state_path)) {
-                auto json = file::read(_index_state_path);
-                auto j_slices = json::parse(json.span().string_view()).as_array();
-                uint64_t end_offset = 0;
-                bool stop = false;
-                for (auto &j: j_slices) {
-                    auto slice = merger::slice::from_json(j.as_object());
-                    for (auto &[name, idxr_ptr]: _indexers) {
-                        if (!idxr_ptr->exists(slice.slice_id())) {
-                            logger::warn("missing slice {} of index {} - truncating to the previous slice", slice.slice_id(), name);
-                            stop = true;
-                            break;
-                        }
-                    }
-                    if (stop)
-                        break;                    
-                    if (slice.offset != end_offset) {
-                        logger::warn("offset of slice {} is not continuous - truncating to the previous slice", slice.slice_id());
-                        break;
-                    }
-                    _slices.add(std::move(slice));
-                    end_offset = slice.offset + slice.size;
-                }
-                logger::info("indices have data up to offset {}", end_offset);
-                for (auto &&path: truncate(end_offset, false))
-                    deletable_files.emplace(std::move(path));
-            }
-            return deletable_files;
-        }
-
         void import(const chunk_registry &src_cr)
         {
             uint8_vector raw_data {}, compressed_data {};
+            target_offset(src_cr.num_bytes());
             for (const auto &[last_byte_offset, src_chunk]: src_cr.chunks()) {
                 file::read_raw(src_cr.full_path(src_chunk.rel_path()), compressed_data);
                 zstd::decompress(raw_data, compressed_data);
@@ -150,48 +118,51 @@ namespace daedalus_turbo::indexer {
             save_state();
         }
 
-        chunk_info parse(uint64_t offset, const std::string &rel_path, const buffer &raw_data, size_t compressed_size) const override
+        slice_list slices(std::optional<uint64_t> end_offset={}) const
         {
-            return _parse_normal(offset, rel_path, raw_data, compressed_size, [](const auto &){});
+            slice_list copy {};
+            std::scoped_lock lk { _slices_mutex };
+            copy.reserve(_slices.size());
+            for (const auto &[offset, s]: _slices) {
+                if (!end_offset || *end_offset >= s.end_offset())
+                    copy.emplace_back(s);
+            }
+            return copy;
         }
 
         file_set truncate(size_t max_end_offset, bool del=true) override
         {
             auto deleted_files = chunk_registry::truncate(max_end_offset, del);
             timer t { fmt::format("truncate indices to max offset {}", max_end_offset) };
-            struct op {
-                merger::slice before {};
-                merger::slice after {};
-            };
-            std::vector<op> ops {};
-            for (const auto &[offset, s]: _slices) {
-                if (s.offset + s.size > max_end_offset) {
-                    logger::debug("truncate index slice {}", s.slice_id());
-                    if (s.offset < max_end_offset) {
+            std::vector<merger::slice> updated {};
+            for (auto it = _slices.begin(); it != _slices.end(); ) {
+                const auto &s = it->second;
+                if (s.end_offset() <= max_end_offset) {
+                    ++it;
+                } else { // s.end_offset() > max_end_offset
+                    logger::trace("truncate index slice {}", s.slice_id);
+                    if (s.offset >= max_end_offset) {
+                        if (del) {
+                            for (auto &[name, idxr_ptr]: _indexers)
+                                index::writer<int>::remove(idxr_ptr->reader_path(s.slice_id));
+                        }
+                        it = _slices.erase(it);
+                    } else {
                         merger::slice new_slice { s.offset, std::min(s.size, max_end_offset - s.offset) };
-                        ops.emplace_back(s, new_slice);
+                        updated.emplace_back(new_slice);
                         for (auto &[name, idxr_ptr]: _indexers) {
-                            _sched.submit("truncate-init-" + name, 25, [this, &idxr_ptr, s] {
-                                idxr_ptr->truncate(s.slice_id(), num_bytes());
-                                return true;
+                            _sched.submit_void("truncate-init-" + name, 25, [&idxr_ptr, s, new_slice, max_end_offset] {
+                                idxr_ptr->truncate(s.slice_id, max_end_offset);
+                                index::writer<int>::rename(idxr_ptr->reader_path(s.slice_id), idxr_ptr->reader_path(new_slice.slice_id));
                             });
                         }
-                    } else {
-                        for (auto &[name, idxr_ptr]: _indexers) {
-                            index::writer<int>::remove(idxr_ptr->reader_path(s.slice_id()));
-                        }
                     }
-                } else {
-                    logger::debug("truncate indices: skipping slice {} - all offsets are smaller", s.slice_id());
                 }
             }
             _sched.process(true);
-            for (auto &&[before, after]: ops) {
-                for (auto &[name, idxr_ptr]: _indexers)
-                    index::writer<int>::rename(idxr_ptr->reader_path(before.slice_id()), idxr_ptr->reader_path(after.slice_id()));
-                _slices.del(before.offset);
-                _slices.add(std::move(after));
-            }                                   
+            for (auto &&new_slice: updated) {
+                _slices.add(new_slice);
+            }
             return deleted_files;
         }
 
@@ -199,179 +170,219 @@ namespace daedalus_turbo::indexer {
         {
             timer t { "indexer::save_state" };
             chunk_registry::save_state();
-            if (!_updated_chunks.empty() || !_slices.empty()) {
-                for (size_t ci = 1; ; ci++) {
-                    size_t num_tasks = 0;
-                    {
-                        std::unique_lock lk { _updates_mutex };
-                        num_tasks = _schedule_premerge(std::move(lk));
-                    }
-                    if (num_tasks > 0) {
-                        _sched.process(true);
-                        logger::info("combine indices iteration {} - launched {} combine tasks", ci, num_tasks);
-                    } else
-                        break;
-                }
+            // ensure that all scheduled tasks have completed by now
+            _sched.process(true);
+            // merge final not-yet merged epochs
+            {
+                std::unique_lock lk { _epoch_slices_mutex };
+                _schedule_final_merge(std::move(lk), true);
             }
+            _sched.process(true);
             std::ostringstream json_s {};
             json_s << "[\n";
-            for (const auto &[offset, slice]: _slices) {
-                json_s << "  " << json::serialize(slice.to_json());
-                if (slice.offset + slice.size < _slices.offset_end())
-                    json_s << ',';
-                json_s << '\n';
+            if (!_slices.empty()) {
+                auto end_offset = _slices.rbegin()->second.end_offset();
+                for (const auto &[offset, slice]: _slices) {
+                    json_s << "  " << json::serialize(slice.to_json());
+                    if (slice.offset + slice.size < end_offset)
+                        json_s << ',';
+                    json_s << '\n';
+                }
             }
             json_s << "]\n";
             file::write(_index_state_path, json_s.str());
-        }
-
-        void set_progress(const std::string &id, progress::info &info_ref) override
-        {
-            _progress.emplace(id, info_ref);
+            _epoch_merged = 0;
+            _final_merged = 0;
         }
     protected:
-        using updated_chunks_map = std::map<uint64_t, chunk_registry::chunk_info>;
-        struct progress_info {
-            std::string id {};
-            std::reference_wrapper<progress::info> info;
-        };
-
         indexer_map &_indexers;
+        const std::filesystem::path _idx_dir;
         const std::string _index_state_path;
-        alignas(mutex::padding) mutable std::mutex _updates_mutex {};
-        mutable updated_chunks_map _updated_chunks {};
-        mutable size_t _updated_chunks_size = 0;
+        std::set<std::string> _mergeable {};
         alignas(mutex::padding) mutable std::mutex _slices_mutex {};
-        mutable merger::tree _slices {};
-        std::optional<progress_info> _progress {};
+        merger::tree _slices {};
+        volatile uint64_t _epoch_merged = 0;
+        volatile uint64_t _final_merged = 0;
+        uint64_t _merge_next_offset = 0;
+        uint64_t _merge_start_offset = 0;
+        alignas(mutex::padding) mutable std::mutex _epoch_slices_mutex {};
+        std::map<uint64_t, merger::slice> _epoch_slices {};
 
-        //size_t _schedule_premerge(std::unique_lock<auto> &&updates_lk, bool skippable=false) const
-        size_t _schedule_premerge(std::unique_lock<std::mutex> &&updates_lk, bool skippable=false) const
+        std::pair<uint64_t, file_set> _load_state(bool strict=true) override
         {
-            if (skippable && _sched.task_count() >= _sched.num_workers())
-                return 0;
-            size_t scheduled_tasks = 0;
+            auto [cr_truncate_offset, deletable_files] = chunk_registry::_load_state(strict);
             uint64_t end_offset = 0;
-            std::vector<merger::proposal> proposals {};
-            {
-                std::scoped_lock lk { _slices_mutex };
-                logger::debug("index::schedule_premerge with {} chunks and {} bytes slices: {}", _updated_chunks.size(), _updated_chunks_size, _slices.size());
-                // first, insert the recently parsed chunks
-                for (auto &[offset, chunk]: _updated_chunks) {
-                    auto slice_it = _slices.add(merger::slice { offset, chunk.data_size });
-                    slice_it->second._slice_id.emplace(fmt::format("update-{}", offset));
-                }
-                _updated_chunks.clear();
-                _updated_chunks_size = 0;
-                updates_lk.unlock();
-                if (_slices.empty())
-                    throw error("internal error: slice list cannot be empty!");
-                // next, analyze the existing slices and schedule necessary merge operations
-                // save proposals since processing updates _slices which influences iteration within find_mergeable
-                _slices.find_mergeable([&](auto &&prop) {
-                    proposals.emplace_back(std::move(prop));
-                });
-                end_offset = _slices.offset_end();
-            }
-            
-            std::set<std::string> merged_indices {};
-            for (const auto &[idxr_name, idxr_ptr]: _indexers) {
-                    if (idxr_ptr->mergeable())
-                        merged_indices.emplace(idxr_name);
-            }
-            for (auto &&[new_slice, input_offsets]: proposals) {
-                logger::debug("indexer::premerge slice {} from {}", new_slice.slice_id(), input_offsets);
-                std::vector<std::string> input_slices {};
-                merger::slice slice_copy {};
-                {
-                    std::scoped_lock lk { _slices_mutex };
-                    for (uint64_t offset: input_offsets) {
-                        input_slices.emplace_back(_slices.at(offset).slice_id());
-                        _slices.del(offset);
+            if (std::filesystem::exists(_index_state_path)) {
+                auto j_slices = json::load(_index_state_path).as_array();    
+                bool stop = false;
+                for (auto &j: j_slices) {
+                    auto slice = merger::slice::from_json(j.as_object());
+                    for (auto &[name, idxr_ptr]: _indexers) {
+                        if (idxr_ptr->mergeable() && !idxr_ptr->exists(slice.slice_id)) {
+                            logger::warn("missing slice {} of index {} - truncating to the previous slice", slice.slice_id, name);
+                            stop = true;
+                            break;
+                        }
                     }
-                    new_slice.indices_awaited = merged_indices;
-                    auto slice_iter = _slices.add(std::move(new_slice));
-                    // creating a copy since concurrent deletions from _slices can corrupt the iterator
-                    slice_copy = slice_iter->second;
+                    if (stop)
+                        break;             
+                    if (slice.offset != end_offset) {
+                        logger::warn("offset of slice {} is not continuous - truncating to the previous slice", slice.slice_id);
+                        break;
+                    }
+                    _slices.add(std::move(slice));
+                    end_offset = slice.offset + slice.size;
                 }
                 
+            }
+            logger::info("indices have data up to offset {}", end_offset);
+            _merge_next_offset = _merge_start_offset = end_offset;
+            return std::make_pair(std::min(cr_truncate_offset, end_offset), deletable_files);
+        }
+
+        void _update_mergeable()
+        {
+            _mergeable.clear();
+            if (!_indexers.empty()) {
                 for (const auto &[idxr_name, idxr_ptr]: _indexers) {
-                    if (!idxr_ptr->mergeable())
-                        continue;
-                    std::vector<std::string> input_paths {};
-                    for (const auto &slice_id: input_slices) {
-                        if (idxr_ptr->disk_size(slice_id) > 0)
-                            input_paths.emplace_back(idxr_ptr->reader_path(slice_id));
-                    }
-                    auto output_path = idxr_ptr->reader_path(slice_copy.slice_id());
-                    size_t priority = (end_offset - slice_copy.offset) * 100 / end_offset;
-                    logger::debug("scheduling merge task with prio {} output: {} inputs: {}", priority, output_path, input_paths);
-                    auto scheduled = std::make_shared<std::atomic_bool>(false);
-                    auto slice_offset = slice_copy.offset;
-                    _sched.on_result(output_path, [this, slice_offset, output_path, idxr_name, scheduled] (const auto &res) {
-                        if (res.type() == typeid(scheduled_task_error))
-                            return;
-                        if (!*scheduled || _sched.task_count(output_path) > 0)
-                            return;
-                        {
-                            std::scoped_lock lk { _slices_mutex };
-                            auto &slice = _slices.at(slice_offset);
-                            slice.indices_awaited.erase(idxr_name);
-                            logger::debug("merge task ready: {} offset: {} size: {} awaited_indices: {}",
-                                output_path, slice.offset, slice.size, slice.indices_awaited);
-                            if (slice.indices_awaited.empty()) {
-                                logger::debug("merged slice: {} total slices: {}", slice.slice_id(), _slices.size());
-                                if (_progress) {
-                                    _progress->info.get().completed = _slices.continuous_size();
-                                    logger::debug("merge progress completed: {}", _progress->info.get().completed);
-                                    progress::get().update(_progress->id, fmt::format("{:0.3f}%", static_cast<double>(_progress->info.get().completed) * 100 / _progress->info.get().total));
-                                }
-                            }
-                        }
-                        _sched.clear_observers(output_path);
-                    });
-                    scheduled_tasks++;
-                    _sched.submit("schedule-" + output_path, priority, [&idxr_ptr, output_path, priority, input_paths, scheduled] {
-                        idxr_ptr->merge(output_path, priority, input_paths, output_path);
-                        *scheduled = true;
-                        return output_path;
-                    });
+                    if (idxr_ptr && idxr_ptr->mergeable())
+                        _mergeable.emplace(idxr_name);
                 }
             }
-            return scheduled_tasks;
+        }
+
+        virtual void _on_slice_ready(uint64_t first_epoch, uint64_t last_epoch, const merger::slice &slice)
+        {
+            logger::info("on_slice_ready first_epoch: {} last_epoch: {} start_offset: {} end_offset: {}",
+                first_epoch, last_epoch, slice.offset, slice.end_offset());
+        }
+
+        void _on_epoch_merge(uint64_t epoch, const epoch_info &info) override
+        {
+            chunk_registry::_on_epoch_merge(epoch, info);
+            std::vector<std::string> input_slices {};
+            for (const auto &chunk_ptr: info.chunk_ids) {
+                input_slices.emplace_back(fmt::format("update-{}", chunk_ptr->offset));
+            }
+            merger::slice output_slice { info.start_offset, info.end_offset - info.start_offset, fmt::format("epoch-{}", epoch) };
+            _merge_slice(output_slice, input_slices, 100, [this, epoch, output_slice] {
+                std::unique_lock lk { _epoch_slices_mutex };
+                logger::trace("insert epoch slice for epoch: {} start_offset: {} end_offset: {}", epoch, output_slice.offset, output_slice.end_offset());
+                _epoch_slices.emplace(epoch, std::move(output_slice));
+                _epoch_merged += output_slice.size;
+                if (_target_offset) {
+                    logger::trace("merge progress epoch_merged: {} final_merged: {} target_offset: {} start_offset: {}",
+                        _epoch_merged, _final_merged, *_target_offset, _merge_start_offset);
+                    progress::get().update("merge", _epoch_merged + _final_merged, (*_target_offset - _merge_start_offset) * 2);
+                }
+                _schedule_final_merge(std::move(lk));
+            });
+        }
+
+        void _merge_slice(const merger::slice &output_slice, const std::vector<std::string> &input_slices, size_t prio_base, const std::function<void()> &on_merge)
+        {
+            auto indices_awaited = std::make_shared<std::set<std::string>>(_mergeable);
+            for (const auto &idxr_name: _mergeable) {
+                auto idxr_ptr = _indexers.at(idxr_name).get();
+                std::vector<std::string> input_paths {};
+                for (const auto &slice_id: input_slices) {
+                    if (idxr_ptr->disk_size(slice_id) > 0)
+                        input_paths.emplace_back(idxr_ptr->reader_path(slice_id));
+                }
+                auto output_path = idxr_ptr->reader_path(output_slice.slice_id);
+                auto end_offset = _target_offset ? *_target_offset : _end_offset;
+                if (end_offset < output_slice.offset)
+                    end_offset = output_slice.offset;
+                size_t priority = prio_base + (end_offset - output_slice.offset) * 100 / end_offset; // [0;100) range
+                auto done_parts = std::make_shared<std::atomic_size_t>(0);
+                auto todo_parts = std::make_shared<std::atomic_size_t>(idxr_ptr->merge_task_count(input_paths));
+                _sched.on_result(output_path, [this, priority, todo_parts, done_parts, output_slice, indices_awaited, output_path, idxr_name, on_merge] (const auto &res) {
+                    logger::trace("notified of index partition merge completion: {} done_parts: {} total_parts: {}",
+                            output_path, done_parts->load(), todo_parts->load());
+                    if (res.type() == typeid(scheduled_task_error))
+                        return;
+                    if (++*done_parts >= *todo_parts) {
+                        indices_awaited->erase(idxr_name);
+                        logger::trace("notified of index merge completion: {} still awaited: {}", output_path, *indices_awaited);
+                        if (indices_awaited->empty()) {
+                            logger::trace("scheduling task to notify of slice readiness: {}", output_path, *indices_awaited);
+                            _sched.submit_void("ready-" + output_path, priority, on_merge);
+                            _sched.clear_observers(output_path);
+                        }
+                    }
+                });
+                _sched.submit_void("schedule-" + output_path, priority, [idxr_ptr, output_path, priority, input_paths, todo_parts] {
+                    idxr_ptr->merge(output_path, priority, input_paths, output_path);
+                });
+                logger::trace("scheduled merge tasks for {}", output_path);
+            }
+        }
+        
+        void _schedule_final_merge(std::unique_lock<std::mutex> &&epoch_slices_lk, bool force=false)
+        {
+            logger::trace("_schedule_final_merge force: {} epoch_slices: {} _merge_next_offset: {} _target_offset: {}",
+                force, _epoch_slices.size(), _merge_next_offset, _target_offset);
+            while (!_epoch_slices.empty()) {
+                uint64_t total_size = 0;
+                for (const auto &[epoch, slice]: _epoch_slices) {
+                    if (slice.offset == _merge_next_offset + total_size) {
+                        logger::trace("_schedule_final_merge accept epoch: {} offset: {} size: {}", epoch, slice.offset, slice.size);
+                        total_size += slice.size;
+                    } else {
+                        logger::trace("_schedule_final_merge continuity breach in epoch: {} offset: {} size: {}", epoch, slice.offset, slice.size);
+                        break;
+                    }
+                }
+                logger::trace("_schedule_final_merge total_size: {}", total_size);
+                if (total_size == 0)
+                    break;
+                if (total_size < merger::part_size && !force && (!_target_offset || *_target_offset > _merge_next_offset + total_size))
+                    break;
+                auto first_epoch = _epoch_slices.begin()->first;
+                auto last_epoch = first_epoch;
+                std::vector<std::string> input_slices {};
+                while (_epoch_slices.begin()->second.offset < _merge_next_offset + total_size) {
+                    input_slices.emplace_back(_epoch_slices.begin()->second.slice_id);
+                    last_epoch = _epoch_slices.begin()->first;
+                    _epoch_slices.erase(_epoch_slices.begin());
+                }   
+                merger::slice output_slice { _merge_next_offset, total_size };
+                _merge_next_offset += total_size;
+                epoch_slices_lk.unlock();
+                _merge_slice(output_slice, input_slices, 200, [this, output_slice, first_epoch, last_epoch] {
+                    {
+                        std::scoped_lock lk { _slices_mutex };
+                        _slices.add(std::move(output_slice));
+                        _final_merged = _slices.continuous_size();
+                    }
+                    if (_target_offset) {
+                        logger::trace("merge progress epoch_merged: {} final_merged: {} target_offset: {} start_offset: {}",
+                            _epoch_merged, _final_merged, *_target_offset, _merge_start_offset);
+                        progress::get().update("merge", _epoch_merged + _final_merged, (*_target_offset - _merge_start_offset) * 2);
+                    }
+                    _on_slice_ready(first_epoch, last_epoch, output_slice);
+                });
+                epoch_slices_lk.lock();
+            }
         }
 
         chunk_info _parse_normal(uint64_t offset, const std::string &rel_path,
-            const buffer &raw_data, size_t compressed_size, const block_processor &extra_proc) const
+            const buffer &raw_data, size_t compressed_size, const block_processor &extra_proc) const override
         {
-            chunk_info info {};
-            {
-                chunk_indexer_list chunk_indexers {};
-                for (auto &[name, idxr_ptr]: _indexers)
-                    chunk_indexers.emplace_back(idxr_ptr->make_chunk_indexer("update", offset));
-                info = chunk_registry::_parse_normal(offset, rel_path, raw_data, compressed_size, [&chunk_indexers, &extra_proc](const auto &blk) {
-                    for (auto &idxr: chunk_indexers)
-                        idxr->index(blk);
-                    extra_proc(blk);
-                });
-            }
-            // ensure that chunk_indexers are properly destroyed by this point.
-            {
-                std::unique_lock lk { _updates_mutex };
-                auto [it, created] = _updated_chunks.try_emplace(offset, info);
-                if (!created)
-                    throw error("duplicate chunk starting at offset {} detected!", offset);
-                _updated_chunks_size += info.data_size;
-                logger::debug("parsed: {}, parsed chunks: {}", info.orig_rel_path, _updated_chunks.size());
-                if (_updated_chunks_size >= static_cast<size_t>(1) << 30)
-                    _schedule_premerge(std::move(lk), true);
-            }
-            return info;
+            chunk_indexer_list chunk_indexers {};
+            for (auto &[name, idxr_ptr]: _indexers)
+                chunk_indexers.emplace_back(idxr_ptr->make_chunk_indexer("update", offset));
+            return chunk_registry::_parse_normal(offset, rel_path, raw_data, compressed_size, [&chunk_indexers, &extra_proc](const auto &blk) {
+                for (auto &idxr: chunk_indexers)
+                    idxr->index(blk);
+                extra_proc(blk);
+            });
         }
     };
 
-    inline indexer_map default_list(scheduler &sched, const std::string &idx_dir)
+    inline indexer_map default_list(scheduler &sched, const std::string &data_dir)
     {
+        const auto idx_dir = incremental::storage_dir(data_dir);
         indexer::indexer_map indexers {};
         indexers.emplace(std::make_unique<index::block_meta::indexer>(sched, idx_dir, "block-meta"));
         indexers.emplace(std::make_unique<index::stake_ref::indexer>(sched, idx_dir, "stake-ref"));

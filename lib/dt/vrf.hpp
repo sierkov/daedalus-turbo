@@ -14,6 +14,7 @@ extern "C" {
 #include <dt/array.hpp>
 #include <dt/blake2b.hpp>
 #include <dt/ed25519.hpp>
+#include <dt/logger.hpp>
 #include <dt/rational.hpp>
 #include <dt/util.hpp>
 
@@ -119,7 +120,10 @@ namespace daedalus_turbo {
         auto p_d = static_cast<double>(p);
         auto ls_d = static_cast<double>(leader_stake_rel);
         auto threshold = 1.0 - std::pow(static_cast<double>(1.0 - f), ls_d);
-        return p_d < threshold;
+        auto ok = p_d < threshold;
+        if (!ok)
+            logger::debug("failed leadership eligibility check: leader value: {} threshold: {}", p_d, threshold);
+        return ok;
     }
 }
 

@@ -9,7 +9,7 @@
 #include <dt/index/common.hpp>
 
 namespace daedalus_turbo::index::pay_ref {
-    struct __attribute__((packed)) item {
+    struct item {
         pay_ident id;
         uint64_t offset = 0;
         cardano::tx_size size {};

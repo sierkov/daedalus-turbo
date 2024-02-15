@@ -581,9 +581,9 @@ namespace daedalus_turbo {
                 os << shift_str << "NULL" << " offset: " << (val.data - base.data) << '\n';
                 break;
 
-            default: {
-                throw cbor_error("Unsupported CBOR type: {}!", (unsigned)val.type);
-            }
+            default:
+                os << shift_str << "Unsupported CBOR type: " << (unsigned)val.type << '\n';
+                break;
         }
     }
 

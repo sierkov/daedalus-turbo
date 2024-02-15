@@ -9,7 +9,7 @@
 #include <dt/index/common.hpp>
 
 namespace daedalus_turbo::index::tx {
-    struct __attribute__((packed)) item {
+    struct item {
         cardano_hash_32 hash;
         uint64_t offset = 0;
         cardano::tx_size size {};

@@ -6,9 +6,9 @@
 #define DAEDALUS_TURBO_CLI_SYNC_LOCAL_HPP
 
 #include <dt/cli.hpp>
-#include <dt/indexer.hpp>
 #include <dt/requirements.hpp>
 #include <dt/sync/local.hpp>
+#include <dt/validator.hpp>
 
 namespace daedalus_turbo::cli::sync_local {
     struct cmd: public command {
@@ -27,8 +27,6 @@ namespace daedalus_turbo::cli::sync_local {
             const auto &node_dir = args.at(0);
             const auto &data_dir = args.at(1);
             requirements::check(data_dir);
-            const std::string db_dir = data_dir + "/compressed";
-            const std::string idx_dir = data_dir + "/index";
             size_t zstd_max_level = 3;
             bool strict = true;
             if (args.size() > 2) {
@@ -47,9 +45,9 @@ namespace daedalus_turbo::cli::sync_local {
                 }
             }
             timer tc { "sync-local" };
-            scheduler sched { std::max(scheduler::default_worker_count() - 1, static_cast<size_t>(1)) };
-            auto indexers = indexer::default_list(sched, idx_dir);
-            indexer::incremental cr { sched, db_dir, indexers };
+            scheduler sched {};
+            auto indexers = validator::default_indexers(sched, data_dir);
+            validator::incremental cr { sched, data_dir, indexers };
             sync::local::syncer syncr { sched, cr, node_dir, strict, zstd_max_level, std::chrono::seconds { 0 } };
             auto res = syncr.sync();
             logger::info("errors: {} chunks: {} deleted: {} dist: {} db_last_slot: {} cycle time: {}",

@@ -9,7 +9,7 @@
 
 namespace daedalus_turbo::index {
     template<typename T>
-    static uint64_t merge_index_part(index::writer<T> &out_idx, size_t part_idx, const std::vector<std::shared_ptr<index::reader_mt<T>>> &readers)
+    inline uint64_t merge_index_part(index::writer<T> &out_idx, size_t part_idx, const std::vector<std::shared_ptr<index::reader_mt<T>>> &readers)
     {
         std::vector<typename index::reader_mt<T>::thread_data> reader_data {};
         merge_queue<T> items_to_consider {};
@@ -34,49 +34,63 @@ namespace daedalus_turbo::index {
     }
 
     template<typename T>
-    static void merge_one_step(scheduler &sched, const std::string &task_group, size_t task_prio, const std::vector<std::string> &chunks, const std::string &final_path)
+    inline size_t merge_estimate_task_count(const std::vector<std::string> &chunks)
     {
-        if (chunks.size() == 0)
-            return;
-        std::vector<std::shared_ptr<index::reader_mt<T>>> readers {};
-        size_t num_parts = 0;
-        for (size_t i = 0; i < chunks.size(); ++i) {
-            auto &reader = readers.emplace_back(std::make_shared<index::reader_mt<T>>(chunks[i]));
-            if (num_parts == 0)
-                num_parts = reader->num_parts();
-            if (num_parts != reader->num_parts())
-                throw error("chunk {} has a partition count: {} different for other chunks: {}!",
-                        chunks[i], reader->num_parts(), num_parts);
-        }
-        auto out_idx = std::make_shared<index::writer<T>>(final_path, num_parts);
-        // Tasks are added to a running scheduler here.
-        // So, if they are very quick task_count() == 0 can be reached before all task have been scheduled
-        auto scheduled = std::make_shared<std::atomic_bool>(false);
-        auto max_offset = std::make_shared<std::atomic<uint64_t>>(0);
-        sched.on_result(task_group, [&sched, scheduled, max_offset, out_idx, task_group, readers, chunks, final_path](const auto &res) mutable {
-            if (res.type() == typeid(scheduled_task_error)) {
-                logger::error("task {} {}", task_group, std::any_cast<scheduled_task_error>(res).what());
-                return;
-            }
-            auto part_max_offset = std::any_cast<uint64_t>(res);
-            if (part_max_offset > *max_offset)
-                *max_offset = part_max_offset;
-            if (!*scheduled || sched.task_count(task_group) > 0)
-                return;
-            out_idx->set_meta("max_offset", buffer::from(*max_offset));
-            // close files before removing
-            readers.clear();
-            out_idx->commit();
-            for (const auto &path: chunks)
-                index::writer<T>::remove(path);
-            logger::debug("merged {} chunks into {}", chunks.size(), final_path);
-        });
-        for (size_t pi = 0; pi < num_parts; ++pi) {
-            sched.submit(task_group, task_prio, [=]() {
-                return merge_index_part(*out_idx, pi, readers);
+        if (chunks.empty())
+            return 0;
+        else if (chunks.size() == 1)
+            return 1;
+        index::reader_mt<T> reader { chunks.at(0) };
+        return reader.num_parts();
+    }
+
+    template<typename T>
+    inline void merge_one_step(scheduler &sched, const std::string &task_group, size_t task_prio, const std::vector<std::string> &chunks, const std::string &final_path)
+    {
+        if (chunks.size() == 1) {
+            auto chunk = chunks.at(0);
+            sched.submit_void(task_group, task_prio, [=]() {
+                index::writer<int>::rename(chunk, final_path);
+                logger::trace("merged {} chunks into {}", chunk, final_path);
             });
+        } else if (!chunks.empty()) {
+            std::vector<std::shared_ptr<index::reader_mt<T>>> readers {};
+            size_t num_parts = 0;
+            for (size_t i = 0; i < chunks.size(); ++i) {
+                auto &reader = readers.emplace_back(std::make_shared<index::reader_mt<T>>(chunks[i]));
+                if (num_parts == 0)
+                    num_parts = reader->num_parts();
+                if (num_parts != reader->num_parts())
+                    throw error("chunk {} has a partition count: {} different from the one found in other chunks: {}!",
+                            chunks[i], reader->num_parts(), num_parts);
+            }
+            auto out_idx = std::make_shared<index::writer<T>>(final_path, num_parts);
+            auto todo_parts = std::make_shared<std::atomic_size_t>(num_parts);
+            auto done_parts = std::make_shared<std::atomic_size_t>(0);
+            auto max_offset = std::make_shared<std::atomic<uint64_t>>(0);
+            sched.on_result(task_group, [todo_parts, done_parts, max_offset, out_idx, task_group, chunks, final_path](const auto &res) mutable {
+                if (res.type() == typeid(scheduled_task_error)) {
+                    logger::error("task {} {}", task_group, std::any_cast<scheduled_task_error>(res).what());
+                    return;
+                }
+                auto part_max_offset = std::any_cast<uint64_t>(res);
+                if (part_max_offset > *max_offset)
+                    *max_offset = part_max_offset;
+                if (++*done_parts >= *todo_parts) {
+                    out_idx->set_meta("max_offset", buffer::from(*max_offset));
+                    out_idx->commit();
+                    // all readers must be already closed since all tasks refering to the shared_ptr are finished
+                    for (const auto &path: chunks)
+                        index::writer<T>::remove(path);
+                    logger::trace("merged {} chunks into {}", chunks.size(), final_path);
+                }
+            });
+            for (size_t pi = 0; pi < num_parts; ++pi) {
+                sched.submit(task_group, task_prio, [=]() {
+                    return merge_index_part(*out_idx, pi, readers);
+                });
+            }
         }
-        *scheduled = true;
     }
 }
 

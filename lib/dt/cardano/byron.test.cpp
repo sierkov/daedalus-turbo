@@ -159,7 +159,7 @@ suite cardano_byron_suite = [] {
         "boundary block hash"_test = [] {
             auto genesis_hash = bytes_from_hex("5F20DF933584822601F9E3F8C024EB5EB252FE8CEFB24D1317DC3D432E940EBB");
             auto hash = bytes_from_hex("89D9B5A5B8DDC8D7E5A6795E9774D97FAF1EFEA59B2CAF7EAF9F8C5B32059DF4");
-            auto chunk = file::read("./data/chunk-registry/immutable/526D236112DB8E38E66F37D330C85AFE0C268D81DF853DDDE4E88551EB9B0637.zstd");
+            auto chunk = file::read("./data/chunk-registry/compressed/immutable/526D236112DB8E38E66F37D330C85AFE0C268D81DF853DDDE4E88551EB9B0637.zstd");
             cbor_parser parser { chunk };
             cbor_value block_tuple {};
             parser.read(block_tuple);
@@ -167,7 +167,7 @@ suite cardano_byron_suite = [] {
             auto blk = cardano::make_block(block_tuple, 0);
             expect(blk->slot() == 0_ull);
             expect(blk->prev_hash() == genesis_hash);
-            //expect(blk->hash() == hash);
+            expect(blk->hash() == hash);
         };
     };  
 };

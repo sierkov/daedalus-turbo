@@ -5,13 +5,8 @@
 #ifndef DAEDALUS_TURBO_CLI_HTTP_API_HPP
 #define DAEDALUS_TURBO_CLI_HTTP_API_HPP
 
-#include <dt/chunk-registry.hpp>
 #include <dt/cli.hpp>
 #include <dt/http-api.hpp>
-#include <dt/history.hpp>
-#include <dt/indexer.hpp>
-#include <dt/requirements.hpp>
-#include <dt/scheduler.hpp>
 
 namespace daedalus_turbo::cli::http_api {
     using namespace daedalus_turbo::http_api;
@@ -27,8 +22,6 @@ namespace daedalus_turbo::cli::http_api {
         {
             if (args.size() < 1) _throw_usage();
             const auto &data_dir = args.at(0);
-            const std::string db_dir = data_dir + "/compressed";
-            const std::string idx_dir = data_dir + "/index";
             std::string ip { "127.0.0.1" };
             uint16_t port = 55556;
             std::string host { "turbo1.daedalusturbo.org" };
@@ -49,7 +42,7 @@ namespace daedalus_turbo::cli::http_api {
                 }
             }
             std::cerr << fmt::format("HTTP API listen address {}:{}\n", ip, port);
-            server s { db_dir, idx_dir, host };
+            server s { data_dir, host };
             s.serve(net::ip::make_address(ip), port);
         }
     };

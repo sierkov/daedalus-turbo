@@ -13,22 +13,21 @@ using namespace daedalus_turbo;
 
 suite history_suite = [] {
     "history"_test = [] {
-        static const std::string db_dir { "./data/chunk-registry"s };
-        static const std::string tmp_db_dir { "./tmp/compressed" };
-        static const std::string idx_dir { "./tmp/index" };
-        for (const auto &dir_path: { tmp_db_dir, idx_dir }) {
-            if (std::filesystem::exists(dir_path))
-                std::filesystem::remove_all(dir_path);
+        static const std::string src_dir { "./data/chunk-registry"s };
+        static const std::string data_dir { "./tmp" };
+        for (const auto &e: std::filesystem::directory_iterator { data_dir }) {
+            if (e.is_directory())
+                std::filesystem::remove_all(e.path());
         }
         "simple reconstruction"_test = [] {
             scheduler sched {};
-            chunk_registry src_cr { sched, db_dir };
-            src_cr.init_state(false, true, false);
-            auto indexers = indexer::default_list(sched, idx_dir);
-            indexer::incremental idxr { sched, tmp_db_dir, indexers };
+            chunk_registry src_cr { sched, src_dir };
+            src_cr.init_state(false, true);
+            auto indexers = indexer::default_list(sched, data_dir);
+            indexer::incremental idxr { sched, data_dir, indexers };
             idxr.import(src_cr);
             
-            reconstructor r { sched, idxr, idx_dir };
+            reconstructor r { sched, idxr };
             const auto &b1 = r.find_block(648087);
             const auto &b2 = r.find_block(648088);
             expect(b1.slot == b2.slot) << b1.slot << " " << b2.slot;

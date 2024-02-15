@@ -1,0 +1,18 @@
+version: "3.5"
+services:
+  cardano-node:
+    image: inputoutput/cardano-node:8.1.2
+    environment:
+      NETWORK: "mainnet"
+    volumes:
+      - /data/cardano-node:/data/db
+      - node-ipc:/ipc
+    restart: on-failure
+    logging:
+      driver: "json-file"
+      options:
+        compress: "true"
+        max-file: "10"
+        max-size: "50m"
+volumes:
+  node-ipc:

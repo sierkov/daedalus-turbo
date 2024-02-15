@@ -6,7 +6,7 @@
 #define DAEDALUS_TURBO_CLI_SYNC_HTTP_HPP
 
 #include <dt/cli.hpp>
-#include <dt/indexer.hpp>
+#include <dt/validator.hpp>
 #include <dt/requirements.hpp>
 #include <dt/sync/http.hpp>
 
@@ -15,7 +15,7 @@ namespace daedalus_turbo::cli::sync_http {
         const command_info &info() const override
         {
             static const command_info i {
-                "sync-http", "<data-dir> [--host=<host>]",
+                "sync-http", "<data-dir> [--host=<host>] [--max-epoch=<epoch>]",
                 "synchronize blockchain over Turbo protocol from <host> into <data-dir>"
             };
             return i;
@@ -26,25 +26,28 @@ namespace daedalus_turbo::cli::sync_http {
             if (args.size() < 1) _throw_usage();
             const auto &data_dir = args.at(0);
             requirements::check(data_dir);
-            const std::string db_dir = data_dir + "/compressed";
-            const std::string idx_dir = data_dir + "/index";
             std::string host = "turbo1.daedalusturbo.org";
+            std::optional<uint64_t> max_epoch {};
             if (args.size() > 1) {
                 static std::string_view p_host { "--host=" };
+                static std::string_view p_max_epoch { "--max-epoch=" };
                 for (const auto &arg: std::ranges::subrange(args.begin() + 1, args.end())) {
                     if (arg.substr(0, p_host.size()) == p_host) {
                         host = arg.substr(p_host.size());
+                    } else if (arg.substr(0, p_max_epoch.size()) == p_max_epoch) {
+                        std::string max_epoch_s { arg.substr(p_max_epoch.size()) };
+                        max_epoch = std::stoull(max_epoch_s);
                     } else {
                         throw error("unsupported option: {}", arg);
                     }
                 }
             }
-            timer tc { fmt::format("sync-http {} -> {}, {}", host, db_dir, idx_dir) };
-            scheduler sched { std::max(scheduler::default_worker_count() - 1, static_cast<size_t>(1)) };
-            auto indexers = indexer::default_list(sched, idx_dir);
-            indexer::incremental cr { sched, db_dir, indexers };
+            timer tc { fmt::format("sync-http {} -> {}", host, data_dir) };
+            scheduler sched {};
+            auto indexers = validator::default_indexers(sched, data_dir);
+            validator::incremental cr { sched, data_dir, indexers };
             sync::http::syncer syncr { sched, cr, host };
-            syncr.sync();
+            syncr.sync(max_epoch);
         }
     };
 }

@@ -6,6 +6,7 @@
 #define DAEDALUS_TURBO_JSON_HPP
 
 #include <boost/json.hpp>
+#include <dt/file.hpp>
 #include <dt/util.hpp>
 
 namespace daedalus_turbo::json {
@@ -14,6 +15,12 @@ namespace daedalus_turbo::json {
     inline json::value parse(const buffer &buf, json::storage_ptr sp={})
     {
         return boost::json::parse(boost::json::string_view { reinterpret_cast<const char *>(buf.data()), buf.size() }, sp);
+    }
+
+    inline json::value load(const std::string &path, json::storage_ptr sp={})
+    {
+        auto buf = file::read(path);
+        return parse(buf, sp);
     }
 }
 

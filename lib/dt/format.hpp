@@ -6,6 +6,7 @@
 #define DAEDALUS_TURBO_FORMAT_HPP
 
 #include <array>
+#include <optional>
 #include <set>
 #include <span>
 #include <string>
@@ -25,7 +26,7 @@ namespace daedalus_turbo {
 
 namespace fmt {
     template<>
-    struct formatter<std::span<const uint8_t>>: public formatter<int> {
+    struct formatter<std::span<const uint8_t>>: formatter<int> {
         template<typename FormatContext>
         auto format(const std::span<const uint8_t> &data, FormatContext &ctx) const -> decltype(ctx.out()) {
             auto out_it = ctx.out();
@@ -37,11 +38,11 @@ namespace fmt {
     };
 
     template<size_t SZ>
-    struct formatter<std::span<const uint8_t, SZ>>: public formatter<std::span<const uint8_t>> {
+    struct formatter<std::span<const uint8_t, SZ>>: formatter<std::span<const uint8_t>> {
     };
 
     template<typename T>
-    struct formatter<std::vector<T>>: public formatter<int> {
+    struct formatter<std::vector<T>>: formatter<int> {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
             auto out_it = ctx.out();
@@ -54,7 +55,7 @@ namespace fmt {
     };
 
     template<typename T>
-    struct formatter<std::set<T>>: public formatter<int> {
+    struct formatter<std::set<T>>: formatter<int> {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
             auto out_it = ctx.out();
@@ -63,6 +64,17 @@ namespace fmt {
                 out_it = fmt::format_to(out_it, "{}{}", *it, sep);
             }
             return out_it;
+        }
+    };
+
+    template<typename T>
+    struct formatter<std::optional<T>>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            if (v)
+                return fmt::format_to(ctx.out(), "{}", *v);
+            else
+                return fmt::format_to(ctx.out(), "std::nullopt");
         }
     };
 }

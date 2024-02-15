@@ -9,7 +9,7 @@
 #include <dt/index/common.hpp>
 
 namespace daedalus_turbo::index::block_meta {
-    struct __attribute__((packed)) item {
+    struct item {
         uint64_t offset = 0;
         cardano::slot slot {};
         uint64_t size: 24 = 0;

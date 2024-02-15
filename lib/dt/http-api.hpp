@@ -60,9 +60,9 @@ namespace daedalus_turbo::http_api {
     using tcp = boost::asio::ip::tcp;
 
     struct server {
-        server(const std::string &db_dir, const std::string &idx_dir, const std::string &host)
-            : _db_dir { db_dir }, _idx_dir { idx_dir }, _host { host }, _indexers { indexer::default_list(_sched, _idx_dir) }
-                , _requirements_status { requirements::check(_db_dir) }
+        server(const std::string &data_dir, const std::string &host)
+            : _data_dir { data_dir }, _host { host }, _indexers { indexer::default_list(_sched, _data_dir) },
+                _requirements_status { requirements::check(_data_dir) }
         {
         }
 
@@ -107,8 +107,8 @@ namespace daedalus_turbo::http_api {
             }
         };
 
-        const std::string _db_dir, _idx_dir, _host;
-        scheduler _sched { std::max(scheduler::default_worker_count() - 1, static_cast<size_t>(1)) };
+        const std::string _data_dir, _host;
+        scheduler _sched {};
         indexer::indexer_map _indexers {};
         std::unique_ptr<indexer::incremental> _cr {};
         std::unique_ptr<reconstructor> _reconst {};
@@ -311,12 +311,12 @@ namespace daedalus_turbo::http_api {
             _sync_error.reset();
             _sync_last_chunk.reset();
             try {
-                _cr = std::make_unique<indexer::incremental>(_sched, _db_dir, _indexers);
+                _cr = std::make_unique<indexer::incremental>(_sched, _data_dir, _indexers);
                 {
                     sync::http::syncer syncr { _sched, *_cr, _host, false };
                     syncr.sync();
                 }
-                _reconst = std::make_unique<reconstructor>(_sched, *_cr, _idx_dir);
+                _reconst = std::make_unique<reconstructor>(_sched, *_cr);
                 _sync_last_chunk = _cr->last_chunk();
                 _sync_status = sync_status::ready;
                 logger::info("synchronization complete, all API endpoints are available now");

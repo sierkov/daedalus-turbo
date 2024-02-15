@@ -111,6 +111,47 @@ namespace daedalus_turbo::cardano::shelley {
         {
             return protocol_version { header_body().at(13).uint(), header_body().at(14).uint() };
         }
+
+        bool signature_ok() const override
+        {
+            auto kes_slot = slot();
+            auto kes_data = kes();
+            auto vkey = issuer_vkey();
+            return _validate_kes(kes_slot, kes_data, vkey);
+        }
+    private:
+        static bool _validate_op_cert(const cardano::kes_signature &kes_, const buffer &issuer_vkey_)
+        {
+            std::array<uint8_t, sizeof(cardano_vkey) + 2 * sizeof(uint64_t)> ocert_data {};
+            if (kes_.vkey.size() != sizeof(cardano::vkey))
+                throw error("vkey size mismatch!");
+            memcpy(ocert_data.data(), kes_.vkey.data(), kes_.vkey.size());
+            uint64_t ctr = host_to_net<uint64_t>(kes_.counter);
+            memcpy(ocert_data.data() + sizeof(cardano_vkey), &ctr, sizeof(uint64_t));
+            uint64_t kp = host_to_net<uint64_t>(kes_.period);
+            memcpy(ocert_data.data() + kes_.vkey.size() + sizeof(uint64_t), &kp, sizeof(uint64_t));
+            return ed25519::verify(kes_.vkey_sig, issuer_vkey_, ocert_data);
+        }
+
+        static bool _validate_kes(const cardano::slot &slot_, const cardano::kes_signature &kes_, const buffer &issuer_vkey_)
+        {
+            if (!_validate_op_cert(kes_, issuer_vkey_)) {
+                logger::error("the signature of the block's operational certificate is invalid!");
+                return false;
+            }
+            uint64_t kp = static_cast<uint64_t>(slot_) / 129600;
+            if (kes_.period > kp) {
+                logger::error("vkey kes period {} is greater than current kes_period {}", kes_.period, kp);
+                return false;
+            }
+            uint64_t t = kp - kes_.period;
+            cardano_kes_signature kes_sig { kes_.sig };
+            if (!kes_sig.verify(t, kes_.vkey.first<32>(), kes_.header_body)) {
+                logger::error("KES signature verification failed!");
+                return false;
+            }
+            return true;
+        }
     };
 
     struct tx: public cardano::tx {
@@ -306,9 +347,39 @@ namespace daedalus_turbo::cardano::shelley {
             });
         }
 
+        vkey_wit_cnt witness_count() const override
+        {
+            vkey_wit_cnt cnt {};
+            if (!_wit)
+                throw cardano_error("vkey_witness_ok called on a transaction without witness data!");
+            for (const auto &[w_type, w_val]: _wit->map()) {
+                switch (w_type.uint()) {
+                    // vkey witness
+                    case 0:
+                    case 2: // bootstrap witness
+                        ++cnt.vkey;
+                        break;
+                    case 1: // native_script
+                    case 3: // plutus_v1_script
+                    case 6: // plutus_v2_script
+                    case 7: // plutus_v3_script
+                        ++cnt.script;
+                        break;
+                    case 4: // plutus_data
+                    case 5: // redeemer
+                        ++cnt.other;
+                        break;
+                    default:
+                        throw cardano_error("unsupported witness type: {}!", w_type.uint());
+                }
+            }
+            return cnt;
+        }
+
         vkey_wit_ok vkey_witness_ok() const override
         {
-            if (!_wit) throw cardano_error("vkey_witness_ok called on a transaction without witness data!");
+            if (!_wit)
+                throw cardano_error("vkey_witness_ok called on a transaction without witness data!");
             vkey_wit_ok ok {};
             auto tx_hash = hash();
             for (const auto &[w_type, w_val]: _wit->map()) {
@@ -319,7 +390,8 @@ namespace daedalus_turbo::cardano::shelley {
                             ok.total++;
                             const auto &vkey = w.array().at(0).buf();
                             const auto &sig = w.array().at(1).buf();
-                            if (ed25519::verify(sig, vkey, tx_hash)) ok.ok++;
+                            if (ed25519::verify(sig, vkey, tx_hash))
+                                ok.ok++;
                         }
                         break;
                     }

@@ -11,6 +11,7 @@
 #include <ranges>
 #include <set>
 #include <span>
+#include <zpp_bits.h>
 #include <dt/cardano/type.hpp>
 #include <dt/cbor.hpp>
 #include <dt/file.hpp>
@@ -148,16 +149,20 @@ namespace daedalus_turbo::cardano {
 
         inline json::object to_json(size_t offset=0, size_t max_items=1000) const;
     };
+
+    static constexpr uint64_t _shelley_begin_ts = 1596051891 + 7200;
+    static constexpr uint64_t _shelley_begin_slot = 208 * 21600;
     
     struct __attribute__((packed)) slot {
+        using serialize = zpp::bits::members<1>;
         uint64_t _slot = 0;
 
-        static cardano::slot from_epoch(uint64_t epoch)
+        static cardano::slot from_epoch(uint64_t epoch, uint64_t epoch_slot = 0)
         {
             if (epoch <= 208) {
-                return cardano::slot { epoch * 21600 };
+                return cardano::slot { epoch * 21600 + epoch_slot };
             } else {
-                return cardano::slot { (epoch - 208) * 432000 + 208 * 21600 };
+                return cardano::slot { (epoch - 208) * 432000 + 208 * 21600 + epoch_slot };
             }
         }
 
@@ -227,9 +232,11 @@ namespace daedalus_turbo::cardano {
                 { "timestamp", timestamp() }
             };
         }
-    private:
-        static constexpr uint64_t _shelley_begin_ts = 1596051891 + 7200;
-        static constexpr uint64_t _shelley_begin_slot = 208 * 21600;
+    };
+
+    struct point {
+        cardano::block_hash hash {};
+        cardano::slot slot {};
     };
 
     struct stake_pointer {
@@ -261,9 +268,10 @@ namespace daedalus_turbo::cardano {
         }
     };
 
-    struct stake_ident_hybrid: std::variant<stake_ident, stake_pointer> {
+    using stake_ident_hybrid = std::variant<stake_ident, stake_pointer>;
+    /*struct stake_ident_hybrid: std::variant<stake_ident, stake_pointer> {
         using std::variant<stake_ident, stake_pointer>::variant;
-    };
+    };*/
 
     struct address {
         buffer bytes;
@@ -399,7 +407,15 @@ namespace daedalus_turbo::cardano {
             switch (type) {
                 case 0b0100: // pointer key
                 case 0b0101: // pointer script
-                    return true;
+                    return true;struct vkey_wit_ok {
+            size_t total = 0;
+            size_t ok = 0;
+
+            bool operator()() const noexcept
+            {
+                return total == ok;
+            }
+        };
                     break;
 
                 default:
@@ -505,7 +521,9 @@ namespace daedalus_turbo::cardano {
         uint8_t _size;
     };
 
-    struct __attribute__((packed)) tx_out_idx {
+    struct tx_out_idx {
+        friend zpp::bits::access;
+        using serialize = zpp::bits::members<1>;
 
         tx_out_idx(): _out_idx { 0 } {}
 
@@ -558,6 +576,9 @@ namespace daedalus_turbo::cardano {
     };
 
     struct __attribute__((packed)) epoch {
+        friend zpp::bits::access;
+        using serialize = zpp::bits::members<1>;
+
         static void check(uint64_t epoch)
         {
             if (epoch >= (1U << 16))
@@ -638,6 +659,8 @@ namespace daedalus_turbo::cardano {
     using nonce = std::optional<cardano_hash_32>;
 
     struct param_update {
+        using serialize=zpp::bits::members<18>;
+
         cardano::pool_hash pool_id {};
         uint64_t epoch = 0;
         std::optional<uint64_t> min_fee_a {};
@@ -649,10 +672,10 @@ namespace daedalus_turbo::cardano {
         std::optional<uint64_t> pool_deposit {};
         std::optional<uint64_t> max_epoch {};
         std::optional<uint64_t> n_opt {};
-        std::optional<rational> pool_pledge_influence {};
-        std::optional<rational> expansion_rate {};
-        std::optional<rational> treasury_growth_rate {};
-        std::optional<rational> decentralization {};
+        std::optional<rational_u64> pool_pledge_influence {};
+        std::optional<rational_u64> expansion_rate {};
+        std::optional<rational_u64> treasury_growth_rate {};
+        std::optional<rational_u64> decentralization {};
         std::optional<cardano::nonce> extra_entropy {};
         std::optional<protocol_version> protocol_ver {};
         std::optional<uint64_t> min_utxo_value {};
@@ -798,17 +821,17 @@ namespace daedalus_turbo::cardano {
 
         virtual const buffer issuer_vkey() const
         {
-            throw error("unsupported");
+            throw error("cardano::block_base::issuer_vkey is not unsupported");
         }
 
         virtual const kes_signature kes() const
         {
-            throw error("unsupported");
+            throw error("cardano::block_base::kes is not unsupported");
         }
 
         virtual const block_vrf vrf() const
         {
-            throw error("unsupported");
+            throw error("cardano::block_base::block_vrf is not unsupported");
         }
 
         virtual size_t tx_count() const
@@ -827,6 +850,11 @@ namespace daedalus_turbo::cardano {
             return _offset + (v.data - _block_tuple.data);
         }
 
+        virtual bool signature_ok() const
+        {
+            throw error("cardano::block_base::signature_ok is not unsupported");
+        }
+
         inline cardano::pool_hash issuer_hash() const
         {
             return blake2b<cardano::pool_hash>(issuer_vkey());
@@ -840,6 +868,11 @@ namespace daedalus_turbo::cardano {
         inline size_t size() const
         {
             return _block_tuple.size;
+        }
+
+        inline const buffer raw_data() const
+        {
+            return _block_tuple.raw_span();
         }
     protected:
         const cbor_value &_block_tuple;
@@ -858,6 +891,16 @@ namespace daedalus_turbo::cardano {
             }
         };
 
+        struct vkey_wit_cnt {
+            size_t vkey = 0;
+            size_t script = 0;
+            size_t other = 0;
+            size_t total() const
+            {
+                return vkey + script + other;
+            };
+        };
+
         tx(const cbor_value &tx, const block_base &blk, const cbor_value *wit=nullptr, size_t idx=0)
             : _tx { tx }, _blk { blk }, _wit { wit }, _idx { idx }
         {
@@ -865,6 +908,7 @@ namespace daedalus_turbo::cardano {
 
         virtual ~tx() {}
         virtual vkey_wit_ok vkey_witness_ok() const =0;
+        virtual vkey_wit_cnt witness_count() const =0;
         virtual void foreach_input(const std::function<void(const tx_input &)> &) const {}
         virtual void foreach_output(const std::function<void(const tx_output &)> &) const {}
         virtual void foreach_withdrawal(const std::function<void(const tx_withdrawal &)> &) const {}

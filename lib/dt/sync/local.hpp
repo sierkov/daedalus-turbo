@@ -22,11 +22,13 @@ namespace daedalus_turbo::sync::local {
         syncer(scheduler &sched, chunk_registry &cr, const std::string &node_path, bool strict=true, size_t zstd_max_level=3, std::chrono::seconds del_delay=std::chrono::seconds { 3600 })
             : _sched { sched }, _cr { cr }, _node_path { std::filesystem::canonical(node_path) },
                 _immutable_path { _node_path / "immutable" }, _volatile_path { _node_path / "volatile" },
+                _converted_path { _cr.full_path("volatile") },
                 _state_path { _cr.full_path("state-local.json") }, _delete_delay { del_delay },
                 _zstd_level_immutable { std::min(static_cast<size_t>(22), zstd_max_level) },
                 _zstd_level_volatile { std::min(static_cast<size_t>(3), zstd_max_level) },
                 _strict { strict }
         {
+            std::filesystem::create_directories(_converted_path);
             logger::debug("syncer zstd (level-immutable: {} level-volatile: {})", _zstd_level_immutable, _zstd_level_volatile);
             auto deletable_chunks = _cr.init_state(_strict);
             auto delete_time = std::chrono::system_clock::now() + _delete_delay;
@@ -45,14 +47,10 @@ namespace daedalus_turbo::sync::local {
         sync_res sync()
         {
             timer t { "sync::local::sync" };
+            progress_guard pg { "parse", "merge" };
             _cr.clean_up();
-            progress::get().update("parse", "0.000%");
-            progress::get().update("merge", "0.000%");
-            _cr.set_progress("merge", _progress.merge);
             auto res = _refresh();
             _save_state();
-            progress::get().retire("parse");
-            progress::get().retire("merge");
             return res;
         }
     private:
@@ -65,7 +63,7 @@ namespace daedalus_turbo::sync::local {
 
             bool is_volatile() const
             {
-                static std::string match { "volatile" };
+                thread_local std::string_view match { "volatile" };
                 return rel_path.size() > match.size() && rel_path.substr(0, match.size()) == match;
             }
 
@@ -97,30 +95,32 @@ namespace daedalus_turbo::sync::local {
             std::time_t update_time {};
             uint64_t data_size = 0;
             uint64_t offset = 0;
-        };
 
+            bool operator<(const chunk_update &b) const
+            {
+                return path < b.path;
+            }
+        };
+        using avail_chunk_list = std::vector<chunk_update>;
         struct analyze_res {
             std::string path {};
             source_chunk_info source_info {};
             chunk_registry::chunk_info dist_info {};
             bool updated = false;
         };
-
-        struct sync_progress {
-            progress::info parse {};
-            progress::info merge {};
-        };
+        using block_hash_list = std::vector<cardano_hash_32>;
+        using block_followers_map = std::map<cardano_hash_32, block_hash_list>;
 
         scheduler &_sched;
         chunk_registry &_cr;
         const std::filesystem::path _node_path;
         const std::filesystem::path _immutable_path;
         const std::filesystem::path _volatile_path;
+        const std::filesystem::path _converted_path;
         const std::string _state_path;
         std::chrono::milliseconds _delete_delay;
         std::map<std::string, source_chunk_info> _source_chunks {};
         std::map<std::string, std::chrono::time_point<std::chrono::system_clock>> _deleted_chunks {};
-        sync_progress _progress {};
         const size_t _zstd_level_immutable;
         const size_t _zstd_level_volatile;
         const bool _strict;
@@ -188,6 +188,17 @@ namespace daedalus_turbo::sync::local {
                     it++;
                 }
             }
+            auto too_old = now - _delete_delay;
+            auto file_now = std::chrono::file_clock::now();
+            for (auto &entry: std::filesystem::directory_iterator(_converted_path)) {
+                if (entry.is_regular_file()) {
+                    auto entry_sys_time = std::chrono::time_point_cast<std::chrono::system_clock::duration>(entry.last_write_time() - file_now + now);
+                    if (entry_sys_time < too_old) {
+                        deleted.emplace_back(entry.path().string());
+                        std::filesystem::remove(entry.path());
+                    }
+                }
+            }
             return deleted;
         }
 
@@ -209,23 +220,15 @@ namespace daedalus_turbo::sync::local {
             }
         }
 
-        void _refresh_sources(const std::filesystem::path &dir_path, const std::string &ext, const std::string &task_name,
-            uint64_t &source_offset, std::vector<std::string> &updated, chunk_registry::file_set &deletable, std::vector<std::string> &errors)
+        void _refresh_chunks(avail_chunk_list &avail_chunks,
+            std::vector<std::string> &updated, chunk_registry::file_set &deletable, std::vector<std::string> &errors)
         {
-            timer t { fmt::format("check {} for updates start offset: {}", dir_path.string(), source_offset), logger::level::debug };
+            timer t { "check chunks for updates", logger::level::debug };
+            uint64_t source_offset = 0;
             std::vector<chunk_update> updated_chunks {};
-            std::map<std::string, chunk_update> avail_chunks {};
-            {
-                timer t { fmt::format("analyze files {}", dir_path.string()), logger::level::debug };
-                for (const auto &entry: std::filesystem::directory_iterator(dir_path)) {
-                    if (entry.file_size() == 0 || entry.path().extension() != ext) continue;
-                    auto path = std::filesystem::weakly_canonical(entry.path()).string();
-                    avail_chunks.try_emplace(path, path, _to_time_t(entry.last_write_time()), entry.file_size());
-                }
-            }
             // std::map guarantees ordered processing
-            for (auto &&[path, update]: avail_chunks) {
-                auto it = _source_chunks.find(path);
+            for (auto &&update: avail_chunks) {
+                auto it = _source_chunks.find(update.path);
                 bool exists = it != _source_chunks.end();
                 bool size_matches = false, time_matches = false, offset_matches = false;
                 if (exists) {
@@ -242,7 +245,7 @@ namespace daedalus_turbo::sync::local {
                         while (it != _source_chunks.end())
                             it = _source_chunks.erase(it);
                         logger::warn("chunk {} is different (e: {} s: {} tp: {} tn: {} o: {}) in the source, updating it and {} following chunks",
-                            path, exists, size_matches, update_time, update.update_time, offset_matches, prev_size - _source_chunks.size());
+                            update.path, exists, size_matches, update_time, update.update_time, offset_matches, prev_size - _source_chunks.size());
                     }
                     update.offset = source_offset;
                     updated_chunks.emplace_back(std::move(update));
@@ -251,11 +254,9 @@ namespace daedalus_turbo::sync::local {
             }
             std::vector<analyze_res> analyzed_chunks {};
             uint64_t updated_min_offset = _cr.num_bytes();
-            _progress.parse.total = source_offset;
-            _progress.parse.completed = updated_min_offset;
-            _progress.merge.total = source_offset;
+            const std::string task_name { "import-chunk" };
             {
-                timer t { fmt::format("process updated chunks from {}", dir_path.string()) };
+                timer t { "process updated chunks" };
                 _sched.on_result(task_name, [&](const auto &res) {
                     if (res.type() == typeid(scheduled_task_error)) {
                         errors.emplace_back(std::any_cast<scheduled_task_error>(res).what());
@@ -269,25 +270,24 @@ namespace daedalus_turbo::sync::local {
                         if (a_res.updated && updated_min_offset > a_res.dist_info.offset)
                             updated_min_offset = a_res.dist_info.offset;
                         analyzed_chunks.emplace_back(a_res);
-                        _progress.parse.completed += a_res.dist_info.data_size;
                     }
-                    progress::get().update("parse", fmt::format("{:0.3f}%", static_cast<double>(_progress.parse.completed) * 100 / _progress.parse.total));
                 });
                 size_t task_size = 0;
                 std::vector<chunk_update> task {};
                 bool small_tasks = updated_chunks.size() / 4 <= _sched.num_workers();
+                auto max_offset = *_cr.target_offset();
                 for (auto it = updated_chunks.begin(); it != updated_chunks.end(); it++) {
                     task_size += it->data_size;
                     task.emplace_back(std::move(*it));
                     if (small_tasks || task_size >= 256'000'000 || std::next(it) == updated_chunks.end()) {
-                        _sched.submit(task_name, task_size >> 20, [this, task] {
+                        _sched.submit(task_name, 0 + 100 * (max_offset - task.front().offset) / max_offset, [this, task] {
                             std::vector<analyze_res> results {};
                             for (const auto &update: task) {
                                 timer t { fmt::format("process chunk path: {} offset: {} size: {}", update.path, update.offset, update.data_size), logger::level::trace };
                                 uint8_vector chunk {};
                                 file::read(update.path, chunk);
                                 if (chunk.size() != update.data_size)
-                                    throw error("file changed new size: {} recorded size: {}!", chunk.size(), update.data_size);
+                                    throw error("file changed: {} new size: {} recorded size: {}!", update.path, chunk.size(), update.data_size);
                                 source_chunk_info source_info {
                                     std::filesystem::relative(std::filesystem::canonical(update.path), _node_path).string(),
                                     update.update_time, update.offset, update.data_size
@@ -313,7 +313,7 @@ namespace daedalus_turbo::sync::local {
                         deletable.emplace(std::move(del_path));
                 }
             }
-            std::sort(analyzed_chunks.begin(), analyzed_chunks.end(), [](const auto &a, const auto &b) { return a.dist_info.orig_rel_path < b.dist_info.orig_rel_path; });
+            std::sort(analyzed_chunks.begin(), analyzed_chunks.end(), [](const auto &a, const auto &b) { return a.dist_info.offset < b.dist_info.offset; });
             for (auto &&chunk: analyzed_chunks) {
                 if (chunk.updated)
                     updated.emplace_back(chunk.dist_info.orig_rel_path);
@@ -323,22 +323,146 @@ namespace daedalus_turbo::sync::local {
             logger::debug("after refresh: max source offset: {} chunk-registry size: {}", source_offset, _cr.num_bytes());
         }
 
+        std::pair<uint64_t, avail_chunk_list> _find_avail_chunks(const std::string &dir_path, const std::string &ext) const
+        {
+            uint64_t total_size = 0;
+            avail_chunk_list avail_chunks {};
+            timer t { fmt::format("analyze files in {}", dir_path), logger::level::trace };
+            for (const auto &entry: std::filesystem::directory_iterator(dir_path)) {
+                if (!entry.is_regular_file() || entry.file_size() == 0 || entry.path().extension() != ext)
+                    continue;
+                auto path = std::filesystem::weakly_canonical(entry.path()).string();
+                avail_chunks.emplace_back(path, _to_time_t(entry.last_write_time()), entry.file_size());
+                total_size += entry.file_size();
+            }
+            std::sort(avail_chunks.begin(), avail_chunks.end());
+            return std::make_pair(total_size, std::move(avail_chunks));
+        }
+
+        static block_hash_list _longest_chain(const cardano_hash_32 &start_hash, const block_followers_map &followers)
+        {
+            block_hash_list segment {};
+            segment.emplace_back(start_hash);
+            auto it = followers.find(start_hash);
+            if (it != followers.end()) {
+                block_hash_list max_segment {};
+                for (const auto &hash: it->second) {
+                    auto seg = _longest_chain(hash, followers);
+                    if (max_segment.size() < seg.size())
+                        max_segment = seg;
+                }
+                for (const auto &hash: max_segment)
+                    segment.emplace_back(hash);
+            }
+            return segment;
+        }
+
+        uint64_t _convert_volatile(avail_chunk_list &avail_chunks, const uint64_t immutable_size, const avail_chunk_list &volatile_chunks, const uint64_t volatile_size_in)
+        {
+            timer t { "convert volatile chunks", logger::level::trace };
+            // read all volatile chunks and the final immutable into a single data buffer
+            uint8_vector raw_data {};
+            raw_data.resize(volatile_size_in);
+            size_t offset = 0;
+            for (const auto &info: volatile_chunks) {
+                logger::trace("analyzing volatile chunk {} of size {}", info.path, info.data_size);
+                file::read_span<uint8_t>(std::span { raw_data.data() + offset, info.data_size }, info.path, info.data_size);
+                offset += info.data_size;
+            }
+
+            cbor_parser parser { raw_data };
+            // cardano::block_base keeps a reference to block_tuple's cbor_value, so need to keep them
+            std::vector<std::unique_ptr<cbor_value>> cbor {};
+            std::map<cardano_hash_32, std::unique_ptr<cardano::block_base>> blocks {};
+            // the first block the most recent immutable chunk
+            const cardano::block_base *first_block = nullptr;
+            while (!parser.eof()) {
+                auto block_tuple_ptr = std::make_unique<cbor_value>();
+                parser.read(*block_tuple_ptr);
+                auto blk = cardano::make_block(*block_tuple_ptr, immutable_size + block_tuple_ptr->data - raw_data.data());
+                if (!first_block)
+                    first_block = blk.get();
+                // volatile chunks can have data older than located in immutable ones, so need to ignore it
+                if (blk->slot() >= first_block->slot()) {
+                    blocks.try_emplace(blk->hash(), std::move(blk));
+                    cbor.emplace_back(std::move(block_tuple_ptr));
+                }
+            }
+            
+            block_followers_map followers {};
+            block_hash_list segments {};
+            for (const auto &[hash, blk]: blocks)  {
+                if (blocks.find(blk->prev_hash()) == blocks.end()) {
+                    segments.emplace_back(hash);
+                } else {
+                    followers[blk->prev_hash()].emplace_back(hash);
+                }
+            }
+            uint64_t output_size = 0;
+            if (!segments.empty()) {
+                block_hash_list longest_chain {};
+                for (const auto &start_hash: segments) {
+                    auto seg = _longest_chain(start_hash, followers);
+                    if (longest_chain.size() < seg.size())
+                        longest_chain = seg;
+                }
+                constexpr size_t batch_size = 100;
+                for (size_t base = 0; base < longest_chain.size(); ) {
+                    uint8_vector batch_data {};
+                    size_t end = std::min(base + batch_size, longest_chain.size());
+                    const auto *first_block = blocks.at(longest_chain.at(base)).get();
+                    size_t off = base;
+                    for (; off < end; ++off) {
+                        const auto *blk = blocks.at(longest_chain.at(off)).get();
+                        // ensure blocks from only one epoch in each chunk
+                        if (blk->slot().epoch() != first_block->slot().epoch())
+                            break;
+                        batch_data << blk->raw_data();
+                    }
+                    base = off;
+                    auto batch_hash = blake2b<cardano::block_hash>(batch_data);
+                    logger::trace("volatile batch {} first block slot: {} first block hash: {}", batch_hash, first_block->slot(), first_block->hash());
+                    auto path = std::filesystem::weakly_canonical(_converted_path / fmt::format("batch-{}.dat", batch_hash));
+                    // write only if not exists to not change the last_write_time in the file system
+                    if (!std::filesystem::exists(path) || std::filesystem::file_size(path) != batch_data.size())
+                        file::write(path, batch_data);
+                    avail_chunks.emplace_back(path, _to_time_t(std::filesystem::last_write_time(path)), batch_data.size());
+                    output_size += batch_data.size();
+                }
+            }
+            return output_size;
+        }
+
         sync_res _refresh()
         {
             timer t { "sync::local::_refresh" };
             std::vector<std::string> errors {};
             std::vector<std::string> updated {};
             chunk_registry::file_set deletable {};
-            uint64_t source_offset = 0;
-            logger::info("parsing immutable chunks");
-            _refresh_sources(_immutable_path, ".chunk", "copy-immutable", source_offset, updated, deletable, errors);
-            logger::info("parsing volatile chunks");
-            _refresh_sources(_volatile_path, ".dat", "copy-volatile", source_offset, updated, deletable, errors);
+            logger::info("analyzing available chunks");
+            auto [immutable_size, avail_chunks] = _find_avail_chunks(_immutable_path, ".chunk");
+            auto [volatile_size_in, avail_volatile] = _find_avail_chunks(_volatile_path, ".dat");
+            // move the last immutable chunk to volatile since they need to be parsed together
+            if (!avail_chunks.empty() && !avail_volatile.empty()) {
+                auto &last_immutable = avail_chunks.back();
+                immutable_size -= last_immutable.data_size;
+                volatile_size_in += last_immutable.data_size;
+                avail_volatile.insert(avail_volatile.begin(), last_immutable);
+                avail_chunks.pop_back();
+            }
+            uint64_t source_end_offset = immutable_size;
+            if (!avail_volatile.empty()) {
+                logger::info("searching for the longest chain among volatile blocks");
+                auto volatile_size = _convert_volatile(avail_chunks, immutable_size, avail_volatile, volatile_size_in);
+                source_end_offset += volatile_size;
+            }
             // when the source has a shorter chain must truncate
-            if (source_offset != _cr.num_bytes()) {
-                for (auto &&del_path: _cr.truncate(source_offset, false))
+            if (source_end_offset != _cr.num_bytes()) {
+                for (auto &&del_path: _cr.truncate(source_end_offset, false))
                     deletable.emplace(std::move(del_path));
             }
+            _cr.target_offset(source_end_offset);
+            _refresh_chunks(avail_chunks, updated, deletable, errors);
             auto deleted = _delete_obsolete(deletable);
             return sync_res { std::move(updated), std::move(deleted), std::move(errors), _cr.max_slot() };
         }

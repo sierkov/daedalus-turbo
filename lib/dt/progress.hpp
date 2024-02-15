@@ -34,6 +34,13 @@ namespace daedalus_turbo {
             return *p;
         }
 
+        void update(const std::string &name, uint64_t current, uint64_t max)
+        {
+            auto value = current < max ? current : max;
+            auto pct_value = max == 0 ? "100.000%" : fmt::format("{:0.3f}%", static_cast<double>(value) * 100 / max);
+            update(name, pct_value);
+        }
+
         void update(const std::string &name, const std::string &value)
         {
             logger::trace("progress {}: {}", name, value);
@@ -80,7 +87,7 @@ namespace daedalus_turbo {
             {
                 std::scoped_lock lk { _state_mutex };
                 for (const auto &[name, val]: _state)
-                    str += fmt::format("{}: [{}] ", name, val);
+                    str += fmt::format("{}: {} ", name, val);
             }
             // adjust for the invisible whitespace
             if (str.size() > _max_str)

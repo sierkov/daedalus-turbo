@@ -12,12 +12,13 @@
 #include <dt/cardano.hpp>
 #include <dt/file.hpp>
 #include <dt/json.hpp>
+#include <dt/progress.hpp>
 #include <dt/scheduler.hpp>
 #include <dt/timer.hpp>
 
 namespace daedalus_turbo {
     struct chunk_registry {
-        // A multiple of SSD sector size and larger than Cardano's largest block
+        // Shall be a multiple of an SSD's sector size and larger than Cardano's largest block (including Byron boundary ones too!)
         static constexpr size_t max_read_size = 1 << 18;
 
         struct chunk_info {
@@ -52,6 +53,8 @@ namespace daedalus_turbo {
             {
                 chunk_info chunk {};
                 chunk.orig_rel_path = json::value_to<std::string_view>(j.at("relPath"));
+                if (j.contains("offset"))
+                    chunk.offset = json::value_to<size_t>(j.at("offset"));
                 chunk.data_size = json::value_to<size_t>(j.at("size"));
                 chunk.compressed_size = json::value_to<size_t>(j.at("compressedSize"));
                 chunk.num_blocks = json::value_to<size_t>(j.at("numBlocks"));
@@ -93,24 +96,20 @@ namespace daedalus_turbo {
             uint64_t end_offset = 0;
         };
         using epoch_map = std::map<size_t, epoch_info>;
-
         using file_set = std::set<std::string>;
-
         template<typename T>
         using parse_res = std::map<std::string, std::vector<T>>;
-
         using block_processor = std::function<void(const cardano::block_base &)>;
 
         static std::filesystem::path init_db_dir(const std::string &db_dir)
         {
-            if (!std::filesystem::exists(db_dir))
-                std::filesystem::create_directories(db_dir);
+            std::filesystem::create_directories(db_dir);
             return std::filesystem::canonical(db_dir);
         }
 
-        chunk_registry(scheduler &sched, const std::string &db_dir)
-            : _sched { sched },
-                _db_dir { init_db_dir(db_dir) },
+        chunk_registry(scheduler &sched, const std::string &data_dir)
+            : _sched { sched }, _data_dir { data_dir },
+                _db_dir { init_db_dir(_data_dir / "compressed") },
                 _state_path { (_db_dir / "state.json").string() }
         {
         }
@@ -119,50 +118,39 @@ namespace daedalus_turbo {
         {
         }
 
-        void add(chunk_info &&chunk, bool strict=true)
+        virtual void add(chunk_info &&chunk, bool strict=true)
         {
-            if (chunk.data_size == 0)
+            if (_target_offset && *_target_offset < chunk.offset + chunk.data_size)
+                throw error("chunk's data exceeds the target offset: {}", _target_offset);
+            if (chunk.data_size == 0 || chunk.num_blocks == 0)
                 throw error("empty chunks are not allowed: {}!", chunk.orig_rel_path);
-            if (chunk.offset != _end_offset)
-                throw error("{} expected offset {} does not match the actual one {}!", chunk.orig_rel_path, chunk.offset, _end_offset);
-            auto last_it = _chunks.rbegin();
-            while (last_it != _chunks.rend() && last_it->second.num_blocks == 0)
-                last_it++;
-            bool empty_volatile = chunk.is_volatile() && chunk.num_blocks == 0;
-            if (last_it != _chunks.rend() && strict && !empty_volatile) {
-                const auto &last = last_it->second;
-                if (chunk.first_slot <= last.last_slot)
-                    throw error("{} the new chunk's first slot {} is less than the last slot in the registry {}",
-                        chunk.orig_rel_path, chunk.first_slot, last.last_slot);
-                if (last.last_block_hash != chunk.prev_block_hash)
-                    throw error("{} prev_block_hash {} does not match the prev chunk's ({}) last_block_hash of the last block {}",
-                        chunk.orig_rel_path, chunk.prev_block_hash.span(), last.orig_rel_path, last.last_block_hash.span());
-            }
-            auto [it, created] = _chunks.try_emplace(chunk.offset + chunk.data_size - 1, std::move(chunk));
-            // use it->second instead of chunk since it has been passed by move reference above
-            const auto &inserted_chunk = it->second;
-            if (!created)
-                throw error("internal error: duplicate chunk offset: {} size: {}", inserted_chunk.offset, inserted_chunk.data_size);
-            _end_offset += inserted_chunk.data_size;
-            _files.emplace(inserted_chunk.rel_path());
-            if (!inserted_chunk.is_volatile() && (_max_immutable_off == 0 || _max_immutable_off < inserted_chunk.offset))
-                _max_immutable_off = inserted_chunk.offset;
-            if (!empty_volatile) {
-                uint64_t chunk_epoch = inserted_chunk.epoch();
+            if (chunk.first_slot.epoch() != chunk.last_slot.epoch())
+                throw error("chunks containing blocks from only one epoch are allowed: {}", chunk.orig_rel_path);
+            std::scoped_lock lk { _update_mutex };
+            auto [um_it, um_created] = _unmerged_chunks.try_emplace(chunk.offset + chunk.data_size - 1, std::move(chunk));
+            if (!um_created)
+                throw error("internal error: duplicate chunk offset: {} size: {}", um_it->second.offset, um_it->second.data_size);
+            // chunk variable should not be used after this point due to std::move right above
+            while (!_unmerged_chunks.empty() && _unmerged_chunks.begin()->second.offset == _end_offset) {
+                const auto &tested_chunk = _unmerged_chunks.begin()->second;
+                if (!_chunks.empty() && strict) {
+                    const auto &last = _chunks.rbegin()->second;
+                    if (tested_chunk.first_slot < last.last_slot)
+                        throw error("{} the new chunk's first slot {} is less than the last slot in the registry {}",
+                            tested_chunk.orig_rel_path, tested_chunk.first_slot, last.last_slot);
+                    if (last.last_block_hash != tested_chunk.prev_block_hash)
+                        throw error("{} prev_block_hash {} does not match the prev chunk's ({}) last_block_hash of the last block {}",
+                            tested_chunk.orig_rel_path, tested_chunk.prev_block_hash, last.orig_rel_path, last.last_block_hash);
+                }
+                auto [it, created, node] = _chunks.insert(_unmerged_chunks.extract(_unmerged_chunks.begin()));
+                // use it->second instead of chunk since it has been passed by a move reference right above
+                const auto &inserted_chunk = it->second;
+                if (!created)
+                    throw error("internal error: duplicate chunk offset: {} size: {}", inserted_chunk.offset, inserted_chunk.data_size);
+                _end_offset += inserted_chunk.data_size;
+                auto chunk_epoch = inserted_chunk.epoch();
                 auto &epoch_data = _epochs[chunk_epoch];
                 epoch_data.num_blocks += inserted_chunk.num_blocks;
-                if (!epoch_data.chunk_ids.empty() && strict && !empty_volatile) {
-                    const auto &last = *epoch_data.chunk_ids.back();
-                    if (inserted_chunk.offset < epoch_data.end_offset)
-                        throw error("the new chunk's offset {} is less than the epochs existing end offset {}",
-                            chunk.offset, epoch_data.end_offset);
-                    if (inserted_chunk.first_slot <= last.last_slot)
-                        throw error("the new chunk's first slot {} is less than the last slot in the epoch {}",
-                            chunk.first_slot, last.last_slot);
-                    if (last.last_block_hash != chunk.prev_block_hash)
-                        throw error("the new chunk's prev_block_hash {} does not match last_block_hash of the epoch's last block {}",
-                            chunk.prev_block_hash.span(), last.last_block_hash.span());
-                }
                 if (epoch_data.chunk_ids.empty()) {
                     epoch_data.first_slot = inserted_chunk.first_slot;
                     epoch_data.prev_block_hash = inserted_chunk.prev_block_hash;
@@ -172,12 +160,13 @@ namespace daedalus_turbo {
                 epoch_data.last_block_hash = inserted_chunk.last_block_hash;
                 epoch_data.end_offset = inserted_chunk.offset + inserted_chunk.data_size;
                 epoch_data.chunk_ids.emplace_back(&inserted_chunk);
+                if (_next_merged_epoch < chunk_epoch || (_target_offset && epoch_data.end_offset == *_target_offset)) {
+                    auto &info = _epochs[_next_merged_epoch];
+                    if (!info.chunk_ids.empty())
+                        _on_epoch_merge(_next_merged_epoch, info);
+                    ++_next_merged_epoch;
+                }
             }
-        }
-
-        virtual void set_progress(const std::string &, progress::info &)
-        {
-            // ignore
         }
 
         virtual void clean_up()
@@ -192,6 +181,13 @@ namespace daedalus_turbo {
         const epoch_map &epochs() const
         {
             return _epochs;
+        }
+
+        // can be called concurrently with parse/add activities
+        epoch_info epoch(uint64_t epoch) const
+        {
+            std::scoped_lock lk { _update_mutex };
+            return _epochs.at(epoch);
         }
 
         const std::optional<chunk_info> last_chunk() const
@@ -255,19 +251,16 @@ namespace daedalus_turbo {
                     epoch_it++;
                 }
             }
+            if (!_epochs.empty()) {
+                _next_merged_epoch = _epochs.rbegin()->first;
+            } else {
+                _next_merged_epoch = 0;
+            }
             while (chunk_it != _chunks.end()) {
                 auto canon_path = full_path(chunk_it->second.rel_path());
                 deleted_chunks.emplace(canon_path);
                 if (del) std::filesystem::remove(canon_path);
-                _files.erase(chunk_it->second.rel_path());
                 chunk_it = _chunks.erase(chunk_it);
-            }
-            _max_immutable_off = 0;
-            for (auto last_it = _chunks.rbegin(); last_it != _chunks.rend(); last_it++) {
-                if (!last_it->second.is_volatile()) {
-                    _max_immutable_off = last_it->first;
-                    break;
-                }
             }
             if (!_chunks.empty()) {
                 const auto &last_chunk = _chunks.rbegin()->second;
@@ -275,6 +268,7 @@ namespace daedalus_turbo {
             } else {
                 _end_offset = 0;
             }
+            _parsed = 0;
             return deleted_chunks;
         }
 
@@ -361,37 +355,96 @@ namespace daedalus_turbo {
         virtual chunk_info parse(uint64_t offset, const std::string &rel_path, const buffer &raw_data, size_t compressed_size) const
         {
             static auto noop = [](const auto &){};
-            return _parse_normal(offset, rel_path, raw_data, compressed_size, noop);
+            auto chunk = _parse_normal(offset, rel_path, raw_data, compressed_size, noop);
+            _parsed += raw_data.size();
+            if (_target_offset) {
+                logger::trace("parse progress parsed: {} target_offset: {} start_offset: {}", _parsed, *_target_offset, _parse_start_offset);
+                progress::get().update("parse", _parsed, *_target_offset - _parse_start_offset);
+            }
+            return chunk;
         }
 
-        file_set init_state(bool strict=true, bool reuse_state=true, bool save=true)
+        file_set init_state(bool strict=true)
         {
-            file_set deletable_chunks {};
-            timer t { "chunk-registry init state", logger::level::debug };
-            if (reuse_state)
-                deletable_chunks = load_state(strict);
+            timer t { "chunk-registry init state", logger::level::trace };
+            auto [truncate_offset, deletable_chunks] = _load_state(strict);
             // give subclasses the time to update their data structures if some chunks weren't loaded / didn't match the state
-            for (auto &&path: truncate(_end_offset, false))
+            for (auto &&path: truncate(truncate_offset, false))
                 deletable_chunks.emplace(std::move(path));
-            if (save)
-                save_state();
-            logger::debug("chunk-registry data size: {} num chunks: {}", num_bytes(), num_chunks());
+            logger::debug("chunk-registry data size: {} num chunks: {} num deletable chunks: {}", num_bytes(), num_chunks(), deletable_chunks.size());
             return deletable_chunks;
         }
 
-        virtual file_set load_state(bool strict=true)
+        virtual void save_state()
+        {
+            timer t { "chunk_registry::save_state" };
+            if (!_unmerged_chunks.empty()) {
+                if (!_chunks.empty())
+                    logger::trace("last merged chunk: {}", json::serialize(_chunks.rbegin()->second.to_json()));
+                for (const auto &[last_byte_offset, uchunk]: _unmerged_chunks)
+                    logger::trace("unmerged chunk with last byte offset {}: {}", last_byte_offset, json::serialize(uchunk.to_json()));
+                logger::warn("{} unmerged chunks - ignoring them", _unmerged_chunks.size());
+                _unmerged_chunks.clear();
+            }
+            while (!_epochs.empty() && _next_merged_epoch <= _epochs.rbegin()->first) {
+                auto &info = _epochs[_next_merged_epoch];
+                if (!info.chunk_ids.empty())
+                    _on_epoch_merge(_next_merged_epoch, info);
+                ++_next_merged_epoch;
+            }
+            std::ostringstream json_s {};
+            json_s << "{\n"
+                << "  \"nextMergedEpoch\": " << _next_merged_epoch << ",\n"
+                << "  \"chunks\": [\n";
+            for (const auto &[max_offset, chunk]: _chunks) {
+                json_s << "      " << json::serialize(chunk.to_json());
+                if (chunk.offset + chunk.data_size < _end_offset)
+                    json_s << ',';
+                json_s << '\n';
+            }
+            json_s << "  ]\n"
+                << "}\n";
+            file::write(_state_path, json_s.str());
+            _parse_start_offset = _end_offset;
+            _parsed = 0;
+        }
+
+        void target_offset(uint64_t offset)
+        {
+            _target_offset.emplace(offset);
+        }
+
+        const std::optional<uint64_t> target_offset() const
+        {
+            return _target_offset;
+        }
+
+        const std::filesystem::path &data_dir() const
+        {
+            return _data_dir;
+        }
+    protected:
+        scheduler &_sched;
+        const std::filesystem::path _data_dir;
+        const std::filesystem::path _db_dir;
+        std::optional<uint64_t> _target_offset {};
+        uint64_t _end_offset = 0;
+        mutable uint64_t _parsed = 0;
+        uint64_t _parse_start_offset = 0;
+
+        virtual std::pair<uint64_t, file_set> _load_state(bool strict=true)
         {
             timer t { "chunk-registry load state from " + _state_path, logger::level::debug };
             _chunks.clear();
-            _files.clear();
             _epochs.clear();
             _end_offset = 0;
+            _next_merged_epoch = 0;
             file_set known_chunks {}, deletable_chunks {};
             if (std::filesystem::exists(_state_path)) {
-                auto json = file::read(_state_path);
-                auto j_chunks = json::parse(json.span().string_view()).as_array();
+                auto j = json::load(_state_path).as_object();
                 uint64_t start_offset = 0;
-                for (const auto &j: j_chunks) {
+                _next_merged_epoch = json::value_to<uint64_t>(j.at("nextMergedEpoch"));
+                for (const auto &j: j.at("chunks").as_array()) {
                     auto chunk = chunk_info::from_json(j.as_object());
                     auto path = full_path(chunk.rel_path());
                     std::error_code ec {};
@@ -412,33 +465,20 @@ namespace daedalus_turbo {
                     known_chunks.emplace(std::move(path));
                 }
             }
+            _parse_start_offset = _end_offset;
             logger::info("chunk_registry has data up to offset {}", _end_offset);
             for (const auto &entry: std::filesystem::recursive_directory_iterator { _db_dir }) {
                 auto path = full_path(entry.path().string());
                 if (entry.is_regular_file() && entry.path().extension() == ".zstd" && !known_chunks.contains(path))
                     deletable_chunks.emplace(std::move(path));
             }
-            return deletable_chunks;
+            return std::make_pair(_end_offset, deletable_chunks);
         }
 
-        virtual void save_state()
+        virtual void _on_epoch_merge(uint64_t epoch, const epoch_info &info)
         {
-            timer t { "chunk_registry::save_state" };
-            std::ostringstream json_s {};
-            json_s << "[\n";
-            for (const auto &[max_offset, chunk]: _chunks) {
-                json_s << "  " << json::serialize(chunk.to_json());
-                if (chunk.offset + chunk.data_size < _end_offset)
-                    json_s << ',';
-                json_s << '\n';
-            }
-            json_s << "]\n";
-            file::write(_state_path, json_s.str());
+            logger::trace("on_epoch_merge epoch: {} start_offset: {} end_offset: {}", epoch, info.start_offset, info.end_offset);
         }
-
-    protected:
-        scheduler &_sched;
-        const std::filesystem::path _db_dir;
 
         void _parse_immutable_chunk(const chunk_info &chunk, const buffer &raw_data, const block_processor &blk_proc) const
         {
@@ -455,75 +495,12 @@ namespace daedalus_turbo {
             }
         }
 
-        using block_hash_list = std::vector<cardano_hash_32>;
-        using block_followers_map = std::map<cardano_hash_32, block_hash_list>;
-
-        static block_hash_list _max_segment(const cardano_hash_32 &start_hash, const block_followers_map &followers)
-        {
-            block_hash_list segment {};
-            segment.emplace_back(start_hash);
-            auto it = followers.find(start_hash);
-            if (it != followers.end()) {
-                block_hash_list max_segment {};
-                for (const auto &hash: it->second) {
-                    auto seg = _max_segment(hash, followers);
-                    if (max_segment.size() < seg.size())
-                        max_segment = seg;
-                }
-                for (const auto &hash: max_segment)
-                    segment.emplace_back(hash);
-            }
-            return segment;
-        }
-
-        void _parse_volatile_chunk(const chunk_info &chunk, const buffer &raw_data, const block_processor &blk_proc) const
-        {
-            if (_max_immutable_off == 0)
-                throw error("volatile chunks must be processed only after immutable ones!");
-            cbor_parser parser { raw_data };
-            // cardano::block_base keeps a reference to block_tuple cbor_value, so need to keep them
-            std::vector<std::unique_ptr<cbor_value>> cbor {};
-            std::map<cardano_hash_32, std::unique_ptr<cardano::block_base>> blocks {};
-            while (!parser.eof()) {
-                auto block_tuple_ptr = std::make_unique<cbor_value>();
-                parser.read(*block_tuple_ptr);
-                auto blk = cardano::make_block(*block_tuple_ptr, chunk.offset + block_tuple_ptr->data - raw_data.data());
-                if (blk->slot() <= find(_max_immutable_off).last_slot)
-                    continue;
-                blocks.try_emplace(blk->hash(), std::move(blk));
-                cbor.emplace_back(std::move(block_tuple_ptr));
-            }
-            
-            block_followers_map followers {};
-            block_hash_list segments {};
-            for (const auto &[hash, blk]: blocks)  {
-                if (blocks.find(blk->prev_hash()) == blocks.end()) {
-                    segments.emplace_back(hash);
-                } else {
-                    followers[blk->prev_hash()].emplace_back(hash);
-                }
-            }
-            if (!segments.empty()) {
-                block_hash_list max_segment {};
-                for (const auto &start_hash: segments) {
-                    auto seg = _max_segment(start_hash, followers);
-                    if (max_segment.size() < seg.size())
-                        max_segment = seg;
-                }
-                for (const auto &hash: max_segment)
-                    blk_proc(*blocks.at(hash));
-            }
-        }
-
         void _parse_chunk(const chunk_info &chunk, const buffer &raw_data, const block_processor &blk_proc) const
         {
-            if (chunk.is_volatile())
-                _parse_volatile_chunk(chunk, raw_data, blk_proc);
-            else
-                _parse_immutable_chunk(chunk, raw_data, blk_proc);
+            _parse_immutable_chunk(chunk, raw_data, blk_proc);
         }
 
-        chunk_info _parse_normal(uint64_t offset, const std::string &rel_path,
+       virtual chunk_info _parse_normal(uint64_t offset, const std::string &rel_path,
             const buffer &raw_data, size_t compressed_size, const block_processor &extra_proc) const
         {
             chunk_info chunk { rel_path, raw_data.size(), compressed_size };
@@ -548,14 +525,13 @@ namespace daedalus_turbo {
             });
             return chunk;
         }
-
     private:
         const std::string _state_path;
+        alignas(mutex::padding) mutable std::mutex _update_mutex {};
         chunk_map _chunks {};
+        chunk_map _unmerged_chunks {};
         epoch_map _epochs {};
-        file_set _files {};
-        uint64_t _max_immutable_off = 0;
-        uint64_t _end_offset = 0;
+        uint64_t _next_merged_epoch = 0;
         const std::string _ext = ".zstd";
         static thread_local uint8_vector _read_buffer;
 

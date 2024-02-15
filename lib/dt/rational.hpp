@@ -6,6 +6,7 @@
 #define DAEDALUS_TURBO_RATIONAL_HPP
 
 #include <boost/multiprecision/cpp_int.hpp>
+#include <zpp_bits.h>
 #include <dt/format.hpp>
 
 namespace daedalus_turbo {
@@ -13,6 +14,27 @@ namespace daedalus_turbo {
     using rational = boost::multiprecision::cpp_rational;
     using boost::multiprecision::numerator;
     using boost::multiprecision::denominator;
+
+    struct rational_u64 {
+        using serialize = zpp::bits::members<2>;
+        uint64_t numerator = 0;
+        uint64_t denominator = 1;
+
+        bool operator==(const auto &b) const
+        {
+            return numerator == b.numerator && denominator == b.denominator;
+        }
+
+        operator rational() const
+        {
+            return rational { numerator, denominator };
+        }
+
+        inline rational as_r() const
+        {
+            return static_cast<rational>(*this);
+        }
+    };
 }
 
 namespace fmt {
@@ -21,6 +43,14 @@ namespace fmt {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
             return fmt::format_to(ctx.out(), "{} % {}", static_cast<uint64_t>(daedalus_turbo::numerator(v)), static_cast<uint64_t>(daedalus_turbo::denominator(v)));
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::rational_u64>: public formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "{} % {}", v.numerator, v.denominator);
         }
     };
 }
