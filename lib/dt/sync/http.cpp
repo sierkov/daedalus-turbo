@@ -1,5 +1,5 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
@@ -19,7 +19,7 @@ namespace daedalus_turbo::sync::http {
     void syncer::sync(std::optional<uint64_t> max_epoch)
     {
         timer t { "http synchronization" };
-        progress_guard pg { "download", "parse", "merge" };
+        progress_guard pg { "download", "parse", "merge", "leaders" };
         _cr.clean_up();
         auto [task, epoch_groups, remote_size] = _find_sync_start_position();
         if (max_epoch) {
@@ -272,7 +272,7 @@ namespace daedalus_turbo::sync::http {
         for (const auto &group: epoch_groups)
             max_offset += json::value_to<uint64_t>(group.at("size"));
         uint64_t start_offset = 0;
-        logger::info("downloading metadata about the synchronized epochs");
+        logger::info("downloading metadata about the synchronized epochs and chunks");
         std::map<uint64_t, uint64_t> epoch_offsets {};
         for (const auto &group: epoch_groups) {
             for (const auto &epoch: group.at("epochs").as_array()) {
@@ -315,7 +315,7 @@ namespace daedalus_turbo::sync::http {
             }
         }
         chunk_registry::file_set updated_chunks {};
-        logger::info("downloading and parsing the differing chunks: {}", download_tasks.size());
+        logger::info("preparing the updated chunks to be downloaded, validated, and indexed: {}", download_tasks.size());
         _download_chunks(download_tasks, max_offset, updated_chunks);
         return updated_chunks;
     }

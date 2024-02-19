@@ -1,20 +1,17 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_VALIDATOR_STATE_HPP
 #define DAEDALUS_TURBO_VALIDATOR_STATE_HPP
 
-#include <cmath>
-#include <ranges>
 #include <unordered_map>
 #include <unordered_set>
 #include <zpp_bits.h>
-#include <dt/cardano.hpp>
+#include <dt/atomic.hpp>
 #include <dt/format.hpp>
 #include <dt/index/stake-delta.hpp>
 #include <dt/static-map.hpp>
-#include <dt/json.hpp>
 #include <dt/timer.hpp>
 #include <dt/validator/types.hpp>
 
@@ -471,7 +468,7 @@ namespace daedalus_turbo::validator {
                 _set = std::move(_mark);
             }
             timer ts { fmt::format("validator::state epoch: {} copy active snapshot to mark", _epoch), logger::level::trace };
-            const std::string task_group { "rotate-snapshot" };
+            static const std::string task_group { "rotate-snapshot" };
             _sched.wait_for_count(task_group, 6,
                 [&] {
                     _sched.submit("rotate-snapshot", 1000, [this] {
@@ -814,19 +811,15 @@ namespace daedalus_turbo::validator {
         {
             const std::string task_group { "staking-rewards-part" };
             auto [total, filtered] = _rewards_prepare_pools(pools_active, staking_reward_pot, total_stake);
-            std::atomic_size_t notify_count = 0;
             _sched.wait_for_count(task_group, _potential_rewards.num_parts,
                 [&] {
                     for (size_t part_idx = 0; part_idx < _potential_rewards.num_parts; ++part_idx) {
                         _sched.submit(task_group, 1000, [this, part_idx] {
                             return _rewards_compute_part(part_idx);
                         });
-                        logger::trace("epoch: {} scheduled task {} for partition: {}", _epoch, task_group, part_idx);
                     }
                 },
                 [&](auto &&res) {
-                    ++notify_count;
-                    logger::trace("epoch: {} task complete {} ready partitions: {}", _epoch, task_group, notify_count.load());
                     auto [part_total, part_filtered] = std::any_cast<std::pair<uint64_t, uint64_t>>(std::move(res));
                     total += part_total;
                     filtered += part_filtered;
@@ -852,8 +845,17 @@ namespace daedalus_turbo::validator {
             }
             _blocks_before = std::move(_blocks_current);
             _blocks_current.clear();
-            _reward_pulsing_snapshot.clear();    
-            _potential_rewards.clear();
+            _reward_pulsing_snapshot.clear();
+            static const std::string task_group { "clean-potential-rewards" };
+            _sched.wait_for_count(task_group, _potential_rewards.num_parts,
+                [&] {
+                    for (size_t part_idx = 0; part_idx < _potential_rewards.num_parts; ++part_idx) {
+                        _sched.submit_void(task_group, 1000, [this, part_idx] () {
+                            _potential_rewards.partition(part_idx).clear();
+                        });
+                    }
+                }
+            );
         }
 
         void _prepare_reward_pulsing_schedule()
@@ -958,27 +960,27 @@ namespace daedalus_turbo::validator {
             }
         }
 
-        void _xtransfer_potential_rewards()
+        void _transfer_potential_rewards()
         {
-            auto aggregated = _params_prev.protocol_ver.aggregated_rewards();
-            auto forgo_prefilter = _params_prev.protocol_ver.forgo_reward_prefilter();
-            bool force_active = !aggregated || forgo_prefilter;
+            const auto aggregated = _params_prev.protocol_ver.aggregated_rewards();
+            const auto forgo_prefilter = _params_prev.protocol_ver.forgo_reward_prefilter();
+            const bool force_active = !aggregated || forgo_prefilter;
             timer t { fmt::format("validator::state epoch: {} transfer_potential_rewards aggregated forgo_prefilter: {}", _epoch, forgo_prefilter), logger::level::trace };
             using pool_update_map = std::unordered_map<cardano::pool_hash, uint64_t>;
-            using part_res = std::pair<uint64_t, pool_update_map>;
-            const std::string task_group { "transfer-rewards-part" };
+            static const std::string task_group { "transfer-rewards-part" };
+            std::atomic_uint64_t treasury_after { _treasury };
+            std::vector<pool_update_map> part_updates(_potential_rewards.num_parts);
             // all rewards must be already created to ensure no allocation is necessary
             _sched.wait_for_count(task_group, _potential_rewards.num_parts,
                 [&] {
                     for (size_t part_idx = 0; part_idx < _potential_rewards.num_parts; ++part_idx) {
-                        _sched.submit("transfer-rewards-part", 100, [this, part_idx, aggregated, force_active] {
+                        _sched.submit_void("transfer-rewards-part", 1000, [this, &part_updates, &treasury_after, part_idx, aggregated, force_active] () {
                             // relies on _rewards, _potential_rewards, _pulsing_snapshot being ordered containers!
                             auto reward_it = _rewards.partition(part_idx).begin();
-                            auto reward_end = _rewards.partition(part_idx).end();
+                            const auto reward_end = _rewards.partition(part_idx).end();
                             pool_update_map pool_dist_updates {};
                             pool_dist_updates.reserve(_reward_pool_params.size());
                             uint64_t treasury_update = 0;
-                            uint64_t part_rewards = 0;
                             for (const auto &[stake_id, reward_list]: _potential_rewards.partition(part_idx)) {
                                 if (force_active || _reward_pulsing_snapshot.contains(stake_id)) {
                                     while (reward_it != reward_end && reward_it->first < stake_id)
@@ -988,7 +990,6 @@ namespace daedalus_turbo::validator {
                                             reward_it->second += ri.amount;
                                             if (ri.delegated_pool_id) {
                                                 pool_dist_updates[*ri.delegated_pool_id] += ri.amount;
-                                                part_rewards += ri.amount;
                                             }
                                         } else {
                                             treasury_update += ri.amount;
@@ -998,51 +999,17 @@ namespace daedalus_turbo::validator {
                                     }
                                 }
                             }
-                            logger::trace("transfer rewards epoch: {} partition: {} pool_rewards: {}", _epoch, part_idx, part_rewards);
-                            return part_res { treasury_update, std::move(pool_dist_updates) };
+                            part_updates[part_idx] = std::move(pool_dist_updates);
+                            atomic_add(treasury_after, treasury_update);
                         });
                     }
-                },
-                [&](auto &&res) {
-                    auto [treasury_update, pool_dist_updates] = std::any_cast<part_res>(std::move(res));
-                    for (const auto &[pool_id, amount]: pool_dist_updates)
-                        _active_pool_dist.add(pool_id, amount);
-                    _treasury += treasury_update;
                 }
             );
-        }
-
-        void _transfer_potential_rewards()
-        {
-            auto aggregated = _params_prev.protocol_ver.aggregated_rewards();
-            auto forgo_prefilter = _params_prev.protocol_ver.forgo_reward_prefilter();
-            bool force_active = !aggregated || forgo_prefilter;
-            timer t { fmt::format("validator::state epoch: {} transfer_potential_rewards aggregated forgo_prefilter: {}", _epoch, forgo_prefilter), logger::level::trace };
-            for (size_t part_idx = 0; part_idx < _potential_rewards.num_parts; ++part_idx) {
-                    // relies on _rewards, _potential_rewards, _pulsing_snapshot being ordered containers!
-                auto reward_it = _rewards.partition(part_idx).begin();
-                auto reward_end = _rewards.partition(part_idx).end();
-                uint64_t part_rewards = 0;
-                for (const auto &[stake_id, reward_list]: _potential_rewards.partition(part_idx)) {
-                    if (force_active || _reward_pulsing_snapshot.contains(stake_id)) {
-                        while (reward_it != reward_end && reward_it->first < stake_id)
-                            ++reward_it;
-                        for (auto &&ri: reward_list) {
-                            if (reward_it != reward_end && reward_it->first == stake_id) {
-                                reward_it->second += ri.amount;
-                                if (ri.delegated_pool_id) {
-                                    _active_pool_dist.add(*ri.delegated_pool_id, ri.amount);
-                                    part_rewards += ri.amount;
-                                }
-                            } else {
-                                _treasury += ri.amount;
-                            }
-                            if (!aggregated)
-                                break;
-                        }
-                    }
-                }
-                logger::trace("transfer rewards epoch: {} partition: {} pool_rewards: {}", _epoch, part_idx, part_rewards);
+            _treasury = treasury_after.load();
+            // updates are applied in the same order as if they were computed sequentially
+            for (const auto &pool_dist_updates: part_updates) {
+                for (const auto &[pool_id, amount]: pool_dist_updates)
+                    _active_pool_dist.add(pool_id, amount);
             }
         }
 

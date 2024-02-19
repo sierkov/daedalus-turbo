@@ -1,5 +1,5 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_INDEX_COMMON_HPP
@@ -217,7 +217,7 @@ namespace daedalus_turbo::index {
 
         virtual uint64_t disk_size(const std::string &slice_id) const =0;
         virtual std::unique_ptr<chunk_indexer_base> make_chunk_indexer(const std::string &slice_id, uint64_t chunk_id) =0;
-        virtual void truncate(const std::string &slice_id, uint64_t new_end_offset) =0;
+        virtual void schedule_truncate(const std::string &slice_id, uint64_t new_end_offset, const std::function<void()> &on_done) =0;
     protected:
         scheduler &_sched;
         std::string _idx_dir;
@@ -303,7 +303,7 @@ namespace daedalus_turbo::index {
                 indexer_merging<T, ChunkIndexer>::chunk_path(slice_id, chunk_id));
         }
 
-        void truncate(const std::string &, uint64_t) override
+        void schedule_truncate(const std::string &, uint64_t, const std::function<void()> &) override
         {
             // update-only index, do nothing
         }
@@ -353,10 +353,10 @@ namespace daedalus_turbo::index {
     struct indexer_offset: public indexer_no_offset<T, ChunkIndexer> {
         using indexer_no_offset<T, ChunkIndexer>::indexer_no_offset;
 
-        void truncate(const std::string &slice_id, uint64_t new_end_offset) override
+        void schedule_truncate(const std::string &slice_id, uint64_t new_end_offset, const std::function<void()> &on_done) override
         {
-            const std::string task_name { "truncate-" + indexer_no_offset<T, ChunkIndexer>::_idx_name + "-" + slice_id };
             auto src_path = indexer_no_offset<T, ChunkIndexer>::reader_path(slice_id);
+            const std::string task_name = fmt::format("truncate-{}", src_path);
             logger::debug("truncate {} to {} bytes", src_path, new_end_offset);
             if (!index::writer<T>::exists(src_path))
                 return;
@@ -371,7 +371,7 @@ namespace daedalus_turbo::index {
                 auto writer = std::make_shared<index::writer<T>>(src_path + "-new", num_parts);
                 auto scheduled = std::make_shared<std::atomic_bool>(false);
                 auto new_max_offset = std::make_shared<uint64_t>(0);
-                indexer_no_offset<T, ChunkIndexer>::_sched.on_result(task_name, [this, new_max_offset, src_path, reader, writer, scheduled, task_name](const auto &res) mutable {
+                indexer_no_offset<T, ChunkIndexer>::_sched.on_result(task_name, [this, on_done, new_max_offset, src_path, reader, writer, scheduled, task_name](const auto &res) mutable {
                     if (res.type() == typeid(scheduled_task_error)) {
                         logger::error("task {} {}", task_name, std::any_cast<scheduled_task_error>(res).what());
                         return;
@@ -385,6 +385,7 @@ namespace daedalus_turbo::index {
                     writer->set_meta("max_offset", buffer::from(*new_max_offset));
                     writer->commit();
                     writer->rename(src_path);
+                    on_done();
                 });
                 for (size_t pi = 0; pi < num_parts; ++pi) {
                     indexer_no_offset<T, ChunkIndexer>::_sched.submit(task_name, reader->size() >> 20, [reader, writer, pi, new_end_offset]() {

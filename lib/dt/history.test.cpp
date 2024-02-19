@@ -1,5 +1,5 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #include <boost/ut.hpp>
@@ -22,7 +22,7 @@ suite history_suite = [] {
         "simple reconstruction"_test = [] {
             scheduler sched {};
             chunk_registry src_cr { sched, src_dir };
-            src_cr.init_state(false, true);
+            src_cr.init_state(false);
             auto indexers = indexer::default_list(sched, data_dir);
             indexer::incremental idxr { sched, data_dir, indexers };
             idxr.import(src_cr);

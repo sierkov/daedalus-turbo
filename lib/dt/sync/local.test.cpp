@@ -1,5 +1,5 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #include <boost/ut.hpp>
@@ -56,7 +56,7 @@ suite sync_local_suite = [] {
             sync::local::syncer syncr { sched, idxr, empty_dir, true, 3, std::chrono::seconds { 0 } };
             auto res = syncr.sync();
             expect(res.errors.size() == 0_u);
-            expect(res.deleted.size() == 29_u);
+            expect(res.deleted.size() == 55_u);
             expect(res.updated.size() == 0_u);
             expect(res.last_slot == 0_u);
         };

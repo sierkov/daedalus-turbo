@@ -1,5 +1,5 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_SYNC_LOCAL_HPP
@@ -47,7 +47,7 @@ namespace daedalus_turbo::sync::local {
         sync_res sync()
         {
             timer t { "sync::local::sync" };
-            progress_guard pg { "parse", "merge" };
+            progress_guard pg { "parse", "merge", "leaders" };
             _cr.clean_up();
             auto res = _refresh();
             _save_state();

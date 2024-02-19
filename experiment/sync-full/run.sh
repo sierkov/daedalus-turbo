@@ -1,7 +1,7 @@
 #! /bin/env bash
 ulimit -n 32768
 test -d ./log || mkdir ./log
-test -d /data/cardano && rm /data/cardano/*.log
+test -d /data/cardano && rm -f /data/cardano/*.log
 for iter in `seq 1 3`; do
     for threads in 24 8; do
         echo "iter: $iter, threads: $threads"

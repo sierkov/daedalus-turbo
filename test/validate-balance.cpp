@@ -1,5 +1,5 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
  *
@@ -139,8 +139,6 @@ try {
         return 1;
     }
     const std::string data_dir { argv[1] };
-    const auto db_dir = data_dir + "/compressed";
-    const auto idx_dir = data_dir + "/index";
     const std::string ledger_path { argv[2] };
     double min_pct = 0.0;
     double max_pct = 0.001;
@@ -151,9 +149,9 @@ try {
     timer t { "complete test" };
     auto [ledger_stake_dist, ledger_slot] = parse_ledger_snapshot(ledger_path);
     scheduler sched {};
-    chunk_registry cr { sched, db_dir };
+    chunk_registry cr { sched, data_dir };
     cr.init_state();
-    reconstructor r { sched, cr, idx_dir };
+    reconstructor r { sched, cr };
     if (ledger_slot != r.last_slot())
         throw error("ledger last slot: {} does not match raw data last slot: {}", ledger_slot, r.last_slot());
     verify_sample(r, ledger_stake_dist, min_pct, max_pct);

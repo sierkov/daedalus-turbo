@@ -1,5 +1,5 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #include <boost/ut.hpp>
@@ -15,12 +15,12 @@ suite chunk_registry_suite = [] {
         static std::string tmp_data_dir { "./tmp/chunk-registry"s };
         scheduler sched {};
         "strict creation"_test = [&] {
-            expect(throws([&] { chunk_registry cr { sched, data_dir }; cr.init_state(true, true); }));
-            expect(nothrow([&] { chunk_registry cr { sched, data_dir }; cr.init_state(false, false); }));
+            expect(throws([&] { chunk_registry cr { sched, data_dir }; cr.init_state(true); }));
+            expect(nothrow([&] { chunk_registry cr { sched, data_dir }; cr.init_state(false); }));
         };
         {
             chunk_registry cr { sched, data_dir };
-            cr.init_state(false, true);
+            cr.init_state(false);
             "create chunk registry"_test = [&cr] {
                 expect(cr.chunks().size()) << cr.num_chunks();
                 expect(cr.num_chunks() == 8_u) << cr.num_chunks();
@@ -56,7 +56,7 @@ suite chunk_registry_suite = [] {
             std::filesystem::create_directories(tmp_data_dir);
             std::filesystem::copy(data_dir, tmp_data_dir, std::filesystem::copy_options::recursive | std::filesystem::copy_options::overwrite_existing);
             chunk_registry cr { sched, tmp_data_dir };
-            cr.init_state(false, true);
+            cr.init_state(false);
             "truncate"_test = [&] {
                 auto before_size = cr.num_bytes();
                 auto before_slot = cr.max_slot();

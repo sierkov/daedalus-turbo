@@ -1,5 +1,5 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #include <boost/ut.hpp>
@@ -16,7 +16,7 @@ suite publisher_suite = [] {
         if (std::filesystem::exists(dist_path))
             std::filesystem::remove_all(dist_path);
         chunk_registry cr { sched, dist_path };
-        cr.init_state(false, false);
+        cr.init_state(false);
         publisher p { sched, cr, node_path, true, 3 };
         p.publish();
         expect(p.size() == 29_ull);

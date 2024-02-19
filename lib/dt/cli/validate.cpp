@@ -1,5 +1,5 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
@@ -37,7 +37,7 @@ namespace daedalus_turbo::cli::validate {
             }
         }
         auto indexers = validator::default_indexers(sched, data_dir);
-        validator::incremental cr { sched, data_dir, indexers };
+        validator::incremental cr { sched, data_dir, indexers, true };
         _parse_progress.total = end_offset;
         cr.target_offset(end_offset);
         _validate_chunks(sched, cr, std::move(chunks));

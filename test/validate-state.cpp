@@ -1,5 +1,5 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #include <dt/file.hpp>
@@ -9,6 +9,11 @@
 namespace {
     using namespace daedalus_turbo;
     using namespace daedalus_turbo::validator;
+
+    struct epoch_state {
+        stake_distribution stakes {};
+        delegation_map delegs {};
+    };
 
     struct node_ledger_state {
         uint64_t epoch = 0;

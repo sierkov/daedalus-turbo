@@ -1,5 +1,5 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_INDEXER_HPP
@@ -9,23 +9,17 @@
 #   include <sys/resource.h>
 #endif
 #include <algorithm>
-#include <chrono>
-#include <cstdio>
-#include <ctime>
-#include <execution>
 #include <filesystem>
-#include <iomanip>
 #include <iostream>
 #include <mutex>
 #include <string>
 #include <string_view>
-#include <thread>
 #include <vector>
+#include <dt/atomic.hpp>
 #include <dt/cardano.hpp>
 #include <dt/chunk-registry.hpp>
 #include <dt/file.hpp>
 #include <dt/index/common.hpp>
-#include <dt/index/merge.hpp>
 #include <dt/index/block-meta.hpp>
 #include <dt/index/pay-ref.hpp>
 #include <dt/index/stake-ref.hpp>
@@ -146,17 +140,18 @@ namespace daedalus_turbo::indexer {
                             for (auto &[name, idxr_ptr]: _indexers)
                                 index::writer<int>::remove(idxr_ptr->reader_path(s.slice_id));
                         }
-                        it = _slices.erase(it);
                     } else {
                         merger::slice new_slice { s.offset, std::min(s.size, max_end_offset - s.offset) };
                         updated.emplace_back(new_slice);
                         for (auto &[name, idxr_ptr]: _indexers) {
                             _sched.submit_void("truncate-init-" + name, 25, [&idxr_ptr, s, new_slice, max_end_offset] {
-                                idxr_ptr->truncate(s.slice_id, max_end_offset);
-                                index::writer<int>::rename(idxr_ptr->reader_path(s.slice_id), idxr_ptr->reader_path(new_slice.slice_id));
+                                idxr_ptr->schedule_truncate(s.slice_id, max_end_offset, [&idxr_ptr, s, new_slice] {
+                                    index::writer<int>::rename(idxr_ptr->reader_path(s.slice_id), idxr_ptr->reader_path(new_slice.slice_id));
+                                });
                             });
                         }
                     }
+                    it = _slices.erase(it);
                 }
             }
             _sched.process(true);
@@ -201,8 +196,8 @@ namespace daedalus_turbo::indexer {
         std::set<std::string> _mergeable {};
         alignas(mutex::padding) mutable std::mutex _slices_mutex {};
         merger::tree _slices {};
-        volatile uint64_t _epoch_merged = 0;
-        volatile uint64_t _final_merged = 0;
+        std::atomic_uint64_t _epoch_merged = 0;
+        std::atomic_uint64_t _final_merged = 0;
         uint64_t _merge_next_offset = 0;
         uint64_t _merge_start_offset = 0;
         alignas(mutex::padding) mutable std::mutex _epoch_slices_mutex {};
@@ -267,13 +262,10 @@ namespace daedalus_turbo::indexer {
             merger::slice output_slice { info.start_offset, info.end_offset - info.start_offset, fmt::format("epoch-{}", epoch) };
             _merge_slice(output_slice, input_slices, 100, [this, epoch, output_slice] {
                 std::unique_lock lk { _epoch_slices_mutex };
-                logger::trace("insert epoch slice for epoch: {} start_offset: {} end_offset: {}", epoch, output_slice.offset, output_slice.end_offset());
                 _epoch_slices.emplace(epoch, std::move(output_slice));
-                _epoch_merged += output_slice.size;
+                auto new_epoch_merged = atomic_add(_epoch_merged, output_slice.size);
                 if (_target_offset) {
-                    logger::trace("merge progress epoch_merged: {} final_merged: {} target_offset: {} start_offset: {}",
-                        _epoch_merged, _final_merged, *_target_offset, _merge_start_offset);
-                    progress::get().update("merge", _epoch_merged + _final_merged, (*_target_offset - _merge_start_offset) * 2);
+                    progress::get().update("merge", new_epoch_merged + _final_merged, (*_target_offset - _merge_start_offset) * 2);
                 }
                 _schedule_final_merge(std::move(lk));
             });
@@ -293,47 +285,39 @@ namespace daedalus_turbo::indexer {
                 auto end_offset = _target_offset ? *_target_offset : _end_offset;
                 if (end_offset < output_slice.offset)
                     end_offset = output_slice.offset;
-                size_t priority = prio_base + (end_offset - output_slice.offset) * 100 / end_offset; // [0;100) range
+                size_t priority = prio_base + (end_offset - output_slice.offset) * 50 / end_offset; // [prio_base;prio_base+50) range
                 auto done_parts = std::make_shared<std::atomic_size_t>(0);
                 auto todo_parts = std::make_shared<std::atomic_size_t>(idxr_ptr->merge_task_count(input_paths));
                 _sched.on_result(output_path, [this, priority, todo_parts, done_parts, output_slice, indices_awaited, output_path, idxr_name, on_merge] (const auto &res) {
-                    logger::trace("notified of index partition merge completion: {} done_parts: {} total_parts: {}",
-                            output_path, done_parts->load(), todo_parts->load());
                     if (res.type() == typeid(scheduled_task_error))
                         return;
                     if (++*done_parts >= *todo_parts) {
                         indices_awaited->erase(idxr_name);
-                        logger::trace("notified of index merge completion: {} still awaited: {}", output_path, *indices_awaited);
                         if (indices_awaited->empty()) {
-                            logger::trace("scheduling task to notify of slice readiness: {}", output_path, *indices_awaited);
                             _sched.submit_void("ready-" + output_path, priority, on_merge);
                             _sched.clear_observers(output_path);
                         }
                     }
                 });
                 _sched.submit_void("schedule-" + output_path, priority, [idxr_ptr, output_path, priority, input_paths, todo_parts] {
-                    idxr_ptr->merge(output_path, priority, input_paths, output_path);
+                    // merge tasks must have a higher priority + 50 so that the actual merge tasks free up file handles
+                    // and other tied resources quicker than they are consumed
+                    idxr_ptr->merge(output_path, priority + 50, input_paths, output_path);
                 });
-                logger::trace("scheduled merge tasks for {}", output_path);
             }
         }
         
         void _schedule_final_merge(std::unique_lock<std::mutex> &&epoch_slices_lk, bool force=false)
         {
-            logger::trace("_schedule_final_merge force: {} epoch_slices: {} _merge_next_offset: {} _target_offset: {}",
-                force, _epoch_slices.size(), _merge_next_offset, _target_offset);
             while (!_epoch_slices.empty()) {
                 uint64_t total_size = 0;
                 for (const auto &[epoch, slice]: _epoch_slices) {
                     if (slice.offset == _merge_next_offset + total_size) {
-                        logger::trace("_schedule_final_merge accept epoch: {} offset: {} size: {}", epoch, slice.offset, slice.size);
                         total_size += slice.size;
                     } else {
-                        logger::trace("_schedule_final_merge continuity breach in epoch: {} offset: {} size: {}", epoch, slice.offset, slice.size);
                         break;
                     }
                 }
-                logger::trace("_schedule_final_merge total_size: {}", total_size);
                 if (total_size == 0)
                     break;
                 if (total_size < merger::part_size && !force && (!_target_offset || *_target_offset > _merge_next_offset + total_size))
@@ -341,7 +325,7 @@ namespace daedalus_turbo::indexer {
                 auto first_epoch = _epoch_slices.begin()->first;
                 auto last_epoch = first_epoch;
                 std::vector<std::string> input_slices {};
-                while (_epoch_slices.begin()->second.offset < _merge_next_offset + total_size) {
+                while (!_epoch_slices.empty() && _epoch_slices.begin()->second.offset < _merge_next_offset + total_size) {
                     input_slices.emplace_back(_epoch_slices.begin()->second.slice_id);
                     last_epoch = _epoch_slices.begin()->first;
                     _epoch_slices.erase(_epoch_slices.begin());
@@ -356,8 +340,6 @@ namespace daedalus_turbo::indexer {
                         _final_merged = _slices.continuous_size();
                     }
                     if (_target_offset) {
-                        logger::trace("merge progress epoch_merged: {} final_merged: {} target_offset: {} start_offset: {}",
-                            _epoch_merged, _final_merged, *_target_offset, _merge_start_offset);
                         progress::get().update("merge", _epoch_merged + _final_merged, (*_target_offset - _merge_start_offset) * 2);
                     }
                     _on_slice_ready(first_epoch, last_epoch, output_slice);

@@ -16,7 +16,7 @@ namespace daedalus_turbo::validator {
     extern indexer::indexer_map default_indexers(scheduler &sched, const std::string &data_dir);
 
     struct incremental: indexer::incremental {
-        incremental(scheduler &sched, const std::string &data_dir, indexer::indexer_map &indexers);
+        incremental(scheduler &sched, const std::string &data_dir, indexer::indexer_map &indexers, bool on_the_go=true);
         file_set truncate(size_t max_end_offset, bool del=true) override;
         void save_state() override;
         chunk_info _parse_normal(uint64_t offset, const std::string &rel_path,
@@ -25,6 +25,12 @@ namespace daedalus_turbo::validator {
         std::pair<uint64_t, file_set> _load_state(bool strict=true) override;
     private:
         using timed_update_list = std::vector<index::timed_update::item>;
+        struct kes_interval
+        {
+            size_t first_counter = 0;
+            size_t last_counter = 0;
+        };
+        using kes_interval_map = std::map<cardano::pool_hash, kes_interval>;
         struct subchain {
             size_t offset = 0;
             size_t num_bytes = 0;
@@ -32,6 +38,7 @@ namespace daedalus_turbo::validator {
             uint64_t epoch = 0;
             size_t ok_sigs = 0;
             size_t ok_eligibility = 0;
+            kes_interval_map kes_intervals {};
 
             bool operator<(const auto &v) const
             {
@@ -81,6 +88,7 @@ namespace daedalus_turbo::validator {
         uint64_t _next_end_offset = 0;
         uint64_t _next_last_epoch = 0;
         snapshot_list _snapshots {};
+        bool _on_the_go = true;
         
         uint64_t _load_state_snapshot(const std::string &path);
         void _save_state_snapshot();
@@ -89,6 +97,9 @@ namespace daedalus_turbo::validator {
         void _add_subchain(subchain &&s) const;
         void _add_subchain_eligibility(uint64_t sc_offset, size_t ok_eligibility);
         std::vector<std::string> _index_slice_paths(const std::string &name, const indexer::slice_list &slices) const;
+        static void _merge_kes_check(const kes_interval &left, const kes_interval &right, const cardano::pool_hash &pool_id, const uint64_t chunk_offset);
+        static void _merge_kes_left(kes_interval_map &left, const kes_interval_map &right, const uint64_t chunk_offset);
+        static void _merge_kes_right(const kes_interval_map &left, kes_interval_map &right, const uint64_t chunk_offset);
         subchain_map::iterator _merge_with_neighbors(subchain_map::iterator it, const std::function<bool(const subchain &, const subchain &)> &ok_to_merge) const;
         void _merge_epoch_subchains();
         void _prepare_outflows_part(index::reader_multi_mt<index::txo_use::item> &txo_use_reader,
@@ -99,8 +110,8 @@ namespace daedalus_turbo::validator {
         void _process_updates(size_t num_outflow_parts, uint64_t first_epoch, uint64_t last_epoch);
         template<typename T>
         std::optional<uint64_t> _gather_updates(std::vector<T> &updates, uint64_t epoch, uint64_t min_offset, const std::string &name, const index::epoch_chunks &updated_chunks);
-        void _apply_ledger_state_updates_for_epoch(uint64_t e, index::reader_multi<index::txo::item> &txo_reader, const index::epoch_chunks &vrf_updates,
-            const indexer::slice_list &slices);
+        void _apply_ledger_state_updates_for_epoch(uint64_t e, index::reader_multi<index::txo::item> &txo_reader,
+            const index::epoch_chunks &vrf_updates, const std::vector<uint64_t> &snapshot_offsets);
         void _apply_ledger_state_updates(uint64_t first_epoch, uint64_t last_epoch, const indexer::slice_list &slices);
         void _validate_epoch_leaders(uint64_t epoch, uint64_t epoch_min_offset, const std::shared_ptr<std::vector<index::vrf::item>> &vrf_updates_ptr,
             const std::shared_ptr<pool_stake_distribution> &pool_dist_ptr,

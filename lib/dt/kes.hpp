@@ -1,5 +1,5 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_KES_HPP
@@ -54,6 +54,9 @@ namespace daedalus_turbo {
             auto computed_vkey = blake2b<blake2b_256_hash>(hash_buf_span);
             int vkey_cmp = span_memcmp(computed_vkey, vkey);
             if (vkey_cmp != 0) return false;
+            size_t max_period = 1 << DEPTH;
+            if (period >= max_period)
+                throw error("KES period out of range: {}!");
             size_t split = 1 << (DEPTH - 1);
             if (period < split) {
                 return _sigma.verify(period, _lhs_vk, msg);

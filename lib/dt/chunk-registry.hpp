@@ -1,5 +1,5 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_CHUNK_REGISTRY_HPP
@@ -9,6 +9,7 @@
 #include <map>
 #include <set>
 #include <string>
+#include <dt/atomic.hpp>
 #include <dt/cardano.hpp>
 #include <dt/file.hpp>
 #include <dt/json.hpp>
@@ -356,10 +357,9 @@ namespace daedalus_turbo {
         {
             static auto noop = [](const auto &){};
             auto chunk = _parse_normal(offset, rel_path, raw_data, compressed_size, noop);
-            _parsed += raw_data.size();
+            auto new_parsed = atomic_add(_parsed, static_cast<uint64_t>(raw_data.size()));
             if (_target_offset) {
-                logger::trace("parse progress parsed: {} target_offset: {} start_offset: {}", _parsed, *_target_offset, _parse_start_offset);
-                progress::get().update("parse", _parsed, *_target_offset - _parse_start_offset);
+                progress::get().update("parse", new_parsed, *_target_offset - _parse_start_offset);
             }
             return chunk;
         }
@@ -429,7 +429,7 @@ namespace daedalus_turbo {
         const std::filesystem::path _db_dir;
         std::optional<uint64_t> _target_offset {};
         uint64_t _end_offset = 0;
-        mutable uint64_t _parsed = 0;
+        mutable std::atomic_uint64_t _parsed = 0;
         uint64_t _parse_start_offset = 0;
 
         virtual std::pair<uint64_t, file_set> _load_state(bool strict=true)

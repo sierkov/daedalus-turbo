@@ -1,16 +1,20 @@
 # Experiments
 
-## From "Highly-parallel wallet-history reconstruction in Cardano blockchain" paper
+## From "Parallelized Ouroboros Praos" paper
+- [sync-cardano-node](./sync-cardano-node) - measure the end-to-end synchronization time of Cardano Node;
+- [sync-full](./sync-full) - measure the end-to-end synchronization time of Daedalus Turbo;
+- [sync-incremental](./sync-incremental) - measure the incremental synchronization time of Daedalus Turbo;
+- [sync-mithril](./sync-mithril) - measure the end-to-end synchronization time of Mithril.
 
-- [bench-algo](./bench-algo/) - the code to measure the performance of the highly-parallel wallet-history-reconstruction method.
+## From "Highly-parallel wallet-history reconstruction in the Cardano blockchain" paper:
+- [bench-algo](./bench-algo/) - the code to measure the performance of the highly-parallel wallet-history-reconstruction method;
 - [bench-cardano-wallet](./bench-cardano-wallet/) - the code to measure the performance of wallet-history reconstruction by Cardano wallet.
 
-## From "Networking scalability of Cardano blockchain" paper
-
-- [cardano-peer-discovery](./cardano-peer-discovery/) - capture and analyze network traffic during Cardano Node synchronization from scratch.
+## From "Scalability of Bulk Synchronization in the Cardano Blockchain" paper
+- [cardano-peer-discovery](./cardano-peer-discovery/) - capture and analyze network traffic during Cardano Node synchronization from scratch;
 - [compression](./compression/) - measure the compression ratio and compression/decompression speed of per-chunk [Zstandard](https://github.com/facebook/zstd) compression.
 
-## Replicating the hardware environment used in performance-focused experiments
+# Replicating the benchmarking environment
 To ensure that all experiments are reproducible, they were performed
 on bare-metal servers rented at [Vultr](https://www.vultr.com/products/bare-metal).
 Bare-metal servers reduce the possibility of alternative workloads affecting experiment results.
@@ -35,6 +39,29 @@ mount /dev/md1 /data
 Install the necessary packages:
 ```
 apt install -y docker-compose
+```
+
+## From "Parallelized Ouroboros Praos" paper
+
+Install the additional necessary packages:
+
+```
+/bin/bash <(curl -sL https://deb.nodesource.com/setup_20.x)
+apt install -y nodejs
+```
+
+Download the source code and build the docker image:
+```
+git clone https://github.com/sierkov/daedalus-turbo dt
+cd dt
+git checkout parallelized-ouroboros-praos
+docker build -t dt -f Dockerfile.test .
+```
+
+## From "Highly-parallel wallet-history reconstruction in the Cardano blockchain" paper:
+
+Install the additional necessary packages:
+```
 cd /root
 git clone https://github.com/scottchiefbaker/dool
 cd dool
@@ -61,36 +88,16 @@ mkdir /data/cardano-wallet
 cp /your-cardano-wallet/stake-pools.sqlite /data/cardano-wallet
 ```
 
-Clone this repository and build the docker image:
+Download the source code and build the docker image:
 ```
 git clone https://github.com/sierkov/daedalus-turbo dt
 cd dt
 git checkout release-20230201
 docker build -t dt -f Dockerfile.test .
 ```
-N.B.: The latest version of the code should work perfectly well, but in case you'd like to precisely reproduce the paper's results, use the version of the code tagged "preview-20230104" and the corresponding version of the README for the instructions since some names of binaries have changed since then.
 
 Create lz4 compressed copies of all ImmutableDB chunks:
 ```
 docker run --rm -v /data/cardano-node/immutable:/immutable dt bash -c "sudo chown -R dev:dev /immutable; ./lz4 compress /immutable"
 ```
 
-### Running the experiments
-Run the benchmarks:
-```
-cd experiments/bench-algo
-bash run-bench.sh
-```
-Expect the bench-algo benchmark to take about three hours when using exactly
-the same hardware config.
-All experiment data will be saved into the log directory next to the run-bench.sh script.
-
-Optionally, run the benchmarks of Cardano Wallet:
-```
-cd experiments/bench-cardano-wallet
-echo "the word list to add a test wallet to cardano wallet" > .secret
-bash run-bench.sh
-```
-Expect the bench-cardano-wallet benchmark to take about ten hours when using precisely
-the same hardware config.
-All experiment data will be saved into log directory next to the run-bench.sh script.

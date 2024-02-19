@@ -1,5 +1,5 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #include <boost/ut.hpp>
@@ -20,7 +20,7 @@ suite indexer_suite = [] {
             {
                 scheduler sched {};
                 chunk_registry src_cr { sched, src_dir };
-                src_cr.init_state(false, true);
+                src_cr.init_state(false);
                 indexer_map indexers {};
                 indexers.emplace(std::make_unique<index::txo_use::indexer>(sched, idx_dir, "txo-use"));
                 incremental idxr { sched, data_dir, indexers };

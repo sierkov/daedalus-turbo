@@ -2,7 +2,7 @@
 set -e
 ulimit -n 32768
 test -d ./log || mkdir ./log
-test -d /data/cardano && rm /data/cardano/*.log
+test -d /data/cardano && rm -f /data/cardano/*.log
 max_epoch=465
 for iter in `seq 1 5`; do
     for threads in 24 8; do

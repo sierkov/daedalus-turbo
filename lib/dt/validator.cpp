@@ -9,14 +9,6 @@
 #include <dt/index/vrf.hpp>
 #include <dt/validator.hpp>
 
-/*
-* Checks to add before the release:
- * - check for the hash of the genesis block
- * - continuity of KES signatures 
- * - extract data from a genesis config instead of using hard coded values
- * - double check that using pool_dist_mark for VRF verification is correct
- */
-
 namespace daedalus_turbo::validator {
     indexer::indexer_map default_indexers(scheduler &sched, const std::string &data_dir)
     {
@@ -30,11 +22,11 @@ namespace daedalus_turbo::validator {
         return indexers;
     }
 
-    incremental::incremental(scheduler &sched, const std::string &data_dir, indexer::indexer_map &indexers)
+    incremental::incremental(scheduler &sched, const std::string &data_dir, indexer::indexer_map &indexers, bool on_the_go)
         : indexer::incremental { sched, data_dir, indexers },
             _validate_dir { chunk_registry::init_db_dir(data_dir + "/validate") },
             _state_path { _validate_dir / "state.json" },
-            _state { _sched }
+            _state { _sched }, _on_the_go { on_the_go }
     {
     }
 
@@ -43,18 +35,7 @@ namespace daedalus_turbo::validator {
         _subchains.clear();
         auto zpp_data = file::read(path);
         zpp::bits::in in { zpp_data };
-        in(_state, _vrf_state).or_throw();
-        if (!chunks().empty()) {
-            subchain done {};
-            done.offset = 0;
-            done.num_bytes = num_bytes();
-            for (const auto &[last_byte_offset, info]: chunks()) {
-                done.num_blocks += info.num_blocks;
-            }
-            done.ok_sigs = done.num_blocks;
-            done.ok_eligibility = done.num_blocks;
-            _add_subchain(std::move(done));   
-        }
+        in(_state, _vrf_state, _subchains).or_throw();
         _next_end_offset = _state.end_offset();
         _next_last_epoch = _state.epoch();
         return _state.end_offset();
@@ -124,11 +105,11 @@ namespace daedalus_turbo::validator {
     void incremental::_save_state_snapshot()
     {
         timer t {
-            fmt::format("validator::save_state_snapshot epoch: {} end_offset: {}", _state.epoch(), _state.end_offset()),
-                logger::level::trace };
+            fmt::format("saved the ledger's state snapshot epoch: {} end_offset: {}", _state.epoch(), _state.end_offset()),
+                logger::level::info };
         uint8_vector zpp_data {};
         zpp::bits::out out { zpp_data };
-        out(_state, _vrf_state).or_throw();
+        out(_state, _vrf_state, _subchains).or_throw();
         file::write(_snapshot_path(_state.epoch()), zpp_data);
         snapshot latest { _state.epoch(), _state.end_offset() };
         _snapshots.emplace(std::move(latest));
@@ -144,6 +125,8 @@ namespace daedalus_turbo::validator {
             _schedule_validation(std::move(lk));
             _sched.process(true);
         }
+        if (_subchains.size() > 1)
+            throw error("The provided data contains unmergeable blockchain segments!");
         {
             if (_snapshots.empty() || _state.end_offset() > _snapshots.rbegin()->end_offset)
                 _save_state_snapshot();
@@ -180,7 +163,8 @@ namespace daedalus_turbo::validator {
             _next_end_offset = slice.end_offset();
         if (last_epoch > _next_last_epoch)
             _next_last_epoch = last_epoch;
-        _schedule_validation(std::move(lk));
+        if (_on_the_go)
+            _schedule_validation(std::move(lk));
     }
 
     void incremental::_schedule_validation(std::unique_lock<std::mutex> &&next_task_lk)
@@ -222,6 +206,18 @@ namespace daedalus_turbo::validator {
             auto slot = blk.slot();
             if (!blk.signature_ok())
                 throw error("validation of the block signature at slot {} failed!");
+            if (blk.era() >= 2) {
+                auto kes = blk.kes();
+                auto pool_id = blk.issuer_hash();
+                auto [kes_it, kes_created] = sc.kes_intervals.try_emplace(pool_id);
+                if (kes_created) {
+                    kes_it->second.first_counter = kes.counter;
+                    kes_it->second.last_counter = kes.counter;
+                } else {
+                    _merge_kes_check(kes_it->second, kes_interval { kes.counter, kes.counter }, pool_id, blk.offset());
+                    kes_it->second.last_counter = kes.counter;
+                }
+            }
             sc.ok_sigs++;
             if (blk.era() < 2)
                 sc.ok_eligibility++;
@@ -240,6 +236,34 @@ namespace daedalus_turbo::validator {
         return chunk;
     }
 
+    void incremental::_merge_kes_check(const kes_interval &left, const kes_interval &right, const cardano::pool_hash &pool_id, const uint64_t chunk_offset)
+    {
+        if (left.last_counter > right.first_counter)
+            throw error("KES intervals from chunk at offset: {} do not merge for pool: {}", chunk_offset, pool_id);
+    }
+
+    void incremental::_merge_kes_left(kes_interval_map &left, const kes_interval_map &right, const uint64_t chunk_offset)
+    {
+        for (const auto &[pool_id, right_interval]: right) {
+            auto [left_it, created] = left.try_emplace(pool_id, right_interval);
+            if (!created) {
+                _merge_kes_check(left_it->second, right_interval, pool_id, chunk_offset);
+                left_it->second.last_counter = right_interval.last_counter;
+            }
+        }
+    }
+
+    void incremental::_merge_kes_right(const kes_interval_map &left, kes_interval_map &right, const uint64_t chunk_offset)
+    {
+        for (const auto &[pool_id, left_interval]: left) {
+            auto [right_it, created] = right.try_emplace(pool_id, left_interval);
+            if (!created) {
+                _merge_kes_check(left_interval, right_it->second, pool_id, chunk_offset);
+                right_it->second.first_counter = left_interval.first_counter;
+            }
+        }
+    }
+
     // Expected to be called when _subchains_mutex is already held by the caller
     incremental::subchain_map::iterator incremental::_merge_with_neighbors(subchain_map::iterator it, const std::function<bool(const subchain &, const subchain &)> &ok_to_merge) const
     {
@@ -251,6 +275,7 @@ namespace daedalus_turbo::validator {
             sc.num_blocks += prev_it->second.num_blocks;
             sc.ok_sigs += prev_it->second.ok_sigs;
             sc.ok_eligibility += prev_it->second.ok_eligibility;
+            _merge_kes_right(prev_it->second.kes_intervals, sc.kes_intervals, sc.offset);
             _subchains.erase(prev_it);
             prev_it = _subchains.lower_bound(sc.offset - 1);
         }
@@ -260,6 +285,7 @@ namespace daedalus_turbo::validator {
             sc.num_blocks += next_it->second.num_blocks;
             sc.ok_sigs += next_it->second.ok_sigs;
             sc.ok_eligibility += next_it->second.ok_eligibility;
+            _merge_kes_left(sc.kes_intervals, next_it->second.kes_intervals, next_it->second.offset);
             _subchains.erase(next_it);
             next_it = _subchains.lower_bound(sc.offset + sc.num_bytes);
         }
@@ -451,8 +477,8 @@ namespace daedalus_turbo::validator {
         return min_chunk_id;
     }
 
-    void incremental::_apply_ledger_state_updates_for_epoch(uint64_t e, index::reader_multi<index::txo::item> &txo_reader, const index::epoch_chunks &vrf_updates,
-        const indexer::slice_list &slices)
+    void incremental::_apply_ledger_state_updates_for_epoch(uint64_t e, index::reader_multi<index::txo::item> &txo_reader,
+        const index::epoch_chunks &vrf_updates, const std::vector<uint64_t> &snapshot_offsets)
     {
         timer te { fmt::format("apply_ledger_state_updates for epoch {}", e) };
         try {
@@ -461,13 +487,13 @@ namespace daedalus_turbo::validator {
             if (last_epoch < e) {
                 if (!_state.reward_dist().empty()) {
                     _state.finish_epoch();
-                    auto einfo = epoch(_state.epoch());
-                    for (const auto &slice: slices) {
-                        logger::trace("checking if to make a snapshot at epoch: {} end_offset: {} slice end_offset: {}",
-                            _state.epoch(), einfo.end_offset, slice.end_offset());
-                        if (slice.end_offset() == einfo.end_offset) {
-                            _save_state_snapshot();
-                            break;
+                    if (_on_the_go) {
+                        auto einfo = epoch(_state.epoch());
+                        for (uint64_t off: snapshot_offsets) {
+                            if (einfo.end_offset >= off && (_snapshots.empty() || _snapshots.rbegin()->end_offset < off)) {
+                                _save_state_snapshot();
+                                break;
+                            }
                         }
                     }
                 }
@@ -602,11 +628,19 @@ namespace daedalus_turbo::validator {
     void incremental::_apply_ledger_state_updates(uint64_t first_epoch, uint64_t last_epoch, const indexer::slice_list &slices)
     {
         timer t { "validator::_update_pool_stake_distributions" };
+        std::vector<uint64_t> snapshot_offsets {};
+        snapshot_offsets.reserve(3);
+        if (_target_offset && *_target_offset >= indexer::merger::part_size * 2) {
+            snapshot_offsets.emplace_back(*_target_offset / 2);
+            while (snapshot_offsets.size() < 3) {
+                snapshot_offsets.emplace_back(snapshot_offsets.back() + (*_target_offset - snapshot_offsets.back()) / 2);
+            }
+        }
         index::reader_multi<index::txo::item> txo_reader { _index_slice_paths("txo", slices) };
         auto vrf_updates = dynamic_cast<index::vrf::indexer &>(*_indexers.at("vrf")).updated_epochs();
         for (uint64_t e = first_epoch; e <= last_epoch; e++) {
             try {
-                _apply_ledger_state_updates_for_epoch(e, txo_reader, vrf_updates, slices);
+                _apply_ledger_state_updates_for_epoch(e, txo_reader, vrf_updates, snapshot_offsets);
                 logger::info("applied ledger updates for epoch: {} end offset: {}", _state.epoch(), _state.end_offset());
             } catch (std::exception &ex) {
                 throw error("failed to process epoch {} updates: {}", e, ex.what());
