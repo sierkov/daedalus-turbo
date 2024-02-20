@@ -35,7 +35,8 @@ namespace daedalus_turbo::validator {
                 self._params_prev,
                 self._ppups,
                 self._ppups_future,
-                self._epoch_infos,
+                self._epoch_accounts,
+                self._fees_next_reward,
                 self._rewards,
                 self._ptr_to_stake,
                 self._stake_to_ptr,
@@ -50,29 +51,17 @@ namespace daedalus_turbo::validator {
                 self._reserves,
                 self._treasury
             );
-#ifndef NDEBUG
-            logger::trace("validator::state::serialize epoch: {} reserves: {} treasury: {}", self._epoch, self._reserves, self._treasury);
-            for (const auto &stake_id: self._traced_stakes) {
-                logger::trace("validator::state::serialize {} rewards: {}", stake_id, self._rewards.get(stake_id));
-            }
-#endif
             return res;
         }
 
         state(scheduler &sched): _sched { sched }
         {
-            //_traced_stakes.emplace(cardano::stake_ident { cardano::key_hash::from_hex("42FBE3C7DE5853FC74DA3C27DC583E7A660CCFF4042FBF12F223E53A") });
         }
 
         template<std::ranges::input_range T>
         void register_pool(const cardano::pool_hash &pool_id, const stake_ident &reward_id, const T &owners,
             uint64_t pledge=0, uint64_t cost=340'000'000, rational_u64 margin=rational_u64 { 0, 1 })
         {
-#ifndef NDEBUG
-            if (_traced_pools.contains(pool_id))
-                logger::trace("epoch: {} register_pool: {} pledge: {} cost: {} margin: {}",
-                    _epoch, pool_id, cardano::amount { pledge }, cardano::amount { cost }, margin);
-#endif
             pool_info pool_params {
                 .reward_id = reward_id,
                 .pledge = pledge,
@@ -99,11 +88,6 @@ namespace daedalus_turbo::validator {
                     for (const auto &stake_id: inv_delegs_it->second)
                         _active_pool_dist.add(pool_id, _active_stake_dist.get(stake_id) + _rewards.get(stake_id));
                 }
-#ifndef NDEBUG
-                if (_traced_pools.contains(pool_id))
-                    logger::trace("epoch: {} register_pool: {} => stake: {}",
-                        _epoch, pool_id, cardano::amount { _active_pool_dist.get(pool_id) });
-#endif
             }
             // delete planned retirement if present
             _pools_retiring.erase(pool_id);
@@ -111,10 +95,6 @@ namespace daedalus_turbo::validator {
 
         void retire_pool(const cardano::pool_hash &pool_id, uint64_t epoch)
         {
-#ifndef NDEBUG
-            if (_traced_pools.contains(pool_id))
-                logger::trace("epoch: {} retire_pool: {} from_epoch: {}", _epoch, pool_id, epoch);
-#endif
             if (_active_pool_params.contains(pool_id)) {
                 _pools_retiring[pool_id] = epoch;
             } else {
@@ -143,32 +123,18 @@ namespace daedalus_turbo::validator {
             _instant_rewards_treasury.add(stake_id, reward);
         }
 
-        void withdraw_reward(const cardano::slot &
-#ifndef NDEBUG
-            slot
-#endif
-            ,
-            const stake_ident &stake_id, uint64_t amount)
+        void withdraw_reward(const cardano::slot &, const stake_ident &stake_id, uint64_t amount)
         {
-#ifndef NDEBUG
-            if (_traced_stakes.contains(stake_id))
-                logger::trace("epoch: {} slot: {} withdraw {} from {}",
-                    _epoch, slot, stake_id, cardano::amount { amount }, stake_id);
-#endif
             _rewards.sub(stake_id, amount);
             auto deleg_it = _active_delegs.find(stake_id);
             if (deleg_it != _active_delegs.end())
                 _active_pool_dist.sub(deleg_it->second, amount);
-            _epoch_infos[_epoch].withdrawals += amount;
+            _epoch_accounts.withdrawals += amount;
         }
 
         void register_stake(const cardano::slot &slot, const stake_ident &stake_id, size_t tx_idx=0, size_t cert_idx=0)
         {
             _tick(slot);
-#ifndef NDEBUG
-            if (_traced_stakes.contains(stake_id))
-                logger::trace("epoch: {} register_stake: {}", _epoch, stake_id);
-#endif
             _rewards.create(stake_id);
             cardano::stake_pointer ptr { slot, tx_idx, cert_idx };
             _ptr_to_stake[ptr] = stake_id;
@@ -179,12 +145,7 @@ namespace daedalus_turbo::validator {
         {
             _tick(slot);
             auto reward = _rewards.get(stake_id);
-#ifndef NDEBUG
-            if (_traced_stakes.contains(stake_id))
-                logger::trace("epoch: {} epoch slot: {} retire stake: {} unclaimed reward: {} stake: {} delegated: {}",
-                    _epoch, slot.epoch_slot(), stake_id, reward, _active_stake_dist.get(stake_id), _active_delegs.contains(stake_id));
-#endif
-            _epoch_infos[_epoch].unclaimed_rewards += reward;
+            _epoch_accounts.unclaimed_rewards += reward;
             auto deleg_it = _active_delegs.find(stake_id);
             if (deleg_it != _active_delegs.end()) {
                 auto stake = _active_stake_dist.get(stake_id) + _rewards.get(stake_id);
@@ -206,10 +167,6 @@ namespace daedalus_turbo::validator {
 
         void delegate_stake(const stake_ident &stake_id, const cardano_hash_28 &pool_id)
         {
-#ifndef NDEBUG
-            if (_traced_stakes.contains(stake_id))
-                logger::trace("epoch: {} delegate_stake: {} to pool: {}", _epoch, stake_id, pool_id);
-#endif
             if (!_active_pool_params.contains(pool_id))
                 throw error("trying to delegate {} to an unknown pool: {}", stake_id, pool_id);
             auto stake = _active_stake_dist.get(stake_id) + _rewards.get(stake_id);
@@ -226,18 +183,10 @@ namespace daedalus_turbo::validator {
                 }
                 deleg_it->second = pool_id;
             }
-#ifndef NDEBUG
-            if (_traced_stakes.contains(stake_id))
-                logger::trace("epoch: {} delegate_stake: {} to pool: {} => pool's stake: {}", _epoch, stake_id, pool_id, _active_pool_dist.get(pool_id));
-#endif
         }
 
         void update_stake(const stake_ident &stake_id, int64_t delta)
         {
-#ifndef NDEBUG
-            if (_traced_stakes.contains(stake_id))
-                logger::trace("epoch: {} update_stake: {} by {}", _epoch, stake_id, delta);
-#endif
             auto deleg_it = _active_delegs.find(stake_id);
             if (delta >= 0) {
                 _active_stake_dist.add(stake_id, static_cast<uint64_t>(delta));
@@ -253,13 +202,6 @@ namespace daedalus_turbo::validator {
                         _active_pool_dist.sub(deleg_it->second, static_cast<uint64_t>(-delta));
                 }
             }
-#ifndef NDEBUG
-            if (_traced_stakes.contains(stake_id)) {
-                logger::trace("epoch: {} update_stake: {} by {} => {}", _epoch, stake_id, delta, cardano::amount { _active_stake_dist.get(stake_id) });
-                if (deleg_it != _active_delegs.end())
-                    logger::trace("epoch: {} update_stake: {} => pool {}: {}", _epoch, stake_id, deleg_it->second, cardano::amount { _active_pool_dist.get(deleg_it->second) });
-            }
-#endif
         }
 
         void update_pointer(const cardano::stake_pointer &ptr, int64_t delta)
@@ -364,10 +306,6 @@ namespace daedalus_turbo::validator {
         {
             if (_genesis_pools().contains(pool_id))
                 return;
-#ifndef NDEBUG
-            if (_traced_pools.contains(pool_id))
-                logger::trace("epoch: {} set_last_epoch_blocks for pool {}: {}", _epoch, pool_id, num_blocks);
-#endif
             if (_go.pool_params.contains(pool_id)) {
                 _blocks_current.add(pool_id, num_blocks);
             } else {
@@ -375,29 +313,14 @@ namespace daedalus_turbo::validator {
             }
         }
 
-        void fees(uint64_t epoch, uint64_t amount)
-        {
-            if (epoch < _epoch)
-                throw error("fees can be set only for the coming epochs!");
-            auto &epoch_info = _epoch_infos[epoch];
-            logger::trace("epoch: {} set fees: {} prev value: {} diff: {}",
-                epoch, amount, epoch_info.fees, static_cast<int64_t>(amount) - static_cast<int64_t>(epoch_info.fees));
-            epoch_info.fees = amount;
-        }
-
         uint64_t fees_reward_snapshot()
         {
-            return _epoch_infos[_epoch].fees;
+            return _epoch_accounts.fees;
         }
 
         void add_fees(uint64_t amount)
         {
-            _epoch_infos[_epoch + 1].fees += amount;
-        }
-
-        void fees(uint64_t amount)
-        {
-            fees(_epoch + 1, amount);
+            _fees_next_reward += amount;
         }
 
         void reserves(uint64_t r)
@@ -444,18 +367,6 @@ namespace daedalus_turbo::validator {
         {
             return _end_offset;
         }
-
-#ifndef NDEBUG
-        void traced_pools(const std::set<cardano::pool_hash> &pools)
-        {
-            _traced_pools = pools;
-        }
-
-        void traced_stakes(const std::set<cardano::stake_ident> &stakes)
-        {
-            _traced_stakes = stakes;
-        }
-#endif
 
         void rotate_snapshots()
         {
@@ -517,26 +428,9 @@ namespace daedalus_turbo::validator {
 
             _epoch = new_epoch;
             _clean_old_epoch_data();
-            
-#ifndef NDEBUG
-            for (const auto &pool_id: _traced_pools) {
-                using dist_info = std::tuple<const char *, const ledger_copy &>;
-                for (const auto &[name, ledg]: { dist_info { "mark", _mark }, dist_info { "set", _set }, dist_info { "go", _go } }) {
-                    logger::trace("epoch start: {} pool {} present in {}: pstake: {} % {}", _epoch, pool_id, name,
-                        ledg.pool_dist.get(pool_id), ledg.pool_dist.total_stake());
-                }
-            }
-            for (const auto &stake_id: _traced_stakes) {
-                using dist_info = std::pair<const char *, const stake_distribution_copy &>;
-                for (const auto &[name, dist]: { dist_info { "dist_mark", _mark.stake_dist }, dist_info { "dist_set", _set.stake_dist },
-                                                 dist_info { "dist_go", _go.stake_dist } }) {
-                    logger::trace("epoch start: {} {} present in {}: {}", _epoch, stake_id, name, dist.get(stake_id));
-                }
-                logger::trace("epoch start: {} {} rewards: {}", _epoch, stake_id, _rewards.get(stake_id));
-            }
-#endif
-            
-            // retire pools and return pool deposits
+            _epoch_accounts.fees = _fees_next_reward;
+            _fees_next_reward = 0;
+
             auto [ refunds_user, refunds_treasury ] = _retire_pools();
             _prepare_reward_pulsing_schedule();
 
@@ -601,6 +495,23 @@ namespace daedalus_turbo::validator {
         using pool_rewards_result = std::tuple<cardano::pool_hash, pool_reward_list, uint64_t>;
         using pool_reward_map = std::map<cardano::pool_hash, pool_reward_list>;
 
+        struct epoch_info {
+            uint64_t fees = 0;
+            uint64_t ir_reserves = 0;
+            uint64_t ir_treasury = 0;
+            uint64_t withdrawals = 0;
+            uint64_t unclaimed_rewards = 0;
+
+            void clear()
+            {
+                fees = 0;
+                ir_reserves = 0;
+                ir_treasury = 0;
+                withdrawals = 0;
+                unclaimed_rewards = 0;
+            }
+        };
+
         scheduler &_sched;
         uint64_t _epoch = 0;
         uint64_t _end_offset = 0;
@@ -623,7 +534,8 @@ namespace daedalus_turbo::validator {
         std::map<cardano::pool_hash, cardano::param_update> _ppups_future {};
 
         // rewards-related data
-        std::map<uint64_t, epoch_info> _epoch_infos {};
+        epoch_info _epoch_accounts {};
+        uint64_t _fees_next_reward = 0;
         reward_distribution _rewards {};
         ptr_to_stake_map _ptr_to_stake {};
         stake_to_ptr_map _stake_to_ptr {};
@@ -644,11 +556,6 @@ namespace daedalus_turbo::validator {
         uint64_t _reserves = 0;
         uint64_t _treasury = 0;
 
-#ifndef NDEBUG
-        std::set<cardano::pool_hash> _traced_pools {};
-        std::set<stake_ident> _traced_stakes {};
-#endif
-
         uint64_t _total_stake(uint64_t reserves) const
         {
             return _params_prev.max_lovelace_supply - reserves;
@@ -657,9 +564,9 @@ namespace daedalus_turbo::validator {
         void _compute_rewards()
         {
             timer t { fmt::format("compute rewards for epoch {}", _epoch), logger::level::trace };
-            uint64_t fees = _epoch_infos[_epoch].fees;
-            uint64_t ir_reserves = _epoch_infos[_epoch].ir_reserves;
-            uint64_t ir_treasury = _epoch_infos[_epoch].ir_treasury;
+            uint64_t fees = _epoch_accounts.fees;
+            uint64_t ir_reserves = _epoch_accounts.ir_reserves;
+            uint64_t ir_treasury = _epoch_accounts.ir_treasury;
             uint64_t expansion = 0;
             if (_params_prev.decentralization.as_r() < _params_prev.decentralizationThreshold.as_r() && _epoch > 0) {
                 rational perf = std::min(rational { 1 }, rational { _blocks_before.total_stake() } / ((1 - _params_prev.decentralization.as_r()) * _params_prev.epoch_blocks));
@@ -696,8 +603,8 @@ namespace daedalus_turbo::validator {
             _delta_treasury = treasury_rewards - ir_treasury;
             _delta_reserves = treasury_rewards + ir_reserves + pool_rewards_filtered - fees;
             logger::trace("epoch {} rewards allocated: {} unclaimed: {} mir: {} withdrawals: {}",
-                _epoch, cardano::amount { pool_rewards_filtered }, cardano::amount { _epoch_infos[_epoch].unclaimed_rewards },
-                cardano::amount { ir_reserves }, cardano::amount { _epoch_infos[_epoch].withdrawals });
+                _epoch, cardano::amount { pool_rewards_filtered }, cardano::amount { _epoch_accounts.unclaimed_rewards },
+                cardano::amount { ir_reserves }, cardano::amount { _epoch_accounts.withdrawals });
             logger::debug("epoch {} accounts update: deltaF -{} deltaT: {} deltaR: -{}",
                  _epoch, cardano::amount { fees }, cardano::amount { _delta_treasury }, cardano::amount { _delta_reserves });
         }
@@ -831,12 +738,8 @@ namespace daedalus_turbo::validator {
         void _clean_old_epoch_data()
         {
             timer t { fmt::format("validator::state epoch: {} clean_old_epoch_data", _epoch), logger::level::trace };
-            for (auto it = _epoch_infos.begin(); it != _epoch_infos.end(); ) {
-                if (it->first < _epoch - 1)
-                    it = _epoch_infos.erase(it);
-                else
-                    it++;
-            }
+            // where to transfer next fees to epoch_accounts.fees?
+            _epoch_accounts.clear();
             _blocks_before = std::move(_blocks_current);
             _blocks_current.clear();
             _reward_pulsing_snapshot.clear();
@@ -1010,14 +913,14 @@ namespace daedalus_turbo::validator {
             timer t { fmt::format("validator::state epoch: {} accumulate_instant_rewards", _epoch), logger::level::trace };
             for (const auto &[stake_id, reward]: _instant_rewards_reserves) {
                 if (_rewards.contains(stake_id)) {
-                    _epoch_infos[_epoch].ir_reserves += reward;
+                    _epoch_accounts.ir_reserves += reward;
                 } else {
                     logger::trace("epoch: {} instant reward: {} from reserves to a retired stake_id: {} - ignoring", _epoch, reward, stake_id);
                 }
             }
             for (const auto &[stake_id, reward]: _instant_rewards_treasury) {
                 if (_rewards.contains(stake_id)) {
-                    _epoch_infos[_epoch].ir_treasury += reward;
+                    _epoch_accounts.ir_treasury += reward;
                 } else {
                     logger::trace("epoch: {} instant reward: {} from treasury to a retired stake_id: {} - ignoring", _epoch, reward, stake_id);
                 }

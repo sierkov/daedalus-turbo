@@ -245,14 +245,6 @@ namespace daedalus_turbo::validator {
     using ptr_to_stake_map = std::map<cardano::stake_pointer, cardano::stake_ident>;
     using stake_to_ptr_map = std::map<cardano::stake_ident, cardano::stake_pointer>;
 
-    struct epoch_info {
-        uint64_t fees = 0;
-        uint64_t ir_reserves = 0;
-        uint64_t ir_treasury = 0;
-        uint64_t withdrawals = 0;
-        uint64_t unclaimed_rewards = 0;
-    };
-
     struct protocol_params {
         using serialize = zpp::bits::members<21>;
 

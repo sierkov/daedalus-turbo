@@ -32,7 +32,6 @@ namespace daedalus_turbo::validator {
 
     uint64_t incremental::_load_state_snapshot(const std::string &path)
     {
-        _subchains.clear();
         auto zpp_data = file::read(path);
         zpp::bits::in in { zpp_data };
         in(_state, _vrf_state, _subchains).or_throw();
@@ -155,10 +154,10 @@ namespace daedalus_turbo::validator {
 
     void incremental::_on_slice_ready(uint64_t first_epoch, uint64_t last_epoch, const indexer::merger::slice &slice)
     {
-        // only one thread at a time must work on this
         indexer::incremental::_on_slice_ready(first_epoch, last_epoch, slice);
+        // only one thread at a time must work on this
         std::unique_lock lk { _next_task_mutex };
-        // slice merge even though scheduled in order may complete out of order
+        // slice merges even though they are scheduled in order, the notifications may be come out of order
         if (slice.end_offset() > _next_end_offset)
             _next_end_offset = slice.end_offset();
         if (last_epoch > _next_last_epoch)
@@ -530,17 +529,6 @@ namespace daedalus_turbo::validator {
                 timer tp { fmt::format("validator epoch: {} process {} timed updates", e, timed_updates.size()) };
                 _gather_updates(timed_updates, e, last_offset, "timed-update", dynamic_cast<index::timed_update::indexer &>(*_indexers.at("timed-update")).updated_epochs());
                 std::sort(timed_updates.begin(), timed_updates.end());
-                struct collateral_id {
-                    uint64_t slot = 0;
-                    uint64_t tx_idx = 0;
-                    bool operator<(const collateral_id &b) const
-                    {
-                        if (slot != b.slot)
-                            return slot < b.slot;
-                        return tx_idx < b.tx_idx;
-                    }
-                };
-                std::map<collateral_id, uint64_t> collateral_fees {};
                 for (const auto &upd: timed_updates) {
                     switch (upd.update.index()) {
                         case 0: {
@@ -590,19 +578,14 @@ namespace daedalus_turbo::validator {
                             const auto &cc = std::get<index::timed_update::collected_collateral>(upd.update);
                             index::txo::item search_item { cc.tx_hash, cc.txo_idx };
                             auto [ txo_count, txo_item ] = txo_reader.find(search_item);
-                            auto &c_fees = collateral_fees[collateral_id { upd.slot, upd.tx_idx }];
                             if (txo_count != 1)
                                 throw error("each input used as a collateral must be present exactly once but got: {} for {} #{}", txo_count, cc.tx_hash, cc.txo_idx);
-                            c_fees += txo_item.amount;
+                            _state.add_fees(txo_item.amount);
                             break;
                         }
                         default:
                             throw error("internal error: unexpected pool update variant: {}", upd.update.index());
                     }
-                }
-                for (const auto &[c_id, c_fees]: collateral_fees) {
-                    logger::trace("epoch: {} collateral from slot: {} tx_idx: {} amount: {}", e, c_id.slot, c_id.tx_idx, c_fees);
-                    _state.add_fees(c_fees);
                 }
             }
             {
