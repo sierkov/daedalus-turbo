@@ -14,7 +14,7 @@ namespace daedalus_turbo::index::txo {
         cardano::tx_out_idx out_idx {};
         uint64_t amount = 0;
         uint64_t offset = 0;
-        cardano::stake_ident_hybrid stake_id {};
+        std::optional<cardano::stake_ident_hybrid> stake_id {};
         
         bool operator<(const auto &b) const
         {
@@ -50,6 +50,8 @@ namespace daedalus_turbo::index::txo {
                         _idx.emplace_part(tx.hash().data()[0] / _part_range, tx.hash(), txo.idx, txo.amount, tx.offset(), txo.address.stake_id());
                     else if (txo.address.has_pointer())
                         _idx.emplace_part(tx.hash().data()[0] / _part_range, tx.hash(), txo.idx, txo.amount, tx.offset(), txo.address.pointer());
+                    else
+                        _idx.emplace_part(tx.hash().data()[0] / _part_range, tx.hash(), txo.idx, txo.amount, tx.offset());
                 });
             });
         }

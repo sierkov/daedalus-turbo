@@ -385,6 +385,11 @@ namespace daedalus_turbo::validator {
             epoch_info.fees = amount;
         }
 
+        uint64_t fees_reward_snapshot()
+        {
+            return _epoch_infos[_epoch].fees;
+        }
+
         void add_fees(uint64_t amount)
         {
             _epoch_infos[_epoch + 1].fees += amount;
@@ -456,7 +461,6 @@ namespace daedalus_turbo::validator {
         {
             timer t { fmt::format("validator::state epoch: {} rotate_snapshots", _epoch), logger::level::trace };
             {
-                timer ts { fmt::format("validator::state epoch: {} move reward_pool_params", _epoch), logger::level::trace };
                 _reward_pool_params = std::move(_go.pool_params);
             }
             {
@@ -469,40 +473,30 @@ namespace daedalus_turbo::validator {
             }
             timer ts { fmt::format("validator::state epoch: {} copy active snapshot to mark", _epoch), logger::level::trace };
             static const std::string task_group { "rotate-snapshot" };
-            _sched.wait_for_count(task_group, 6,
-                [&] {
-                    _sched.submit("rotate-snapshot", 1000, [this] {
-                        timer ts { fmt::format("validator::state epoch: {} copy pool_dist to mark", _epoch), logger::level::trace };
-                        _mark.pool_dist = _active_pool_dist;
-                        return true;
-                    });
-                    _sched.submit("rotate-snapshot", 1000, [this] {
-                        timer ts { fmt::format("validator::state epoch: {} copy pool_params to mark", _epoch), logger::level::trace };
-                        _mark.pool_params = _active_pool_params;
-                        return true;
-                    });
-                    _sched.submit("rotate-snapshot", 1000, [this] {
-                        timer ts { fmt::format("validator::state epoch: {} copy delegs to mark", _epoch), logger::level::trace };
-                        _mark.delegs = _active_delegs;
-                        return true;
-                    });
-                    _sched.submit("rotate-snapshot", 1000, [this] {
-                        timer ts { fmt::format("validator::state epoch: {} copy inv_delegs to mark", _epoch), logger::level::trace };
-                        _mark.inv_delegs = _active_inv_delegs;
-                        return true;
-                    });
-                    _sched.submit("rotate-snapshot", 1000, [this] {
-                        timer ts { fmt::format("validator::state epoch: {} copy stake_dist to mark", _epoch), logger::level::trace };
-                        _mark.stake_dist = _active_stake_dist;
-                        return true;
-                    });
-                    _sched.submit("rotate-snapshot", 1000, [this] {
-                        timer ts { fmt::format("validator::state epoch: {} copy rewards to mark", _epoch), logger::level::trace };
-                        _mark.reward_dist = _rewards;
-                        return true;
-                    });
-                }
-            );
+            _sched.wait_for_count(task_group, 6, [&] {
+                _sched.submit_void("rotate-snapshot", 1000, [this] {
+                    _mark.pool_dist = _active_pool_dist;
+                });
+                _sched.submit_void("rotate-snapshot", 1000, [this] {
+                    _mark.pool_params = _active_pool_params;
+                });
+                _sched.submit_void("rotate-snapshot", 1000, [this] {
+                    timer ts { fmt::format("validator::state epoch: {} copy delegs to mark", _epoch), logger::level::trace };
+                    _mark.delegs = _active_delegs;
+                });
+                _sched.submit_void("rotate-snapshot", 1000, [this] {
+                    timer ts { fmt::format("validator::state epoch: {} copy inv_delegs to mark", _epoch), logger::level::trace };
+                    _mark.inv_delegs = _active_inv_delegs;
+                });
+                _sched.submit_void("rotate-snapshot", 1000, [this] {
+                    timer ts { fmt::format("validator::state epoch: {} copy stake_dist to mark", _epoch), logger::level::trace };
+                    _mark.stake_dist = _active_stake_dist;
+                });
+                _sched.submit_void("rotate-snapshot", 1000, [this] {
+                    timer ts { fmt::format("validator::state epoch: {} copy rewards to mark", _epoch), logger::level::trace };
+                    _mark.reward_dist = _rewards;
+                });
+            });
         }
 
         void start_epoch(uint64_t new_epoch=0)
@@ -860,13 +854,11 @@ namespace daedalus_turbo::validator {
 
         void _prepare_reward_pulsing_schedule()
         {
-            timer t { fmt::format("validator::state epoch: {} prepare_reward_pulsing_schedule", _epoch), logger::level::trace };
             _reward_pulsing_start = cardano::slot::from_epoch(_epoch) + _params.randomness_stabilization_window();
         }
 
         void _apply_param_updates()
         {
-            timer t { fmt::format("validator::state epoch: {} apply_param_updates", _epoch), logger::level::trace };
             _params_prev = _params;
             std::optional<cardano::param_update> update {};
             for (const auto &[pool_id, proposal]: _ppups) {
@@ -1057,7 +1049,6 @@ namespace daedalus_turbo::validator {
 
         std::pair<uint64_t, uint64_t> _retire_pools()
         {
-            timer t { fmt::format("validator::state epoch: {} retire_pools", _epoch), logger::level::trace };
             uint64_t refunds_user = 0;
             uint64_t refunds_treasury = 0;
             for (auto it = _pools_retiring.begin(); it != _pools_retiring.end(); ) {

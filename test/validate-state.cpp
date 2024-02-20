@@ -26,6 +26,7 @@ namespace {
         ptr_to_stake_map pointers {};
         uint64_t reserves = 0;
         uint64_t treasury = 0;
+        uint64_t fees_reward_snapshot = 0;
     };
 
     cardano::stake_ident extract_stake_id(const json::value &j)
@@ -48,6 +49,7 @@ namespace {
         st.epoch = json::value_to<uint64_t>(j_state.at("lastEpoch"));
         st.reserves = json::value_to<uint64_t>(j_state.at("stateBefore").at("esAccountState").at("reserves"));
         st.treasury = json::value_to<uint64_t>(j_state.at("stateBefore").at("esAccountState").at("treasury"));
+        st.fees_reward_snapshot = json::value_to<uint64_t>(j_state.at("stateBefore").at("esSnapshots").at("feeSS"));
 
         for (const auto &j_reward: j_state.at("possibleRewardUpdate").at("rs").as_array()) {
             auto stake_id = extract_stake_id(j_reward.at(0));
@@ -226,10 +228,11 @@ int main(int argc, char **argv)
     auto node_state = load_node_state(argv[1]);
     
     compare_values("epoch", node_state.epoch, dt_state.epoch());
-    // blocksBefore
-    // blocksCurrent
+    compare_values("feeSS", node_state.fees_reward_snapshot, dt_state.fees_reward_snapshot());
     compare_values("reserves", node_state.reserves, dt_state.reserves());
     compare_values("treasury", node_state.treasury, dt_state.treasury());
+    // blocksBefore
+    // blocksCurrent
     compare_dists("stake_dist_mark", node_state.pstake_mark.stakes, dt_state.stake_dist_mark());
     compare_dists("delegs_mark", node_state.pstake_mark.delegs, dt_state.delegs_mark());
     // pstakeMark.poolParams
@@ -239,7 +242,6 @@ int main(int argc, char **argv)
     compare_dists("stake_dist_go", node_state.pstake_go.stakes, dt_state.stake_dist_go());
     compare_dists("delegs_go", node_state.pstake_go.delegs, dt_state.delegs_go());
     // pstakeGo.poolParams
-    // feeSS
     // esLState.utxoState.stake.credentials
     compare_dists("reward_dist", node_state.rewards, dt_state.reward_dist());
     compare_dists("pointers", node_state.pointers, dt_state.pointers());
@@ -253,6 +255,6 @@ int main(int argc, char **argv)
     // retiring
     // esPrevPp
     // esPp
-    compare_dists("potential_rewards", node_state.reward_updates, dt_state.potential_rewards());
     compare_dists("pool_dist_set", node_state.pool_dist, dt_state.pool_dist_set());
+    compare_dists("potential_rewards", node_state.reward_updates, dt_state.potential_rewards());
 }

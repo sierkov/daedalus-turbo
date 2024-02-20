@@ -23,36 +23,6 @@ namespace daedalus_turbo::cardano::alonzo {
         {
             return _block.array().at(4).array();
         }
-
-        const kes_signature kes() const override
-        {
-            const auto &op_cert = header_body().at(8).array();
-            size_t op_start_idx = 0;
-            return kes_signature {
-                op_cert.at(op_start_idx + 0).buf(),
-                op_cert.at(op_start_idx + 3).buf(),
-                issuer_vkey(),
-                header().at(1).buf(),
-                header_body_raw(),
-                op_cert.at(op_start_idx + 1).uint(),
-                op_cert.at(op_start_idx + 2).uint(),
-                slot()
-            };
-        }
-
-        const block_vrf vrf() const override
-        {
-            const auto &vkey = header_body().at(4).span();
-            const auto &leader_vrf = header_body().at(5).array();
-            const auto &nonce_vrf = header_body().at(5).array(); // Yes, the same as leader_vrf
-            return block_vrf {
-                vkey,
-                leader_vrf.at(0).span(),
-                leader_vrf.at(1).span(),
-                nonce_vrf.at(0).span(),
-                nonce_vrf.at(1).span()
-            };
-        }
     };
 
     struct tx: public mary::tx {
@@ -115,8 +85,10 @@ namespace daedalus_turbo::cardano::alonzo {
         if (txs.size() != wits.size())
             throw error("slot: {}, the number of transactions {} does not match the number of witnesses {}", (uint64_t)slot(), txs.size(), wits.size());
         std::set<size_t> invalid_tx_idxs {};
-        for (const auto &tx_idx: invalid_transactions())
-            invalid_tx_idxs.emplace(tx_idx.uint());
+        if (protocol_ver().major >= 6) {
+            for (const auto &tx_idx: invalid_transactions())
+                invalid_tx_idxs.emplace(tx_idx.uint());
+        }
         for (size_t i = 0; i < txs.size(); ++i)
             if (!invalid_tx_idxs.contains(i))
                 observer(tx { txs.at(i), *this, &wits.at(i), i });
@@ -124,12 +96,14 @@ namespace daedalus_turbo::cardano::alonzo {
 
     inline void block::foreach_invalid_tx(const std::function<void(const cardano::tx &)> &observer) const
     {
-        const auto &txs = transactions();
-        const auto &wits = witnesses();
-        if (txs.size() != wits.size())
-            throw error("slot: {}, the number of transactions {} does not match the number of witnesses {}", (uint64_t)slot(), txs.size(), wits.size());
-        for (const auto &tx_idx: invalid_transactions())
-            observer(tx { txs.at(tx_idx.uint()), *this, &wits.at(tx_idx.uint()), tx_idx.uint() });
+        if (protocol_ver().major >= 6) {
+            const auto &txs = transactions();
+            const auto &wits = witnesses();
+            if (txs.size() != wits.size())
+                throw error("slot: {}, the number of transactions {} does not match the number of witnesses {}", (uint64_t)slot(), txs.size(), wits.size());
+            for (const auto &tx_idx: invalid_transactions())
+                observer(tx { txs.at(tx_idx.uint()), *this, &wits.at(tx_idx.uint()), tx_idx.uint() });
+        }
     }
 }
 

@@ -74,7 +74,7 @@ namespace daedalus_turbo::validator {
         chunk_registry::file_set deletable {};
         // TODO:
         // - round down the max_end offset to the end of the most recent still complete epoch
-        // - drop stake deltas for the truncate depochs
+        // - drop stake deltas for the truncated epochs
         if (max_end_offset < _state.end_offset()) {
             for (auto it = _snapshots.begin(); it != _snapshots.end(); ) {
                 if (it->end_offset <= max_end_offset) {
@@ -359,8 +359,8 @@ namespace daedalus_turbo::validator {
             int cmp = memcmp(txo_use_item->hash.data(), txo_item->hash.data(), txo_use_item->hash.size());
             if (cmp == 0)
                 cmp = static_cast<int>(txo_use_item->out_idx) - static_cast<int>(txo_item->out_idx);
-            if (cmp == 0 && txo_use_item->offset >= validate_start_offset && txo_use_item->offset < validate_end_offset) {
-                epoch_idxs[txo_use_item->epoch][txo_item->stake_id] -= static_cast<int64_t>(txo_item->amount);
+            if (cmp == 0 && txo_use_item->offset >= validate_start_offset && txo_use_item->offset < validate_end_offset && txo_item->stake_id) {
+                epoch_idxs[txo_use_item->epoch][*txo_item->stake_id] -= static_cast<int64_t>(txo_item->amount);
             }
             if (cmp <= 0 && !txo_use_reader.read_part(part_no, *txo_use_item, txo_use_data))
                 txo_use_item.reset();
@@ -457,7 +457,6 @@ namespace daedalus_turbo::validator {
     std::optional<uint64_t> incremental::_gather_updates(std::vector<T> &updates, uint64_t epoch, uint64_t min_offset,
         const std::string &name, const index::epoch_chunks &updated_chunks)
     {
-        timer t { fmt::format("validator::_gather_updates for {} epoch {}", name, epoch), logger::level::trace };
         updates.clear();
         std::optional<uint64_t> min_chunk_id {};
         auto it = updated_chunks.find(epoch);
@@ -497,26 +496,15 @@ namespace daedalus_turbo::validator {
                         }
                     }
                 }
-                switch (e) {
-                case 313: // Find out the root cause - invalid tx?
-                    _state.fees(313, 135'522'429'378);
-                    break;
-
-                case 336: // Find out the root cause - invalid tx?
-                    _state.fees(336, 205'828'054'439);
-                    break;
-                }
                 _state.start_epoch(e);
                 if (_vrf_state.epoch_updates() > 0)
                     _vrf_state.finish_epoch(_state.params().extra_entropy);
                 switch (e) {
-                    case 208:
-                        // Learn to compute from UTXO balance
+                    case 208: // Learn to compute from UTXO balance
                         _state.reserves(13'888'022'852'926'644);
                         break;
-
                     case 236: // Allegra fork - return byron redeemer addresses to reserves
-                        _state.reserves(13'112'607'631'777'589);
+                        _state.reserves(_state.reserves() + 318'200'635'000'000);
                         break;
                 }
             }
@@ -542,6 +530,17 @@ namespace daedalus_turbo::validator {
                 timer tp { fmt::format("validator epoch: {} process {} timed updates", e, timed_updates.size()) };
                 _gather_updates(timed_updates, e, last_offset, "timed-update", dynamic_cast<index::timed_update::indexer &>(*_indexers.at("timed-update")).updated_epochs());
                 std::sort(timed_updates.begin(), timed_updates.end());
+                struct collateral_id {
+                    uint64_t slot = 0;
+                    uint64_t tx_idx = 0;
+                    bool operator<(const collateral_id &b) const
+                    {
+                        if (slot != b.slot)
+                            return slot < b.slot;
+                        return tx_idx < b.tx_idx;
+                    }
+                };
+                std::map<collateral_id, uint64_t> collateral_fees {};
                 for (const auto &upd: timed_updates) {
                     switch (upd.update.index()) {
                         case 0: {
@@ -591,14 +590,19 @@ namespace daedalus_turbo::validator {
                             const auto &cc = std::get<index::timed_update::collected_collateral>(upd.update);
                             index::txo::item search_item { cc.tx_hash, cc.txo_idx };
                             auto [ txo_count, txo_item ] = txo_reader.find(search_item);
+                            auto &c_fees = collateral_fees[collateral_id { upd.slot, upd.tx_idx }];
                             if (txo_count != 1)
                                 throw error("each input used as a collateral must be present exactly once but got: {} for {} #{}", txo_count, cc.tx_hash, cc.txo_idx);
-                            _state.add_fees(txo_item.amount);
+                            c_fees += txo_item.amount;
                             break;
                         }
                         default:
                             throw error("internal error: unexpected pool update variant: {}", upd.update.index());
                     }
+                }
+                for (const auto &[c_id, c_fees]: collateral_fees) {
+                    logger::trace("epoch: {} collateral from slot: {} tx_idx: {} amount: {}", e, c_id.slot, c_id.tx_idx, c_fees);
+                    _state.add_fees(c_fees);
                 }
             }
             {

@@ -36,8 +36,8 @@ namespace daedalus_turbo::cardano {
             return std::make_unique<shelley::tx>(tx, blk);
         case 4:
         case 5:
-            return std::make_unique<mary::tx>(tx, blk);
-            //return std::make_unique<alonzo::tx>(tx, blk);
+            //return std::make_unique<mary::tx>(tx, blk);
+            return std::make_unique<alonzo::tx>(tx, blk);
         case 6:
             return std::make_unique<babbage::tx>(tx, blk);
         default:
@@ -59,8 +59,8 @@ namespace daedalus_turbo::cardano {
             return std::make_unique<cardano::shelley::block>(block_tuple, offset, era, block);
         case 4:
         case 5:
-            return std::make_unique<cardano::mary::block>(block_tuple, offset, era, block);
-            //return std::make_unique<cardano::alonzo::block>(block_tuple, offset, era, block);
+            //return std::make_unique<cardano::mary::block>(block_tuple, offset, era, block);
+            return std::make_unique<cardano::alonzo::block>(block_tuple, offset, era, block);
         case 6:
             return std::make_unique<cardano::babbage::block>(block_tuple, offset, era, block);
         default:

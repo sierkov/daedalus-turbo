@@ -233,7 +233,6 @@ namespace daedalus_turbo::sync::http {
             const auto &chunk = std::any_cast<saved_chunk>(res);
             downloaded += chunk.info.data_size;
             if (_cr.target_offset()) {
-                logger::trace("download progress downloaded: {} target_offset: {} start_offset: {}", downloaded, *_cr.target_offset(), download_start_offset);
                 progress.update("download", downloaded, *_cr.target_offset() - download_start_offset);
             }
             _sched.submit(parse_task, 0 + 100 * (max_offset - chunk.info.offset) / max_offset, [this, chunk]() {

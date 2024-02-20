@@ -80,10 +80,16 @@ namespace daedalus_turbo::http {
         bool process_ok(bool report_progress=false, scheduler *sched = nullptr)
         {
             _report = report_progress;
+            static constexpr std::chrono::milliseconds report_interval { 5000 };
+            auto next_report = std::chrono::system_clock::now() + report_interval;
             for (;;) {
                 auto queue_sz = _queue_size.load();
                 auto n_conns = _active_conns.load();
-                logger::debug("download_queue::process_ok queue_size: {} active_conns: {}", queue_sz, n_conns);
+                auto now = std::chrono::system_clock::now();
+                if (now >= next_report) {
+                    logger::debug("download_queue::process_ok queue_size: {} active_conns: {}", queue_sz, n_conns);
+                    next_report = now + report_interval;
+                }
                 if (queue_sz == 0 && n_conns == 0)
                     break;
                 if (sched != nullptr)
@@ -352,7 +358,6 @@ namespace daedalus_turbo::http {
         {
             std::optional<request> res {};
             {
-                logger::debug("download_queue::_take_request begin wait for the mutex");
                 std::scoped_lock lock { _queue_mutex };
                 if (!_shutdown && !_queue.empty()) {
                     auto req = _queue.top();
@@ -362,7 +367,6 @@ namespace daedalus_turbo::http {
                     res.emplace(std::move(req));
                 }
             }
-            logger::debug("download_queue::_take_request released mutex and returning: {}", static_cast<bool>(res));
             return res;
         }
 
