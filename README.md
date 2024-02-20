@@ -52,8 +52,8 @@ To test the command line interface, you need the following software packages ins
 Clone this repository and make it your working directory:
 ```
 git clone https://github.com/sierkov/daedalus-turbo.git dt
-git checkout parallelized-ouroboros-praos
 cd dt
+git checkout parallelized-ouroboros-praos
 ```
 
 Build the test Docker container:
