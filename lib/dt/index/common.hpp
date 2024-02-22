@@ -186,10 +186,10 @@ namespace daedalus_turbo::index {
                 if (!entry.is_regular_file())
                     continue;
                 if (entry.path().extension() != ".data") {
-                    logger::debug("removing a temporary file: {}", entry.path().string());
+                    logger::trace("removing a temporary file: {}", entry.path().string());
                     std::filesystem::remove(entry.path());
-                } else if (entry.path().filename().string().starts_with("index-update-")) {
-                    logger::debug("removing an unmerged index chunk: {}", entry.path().string());
+                } else if (!entry.path().filename().string().starts_with("index-slice-")) {
+                    logger::trace("removing an unmerged index chunk: {}", entry.path().string());
                     std::filesystem::remove(entry.path());
                 }
             }

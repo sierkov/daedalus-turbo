@@ -15,15 +15,15 @@ Daedalus Turbo is an open-source project that aims to improve drastically (>=10x
 
 # Features
 Currently supported:
-- Incremental synchronization and indexing of compressed blockchain data over the network;
+- Incremental synchronization and indexing of compressed blockchain data over the Internet;
 - Incremental synchronization and indexing from a local Cardano Node instance;
+- Parallelized Ouroboros Praos data validation.
 - Reconstruction of balances and transaction histories of stake addresses;
 - Reconstruction of balances and transaction histories of payment addresses;
+- Direct history reconstruction from compressed blockchain data;
 - Quick search for transaction data;
 - ADA and non-ADA assets;
-- Direct reconstruction from compressed blockchain data;
 - Blockchain Explorer Desktop User Interface;
-- Parallelized Ouroboros Praos validation of blockchain data.
 
 Currently not supported:
 - Validation of Plutus and other scripts.
@@ -143,7 +143,7 @@ Many in the Cardano community, including some developers of Daedalus, don't beli
 
 # Quality
 The accuracy of the ledger state reconstruction has been tested by comparing the reconstructed components
-of the ledger state with those prepared by Cardano Node at the end of each Shelley+ epoch on the Cardano's mainnet up to 465.
+of the ledger state with those prepared by Cardano Node at the end of each Shelley+ epoch on the Cardano's mainnet up to epoch 465.
 The code of the test is located in the [test/validate-state.cpp](test/validate-state.cpp) file.
 
 The indexing and history-reconstruction code has been tested using a sample of ten thousand randomly-selected stake keys. For 100% of those, the reconstructed ADA balance (excluding rewards) precisely matched the stake recorded in the ledger snapshot produced by Cardano Node. The testing was performed with slot number 106012751 at the tip of the blockchain. The code of the test is located in the [test/validate-balance.cpp](test/validate-balance.cpp) file.

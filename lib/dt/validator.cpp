@@ -113,10 +113,12 @@ namespace daedalus_turbo::validator {
                 _subchains.clear();
             }
         }
+        if (!deletable.empty())
+            logger::info("validator removed snapshots after blockchain offset: {}", max_end_offset);
         for (auto &&file: indexer::incremental::truncate(max_end_offset, del))
             deletable.emplace(std::move(file));
         return deletable;
-    }
+ }
 
     void incremental::_save_state_snapshot(bool record)
     {
@@ -161,8 +163,10 @@ namespace daedalus_turbo::validator {
         timer t { "validator::save_state" };
         indexer::incremental::save_state();
         // previous validation task must be finished by now
-        if (_next_end_offset > _state.end_offset()) {
+        if (_end_offset > _state.end_offset()) {
             std::unique_lock lk { _next_task_mutex };
+            _next_end_offset = _end_offset;
+            _next_last_epoch =  epochs().rbegin()->first;
             _schedule_validation(std::move(lk));
             _sched.process(true);
         }
@@ -175,11 +179,13 @@ namespace daedalus_turbo::validator {
         {
             if (_snapshots.empty() || _state.end_offset() > _snapshots.rbegin()->end_offset)
                 _save_state_snapshot();
-            if (_snapshots.size() > 3) {
+            if (_snapshots.size() > 5) {
                 uint64_t last_offset = 0;
+                uint64_t end_offset = _snapshots.rbegin()->end_offset;
                 for (auto it = _snapshots.begin(); it != _snapshots.end(); ) {
-                    if ((it->end_offset - last_offset < indexer::merger::part_size * 2 || it->epoch == _snapshots.rbegin()->epoch)
-                        && it->end_offset != _snapshots.rbegin()->end_offset)
+                    if (((end_offset - it->end_offset <= snapshot_hifreq_end_offset_range && it->end_offset - last_offset < snapshot_hifreq_distance)
+                        || (end_offset - it->end_offset > snapshot_hifreq_end_offset_range && it->end_offset - last_offset < snapshot_normal_distance))
+                        && it->end_offset != end_offset)
                     {
                         for (const auto &prefix: { "kes", "ledger", "vrf" }) {
                             std::filesystem::remove(_storage_path(prefix, it->end_offset));
@@ -300,7 +306,7 @@ namespace daedalus_turbo::validator {
             uint64_t valid = _subchains.valid_size();
             sc_lk.unlock();
             if (_target_offset)
-                progress::get().update("validate", valid, *_target_offset);
+                progress::get().update("validate", (valid - _validate_start_offset), (*_target_offset - _validate_start_offset));
         }
         return chunk;
     }
@@ -362,7 +368,12 @@ namespace daedalus_turbo::validator {
     {
         timer t { "validator/prepare_outflows" };
         logger::info("determining outflow transactions between offsets {} and {} ...", validate_start_offset, validate_end_offset);
-        auto txo_use_reader = std::make_shared<index::reader_multi_mt<index::txo_use::item>>(_index_slice_paths("txo-use", slices));
+        indexer::slice_list txo_use_slices {};
+        for (const auto &slice: slices) {
+            if (slice.offset + slice.size > validate_start_offset && slice.offset < validate_end_offset)
+                txo_use_slices.emplace_back(slice);
+        }
+        auto txo_use_reader = std::make_shared<index::reader_multi_mt<index::txo_use::item>>(_index_slice_paths("txo-use", txo_use_slices));
         auto txo_reader = std::make_shared<index::reader_multi_mt<index::txo::item>>(_index_slice_paths("txo", slices));
         auto num_parts = txo_use_reader->num_parts();
         _sched.wait_for_count("prepare-outflows", num_parts, [&] {
@@ -456,16 +467,14 @@ namespace daedalus_turbo::validator {
             if (last_epoch < e) {
                 if (!_state.reward_dist().empty()) {
                     _state.finish_epoch();
+                    auto einfo = epoch(_state.epoch());
                     if (_on_the_go) {
-                        auto einfo = epoch(_state.epoch());
                         for (uint64_t off: snapshot_offsets) {
                             if (einfo.end_offset >= off && (_snapshots.empty() || _snapshots.rbegin()->end_offset < off)) {
                                 _save_state_snapshot();
                                 break;
                             }
                         }
-                        //if (_snapshots.empty() || _snapshots.rbegin()->end_offset != einfo.end_offset)
-                        //    _save_state_snapshot(false);
                     }
                 }
                 _state.start_epoch(e);
@@ -589,17 +598,19 @@ namespace daedalus_turbo::validator {
     {
         timer t { "validator::_update_pool_stake_distributions" };
         std::vector<uint64_t> snapshot_offsets {};
-        if (_target_offset && *_target_offset >= indexer::merger::part_size * 2) {
-            uint64_t min_offset = *_target_offset / 2;
-            for (const auto &slice: slices) {
-                auto slice_end_offset = slice.end_offset();
-                if (slice_end_offset >= min_offset) {
-                    snapshot_offsets.emplace_back(slice_end_offset);
-                    std::scoped_lock lk { _subchains_mutex };
-                    auto it = _subchains.find(slice_end_offset - 1);
-                    it->second.snapshot = true;
-                    min_offset = slice_end_offset + std::max((*_target_offset - slice_end_offset) / 2, indexer::merger::part_size * 2);
-                }   
+        if (_target_offset) {
+            std::scoped_lock lk { _subchains_mutex };
+            snapshot_offsets.emplace_back(*_target_offset / 2);
+            uint64_t max_offset = num_bytes();
+            while (snapshot_offsets.back() < max_offset) {
+                uint64_t last_offset = snapshot_offsets.back();
+                uint64_t next_offset = std::min(last_offset + std::max((*_target_offset - last_offset) / 2, snapshot_normal_distance), max_offset);
+                if (*_target_offset - next_offset <= snapshot_hifreq_end_offset_range)
+                    next_offset = std::min(last_offset + std::max((*_target_offset - last_offset) / 2, snapshot_hifreq_distance), max_offset);
+                auto einfo = epoch(find(next_offset - 1).epoch());
+                auto it = _subchains.find(einfo.end_offset - 1);
+                it->second.snapshot = true;
+                snapshot_offsets.emplace_back(einfo.end_offset);
             }
         }
         index::reader_multi<index::txo::item> txo_reader { _index_slice_paths("txo", slices) };
@@ -676,7 +687,7 @@ namespace daedalus_turbo::validator {
             auto valid = _subchains.valid_size();
             sc_lk.unlock();
             if (_target_offset)
-                progress::get().update("validate", valid, *_target_offset);
+                progress::get().update("validate", (valid - _validate_start_offset), (*_target_offset - _validate_start_offset));
         }
     }
 

@@ -21,52 +21,62 @@ namespace daedalus_turbo::sync::http {
         timer t { "http synchronization" };
         progress_guard pg { "download", "parse", "merge", "validate" };
         _cr.clean_up();
-        auto [task, epoch_groups, remote_size] = _find_sync_start_position();
-        if (max_epoch) {
-            uint64_t max_offset = 0;
-            for (auto g_it = epoch_groups.begin(); g_it != epoch_groups.end();) {
-                auto &j_epochs = g_it->at("epochs").as_array();
-                for (auto it = j_epochs.begin(); it != j_epochs.end();) {
-                    if (json::value_to<uint64_t>(it->at("id")) <= max_epoch) {
-                        max_offset += json::value_to<uint64_t>(it->at("size"));
-                        ++it;
+        _epoch_json_cache.clear();
+        auto epoch_groups = _get_json<json::array>("/chain.json");
+        for (;;) {
+            auto [task, remote_size] = _find_sync_start_position(epoch_groups);
+            if (max_epoch) {
+                uint64_t max_offset = 0;
+                for (auto g_it = epoch_groups.begin(); g_it != epoch_groups.end();) {
+                    auto &j_epochs = g_it->at("epochs").as_array();
+                    for (auto it = j_epochs.begin(); it != j_epochs.end();) {
+                        if (json::value_to<uint64_t>(it->at("id")) <= max_epoch) {
+                            max_offset += json::value_to<uint64_t>(it->at("size"));
+                            ++it;
+                        } else {
+                            it = j_epochs.erase(it);
+                        }
+                    }
+                    if (j_epochs.empty()) {
+                        g_it = epoch_groups.erase(g_it);
                     } else {
-                        it = j_epochs.erase(it);
+                        ++g_it;
                     }
                 }
-                if (j_epochs.empty()) {
-                    g_it = epoch_groups.erase(g_it);
-                } else {
-                    ++g_it;
+                remote_size = max_offset;
+                logger::info("user override max synced epoch: {} max synced offset: {}", *max_epoch, max_offset);
+            }
+            
+            if (!task) {
+                logger::info("local chain is up to date - nothing to do");
+            } else if (task->start_offset != _cr.num_bytes()) {
+                // truncation may require multiple iterations because the validator has snapshots only at certain points of the blockchain
+                for (auto &&path: _cr.truncate(task->start_offset, false))
+                    _deletable_chunks.emplace(std::move(path));
+            } else {
+                logger::info("synchronization starts from chain offset {} in epoch {}", task->start_offset, task->start_epoch);
+                _cr.target_offset(remote_size);
+                auto updated_chunks = _download_data(epoch_groups, task->start_epoch);
+                _cr.save_state();
+                // remove updated chunks from the to-be-deleted list
+                for (auto &&path: updated_chunks) {
+                    logger::trace("updated chunk: {}", path);
+                    _deletable_chunks.erase(path);
                 }
+                for (auto &&path: _deletable_chunks) {
+                    logger::trace("deleting chunk: {}", path);
+                    std::filesystem::remove(path);
+                }
+                break;
             }
-            remote_size = max_offset;
-            logger::info("user override max synced epoch: {} max synced offset: {}", *max_epoch, max_offset);
         }
-        if (task) {
-            logger::info("synchronization starts from chain offset {} in epoch {}", task->start_offset, task->start_epoch);
-            _cr.target_offset(remote_size);
-            auto deleted_chunks = _cr.truncate(task->start_offset, false);
-            auto updated_chunks = _download_data(epoch_groups, task->start_epoch);
-            _cr.save_state();
-            for (auto &&path: deleted_chunks)
-                _deletable_chunks.emplace(std::move(path));
-            // remove updated chunks from the to-be-deleted list
-            for (auto &&path: updated_chunks) {
-                logger::trace("updated chunk: {}", path);
-                _deletable_chunks.erase(path);
-            }
+        auto last_chunk = _cr.last_chunk();
+        if (last_chunk) {
+            logger::info("synced last_slot: {} last_block: {} took: {:0.1f} secs",
+                last_chunk->last_slot, last_chunk->last_block_hash, t.stop(false));
         } else {
-            logger::info("local chain is up to date - nothing to do");
+            logger::info("synced to an empty chain took: {:0.1f} secs", t.stop(false));
         }
-        for (auto &&path: _deletable_chunks) {
-            logger::trace("deleting chunk: {}", path);
-            std::filesystem::remove(path);
-        }
-        logger::info("synced last_slot: {} last_block: {} took: {:0.1f} secs",
-                        json::value_to<uint64_t>(epoch_groups.back().at("lastSlot")),
-                        json::value_to<std::string_view>(epoch_groups.back().at("lastBlockHash")),
-                        t.stop(false));
     }
 
     std::string syncer::_get_sync(const std::string &target)
@@ -98,16 +108,14 @@ namespace daedalus_turbo::sync::http {
         }
     }
 
-    std::tuple<std::optional<syncer::sync_task>, json::array, uint64_t> syncer::_find_sync_start_position()
+    std::tuple<std::optional<syncer::sync_task>, uint64_t> syncer::_find_sync_start_position(const json::array &epoch_groups)
     {
         timer t { "find first epoch to sync" };
-        auto epoch_groups = _get_json<json::array>("/chain.json");
         if (epoch_groups.empty())
             throw error("the remote chain is empty - nothing to synchronize!");
         sync_task task_data {};
         auto last_synced_epoch_it = _cr.epochs().end();
         uint64_t remote_chain_size = 0;
-        _epoch_json_cache.clear();
         for (const auto &group: epoch_groups)
             remote_chain_size += json::value_to<uint64_t>(group.at("size"));
         // find first differing epoch group
@@ -129,7 +137,7 @@ namespace daedalus_turbo::sync::http {
             last_synced_epoch_it = last_it;
         }
         auto &progress = progress::get();
-        progress.update("download-metadata", "0.000%");
+        progress_guard gm { "metadata" };
         progress::info dm_progress {};
         if (last_synced_epoch_it != _cr.epochs().end()) {
             for (auto it = std::next(last_synced_epoch_it); it != _cr.epochs().end(); it++) {
@@ -144,15 +152,14 @@ namespace daedalus_turbo::sync::http {
                             _epoch_json_cache[epoch] = buf.span().string_view();
                         }
                         dm_progress.completed++;
-                        progress.update("download-metadata", static_cast<double>(dm_progress.completed), dm_progress.total);
+                        progress.update("metadata", static_cast<double>(dm_progress.completed), dm_progress.total);
                         if (_report_progress)
                             progress.inform();
                     }
                 });
             }
         }
-        _dlq.process(_report_progress);
-        progress.retire("download-metadata");
+        _dlq.process(_report_progress, &_sched);
         if (last_synced_epoch_it != _cr.epochs().end()) {
             for (auto it = std::next(last_synced_epoch_it); it != _cr.epochs().end(); it++) {
                 auto epoch_meta = json::parse(_epoch_json_cache.at(it->first)).as_object();
@@ -187,7 +194,7 @@ namespace daedalus_turbo::sync::http {
             task.emplace(std::move(task_data));
         cardano::slot remote_slot { json::value_to<uint64_t>(epoch_groups.back().at("lastSlot")) };
         logger::info("remote chain size: {} latest epoch: {} slot: {}", remote_chain_size, remote_slot.epoch(), remote_slot);
-        return std::make_tuple(std::move(task), std::move(epoch_groups), remote_chain_size);
+        return std::make_tuple(std::move(task), remote_chain_size);
     }
 
     std::string syncer::_parse_local_chunk(const chunk_registry::chunk_info &chunk, const std::string &save_path)
@@ -302,8 +309,7 @@ namespace daedalus_turbo::sync::http {
             for (const auto &j_chunk: epoch.at("chunks").as_array()) {
                 auto chunk = chunk_registry::chunk_info::from_json(j_chunk.as_object());
                 auto chunk_size = chunk.data_size;
-                // Ignore chunks that could have been added after the sync has begun.
-                // They will be synced in the next cycle.
+                // Ignore chunks added after the sync begun. They will be synced in the next cycle.
                 if (_cr.target_offset() && chunk_start_offset + chunk_size > *_cr.target_offset())
                     break;
                 const auto chunk_it = _cr.find(chunk.data_hash);

@@ -15,6 +15,9 @@
 
 namespace daedalus_turbo::validator {
     extern indexer::indexer_map default_indexers(scheduler &sched, const std::string &data_dir);
+    static constexpr size_t snapshot_hifreq_end_offset_range = static_cast<uint64_t>(1) << 30;
+    static constexpr size_t snapshot_hifreq_distance = static_cast<uint64_t>(1) << 27;;
+    static constexpr size_t snapshot_normal_distance = indexer::merger::part_size * 2;
 
     struct incremental: indexer::incremental {
         incremental(scheduler &sched, const std::string &data_dir, indexer::indexer_map &indexers, bool on_the_go=true);

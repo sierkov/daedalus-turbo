@@ -56,7 +56,7 @@ namespace daedalus_turbo {
             if (vkey_cmp != 0) return false;
             size_t max_period = 1 << DEPTH;
             if (period >= max_period)
-                throw error("KES period out of range: {}!");
+                throw error("KES period out of range: {}!", period);
             size_t split = 1 << (DEPTH - 1);
             if (period < split) {
                 return _sigma.verify(period, _lhs_vk, msg);

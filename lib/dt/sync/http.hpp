@@ -33,7 +33,7 @@ namespace daedalus_turbo::sync::http {
         std::string _get_sync(const std::string &target);
         template<typename T>
         T _get_json(const std::string &target);
-        std::tuple<std::optional<syncer::sync_task>, json::array, uint64_t> _find_sync_start_position();
+        std::tuple<std::optional<syncer::sync_task>, uint64_t> _find_sync_start_position(const json::array &epoch_groups);
         std::string _parse_local_chunk(const chunk_registry::chunk_info &chunk, const std::string &save_path);
         void _download_chunks(const download_task_list &download_tasks, uint64_t max_offset, chunk_registry::file_set &updated_chunks);
         chunk_registry::file_set _download_data(const json::array &epoch_groups, size_t first_synced_epoch);

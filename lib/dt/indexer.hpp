@@ -126,7 +126,7 @@ namespace daedalus_turbo::indexer {
 
         file_set truncate(size_t max_end_offset, bool del=true) override
         {
-            auto deleted_files = chunk_registry::truncate(max_end_offset, del);
+            file_set deletable {};
             timer t { fmt::format("truncate indices to max offset {}", max_end_offset) };
             std::vector<merger::slice> updated {};
             for (auto it = _slices.begin(); it != _slices.end(); ) {
@@ -136,9 +136,11 @@ namespace daedalus_turbo::indexer {
                 } else { // s.end_offset() > max_end_offset
                     logger::trace("truncate index slice {}", s.slice_id);
                     if (s.offset >= max_end_offset) {
-                        if (del) {
-                            for (auto &[name, idxr_ptr]: _indexers)
-                                index::writer<int>::remove(idxr_ptr->reader_path(s.slice_id));
+                        for (auto &[name, idxr_ptr]: _indexers) {
+                            auto path = idxr_ptr->reader_path(s.slice_id);
+                            deletable.emplace(path);
+                            if (del)
+                                index::writer<int>::remove(path);
                         }
                     } else {
                         merger::slice new_slice { s.offset, std::min(s.size, max_end_offset - s.offset) };
@@ -158,22 +160,50 @@ namespace daedalus_turbo::indexer {
             for (auto &&new_slice: updated) {
                 _slices.add(new_slice);
             }
+            if (!deletable.empty() || !updated.empty())
+                logger::info("truncated indices to the end offset: {}", max_end_offset);
             _merge_next_offset = _merge_start_offset = max_end_offset;
-            return deleted_files;
+            for (auto &&path: chunk_registry::truncate(max_end_offset, del))
+                deletable.emplace(std::move(path));
+            return deletable;
         }
 
         void save_state() override
         {
             timer t { "indexer::save_state" };
             chunk_registry::save_state();
-            // ensure that all scheduled tasks have completed by now
-            _sched.process(true);
             // merge final not-yet merged epochs
             {
                 std::unique_lock lk { _epoch_slices_mutex };
                 _schedule_final_merge(std::move(lk), true);
             }
             _sched.process(true);
+            // combine small recent slices
+            {
+                uint64_t input_offset = 0;
+                uint64_t input_size = 0;
+                std::vector<std::string> input_slices {};
+                for (auto rit = _slices.rbegin(); rit != _slices.rend(); ++rit) {
+                    if (rit->second.size + input_size <= merger::part_size) {
+                        input_slices.emplace_back(rit->second.slice_id);
+                        input_size += rit->second.size;
+                        input_offset = rit->second.offset;
+                    } else {
+                        break;
+                    }
+                }
+                if (input_slices.size() >= 2) {
+                    while (!_slices.empty() && _slices.rbegin()->second.offset >= input_offset) {
+                        _slices.erase(_slices.rbegin()->first);
+                    }
+                    logger::info("combining small index slices between offsets {} and {} ...", input_offset, input_offset + input_size);
+                    merger::slice output_slice { input_offset, input_size };
+                    _merge_slice(output_slice, input_slices, 200, [this, output_slice, input_slices] {
+                        _slices.add(std::move(output_slice));
+                    });
+                    _sched.process(true);
+                }
+            }
             std::ostringstream json_s {};
             json_s << "[\n";
             if (!_slices.empty()) {
