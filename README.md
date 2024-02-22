@@ -10,7 +10,7 @@
 # About
 Daedalus Turbo is an open-source project that aims to improve drastically (>=10x) the blockchain synchronization performance of the Daedalus wallet, the primary fully decentralized wallet of the Cardano blockchain. The project has a two-year schedule presented in its [roadmap](#roadmap), and its technical approach is based on two key ideas: reducing the necessary network bandwidth through the use of compression and maximizing the use of parallel computation during the processing of blockchain data. These ideas are further explained in the following research reports:
 1. [Highly Parallel Reconstruction of Wallet History in the Cardano Blockchain](./doc/2023_Sierkov_WalletHistoryReconstruction.pdf);
-2. [Scalability of Bulk Synchronization in the Cardano Blockchain](./doc/2023_Sierkov_CardanoBulkSynchronization.pdf).
+2. [Scalability of Bulk Synchronization in the Cardano Blockchain](./doc/2023_Sierkov_CardanoBulkSynchronization.pdf);
 3. [Parallelized Ouroboros Praos](./doc/2024-sierkov-parallelized-ouroboros-praos.pdf).
 
 # Features
@@ -33,9 +33,9 @@ As the project matures and moves through its [roadmap](#roadmap), the list of su
 # Requirements
 - 8+-core CPU;
 - 16+GB of RAM. The precise amount depends on the number of simultaneous execution threads your CPU can handle. The higher the number, the more RAM is needed;
-- a fast SSD with ~60GB of free space;
+- a fast SSD with ~70GB of free space;
   - ~50GB for the compressed blockchain data and search indices;
-  - ~10GB for temporary use during indexing;
+  - ~20GB for temporary use during indexing;
 - a fast Internet connection (250 Mbps or better).
 
 # Test it yourself
