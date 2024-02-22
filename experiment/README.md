@@ -1,6 +1,7 @@
 # Experiments
 
 ## From "Parallelized Ouroboros Praos" paper
+- [parallelized-praos](./parallelized-praos) - measure the local validation performance of Parallelized Ouroboros Praos;
 - [sync-cardano-node](./sync-cardano-node) - measure the end-to-end synchronization time of Cardano Node;
 - [sync-full](./sync-full) - measure the end-to-end synchronization time of Daedalus Turbo;
 - [sync-incremental](./sync-incremental) - measure the incremental synchronization time of Daedalus Turbo;
