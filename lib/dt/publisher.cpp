@@ -90,7 +90,7 @@ namespace daedalus_turbo {
                     html.replace(pos - 2, pos_end - pos + 4, vars[name]);
                     pos = html.find("{{", pos);
                 }
-                file::write(_cr.data_dir() / entry.path().filename().string(), html);
+                file::write((_cr.data_dir() / entry.path().filename()).string(), html);
             } else {
                 auto dst_path = _cr.data_dir() / entry.path().filename().string();
                 // Extra remove since copy_options::overwrite_existing was not working on windows
@@ -159,7 +159,7 @@ namespace daedalus_turbo {
                 { "lastBlockHash", fmt::format("{}", epoch_data.last_block_hash.span()) },
                 { "chunks", std::move(chunks) }
             };
-            file::write(_cr.data_dir() / fmt::format("epoch-{}.json", epoch), json::serialize(epoch_meta));
+            file::write((_cr.data_dir() / fmt::format("epoch-{}.json", epoch)).string(), json::serialize(epoch_meta));
             if (group_epochs.empty())
                 group_prev_block_hash = epoch_data.prev_block_hash;
             group_epochs.emplace_back(json::object {
@@ -190,7 +190,7 @@ namespace daedalus_turbo {
             }
         }
         group_s << "]\n";
-        file::write(_cr.data_dir() / "chain.json", group_s.str());
+        file::write((_cr.data_dir() / "chain.json").string(), group_s.str());
         _write_index_html(total_size, total_compressed_size);
     }
 }

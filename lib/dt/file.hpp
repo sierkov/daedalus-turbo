@@ -208,6 +208,10 @@ namespace daedalus_turbo::file {
                 throw error_sys("failed to write {} bytes to {}", num_bytes, _path);
         }
 
+        void write(const buffer &data)
+        {
+            write(data.data(), data.size());
+        }
     protected:
         FILE *_f = NULL;
         std::string _path {};

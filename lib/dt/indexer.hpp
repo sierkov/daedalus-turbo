@@ -61,7 +61,7 @@ namespace daedalus_turbo::indexer {
     struct incremental: public chunk_registry {
         static std::string storage_dir(const std::string &data_dir)
         {
-            return chunk_registry::init_db_dir(data_dir + "/index");
+            return chunk_registry::init_db_dir(data_dir + "/index").string();
         }
 
         incremental(scheduler &sched, const std::string &data_dir, indexer_map &indexers)
@@ -158,6 +158,7 @@ namespace daedalus_turbo::indexer {
             for (auto &&new_slice: updated) {
                 _slices.add(new_slice);
             }
+            _merge_next_offset = _merge_start_offset = max_end_offset;
             return deleted_files;
         }
 
@@ -188,6 +189,7 @@ namespace daedalus_turbo::indexer {
             file::write(_index_state_path, json_s.str());
             _epoch_merged = 0;
             _final_merged = 0;
+            _merge_next_offset = _merge_start_offset = _end_offset;
         }
     protected:
         indexer_map &_indexers;

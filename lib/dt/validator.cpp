@@ -25,17 +25,24 @@ namespace daedalus_turbo::validator {
     incremental::incremental(scheduler &sched, const std::string &data_dir, indexer::indexer_map &indexers, bool on_the_go)
         : indexer::incremental { sched, data_dir, indexers },
             _validate_dir { chunk_registry::init_db_dir(data_dir + "/validate") },
-            _state_path { _validate_dir / "state.json" },
+            _state_path { (_validate_dir / "state.json").string() },
             _state { _sched }, _on_the_go { on_the_go }
     {
     }
 
-    uint64_t incremental::_load_state_snapshot(const std::string &path)
+    uint64_t incremental::_load_state_snapshot(uint64_t end_offset)
     {
-        auto zpp_data = file::read(path);
-        zpp::bits::in in { zpp_data };
-        in(_state, _vrf_state, _subchains).or_throw();
-        _next_end_offset = _state.end_offset();
+        _vrf_state.load(_storage_path("vrf", end_offset));
+        _state.load(_storage_path("ledger", end_offset));
+        {
+            auto zpp_data = file::read(_storage_path("kes", _state.end_offset()));
+            zpp::bits::in in { zpp_data };
+            subchain sc {};
+            in(sc).or_throw();
+            _subchains.clear();
+            _subchains.add(std::move(sc));
+        }
+        _validate_start_offset = _next_end_offset = _state.end_offset();
         _next_last_epoch = _state.epoch();
         return _state.end_offset();
     }
@@ -49,40 +56,45 @@ namespace daedalus_turbo::validator {
             auto j_snapshots = json::load(_state_path).as_array();
             for (const auto &j_s: j_snapshots) {
                 auto snap = snapshot::from_json(j_s.as_object());
-                auto snap_path = _snapshot_path(snap.epoch);
-                if (std::filesystem::exists(snap_path))
+                bool ok = true;
+                for (const auto &prefix: { "kes", "ledger", "vrf" }) {
+                    auto snap_path = _storage_path(prefix, snap.end_offset);
+                    if (!std::filesystem::exists(snap_path)) {
+                        logger::warn("missing snapshot file: {} - ignoring the snapshot for end offset {}", snap_path, snap.end_offset);
+                        ok = false;
+                        break;
+                    }
+                }
+                if (ok)
                     _snapshots.emplace(std::move(snap));
-                else
-                    logger::warn("missing snapshot: {} - ignoring it", snap_path);
             }
             if (!_snapshots.empty())
-                end_offset = _load_state_snapshot(_snapshot_path(_snapshots.rbegin()->epoch));
+                end_offset = _load_state_snapshot(_snapshots.rbegin()->end_offset);
         }
         logger::info("validator snapshot has data up to offset: {}", end_offset);
         return std::make_pair(std::min(idxr_truncate_offset, end_offset), deletable);
     }
 
-    std::string incremental::_snapshot_path(uint64_t epoch) const
+    std::string incremental::_storage_path(const std::string_view &prefix, uint64_t end_offset) const
     {
-        return (_validate_dir / fmt::format("state-{}.bin", epoch)).string();
+        return (_validate_dir / fmt::format("{}-{:013}.bin", prefix, end_offset)).string();
     }
 
     chunk_registry::file_set incremental::truncate(size_t max_end_offset, bool del)
     {
         timer t { "validator::truncate" };
         chunk_registry::file_set deletable {};
-        // TODO:
-        // - round down the max_end offset to the end of the most recent still complete epoch
-        // - drop stake deltas for the truncated epochs
-        if (max_end_offset < _state.end_offset()) {
+        while (max_end_offset < _state.end_offset()) {
             for (auto it = _snapshots.begin(); it != _snapshots.end(); ) {
                 if (it->end_offset <= max_end_offset) {
                     ++it;
                 } else {
-                    auto path = _snapshot_path(it->epoch);
-                    deletable.emplace(path);
-                    if (del)
-                        std::filesystem::remove(path);
+                    for (const auto &prefix: { "kes", "ledger", "vrf" }) {
+                        auto snap_path = _storage_path(prefix, it->end_offset);
+                        deletable.emplace(snap_path);
+                        if (del)
+                            std::filesystem::remove(snap_path);
+                    }
                     it = _snapshots.erase(it);
                 }
             }
@@ -90,10 +102,15 @@ namespace daedalus_turbo::validator {
                 const auto &last_snapshot = *_snapshots.rbegin();
                 logger::info("validator's closest snapshot is for epoch {} and end_offset: {}", last_snapshot.epoch, last_snapshot.end_offset);
                 max_end_offset = last_snapshot.end_offset;
-                _load_state_snapshot(_snapshot_path(last_snapshot.epoch));
+                _load_state_snapshot(last_snapshot.end_offset);
             } else {
                 logger::info("validator has no applicable snapshots, the new end_offset: 0");
                 max_end_offset = 0;
+                _validate_start_offset = _next_end_offset = 0;
+                _next_last_epoch = 0;
+                _state.clear();
+                _vrf_state.clear();
+                _subchains.clear();
             }
         }
         for (auto &&file: indexer::incremental::truncate(max_end_offset, del))
@@ -101,17 +118,42 @@ namespace daedalus_turbo::validator {
         return deletable;
     }
 
-    void incremental::_save_state_snapshot()
+    void incremental::_save_state_snapshot(bool record)
     {
         timer t {
             fmt::format("saved the ledger's state snapshot epoch: {} end_offset: {}", _state.epoch(), _state.end_offset()),
                 logger::level::info };
+        _vrf_state.save(_storage_path("vrf", _state.end_offset()));
+        _state.save(_storage_path("ledger", _state.end_offset()));
+        if (record) {
+            snapshot latest { _state.epoch(), _state.end_offset() };
+            _snapshots.emplace(std::move(latest));
+        }
+    }
+
+    void incremental::_save_subchains_snapshot(const subchain &sc) const
+    {
         uint8_vector zpp_data {};
         zpp::bits::out out { zpp_data };
-        out(_state, _vrf_state, _subchains).or_throw();
-        file::write(_snapshot_path(_state.epoch()), zpp_data);
-        snapshot latest { _state.epoch(), _state.end_offset() };
-        _snapshots.emplace(std::move(latest));
+        out(sc).or_throw();
+        file::write(_storage_path("kes", sc.end_offset()), zpp_data);
+    }
+
+    void incremental::clean_up()
+    {
+        indexer::incremental::clean_up();
+        std::set<std::string> known_files {};
+        known_files.emplace(std::filesystem::weakly_canonical(_state_path).string());
+        for (const auto &snap: _snapshots) {
+            for (const auto &prefix: { "kes", "ledger", "vrf" }) {
+                known_files.emplace(std::filesystem::weakly_canonical(_storage_path(prefix, snap.end_offset)).string());
+            }
+        }
+        for (auto &entry: std::filesystem::directory_iterator(_validate_dir)) {
+            auto canon_path = std::filesystem::weakly_canonical(entry.path());
+            if (entry.is_regular_file() && !known_files.contains(canon_path.string()))
+                std::filesystem::remove(canon_path);
+        }
     }
 
     void incremental::save_state()
@@ -124,11 +166,32 @@ namespace daedalus_turbo::validator {
             _schedule_validation(std::move(lk));
             _sched.process(true);
         }
-        if (_subchains.size() > 1)
-            throw error("The provided data contains unmergeable blockchain segments!");
+        if (_end_offset > 0) {
+            _subchains.merge_valid();
+            if (_subchains.size() != 1 || !_subchains.begin()->second)
+                throw error("The provided data contains unmergeable blockchain segments!");
+            _save_subchains_snapshot(_subchains.begin()->second);
+        }
         {
             if (_snapshots.empty() || _state.end_offset() > _snapshots.rbegin()->end_offset)
                 _save_state_snapshot();
+            if (_snapshots.size() > 3) {
+                uint64_t last_offset = 0;
+                for (auto it = _snapshots.begin(); it != _snapshots.end(); ) {
+                    if ((it->end_offset - last_offset < indexer::merger::part_size * 2 || it->epoch == _snapshots.rbegin()->epoch)
+                        && it->end_offset != _snapshots.rbegin()->end_offset)
+                    {
+                        for (const auto &prefix: { "kes", "ledger", "vrf" }) {
+                            std::filesystem::remove(_storage_path(prefix, it->end_offset));
+                        }
+                        it = _snapshots.erase(it);
+                    } else {
+                        last_offset = it->end_offset;
+                        ++it;
+                    }
+                }
+            }
+
             std::ostringstream json_s {};
             json_s << "[\n";
             for (auto it = _snapshots.begin(); it != _snapshots.end(); ++it) {
@@ -150,6 +213,7 @@ namespace daedalus_turbo::validator {
             std::filesystem::remove_all(_idx_dir / "outflow");
             std::filesystem::remove_all(_idx_dir / "vrf");
         }
+        _validate_start_offset = _next_end_offset;
     }
 
     void incremental::_on_slice_ready(uint64_t first_epoch, uint64_t last_epoch, const indexer::merger::slice &slice)
@@ -184,7 +248,10 @@ namespace daedalus_turbo::validator {
                     logger::info("validating leader-eligibility for epochs from {} to {}", first_epoch, last_epoch);
                     auto num_outflow_parts = _prepare_outflows(start_offset, end_offset, ready_slices);
                     _process_updates(num_outflow_parts, first_epoch, last_epoch);
-                    _merge_epoch_subchains();
+                    {
+                        std::scoped_lock sc_lk { _subchains_mutex };
+                        _subchains.merge_same_epoch();
+                    }
                     _apply_ledger_state_updates(first_epoch, last_epoch, ready_slices);
                     lk2.lock();
                 }
@@ -208,130 +275,34 @@ namespace daedalus_turbo::validator {
             if (blk.era() >= 2) {
                 auto kes = blk.kes();
                 auto pool_id = blk.issuer_hash();
-                auto [kes_it, kes_created] = sc.kes_intervals.try_emplace(pool_id);
-                if (kes_created) {
-                    kes_it->second.first_counter = kes.counter;
-                    kes_it->second.last_counter = kes.counter;
-                } else {
-                    _merge_kes_check(kes_it->second, kes_interval { kes.counter, kes.counter }, pool_id, blk.offset());
-                    kes_it->second.last_counter = kes.counter;
-                }
-            }
-            sc.ok_sigs++;
-            if (blk.era() < 2)
+                kes_interval pool_kes { kes.counter, kes.counter };
+                auto [kes_it, kes_created] = sc.kes_intervals.try_emplace(pool_id, pool_kes);
+                if (!kes_created)
+                    kes_it->second.merge(pool_kes, pool_id, blk.offset());
+            } else {
+                // In Byron era, the eligibility is verified through the simple presence in the genesis-defined list of signers
                 sc.ok_eligibility++;
+            }
             if (sc.num_blocks > 0) {
                  if (sc.epoch != slot.epoch())
-                    throw error("chunks must contains blocks from one era only but got rel_path: {} block slot: {}", rel_path, slot);
-            } else {
-                sc.epoch = slot.epoch();
-            }
+                     throw error("chunks must contains blocks from one era only but got rel_path: {} block slot: {}", rel_path, slot);
+             } else {
+                 sc.epoch = slot.epoch();
+             }
             sc.num_blocks++;
             extra_proc(blk);
         });
         if (sc.num_blocks == 0)
             throw error("chunk {} contains no blocks!", rel_path);
-        _add_subchain(std::move(sc));
+        {
+            std::unique_lock sc_lk { _subchains_mutex };
+            _subchains.add(std::move(sc));
+            uint64_t valid = _subchains.valid_size();
+            sc_lk.unlock();
+            if (_target_offset)
+                progress::get().update("validate", valid, *_target_offset);
+        }
         return chunk;
-    }
-
-    void incremental::_merge_kes_check(const kes_interval &left, const kes_interval &right, const cardano::pool_hash &pool_id, const uint64_t chunk_offset)
-    {
-        if (left.last_counter > right.first_counter)
-            throw error("KES intervals from chunk at offset: {} do not merge for pool: {}", chunk_offset, pool_id);
-    }
-
-    void incremental::_merge_kes_left(kes_interval_map &left, const kes_interval_map &right, const uint64_t chunk_offset)
-    {
-        for (const auto &[pool_id, right_interval]: right) {
-            auto [left_it, created] = left.try_emplace(pool_id, right_interval);
-            if (!created) {
-                _merge_kes_check(left_it->second, right_interval, pool_id, chunk_offset);
-                left_it->second.last_counter = right_interval.last_counter;
-            }
-        }
-    }
-
-    void incremental::_merge_kes_right(const kes_interval_map &left, kes_interval_map &right, const uint64_t chunk_offset)
-    {
-        for (const auto &[pool_id, left_interval]: left) {
-            auto [right_it, created] = right.try_emplace(pool_id, left_interval);
-            if (!created) {
-                _merge_kes_check(left_interval, right_it->second, pool_id, chunk_offset);
-                right_it->second.first_counter = left_interval.first_counter;
-            }
-        }
-    }
-
-    // Expected to be called when _subchains_mutex is already held by the caller
-    incremental::subchain_map::iterator incremental::_merge_with_neighbors(subchain_map::iterator it, const std::function<bool(const subchain &, const subchain &)> &ok_to_merge) const
-    {
-        auto &sc = it->second;
-        auto prev_it = _subchains.lower_bound(sc.offset - 1);
-        while (prev_it != _subchains.end() && ok_to_merge(prev_it->second, sc) && prev_it->second.offset + prev_it->second.num_bytes == sc.offset) {
-            sc.offset = prev_it->second.offset;
-            sc.num_bytes += prev_it->second.num_bytes;
-            sc.num_blocks += prev_it->second.num_blocks;
-            sc.ok_sigs += prev_it->second.ok_sigs;
-            sc.ok_eligibility += prev_it->second.ok_eligibility;
-            _merge_kes_right(prev_it->second.kes_intervals, sc.kes_intervals, sc.offset);
-            _subchains.erase(prev_it);
-            prev_it = _subchains.lower_bound(sc.offset - 1);
-        }
-        auto next_it = _subchains.lower_bound(sc.offset + sc.num_bytes);
-        while (next_it != _subchains.end() && ok_to_merge(sc, next_it->second) && sc.offset + sc.num_bytes == next_it->second.offset) {
-            sc.num_bytes += next_it->second.num_bytes;
-            sc.num_blocks += next_it->second.num_blocks;
-            sc.ok_sigs += next_it->second.ok_sigs;
-            sc.ok_eligibility += next_it->second.ok_eligibility;
-            _merge_kes_left(sc.kes_intervals, next_it->second.kes_intervals, next_it->second.offset);
-            _subchains.erase(next_it);
-            next_it = _subchains.lower_bound(sc.offset + sc.num_bytes);
-        }
-        uint64_t last_offset = it->second.offset + it->second.num_bytes - 1;
-        if (it->first != last_offset) {
-            auto node = _subchains.extract(it);
-            node.key() = last_offset;
-            auto [new_it, created, nt] = _subchains.insert(std::move(node));
-            if (!created)
-                throw error("duplicate subchain found with last_offset {}", last_offset);
-            it = std::move(new_it);
-        }
-        if (_target_offset && it->second && it->second.offset == 0 && it->second.ok_eligibility == it->second.num_blocks)
-            progress::get().update("leaders", it->second.num_bytes, *_target_offset);
-        return it;
-    }
-
-    void incremental::_add_subchain(subchain &&sc) const
-    {
-        std::scoped_lock lk { _subchains_mutex };
-        auto [it, created] = _subchains.emplace(sc.offset + sc.num_bytes - 1, std::move(sc));
-        if (!created)
-            throw error("duplicate subchain starting a offset {} size {}", sc.offset, sc.num_bytes);
-        _merge_with_neighbors(it, [](const auto &l, const auto &r) { return l && r; });
-    }
-
-    void incremental::_add_subchain_eligibility(uint64_t sc_offset, size_t ok_eligibility)
-    {
-        std::scoped_lock lk { _subchains_mutex };
-        auto it = _subchains.lower_bound(sc_offset);
-        if (it == _subchains.end() || !(it->second.offset <= sc_offset && it->first >= sc_offset))
-            throw error("internal error: can't find subchain for blockchain offset {}", sc_offset);
-        it->second.ok_eligibility += ok_eligibility;
-        _merge_with_neighbors(it, [](const auto &l, const auto &r) { return l && r; });
-    }
-
-    void incremental::_merge_epoch_subchains()
-    {
-        std::scoped_lock lk { _subchains_mutex };
-        uint64_t offset = 0;
-        while (_subchains.size() > 1 && offset <= _subchains.rbegin()->first) {
-            auto it = _subchains.lower_bound(offset);
-            it = _merge_with_neighbors(it, [](const auto &l, const auto &r) {
-                return l.epoch == r.epoch;
-            });
-            offset = it->second.offset + it->second.num_bytes;
-        }
     }
     
     void incremental::_prepare_outflows_part(index::reader_multi_mt<index::txo_use::item> &txo_use_reader,
@@ -369,7 +340,7 @@ namespace daedalus_turbo::validator {
 
         size_t ram_used = 0;
         for (const auto &[epoch, deltas]: epoch_idxs) {
-            auto epoch_path = index::indexer_base::chunk_path(_idx_dir, "outflow", std::to_string(epoch), part_no);
+            auto epoch_path = index::indexer_base::chunk_path(_idx_dir.string(), "outflow", std::to_string(epoch), part_no);
             index::writer<index::stake_delta::item> writer { epoch_path, 1 };
             for (const auto &[stake_id, delta]: deltas)
                 writer.emplace(stake_id, delta);
@@ -420,7 +391,7 @@ namespace daedalus_turbo::validator {
         }
 
         for (size_t pi = 0; pi < num_outflow_parts; pi++) {
-            auto outflow_path = index::indexer_base::chunk_path(_idx_dir, "outflow", std::to_string(epoch), pi);
+            auto outflow_path = index::indexer_base::chunk_path(_idx_dir.string(), "outflow", std::to_string(epoch), pi);
             if (index::writer<index::stake_delta::item>::exists(outflow_path)) {
                 index::reader<index::stake_delta::item> reader { outflow_path };
                 index::stake_delta::item item {};
@@ -430,7 +401,7 @@ namespace daedalus_turbo::validator {
             }
         }
 
-        auto delta_path = index::indexer_base::reader_path(_idx_dir, "epoch-delta", std::to_string(epoch));
+        auto delta_path = index::indexer_base::reader_path(_idx_dir.string(), "epoch-delta", std::to_string(epoch));
         logger::trace("saving {} deltas to {}", dist.size(), delta_path);
         index::writer<index::stake_delta::item> writer { delta_path, 1 };
         for (const auto &[id, delta]: dist)
@@ -493,13 +464,15 @@ namespace daedalus_turbo::validator {
                                 break;
                             }
                         }
+                        //if (_snapshots.empty() || _snapshots.rbegin()->end_offset != einfo.end_offset)
+                        //    _save_state_snapshot(false);
                     }
                 }
                 _state.start_epoch(e);
                 if (_vrf_state.epoch_updates() > 0)
                     _vrf_state.finish_epoch(_state.params().extra_entropy);
                 switch (e) {
-                    case 208: // Learn to compute from UTXO balance
+                    case 208: // First Shelley/Ouroboros Praos epoch - set the reserves to the Byron UTXO balance
                         _state.reserves(13'888'022'852'926'644);
                         break;
                     case 236: // Allegra fork - return byron redeemer addresses to reserves
@@ -590,7 +563,7 @@ namespace daedalus_turbo::validator {
             }
             {
                 timer td { fmt::format("validator epoch: {} process stake delta update", e) };
-                auto delta_path = index::indexer_base::reader_path(_idx_dir, "epoch-delta", std::to_string(e));
+                auto delta_path = index::indexer_base::reader_path(_idx_dir.string(), "epoch-delta", std::to_string(e));
                 if (index::writer<index::stake_delta::item>::exists(delta_path)) {
                     index::reader<index::stake_delta::item> reader { delta_path };
                     logger::debug("validator epoch: {} {} stake delta updates available", e, reader.size());
@@ -616,11 +589,17 @@ namespace daedalus_turbo::validator {
     {
         timer t { "validator::_update_pool_stake_distributions" };
         std::vector<uint64_t> snapshot_offsets {};
-        snapshot_offsets.reserve(3);
         if (_target_offset && *_target_offset >= indexer::merger::part_size * 2) {
-            snapshot_offsets.emplace_back(*_target_offset / 2);
-            while (snapshot_offsets.size() < 3) {
-                snapshot_offsets.emplace_back(snapshot_offsets.back() + (*_target_offset - snapshot_offsets.back()) / 2);
+            uint64_t min_offset = *_target_offset / 2;
+            for (const auto &slice: slices) {
+                auto slice_end_offset = slice.end_offset();
+                if (slice_end_offset >= min_offset) {
+                    snapshot_offsets.emplace_back(slice_end_offset);
+                    std::scoped_lock lk { _subchains_mutex };
+                    auto it = _subchains.find(slice_end_offset - 1);
+                    it->second.snapshot = true;
+                    min_offset = slice_end_offset + std::max((*_target_offset - slice_end_offset) / 2, indexer::merger::part_size * 2);
+                }   
             }
         }
         index::reader_multi<index::txo::item> txo_reader { _index_slice_paths("txo", slices) };
@@ -689,7 +668,16 @@ namespace daedalus_turbo::validator {
                 }
             }
         }
-        _add_subchain_eligibility(epoch_min_offset, end_idx - start_idx);
+        std::unique_lock sc_lk { _subchains_mutex };
+        auto sc_it = _subchains.find(epoch_min_offset);
+        sc_it->second.ok_eligibility += end_idx - start_idx;
+        if (sc_it->second) {
+            _subchains.merge_valid();
+            auto valid = _subchains.valid_size();
+            sc_lk.unlock();
+            if (_target_offset)
+                progress::get().update("validate", valid, *_target_offset);
+        }
     }
 
     void incremental::_process_vrf_update_chunks(uint64_t epoch_min_offset, cardano::state::vrf &vrf_state, const std::vector<uint64_t> &chunks)

@@ -26,7 +26,11 @@ namespace daedalus_turbo::memory {
             struct rusage ru {};
             if (getrusage(RUSAGE_SELF, &ru) != 0)
                 throw error_sys("getrusage failed");
+#           ifdef __APPLE__
+            return static_cast<size_t>(ru.ru_maxrss >> 20);
+#           else
             return static_cast<size_t>(ru.ru_maxrss >> 10);
+#           endif
 #       endif
     }
 

@@ -11,13 +11,17 @@ list(FILTER LIB_SRCS EXCLUDE REGEX "\\.bench\\.cpp$")
 add_library(lib OBJECT ${LIB_SRCS})
 target_include_directories(lib PUBLIC .)
 target_link_libraries(lib PUBLIC
-    Boost::json Boost::coroutine Boost::url
-    ${Boost_LIBRARIES}
-    ${FMT_LIBRARIES}
-    ${SODIUM_LIBRARIES}
-    ${SPDLOG_LIBRARIES}
-    ${ZSTD_LIBRARIES}
+        Boost::json Boost::coroutine Boost::url
+        ${Boost_LIBRARIES}
+        ${FMT_LIBRARIES}
+        ${SPDLOG_LIBRARIES}
+        ${ZSTD_LIBRARIES}
 )
+if (MSVC)
+    target_link_libraries(lib PUBLIC libsodium.lib)
+else()
+    target_link_libraries(lib PUBLIC ${SODIUM_LIBRARIES})
+endif()
 target_link_directories(lib PUBLIC
     ${Boost_LIBRARY_DIRS}
     ${FMT_LIBRARY_DIRS}

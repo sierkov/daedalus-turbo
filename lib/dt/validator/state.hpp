@@ -9,6 +9,7 @@
 #include <unordered_set>
 #include <zpp_bits.h>
 #include <dt/atomic.hpp>
+#include <dt/file.hpp>
 #include <dt/format.hpp>
 #include <dt/index/stake-delta.hpp>
 #include <dt/static-map.hpp>
@@ -16,42 +17,118 @@
 #include <dt/validator/types.hpp>
 
 namespace daedalus_turbo::validator {
+    struct pool_info {
+        constexpr static auto serialize(auto &archive, auto &self)
+        {
+            return archive(self.reward_id, self.owners, self.pledge, self.cost, self.margin);
+        }
+
+        stake_ident reward_id {};
+        std::vector<stake_ident> owners {};
+        uint64_t pledge = 0;
+        uint64_t cost = 0;
+        rational_u64 margin = { 0, 1 };
+        rational member_reward_base {}; // not serializable
+    };
+    using pool_info_map = std::map<cardano::pool_hash, pool_info>;
+
     struct state {
         constexpr static auto serialize(auto &archive, auto &self)
         {
-            auto res = archive(
+            return archive(
                 self._epoch,
                 self._end_offset,
-                self._mark,
-                self._set,
-                self._go,
-                self._pools_retiring,
-                self._active_stake_dist,
-                self._active_pool_dist,
-                self._active_pool_params,
-                self._active_delegs,
-                self._active_inv_delegs,
-                self._params,
-                self._params_prev,
-                self._ppups,
-                self._ppups_future,
-                self._epoch_accounts,
+                self._delta_treasury,
+                self._delta_reserves,
+                self._reserves,
+                self._treasury,
                 self._fees_next_reward,
-                self._rewards,
-                self._ptr_to_stake,
-                self._stake_to_ptr,
+                self._epoch_accounts,
                 self._instant_rewards_reserves,
                 self._instant_rewards_treasury,
                 self._reward_pool_params,
                 self._blocks_current,
                 self._blocks_before,
-                self._potential_rewards,
-                self._reward_pulsing_start,
+                self._params,
+                self._params_prev,
+                self._ppups,
+                self._ppups_future,
+
+                self._mark,
+                self._set,
+                self._go,
+                
+                self._active_stake_dist,
+                self._active_pool_dist,
+                self._active_pool_params,
+                self._active_delegs,
+                self._active_inv_delegs,
+                self._pools_retiring,
+
+                self._rewards,
                 self._reward_pulsing_snapshot,
-                self._reserves,
-                self._treasury
+                self._reward_pulsing_start,
+                self._potential_rewards,
+                self._ptr_to_stake,
+                self._stake_to_ptr
             );
-            return res;
+        }
+
+        void load(const std::string &path)
+        {
+            auto zpp_data = file::read(path);
+            zpp::bits::in in { zpp_data };
+            in(*this).or_throw();
+        }
+
+        void save(const std::string &path)
+        {
+            uint8_vector small {}, mark {}, set {}, go {}, active {}, rewards {};
+            static const std::string task_group { "save-state-snapshot" };
+            _sched.wait_for_count(task_group, 6, [&] {
+                _sched.submit_void(task_group, 1000, [&] {
+                    timer t { fmt::format("serializing small for snapshot {}", path), logger::level::trace };
+                    zpp::bits::out out { small };
+                    out(_epoch, _end_offset, _delta_treasury, _delta_reserves, _reserves, _treasury, _fees_next_reward,
+                        _epoch_accounts, _instant_rewards_reserves, _instant_rewards_treasury, _reward_pool_params,
+                        _blocks_current, _blocks_before, _params, _params_prev, _ppups, _ppups_future).or_throw();
+                });
+                _sched.submit_void(task_group, 1000, [&] {
+                    timer t { fmt::format("serializing mark for snapshot {}", path), logger::level::trace };
+                    zpp::bits::out out { mark };
+                    out(_mark).or_throw();
+                });
+                _sched.submit_void(task_group, 1000, [&] {
+                    timer t { fmt::format("serializing set for snapshot {}", path), logger::level::trace };
+                    zpp::bits::out out { set };
+                    out(_set).or_throw();
+                });
+                _sched.submit_void(task_group, 1000, [&] {
+                    timer t { fmt::format("serializing go for snapshot {}", path), logger::level::trace };
+                    zpp::bits::out out { go };
+                    out(_go).or_throw();
+                });
+                _sched.submit_void(task_group, 1000, [&] {
+                    timer t { fmt::format("serializing active for snapshot {}", path), logger::level::trace };
+                    zpp::bits::out out { active };
+                    out(_active_stake_dist, _active_pool_dist, _active_pool_params, _active_delegs,
+                        _active_inv_delegs, _pools_retiring).or_throw();
+                });
+                _sched.submit_void(task_group, 1000, [&] {
+                    timer t { fmt::format("serializing rewards for snapshot {}", path), logger::level::trace };
+                    zpp::bits::out out { rewards };
+                    out(_rewards, _reward_pulsing_snapshot, _reward_pulsing_start, _potential_rewards,
+                        _ptr_to_stake, _stake_to_ptr).or_throw();
+                });
+            });
+            timer t { fmt::format("writing serialized data to {}", path), logger::level::trace };
+            file::write_stream ws { path };
+            ws.write(small);
+            ws.write(mark);
+            ws.write(set);
+            ws.write(go);
+            ws.write(active);
+            ws.write(rewards);
         }
 
         state(scheduler &sched): _sched { sched }
@@ -368,6 +445,11 @@ namespace daedalus_turbo::validator {
             return _end_offset;
         }
 
+        uint64_t delta_reserves() const
+        {
+            return _delta_reserves;
+        }
+
         void rotate_snapshots()
         {
             timer t { fmt::format("validator::state epoch: {} rotate_snapshots", _epoch), logger::level::trace };
@@ -385,25 +467,25 @@ namespace daedalus_turbo::validator {
             timer ts { fmt::format("validator::state epoch: {} copy active snapshot to mark", _epoch), logger::level::trace };
             static const std::string task_group { "rotate-snapshot" };
             _sched.wait_for_count(task_group, 6, [&] {
-                _sched.submit_void("rotate-snapshot", 1000, [this] {
+                _sched.submit_void(task_group, 1000, [this] {
                     _mark.pool_dist = _active_pool_dist;
                 });
-                _sched.submit_void("rotate-snapshot", 1000, [this] {
+                _sched.submit_void(task_group, 1000, [this] {
                     _mark.pool_params = _active_pool_params;
                 });
-                _sched.submit_void("rotate-snapshot", 1000, [this] {
+                _sched.submit_void(task_group, 1000, [this] {
                     timer ts { fmt::format("validator::state epoch: {} copy delegs to mark", _epoch), logger::level::trace };
                     _mark.delegs = _active_delegs;
                 });
-                _sched.submit_void("rotate-snapshot", 1000, [this] {
+                _sched.submit_void(task_group, 1000, [this] {
                     timer ts { fmt::format("validator::state epoch: {} copy inv_delegs to mark", _epoch), logger::level::trace };
                     _mark.inv_delegs = _active_inv_delegs;
                 });
-                _sched.submit_void("rotate-snapshot", 1000, [this] {
+                _sched.submit_void(task_group, 1000, [this] {
                     timer ts { fmt::format("validator::state epoch: {} copy stake_dist to mark", _epoch), logger::level::trace };
                     _mark.stake_dist = _active_stake_dist;
                 });
-                _sched.submit_void("rotate-snapshot", 1000, [this] {
+                _sched.submit_void(task_group, 1000, [this] {
                     timer ts { fmt::format("validator::state epoch: {} copy rewards to mark", _epoch), logger::level::trace };
                     _mark.reward_dist = _rewards;
                 });
@@ -457,22 +539,43 @@ namespace daedalus_turbo::validator {
         {
             return _epoch;
         }
+
+        void clear()
+        {
+            _epoch = 0;
+            _end_offset = 0;
+            _mark.clear();
+            _set.clear();
+            _go.clear();
+            _pools_retiring.clear();
+            _active_stake_dist.clear();
+            _active_pool_dist.clear();
+            _active_pool_params.clear();
+            _active_delegs.clear();
+            _active_inv_delegs.clear();
+            _params = {};
+            _params_prev = {};
+            _ppups.clear();
+            _ppups_future.clear();
+            _epoch_accounts = {};
+            _fees_next_reward = 0;
+            _rewards.clear();
+            _ptr_to_stake.clear();
+            _stake_to_ptr.clear();
+            _instant_rewards_reserves.clear();
+            _instant_rewards_treasury.clear();
+            _reward_pool_params.clear();
+            _blocks_current.clear();
+            _blocks_before.clear();
+            _delta_treasury = 0;
+            _delta_reserves = 0;
+            _potential_rewards.clear();
+            _reward_pulsing_start = {};
+            _reward_pulsing_snapshot.clear();
+            _reserves = 0;
+            _treasury = 0;
+        }
     private:
-        struct pool_info {
-            constexpr static auto serialize(auto &archive, auto &self)
-            {
-                return archive(self.reward_id, self.owners, self.pledge, self.cost, self.margin);
-            }
-
-            stake_ident reward_id {};
-            std::vector<stake_ident> owners {};
-            uint64_t pledge = 0;
-            uint64_t cost = 0;
-            rational_u64 margin = { 0, 1 };
-            rational member_reward_base {}; // not serializable
-        };
-        using pool_info_map = std::map<cardano::pool_hash, pool_info>;
-
         struct ledger_copy {
             stake_distribution_copy stake_dist {};
             reward_distribution_copy reward_dist {};
@@ -480,6 +583,16 @@ namespace daedalus_turbo::validator {
             delegation_map_copy delegs {};
             inv_delegation_map_copy inv_delegs {};
             pool_info_map pool_params {};
+
+            void clear()
+            {
+                stake_dist.clear();
+                reward_dist.clear();
+                pool_dist.clear();
+                delegs.clear();
+                inv_delegs.clear();
+                pool_params.clear();
+            }
         };
 
         struct pool_reward_item {
@@ -548,7 +661,6 @@ namespace daedalus_turbo::validator {
         uint64_t _delta_treasury = 0;
         uint64_t _delta_reserves = 0;
         partitioned_reward_update_dist _potential_rewards {};
-        //pool_reward_map _pool_potential_rewards {};
         cardano::slot _reward_pulsing_start {};
         reward_distribution_copy _reward_pulsing_snapshot {};
 
@@ -577,36 +689,26 @@ namespace daedalus_turbo::validator {
                 expansion = static_cast<uint64_t>(_params_prev.expansion_rate.as_r() * _reserves);
                 logger::trace("epoch: {} simple expansion: {}", _epoch, expansion);
             }
-            logger::trace("epoch: {} reserves: {} fees: {} expansion_rate: {} treasury_growth_rate: {}",
-                _epoch, _reserves, fees, _params_prev.expansion_rate, _params_prev.treasury_growth_rate);
             uint64_t total_reward_pool = expansion + fees;
             uint64_t treasury_rewards = static_cast<uint64_t>(_params_prev.treasury_growth_rate.as_r() * total_reward_pool);
             uint64_t rewards_pot = total_reward_pool - treasury_rewards;
-            logger::trace("epoch: {} deltaT: {} rewardsPot: {}", _epoch, treasury_rewards, rewards_pot);
             uint64_t pool_rewards_filtered = 0;
             uint64_t total_stake = _total_stake(_reserves);
-            logger::trace("epoch: {} total stake: {} pre-computed active stake: {} re-computed active stake: {}",
-                _epoch, total_stake,  _go.pool_dist.total_stake(), _go.pool_dist.total_stake());
             if (!_blocks_before.empty()) {
                 const auto &pools_active = _blocks_before;
-                logger::trace("epoch {} begin reward allocation: total stake {} treasury: {} reserves: {} rewards pot: {} block-producing pools: {} reward pools: {}",
-                    _epoch, total_stake, _treasury, _reserves, rewards_pot, pools_active.size(), _reward_pool_params.size());
+                
                 {
                     timer t2 { fmt::format("compute per-pool rewards for epoch {}", _epoch), logger::level::trace };
                     pool_rewards_filtered = _compute_pool_rewards_parallel(pools_active, rewards_pot, total_stake);
                 }
-                logger::trace("epoch {} allocated rewards: total stake: {} treasury: {} reserves: {} rewards attributed: {}",
-                    _epoch, total_stake, _treasury, _reserves, pool_rewards_filtered);
+                logger::trace("epoch {} total stake {} treasury: {} reserves: {} rewards pot: {} block-producing pools: {} reward pools: {} rewards attributed: {}",
+                    _epoch, total_stake, _treasury, _reserves, rewards_pot, pools_active.size(), _reward_pool_params.size(), pool_rewards_filtered);
             }
-            logger::trace("epoch {} before accounts update: total stake {} treasury: {} reserves: {} fees: {} ir_reserves: {} ir_treasury: {}",
-                 _epoch, total_stake, _treasury, _reserves, fees, ir_reserves, ir_treasury);
             _delta_treasury = treasury_rewards - ir_treasury;
             _delta_reserves = treasury_rewards + ir_reserves + pool_rewards_filtered - fees;
-            logger::trace("epoch {} rewards allocated: {} unclaimed: {} mir: {} withdrawals: {}",
-                _epoch, cardano::amount { pool_rewards_filtered }, cardano::amount { _epoch_accounts.unclaimed_rewards },
-                cardano::amount { ir_reserves }, cardano::amount { _epoch_accounts.withdrawals });
-            logger::debug("epoch {} accounts update: deltaF -{} deltaT: {} deltaR: -{}",
-                 _epoch, cardano::amount { fees }, cardano::amount { _delta_treasury }, cardano::amount { _delta_reserves });
+            logger::trace("epoch {} deltaR ({}) = deltaT ({}) + irTreasury ({}) + irReserves ({}) + poolRewards ({}) - deltaF {}",
+                _epoch, cardano::amount { _delta_reserves }, cardano::amount { _delta_treasury }, cardano::amount { ir_treasury },
+                cardano::amount { ir_reserves }, cardano::amount { pool_rewards_filtered }, cardano::amount { fees });
         }
 
         void _rewards_prepare_pool_params(uint64_t &total, uint64_t &filtered,
@@ -711,7 +813,9 @@ namespace daedalus_turbo::validator {
         uint64_t _compute_pool_rewards_parallel(const pool_block_dist &pools_active, const uint64_t staking_reward_pot, const uint64_t total_stake)
         {
             const std::string task_group { "staking-rewards-part" };
-            auto [total, filtered] = _rewards_prepare_pools(pools_active, staking_reward_pot, total_stake);
+            auto [init_total, init_filtered] = _rewards_prepare_pools(pools_active, staking_reward_pot, total_stake);
+            std::atomic_uint64_t total = init_total;
+            std::atomic_uint64_t filtered = init_filtered;
             _sched.wait_for_count(task_group, _potential_rewards.num_parts,
                 [&] {
                     for (size_t part_idx = 0; part_idx < _potential_rewards.num_parts; ++part_idx) {
@@ -722,12 +826,12 @@ namespace daedalus_turbo::validator {
                 },
                 [&](auto &&res) {
                     auto [part_total, part_filtered] = std::any_cast<std::pair<uint64_t, uint64_t>>(std::move(res));
-                    total += part_total;
-                    filtered += part_filtered;
+                    atomic_add(total, part_total);
+                    atomic_add(filtered, part_filtered);
                 }
             );
             logger::trace("epoch: {} staking_rewards total: {} filtered: {} diff: {}",
-                _epoch, cardano::amount { total }, cardano::amount { filtered },
+                _epoch, cardano::amount { total.load() }, cardano::amount { filtered.load() },
                 cardano::balance_change { static_cast<int64_t>(filtered) - static_cast<int64_t>(total) });
             if (!_params_prev.protocol_ver.aggregated_rewards())
                 return filtered;
@@ -863,19 +967,19 @@ namespace daedalus_turbo::validator {
             timer t { fmt::format("validator::state epoch: {} transfer_potential_rewards aggregated forgo_prefilter: {}", _epoch, forgo_prefilter), logger::level::trace };
             using pool_update_map = std::unordered_map<cardano::pool_hash, uint64_t>;
             static const std::string task_group { "transfer-rewards-part" };
-            std::atomic_uint64_t treasury_after { _treasury };
+            std::atomic_uint64_t treasury_update = 0;
             std::vector<pool_update_map> part_updates(_potential_rewards.num_parts);
             // all rewards must be already created to ensure no allocation is necessary
             _sched.wait_for_count(task_group, _potential_rewards.num_parts,
                 [&] {
                     for (size_t part_idx = 0; part_idx < _potential_rewards.num_parts; ++part_idx) {
-                        _sched.submit_void("transfer-rewards-part", 1000, [this, &part_updates, &treasury_after, part_idx, aggregated, force_active] () {
+                        _sched.submit_void("transfer-rewards-part", 1000, [this, &part_updates, &treasury_update, part_idx, aggregated, force_active] () {
                             // relies on _rewards, _potential_rewards, _pulsing_snapshot being ordered containers!
                             auto reward_it = _rewards.partition(part_idx).begin();
                             const auto reward_end = _rewards.partition(part_idx).end();
                             pool_update_map pool_dist_updates {};
                             pool_dist_updates.reserve(_reward_pool_params.size());
-                            uint64_t treasury_update = 0;
+                            uint64_t part_treasury_update = 0;
                             for (const auto &[stake_id, reward_list]: _potential_rewards.partition(part_idx)) {
                                 if (force_active || _reward_pulsing_snapshot.contains(stake_id)) {
                                     while (reward_it != reward_end && reward_it->first < stake_id)
@@ -887,7 +991,7 @@ namespace daedalus_turbo::validator {
                                                 pool_dist_updates[*ri.delegated_pool_id] += ri.amount;
                                             }
                                         } else {
-                                            treasury_update += ri.amount;
+                                            part_treasury_update += ri.amount;
                                         }
                                         if (!aggregated)
                                             break;
@@ -895,16 +999,20 @@ namespace daedalus_turbo::validator {
                                 }
                             }
                             part_updates[part_idx] = std::move(pool_dist_updates);
-                            atomic_add(treasury_after, treasury_update);
+                            atomic_add(treasury_update, part_treasury_update);
                         });
                     }
                 }
             );
-            _treasury = treasury_after.load();
-            // updates are applied in the same order as if they were computed sequentially
-            for (const auto &pool_dist_updates: part_updates) {
-                for (const auto &[pool_id, amount]: pool_dist_updates)
-                    _active_pool_dist.add(pool_id, amount);
+            logger::trace("epoch {} transfer_potential_rewards treasury_update: {}", _epoch, treasury_update.load());
+            _treasury += treasury_update;
+            {
+                timer t { fmt::format("epoch: {} transfer_potential_rewards sequential application of updates", _epoch), logger::level::trace };
+                // updates are applied in the same order as if they were computed sequentially
+                for (const auto &pool_dist_updates: part_updates) {
+                    for (const auto &[pool_id, amount]: pool_dist_updates)
+                        _active_pool_dist.add(pool_id, amount);
+                }
             }
         }
 

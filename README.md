@@ -91,6 +91,53 @@ Show information about a transaction:
 ./dt tx-info /data/cardano 357D47E9916B7FE949265F23120AEED873B35B97FB76B9410C323DDAB5B96D1A
 ```
 
+## Blockchain Explorer Desktop User Interface
+
+### Prerequisites
+To test the desktop user interface, you need the following packages:
+- [Git](https://git-scm.com/) to get a copy of this repository.
+- [Docker](https://www.docker.com/products/docker-desktop/) to launch the software in an isolated environment.
+- [Node.JS](https://nodejs.org/en/download/current) to start the user interface.
+
+### Build
+
+Clone this repository and make it your working directory:
+```
+git clone https://github.com/sierkov/daedalus-turbo.git dt
+cd dt
+git checkout parallelized-ouroboros-praos
+```
+
+Build the test Docker container:
+```
+docker build -t dt -f Dockerfile.test .
+```
+
+Install the necessary Node.JS modules:
+```
+cd ui
+npm i
+cd ..
+```
+
+### Launch
+
+Launch the local API server which will store the downloaded blockchain data into the host's `<cardano-dir>` directory and will be listening at the address 127.0.0.1:55556 of the host machine:
+```
+docker run -it --rm -v <cardano-dir>:/data/cardano -p 127.0.0.1:55556:55556 dt ./dt http-api /data/cardano --ip=0.0.0.0
+```
+
+From a separate terminal window, while the http API is running, start the UI:
+```
+cd ui
+npm start
+```
+
+During the first run, the API server will download the complete Cardano blockchain data, which may take a while.
+If your test PC fulfills the [hardware requirements](#requirements), the initial synchronization should take less than one hour. The successive runs will sync only the updates since the previous sync.
+
+Once you are done with testing the UI, stop the local API server by using Ctrl-C or closing the terminal in which you started it.
+
 # Spread the word
 Many in the Cardano community, including some developers of Daedalus, don't believe that it's possible to make it noticeably faster. This leads to a situation in which the development is not focused on its performance. If you're persuaded by the evidence presented here, share it on social media with those around you. Changing the beliefs of people can be harder than building top-notch technology. So, every single tweet and Facebook post makes a difference. Thank you!
 

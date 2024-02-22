@@ -96,7 +96,7 @@ namespace daedalus_turbo {
             return *this;
         }
 
-        bool verify(size_t period, const kes_vkey_span &vkey, const std::span<const uint8_t> &msg) const
+        bool verify(size_t period, const kes_vkey_span &vkey, const buffer &msg) const
         {
             if (period != 0) throw error("period value must be 0 but got: {}", period);
             return ed25519::verify(_signature, vkey, msg);

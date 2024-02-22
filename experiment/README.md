@@ -38,6 +38,7 @@ mount /dev/md1 /data
 
 Install the necessary packages:
 ```
+apt update
 apt install -y docker-compose
 ```
 

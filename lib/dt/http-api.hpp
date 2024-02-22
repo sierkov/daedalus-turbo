@@ -40,6 +40,7 @@
 #include <dt/requirements.hpp>
 #include <dt/sync/http.hpp>
 #include <dt/util.hpp>
+#include <dt/validator.hpp>
 
 namespace fmt {
     template<>
@@ -61,7 +62,7 @@ namespace daedalus_turbo::http_api {
 
     struct server {
         server(const std::string &data_dir, const std::string &host)
-            : _data_dir { data_dir }, _host { host }, _indexers { indexer::default_list(_sched, _data_dir) },
+            : _data_dir { data_dir }, _host { host }, _indexers { validator::default_indexers(_sched, _data_dir) },
                 _requirements_status { requirements::check(_data_dir) }
         {
         }
@@ -311,7 +312,7 @@ namespace daedalus_turbo::http_api {
             _sync_error.reset();
             _sync_last_chunk.reset();
             try {
-                _cr = std::make_unique<indexer::incremental>(_sched, _data_dir, _indexers);
+                _cr = std::make_unique<validator::incremental>(_sched, _data_dir, _indexers);
                 {
                     sync::http::syncer syncr { _sched, *_cr, _host, false };
                     syncr.sync();
@@ -418,7 +419,7 @@ namespace daedalus_turbo::http_api {
                 throw error("Unsupported HTTP method {}", static_cast<std::string_view>(req.method_string()));
             const auto target = static_cast<std::string>(req.target());
             try {
-                timer t { target, logger::level::info };
+                timer t { target, logger::level::trace };
                 if (target.starts_with("/status/")) {
                     send(_api_status(req));
                 } else if (_sync_status != sync_status::ready) {

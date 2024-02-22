@@ -27,6 +27,21 @@ namespace daedalus_turbo::cardano::state {
             );
         }
 
+        void load(const std::string &path)
+        {
+            auto zpp_data = file::read(path);
+            zpp::bits::in in { zpp_data };
+            in(*this).or_throw();
+        }
+
+        void save(const std::string &path) const
+        {
+            uint8_vector zpp_data {};
+            zpp::bits::out out { zpp_data };
+            out(*this).or_throw();
+            file::write(path, zpp_data);
+        }
+
         void process_updates(const std::vector<index::vrf::item> &updates)
         {
             blake2b_256_hash nonce_block {};
@@ -70,7 +85,7 @@ namespace daedalus_turbo::cardano::state {
 
         size_t epoch_updates() const
         {
-            return _epoch_updates;
+            return _epoch_updates; 
         }
 
         const cardano::vrf_nonce &epoch_nonce() const
@@ -86,6 +101,19 @@ namespace daedalus_turbo::cardano::state {
         const cardano::vrf_nonce &uc_nonce() const
         {
             return _nonce_uc_nonce;
+        }
+
+        void clear()
+        {
+            _nonce_epoch = _nonce_genesis;
+            _nonce_lab = _nonce_genesis;
+            _nonce_next_epoch = _nonce_genesis;
+            _lab_prev_hash = cardano::vrf_nonce {};
+            _prev_epoch_lab_prev_hash = cardano::vrf_nonce {};
+            _epoch_last = 0;
+            _epoch_transition = 0;
+            _slot_last = 0;
+            _epoch_updates = 0;
         }
     private:
         const cardano::vrf_nonce _nonce_uc_nonce { cardano::vrf_nonce::from_hex("81e47a19e6b29b0a65b9591762ce5143ed30d0261e5d24a3201752506b20f15c") };

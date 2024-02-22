@@ -27,6 +27,7 @@ namespace {
         uint64_t reserves = 0;
         uint64_t treasury = 0;
         uint64_t fees_reward_snapshot = 0;
+        uint64_t delta_reserves = 0;
     };
 
     cardano::stake_ident extract_stake_id(const json::value &j)
@@ -50,6 +51,7 @@ namespace {
         st.reserves = json::value_to<uint64_t>(j_state.at("stateBefore").at("esAccountState").at("reserves"));
         st.treasury = json::value_to<uint64_t>(j_state.at("stateBefore").at("esAccountState").at("treasury"));
         st.fees_reward_snapshot = json::value_to<uint64_t>(j_state.at("stateBefore").at("esSnapshots").at("feeSS"));
+        st.delta_reserves = static_cast<uint64_t>(-json::value_to<int64_t>(j_state.at("possibleRewardUpdate").at("deltaR")));
 
         for (const auto &j_reward: j_state.at("possibleRewardUpdate").at("rs").as_array()) {
             auto stake_id = extract_stake_id(j_reward.at(0));
@@ -168,25 +170,25 @@ namespace {
     template<typename ExpDist, typename ActDist>
     void compare_dists(const std::string &name, const ExpDist &expected, const ActDist &actual)
     {
-        logger::debug("{} expected items: {} actual items: {} diff: {}",
+        logger::trace("{} expected items: {} actual items: {} diff: {}",
             name, expected.size(), actual.size(), static_cast<int64_t>(actual.size()) - static_cast<int64_t>(expected.size()));
         size_t diffs = 0;
         for (const auto &[id, exp_val]: expected) {
             if (!actual.contains(id)) {
-                logger::debug("{} missing item: {} val: {}", name, id, exp_val);
+                logger::trace("{} missing item: {} val: {}", name, id, exp_val);
                 ++diffs;
                 continue;
             }
             const auto &act_val = actual.at(id);
             if (exp_val != act_val) {
-                logger::debug("{} item: {} expected: {} actual: {}", name, id, exp_val, act_val);
+                logger::trace("{} item: {} expected: {} actual: {}", name, id, exp_val, act_val);
                 ++diffs;
             }
         }
         // do an inverse check to detect extra elements
         for (const auto &[id, act_val]: actual) {
             if (!expected.contains(id)) {
-                logger::debug("{} extra item: {} val: {}", name, id, act_val);
+                logger::trace("{} extra item: {} val: {}", name, id, act_val);
                 if constexpr (std::convertible_to<decltype(act_val), uint64_t>) {
                     if (static_cast<uint64_t>(act_val) != 0)
                         ++diffs;
@@ -229,6 +231,8 @@ int main(int argc, char **argv)
     
     compare_values("epoch", node_state.epoch, dt_state.epoch());
     compare_values("feeSS", node_state.fees_reward_snapshot, dt_state.fees_reward_snapshot());
+    compare_values("deltaR", node_state.delta_reserves, dt_state.delta_reserves());
+
     compare_values("reserves", node_state.reserves, dt_state.reserves());
     compare_values("treasury", node_state.treasury, dt_state.treasury());
     // blocksBefore

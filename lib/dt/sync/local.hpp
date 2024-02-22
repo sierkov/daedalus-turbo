@@ -47,7 +47,7 @@ namespace daedalus_turbo::sync::local {
         sync_res sync()
         {
             timer t { "sync::local::sync" };
-            progress_guard pg { "parse", "merge", "leaders" };
+            progress_guard pg { "parse", "merge", "validate" };
             _cr.clean_up();
             auto res = _refresh();
             _save_state();
@@ -425,8 +425,8 @@ namespace daedalus_turbo::sync::local {
                     auto path = std::filesystem::weakly_canonical(_converted_path / fmt::format("batch-{}.dat", batch_hash));
                     // write only if not exists to not change the last_write_time in the file system
                     if (!std::filesystem::exists(path) || std::filesystem::file_size(path) != batch_data.size())
-                        file::write(path, batch_data);
-                    avail_chunks.emplace_back(path, _to_time_t(std::filesystem::last_write_time(path)), batch_data.size());
+                        file::write(path.string(), batch_data);
+                    avail_chunks.emplace_back(path.string(), _to_time_t(std::filesystem::last_write_time(path)), batch_data.size());
                     output_size += batch_data.size();
                 }
             }
@@ -440,8 +440,8 @@ namespace daedalus_turbo::sync::local {
             std::vector<std::string> updated {};
             chunk_registry::file_set deletable {};
             logger::info("analyzing available chunks");
-            auto [immutable_size, avail_chunks] = _find_avail_chunks(_immutable_path, ".chunk");
-            auto [volatile_size_in, avail_volatile] = _find_avail_chunks(_volatile_path, ".dat");
+            auto [immutable_size, avail_chunks] = _find_avail_chunks(_immutable_path.string(), ".chunk");
+            auto [volatile_size_in, avail_volatile] = _find_avail_chunks(_volatile_path.string(), ".dat");
             // move the last immutable chunk to volatile since they need to be parsed together
             if (!avail_chunks.empty() && !avail_volatile.empty()) {
                 auto &last_immutable = avail_chunks.back();

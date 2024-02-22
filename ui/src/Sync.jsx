@@ -8,6 +8,6 @@ export default function Sync({ progress }) {
             <img className="logo-large" src="static/logo.svg" />
         </div>
         <h1>Synchronization progress</h1>
-        <Progress progress={progress} names={[ 'download', 'parse', 'merge' ]} />
+        <Progress progress={progress} names={[ 'download', 'parse', 'merge', 'validate' ]} />
     </div>;
 }

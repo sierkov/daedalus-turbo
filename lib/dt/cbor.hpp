@@ -380,7 +380,7 @@ namespace daedalus_turbo {
             uint8_t type = (hdr >> 5) & 0x7;
             uint8_t augVal = hdr & 0x1F;
             bool indefinite = false;
-            cbor_buffer augBuf;
+            cbor_buffer augBuf {};
 
             switch (augVal) {
                 case 24:

@@ -33,7 +33,7 @@ namespace daedalus_turbo::index::block_fees {
             blk.foreach_tx([&](const auto &tx) {
                 fees += tx.fee();
             });
-            idx.emplace_back(blk.issuer_hash(), fees, blk.offset() + blk.size(), blk.era());
+            idx.emplace_back(blk.issuer_hash(), fees, blk.offset() + blk.size(), static_cast<uint8_t>(blk.era()));
         }
     };
     using indexer = indexer_multi_epoch<item, chunk_indexer>;

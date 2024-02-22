@@ -17,7 +17,7 @@ namespace daedalus_turbo::validator {
     {
         using C::C;
 
-        const C::mapped_type get(const C::key_type &id) const
+        const typename C::mapped_type get(const typename C::key_type &id) const
         {
             auto it = C::find(id);
             if (it != C::end())
@@ -41,7 +41,7 @@ namespace daedalus_turbo::validator {
             return archive(self._total_stake, const_cast<map_with_get<C> &>(dynamic_cast<const map_with_get<C> &>(self)));
         }
 
-        void add(map_with_get<C>::iterator it, C::mapped_type stake)
+        void add(map_with_get<C>::iterator it, typename C::mapped_type stake)
         {
             if (stake > 0) {
                 it->second += stake;
@@ -49,7 +49,7 @@ namespace daedalus_turbo::validator {
             }
         }
 
-        void add(const C::key_type &id, C::mapped_type stake)
+        void add(const typename C::key_type &id, typename C::mapped_type stake)
         {
             if (stake > 0) {
                 auto [it, created] = map_with_get<C>::try_emplace(id, 0);
@@ -57,7 +57,7 @@ namespace daedalus_turbo::validator {
             }
         }
 
-        void sub(const C::key_type &id, C::mapped_type stake, bool remove_zero=true)
+        void sub(const typename C::key_type &id, typename C::mapped_type stake, bool remove_zero=true)
         {
             if (stake > 0) {
                 auto it = map_with_get<C>::find(id);
@@ -91,13 +91,13 @@ namespace daedalus_turbo::validator {
     {
         using distribution<C>::distribution;
 
-        bool create(const C::key_type &id)
+        bool create(const typename C::key_type &id)
         {
             auto [it, created] = distribution<C>::try_emplace(id);
             return created;
         }
 
-        void retire(const C::key_type &id)
+        void retire(const typename C::key_type &id)
         {
             auto it = distribution<C>::find(id);
             if (it == distribution<C>::end())
@@ -106,19 +106,19 @@ namespace daedalus_turbo::validator {
             distribution<C>::erase(it);
         }
 
-        void add(distribution<C>::iterator it, C::mapped_type stake)
+        void add(distribution<C>::iterator it, typename C::mapped_type stake)
         {
             if (it == distribution<C>::end())
                 throw error("request to increase an unregistered id {} by {}", it->first, stake);
             distribution<C>::add(it, stake);
         }
 
-        void add(const C::key_type &id, C::mapped_type stake)
+        void add(const typename C::key_type &id, typename C::mapped_type stake)
         {
             add(distribution<C>::find(id), stake);
         }
 
-        void sub(const C::key_type &id, C::mapped_type stake)
+        void sub(const typename C::key_type &id, typename C::mapped_type stake)
         {
             distribution<C>::sub(id, stake, false);
         }

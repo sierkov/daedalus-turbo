@@ -110,7 +110,7 @@ namespace daedalus_turbo {
 
         chunk_registry(scheduler &sched, const std::string &data_dir)
             : _sched { sched }, _data_dir { data_dir },
-                _db_dir { init_db_dir(_data_dir / "compressed") },
+                _db_dir { init_db_dir((_data_dir / "compressed").string()) },
                 _state_path { (_db_dir / "state.json").string() }
         {
         }

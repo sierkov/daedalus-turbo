@@ -167,7 +167,7 @@ namespace daedalus_turbo {
             auto [ ref_count, ref_item ] = ref_idx.find(search_item);
             for (size_t i = 0; i < ref_count; i++) {
                 auto it = transactions.emplace_hint(transactions.end(), (uint64_t)ref_item.offset, transaction { .size=ref_item.size });
-                it->second.outputs.emplace_back(0, ref_item.out_idx);
+                it->second.outputs.emplace_back(0, static_cast<uint16_t>(ref_item.out_idx));
                 if (i < ref_count - 1)
                     ref_idx.read(ref_item);
             }
@@ -349,14 +349,14 @@ namespace daedalus_turbo {
         };
 
         reconstructor(scheduler &sched, chunk_registry &cr)
-            : _sched { sched }, _cr { cr }, _idx_dir { indexer::incremental::storage_dir(_cr.data_dir()) },
-                _stake_ref_idx { indexer::multi_reader_paths(_idx_dir, "stake-ref") },
-                _pay_ref_idx { indexer::multi_reader_paths(_idx_dir, "pay-ref") },
-                _tx_idx { indexer::multi_reader_paths(_idx_dir, "tx") },
-                _txo_use_idx { indexer::multi_reader_paths(_idx_dir, "txo-use") },
+            : _sched { sched }, _cr { cr }, _idx_dir { indexer::incremental::storage_dir(_cr.data_dir().string()) },
+                _stake_ref_idx { indexer::multi_reader_paths(_idx_dir.string(), "stake-ref") },
+                _pay_ref_idx { indexer::multi_reader_paths(_idx_dir.string(), "pay-ref") },
+                _tx_idx { indexer::multi_reader_paths(_idx_dir.string(), "tx") },
+                _txo_use_idx { indexer::multi_reader_paths(_idx_dir.string(), "txo-use") },
                 _block_index {}
         {
-            index::reader_multi<index::block_meta::item> block_meta_idx { indexer::multi_reader_paths(_idx_dir, "block-meta") };
+            index::reader_multi<index::block_meta::item> block_meta_idx { indexer::multi_reader_paths(_idx_dir.string(), "block-meta") };
             _block_index.reserve(block_meta_idx.size());
             index::block_meta::item item {};
             while (block_meta_idx.read(item)) {

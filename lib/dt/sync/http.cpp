@@ -19,7 +19,7 @@ namespace daedalus_turbo::sync::http {
     void syncer::sync(std::optional<uint64_t> max_epoch)
     {
         timer t { "http synchronization" };
-        progress_guard pg { "download", "parse", "merge", "leaders" };
+        progress_guard pg { "download", "parse", "merge", "validate" };
         _cr.clean_up();
         auto [task, epoch_groups, remote_size] = _find_sync_start_position();
         if (max_epoch) {
@@ -285,7 +285,7 @@ namespace daedalus_turbo::sync::http {
                         _dlq.download(epoch_url, save_path, epoch_id, [this, epoch_id, save_path](auto &&res) {
                             if (res) {
                                 auto buf = file::read(save_path);
-                                std::scoped_lock { _epoch_json_cache_mutex };
+                                std::scoped_lock lk { _epoch_json_cache_mutex };
                                 _epoch_json_cache[epoch_id] = buf.span().string_view();
                             }
                         });
@@ -302,6 +302,10 @@ namespace daedalus_turbo::sync::http {
             for (const auto &j_chunk: epoch.at("chunks").as_array()) {
                 auto chunk = chunk_registry::chunk_info::from_json(j_chunk.as_object());
                 auto chunk_size = chunk.data_size;
+                // Ignore chunks that could have been added after the sync has begun.
+                // They will be synced in the next cycle.
+                if (_cr.target_offset() && chunk_start_offset + chunk_size > *_cr.target_offset())
+                    break;
                 const auto chunk_it = _cr.find(chunk.data_hash);
                 if (chunk_it == _cr.chunks().end()) {
                     chunk.offset = chunk_start_offset;

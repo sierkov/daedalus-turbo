@@ -24,7 +24,7 @@ namespace daedalus_turbo::cli::validate {
         const auto &data_dir = args.at(0);
         requirements::check(data_dir);
         ed25519::init();        
-        progress_guard pg { "parse", "merge", "leaders" };
+        progress_guard pg { "parse", "merge", "validate" };
         uint64_t end_offset = 0;
         chunk_list chunks {};
         scheduler sched {};

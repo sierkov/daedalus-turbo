@@ -5,15 +5,16 @@
 #ifndef DAEDALUS_TURBO_HTTP_DOWNLOAD_QUEUE_NG_HPP
 #define DAEDALUS_TURBO_HTTP_DOWNLOAD_QUEUE_NG_HPP
 
-#include <cstdlib>
 #include <functional>
-#include <iostream>
 #include <memory>
 #include <optional>
 #include <string>
 #ifdef __clang__
 #   pragma GCC diagnostic push
 #   pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+#ifdef _MSC_VER
+#   include <SDKDDKVer.h>
 #endif
 #define BOOST_ASIO_HAS_STD_INVOKE_RESULT 1
 #ifndef BOOST_ALLOW_DEPRECATED_HEADERS
@@ -24,7 +25,7 @@
 #include <boost/asio/ip/tcp.hpp>
 #ifdef DT_CLEAR_BOOST_DEPRECATED_HEADERS
 #   undef BOOST_ALLOW_DEPRECATED_HEADERS
-#   undef DT_CLEAR_BOOST_DEPRECATED_HEADERS
+#undef DT_CLEAR_BOOST_DEPRECATED_HEADERS
 #endif
 #ifdef __clang__
 #   pragma GCC diagnostic pop

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { bech32 } from 'bech32';
 import Button from '@mui/material/Button';
 import NavBar from './NavBar.jsx';
@@ -45,8 +45,8 @@ function toHex(bytes) {
 export default function Bech32 () {
     const params = useParams();
     const navigate = useNavigate();
-    const navigateStake = (bytes) => useEffect(() => navigate('/stake/' + toHex(bytes)));
-    const navigatePay = (bytes) => useEffect(() => navigate('/pay/' + toHex(bytes)));
+    const stakeUrl = (bytes) => '/stake/' + toHex(bytes);
+    const payUrl = (bytes) => '/pay/' + toHex(bytes);
     const bech32Data = params.bech32;
     let error, bytes, hasPay, hasStake;
     try {
@@ -82,12 +82,10 @@ export default function Bech32 () {
         </div>
     }
     if (hasPay && !hasStake) {
-        navigatePay(bytes);
-        return <Transition />;
+        return <Navigate to={payUrl(bytes)} replace={true} />;
     }
     if (hasStake && !hasPay) {
-        navigateStake(bytes);
-        return <Transition />;
+        return <Navigate to={stakeUrl(bytes)} replace={true} />;
     }
     return <div className="content">
         <NavBar />
@@ -96,9 +94,11 @@ export default function Bech32 () {
         <p>Which one you'd like to explore:</p>
         <div className="buttons">
             <Button className="choice-button"
-                    variant="contained" color="primary" size="large" onClick={() => navigatePay(bytes)}>Explore the payment key</Button>
+                    variant="contained" color="primary" size="large"
+                    onClick={() => navigate(payUrl(bytes))}>Explore the payment key</Button>
             <Button className="choice-button"
-                    variant="contained" color="primary" size="large" onClick={() => navigateStake(bytes)}>Explore the stake key</Button>
+                    variant="contained" color="primary" size="large"
+                    onClick={() => navigate(stakeUrl(bytes))}>Explore the stake key</Button>
         </div>
     </div>;
 }

@@ -39,7 +39,11 @@ namespace daedalus_turbo {
     }
 
     template<typename T, size_t SZ>
-    struct __attribute__((packed)) array: public std::array<T, SZ> {
+    struct
+#   ifndef _MSC_VER
+        __attribute__((packed))
+#   endif
+        array: std::array<T, SZ> {
         using std::array<T, SZ>::array;
 
         static array<T, SZ> from_hex(const std::string_view &hex)
