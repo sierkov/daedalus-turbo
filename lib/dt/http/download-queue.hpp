@@ -348,9 +348,11 @@ namespace daedalus_turbo::http {
             }
         }
 
-        void _add_request(request &&req)
+        void _add_request(request &&req, bool update_priority=false)
         {
             std::scoped_lock lk { _queue_mutex };
+            if (update_priority && !_queue.empty())
+                req.priority = _queue.top().priority + 1;
             _queue.emplace(std::move(req));
             _queue_size = _queue.size();
         }
@@ -380,8 +382,7 @@ namespace daedalus_turbo::http {
                     req.errors.emplace_back(*res.error);
                     if (req.errors.size() < 10) {
                         logger::debug("retrying after a recoverable download issue with {}: {} num_errors: {}", req.url, *res.error, req.errors.size());
-                        req.priority = (req.priority + 1) * 2;
-                        _add_request(std::move(req));
+                        _add_request(std::move(req), true);
                         return;
                     }
                 }
