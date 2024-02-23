@@ -9,34 +9,34 @@
 
 # About
 Daedalus Turbo is an open-source project that aims to improve drastically (>=10x) the blockchain synchronization performance of the Daedalus wallet, the primary fully decentralized wallet of the Cardano blockchain. The project has a two-year schedule presented in its [roadmap](#roadmap), and its technical approach is based on two key ideas: reducing the necessary network bandwidth through the use of compression and maximizing the use of parallel computation during the processing of blockchain data. These ideas are further explained in the following research reports:
-1. [Highly Parallel Reconstruction of Wallet History in the Cardano Blockchain](./doc/2023_Sierkov_WalletHistoryReconstruction.pdf);
-2. [Scalability of Bulk Synchronization in the Cardano Blockchain](./doc/2023_Sierkov_CardanoBulkSynchronization.pdf);
-3. [Parallelized Ouroboros Praos](./doc/2024-sierkov-parallelized-ouroboros-praos.pdf).
+1. [Highly Parallel Reconstruction of Wallet History in the Cardano Blockchain](./doc/2023_Sierkov_WalletHistoryReconstruction.pdf)
+2. [Scalability of Bulk Synchronization in the Cardano Blockchain](./doc/2023_Sierkov_CardanoBulkSynchronization.pdf)
+3. [Parallelized Ouroboros Praos](./doc/2024-sierkov-parallelized-ouroboros-praos.pdf)
 
 # Features
 Currently supported:
-- Incremental synchronization and indexing of compressed blockchain data over the Internet;
-- Incremental synchronization and indexing from a local Cardano Node instance;
-- Parallelized Ouroboros Praos data validation.
-- Reconstruction of balances and transaction histories of stake addresses;
-- Reconstruction of balances and transaction histories of payment addresses;
-- Direct history reconstruction from compressed blockchain data;
-- Quick search for transaction data;
-- ADA and non-ADA assets;
-- Blockchain Explorer Desktop User Interface;
+- Incremental synchronization and indexing of compressed blockchain data over the Internet
+- Incremental synchronization and indexing from a local Cardano Node instance
+- Parallelized Ouroboros Praos data validation
+- Reconstruction of balances and transaction histories of stake addresses
+- Reconstruction of balances and transaction histories of payment addresses
+- Direct history reconstruction from compressed blockchain data
+- Quick search for transaction data
+- ADA and non-ADA assets
+- Blockchain Explorer Desktop User Interface
 
 Currently not supported:
-- Validation of Plutus and other scripts.
+- Validation of Plutus and other scripts
 
 As the project matures and moves through its [roadmap](#roadmap), the list of supported features will grow.
 
 # Requirements
-- 8+-core CPU;
-- 16+GB of RAM. The precise amount depends on the number of simultaneous execution threads your CPU can handle. The higher the number, the more RAM is needed;
-- a fast SSD with ~70GB of free space;
-  - ~50GB for the compressed blockchain data and search indices;
-  - ~20GB for temporary use during indexing;
-- a fast Internet connection (250 Mbps or better).
+- 8+-core CPU
+- 16+GB of RAM (The more cores a CPU has, the more RAM is needed)
+- a fast SSD with ~70GB of free space:
+  - ~50GB for the compressed blockchain data and search indices
+  - ~20GB for temporary use during indexing
+- a fast Internet connection (250 Mbps or better)
 
 # Test it yourself
 
