@@ -37,7 +37,7 @@ mkdir /data
 mount /dev/md1 /data
 ```
 
-Install the necessary packages:
+Install the docker-compose package:
 ```
 apt update
 apt install -y docker-compose
@@ -52,12 +52,18 @@ Install the additional necessary packages:
 apt install -y nodejs
 ```
 
-Download the source code and build the docker image:
+Download the source code and build the test docker image:
 ```
 git clone https://github.com/sierkov/daedalus-turbo dt
 cd dt
 git checkout parallelized-ouroboros-praos
 docker build -t dt -f Dockerfile.test .
+```
+
+To run an individual experiment, such as [parallelized-praos](./parallelized-praos), do:
+```
+cd experiment/parallelized-praos
+bash run.sh
 ```
 
 ## From "Highly-parallel wallet-history reconstruction in the Cardano blockchain" paper:
