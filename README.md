@@ -66,6 +66,8 @@ Start the test container, with `<cardano-dir>` being the host's directory to sto
 docker run -it --rm -v <cardano-dir>:/data/cardano dt
 ```
 
+All the following commands are to be run within the container started by the previous command.
+
 Download, validate, and prepare for querying a copy of the Cardano blockchain from a demo compressing server, [turbo1.daedalusturbo.org](http://turbo1.daedalusturbo.org/):
 ```
 ./dt sync-http /data/cardano
