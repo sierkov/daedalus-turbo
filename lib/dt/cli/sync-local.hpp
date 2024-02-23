@@ -16,7 +16,7 @@ namespace daedalus_turbo::cli::sync_local {
         {
             static const command_info i {
                 "sync-local", "<node-dir> <data-dir>",
-                "synchronize from a local Cardano Node in <node-dir> into <data-dir>"
+                "synchronize the blockchain from a local Cardano Node in <node-dir> into <data-dir>"
             };
             return i;
         }

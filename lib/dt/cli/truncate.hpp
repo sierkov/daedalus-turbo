@@ -12,7 +12,7 @@ namespace daedalus_turbo::cli::truncate {
     struct cmd: public command {
         const command_info &info() const override
         {
-            static const command_info i { "truncate", "<data-dir> <max-epoch>", "truncate the blockchain to the last block of the epoch <max-epoch>" };
+            static const command_info i { "truncate", "<data-dir> <max-epoch>", "truncate the blockchain to the latest possible point before the end of epoch <max-epoch>" };
             return i;
         }
 

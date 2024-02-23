@@ -16,7 +16,7 @@ namespace daedalus_turbo::cli::sync_http {
         {
             static const command_info i {
                 "sync-http", "<data-dir> [--host=<host>] [--max-epoch=<epoch>]",
-                "synchronize blockchain over Turbo protocol from <host> into <data-dir>"
+                "synchronize the blockchain from a Turbo server <host> into <data-dir>"
             };
             return i;
         }

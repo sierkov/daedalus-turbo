@@ -12,7 +12,7 @@ namespace daedalus_turbo::cli::validate {
     {
         static const command_info i {
             "revalidate", "<data-dir>",
-            "revalidate chain in <data-dir> from byte 0"
+            "revalidate the blockchain in <data-dir> from scratch"
         };
         return i;
     }
