@@ -16,7 +16,7 @@
 #include <dt/json.hpp>
 
 namespace daedalus_turbo::indexer::merger {
-    static constexpr uint64_t part_size = static_cast<uint64_t>(1) << 34;
+    static constexpr uint64_t part_size = static_cast<uint64_t>(1) << 33;
 
     struct slice {
         using serialize = zpp::bits::members<3>;
