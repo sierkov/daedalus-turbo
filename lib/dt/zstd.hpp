@@ -12,8 +12,12 @@ extern "C" {
 #include "util.hpp"
 
 namespace daedalus_turbo::zstd {
+    static constexpr size_t max_zstd_buffer = static_cast<size_t>(1) << 28;
+
     inline void compress(uint8_vector &compressed, const buffer &orig, int level=22)
     {
+        if (orig.size() > max_zstd_buffer)
+            throw error("data size {} is greater than the maximum allowed: {}!", orig.size(), max_zstd_buffer);
         compressed.resize(ZSTD_compressBound(orig.size()) + sizeof(uint64_t));
         uint64_t *orig_data_size = reinterpret_cast<uint64_t *>(compressed.data());
         *orig_data_size = orig.size();
@@ -58,6 +62,8 @@ namespace daedalus_turbo::zstd {
     inline void decompress(T &out, const buffer &compressed)
     {
         const uint64_t orig_data_size = decompressed_size(compressed);
+        if (orig_data_size > max_zstd_buffer)
+            throw error("recorded original data size {} is greater than the maximum allowed: {}!", orig_data_size, max_zstd_buffer);
         const uint8_t *compressed_data = compressed.data() + sizeof(uint64_t);
         _check_size(out, orig_data_size);
         const size_t decompressed_size = ZSTD_decompress(reinterpret_cast<void *>(out.data()), out.size(), reinterpret_cast<const void *>(compressed_data), compressed.size() - sizeof(uint64_t));
