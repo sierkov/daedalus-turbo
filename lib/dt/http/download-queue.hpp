@@ -263,21 +263,20 @@ namespace daedalus_turbo::http {
                     return;
                 }
                 auto &res = _http_parser->get();
-                std::string body = boost::beast::buffers_to_string(res.body().data());
-                file::write(_req.save_path, body);
-                //res.body().close();
-                size_t body_size = 0;
-                if (_http_parser->content_length())
-                    body_size = *_http_parser->content_length();
-                else 
-                    body_size = std::filesystem::file_size(_req.save_path);
-                auto http_status = _http_parser->get().result_int();
+                auto http_status = res.result_int();
                 if (!_http_parser->keep_alive()) {
                     logger::debug("{}: remote turns down keep-alive, closing the connection", _req.url);
                     _stream->close();
                     _stream.reset();
                 }
                 if (http_status == 200) {
+                    std::string body = boost::beast::buffers_to_string(res.body().data());
+                    file::write(_req.save_path, body);
+                    size_t body_size = 0;
+                    if (_http_parser->content_length())
+                        body_size = *_http_parser->content_length();
+                    else 
+                        body_size = std::filesystem::file_size(_req.save_path);
                     _dlq._report_result(std::move(_req), result { std::move(_req.url), std::move(_req.save_path), {}, body_size });
                 } else {
                     _dlq._report_result(std::move(_req), result { std::move(_req.url), std::move(_req.save_path), fmt::format("bad http status: {}", http_status) });
