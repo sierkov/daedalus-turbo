@@ -73,7 +73,7 @@ Download, validate, and prepare for querying a copy of the Cardano blockchain fr
 ./dt sync-http /data/cardano
 ```
 
-(Optional) To revalidate already downloaded data (for benchmark purposes, etc.):
+(Optional) Revalidate the data downloaded by sync-http for benchmark purposes:
 ```
 ./dt revalidate /data/cardano
 ```
