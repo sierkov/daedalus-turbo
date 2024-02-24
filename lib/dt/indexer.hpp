@@ -295,10 +295,14 @@ namespace daedalus_turbo::indexer {
             _merge_slice(output_slice, input_slices, 100, [this, epoch, output_slice] {
                 std::unique_lock lk { _epoch_slices_mutex };
                 _epoch_slices.emplace(epoch, std::move(output_slice));
-                auto new_epoch_merged = atomic_add(_epoch_merged, output_slice.size);
-                if (_target_offset) {
-                    progress::get().update("merge", new_epoch_merged + _final_merged, (*_target_offset - _merge_start_offset) * 2);
+                if (output_slice.end_offset() > _merge_start_offset) {
+                    auto newly_merged = output_slice.offset >= _merge_start_offset ? output_slice.size : output_slice.end_offset() - _merge_start_offset;
+                    auto new_epoch_merged = atomic_add(_epoch_merged, newly_merged);
+                    if (_target_offset) {
+                        progress::get().update("merge", new_epoch_merged + _final_merged, (*_target_offset - _merge_start_offset) * 2);
+                    }
                 }
+                
                 _schedule_final_merge(std::move(lk));
             });
         }
@@ -369,7 +373,7 @@ namespace daedalus_turbo::indexer {
                     {
                         std::scoped_lock lk { _slices_mutex };
                         _slices.add(std::move(output_slice));
-                        _final_merged = _slices.continuous_size();
+                        _final_merged = _slices.continuous_size() - _merge_start_offset;
                     }
                     if (_target_offset) {
                         progress::get().update("merge", _epoch_merged + _final_merged, (*_target_offset - _merge_start_offset) * 2);
