@@ -4,10 +4,11 @@ const fetch = require('node-fetch');
 const { spawn } = require('child_process');
 
 console.log('Initializing DT UI cwd:', process.cwd(), 'execPath:', process.execPath);
-const execFilename = path.basename(process.execPath);
+const execFilename = path.basename(process.execPath, '.exe').toLowerCase();
 const api = {
+  execFilename,
   cmd: path.resolve(path.dirname(process.execPath), 'dt'),
-  dev: execFilename === "Electron" || execFilename === "electron.exe",
+  dev: execFilename === "electron",
   dataDir: path.resolve(path.dirname(process.execPath), '../data'),
   logPath: path.resolve(path.dirname(process.execPath), '../log/dt-api.log'),
   ip: '127.0.0.1',
