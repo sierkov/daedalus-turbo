@@ -70,12 +70,11 @@ app.whenReady().then(() => {
   });
 });
 app.on('window-all-closed', () => {
-  console.log('The app window is closed, killing the API server');
-  //if (process.platform !== 'darwin') {
-  if (apiServer)
+  if (apiServer) {
+    console.log('The app window is closed, killing the API server');
     apiServer.kill('SIGKILL');
+  }
   app.quit();
-  //}
 });
 
 function setupIdRequest(name, baseURI, reqURI) {
