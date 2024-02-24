@@ -551,20 +551,21 @@ namespace daedalus_turbo {
         void _notify_of_updates(bool force=false)
         {
             while (_end_offset > _notify_end_offset && (_chunks.rbegin()->second.epoch() > _notify_next_epoch || force)) {
-                auto &info = _epochs[_notify_next_epoch];
+                auto notify_epoch = _chunks.rbegin()->second.epoch() > _notify_next_epoch ? _notify_next_epoch : _chunks.rbegin()->second.epoch();
+                auto &info = _epochs.at(notify_epoch);
                 if (info.chunk_ids.empty())
-                    throw error("epoch {} does not have any chunks!", _notify_next_epoch);
+                    throw error("epoch {} does not have any chunks!", notify_epoch);
                 if (force) {
                     epoch_info info_part {};
                     for (const auto &chunk: info.chunk_ids) {
                         if (chunk->offset >= _notify_end_offset)
                             _add_chunk_to_epoch(info_part, *chunk);
                     }
-                    _on_epoch_merge(_notify_next_epoch, info_part);
+                    _on_epoch_merge(notify_epoch, info_part);
                 } else {
-                    _on_epoch_merge(_notify_next_epoch, info);
+                    _on_epoch_merge(notify_epoch, info);
                 }
-                ++_notify_next_epoch;
+                _notify_next_epoch = notify_epoch + 1;
                 _notify_end_offset = info.end_offset;
             }
         }
