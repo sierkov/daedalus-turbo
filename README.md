@@ -99,7 +99,7 @@ Show information about a transaction:
 To test the desktop user interface, you need the following packages:
 - [Git](https://git-scm.com/) to get a copy of this repository.
 - [Docker](https://www.docker.com/products/docker-desktop/) to launch the software in an isolated environment.
-- [Node.JS](https://nodejs.org/en/download/current) to start the user interface.
+- [Node.JS 20](https://nodejs.org/en/download/current) to start the user interface.
 
 ### Build
 
