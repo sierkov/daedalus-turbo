@@ -10,6 +10,7 @@
 #include <dt/cli/truncate.hpp>
 #include <dt/cli/tx-info.hpp>
 #include <dt/cli/validate.hpp>
+#include <dt/cli/validate-tx-vkeys.hpp>
 
 int main(int argc, char **argv)
 {
@@ -22,6 +23,7 @@ int main(int argc, char **argv)
         std::make_unique<sync_local::cmd>(),
         std::make_unique<truncate::cmd>(),
         std::make_unique<tx_info::cmd>(),
-        std::make_unique<validate::cmd>()
+        std::make_unique<validate::cmd>(),
+        std::make_unique<validate_tx_vkeys::cmd>()
     ));
 }

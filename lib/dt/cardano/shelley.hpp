@@ -356,18 +356,18 @@ namespace daedalus_turbo::cardano::shelley {
                 switch (w_type.uint()) {
                     // vkey witness
                     case 0:
-                    case 2: // bootstrap witness
-                        ++cnt.vkey;
+                        cnt.vkey += w_val.array().size();
                         break;
                     case 1: // native_script
                     case 3: // plutus_v1_script
                     case 6: // plutus_v2_script
                     case 7: // plutus_v3_script
-                        ++cnt.script;
+                        cnt.script += w_val.array().size();;
                         break;
+                    case 2: // bootstrap witness
                     case 4: // plutus_data
                     case 5: // redeemer
-                        ++cnt.other;
+                        cnt.other += w_val.array().size();;
                         break;
                     default:
                         throw cardano_error("unsupported witness type: {}!", w_type.uint());
