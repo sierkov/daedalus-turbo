@@ -192,10 +192,14 @@ namespace daedalus_turbo::sync::local {
             auto file_now = std::chrono::file_clock::now();
             for (auto &entry: std::filesystem::directory_iterator(_converted_path)) {
                 if (entry.is_regular_file()) {
-                    auto entry_sys_time = std::chrono::time_point_cast<std::chrono::system_clock::duration>(entry.last_write_time() - file_now + now);
-                    if (entry_sys_time < too_old) {
-                        deleted.emplace_back(entry.path().string());
-                        std::filesystem::remove(entry.path());
+                    auto path = std::filesystem::weakly_canonical(entry.path()).string();
+                    if (!_source_chunks.contains(path)) {
+                        auto entry_sys_time = std::chrono::time_point_cast<std::chrono::system_clock::duration>(entry.last_write_time() - file_now + now);
+                        if (entry_sys_time < too_old) {
+                            logger::trace("found a converted volatile chunk {} not referenced by source_chunks - deleting it", path);
+                            deleted.emplace_back(path);
+                            std::filesystem::remove(path);
+                        }
                     }
                 }
             }
@@ -289,7 +293,7 @@ namespace daedalus_turbo::sync::local {
                                 if (chunk.size() != update.data_size)
                                     throw error("file changed: {} new size: {} recorded size: {}!", update.path, chunk.size(), update.data_size);
                                 source_chunk_info source_info {
-                                    std::filesystem::relative(std::filesystem::canonical(update.path), _node_path).string(),
+                                    std::filesystem::path { update.path }.filename().string(),
                                     update.update_time, update.offset, update.data_size
                                 };
                                 blake2b(source_info.data_hash, chunk);
@@ -382,7 +386,7 @@ namespace daedalus_turbo::sync::local {
                 auto blk = cardano::make_block(*block_tuple_ptr, immutable_size + block_tuple_ptr->data - raw_data.data());
                 if (!first_block)
                     first_block = blk.get();
-                // volatile chunks can have data older than located in immutable ones, so need to ignore it
+                // volatile chunks can have data older than the data in the immutable ones, can simply skip those
                 if (blk->slot() >= first_block->slot()) {
                     blocks.try_emplace(blk->hash(), std::move(blk));
                     cbor.emplace_back(std::move(block_tuple_ptr));
@@ -456,7 +460,7 @@ namespace daedalus_turbo::sync::local {
                 auto volatile_size = _convert_volatile(avail_chunks, immutable_size, avail_volatile, volatile_size_in);
                 source_end_offset += volatile_size;
             }
-            // when the source has a shorter chain must truncate
+            // when the source has a shorter chain, must truncate the local one
             if (source_end_offset != _cr.num_bytes()) {
                 for (auto &&del_path: _cr.truncate(source_end_offset, false))
                     deletable.emplace(std::move(del_path));

@@ -25,6 +25,7 @@ namespace daedalus_turbo {
         try {        
             auto res = _syncer.sync();
             _write_meta();
+            _remove_old_meta();
             logger::info("errors: {} updated: {} deleted: {} dist: {}, size: {} max_slot: {} cycle time: {}",
                 res.errors.size(), res.updated.size(), res.deleted.size(), _cr.chunks().size(),
                 _cr.num_bytes(), _cr.max_slot(), tc.stop(false));
@@ -116,8 +117,6 @@ namespace daedalus_turbo {
         uint64_t total_size = 0;
         uint64_t total_compressed_size = 0;
         for (const auto &[last_offset, dist_info]: _cr.chunks()) {
-            //if (dist_info.last_slot.epoch() != dist_info.first_slot.epoch())
-            //    throw error("chunk {} contains data from multiple epochs!", dist_info.data_hash.span());
             uint64_t epoch = dist_info.first_slot.epoch();
             auto &epoch_data = epochs[epoch];
             epoch_data.num_blocks += dist_info.num_blocks;
@@ -159,12 +158,15 @@ namespace daedalus_turbo {
                 { "lastBlockHash", fmt::format("{}", epoch_data.last_block_hash.span()) },
                 { "chunks", std::move(chunks) }
             };
+            // temporary keep both the old and the name formats
             file::write((_cr.data_dir() / fmt::format("epoch-{}.json", epoch)).string(), json::serialize(epoch_meta));
+            file::write((_cr.data_dir() / fmt::format("epoch-{}-{}.json", epoch, epoch_data.last_block_hash)).string(), json::serialize(epoch_meta));
             if (group_epochs.empty())
                 group_prev_block_hash = epoch_data.prev_block_hash;
             group_epochs.emplace_back(json::object {
                 { "id", epoch },
-                { "size", epoch_data.data_size }
+                { "size", epoch_data.data_size },
+                { "lastBlockHash", fmt::format("{}", epoch_data.last_block_hash) }
             });
             group_size += epoch_data.data_size;
             group_compressed_size += epoch_data.compressed_size;
@@ -192,5 +194,23 @@ namespace daedalus_turbo {
         group_s << "]\n";
         file::write((_cr.data_dir() / "chain.json").string(), group_s.str());
         _write_index_html(total_size, total_compressed_size);
+    }
+
+    void publisher::_remove_old_meta() const
+    {
+        static const std::chrono::seconds delete_delay { 3600 };
+        auto now = std::chrono::system_clock::now();
+        auto too_old = now - delete_delay;
+        auto file_now = std::chrono::file_clock::now();
+        for (auto &entry: std::filesystem::directory_iterator(_cr.data_dir())) {
+            auto filename = entry.path().filename().string();
+            // consider only the new epoch-<epoch-id>-<last-block-hash>
+            if (entry.is_regular_file() && filename.starts_with("epoch-") && filename.ends_with(".json") && filename.size() >= 45) {
+                auto entry_sys_time = std::chrono::time_point_cast<std::chrono::system_clock::duration>(entry.last_write_time() - file_now + now);
+                if (entry_sys_time < too_old) {
+                    logger::trace("found a converted volatile chunk {} not referenced by source_chunks - deleting it", entry.path().string());
+                }
+            }
+        }
     }
 }

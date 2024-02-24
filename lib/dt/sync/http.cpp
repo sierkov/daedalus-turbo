@@ -116,8 +116,14 @@ namespace daedalus_turbo::sync::http {
         sync_task task_data {};
         auto last_synced_epoch_it = _cr.epochs().end();
         uint64_t remote_chain_size = 0;
-        for (const auto &group: epoch_groups)
+        std::map<uint64_t, std::string> epoch_last_block_hash {};
+        for (const auto &group: epoch_groups) {
             remote_chain_size += json::value_to<uint64_t>(group.at("size"));
+            for (const auto &epoch: group.at("epochs").as_array()) {
+                auto epoch_id = json::value_to<uint64_t>(epoch.at("id"));
+                epoch_last_block_hash[epoch_id] = static_cast<std::string>(epoch.at("lastBlockHash").as_string());
+            }
+        }
         // find first differing epoch group
         for (const auto &group: epoch_groups) {
             const auto &epochs = group.at("epochs").as_array();
@@ -144,7 +150,7 @@ namespace daedalus_turbo::sync::http {
                 uint64_t epoch = it->first;
                 dm_progress.total++;
                 auto save_path = _cr.full_path(fmt::format("remote/epoch-{}.json", epoch));
-                _dlq.download(fmt::format("http://{}/epoch-{}.json", _host, epoch), save_path, epoch, [this, &dm_progress, &progress, epoch, save_path](auto &&res) {
+                _dlq.download(fmt::format("http://{}/epoch-{}-{}.json", _host, epoch, epoch_last_block_hash.at(epoch)), save_path, epoch, [this, &dm_progress, &progress, epoch, save_path](auto &&res) {
                     if (res) {
                         auto buf = file::read(save_path);
                         {
@@ -284,10 +290,11 @@ namespace daedalus_turbo::sync::http {
             for (const auto &epoch: group.at("epochs").as_array()) {
                 auto epoch_id = json::value_to<uint64_t>(epoch.at("id"));
                 auto epoch_size = json::value_to<uint64_t>(epoch.at("size"));
+                auto epoch_last_block_hash = static_cast<std::string>(epoch.at("lastBlockHash").as_string());
                 if (epoch_id >= first_synced_epoch) {
                     epoch_offsets[epoch_id] = start_offset;
                     if (!_epoch_json_cache.contains(epoch_id)) {
-                        auto epoch_url = fmt::format("http://{}/epoch-{}.json", _host, epoch_id);
+                        auto epoch_url = fmt::format("http://{}/epoch-{}-{}.json", _host, epoch_id, epoch_last_block_hash);
                         auto save_path = _cr.full_path(fmt::format("remote/epoch-{}.json", epoch_id));
                         _dlq.download(epoch_url, save_path, epoch_id, [this, epoch_id, save_path](auto &&res) {
                             if (res) {

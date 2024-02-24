@@ -19,6 +19,7 @@ namespace daedalus_turbo {
 
         void _write_index_html(uint64_t total_size, uint64_t total_compressed_size) const;
         void _write_meta() const;
+        void _remove_old_meta() const;
     };
 }
 
