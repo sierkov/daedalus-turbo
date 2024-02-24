@@ -26,7 +26,9 @@ namespace daedalus_turbo::cli::validate_tx_vkeys {
             chunk_registry cr { sched, data_dir };
             cr.init_state();
             info_map all_infos {};
+            size_t num_parsed = 0;
             sched.on_result("parse-chunk", [&](const std::any &res) {
+                ++num_parsed;
                 if (res.type() == typeid(scheduled_task_error))
                     return;
                 const auto &chunk_infos = std::any_cast<info_map>(res);
@@ -34,6 +36,7 @@ namespace daedalus_turbo::cli::validate_tx_vkeys {
                     auto &era_info = all_infos[era];
                     era_info += info;
                 }
+                progress::get().update("parse", num_parsed, cr.num_chunks());
             });
             for (const auto &[last_byte_offset, info]: cr.chunks()) {
                 auto chunk_path = cr.full_path(info.rel_path());
@@ -59,7 +62,7 @@ namespace daedalus_turbo::cli::validate_tx_vkeys {
                     return infos;
                 });
             }
-            sched.process();
+            sched.process(true);
             item_info total {};
             for (const auto &[era, info]: all_infos) {
                 std::cout << fmt::format("era: {} {}\n", era, info.to_string());
