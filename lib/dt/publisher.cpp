@@ -208,7 +208,7 @@ namespace daedalus_turbo {
             if (entry.is_regular_file() && filename.starts_with("epoch-") && filename.ends_with(".json") && filename.size() >= 45) {
                 auto entry_sys_time = std::chrono::time_point_cast<std::chrono::system_clock::duration>(entry.last_write_time() - file_now + now);
                 if (entry_sys_time < too_old) {
-                    logger::trace("found a converted volatile chunk {} not referenced by source_chunks - deleting it", entry.path().string());
+                    logger::trace("found an obsolete metadata file {} - deleting it", entry.path().string());
                 }
             }
         }
