@@ -8,7 +8,7 @@
 
 using namespace daedalus_turbo;
 
-suite base64url_suite = [] {
+suite base64_suite = [] {
     "base64"_test = [] {
         "decode_url"_test = [] {
             static std::vector<std::pair<std::string_view, uint8_vector>> test_vectors {
