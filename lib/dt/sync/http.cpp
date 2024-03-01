@@ -257,7 +257,7 @@ namespace daedalus_turbo::sync::http {
             timer t { "download all chunks and parse immutable ones" };
             // compute totals before starting the execution to ensure correct progress percentages            
             for (const auto &chunk: download_tasks) {
-                auto data_url = fmt::format("http://{}/{}", _host, chunk.rel_path());
+                auto data_url = fmt::format("http://{}/compressed/{}", _host, chunk.rel_path());
                 auto save_path = _cr.full_path(chunk.rel_path());
                 if (!std::filesystem::exists(save_path)) {
                     _dlq.download(data_url, save_path, chunk.offset, [chunk, saved_proc, save_path](download_queue::result &&res) {

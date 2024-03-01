@@ -29,7 +29,7 @@ namespace daedalus_turbo::sync::local {
                 _strict { strict }
         {
             std::filesystem::create_directories(_converted_path);
-            logger::debug("syncer zstd (level-immutable: {} level-volatile: {})", _zstd_level_immutable, _zstd_level_volatile);
+            logger::trace("syncer zstd (level-immutable: {} level-volatile: {})", _zstd_level_immutable, _zstd_level_volatile);
             auto deletable_chunks = _cr.init_state(_strict);
             auto delete_time = std::chrono::system_clock::now() + _delete_delay;
             for (auto &&path: deletable_chunks) {
@@ -139,7 +139,6 @@ namespace daedalus_turbo::sync::local {
                 auto j_chunks = json::parse(json.span().string_view()).as_array();
                 for (const auto &j_chunk: j_chunks) {
                     auto chunk = source_chunk_info::from_json(j_chunk.as_object());
-                    logger::trace("import chunk_info path: {} data_size: {} update_time: {}", chunk.rel_path, chunk.data_size, chunk.update_time);
                     auto full_path = std::filesystem::weakly_canonical(_node_path / chunk.rel_path).string();
                     if (!std::filesystem::exists(full_path)) {
                         logger::warn("{} is recorded in the state but missing - ignoring it and all the following chunks", full_path);
@@ -369,7 +368,6 @@ namespace daedalus_turbo::sync::local {
             raw_data.resize(volatile_size_in);
             size_t offset = 0;
             for (const auto &info: volatile_chunks) {
-                logger::trace("analyzing volatile chunk {} of size {}", info.path, info.data_size);
                 file::read_span<uint8_t>(std::span { raw_data.data() + offset, info.data_size }, info.path, info.data_size);
                 offset += info.data_size;
             }
@@ -411,6 +409,7 @@ namespace daedalus_turbo::sync::local {
                         longest_chain = seg;
                 }
                 constexpr size_t batch_size = 100;
+                size_t batch_idx = 0;
                 for (size_t base = 0; base < longest_chain.size(); ) {
                     uint8_vector batch_data {};
                     size_t end = std::min(base + batch_size, longest_chain.size());
@@ -425,8 +424,8 @@ namespace daedalus_turbo::sync::local {
                     }
                     base = off;
                     auto batch_hash = blake2b<cardano::block_hash>(batch_data);
-                    logger::trace("volatile batch {} first block slot: {} first block hash: {}", batch_hash, first_block->slot(), first_block->hash());
-                    auto path = std::filesystem::weakly_canonical(_converted_path / fmt::format("batch-{}.dat", batch_hash));
+                    auto path = std::filesystem::weakly_canonical(_converted_path / fmt::format("batch-{:04}-{}.dat", batch_idx, batch_hash));
+                    ++batch_idx;
                     // write only if not exists to not change the last_write_time in the file system
                     if (!std::filesystem::exists(path) || std::filesystem::file_size(path) != batch_data.size())
                         file::write(path.string(), batch_data);
@@ -456,7 +455,6 @@ namespace daedalus_turbo::sync::local {
             }
             uint64_t source_end_offset = immutable_size;
             if (!avail_volatile.empty()) {
-                logger::info("searching for the longest chain among volatile blocks");
                 auto volatile_size = _convert_volatile(avail_chunks, immutable_size, avail_volatile, volatile_size_in);
                 source_end_offset += volatile_size;
             }
