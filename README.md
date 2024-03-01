@@ -53,7 +53,6 @@ Clone this repository and make it your working directory:
 ```
 git clone https://github.com/sierkov/daedalus-turbo.git dt
 cd dt
-git checkout parallelized-ouroboros-praos
 ```
 
 Build the test Docker container:
@@ -107,7 +106,6 @@ Clone this repository and make it your working directory:
 ```
 git clone https://github.com/sierkov/daedalus-turbo.git dt
 cd dt
-git checkout parallelized-ouroboros-praos
 ```
 
 Build the test Docker container:
