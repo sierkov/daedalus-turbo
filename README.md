@@ -6,6 +6,7 @@
 - [Quality](#quality)
 - [Roadmap](#roadmap)
 - [Benchmarks](#benchmarks)
+- [Compilation](#benchmarks)
 
 # About
 Daedalus Turbo is an open-source project that aims to improve drastically (>=10x) the blockchain synchronization performance of the Daedalus wallet, the primary fully decentralized wallet of the Cardano blockchain. The project has a two-year schedule presented in its [roadmap](#roadmap), and its technical approach is based on two key ideas: reducing the necessary network bandwidth through the use of compression and maximizing the use of parallel computation during the processing of blockchain data. These ideas are further explained in the following research reports:
@@ -162,3 +163,33 @@ The development can go both faster and slower than expected.
 
 # Benchmarks
 The [experiment](./experiment/) directory contains the source code of benchmarks and experiments discussed in the research reports.
+
+# Compilation
+The software is in its proof-of-concept stage, and only the build path with Docker described above is regularly tested.
+Nevertheless, compilation in other environments and with other compilers is possible and is tested from time to time.
+The below notes may be helpful if you decide to build the software outside of Docker.
+
+## Necessary software packages
+- [CMake >= 3.22.1](https://cmake.org/), a build system
+- [boost == 1.83](https://www.boost.org/), a collection of C++ libraries
+- [fmt >= 8.1.1](https://github.com/fmtlib/fmt), a string formatting library
+- [libsodium >= 1.0.18](https://github.com/jedisct1/libsodium), a cryptographic library
+- [spdlog >= 1.9.2](https://github.com/gabime/spdlog), a logging library
+- [zstd >= 1.4.8](https://github.com/facebook/zstd), a compression library
+
+## Tested environments and compilers
+- Ubuntu Linux 22.04 with GCC 11.4.0
+- Mac OS Sonoma 14.2.1 with Clang 17.0.6 installed with ```brew install llvm@17```
+- Windows 11 with Visual C++ 19.39.33520.0 that comes with Visual Studio 2022 Community Edition
+- Windows 11 with GCC 13.2.0 that comes with MinGW64
+
+## Build instructions
+Verify the presence of the necessary libraries and generate build files in `cmake-build-release` directory for a release build:
+```
+cmake -B cmake-build-release
+```
+
+Build `dt` binary using all available CPU cores (will be available in `cmake-build-release` directory):
+```
+cmake --build cmake-build-release -j -t dt
+```
