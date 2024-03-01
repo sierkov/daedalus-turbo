@@ -4,12 +4,9 @@
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #include <algorithm>
 #include <cstring>
-#include <string_view>
-#include <boost/ut.hpp>
 #include <dt/array.hpp>
 #include <dt/benchmark.hpp>
 
-using namespace boost::ut;
 using namespace daedalus_turbo;
 
 suite array_bench_suite = [] {

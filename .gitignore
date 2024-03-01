@@ -5,9 +5,7 @@ out
 log
 .vscode
 .idea
-build_debug/
-build_release/
-build/
+build-*
 cmake-build-*
 ui/dt-ui-*
 **/*-arm64

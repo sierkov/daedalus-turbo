@@ -10,10 +10,8 @@
 #endif
 #include <algorithm>
 #include <filesystem>
-#include <iostream>
 #include <mutex>
 #include <string>
-#include <string_view>
 #include <vector>
 #include <dt/atomic.hpp>
 #include <dt/cardano.hpp>
@@ -58,7 +56,7 @@ namespace daedalus_turbo::indexer {
         }
     };
 
-    struct incremental: public chunk_registry {
+    struct incremental: chunk_registry {
         static std::string storage_dir(const std::string &data_dir)
         {
             return chunk_registry::init_db_dir(data_dir + "/index").string();
@@ -126,6 +124,7 @@ namespace daedalus_turbo::indexer {
 
         file_set truncate(size_t max_end_offset, bool del=true) override
         {
+            // merge final not-yet merged epochs
             file_set deletable {};
             timer t { fmt::format("truncate indices to max offset {}", max_end_offset) };
             std::vector<merger::slice> updated {};
@@ -162,9 +161,10 @@ namespace daedalus_turbo::indexer {
             }
             if (!deletable.empty() || !updated.empty())
                 logger::info("truncated indices to the end offset: {}", max_end_offset);
-            _merge_next_offset = _merge_start_offset = max_end_offset;
             for (auto &&path: chunk_registry::truncate(max_end_offset, del))
                 deletable.emplace(std::move(path));
+            _merge_next_offset = _merge_start_offset = _end_offset;
+            _epoch_slices.clear();
             return deletable;
         }
 
@@ -217,6 +217,7 @@ namespace daedalus_turbo::indexer {
             }
             json_s << "]\n";
             file::write(_index_state_path, json_s.str());
+            _epoch_slices.clear();
             _epoch_merged = 0;
             _final_merged = 0;
             _merge_next_offset = _merge_start_offset = _end_offset;
@@ -264,6 +265,7 @@ namespace daedalus_turbo::indexer {
             }
             logger::info("indices have data up to offset {}", end_offset);
             _merge_next_offset = _merge_start_offset = end_offset;
+            _epoch_slices.clear();
             return std::make_pair(std::min(cr_truncate_offset, end_offset), deletable_files);
         }
 

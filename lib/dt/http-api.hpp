@@ -44,7 +44,7 @@
 
 namespace fmt {
     template<>
-    struct formatter<boost::string_view>: public formatter<std::string_view> {
+    struct formatter<boost::string_view>: formatter<std::string_view> {
         template<typename FormatContext>
         auto format(const boost::string_view &sv, FormatContext &ctx) const -> decltype(ctx.out()) {
             return formatter<std::string_view>::format(std::string_view { sv.data(), sv.size() }, ctx);

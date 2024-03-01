@@ -7,6 +7,7 @@
 
 #include <ctime>
 #include <functional>
+#include <map>
 #include <optional>
 #include <ranges>
 #include <set>
@@ -17,10 +18,8 @@
 #include <dt/file.hpp>
 #include <dt/format.hpp>
 #include <dt/json.hpp>
-#include <dt/logger.hpp>
 #include <dt/rational.hpp>
 #include <dt/util.hpp>
-#include <dt/zstd.hpp>
 
 namespace daedalus_turbo {
     struct __attribute__((packed)) stake_ident {
@@ -144,7 +143,7 @@ namespace daedalus_turbo::cardano {
 
     using multi_balance_change = std::map<std::string, int64_t>;
 
-    struct multi_balance: public std::map<std::string, uint64_t> {
+    struct multi_balance: std::map<std::string, uint64_t> {
         using std::map<std::string, uint64_t>::map;
 
         inline json::object to_json(size_t offset=0, size_t max_items=1000) const;
@@ -269,9 +268,6 @@ namespace daedalus_turbo::cardano {
     };
 
     using stake_ident_hybrid = std::variant<stake_ident, stake_pointer>;
-    /*struct stake_ident_hybrid: std::variant<stake_ident, stake_pointer> {
-        using std::variant<stake_ident, stake_pointer>::variant;
-    };*/
 
     struct address {
         buffer bytes;
@@ -345,8 +341,6 @@ namespace daedalus_turbo::cardano {
             p.slot = rel_slot;
             auto sz2 = _read_var_uint_be(p.tx_idx, ptr.subspan(sz1, ptr.size() - sz1));
             _read_var_uint_be(p.cert_idx, ptr.subspan(sz1 + sz2, ptr.size() - sz1 - sz2));
-            //if (slot < rel_slot)
-            //    logger::debug("slot: {} invalid relative slot {} in a pointer address", slot, rel_slot);
             return p;
         };
 
@@ -848,6 +842,11 @@ namespace daedalus_turbo::cardano {
         {
             if (v.data < _block_tuple.data) throw error("internal error: only CBOR values from within the same block are supported!");
             return _offset + (v.data - _block_tuple.data);
+        }
+
+        virtual bool body_hash_ok() const
+        {
+            throw error("cardano::block_base::body_hash is not unsupported");
         }
 
         virtual bool signature_ok() const

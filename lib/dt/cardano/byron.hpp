@@ -48,7 +48,7 @@ namespace daedalus_turbo::cardano::byron {
         const cbor_array &_sig;
     };
 
-    struct boundary_block: public block_base {
+    struct boundary_block: block_base {
         using block_base::block_base;
 
         static cardano::block_hash padded_hash(uint8_t magic, const buffer &data)
@@ -109,7 +109,7 @@ namespace daedalus_turbo::cardano::byron {
 
     struct tx;
 
-    struct block: public boundary_block {
+    struct block: boundary_block {
         using boundary_block::boundary_block;
 
         cardano_hash_32 hash() const override
@@ -241,7 +241,7 @@ namespace daedalus_turbo::cardano::byron {
         }
     };
 
-    struct tx: public cardano::tx {
+    struct tx: cardano::tx {
         using cardano::tx::tx;
 
         void foreach_input(const std::function<void(const tx_input &)> &observer) const override

@@ -2,10 +2,10 @@
  * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
-#include <boost/ut.hpp>
-#include <dt/cardano.hpp>
 
-using namespace boost::ut;
+#include <dt/cardano.hpp>
+#include <dt/test.hpp>
+
 using namespace daedalus_turbo;
 
 suite cardano_common_suite = [] {

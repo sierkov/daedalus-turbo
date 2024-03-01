@@ -11,7 +11,7 @@
 namespace daedalus_turbo::cli::http_api {
     using namespace daedalus_turbo::http_api;
 
-    struct cmd: public command {
+    struct cmd: command {
         const command_info &info() const override
         {
             static const command_info i { "http-api", "<data-dir> [--ip=<ip>] [--port=<port>] [--source=<turbo-host>]", "start the HTTP API server at 127.0.0.1:55556 by default" };

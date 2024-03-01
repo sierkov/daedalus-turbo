@@ -8,12 +8,11 @@
 #include <dt/cardano/common.hpp>
 #include <dt/cardano/mary.hpp>
 #include <dt/cbor.hpp>
-#include <dt/ed25519.hpp>
 
 namespace daedalus_turbo::cardano::alonzo {
     struct tx;
 
-    struct block: public mary::block {
+    struct block: mary::block {
         using mary::block::block;
 
         void foreach_tx(const std::function<void(const cardano::tx &)> &observer) const override;
@@ -25,7 +24,7 @@ namespace daedalus_turbo::cardano::alonzo {
         }
     };
 
-    struct tx: public mary::tx {
+    struct tx: mary::tx {
         using mary::tx::tx;
 
         void foreach_output(const std::function<void(const tx_output &)> &observer) const override

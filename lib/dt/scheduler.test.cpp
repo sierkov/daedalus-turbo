@@ -2,22 +2,22 @@
  * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
+
 #include <iostream>
 #include <vector>
 #include <sstream>
 #include <string>
-#include <boost/ut.hpp>
 #include <dt/scheduler.hpp>
+#include <dt/test.hpp>
 #include <dt/util.hpp>
 
 using namespace std::literals;
-using namespace boost::ut;
 using namespace daedalus_turbo;
 
 suite scheduler_suite = [] {
     "scheduler"_test = [] {
         "chained_scheduling"_test = [] {
-            scheduler s { 16 };
+            scheduler s {};
             size_t preproc_calls = 0;
             std::vector<std::string> preproc_done {};
 
@@ -86,7 +86,7 @@ suite scheduler_suite = [] {
             expect(merge_2_calls == 1_u);
             expect(merge_2_done.size() == 16_u);
             expect(progress.str().size() > 0_u);
-            expect(s.num_workers() == 16);
+            expect(s.num_workers() == scheduler::default_worker_count());
         };
         "exceptions"_test = [] {
             scheduler s {};
@@ -101,7 +101,7 @@ suite scheduler_suite = [] {
             expect(num_err == 1_u);
         };
         "exceptions_no_observer"_test = [] {
-            scheduler s;
+            scheduler s {};
             s.submit("bad_actor", 100, []() { throw error("Ha ha! I told ya!"); return true; });
             expect(throws([&]{ s.process(); }));
         };

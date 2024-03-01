@@ -68,7 +68,7 @@ namespace daedalus_turbo::cardano::state {
         {
             auto prev_epoch_nonce = _nonce_epoch;
             if (_epoch_transition++ >= 1) {
-                logger::debug("vrf::state epoch transition epoch: {} extra_entropy: {}", _epoch_last, extra_entropy);
+                logger::trace("vrf::state epoch transition epoch: {} extra_entropy: {}", _epoch_last, extra_entropy);
                 if (extra_entropy) {
                     _nonce_epoch = vrf_nonce_accumulate(vrf_nonce_accumulate(_nonce_next_epoch, _prev_epoch_lab_prev_hash), extra_entropy.value());
                 } else {

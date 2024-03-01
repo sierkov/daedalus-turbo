@@ -7,13 +7,9 @@
 
 #include <chrono>
 #include <filesystem>
-#include <iomanip>
 #include <iostream>
-#include <set>
 #include <string>
 #include <utility>
-#include <unordered_map>
-#include <dt/bech32.hpp>
 #include <dt/cardano.hpp>
 #include <dt/cbor.hpp>
 #include <dt/chunk-registry.hpp>
@@ -28,7 +24,7 @@
 #include <dt/util.hpp>
 
 namespace daedalus_turbo {
-    struct history_mock_block: public cardano::block_base {
+    struct history_mock_block: cardano::block_base {
         history_mock_block(const index::block_meta::item &block_meta, const cbor_value &tx, uint64_t tx_offset)
             : cardano::block_base { tx, block_meta.offset, block_meta.era, tx }, _block_meta { block_meta }, _tx { tx }, _tx_offset { tx_offset }
         {
@@ -526,7 +522,7 @@ namespace daedalus_turbo {
 
 namespace fmt {
     template<>
-    struct formatter<daedalus_turbo::transaction>: public formatter<size_t> {
+    struct formatter<daedalus_turbo::transaction>: formatter<size_t> {
         template<typename FormatContext>
         auto format(const auto &tx, FormatContext &ctx) const -> decltype(ctx.out()) {
             return fmt::format_to(ctx.out(), "slot: {}/{} hash: {} balance change: {}\n",
@@ -535,7 +531,7 @@ namespace fmt {
     };
 
     template<typename T>
-    struct formatter<daedalus_turbo::history<T>>: public formatter<size_t> {
+    struct formatter<daedalus_turbo::history<T>>: formatter<size_t> {
         template<typename FormatContext>
         auto format(const auto &h, FormatContext &ctx) const -> decltype(ctx.out()) {
             auto out_it = ctx.out();

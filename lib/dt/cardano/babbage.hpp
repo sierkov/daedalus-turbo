@@ -8,10 +8,9 @@
 #include <dt/cardano/common.hpp>
 #include <dt/cardano/alonzo.hpp>
 #include <dt/cbor.hpp>
-#include <dt/ed25519.hpp>
 
 namespace daedalus_turbo::cardano::babbage {
-    struct block: public alonzo::block {
+    struct block: alonzo::block {
         using alonzo::block::block;
 
         const protocol_version protocol_ver() const override
@@ -48,6 +47,13 @@ namespace daedalus_turbo::cardano::babbage {
                 nonce_vrf.at(0).span(),
                 nonce_vrf.at(1).span()
             };
+        }
+
+        bool body_hash_ok() const override
+        {
+            const auto &exp_hash = header_body().at(7).buf();
+            auto act_hash = _calc_body_hash(_block.array(), 1, _block.array().size());
+            return exp_hash == act_hash;
         }
     };
 

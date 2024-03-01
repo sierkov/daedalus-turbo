@@ -11,7 +11,7 @@
 #include <dt/chunk-registry.hpp>
 
 namespace daedalus_turbo::cli::validate_tx_vkeys {
-    struct cmd: public command {
+    struct cmd: command {
         const command_info &info() const override
         {
             static const command_info i { "validate-tx-vkeys", "<data-dir>", "validate transaction vkey witnesses" };

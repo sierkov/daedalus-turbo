@@ -8,7 +8,6 @@
 #include <array>
 #include <cstring>
 #include <span>
-#include <string_view>
 #include <dt/error.hpp>
 #include <dt/format.hpp>
 
@@ -60,12 +59,12 @@ namespace daedalus_turbo {
             static_assert(sizeof(*this) == SZ * sizeof(T));
             if (s.size() != SZ)
                 throw array_error("span must be of size {} but got {}", SZ, s.size());
-#ifndef __clang__
+#if !defined(__clang__) && !defined(_MSC_VER)
 #   pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wclass-memaccess"
+#   pragma GCC diagnostic ignored "-Wclass-memaccess"
 #endif
             memcpy(this, std::data(s), SZ * sizeof(T));
-#ifndef __clang__
+#if !defined(__clang__) && !defined(_MSC_VER)
 #   pragma GCC diagnostic pop
 #endif
         }

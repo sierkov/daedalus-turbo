@@ -8,17 +8,21 @@
 #include <mutex>
 
 namespace daedalus_turbo::mutex {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpragmas"
-#ifndef __clang__
-#   pragma GCC diagnostic ignored "-Winterference-size"
+#ifndef _MSC_VER
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wpragmas"
+#   ifndef __clang__
+#       pragma GCC diagnostic ignored "-Winterference-size"
+#   endif
 #endif
 #   ifdef __cpp_lib_hardware_interference_size
         static const size_t padding = std::hardware_destructive_interference_size;
 #   else
         static const size_t padding = 64;
 #   endif
-#pragma GCC diagnostic pop
+#ifndef _MSC_VER
+#   pragma GCC diagnostic pop
+#endif
 }
 
 #endif // !DAEDALUS_TURBO_MUTEX_HPP

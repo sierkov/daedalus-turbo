@@ -30,7 +30,7 @@ namespace daedalus_turbo::index::block_meta {
         }
     };
 
-    struct chunk_indexer: public chunk_indexer_one_part<item> {
+    struct chunk_indexer: chunk_indexer_one_part<item> {
         using chunk_indexer_one_part<item>::chunk_indexer_one_part;
     protected:
         void _index(const cardano::block_base &blk) override

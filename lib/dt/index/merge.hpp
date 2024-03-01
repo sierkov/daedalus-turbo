@@ -6,6 +6,7 @@
 #define DAEDALUS_TURBO_INDEX_MERGE_HPP
 
 #include <dt/index/io.hpp>
+#include <dt/logger.hpp>
 
 namespace daedalus_turbo::index {
     template<typename T>

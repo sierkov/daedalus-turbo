@@ -3,19 +3,22 @@
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
+#include <atomic>
+#include <optional>
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
 #include <dt/logger.hpp>
-#include <dt/mutex.hpp>
 
 namespace daedalus_turbo::logger {
-    alignas(mutex::padding) static std::mutex m {};
+    static std::atomic_bool initializing { false };
+    static std::atomic_bool initialized { false };
     static std::optional<spdlog::logger> logger {};
 
     spdlog::logger &get()
     {
-        if (!logger) {
-            std::scoped_lock lk { m };
-            // checking again since another thread could have already started initializing the logger
-            if (!logger) {
+        if (!initialized) {
+            bool exp = false;
+            if (initializing.compare_exchange_strong(exp, true)) {
                 auto console_sink = std::make_shared<spdlog::sinks::stderr_color_sink_mt>();
                 console_sink->set_level(spdlog::level::info);
                 console_sink->set_pattern("[%^%l%$] %v");
@@ -26,6 +29,11 @@ namespace daedalus_turbo::logger {
                 logger->set_level(spdlog::level::trace);
                 logger->flush_on(spdlog::level::debug);
                 spdlog::flush_every(std::chrono::seconds(1));
+                initialized = true;
+            } else {
+                while (!initialized) {
+                    std::this_thread::sleep_for(std::chrono::milliseconds { 10 });
+                }
             }
         }
         return *logger;

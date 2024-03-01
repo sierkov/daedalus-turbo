@@ -39,7 +39,7 @@ namespace daedalus_turbo {
         using vrf_result = cardano_vrf_result;
         using vrf_proof = cardano_vrf_proof;
 
-        struct address_buf: public uint8_vector {
+        struct address_buf: uint8_vector {
             address_buf(const std::string_view &addr_sv): uint8_vector {}
             {
                 static const std::string_view prefix { "0x" };

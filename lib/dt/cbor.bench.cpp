@@ -2,15 +2,13 @@
  * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
-#include <vector>
+
 #include <string>
-#include <boost/ut.hpp>
 #include <dt/benchmark.hpp>
 #include <dt/cbor.hpp>
 #include <dt/file.hpp>
 #include <dt/util.hpp>
 
-using namespace boost::ut;
 using namespace daedalus_turbo;
 
 static size_t parse_all_chunks(const std::string &db_path, void processor(const uint8_vector &), size_t skip_factor = 1) {

@@ -9,8 +9,6 @@
  * The code has been tested with the ledger snapshot at end of epoch 432 (last slot 106012751). */
 #include <algorithm>
 #include <array>
-#include <fstream>
-#include <iostream>
 #include <random>
 #include <ranges>
 #include <span>

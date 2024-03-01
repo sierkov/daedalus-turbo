@@ -13,7 +13,6 @@ extern "C" {
 }
 #include <dt/array.hpp>
 #include <dt/blake2b.hpp>
-#include <dt/ed25519.hpp>
 #include <dt/logger.hpp>
 #include <dt/rational.hpp>
 #include <dt/util.hpp>

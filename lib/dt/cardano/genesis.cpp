@@ -12,7 +12,7 @@ namespace daedalus_turbo::cardano::genesis {
     {
     }
 
-    const json::value &config::at(const std::string_view &name)
+    const json::value &config::at(const std::string_view &name) const
     {
         return _parsed.at(name);
     }

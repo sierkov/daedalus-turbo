@@ -2,13 +2,13 @@
  * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
+
 #include <array>
 #include <span>
-#include <boost/ut.hpp>
 #include <dt/blake2b.hpp>
 #include <dt/ed25519.hpp>
+#include <dt/test.hpp>
 
-using namespace boost::ut;
 using namespace daedalus_turbo;
 
 suite ed25519_suite = [] {

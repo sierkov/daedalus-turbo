@@ -2,10 +2,10 @@
  * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
-#include <boost/ut.hpp>
-#include <dt/rational.hpp>
 
-using namespace boost::ut;
+#include <dt/rational.hpp>
+#include <dt/test.hpp>
+
 using namespace daedalus_turbo;
 
 namespace {
@@ -85,7 +85,7 @@ suite rational_suite = [] {
             rational x = (pool_s - pledge_s * y) / z0;
             rational max_reward = reward_s * (pool_s + pledge_s * a0 * x);
             auto max_reward_u = static_cast<uint64_t>(max_reward);
-            expect(max_reward_u == 72924591476_ul);
+            expect(max_reward_u == 72924591476_ull);
         };
         "leader reward #1"_test = [&] {
             uint64_t cost = 340000000;
@@ -136,8 +136,8 @@ suite rational_suite = [] {
             rational treasury_growth_rate { 1, 5 };
             rational decentralization { 1, 2 };
             uint64_t num_blocks = 10375;
-            expect(reward_pot_f64(reserves, fees, num_blocks, expansion_rate, treasury_growth_rate, decentralization) == 29891175711619_ul);
-            expect(reward_pot_rat(reserves, fees, num_blocks, expansion_rate, treasury_growth_rate, decentralization) == 29891175711619_ul);
+            expect(reward_pot_f64(reserves, fees, num_blocks, expansion_rate, treasury_growth_rate, decentralization) == 29891175711619_ull);
+            expect(reward_pot_rat(reserves, fees, num_blocks, expansion_rate, treasury_growth_rate, decentralization) == 29891175711619_ull);
         };
 
         "comparison"_test = [] {

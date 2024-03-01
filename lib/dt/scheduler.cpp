@@ -23,11 +23,7 @@ namespace daedalus_turbo {
     }
 
     scheduler::scheduler(size_t user_num_workers)
-        : _tasks_mutex(), _tasks_cv(), _tasks(), _tasks_cnt(),
-            _observers_mutex(), _observers(),
-            _results_mutex(), _results_cv(), _results(),
-            _workers(), _worker_tasks(),
-            _num_workers { _find_num_workers(user_num_workers) }
+        : _num_workers { _find_num_workers(user_num_workers) }
     {
         if (_num_workers == 0)
             throw error("the number of worker threads must be greater than zero!");
@@ -123,7 +119,6 @@ namespace daedalus_turbo {
         if (!_process_running.compare_exchange_strong(must_be_false, true))
             throw error("nested calls to scheduler::process are prohibited!");
         logger::debug("scheduler process_ok started tasks: {}", task_count());
-        _success = true;
         try {
             _process(report_progress, report_stream, update_interval_ms);
             _observers.clear();
@@ -136,8 +131,10 @@ namespace daedalus_turbo {
                 logger::warn("internal error: failed to set _process running back to false during exception handling!");
             throw;
         }
-        logger::debug("scheduler process_ok done remaining tasks: {} success: {}", task_count(), _success.load());
-        return _success;
+        bool res = _success.load();
+        logger::debug("scheduler process_ok done remaining tasks: {} success: {}", task_count(), res);
+        _success = true;
+        return res;
     }
 
     void scheduler::process(bool report_progress, std::chrono::milliseconds update_interval_ms, std::ostream &report_stream)

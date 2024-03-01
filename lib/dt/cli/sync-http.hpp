@@ -11,7 +11,7 @@
 #include <dt/sync/http.hpp>
 
 namespace daedalus_turbo::cli::sync_http {
-    struct cmd: public command {
+    struct cmd: command {
         const command_info &info() const override
         {
             static const command_info i {

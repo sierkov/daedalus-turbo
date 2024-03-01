@@ -8,7 +8,6 @@
 #include <map>
 #include <vector>
 #include <unordered_map>
-#include <zpp_bits.h>
 #include <dt/logger.hpp>
 #include <dt/partitioned-map.hpp>
 

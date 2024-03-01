@@ -12,7 +12,7 @@
 #include <dt/scheduler.hpp>
 
 namespace daedalus_turbo::cli::stake_history {
-    struct cmd: public command {
+    struct cmd: command {
         const command_info &info() const override
         {
             static const command_info i { "stake-history", "<data-dir> <stake-addr>", "list all transactions referencing a given stake address" };

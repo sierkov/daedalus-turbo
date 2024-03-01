@@ -209,6 +209,7 @@ namespace daedalus_turbo {
                 auto entry_sys_time = std::chrono::time_point_cast<std::chrono::system_clock::duration>(entry.last_write_time() - file_now + now);
                 if (entry_sys_time < too_old) {
                     logger::trace("found an obsolete metadata file {} - deleting it", entry.path().string());
+                    std::filesystem::remove(entry.path());
                 }
             }
         }

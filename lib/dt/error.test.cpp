@@ -6,12 +6,10 @@
 #include <functional>
 #include <optional>
 #include <source_location>
-#include <span>
-#include <boost/ut.hpp>
 #include <dt/array.hpp>
 #include <dt/error.hpp>
+#include <dt/test.hpp>
 
-using namespace boost::ut;
 using namespace daedalus_turbo;
 
 static std::string no_error_msg {
@@ -77,7 +75,7 @@ suite error_suite = [] {
         };
         "error_src_loc"_test = [] {
             auto f = [&] { throw error_src_loc(std::source_location::current(), "Hello {}!", "world"); };
-            expect_throws_msg(f, { "Hello world!", "lib/dt/error.test.cpp:79" });
+            expect_throws_msg(f, { "Hello world!", "error.test.cpp:77" });
         };
     };
 };

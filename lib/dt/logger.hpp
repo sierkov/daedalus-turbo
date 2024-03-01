@@ -5,12 +5,10 @@
 #ifndef DAEDALUS_TURBO_LOGGER_HPP
 #define DAEDALUS_TURBO_LOGGER_HPP
 
-#include <map>
-#include <optional>
-#define SPDLOG_FMT_EXTERNAL 1
+#ifndef SPDLOG_FMT_EXTERNAL
+#   define SPDLOG_FMT_EXTERNAL 1
+#endif
 #include <spdlog/spdlog.h>
-#include <spdlog/sinks/basic_file_sink.h>
-#include <spdlog/sinks/stdout_color_sinks.h>
 #include <dt/error.hpp>
 #include <dt/format.hpp>
 

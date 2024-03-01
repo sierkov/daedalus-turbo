@@ -227,7 +227,7 @@ namespace daedalus_turbo::validator {
         indexer::incremental::_on_slice_ready(first_epoch, last_epoch, slice);
         // only one thread at a time must work on this
         std::unique_lock lk { _next_task_mutex };
-        // slice merges even though they are scheduled in order, the notifications may be come out of order
+        // slice merge notifications may arrive out of order even though the are scheduled in order
         if (slice.end_offset() > _next_end_offset)
             _next_end_offset = slice.end_offset();
         if (last_epoch > _next_last_epoch)
@@ -238,7 +238,7 @@ namespace daedalus_turbo::validator {
 
     void incremental::_schedule_validation(std::unique_lock<std::mutex> &&next_task_lk)
     {
-        // move, so that it is unlock on stack unrolling
+        // move, so that it unlocks on stack unrolling
         std::unique_lock<std::mutex> lk { std::move(next_task_lk) };
         bool exp_false = false;
         if (_validation_running.compare_exchange_strong(exp_false, true)) {
@@ -272,22 +272,51 @@ namespace daedalus_turbo::validator {
     chunk_registry::chunk_info incremental::_parse_normal(uint64_t offset, const std::string &rel_path,
         const buffer &raw_data, size_t compressed_size, const block_processor &extra_proc) const
     {
-        timer t { fmt::format("validator::parse chunk: {} offset: {}", rel_path, offset) };
         subchain sc { offset, raw_data.size() };
         auto chunk = indexer::incremental::_parse_normal(offset, rel_path, raw_data, compressed_size, [&](const auto &blk) {
             auto slot = blk.slot();
             if (!blk.signature_ok())
-                throw error("validation of the block signature at slot {} failed!");
-            if (blk.era() >= 2) {
-                auto kes = blk.kes();
-                auto pool_id = blk.issuer_hash();
-                kes_interval pool_kes { kes.counter, kes.counter };
-                auto [kes_it, kes_created] = sc.kes_intervals.try_emplace(pool_id, pool_kes);
-                if (!kes_created)
-                    kes_it->second.merge(pool_kes, pool_id, blk.offset());
-            } else {
-                // In Byron era, the eligibility is verified through the simple presence in the genesis-defined list of signers
-                sc.ok_eligibility++;
+                throw error("validation of the block signature at slot {} failed!", slot);
+            if (blk.era() >= 2 && !blk.body_hash_ok())
+                throw error("validation of the block body hash at slot {} failed!", slot);
+            switch (blk.era()) {
+                case 0: {
+                    static auto boundary_issuer_vkey = cardano::vkey::from_hex("0000000000000000000000000000000000000000000000000000000000000000");
+                    if (blk.issuer_vkey() != boundary_issuer_vkey)
+                        throw error("boundary block contains an unexpected issuer_vkey: {}", blk.issuer_vkey());
+                    ++sc.ok_eligibility;
+                    break;
+                }
+                case 1: {
+                    static std::set<cardano::vkey> byron_issuers {
+                        cardano::vkey::from_hex("0BDB1F5EF3D994037593F2266255F134A564658BB2DF814B3B9CEFB96DA34FA9"),
+                        cardano::vkey::from_hex("1BC97A2FE02C297880CE8ECFD997FE4C1EC09EE10FEEEE9F686760166B05281D"),
+                        cardano::vkey::from_hex("26566E86FC6B9B177C8480E275B2B112B573F6D073F9DEEA53B8D99C4ED976B3"),
+                        cardano::vkey::from_hex("50733161FDAFB6C8CB6FAE0E25BDF9555105B3678EFB08F1775B9E90DE4F5C77"),
+                        cardano::vkey::from_hex("993A8F056D2D3E50B0AC60139F10DF8F8123D5F7C4817B40DAC2B5DD8AA94A82"),
+                        cardano::vkey::from_hex("9A6FA343C8C6C36DE1A3556FEB411BFDF8708D5AF88DE8626D0FC6BFA4EEBB6D"),
+                        cardano::vkey::from_hex("D2965C869901231798C5D02D39FCA2A79AA47C3E854921B5855C82FD14708915"),
+                    };
+                    if (!byron_issuers.contains(blk.issuer_vkey()))
+                        throw error("unexpected Byron issuer_vkey: {}", blk.issuer_vkey());
+                    ++sc.ok_eligibility;
+                    break;
+                }
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6: {
+                    auto kes = blk.kes();
+                    auto pool_id = blk.issuer_hash();
+                    kes_interval pool_kes { kes.counter, kes.counter };
+                    auto [kes_it, kes_created] = sc.kes_intervals.try_emplace(pool_id, pool_kes);
+                    if (!kes_created)
+                        kes_it->second.merge(pool_kes, pool_id, blk.offset());
+                    break;
+                }
+                default:
+                    throw error("unsupported block era: {}", blk.era());
             }
             if (sc.num_blocks > 0) {
                  if (sc.epoch != slot.epoch())
@@ -295,7 +324,7 @@ namespace daedalus_turbo::validator {
              } else {
                  sc.epoch = slot.epoch();
              }
-            sc.num_blocks++;
+            ++sc.num_blocks;
             extra_proc(blk);
         });
         if (sc.num_blocks == 0)
@@ -330,7 +359,7 @@ namespace daedalus_turbo::validator {
         // TODO: RAM use is unconstrained. Not a problem right now, but needs to be reworked in the future.
         std::map<uint64_t, std::map<cardano::stake_ident_hybrid, int64_t>> epoch_idxs {};
 
-        // this is an inner join so can ignore non-matching elements from any readers
+        // this is an inner join so can ignore non-matching elements from any reader
         while (txo_use_item && txo_item) {
             int cmp = memcmp(txo_use_item->hash.data(), txo_item->hash.data(), txo_use_item->hash.size());
             if (cmp == 0)
@@ -481,7 +510,7 @@ namespace daedalus_turbo::validator {
                 if (_vrf_state.epoch_updates() > 0)
                     _vrf_state.finish_epoch(_state.params().extra_entropy);
                 switch (e) {
-                    case 208: // First Shelley/Ouroboros Praos epoch - set the reserves to the Byron UTXO balance
+                    case 208: // First Shelley/Ouroboros Praos epoch - set the reserves based on the final Byron UTXO balance
                         _state.reserves(13'888'022'852'926'644);
                         break;
                     case 236: // Allegra fork - return byron redeemer addresses to reserves
@@ -575,7 +604,7 @@ namespace daedalus_turbo::validator {
                 auto delta_path = index::indexer_base::reader_path(_idx_dir.string(), "epoch-delta", std::to_string(e));
                 if (index::writer<index::stake_delta::item>::exists(delta_path)) {
                     index::reader<index::stake_delta::item> reader { delta_path };
-                    logger::debug("validator epoch: {} {} stake delta updates available", e, reader.size());
+                    logger::trace("validator epoch: {} {} stake delta updates available", e, reader.size());
                     index::stake_delta::item d {};
                     while (reader.read(d)) {
                         if (std::holds_alternative<cardano::stake_ident>(d.stake_id))

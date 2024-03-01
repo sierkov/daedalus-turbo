@@ -5,20 +5,23 @@
 #ifndef DAEDALUS_TURBO_FORMAT_HPP
 #define DAEDALUS_TURBO_FORMAT_HPP
 
-#include <array>
 #include <optional>
 #include <set>
 #include <span>
 #include <string>
 #include <vector>
+#ifndef _MSC_VER
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpragmas"
 #ifndef __clang__
 #   pragma GCC diagnostic ignored "-Wdangling-reference"
 #endif
+#endif
 #include <fmt/core.h>
 #include <fmt/format.h>
+#ifndef _MSC_VER
 #pragma GCC diagnostic pop
+#endif
 
 namespace daedalus_turbo {
     using fmt::format;

@@ -32,7 +32,7 @@ suite zpp_bits_bench_suite = [] {
                     out(items).or_throw();
                 return data.size();
             });
-            benchmark("deserialize", 1e9, 5, [&] {
+            benchmark("deserialize", 5e8, 5, [&] {
                 for (size_t i = 0; i < num_iters; ++i)
                     in(items).or_throw();
                 return data.size();

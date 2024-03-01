@@ -22,7 +22,7 @@ namespace daedalus_turbo::sync::local {
         syncer(scheduler &sched, chunk_registry &cr, const std::string &node_path, bool strict=true, size_t zstd_max_level=3, std::chrono::seconds del_delay=std::chrono::seconds { 3600 })
             : _sched { sched }, _cr { cr }, _node_path { std::filesystem::canonical(node_path) },
                 _immutable_path { _node_path / "immutable" }, _volatile_path { _node_path / "volatile" },
-                _converted_path { _cr.full_path("volatile") },
+                _converted_path { _node_path / "volatile-dt" },
                 _state_path { _cr.full_path("state-local.json") }, _delete_delay { del_delay },
                 _zstd_level_immutable { std::min(static_cast<size_t>(22), zstd_max_level) },
                 _zstd_level_volatile { std::min(static_cast<size_t>(3), zstd_max_level) },
@@ -293,7 +293,7 @@ namespace daedalus_turbo::sync::local {
                                 if (chunk.size() != update.data_size)
                                     throw error("file changed: {} new size: {} recorded size: {}!", update.path, chunk.size(), update.data_size);
                                 source_chunk_info source_info {
-                                    std::filesystem::path { update.path }.filename().string(),
+                                    std::filesystem::relative(std::filesystem::canonical(update.path), _node_path).string(),
                                     update.update_time, update.offset, update.data_size
                                 };
                                 blake2b(source_info.data_hash, chunk);
@@ -461,7 +461,7 @@ namespace daedalus_turbo::sync::local {
                 source_end_offset += volatile_size;
             }
             // when the source has a shorter chain, must truncate the local one
-            if (source_end_offset != _cr.num_bytes()) {
+            if (source_end_offset < _cr.num_bytes()) {
                 for (auto &&del_path: _cr.truncate(source_end_offset, false))
                     deletable.emplace(std::move(del_path));
             }

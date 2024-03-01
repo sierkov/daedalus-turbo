@@ -5,14 +5,11 @@
 #ifndef DAEDALUS_TURBO_CBOR_HPP
 #define DAEDALUS_TURBO_CBOR_HPP
 
-#include <map>
 #include <span>
 #include <stdexcept>
-#include <iomanip>
 #include <memory>
 #include <source_location>
 #include <string>
-#include <string_view>
 #include <variant>
 #include <vector>
 #include "util.hpp"
@@ -20,7 +17,7 @@
 namespace daedalus_turbo {
     using cbor_error = error;
 
-    struct cbor_incomplete_data_error: public cbor_error {
+    struct cbor_incomplete_data_error: cbor_error {
         cbor_incomplete_data_error(): cbor_error("CBOR value extends beyond the end of stream")
         {
         }
@@ -32,7 +29,7 @@ namespace daedalus_turbo {
     typedef std::pair<cbor_value, cbor_value> cbor_map_value;
     typedef std::vector<cbor_map_value> cbor_map;
 
-    struct cbor_array: public std::vector<cbor_value>
+    struct cbor_array: std::vector<cbor_value>
     {
         inline const cbor_value &at(size_t pos, const std::source_location loc = std::source_location::current()) const;
     };

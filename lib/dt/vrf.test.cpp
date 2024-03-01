@@ -2,14 +2,13 @@
  * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
-#include <span>
-#include <boost/ut.hpp>
+
 #include <dt/blake2b.hpp>
 #include <dt/file.hpp>
-#include <dt/vrf.hpp>
+#include <dt/test.hpp>
 #include <dt/util.hpp>
+#include <dt/vrf.hpp>
 
-using namespace boost::ut;
 using namespace daedalus_turbo;
 
 suite vrf_suite = [] {

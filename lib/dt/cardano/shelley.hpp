@@ -12,7 +12,7 @@
 namespace daedalus_turbo::cardano::shelley {
     struct tx;
 
-    struct block: public block_base {
+    struct block: block_base {
         using block_base::block_base;
 
         cardano_hash_32 hash() const override
@@ -112,12 +112,29 @@ namespace daedalus_turbo::cardano::shelley {
             return protocol_version { header_body().at(13).uint(), header_body().at(14).uint() };
         }
 
+        bool body_hash_ok() const override
+        {
+            const auto &exp_hash = header_body().at(8).buf();
+            auto act_hash = _calc_body_hash(_block.array(), 1, 4);
+            return exp_hash == act_hash;
+        }
+
         bool signature_ok() const override
         {
             auto kes_slot = slot();
             auto kes_data = kes();
             auto vkey = issuer_vkey();
             return _validate_kes(kes_slot, kes_data, vkey);
+        }
+    protected:
+        static cardano_hash_32 _calc_body_hash(const cbor_array &block, size_t begin_idx, size_t end_idx)
+        {
+            size_t num_hashes = end_idx - begin_idx;
+            std::vector<cardano_hash_32> body_hash_in(num_hashes);
+            for (size_t i = 0; i < num_hashes; ++i) {
+                blake2b(body_hash_in[i], block.at(begin_idx + i).raw_span());
+            }
+            return blake2b<cardano_hash_32>(buffer { body_hash_in.data(), body_hash_in.size() * sizeof(body_hash_in[0]) });
         }
     private:
         static bool _validate_op_cert(const cardano::kes_signature &kes_, const buffer &issuer_vkey_)
@@ -154,7 +171,7 @@ namespace daedalus_turbo::cardano::shelley {
         }
     };
 
-    struct tx: public cardano::tx {
+    struct tx: cardano::tx {
         using cardano::tx::tx;
 
         void foreach_input(const std::function<void(const tx_input &)> &observer) const override

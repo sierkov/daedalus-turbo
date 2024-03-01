@@ -140,7 +140,6 @@ namespace daedalus_turbo::http {
             std::optional<beast::tcp_stream> _stream {};
             beast::flat_buffer _buffer {};
             std::optional<http::request<http::empty_body>> _http_req {};
-            //std::optional<http::response_parser<http::file_body>> _http_parser {};
             std::optional<http::response_parser<http::dynamic_body>> _http_parser {};
             request _req {};
 
@@ -240,16 +239,8 @@ namespace daedalus_turbo::http {
                     _handle_error(fmt::format("async_write failed: {}", ec.message()));
                     return;
                 }
-                {
-                    //beast::error_code open_ec {};
-                    _http_parser.emplace();
-                    _http_parser->body_limit(1 << 26);
-                    /*_http_parser->get().body().open(_req.save_path.c_str(), beast::file_mode::write, open_ec);
-                    if (open_ec) {
-                        _handle_error(fmt::format("file open failed: {}", open_ec.message()));
-                        return;
-                    }*/
-                }
+                _http_parser.emplace();
+                _http_parser->body_limit(1 << 26);
                 logger::trace("{}: waiting for HTTP response", _req.url);
                 _buffer.clear();
                 _stream->expires_after(std::chrono::seconds(30));
@@ -343,7 +334,8 @@ namespace daedalus_turbo::http {
                     _stats.report(report_span_secs, _queue_size, _active_conns);
                     break;
                 }
-                _ioc.restart();
+                if (_ioc.stopped())
+                    _ioc.restart();
             }
         }
 

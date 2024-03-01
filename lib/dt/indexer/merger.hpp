@@ -7,12 +7,9 @@
 
 #include <functional>
 #include <map>
-#include <optional>
-#include <set>
 #include <string>
 #include <zpp_bits.h>
 #include <dt/error.hpp>
-#include <dt/index/common.hpp>
 #include <dt/json.hpp>
 
 namespace daedalus_turbo::indexer::merger {

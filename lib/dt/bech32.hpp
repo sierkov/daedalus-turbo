@@ -8,7 +8,6 @@
 #include <array>
 #include <algorithm>
 #include <cctype>
-#include <string_view>
 #include "util.hpp"
 
 namespace daedalus_turbo {

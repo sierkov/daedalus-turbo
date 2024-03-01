@@ -2,16 +2,12 @@
  * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
+
 #include <chrono>
-#include <cstring>
-#include <iostream>
 #include <source_location>
-#include <string_view>
-#include <boost/ut.hpp>
 #include <dt/benchmark.hpp>
 #include <dt/error.hpp>
 
-using namespace boost::ut;
 using namespace daedalus_turbo;
 
 inline void create_error(const std::source_location &loc=std::source_location::current())

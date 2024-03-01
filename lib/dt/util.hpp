@@ -6,21 +6,12 @@
 #define DAEDALUS_TURBO_UTIL_HPP
 
 #include <algorithm>
-#include <array>
-#include <cstdarg>
-#include <cstdio>
 #include <cstring>
 #include <filesystem>
-#include <functional>
 #include <iomanip>
 #include <iostream>
-#include <map>
-#include <mutex>
 #include <source_location>
 #include <span>
-#include <stdexcept>
-#include <sstream>
-#include <string_view>
 #include <vector>
 #include <dt/array.hpp>
 #include <dt/error.hpp>
@@ -50,7 +41,7 @@ namespace daedalus_turbo {
 
     struct buffer;
 
-    struct uint8_vector: public std::vector<uint8_t> {
+    struct uint8_vector: std::vector<uint8_t> {
         using std::vector<uint8_t>::vector;
 
         static uint8_vector from_hex(const std::string_view& hex)
@@ -69,7 +60,7 @@ namespace daedalus_turbo {
         inline const buffer span() const;
     };
 
-    struct buffer: public std::span<const uint8_t> {
+    struct buffer: std::span<const uint8_t> {
         using std::span<const uint8_t>::span;
 
         template<typename M>
@@ -144,7 +135,7 @@ namespace daedalus_turbo {
         }
     };
 
-    struct buffer_readable: public buffer {
+    struct buffer_readable: buffer {
         using buffer::buffer;
     };
 
@@ -256,11 +247,11 @@ namespace daedalus_turbo {
 
 namespace fmt {
     template<>
-    struct formatter<daedalus_turbo::buffer>: public formatter<std::span<const uint8_t>> {
+    struct formatter<daedalus_turbo::buffer>: formatter<std::span<const uint8_t>> {
     };
 
     template<>
-    struct formatter<daedalus_turbo::uint8_vector>: public formatter<std::span<const uint8_t>> {
+    struct formatter<daedalus_turbo::uint8_vector>: formatter<std::span<const uint8_t>> {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
             return fmt::format_to(ctx.out(), "{}", v.span());
@@ -268,7 +259,7 @@ namespace fmt {
     };
 
     template<>
-    struct formatter<daedalus_turbo::buffer_readable>: public formatter<daedalus_turbo::buffer> {
+    struct formatter<daedalus_turbo::buffer_readable>: formatter<daedalus_turbo::buffer> {
         template<typename FormatContext>
         auto format(const auto &bytes, FormatContext &ctx) const -> decltype(ctx.out()) {
             bool readable = true;

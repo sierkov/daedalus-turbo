@@ -2,11 +2,11 @@
  * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
-#include <boost/ut.hpp>
+
 #include <dt/indexer.hpp>
 #include <dt/sync/local.hpp>
+#include <dt/test.hpp>
 
-using namespace boost::ut;
 using namespace daedalus_turbo;
 
 suite sync_local_suite = [] {
@@ -18,7 +18,7 @@ suite sync_local_suite = [] {
         auto indexers = indexer::default_list(sched, data_dir);
         indexer::incremental idxr { sched, data_dir, indexers };
         "from scratch"_test = [&] {
-            sync::local::syncer syncr { sched, idxr, node_dir, true };
+            sync::local::syncer syncr { sched, idxr, node_dir, false };
             auto res = syncr.sync();
             expect(res.errors.size() == 0_u);
             expect(res.deleted.size() == 0_u);
@@ -33,7 +33,7 @@ suite sync_local_suite = [] {
             expect(idxr.max_slot() < before_slot);
         };
         "incremental"_test = [&] {
-            sync::local::syncer syncr { sched, idxr, node_dir, true };
+            sync::local::syncer syncr { sched, idxr, node_dir, false };
             auto res = syncr.sync();
             expect(res.errors.size() == 0_u);
             expect(res.deleted.size() == 0_u);
@@ -41,7 +41,7 @@ suite sync_local_suite = [] {
             expect(res.last_slot == 93147517_u);
         };
         "nothing to do"_test = [&] {
-            sync::local::syncer syncr { sched, idxr, node_dir, true };
+            sync::local::syncer syncr { sched, idxr, node_dir, false };
             auto res = syncr.sync();
             expect(res.errors.size() == 0_u);
             expect(res.deleted.size() == 0_u);
@@ -53,10 +53,10 @@ suite sync_local_suite = [] {
             std::filesystem::remove_all(empty_dir);
             std::filesystem::create_directories(empty_dir + "/immutable");
             std::filesystem::create_directories(empty_dir + "/volatile");
-            sync::local::syncer syncr { sched, idxr, empty_dir, true, 3, std::chrono::seconds { 0 } };
+            sync::local::syncer syncr { sched, idxr, empty_dir, false, 3, std::chrono::seconds { 0 } };
             auto res = syncr.sync();
             expect(res.errors.size() == 0_u);
-            expect(res.deleted.size() == 55_u);
+            expect(res.deleted.size() == 34_u);
             expect(res.updated.size() == 0_u);
             expect(res.last_slot == 0_u);
         };

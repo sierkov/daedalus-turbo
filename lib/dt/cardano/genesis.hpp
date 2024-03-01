@@ -5,13 +5,14 @@
 #ifndef DAEDALUS_TURBO_CARDANO_GENESIS_HPP
 #define DAEDALUS_TURBO_CARDANO_GENESIS_HPP
 
+#include <map>
 #include <dt/blake2b.hpp>
 #include <dt/json.hpp>
 
 namespace daedalus_turbo::cardano::genesis {
     struct config {
         config(const std::string &path);
-        const json::value &at(const std::string_view &name);
+        const json::value &at(const std::string_view &name) const;
         const blake2b_256_hash &hash() const;
     private:
         uint8_vector _raw;

@@ -163,7 +163,7 @@ namespace daedalus_turbo {
                 auto &epoch_data = _epochs[inserted_chunk.epoch()];
                 _add_chunk_to_epoch(epoch_data, inserted_chunk);
             }
-            if (notify)
+            if (notify && strict)
                 _notify_of_updates();
         }
 
@@ -357,6 +357,7 @@ namespace daedalus_turbo {
 
         virtual chunk_info parse(uint64_t offset, const std::string &rel_path, const buffer &raw_data, size_t compressed_size) const
         {
+            timer t { fmt::format("parsing chunk {} to add it to the registry", rel_path), logger::level::trace };
             static auto noop = [](const auto &){};
             auto chunk = _parse_normal(offset, rel_path, raw_data, compressed_size, noop);
             auto new_parsed = atomic_add(_parsed, static_cast<uint64_t>(raw_data.size()));
@@ -552,21 +553,24 @@ namespace daedalus_turbo {
         {
             while (_end_offset > _notify_end_offset && (_chunks.rbegin()->second.epoch() > _notify_next_epoch || force)) {
                 auto notify_epoch = _chunks.rbegin()->second.epoch() > _notify_next_epoch ? _notify_next_epoch : _chunks.rbegin()->second.epoch();
-                auto &info = _epochs.at(notify_epoch);
-                if (info.chunk_ids.empty())
-                    throw error("epoch {} does not have any chunks!", notify_epoch);
-                if (force) {
-                    epoch_info info_part {};
-                    for (const auto &chunk: info.chunk_ids) {
-                        if (chunk->offset >= _notify_end_offset)
-                            _add_chunk_to_epoch(info_part, *chunk);
+                // in unit-tests chunks may have non-continuous ecpohs
+                if (_epochs.contains(notify_epoch)) {
+                    auto &info = _epochs.at(notify_epoch);
+                    if (info.chunk_ids.empty())
+                        throw error("epoch {} does not have any chunks!", notify_epoch);
+                    if (force) {
+                        epoch_info info_part {};
+                        for (const auto &chunk: info.chunk_ids) {
+                            if (chunk->offset >= _notify_end_offset)
+                                _add_chunk_to_epoch(info_part, *chunk);
+                        }
+                        _on_epoch_merge(notify_epoch, info_part);
+                    } else {
+                        _on_epoch_merge(notify_epoch, info);
                     }
-                    _on_epoch_merge(notify_epoch, info_part);
-                } else {
-                    _on_epoch_merge(notify_epoch, info);
+                    _notify_end_offset = info.end_offset;
                 }
                 _notify_next_epoch = notify_epoch + 1;
-                _notify_end_offset = info.end_offset;
             }
         }
 

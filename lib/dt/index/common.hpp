@@ -5,6 +5,7 @@
 #ifndef DAEDALUS_TURBO_INDEX_COMMON_HPP
 #define DAEDALUS_TURBO_INDEX_COMMON_HPP
 
+#include <dt/cardano/common.hpp>
 #include <dt/index/io.hpp>
 #include <dt/index/merge.hpp>
 #include <dt/mutex.hpp>
@@ -36,7 +37,7 @@ namespace daedalus_turbo::index {
     };
 
     template<typename T>
-    struct chunk_indexer_one_part: public chunk_indexer_base {
+    struct chunk_indexer_one_part: chunk_indexer_base {
         chunk_indexer_one_part(const std::string &idx_path, size_t)
             : _idx { idx_path, 1 }
         {}
@@ -50,7 +51,7 @@ namespace daedalus_turbo::index {
     };
 
     template<typename T>
-    struct chunk_indexer_multi_part: public chunk_indexer_base {
+    struct chunk_indexer_multi_part: chunk_indexer_base {
         chunk_indexer_multi_part(const std::string &idx_path, size_t num_threads)
             : _idx { idx_path, num_threads }, _part_range { 1 + ((256 - 1) / num_threads) }
         {}
@@ -69,7 +70,7 @@ namespace daedalus_turbo::index {
     };
 
     template<typename T>
-    struct chunk_indexer_multi_epoch: public chunk_indexer_base {
+    struct chunk_indexer_multi_epoch: chunk_indexer_base {
         chunk_indexer_multi_epoch(epoch_observer &observer, uint64_t chunk_id, const std::string &idx_path)
             : _epoch_observer { observer }, _chunk_id { chunk_id }, _idx_base_path { idx_path }
         {}
@@ -227,7 +228,7 @@ namespace daedalus_turbo::index {
     extern const size_t two_step_merge_num_files;
 
     template<typename T, typename ChunkIndexer>
-    struct indexer_merging: public indexer_base {
+    struct indexer_merging: indexer_base {
         using indexer_base::indexer_base;
 
         uint64_t disk_size(const std::string &slice_id="") const override
@@ -257,7 +258,7 @@ namespace daedalus_turbo::index {
     };
 
     template<typename T, typename ChunkIndexer>
-    struct indexer_no_offset: public indexer_merging<T, ChunkIndexer> {
+    struct indexer_no_offset: indexer_merging<T, ChunkIndexer> {
         using indexer_merging<T, ChunkIndexer>::indexer_merging;
 
         std::unique_ptr<chunk_indexer_base> make_chunk_indexer(const std::string &slice_id, uint64_t chunk_id) override
@@ -274,7 +275,6 @@ namespace daedalus_turbo::index {
         indexer_multi_epoch(scheduler &sched, const std::string &idx_dir, const std::string &idx_name)
             : indexer_merging<T, ChunkIndexer> { sched, idx_dir, idx_name }
         {
-            //_register_available_chunks();
         }
 
         using indexer_merging<T, ChunkIndexer>::indexer_merging;
@@ -350,7 +350,7 @@ namespace daedalus_turbo::index {
     };
 
     template<HasOffsetField T, typename ChunkIndexer>
-    struct indexer_offset: public indexer_no_offset<T, ChunkIndexer> {
+    struct indexer_offset: indexer_no_offset<T, ChunkIndexer> {
         using indexer_no_offset<T, ChunkIndexer>::indexer_no_offset;
 
         void schedule_truncate(const std::string &slice_id, uint64_t new_end_offset, const std::function<void()> &on_done) override

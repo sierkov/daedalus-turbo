@@ -2,15 +2,13 @@
  * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
+
 #include <array>
-#include <string_view>
-#include <tuple>
-#include <boost/ut.hpp>
 #include <dt/bech32.hpp>
 #include <dt/blake2b.hpp>
+#include <dt/test.hpp>
 #include <dt/util.hpp>
 
-using namespace boost::ut;
 using namespace daedalus_turbo;
 
 static bech32 own_match(const std::string_view &text, const buffer &exp)

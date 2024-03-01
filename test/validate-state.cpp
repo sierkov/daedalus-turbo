@@ -222,11 +222,7 @@ int main(int argc, char **argv)
     }
     scheduler sched {};
     validator::state dt_state { sched };
-    {
-        auto zpp_data = file::read(argv[2]);
-        zpp::bits::in in { zpp_data };
-        in(dt_state).or_throw();
-    }
+    dt_state.load(argv[2]);
     auto node_state = load_node_state(argv[1]);
     
     compare_values("epoch", node_state.epoch, dt_state.epoch());

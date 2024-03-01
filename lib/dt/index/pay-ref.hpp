@@ -34,7 +34,7 @@ namespace daedalus_turbo::index::pay_ref {
         }
     };
 
-    struct chunk_indexer: public chunk_indexer_multi_part<item> {
+    struct chunk_indexer: chunk_indexer_multi_part<item> {
         using chunk_indexer_multi_part<item>::chunk_indexer_multi_part;
     protected:
         void _index(const cardano::block_base &blk) override

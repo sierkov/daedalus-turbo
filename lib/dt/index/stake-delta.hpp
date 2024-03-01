@@ -19,7 +19,7 @@ namespace daedalus_turbo::index::stake_delta {
         }
     };
 
-    struct chunk_indexer: public chunk_indexer_multi_epoch_zpp<item> {
+    struct chunk_indexer: chunk_indexer_multi_epoch_zpp<item> {
         using chunk_indexer_multi_epoch_zpp<item>::chunk_indexer_multi_epoch_zpp;
         ~chunk_indexer()
         {

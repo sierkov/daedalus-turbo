@@ -9,7 +9,7 @@
 #include <dt/history.hpp>
 
 namespace daedalus_turbo::cli::tx_info {
-    struct cmd: public command {
+    struct cmd: command {
         const command_info &info() const override
         {
             static const command_info i { "tx-info", "<data-dir> <tx-hash>", "show information about a transaction" };

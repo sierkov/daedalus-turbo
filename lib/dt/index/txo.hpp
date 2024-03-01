@@ -39,7 +39,7 @@ namespace daedalus_turbo::index::txo {
         }
     };
 
-    struct chunk_indexer: public chunk_indexer_multi_part<item> {
+    struct chunk_indexer: chunk_indexer_multi_part<item> {
         using chunk_indexer_multi_part<item>::chunk_indexer_multi_part;
     protected:
         void _index(const cardano::block_base &blk) override
@@ -62,7 +62,7 @@ namespace daedalus_turbo::index::txo {
 
 namespace fmt {
     template<>
-    struct formatter<daedalus_turbo::index::txo::item>: public formatter<uint64_t> {
+    struct formatter<daedalus_turbo::index::txo::item>: formatter<uint64_t> {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
             return fmt::format_to(ctx.out(), "txo::item(hash: {} out_idx: {} amount: {} offset: {} stake_id: {})",

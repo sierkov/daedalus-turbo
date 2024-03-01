@@ -6,24 +6,13 @@
 #define DAEDALUS_TURBO_CARDANO_HPP
 
 #include <cstdint>
-#include <array>
-#include <functional>
-#include <span>
-#include <unordered_map>
-#include <variant>
-#include "bech32.hpp"
-#include "blake2b.hpp"
-#include "cbor.hpp"
-#include "ed25519.hpp"
-#include "file.hpp"
-#include "kes.hpp"
-#include "vrf.hpp"
-#include "util.hpp"
-#include "cardano/alonzo.hpp"
-#include "cardano/byron.hpp"
-#include "cardano/mary.hpp"
-#include "cardano/shelley.hpp"
-#include "cardano/babbage.hpp"
+#include <dt/blake2b.hpp>
+#include <dt/cbor.hpp>
+#include <dt/ed25519.hpp>
+#include <dt/cardano/alonzo.hpp>
+#include <dt/cardano/byron.hpp>
+#include <dt/cardano/shelley.hpp>
+#include <dt/cardano/babbage.hpp>
 
 namespace daedalus_turbo::cardano {
     inline std::unique_ptr<tx> make_tx(const cbor_value &tx, const cardano::block_base &blk)
@@ -36,7 +25,6 @@ namespace daedalus_turbo::cardano {
             return std::make_unique<shelley::tx>(tx, blk);
         case 4:
         case 5:
-            //return std::make_unique<mary::tx>(tx, blk);
             return std::make_unique<alonzo::tx>(tx, blk);
         case 6:
             return std::make_unique<babbage::tx>(tx, blk);
@@ -59,7 +47,6 @@ namespace daedalus_turbo::cardano {
             return std::make_unique<cardano::shelley::block>(block_tuple, offset, era, block);
         case 4:
         case 5:
-            //return std::make_unique<cardano::mary::block>(block_tuple, offset, era, block);
             return std::make_unique<cardano::alonzo::block>(block_tuple, offset, era, block);
         case 6:
             return std::make_unique<cardano::babbage::block>(block_tuple, offset, era, block);

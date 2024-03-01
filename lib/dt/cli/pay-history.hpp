@@ -11,7 +11,7 @@
 #include <dt/scheduler.hpp>
 
 namespace daedalus_turbo::cli::pay_history {
-    struct cmd: public command {
+    struct cmd: command {
         const command_info &info() const override
         {
             static const command_info i { "pay-history", "<data-dir> <pay-addr>", "list all transactions referencing a given payment address" };

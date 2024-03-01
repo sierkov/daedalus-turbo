@@ -2,12 +2,12 @@
  * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
-#include <boost/ut.hpp>
+
 #include <dt/array.hpp>
 #include <dt/util.hpp>
+#include <dt/test.hpp>
 
 using namespace std::literals;
-using namespace boost::ut;
 using namespace daedalus_turbo;
 
 suite util_suite = [] {
@@ -19,7 +19,7 @@ suite util_suite = [] {
                 { 50, true }, { 65, false }, { 70, true }, { 75, false }
             };
             for (const auto &[val, exp]: test_vector) {
-                auto it = binary_search(data.begin(), data.end(), val, [&](const auto &el, const auto &val) { return el < val; });
+                auto it = daedalus_turbo::binary_search(data.begin(), data.end(), val, [&](const auto &el, const auto &val) { return el < val; });
                 expect((it != data.end()) == exp);
                 if (it != data.end()) expect(*it == val);
             }

@@ -77,15 +77,15 @@ namespace daedalus_turbo {
         void wait_for_count(const std::string &task_group, size_t task_count,
             const std::function<void ()> &submit_tasks, const std::function<void (std::any &&)> &process_res=[](auto &&) {});
     private:
-        alignas(mutex::padding) std::mutex _tasks_mutex;
-        alignas(mutex::padding) std::condition_variable _tasks_cv;
-        std::priority_queue<scheduled_task> _tasks;
-        std::unordered_map<std::string, size_t> _tasks_cnt;
+        alignas(mutex::padding) std::mutex _tasks_mutex {};
+        alignas(mutex::padding) std::condition_variable _tasks_cv {};
+        std::priority_queue<scheduled_task> _tasks {};
+        std::unordered_map<std::string, size_t> _tasks_cnt {};
 
         using observer_list = std::list<std::function<void (std::any &&)>>;
         using observer_map = std::unordered_map<std::string, observer_list>;
-        alignas(mutex::padding) std::mutex _observers_mutex;
-        observer_map _observers;
+        alignas(mutex::padding) std::mutex _observers_mutex {};
+        observer_map _observers {};
 
         alignas(mutex::padding) std::mutex _results_mutex {};
         alignas(mutex::padding) std::condition_variable _results_cv {};
@@ -95,9 +95,8 @@ namespace daedalus_turbo {
         alignas(mutex::padding) std::mutex _retiring_mutex {};
         std::vector<std::string> _retiring_observers {};
 
-        std::thread _manager;
-        std::vector<std::thread> _workers;
-        std::vector<std::string> _worker_tasks;
+        std::vector<std::thread> _workers {};
+        std::vector<std::string> _worker_tasks {};
         const size_t _num_workers;
         std::atomic_bool _destroy { false };
         std::atomic_bool _success { true };

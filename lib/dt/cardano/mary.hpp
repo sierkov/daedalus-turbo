@@ -8,18 +8,24 @@
 #include <dt/cardano/common.hpp>
 #include <dt/cardano/shelley.hpp>
 #include <dt/cbor.hpp>
-#include <dt/ed25519.hpp>
 
 namespace daedalus_turbo::cardano::mary {
     struct tx;
 
-    struct block: public shelley::block {
+    struct block: shelley::block {
         using shelley::block::block;
 
         void foreach_tx(const std::function<void(const cardano::tx &)> &observer) const override;
+
+        bool body_hash_ok() const override
+        {
+            const auto &exp_hash = header_body().at(8).buf();
+            auto act_hash = _calc_body_hash(_block.array(), 1, _block.array().size());
+            return exp_hash == act_hash;
+        }
     };
 
-    struct tx: public shelley::tx {
+    struct tx: shelley::tx {
         using shelley::tx::tx;
 
         void foreach_output(const std::function<void(const cardano::tx_output &)> &observer) const override

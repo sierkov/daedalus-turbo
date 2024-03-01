@@ -7,10 +7,10 @@
 
 #include <chrono>
 #include <iostream>
+#include <source_location>
 #include <sstream>
 #include <string>
-#include <string_view>
-#include <boost/ut.hpp>
+#include <dt/test.hpp>
 
 namespace daedalus_turbo {
     using namespace std;
@@ -85,18 +85,18 @@ namespace daedalus_turbo {
     };
 
     template<Countable T>
-    static void benchmark(const string_view &name, double min_rate, size_t num_iter, T &&action) {
+    static void benchmark(const string_view &name, double min_rate, size_t num_iter, T &&action, const std::source_location &src_loc=std::source_location::current()) {
         boost::ut::test(name) = [=] {
             double rate = benchmark_throughput(name, num_iter, action);
-            boost::ut::expect(rate >= min_rate) << rate << " < " << min_rate;
+            boost::ut::expect(rate >= min_rate, src_loc) << rate << " < " << min_rate;
         };
     }
 
     template<typename T>
-    static void benchmark_r(const string_view &name, double min_rate, size_t num_iter, T &&action) {
+    static void benchmark_r(const string_view &name, double min_rate, size_t num_iter, T &&action, const std::source_location &src_loc=std::source_location::current()) {
         boost::ut::test(name) = [=] {
             double rate = benchmark_rate(name, num_iter, action);
-            boost::ut::expect(rate >= min_rate) << rate << " < " << min_rate;
+            boost::ut::expect(rate >= min_rate, src_loc) << rate << " < " << min_rate;
         };
     }
 }
