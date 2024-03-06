@@ -98,7 +98,9 @@ namespace daedalus_turbo::http {
                 else
                     std::this_thread::sleep_for(scheduler::default_wait_interval);
             }
-            return _success;
+            auto res = _success.load();
+            _success = true;
+            return res;
         }
 
         void process(bool report_progress=false, scheduler *sched = nullptr)

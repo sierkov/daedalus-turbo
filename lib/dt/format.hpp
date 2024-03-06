@@ -8,7 +8,9 @@
 #include <optional>
 #include <set>
 #include <span>
+#include <sstream>
 #include <string>
+#include <thread>
 #include <vector>
 #ifndef _MSC_VER
 #pragma GCC diagnostic push
@@ -78,6 +80,16 @@ namespace fmt {
                 return fmt::format_to(ctx.out(), "{}", *v);
             else
                 return fmt::format_to(ctx.out(), "std::nullopt");
+        }
+    };
+
+    template<>
+    struct formatter<std::thread::id>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            std::stringstream ss {};
+            ss << v;
+            return fmt::format_to(ctx.out(), "{}", ss.str());
         }
     };
 }

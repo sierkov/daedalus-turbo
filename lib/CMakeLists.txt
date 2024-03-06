@@ -30,3 +30,7 @@ target_link_directories(lib PUBLIC
     ${ZSTD_LIBRARY_DIRS}
 )
 set_target_properties(lib PROPERTIES LINKER_LANGUAGE CXX)
+if (MINGW)
+    target_link_libraries(lib PUBLIC "ws2_32")
+    target_link_libraries(lib PUBLIC "wsock32")
+endif()

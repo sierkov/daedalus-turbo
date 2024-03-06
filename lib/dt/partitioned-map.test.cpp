@@ -59,7 +59,7 @@ suite partitioned_map_suite = [] {
         };
         "range"_test = [&] {
             size_t cnt = 0;
-            for (const auto &[stake_id, updates]: pm)
+            for (const auto &v: pm)
                 cnt++;
             expect(cnt == 3_ul);
         };

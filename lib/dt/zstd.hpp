@@ -14,6 +14,71 @@ extern "C" {
 namespace daedalus_turbo::zstd {
     static constexpr size_t max_zstd_buffer = static_cast<size_t>(1) << 28;
 
+    struct compress_context {
+        compress_context()
+        {
+            _ctx = ZSTD_createCCtx();
+            if (_ctx == nullptr)
+                throw error("failed to create ZSTD compression context!");
+        }
+
+        ~compress_context()
+        {
+            if (_ctx != nullptr)
+                ZSTD_freeCCtx(_ctx);
+        }
+
+        ZSTD_CCtx* get() const
+        {
+            return _ctx;
+        }
+
+        void reset()
+        {
+            auto res = ZSTD_CCtx_reset(_ctx, ZSTD_reset_session_only);
+            if (ZSTD_isError(res))
+                throw error("ZSTD: failed to reset a compression context: {}", ZSTD_getErrorName(res));
+        }
+
+        void set_level(size_t level)
+        {
+            auto res = ZSTD_CCtx_setParameter(_ctx, ZSTD_c_compressionLevel, level);
+            if (ZSTD_isError(res))
+                throw error("ZSTD: failed to change the compression level to {}: {}", level, ZSTD_getErrorName(res));
+        }
+    private:
+        ZSTD_CCtx* _ctx = nullptr;
+    };
+
+    struct decompress_context {
+        decompress_context()
+        {
+            _ctx = ZSTD_createDCtx();
+            if (_ctx == nullptr)
+                throw error("failed to create ZSTD decompression context!");
+        }
+
+        ~decompress_context()
+        {
+            if (_ctx != nullptr)
+                ZSTD_freeDCtx(_ctx);
+        }
+
+        ZSTD_DCtx* get() const
+        {
+            return _ctx;
+        }
+
+        void reset()
+        {
+            auto res = ZSTD_DCtx_reset(_ctx, ZSTD_reset_session_only);
+            if (ZSTD_isError(res))
+                throw error("ZSTD: failed to reset a compression context: {}", ZSTD_getErrorName(res));
+        }
+    private:
+        ZSTD_DCtx* _ctx = nullptr;
+    };
+
     inline void compress(uint8_vector &compressed, const buffer &orig, int level=22)
     {
         if (orig.size() > max_zstd_buffer)
@@ -22,7 +87,10 @@ namespace daedalus_turbo::zstd {
         uint64_t *orig_data_size = reinterpret_cast<uint64_t *>(compressed.data());
         *orig_data_size = orig.size();
         uint8_t *compressed_data = compressed.data() + sizeof(uint64_t);
-        const size_t compressed_size = ZSTD_compress(reinterpret_cast<void *>(compressed_data), compressed.size() - sizeof(uint64_t), reinterpret_cast<const void *>(orig.data()), orig.size(), level);
+        thread_local compress_context ctx {};
+        ctx.reset();
+        ctx.set_level(level);
+        const size_t compressed_size = ZSTD_compress2(ctx.get(), reinterpret_cast<void *>(compressed_data), compressed.size() - sizeof(uint64_t), reinterpret_cast<const void *>(orig.data()), orig.size());
         if (ZSTD_isError(compressed_size))
             throw error("zstd compression error: {}", ZSTD_getErrorName(compressed_size));
         compressed.resize(compressed_size + sizeof(uint64_t));
@@ -66,7 +134,9 @@ namespace daedalus_turbo::zstd {
             throw error("recorded original data size {} is greater than the maximum allowed: {}!", orig_data_size, max_zstd_buffer);
         const uint8_t *compressed_data = compressed.data() + sizeof(uint64_t);
         _check_size(out, orig_data_size);
-        const size_t decompressed_size = ZSTD_decompress(reinterpret_cast<void *>(out.data()), out.size(), reinterpret_cast<const void *>(compressed_data), compressed.size() - sizeof(uint64_t));
+        thread_local decompress_context ctx {};
+        ctx.reset();
+        const size_t decompressed_size = ZSTD_decompressDCtx(ctx.get(), reinterpret_cast<void *>(out.data()), out.size(), reinterpret_cast<const void *>(compressed_data), compressed.size() - sizeof(uint64_t));
         if (ZSTD_isError(decompressed_size)) 
             throw error("zstd decompression error: {}", ZSTD_getErrorName(decompressed_size));
         if ((uint64_t)decompressed_size != out.size())

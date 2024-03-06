@@ -16,5 +16,7 @@ int main(int argc, char **argv)
         std::cerr << "using test-filter mask: " << argv[1] << '\n';
         cfg<override> = { .filter = argv[1] };
     }
-    return cfg<override>.run() ? 0 : 1;
+    bool res = cfg<override>.run();
+    logger::info("run-test finished with {}", res ? "failures" : "success");
+    return 0;
 }

@@ -36,18 +36,12 @@ namespace daedalus_turbo {
 
             std::string rel_path() const
             {
-                return fmt::format("{}/{}.zstd", is_volatile() ? "volatile" : "immutable", data_hash.span());
+                return fmt::format("chunk/{}.zstd", data_hash.span());
             }
 
             uint64_t end_offset() const
             {
                 return offset + data_size;
-            }
-
-            bool is_volatile() const
-            {
-                static std::string match { "volatile" };
-                return orig_rel_path.size() > match.size() && orig_rel_path.substr(0, match.size()) == match;
             }
 
             uint64_t epoch() const

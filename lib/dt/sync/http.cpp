@@ -168,6 +168,8 @@ namespace daedalus_turbo::sync::http {
         _dlq.process(_report_progress, &_sched);
         if (last_synced_epoch_it != _cr.epochs().end()) {
             for (auto it = std::next(last_synced_epoch_it); it != _cr.epochs().end(); it++) {
+                if (!_epoch_json_cache.contains(it->first))
+                    throw error("missing remote metadata about epoch {}", it->first);
                 auto epoch_meta = json::parse(_epoch_json_cache.at(it->first)).as_object();
                 auto &epoch_chunks = epoch_meta.at("chunks").as_array();
                 if (epoch_chunks.empty())

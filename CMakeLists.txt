@@ -20,11 +20,12 @@ endif()
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 if (MSVC)
     add_compile_options(/bigobj)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_RELEASE} /MD /EHa")
 endif()
-if (CMAKE_SYSTEM_NAME MATCHES "^MINGW")
+if (MINGW)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wa,-mbig-obj")
     list(APPEND CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES /mingw64/include)
 endif()
-
 add_subdirectory(3rdparty)
 add_subdirectory(lib)
 target_link_libraries(lib PUBLIC 3rdparty)
@@ -70,7 +71,7 @@ elseif (CMAKE_BUILD_TYPE STREQUAL Profile)
 elseif (CMAKE_BUILD_TYPE STREQUAL Coverage)
     target_compile_options(lib PRIVATE -g --coverage)
     target_compile_options(run-test PRIVATE -g --coverage)
-    target_link_options(run-test PRIVATE -g --coverage)
+    target_link_options(run-test PRIVATE -g --coverage -lgcov)
     add_custom_command(TARGET run-test PRE_BUILD COMMAND
             find ${CMAKE_BINARY_DIR} -type f -name '*.gcda' -exec rm {} +)
     find_program(GCOVR_PATH gcovr)
@@ -79,8 +80,8 @@ elseif (CMAKE_BUILD_TYPE STREQUAL Coverage)
         add_custom_target(coverage
             COMMENT "Running test coverage ..."
             COMMAND $<TARGET_FILE:run-test> ${COVERAGE_ARGS}
-            COMMAND mkdir -p coverage
-            COMMAND ${GCOVR_PATH} -j -r ${CMAKE_SOURCE_DIR} --gcov-ignore-parse-errors=negative_hits.warn --merge-mode-functions=separate --html-details coverage/coverage.html
+            COMMAND mkdir -p ${CMAKE_BINARY_DIR}/coverage
+            COMMAND ${GCOVR_PATH} -j 8 -r ${CMAKE_SOURCE_DIR} --gcov-ignore-parse-errors=negative_hits.warn --merge-mode-functions=separate --html-details ${CMAKE_BINARY_DIR}/coverage/coverage.html .
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         )
     endif()

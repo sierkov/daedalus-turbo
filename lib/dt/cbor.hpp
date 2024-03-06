@@ -26,12 +26,16 @@ namespace daedalus_turbo {
     using cbor_buffer = buffer;
     struct cbor_value;
 
-    typedef std::pair<cbor_value, cbor_value> cbor_map_value;
-    typedef std::vector<cbor_map_value> cbor_map;
+    template<typename T>
+    using cbor_allocator = std::allocator<T>;
 
-    struct cbor_array: std::vector<cbor_value>
+    typedef std::pair<cbor_value, cbor_value> cbor_map_value;
+    typedef std::vector<cbor_map_value, cbor_allocator<cbor_map_value>> cbor_map;
+
+    struct cbor_array: std::vector<cbor_value, cbor_allocator<cbor_value>>
     {
-        inline const cbor_value &at(size_t pos, const std::source_location loc = std::source_location::current()) const;
+        using parent_type = std::vector<cbor_value, cbor_allocator<cbor_value>>;
+        inline const cbor_value &at(size_t pos, const std::source_location &loc=std::source_location::current()) const;
     };
 
     enum cbor_value_type {
@@ -192,10 +196,10 @@ namespace daedalus_turbo {
         cbor_value_content content;
     };
 
-    inline const cbor_value &cbor_array::at(size_t pos, const std::source_location loc) const
+    inline const cbor_value &cbor_array::at(size_t pos, const std::source_location &loc) const
     {
         try {
-            return std::vector<cbor_value>::at(pos);
+            return parent_type::at(pos);
         } catch (std::out_of_range &ex) {
             throw cbor_error("invalid element index {} in the array of size {} in file {} line {}!",
                                 pos, size(), loc.file_name(), loc.line());
