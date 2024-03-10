@@ -17,25 +17,23 @@ suite http_download_queue_suite = [] {
             download_queue dlq {};
             size_t num_errors = 0;
             size_t num_oks = 0;
-            auto handler = [&](auto &&res) {
-                const auto &r = std::any_cast<download_queue::result>(res);
+            auto handler = [&](auto &&r) {
                 if (r.error)
                     ++num_errors;
                 else
                     ++num_oks;
             };
-            for (size_t epoch = 0; epoch <= 447; ++epoch)
-                dlq.download(fmt::format("http://turbo1.daedalusturbo.org/epoch-{}.json", epoch), fmt::format("{}/epoch-{}.json", tmp_dir, epoch), 0, handler);
+            for (size_t i = 0; i < 32; ++i)
+                dlq.download("http://turbo1.daedalusturbo.org/chain.json", fmt::format("{}/chain-{}.json", tmp_dir, i), 0, handler);
             dlq.process();
             expect(num_errors == 0_u);
-            expect(num_oks == 448_u);
+            expect(num_oks == 32_u);
         };
         "retry on recoverable errors"_test = [&] {
             download_queue dlq {};
             size_t num_errors = 0;
             size_t num_oks = 0;
-            auto handler = [&](auto &&res) {
-                const auto &r = std::any_cast<download_queue::result>(res);
+            auto handler = [&](auto &&r) {
                 if (r.error)
                     ++num_errors;
                 else

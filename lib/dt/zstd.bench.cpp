@@ -18,7 +18,7 @@ namespace {
 
 suite zstd_bench_suite = [] {
     "zstd"_test = [] {
-        auto data = file::read("./data/chunk-registry/compressed/immutable/9C5C0267DCA941851D0330E19B91712618EB6DB4BF17E458BCF00829F84CF3CF.zstd");
+        auto data = file::read("./data/chunk-registry/compressed/chunk/9C5C0267DCA941851D0330E19B91712618EB6DB4BF17E458BCF00829F84CF3CF.zstd");
         if (data.size() > (1 << 22))
             data.resize(1 << 24);
         for (const auto &[zstd_level, exp_throughput]: {

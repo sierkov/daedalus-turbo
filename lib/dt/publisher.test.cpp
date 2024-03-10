@@ -21,7 +21,9 @@ suite publisher_suite = [] {
         p.publish();
         expect(p.size() == 29_ull);
         expect(std::filesystem::exists(dist_path + "/chain.json"));
-        expect(std::filesystem::exists(dist_path + "/epoch-412.json"));
-        expect(std::filesystem::exists(dist_path + "/epoch-413.json"));
+        expect(std::filesystem::exists(dist_path + "/epoch-412-F2C09FD9B3D9A5D488924C8864284730236DBAD0D3F8140998210C6218852A5E.json"));
+        expect(std::filesystem::exists(dist_path + "/epoch-413-69AB9C82E7C4EDF5DADD494054CEB3B340EC037699D9ED503C0DD0CA699C9467.json"));
+        auto api_info = json::load(dist_path + "/api.json");
+        expect(api_info.at("version").as_int64() == 1_ll);
     };
 };

@@ -22,50 +22,29 @@ namespace daedalus_turbo {
             return sizeof(ed25519_signature) + DEPTH * 2 * sizeof(ed25519_vkey);
         }
 
-        kes_signature()
+        explicit kes_signature(const buffer &bytes)
+            : _signature { bytes.subspan(0, kes_signature<DEPTH - 1>::size()) },
+                _lhs_vk { bytes.subspan(kes_signature<DEPTH - 1>::size(), sizeof(_lhs_vk)) },
+                _rhs_vk { bytes.subspan(kes_signature<DEPTH - 1>::size() + sizeof(_lhs_vk), sizeof(_rhs_vk)) }
         {
         }
 
-        kes_signature(const std::span<const uint8_t> &bytes)
-            : _sigma(bytes.subspan(0, kes_signature<DEPTH - 1>::size()))
+        [[nodiscard]] bool verify(size_t period, const kes_vkey_span &vkey, const buffer &msg) const
         {
-            if (bytes.size() != kes_signature<DEPTH>::size())
-                throw error("KES signature of depth {} is expected to have {} bytes but got only {}!", DEPTH, kes_signature<DEPTH>::size(), bytes.size());
-            span_memcpy(_lhs_vk, bytes.subspan(kes_signature<DEPTH - 1>::size(), sizeof(_lhs_vk)));
-            span_memcpy(_rhs_vk, bytes.subspan(kes_signature<DEPTH - 1>::size() + sizeof(_lhs_vk), sizeof(_lhs_vk)));
-        }
-
-        kes_signature &operator=(const std::span<const uint8_t> &bytes)
-        {
-            if (bytes.size() != kes_signature<DEPTH>::size())
-                throw error("KES signature of depth {} is expected to have {} bytes but got only {}!", DEPTH, kes_signature<DEPTH>::size(), bytes.size());
-            _sigma = bytes.subspan(0, kes_signature<DEPTH - 1>::size());
-            span_memcpy(_lhs_vk, bytes.subspan(kes_signature<DEPTH - 1>::size(), sizeof(_lhs_vk)));
-            span_memcpy(_rhs_vk, bytes.subspan(kes_signature<DEPTH - 1>::size() + sizeof(_lhs_vk), sizeof(_lhs_vk)));
-            return *this;
-        }
-
-        bool verify(size_t period, const kes_vkey_span &vkey, const std::span<const uint8_t> &msg) const
-        {
-            std::array<uint8_t, sizeof(kes_vkey) * 2> hash_buf;
-            auto hash_buf_span = std::span(hash_buf);
-            span_memcpy(hash_buf_span.subspan(0, sizeof(kes_vkey)), _lhs_vk);
-            span_memcpy(hash_buf_span.subspan(sizeof(kes_vkey), sizeof(kes_vkey)), _rhs_vk);
-            auto computed_vkey = blake2b<blake2b_256_hash>(hash_buf_span);
-            int vkey_cmp = span_memcmp(computed_vkey, vkey);
-            if (vkey_cmp != 0) return false;
-            size_t max_period = 1 << DEPTH;
+            blake2b_256_hash computed_vkey;
+            blake2b(computed_vkey, buffer { &_lhs_vk, sizeof(_lhs_vk) + sizeof(_rhs_vk) });
+            if (span_memcmp(computed_vkey, vkey) != 0)
+                return false;
+            static constexpr size_t max_period = 1 << DEPTH;
             if (period >= max_period)
                 throw error("KES period out of range: {}!", period);
-            size_t split = 1 << (DEPTH - 1);
-            if (period < split) {
-                return _sigma.verify(period, _lhs_vk, msg);
-            } else {
-                return _sigma.verify(period - split, _rhs_vk, msg);
-            }
+            static constexpr size_t split = 1 << (DEPTH - 1);
+            if (period < split)
+                return _signature.verify(period, _lhs_vk, msg);
+            return _signature.verify(period - split, _rhs_vk, msg);
         }
     private:
-        kes_signature<DEPTH - 1> _sigma {};
+        kes_signature<DEPTH - 1> _signature {};
         blake2b_256_hash _lhs_vk {};
         blake2b_256_hash _rhs_vk {};
     };
@@ -77,28 +56,15 @@ namespace daedalus_turbo {
             return sizeof(ed25519_signature);
         }
 
-        kes_signature()
+        explicit kes_signature(const buffer &bytes)
+            : _signature { bytes }
         {
         }
 
-        kes_signature(const std::span<const uint8_t> &bytes)
+        [[nodiscard]] bool verify(size_t period, const kes_vkey_span &vkey, const buffer &msg) const
         {
-            if (bytes.size() != kes_signature<0>::size())
-                throw error("KES signature of depth {} is expected to have {} bytes but got only {}!", 0, kes_signature<0>::size(), bytes.size());
-            span_memcpy(_signature, bytes);
-        }
-
-        kes_signature &operator=(const std::span<const uint8_t> &bytes)
-        {
-            if (bytes.size() != kes_signature<0>::size())
-                throw error("KES signature of depth {} is expected to have {} bytes but got only {}!", 0, kes_signature<0>::size(), bytes.size());
-            span_memcpy(_signature, bytes);
-            return *this;
-        }
-
-        bool verify(size_t period, const kes_vkey_span &vkey, const buffer &msg) const
-        {
-            if (period != 0) throw error("period value must be 0 but got: {}", period);
+            if (period != 0)
+                throw error("period value must be 0 but got: {}", period);
             return ed25519::verify(_signature, vkey, msg);
         }
     private:

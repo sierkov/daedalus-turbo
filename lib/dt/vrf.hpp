@@ -98,12 +98,16 @@ namespace daedalus_turbo {
 
     inline bool vrf03_verify(const buffer &exp_res, const buffer &vkey, const buffer &proof, const buffer &msg)
     {
-        if (exp_res.size() != sizeof(vrf_result)) throw error("result must be {} bytes but got {}!", sizeof(vrf_result), exp_res.size());
-        if (vkey.size() != sizeof(vrf_vkey)) throw error("vkey must be {} bytes but got {}!", sizeof(vrf_vkey), vkey.size());
-        if (proof.size() != sizeof(vrf_proof)) throw error("proof must be {} bytes but got {}!", sizeof(vrf_proof), proof.size());
-        vrf_result res {};
+        if (exp_res.size() != sizeof(vrf_result))
+            throw error("result must be {} bytes but got {}!", sizeof(vrf_result), exp_res.size());
+        if (vkey.size() != sizeof(vrf_vkey))
+            throw error("vkey must be {} bytes but got {}!", sizeof(vrf_vkey), vkey.size());
+        if (proof.size() != sizeof(vrf_proof))
+            throw error("proof must be {} bytes but got {}!", sizeof(vrf_proof), proof.size());
+        vrf_result res;
         bool ok = crypto_vrf_ietfdraft03_verify(res.data(), vkey.data(), proof.data(), msg.data(), msg.size()) == 0;
-        if (ok) ok = memcmp(res.data(), exp_res.data(), res.size()) == 0;
+        if (ok)
+            ok = memcmp(res.data(), exp_res.data(), res.size()) == 0;
         return ok;
     }
 

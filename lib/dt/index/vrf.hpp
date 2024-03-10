@@ -29,7 +29,7 @@ namespace daedalus_turbo::index::vrf {
     struct chunk_indexer: chunk_indexer_multi_epoch_zpp<item> {
         using chunk_indexer_multi_epoch_zpp<item>::chunk_indexer_multi_epoch_zpp;
     protected:
-        void _index_epoch(const cardano::block_base &blk, std::vector<item> &idx) override
+        void _index_epoch(const cardano::block_base &blk, data_list &idx) override
         {
             if (blk.era() >= 2) {
                 auto vrf = blk.vrf();

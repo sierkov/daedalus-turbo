@@ -27,7 +27,7 @@ namespace daedalus_turbo::index::block_fees {
     struct chunk_indexer: chunk_indexer_multi_epoch_zpp<item> {
         using chunk_indexer_multi_epoch_zpp<item>::chunk_indexer_multi_epoch_zpp;
     protected:
-        void _index_epoch(const cardano::block_base &blk, std::vector<item> &idx) override
+        void _index_epoch(const cardano::block_base &blk, data_list &idx) override
         {
             uint64_t fees = 0;
             blk.foreach_tx([&](const auto &tx) {

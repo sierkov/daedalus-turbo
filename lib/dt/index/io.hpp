@@ -6,11 +6,10 @@
 #define DAEDALUS_TURBO_INDEX_IO_HPP
 
 #include <atomic>
-#include <map>
 #include <memory>
 #include <mutex>
-#include <vector>
 #include <dt/blake2b.hpp>
+#include <dt/container.hpp>
 #include <dt/file.hpp>
 #include <dt/scheduler.hpp>
 #include <dt/util.hpp>
@@ -171,10 +170,10 @@ namespace daedalus_turbo::index {
             return _free_off;
         }
     protected:
-        std::vector<std::vector<chunk_info<T>>> _parts;
-        std::vector<std::vector<T>> _bufs;
-        std::vector<size_t> _cnts;
-        std::map<std::string, uint8_vector> _meta {};
+        vector<vector<chunk_info<T>>> _parts;
+        vector<vector<T>> _bufs;
+        vector<size_t> _cnts;
+        map<std::string, uint8_vector> _meta {};
         std::string _path, _data_path;
         size_t _num_parts, _chunk_size;
 
@@ -293,7 +292,7 @@ namespace daedalus_turbo::index {
         }
 
     private:
-        std::vector<std::vector<T>> _bufs;
+        vector<vector<T>> _bufs;
         writer<T> _writer;
         bool _commited = false;
 
@@ -315,9 +314,9 @@ namespace daedalus_turbo::index {
         using find_result = std::tuple<size_t, T>;
 
         struct thread_data {
-            std::vector<size_t> offsets {};
-            std::vector<size_t> cache_chunk_idxs {};
-            std::vector<std::vector<T>> caches {};
+            vector<size_t> offsets {};
+            vector<size_t> cache_chunk_idxs {};
+            vector<vector<T>> caches {};
             uint8_vector read_buf {};
             size_t num_reads = 0;
             size_t next_part_idx = 0;
@@ -558,10 +557,10 @@ namespace daedalus_turbo::index {
         std::string _path, _data_path;
         size_t _num_parts = 0;
         size_t _chunk_size = 0;
-        std::map<std::string, uint8_vector> _meta {};
-        std::vector<std::vector<chunk_info<T>>> _chunk_lists {};
-        std::vector<size_t> _cnts {};
-        std::vector<T> _max_items {};
+        map<std::string, uint8_vector> _meta {};
+        vector<vector<chunk_info<T>>> _chunk_lists {};
+        vector<size_t> _cnts {};
+        vector<T> _max_items {};
         alignas(mutex::padding) mutable std::mutex _read_mutex {};
         mutable file::read_stream _is;
 
@@ -668,9 +667,9 @@ namespace daedalus_turbo::index {
     template<class T>
     struct reader_multi_mt {
         struct thread_data {
-            std::vector<std::unique_ptr<typename reader_mt<T>::thread_data>> data {};
-            std::vector<merge_queue<T>> read_part_queue {};
-            std::vector<size_t> matches {};
+            vector<std::unique_ptr<typename reader_mt<T>::thread_data>> data {};
+            vector<merge_queue<T>> read_part_queue {};
+            vector<size_t> matches {};
             size_t next_match_count = 0;
             size_t num_reads = 0;
             size_t single_part_no = max_parts;
@@ -816,7 +815,7 @@ namespace daedalus_turbo::index {
         }
 
     private:
-        std::vector<std::unique_ptr<reader_mt<T>>> _readers;
+        vector<std::unique_ptr<reader_mt<T>>> _readers;
 
         static size_t _thread_part_no(size_t part_no, thread_data &t)
         {

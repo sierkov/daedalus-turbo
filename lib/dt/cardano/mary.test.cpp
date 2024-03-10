@@ -12,7 +12,7 @@ using namespace daedalus_turbo;
 suite cardano_mary_suite = [] {
     "cardano::mary"_test = [] {
         "body_hash_ok"_test = [] {
-            auto chunk = file::read("./data/chunk-registry/compressed/immutable/1A6CC809A5297CFC502B229B4CD31A9B00B71638CEAEDE45409D4F0EBC534356.zstd");
+            auto chunk = file::read("./data/chunk-registry/compressed/chunk/1A6CC809A5297CFC502B229B4CD31A9B00B71638CEAEDE45409D4F0EBC534356.zstd");
             cbor_parser parser { chunk };
             cbor_value block_tuple {};
             while (!parser.eof()) {

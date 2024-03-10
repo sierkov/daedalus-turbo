@@ -6,6 +6,7 @@
 #define DAEDALUS_TURBO_VALIDATOR_HPP
 
 #include <dt/cardano/state/vrf.hpp>
+#include <dt/container.hpp>
 #include <dt/index/timed-update.hpp>
 #include <dt/index/txo.hpp>
 #include <dt/indexer.hpp>
@@ -26,10 +27,10 @@ namespace daedalus_turbo::validator {
         void save_state() override;
     protected:
         std::pair<uint64_t, file_set> _load_state(bool strict=true) override;
-        chunk_info _parse_normal(uint64_t offset, const std::string &rel_path,
+        chunk_info _parse(uint64_t offset, const std::string &rel_path,
             const buffer &raw_data, size_t compressed_size, const block_processor &extra_proc) const override;
     private:
-        using timed_update_list = std::vector<index::timed_update::item>;
+        using timed_update_list = vector<index::timed_update::item>;
         struct snapshot {
             uint64_t epoch = 0;
             uint64_t end_offset = 0;
@@ -74,23 +75,23 @@ namespace daedalus_turbo::validator {
         std::string _storage_path(const std::string_view &prefix, uint64_t end_offset) const;
         void _on_slice_ready(uint64_t first_epoch, uint64_t last_epoch, const indexer::merger::slice &slice) override;
         void _schedule_validation(std::unique_lock<std::mutex> &&next_task_lk);
-        std::vector<std::string> _index_slice_paths(const std::string &name, const indexer::slice_list &slices) const;
+        vector<std::string> _index_slice_paths(const std::string &name, const indexer::slice_list &slices) const;
         void _prepare_outflows_part(index::reader_multi_mt<index::txo_use::item> &txo_use_reader,
             index::reader_multi_mt<index::txo::item> &txo_reader, size_t part_no,
             uint64_t validate_start_offset, uint64_t validate_end_offset) const;
         size_t _prepare_outflows(uint64_t validate_start_offset, uint64_t validate_end_offset, const indexer::slice_list &slices) const;
-        void _process_epoch_updates(uint64_t epoch, const std::vector<uint64_t> &inflow_chunks, size_t num_outflow_parts) const;
+        void _process_epoch_updates(uint64_t epoch, const vector<uint64_t> &inflow_chunks, size_t num_outflow_parts) const;
         void _process_updates(size_t num_outflow_parts, uint64_t first_epoch, uint64_t last_epoch);
         template<typename T>
-        std::optional<uint64_t> _gather_updates(std::vector<T> &updates, uint64_t epoch, uint64_t min_offset, const std::string &name, const index::epoch_chunks &updated_chunks);
+        std::optional<uint64_t> _gather_updates(vector<T> &updates, uint64_t epoch, uint64_t min_offset, const std::string &name, const index::epoch_chunks &updated_chunks);
         void _apply_ledger_state_updates_for_epoch(uint64_t e, index::reader_multi<index::txo::item> &txo_reader,
-            const index::epoch_chunks &vrf_updates, const std::vector<uint64_t> &snapshot_offsets);
+            const index::epoch_chunks &vrf_updates, const vector<uint64_t> &snapshot_offsets);
         void _apply_ledger_state_updates(uint64_t first_epoch, uint64_t last_epoch, const indexer::slice_list &slices);
-        void _validate_epoch_leaders(uint64_t epoch, uint64_t epoch_min_offset, const std::shared_ptr<std::vector<index::vrf::item>> &vrf_updates_ptr,
+        void _validate_epoch_leaders(uint64_t epoch, uint64_t epoch_min_offset, const std::shared_ptr<vector<index::vrf::item>> &vrf_updates_ptr,
             const std::shared_ptr<pool_stake_distribution> &pool_dist_ptr,
             const cardano::vrf_nonce &nonce_epoch, const cardano::vrf_nonce &uc_nonce, const cardano::vrf_nonce &uc_leader,
             size_t start_idx, size_t end_idx);        
-        void _process_vrf_update_chunks(uint64_t epoch_min_offset, cardano::state::vrf &vrf_state, const std::vector<uint64_t> &chunks);
+        void _process_vrf_update_chunks(uint64_t epoch_min_offset, cardano::state::vrf &vrf_state, const vector<uint64_t> &chunks);
     };
 }
 

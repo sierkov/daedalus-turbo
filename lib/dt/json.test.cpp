@@ -14,5 +14,27 @@ suite json_suite = [] {
             auto genesis = json::load("./etc/genesis/mainnet-shelley-genesis.json");
             expect(genesis.at("genDelegs").as_object().size() == 7_u);
         };
+        "save_pretty object"_test = [] {
+            file::tmp t { "json-save-pretty-object-test.json" };
+            auto j = json::object {
+                { "name", "abc" },
+                { "version", 123 }
+            };
+            json::save_pretty(t.path(), j);
+            auto buf = file::read(t.path());
+            expect(buf == std::string_view { "{\n  \"name\": \"abc\",\n  \"version\": 123\n}" }) << std::string_view { reinterpret_cast<char *>(buf.data()), buf.size() };
+        };
+        "save_pretty array"_test = [] {
+            file::tmp t { "json-save-pretty-array-test.json" };
+            auto j = json::array {
+                "name",
+                123
+            };
+            json::save_pretty(t.path(), j);
+            auto act = file::read(t.path());
+            std::string_view exp { "[\n  \"name\",\n  123\n]" };
+            expect(act.size() == exp.size()) << act.size() << exp.size();
+            expect(act == exp) << act.span().string_view();
+        };
     };  
 };

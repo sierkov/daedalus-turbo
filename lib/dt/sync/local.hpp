@@ -105,7 +105,6 @@ namespace daedalus_turbo::sync::local {
         struct analyze_res {
             std::string path {};
             source_chunk_info source_info {};
-            chunk_registry::chunk_info dist_info {};
             bool updated = false;
         };
         using block_hash_list = std::vector<cardano_hash_32>;
@@ -158,16 +157,10 @@ namespace daedalus_turbo::sync::local {
         {
             timer t { "sync::local::save_state", logger::level::debug };
             _cr.save_state();
-            std::ostringstream json_s {};
-            json_s << "[\n";
-            for (const auto &[full_path, chunk]: _source_chunks) {
-                json_s << "  " << json::serialize(chunk.to_json());
-                if (full_path != _source_chunks.rbegin()->first)
-                    json_s << ',';
-                json_s << '\n';
-            }
-            json_s << "]\n";
-            file::write(_state_path, json_s.str());
+            json::array j_chunks {};
+            for (const auto &[full_path, chunk]: _source_chunks)
+                j_chunks.emplace_back(chunk.to_json());
+            json::save_pretty(_state_path, j_chunks);
         }
 
         std::vector<std::string> _delete_obsolete(const chunk_registry::file_set &deletable)
@@ -205,22 +198,33 @@ namespace daedalus_turbo::sync::local {
             return deleted;
         }
 
-        std::pair<bool, chunk_registry::chunk_info> _write_chunk(const source_chunk_info &info, const buffer &chunk) const
+        analyze_res _analyze_local_chunk(chunk_update &&update)
         {
-            auto dist_it = _cr.find(info.data_hash);
+            timer t { fmt::format("process chunk path: {} offset: {} size: {}", update.path, update.offset, update.data_size), logger::level::trace };
+            uint8_vector chunk {};
+            file::read(update.path, chunk);
+            if (chunk.size() != update.data_size)
+                throw error("file changed: {} new size: {} recorded size: {}!", update.path, chunk.size(), update.data_size);
+            source_chunk_info source_info {
+                std::filesystem::relative(std::filesystem::canonical(update.path), _node_path).string(),
+                update.update_time, update.offset, update.data_size
+            };
+            blake2b(source_info.data_hash, chunk);
+            const auto dist_it = _cr.find(source_info.data_hash);
+            // even if the data is the same, the offset change requires reparse/reindex
+            if (dist_it != _cr.chunks().end() && dist_it->second.offset == source_info.offset)
+                return analyze_res { std::move(update.path), std::move(source_info), false };
+            std::string local_path;
             if (dist_it == _cr.chunks().end()) {
                 uint8_vector compressed {};
-                zstd::compress(compressed, chunk, info.is_volatile() ? _zstd_level_volatile : _zstd_level_immutable);
-                auto dist_info = _cr.parse(info.offset, info.rel_path, chunk, compressed.size());
-                file::write(_cr.full_path(dist_info.rel_path()), compressed);
-                return std::make_pair(true, std::move(dist_info));
-            } else if (dist_it->second.offset != info.offset) {
-                // even though the data is the same, the change in the offset requires reindexing
-                auto dist_info = _cr.parse(info.offset, info.rel_path, chunk, std::filesystem::file_size(_cr.full_path(dist_it->second.rel_path())));
-                return std::make_pair(true, std::move(dist_info));
+                zstd::compress(compressed, chunk, source_info.is_volatile() ? _zstd_level_volatile : _zstd_level_immutable);
+                local_path = _cr.full_path(storage::chunk_info::rel_path_from_hash(source_info.data_hash));
+                file::write(local_path, compressed);
             } else {
-                return std::make_pair(false, dist_it->second);
+                local_path = _cr.full_path(dist_it->second.rel_path());
             }
+            _cr.add(source_info.offset, local_path, source_info.data_hash, source_info.rel_path, _strict);
+            return analyze_res { std::move(update.path), std::move(source_info), true };
         }
 
         void _refresh_chunks(avail_chunk_list &avail_chunks,
@@ -232,8 +236,8 @@ namespace daedalus_turbo::sync::local {
             // std::map guarantees ordered processing
             for (auto &&update: avail_chunks) {
                 auto it = _source_chunks.find(update.path);
-                bool exists = it != _source_chunks.end();
                 bool size_matches = false, time_matches = false, offset_matches = false;
+                bool exists = it != _source_chunks.end();
                 if (exists) {
                     size_matches = it->second.data_size == update.data_size;
                     // add +1 second for conversion error between clocks from _to_time_t
@@ -243,10 +247,9 @@ namespace daedalus_turbo::sync::local {
                 if (!exists || !size_matches || !time_matches || !offset_matches) {
                     // truncate _source_chunks after this path since their offsets may be off and need to be rechecked
                     if (it != _source_chunks.end()) {
+                        std::time_t update_time = it->second.update_time;
                         size_t prev_size = _source_chunks.size();
-                        std::time_t update_time = it->second.update_time;                        
-                        while (it != _source_chunks.end())
-                            it = _source_chunks.erase(it);
+                        _source_chunks.erase(it, _source_chunks.end());
                         logger::warn("chunk {} is different (e: {} s: {} tp: {} tn: {} o: {}) in the source, updating it and {} following chunks",
                             update.path, exists, size_matches, update_time, update.update_time, offset_matches, prev_size - _source_chunks.size());
                     }
@@ -255,73 +258,41 @@ namespace daedalus_turbo::sync::local {
                 }
                 source_offset += update.data_size;
             }
-            std::vector<analyze_res> analyzed_chunks {};
-            uint64_t updated_min_offset = _cr.num_bytes();
-            const std::string task_name { "import-chunk" };
-            {
+            if (!updated_chunks.empty()) {
+                auto updated_start_offset = updated_chunks.front().offset;
+                if (updated_start_offset < _cr.num_bytes()) {
+                    // truncate del=false since some files after the truncation offset may have been just updated
+                    for (auto &&del_path: _cr.truncate(updated_start_offset, false)) {
+                        auto source_path = std::filesystem::weakly_canonical(_node_path / _cr.rel_path(del_path)).string();
+                        // only to-be-deleted chunks unknown in the update source-chunk list to the deletable list
+                        if (_source_chunks.find(source_path) == _source_chunks.end())
+                            deletable.emplace(std::move(del_path));
+                    }
+                }
+                if (updated_start_offset != _cr.num_bytes())
+                    throw error("internal error: updated chunk offset {} is greater than the compressed data size {}!",
+                        updated_start_offset, _cr.num_bytes());
+                logger::info("update_start_offset: {}", updated_start_offset);
+                static const std::string task_name { "import-chunk" };
                 timer t { "process updated chunks" };
-                _sched.on_result(task_name, [&](const auto &res) {
+                _sched.on_result(task_name, [&](auto &&res) {
                     if (res.type() == typeid(scheduled_task_error)) {
                         errors.emplace_back(std::any_cast<scheduled_task_error>(res).what());
                         return;
                     }
-                    const auto &results = std::any_cast<std::vector<analyze_res>>(res);
-                    for (const auto &a_res: results) {
-                        auto [it, created] = _source_chunks.try_emplace(a_res.path, a_res.source_info);
-                        if (!created)
-                            it->second = a_res.source_info;
-                        if (a_res.updated && updated_min_offset > a_res.dist_info.offset)
-                            updated_min_offset = a_res.dist_info.offset;
-                        analyzed_chunks.emplace_back(a_res);
-                    }
+                    auto &&a_res = std::any_cast<analyze_res>(res);
+                    if (a_res.updated)
+                        updated.emplace_back(a_res.source_info.rel_path);
+                    auto [it, created] = _source_chunks.try_emplace(a_res.path, std::move(a_res.source_info));
+                    if (!created)
+                        it->second = std::move(a_res.source_info);
                 });
-                size_t task_size = 0;
-                std::vector<chunk_update> task {};
-                bool small_tasks = updated_chunks.size() / 4 <= _sched.num_workers();
-                auto max_offset = *_cr.target_offset();
-                for (auto it = updated_chunks.begin(); it != updated_chunks.end(); it++) {
-                    task_size += it->data_size;
-                    task.emplace_back(std::move(*it));
-                    if (small_tasks || task_size >= 256'000'000 || std::next(it) == updated_chunks.end()) {
-                        _sched.submit(task_name, 0 + 100 * (max_offset - task.front().offset) / max_offset, [this, task] {
-                            std::vector<analyze_res> results {};
-                            for (const auto &update: task) {
-                                timer t { fmt::format("process chunk path: {} offset: {} size: {}", update.path, update.offset, update.data_size), logger::level::trace };
-                                uint8_vector chunk {};
-                                file::read(update.path, chunk);
-                                if (chunk.size() != update.data_size)
-                                    throw error("file changed: {} new size: {} recorded size: {}!", update.path, chunk.size(), update.data_size);
-                                source_chunk_info source_info {
-                                    std::filesystem::relative(std::filesystem::canonical(update.path), _node_path).string(),
-                                    update.update_time, update.offset, update.data_size
-                                };
-                                blake2b(source_info.data_hash, chunk);
-                                auto write_info = _write_chunk(source_info, chunk);
-                                results.emplace_back(update.path, std::move(source_info), std::move(write_info.second), write_info.first);
-                            }
-                            return results;
-                        });
-                        task.clear();
-                        task_size = 0;
-                    }
-                }
+                const auto max_offset = *_cr.target_offset();
+                for (auto &&update: updated_chunks)
+                    _sched.submit(task_name, 0 + 100 * (max_offset - update.offset) / max_offset, [&] {
+                        return _analyze_local_chunk(std::move(update));
+                    });
                 _sched.process(true);
-            }
-            if (updated_min_offset != _cr.num_bytes()) {
-                // truncate del=false since some files after the truncation offset may have been just updated
-                for (auto &&del_path: _cr.truncate(updated_min_offset, false)) {
-                    auto source_path = std::filesystem::weakly_canonical(_node_path / _cr.rel_path(del_path)).string();
-                    // only to-be-deleted chunks unknown in the update source-chunk list to the deletable list
-                    if (_source_chunks.find(source_path) == _source_chunks.end())
-                        deletable.emplace(std::move(del_path));
-                }
-            }
-            std::sort(analyzed_chunks.begin(), analyzed_chunks.end(), [](const auto &a, const auto &b) { return a.dist_info.offset < b.dist_info.offset; });
-            for (auto &&chunk: analyzed_chunks) {
-                if (chunk.updated)
-                    updated.emplace_back(chunk.dist_info.orig_rel_path);
-                if (chunk.updated || chunk.dist_info.offset >= updated_min_offset)
-                    _cr.add(std::move(chunk.dist_info), _strict);
             }
             logger::debug("after refresh: max source offset: {} chunk-registry size: {}", source_offset, _cr.num_bytes());
         }
@@ -443,20 +414,16 @@ namespace daedalus_turbo::sync::local {
             std::vector<std::string> updated {};
             chunk_registry::file_set deletable {};
             logger::info("analyzing available chunks");
-            auto [immutable_size, avail_chunks] = _find_avail_chunks(_immutable_path.string(), ".chunk");
+            auto [source_end_offset, avail_chunks] = _find_avail_chunks(_immutable_path.string(), ".chunk");
             auto [volatile_size_in, avail_volatile] = _find_avail_chunks(_volatile_path.string(), ".dat");
             // move the last immutable chunk to volatile since they need to be parsed together
-            if (!avail_chunks.empty() && !avail_volatile.empty()) {
+            if (!avail_volatile.empty() && !avail_chunks.empty()) {
                 auto &last_immutable = avail_chunks.back();
-                immutable_size -= last_immutable.data_size;
+                source_end_offset -= last_immutable.data_size;
                 volatile_size_in += last_immutable.data_size;
                 avail_volatile.insert(avail_volatile.begin(), last_immutable);
                 avail_chunks.pop_back();
-            }
-            uint64_t source_end_offset = immutable_size;
-            if (!avail_volatile.empty()) {
-                auto volatile_size = _convert_volatile(avail_chunks, immutable_size, avail_volatile, volatile_size_in);
-                source_end_offset += volatile_size;
+                source_end_offset += _convert_volatile(avail_chunks, source_end_offset, avail_volatile, volatile_size_in);
             }
             // when the source has a shorter chain, must truncate the local one
             if (source_end_offset < _cr.num_bytes()) {

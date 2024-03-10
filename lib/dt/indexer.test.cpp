@@ -24,7 +24,7 @@ suite indexer_suite = [] {
                 indexer_map indexers {};
                 indexers.emplace(std::make_unique<index::txo_use::indexer>(sched, idx_dir, "txo-use"));
                 incremental idxr { sched, data_dir, indexers };
-                idxr.import(src_cr);
+                idxr.import(src_cr, false);
             }
             {
                 index::reader_multi<index::txo_use::item> reader { indexer::multi_reader_paths(idx_dir, "txo-use") };

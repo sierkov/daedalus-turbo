@@ -15,10 +15,10 @@ suite kes_bench_suite = [] {
     auto sig_data = file::read("./data/kes-sig.bin");
     auto msg_data = file::read("./data/kes-msg.bin");
     "kes"_test = [&] {
-        benchmark_r("kes/create+verify", 2000.0, 2000,
+        benchmark_r("kes/create+verify", 2000.0, 50000,
             [&] {
-                kes_signature<6> sig(sig_data);
-                sig.verify(34, kes_vkey_span(vkey_data), msg_data);
+                kes_signature<6> sig { sig_data };
+                return sig.verify(34, kes_vkey_span(vkey_data), msg_data);
             }
         );
     };

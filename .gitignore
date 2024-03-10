@@ -3,8 +3,10 @@ node_modules
 tmp
 out
 log
+.vs
 .vscode
 .idea
+CMakeSettings.json
 build-*
 cmake-build-*
 ui/dt-ui-*

@@ -40,6 +40,9 @@ suite chunk_registry_suite = [] {
                 auto exp = std::filesystem::weakly_canonical(std::filesystem::absolute(data_dir) / "compressed/some-dir/some-file.ext");
                 auto act = cr.full_path("some-dir/some-file.ext");
                 expect(exp == act) << act;
+                auto dir_path = cr.full_path("some-dir");
+                expect(std::filesystem::exists(dir_path));
+                std::filesystem::remove_all(dir_path);
                 expect(throws([&] { cr.full_path("../../../../../etc/passwd"); }));
             };
             "rel_path"_test = [&] {
@@ -92,29 +95,56 @@ suite chunk_registry_suite = [] {
                 void _on_epoch_merge(uint64_t epoch, const chunk_registry::epoch_info &info) override
                 {
                     epochs.emplace(epoch);
-                    num_chunks += info.chunk_ids.size();
+                    num_chunks += info.chunks.size();
                 }
             };
 
             std::filesystem::remove_all(tmp_data_dir);
             // 0, 1, 2, 1, 0, 2, 3
-            auto j_chunks = json::load("./data/chunk-registry-new/epoch-merge.json").as_array();
+            static const std::string src_dir { "./data/chunk-registry-new" };
+            auto j_chunks = json::load(src_dir + "/epoch-merge.json").as_array();
             test_chunk_registry cr { sched, tmp_data_dir };
             expect(cr.epochs.empty());
-            std::optional<uint64_t> max_epoch {};
             for (const auto &j_chunk: j_chunks) {
-                auto chunk = chunk_registry::chunk_info::from_json(j_chunk.as_object());
-                if (!max_epoch || chunk.last_slot.epoch() > *max_epoch)
-                    max_epoch = chunk.last_slot.epoch();
-                cr.add(std::move(chunk));
+                std::string orig_rel_path { static_cast<std::string_view>(j_chunk.at("relPath").as_string()) };
+                auto src_path = fmt::format("{}/{}", src_dir, orig_rel_path);
+                auto offset = json::value_to<uint64_t>(j_chunk.at("offset"));
+                auto data_hash = blake2b<cardano::block_hash>(file::read(src_path));
+                auto local_path = cr.full_path(storage::chunk_info::rel_path_from_hash(data_hash));
+                auto raw_data = file::read(src_path);
+                auto compressed = zstd::compress(raw_data, 3);
+                file::write(local_path, compressed);
+                cr.add(offset, local_path, data_hash, orig_rel_path, false);
                 auto exp_epochs = json::value_to<uint64_t>(j_chunk.at("expNumEpochs"));
-                expect(cr.epochs.size() == exp_epochs) << exp_epochs << cr.epochs.size();
+                expect(cr.epochs.size() == exp_epochs) << orig_rel_path << exp_epochs << cr.epochs.size();
             }
             cr.save_state();
             expect(cr.num_chunks == j_chunks.size()) << cr.num_chunks;
-            expect(static_cast<bool>(max_epoch));
-            if (max_epoch && !cr.epochs.empty())
-                expect(*max_epoch == *cr.epochs.rbegin()) << fmt::format("{}", cr.epochs);
+            if (!cr.epochs.empty())
+                expect(3 == *cr.epochs.rbegin()) << fmt::format("{}", cr.epochs);
+        };
+        "parse_parallel"_test = [&] {
+            struct res_t {
+                size_t num_txs = 0;
+                res_t &operator+=(const res_t &v)
+                {
+                    num_txs += v.num_txs;
+                    return *this;
+                }
+            };
+            chunk_registry cr { sched, data_dir };
+            cr.init_state(false);
+            res_t agg_res {};
+            auto ok = cr.parse_parallel<res_t>(
+                [&](auto &res, const auto &, auto &blk) {
+                    res.num_txs += blk.tx_count();
+                },
+                [&](auto &&, auto &&res) {
+                    agg_res += res;
+                }
+            );
+            expect(ok);
+            expect(agg_res.num_txs == 83426_ull);
         };
     };
 };

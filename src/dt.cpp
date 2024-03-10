@@ -2,6 +2,7 @@
  * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
+
 #include <dt/cli/http-api.hpp>
 #include <dt/cli/pay-history.hpp>
 #include <dt/cli/stake-history.hpp>

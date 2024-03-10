@@ -25,7 +25,7 @@ suite history_suite = [] {
             src_cr.init_state(false);
             auto indexers = indexer::default_list(sched, data_dir);
             indexer::incremental idxr { sched, data_dir, indexers };
-            idxr.import(src_cr);
+            idxr.import(src_cr, false);
             
             reconstructor r { sched, idxr };
             const auto &b1 = r.find_block(648087);

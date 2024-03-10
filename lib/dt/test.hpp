@@ -5,8 +5,10 @@
 #ifndef DAEDALUS_TURBO_TEST_HPP
 #define DAEDALUS_TURBO_TEST_HPP
 
+#include <filesystem>
 #define BOOST_UT_DISABLE_MODULE 1
 #include <boost/ut.hpp>
+#include <dt/logger.hpp>
 
 namespace daedalus_turbo {
     using namespace boost::ut;

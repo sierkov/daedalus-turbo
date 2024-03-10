@@ -30,7 +30,7 @@ namespace daedalus_turbo::index::stake_delta {
             }
         }
     protected:
-        void _index_epoch(const cardano::block_base &blk, std::vector<item> &) override
+        void _index_epoch(const cardano::block_base &blk, data_list &) override
         {
             blk.foreach_tx([&](const auto &tx) {
                 uint64_t epoch = blk.slot().epoch();

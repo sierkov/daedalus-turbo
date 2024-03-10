@@ -13,7 +13,7 @@ using namespace daedalus_turbo;
 
 suite blake2b_bench_suite = [] {
     "blake2b"_test = [&] {
-        auto in = file::read("./data/chunk-registry/compressed/immutable/47F62675C9B0161211B9261B7BB1CF801EDD4B9C0728D9A6C7A910A1581EED41.zstd");
+        auto in = file::read("./data/chunk-registry/compressed/chunk/47F62675C9B0161211B9261B7BB1CF801EDD4B9C0728D9A6C7A910A1581EED41.zstd");
         scheduler sched {};
         for (const auto &[name, func]: { std::make_pair("blake2b-sodium", blake2b_sodium) }) {
             size_t num_evals = (1 << 30) / in.size();

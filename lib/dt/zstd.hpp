@@ -96,6 +96,13 @@ namespace daedalus_turbo::zstd {
         compressed.resize(compressed_size + sizeof(uint64_t));
     }
 
+    inline uint8_vector compress(const buffer &orig, int level=22)
+    {
+        uint8_vector res {};
+        compress(res, orig, level);
+        return res;
+    }
+
     template<typename T>
     concept Resizable = requires(T a) {
         { a.resize(22) };

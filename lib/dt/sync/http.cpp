@@ -22,31 +22,19 @@ namespace daedalus_turbo::sync::http {
         progress_guard pg { "download", "parse", "merge", "validate" };
         _cr.clean_up();
         _epoch_json_cache.clear();
-        auto epoch_groups = _get_json<json::array>("/chain.json");
+        auto j_chain = _get_json<json::object>("/chain.json");
+        const auto &j_epochs = j_chain.at("epochs").as_array();
         for (;;) {
-            auto [task, remote_size] = _find_sync_start_position(epoch_groups);
+            auto [task, remote_size] = _find_sync_start_position(j_epochs);
             if (max_epoch) {
-                uint64_t max_offset = 0;
-                for (auto g_it = epoch_groups.begin(); g_it != epoch_groups.end();) {
-                    auto &j_epochs = g_it->at("epochs").as_array();
-                    for (auto it = j_epochs.begin(); it != j_epochs.end();) {
-                        if (json::value_to<uint64_t>(it->at("id")) <= max_epoch) {
-                            max_offset += json::value_to<uint64_t>(it->at("size"));
-                            ++it;
-                        } else {
-                            it = j_epochs.erase(it);
-                        }
-                    }
-                    if (j_epochs.empty()) {
-                        g_it = epoch_groups.erase(g_it);
-                    } else {
-                        ++g_it;
-                    }
+                remote_size = 0;
+                for (size_t epoch = 0; epoch < j_epochs.size(); ++epoch) {
+                    const auto &j_epoch_meta = j_epochs.at(epoch);
+                    if (epoch <= *max_epoch)
+                        remote_size += json::value_to<uint64_t>(j_epoch_meta.at("size"));
                 }
-                remote_size = max_offset;
-                logger::info("user override max synced epoch: {} max synced offset: {}", *max_epoch, max_offset);
+                logger::info("user override max synced epoch: {} max synced offset: {}", *max_epoch, remote_size);
             }
-            
             if (!task) {
                 logger::info("local chain is up to date - nothing to do");
             } else if (task->start_offset != _cr.num_bytes()) {
@@ -56,7 +44,7 @@ namespace daedalus_turbo::sync::http {
             } else {
                 logger::info("synchronization starts from chain offset {} in epoch {}", task->start_offset, task->start_epoch);
                 _cr.target_offset(remote_size);
-                auto updated_chunks = _download_data(epoch_groups, task->start_epoch);
+                auto updated_chunks = _download_data(j_epochs, remote_size, task->start_epoch);
                 _cr.save_state();
                 // remove updated chunks from the to-be-deleted list
                 for (auto &&path: updated_chunks) {
@@ -108,99 +96,46 @@ namespace daedalus_turbo::sync::http {
         }
     }
 
-    std::tuple<std::optional<syncer::sync_task>, uint64_t> syncer::_find_sync_start_position(const json::array &epoch_groups)
+    std::tuple<std::optional<syncer::sync_task>, uint64_t> syncer::_find_sync_start_position(const json::array &j_epochs)
     {
         timer t { "find first epoch to sync" };
-        if (epoch_groups.empty())
-            throw error("the remote chain is empty - nothing to synchronize!");
-        sync_task task_data {};
-        auto last_synced_epoch_it = _cr.epochs().end();
+
         uint64_t remote_chain_size = 0;
         std::map<uint64_t, std::string> epoch_last_block_hash {};
-        for (const auto &group: epoch_groups) {
-            remote_chain_size += json::value_to<uint64_t>(group.at("size"));
-            for (const auto &epoch: group.at("epochs").as_array()) {
-                auto epoch_id = json::value_to<uint64_t>(epoch.at("id"));
-                epoch_last_block_hash[epoch_id] = static_cast<std::string>(epoch.at("lastBlockHash").as_string());
-            }
-        }
-        // find first differing epoch group
-        for (const auto &group: epoch_groups) {
-            const auto &epochs = group.at("epochs").as_array();
-            if (epochs.empty())
-                throw error("remote peer reported an empty epoch group!");
-            auto first_it = _cr.epochs().find(json::value_to<uint64_t>(epochs.front().at("id")));
-            if (first_it == _cr.epochs().end())
-                break;
-            if (first_it->second.prev_block_hash != bytes_from_hex((std::string_view)group.at("prevBlockHash").as_string()))
-                break;
-            last_synced_epoch_it = first_it;
-            auto last_it = _cr.epochs().find(json::value_to<uint64_t>(epochs.back().at("id")));
-            if (last_it == _cr.epochs().end())
-                break;
-            if (last_it->second.last_block_hash != bytes_from_hex((std::string_view)group.at("lastBlockHash").as_string()))
-                break;
-            last_synced_epoch_it = last_it;
-        }
-        auto &progress = progress::get();
-        progress_guard gm { "metadata" };
-        progress::info dm_progress {};
-        if (last_synced_epoch_it != _cr.epochs().end()) {
-            for (auto it = std::next(last_synced_epoch_it); it != _cr.epochs().end(); it++) {
-                uint64_t epoch = it->first;
-                dm_progress.total++;
-                auto save_path = _cr.full_path(fmt::format("remote/epoch-{}.json", epoch));
-                _dlq.download(fmt::format("http://{}/epoch-{}-{}.json", _host, epoch, epoch_last_block_hash.at(epoch)), save_path, epoch, [this, &dm_progress, &progress, epoch, save_path](auto &&res) {
-                    if (res) {
-                        auto buf = file::read(save_path);
-                        {
-                            std::scoped_lock lk { _epoch_json_cache_mutex };
-                            _epoch_json_cache[epoch] = buf.span().string_view();
-                        }
-                        dm_progress.completed++;
-                        progress.update("metadata", static_cast<double>(dm_progress.completed), dm_progress.total);
-                        if (_report_progress)
-                            progress.inform();
-                    }
-                });
-            }
-        }
-        _dlq.process(_report_progress, &_sched);
-        if (last_synced_epoch_it != _cr.epochs().end()) {
-            for (auto it = std::next(last_synced_epoch_it); it != _cr.epochs().end(); it++) {
-                if (!_epoch_json_cache.contains(it->first))
-                    throw error("missing remote metadata about epoch {}", it->first);
-                auto epoch_meta = json::parse(_epoch_json_cache.at(it->first)).as_object();
-                auto &epoch_chunks = epoch_meta.at("chunks").as_array();
-                if (epoch_chunks.empty())
-                    break;
-                if (it->second.prev_block_hash != bytes_from_hex((std::string_view)epoch_meta.at("prevBlockHash").as_string()))
-                    break;
-                if (it->second.last_block_hash != bytes_from_hex((std::string_view)epoch_meta.at("lastBlockHash").as_string()))
-                    break;
-                last_synced_epoch_it = it;
-            }
-            // identify first differing chunk in the first differing epoch
-            uint64_t new_end_offset = last_synced_epoch_it->second.end_offset;
-            auto next_epoch_it = std::next(last_synced_epoch_it);
-            if (next_epoch_it != _cr.epochs().end()) {
-                const auto epoch = json::parse(_epoch_json_cache.at(next_epoch_it->first)).as_object();
-                uint8_vector data {}, compressed {};
-                for (const auto &chunk: epoch.at("chunks").as_array()) {
-                    auto data_hash = bytes_from_hex(json::value_to<std::string_view>(chunk.at("hash")));
-                    auto chunk_it = _cr.find(data_hash);
-                    if (chunk_it == _cr.chunks().end())
-                        break;
-                    new_end_offset = chunk_it->second.offset + chunk_it->second.data_size;
+        uint64_t check_from_epoch = 0;
+        uint64_t check_from_offset = 0;
+        for (size_t epoch = 0; epoch < j_epochs.size(); ++epoch) {
+            const auto &j_epoch_meta = j_epochs[epoch];
+            epoch_last_block_hash[epoch] = static_cast<std::string>(j_epoch_meta.at("lastBlockHash").as_string());
+            auto epoch_size = json::value_to<uint64_t>(j_epoch_meta.at("size"));
+            remote_chain_size += epoch_size;
+            if (epoch == check_from_epoch) {
+                auto epoch_it = _cr.epochs().find(epoch);
+                if (epoch_it != _cr.epochs().end()
+                    && epoch_it->second.last_block_hash() == cardano::block_hash::from_hex(j_epoch_meta.at("lastBlockHash").as_string()))
+                {
+                    check_from_epoch = epoch + 1;
+                    check_from_offset += epoch_size;
                 }
             }
-            task_data.start_epoch = last_synced_epoch_it->first + 1;
-            task_data.start_offset = new_end_offset;
+        }
+        if (check_from_epoch <= _cr.max_slot().epoch()) {
+            auto check_epoch_it = _cr.epochs().find(check_from_epoch);
+            if (check_epoch_it != _cr.epochs().end()) {
+                auto j_epoch = _get_json<json::object>(fmt::format("/epoch-{}-{}.json", check_from_epoch, epoch_last_block_hash.at(check_from_epoch)));
+                for (const auto &chunk: j_epoch.at("chunks").as_array()) {
+                    auto data_hash = cardano::block_hash::from_hex(json::value_to<std::string_view>(chunk.at("hash")));
+                    auto chunk_it = _cr.find(data_hash);
+                    if (chunk_it == _cr.chunks().end() || chunk_it->second.offset != check_from_offset)
+                        break;
+                    check_from_offset += chunk_it->second.data_size;
+                }
+            }
         }
         std::optional<sync_task> task {};
-        if (remote_chain_size > task_data.start_offset)
-            task.emplace(std::move(task_data));
-        cardano::slot remote_slot { json::value_to<uint64_t>(epoch_groups.back().at("lastSlot")) };
+        if (remote_chain_size > check_from_offset)
+            task.emplace(check_from_epoch, check_from_offset);
+        cardano::slot remote_slot { json::value_to<uint64_t>(j_epochs.back().at("lastSlot")) };
         logger::info("remote chain size: {} latest epoch: {} slot: {}", remote_chain_size, remote_slot.epoch(), remote_slot);
         return std::make_tuple(std::move(task), remote_chain_size);
     }
@@ -208,15 +143,7 @@ namespace daedalus_turbo::sync::http {
     std::string syncer::_parse_local_chunk(const chunk_registry::chunk_info &chunk, const std::string &save_path)
     {
         try {
-            auto compressed = file::read_raw(save_path);
-            uint8_vector data {};
-            zstd::decompress(data, compressed);
-            auto parsed_chunk = _cr.parse(chunk.offset, chunk.orig_rel_path, data, compressed.size());
-            if (parsed_chunk.data_hash != chunk.data_hash)
-                throw error("data hash does not match for the chunk: {}", save_path);
-            auto chunk_path = _cr.full_path(parsed_chunk.rel_path());                
-            _cr.add(std::move(parsed_chunk));
-            return chunk_path;
+            return _cr.add(chunk.offset, save_path, chunk.data_hash, chunk.orig_rel_path);
         } catch (std::exception &ex) {
             std::filesystem::path orig_path { save_path };
             auto debug_path = _cr.full_path(fmt::format("error/{}", orig_path.filename().string()));
@@ -278,37 +205,32 @@ namespace daedalus_turbo::sync::http {
         }
     }
 
-    chunk_registry::file_set syncer::_download_data(const json::array &epoch_groups, size_t first_synced_epoch)
+    chunk_registry::file_set syncer::_download_data(const json::array &j_epochs, uint64_t max_offset, uint64_t first_synced_epoch)
     {
         timer t { "download data" };
         std::vector<chunk_registry::chunk_info> download_tasks {};
-        uint64_t max_offset = 0;
-        for (const auto &group: epoch_groups)
-            max_offset += json::value_to<uint64_t>(group.at("size"));
-        uint64_t start_offset = 0;
         logger::info("downloading metadata about the synchronized epochs and chunks");
         std::map<uint64_t, uint64_t> epoch_offsets {};
-        for (const auto &group: epoch_groups) {
-            for (const auto &epoch: group.at("epochs").as_array()) {
-                auto epoch_id = json::value_to<uint64_t>(epoch.at("id"));
-                auto epoch_size = json::value_to<uint64_t>(epoch.at("size"));
-                auto epoch_last_block_hash = static_cast<std::string>(epoch.at("lastBlockHash").as_string());
-                if (epoch_id >= first_synced_epoch) {
-                    epoch_offsets[epoch_id] = start_offset;
-                    if (!_epoch_json_cache.contains(epoch_id)) {
-                        auto epoch_url = fmt::format("http://{}/epoch-{}-{}.json", _host, epoch_id, epoch_last_block_hash);
-                        auto save_path = _cr.full_path(fmt::format("remote/epoch-{}.json", epoch_id));
-                        _dlq.download(epoch_url, save_path, epoch_id, [this, epoch_id, save_path](auto &&res) {
-                            if (res) {
-                                auto buf = file::read(save_path);
-                                std::scoped_lock lk { _epoch_json_cache_mutex };
-                                _epoch_json_cache[epoch_id] = buf.span().string_view();
-                            }
-                        });
-                    }
+        uint64_t current_offset = 0;
+        for (size_t epoch = 0; epoch < j_epochs.size() && current_offset < max_offset; ++epoch) {
+            const auto &j_epoch_meta = j_epochs[epoch];
+            auto epoch_size = json::value_to<uint64_t>(j_epoch_meta.at("size"));
+            auto epoch_last_block_hash = static_cast<std::string>(j_epoch_meta.at("lastBlockHash").as_string());
+            if (epoch >= first_synced_epoch) {
+                epoch_offsets[epoch] = current_offset;
+                if (!_epoch_json_cache.contains(epoch)) {
+                    auto epoch_url = fmt::format("http://{}/epoch-{}-{}.json", _host, epoch, epoch_last_block_hash);
+                    auto save_path = _cr.full_path(fmt::format("remote/epoch-{}.json", epoch));
+                    _dlq.download(epoch_url, save_path, epoch, [this, epoch, save_path](auto &&res) {
+                        if (res) {
+                            auto buf = file::read(save_path);
+                            std::scoped_lock lk { _epoch_json_cache_mutex };
+                            _epoch_json_cache[epoch] = buf.span().string_view();
+                        }
+                    });
                 }
-                start_offset += epoch_size;
             }
+            current_offset += epoch_size;
         }
         _dlq.process(_report_progress, &_sched);
         _sched.process(_report_progress);
@@ -318,15 +240,14 @@ namespace daedalus_turbo::sync::http {
             for (const auto &j_chunk: epoch.at("chunks").as_array()) {
                 auto chunk = chunk_registry::chunk_info::from_json(j_chunk.as_object());
                 auto chunk_size = chunk.data_size;
-                // Ignore chunks added after the sync begun. They will be synced in the next cycle.
-                if (_cr.target_offset() && chunk_start_offset + chunk_size > *_cr.target_offset())
+                if (chunk_start_offset + chunk_size > max_offset)
                     break;
                 const auto chunk_it = _cr.find(chunk.data_hash);
                 if (chunk_it == _cr.chunks().end()) {
                     chunk.offset = chunk_start_offset;
                     download_tasks.emplace_back(std::move(chunk));
                 } else if (chunk_it->second.data_size != chunk_size || chunk_it->second.offset != chunk_start_offset) {
-                    throw error("remote chunk offset: {} and size: {} mismatch the local ones: {} and {}",
+                    throw error("remote chunk offset: {} and size: {} does not match the local ones: {} and {}",
                         chunk_start_offset, chunk_size, chunk_it->second.offset, chunk_it->second.data_size);
                 }
                 chunk_start_offset += chunk_size;

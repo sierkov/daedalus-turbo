@@ -198,16 +198,10 @@ namespace daedalus_turbo::validator {
                 }
             }
 
-            std::ostringstream json_s {};
-            json_s << "[\n";
-            for (auto it = _snapshots.begin(); it != _snapshots.end(); ++it) {
-                json_s << "  " << json::serialize(it->to_json());
-                if (std::next(it) != _snapshots.end())
-                    json_s << ',';
-                json_s << '\n';
-            }
-            json_s << "]\n";
-            file::write(_state_path, json_s.str());
+            json::array j_snapshots {};
+            for (const auto &j_snap: _snapshots)
+                j_snapshots.emplace_back(j_snap.to_json());
+            json::save_pretty(_state_path, j_snapshots);
         }
         {
             timer t { "validator::remove_updated_chunks" };
@@ -269,11 +263,12 @@ namespace daedalus_turbo::validator {
         }
     }
 
-    chunk_registry::chunk_info incremental::_parse_normal(uint64_t offset, const std::string &rel_path,
-        const buffer &raw_data, size_t compressed_size, const block_processor &extra_proc) const
+    chunk_registry::chunk_info incremental::_parse(uint64_t offset, const std::string &rel_path,
+        const buffer &raw_data, size_t compressed_size, const block_processor &blk_proc) const
     {
         subchain sc { offset, raw_data.size() };
-        auto chunk = indexer::incremental::_parse_normal(offset, rel_path, raw_data, compressed_size, [&](const auto &blk) {
+        auto chunk = indexer::incremental::_parse(offset, rel_path, raw_data, compressed_size, [&](const auto &blk) {
+            blk_proc(blk);
             auto slot = blk.slot();
             if (!blk.signature_ok())
                 throw error("validation of the block signature at slot {} failed!", slot);
@@ -325,7 +320,6 @@ namespace daedalus_turbo::validator {
                  sc.epoch = slot.epoch();
              }
             ++sc.num_blocks;
-            extra_proc(blk);
         });
         if (sc.num_blocks == 0)
             throw error("chunk {} contains no blocks!", rel_path);
@@ -384,9 +378,9 @@ namespace daedalus_turbo::validator {
         logger::trace("prepare_outflows part {}: consumed {} MB of RAM", part_no, ram_used / 1'000'000);
     }
 
-    std::vector<std::string> incremental::_index_slice_paths(const std::string &name, const indexer::slice_list &slices) const
+    vector<std::string> incremental::_index_slice_paths(const std::string &name, const indexer::slice_list &slices) const
     {
-        std::vector<std::string> paths {};
+        vector<std::string> paths {};
         for (const auto &slice: slices)
             paths.emplace_back(_indexers.at(name)->reader_path(slice.slice_id));
         logger::trace("slice paths for index {}: {}", name, paths);
@@ -416,14 +410,14 @@ namespace daedalus_turbo::validator {
         return num_parts;
     }
 
-    void incremental::_process_epoch_updates(uint64_t epoch, const std::vector<uint64_t> &inflow_chunks, size_t num_outflow_parts) const
+    void incremental::_process_epoch_updates(uint64_t epoch, const vector<uint64_t> &inflow_chunks, size_t num_outflow_parts) const
     {
         std::map<cardano::stake_ident_hybrid, int64_t> dist {};
         for (const uint64_t chunk_id: inflow_chunks) {
             if (chunk_id < _state.end_offset())
                 continue;
             auto chunk_path = fmt::format("{}-{}.bin", _indexers.at("inflow")->chunk_path("update", chunk_id), epoch);
-            std::vector<index::stake_delta::item> deltas {};
+            vector<index::stake_delta::item> deltas {};
             file::read_zpp(deltas, chunk_path);
             for (const auto &delta: deltas) {
                 dist[delta.stake_id] += delta.delta;
@@ -464,7 +458,7 @@ namespace daedalus_turbo::validator {
     }
 
     template<typename T>
-    std::optional<uint64_t> incremental::_gather_updates(std::vector<T> &updates, uint64_t epoch, uint64_t min_offset,
+    std::optional<uint64_t> incremental::_gather_updates(vector<T> &updates, uint64_t epoch, uint64_t min_offset,
         const std::string &name, const index::epoch_chunks &updated_chunks)
     {
         updates.clear();
@@ -476,7 +470,7 @@ namespace daedalus_turbo::validator {
                     if (!min_chunk_id || *min_chunk_id > chunk_id)
                         min_chunk_id = chunk_id;
                     auto chunk_path = fmt::format("{}-{}.bin", _indexers.at(name)->chunk_path("update", chunk_id), epoch);
-                    std::vector<T> chunk_updates {};
+                    vector<T> chunk_updates {};
                     file::read_zpp(chunk_updates, chunk_path);
                     for (const auto &u: chunk_updates)
                         updates.emplace_back(std::move(u));
@@ -487,7 +481,7 @@ namespace daedalus_turbo::validator {
     }
 
     void incremental::_apply_ledger_state_updates_for_epoch(uint64_t e, index::reader_multi<index::txo::item> &txo_reader,
-        const index::epoch_chunks &vrf_updates, const std::vector<uint64_t> &snapshot_offsets)
+        const index::epoch_chunks &vrf_updates, const vector<uint64_t> &snapshot_offsets)
     {
         timer te { fmt::format("apply_ledger_state_updates for epoch {}", e) };
         try {
@@ -499,7 +493,7 @@ namespace daedalus_turbo::validator {
                     auto einfo = epoch(_state.epoch());
                     if (_on_the_go) {
                         for (uint64_t off: snapshot_offsets) {
-                            if (einfo.end_offset >= off && (_snapshots.empty() || _snapshots.rbegin()->end_offset < off)) {
+                            if (einfo.end_offset() >= off && (_snapshots.empty() || _snapshots.rbegin()->end_offset < off)) {
                                 _save_state_snapshot();
                                 break;
                             }
@@ -519,7 +513,7 @@ namespace daedalus_turbo::validator {
                 }
             }
             
-            std::vector<index::block_fees::item> fee_updates {};
+            vector<index::block_fees::item> fee_updates {};
             auto min_epoch_offset = _gather_updates(fee_updates, e, last_offset, "block-fees", dynamic_cast<index::block_fees::indexer &>(*_indexers.at("block-fees")).updated_epochs());
             if (!min_epoch_offset)
                 return;
@@ -626,7 +620,7 @@ namespace daedalus_turbo::validator {
     void incremental::_apply_ledger_state_updates(uint64_t first_epoch, uint64_t last_epoch, const indexer::slice_list &slices)
     {
         timer t { "validator::_update_pool_stake_distributions" };
-        std::vector<uint64_t> snapshot_offsets {};
+        vector<uint64_t> snapshot_offsets {};
         if (_target_offset) {
             std::scoped_lock lk { _subchains_mutex };
             snapshot_offsets.emplace_back(*_target_offset / 2);
@@ -637,9 +631,9 @@ namespace daedalus_turbo::validator {
                 if (*_target_offset - next_offset <= snapshot_hifreq_end_offset_range)
                     next_offset = std::min(last_offset + std::max((*_target_offset - last_offset) / 2, snapshot_hifreq_distance), max_offset);
                 auto einfo = epoch(find(next_offset - 1).epoch());
-                auto it = _subchains.find(einfo.end_offset - 1);
+                auto it = _subchains.find(einfo.end_offset() - 1);
                 it->second.snapshot = true;
-                snapshot_offsets.emplace_back(einfo.end_offset);
+                snapshot_offsets.emplace_back(einfo.end_offset());
             }
         }
         index::reader_multi<index::txo::item> txo_reader { _index_slice_paths("txo", slices) };
@@ -654,7 +648,7 @@ namespace daedalus_turbo::validator {
         }
     }
 
-    void incremental::_validate_epoch_leaders(uint64_t epoch, uint64_t epoch_min_offset, const std::shared_ptr<std::vector<index::vrf::item>> &vrf_updates_ptr,
+    void incremental::_validate_epoch_leaders(uint64_t epoch, uint64_t epoch_min_offset, const std::shared_ptr<vector<index::vrf::item>> &vrf_updates_ptr,
         const std::shared_ptr<pool_stake_distribution> &pool_dist_ptr,
         const cardano::vrf_nonce &nonce_epoch, const cardano::vrf_nonce &uc_nonce, const cardano::vrf_nonce &uc_leader,
         size_t start_idx, size_t end_idx)
@@ -720,14 +714,14 @@ namespace daedalus_turbo::validator {
         }
     }
 
-    void incremental::_process_vrf_update_chunks(uint64_t epoch_min_offset, cardano::state::vrf &vrf_state, const std::vector<uint64_t> &chunks)
+    void incremental::_process_vrf_update_chunks(uint64_t epoch_min_offset, cardano::state::vrf &vrf_state, const vector<uint64_t> &chunks)
     {
         auto epoch = _state.epoch();
         timer t { fmt::format("processed VRF nonce updates for epoch {}", epoch) };
-        auto vrf_updates_ptr = std::make_shared<std::vector<index::vrf::item>>();
+        auto vrf_updates_ptr = std::make_shared<vector<index::vrf::item>>();
         for (const uint64_t chunk_id: chunks) {
             auto chunk_path = fmt::format("{}-{}.bin", _indexers.at("vrf")->chunk_path("update", chunk_id), epoch);
-            std::vector<index::vrf::item> chunk_updates {};
+            vector<index::vrf::item> chunk_updates {};
             file::read_zpp(chunk_updates, chunk_path);
             vrf_updates_ptr->reserve(vrf_updates_ptr->size() + chunk_updates.size());
             for (const auto &u: chunk_updates)

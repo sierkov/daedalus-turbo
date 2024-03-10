@@ -22,7 +22,7 @@ namespace daedalus_turbo::file {
 
         ~tmp()
         {
-            if (std::filesystem::exists(_path)) std::filesystem::remove(_path);
+            std::filesystem::remove(_path);
         }
 
         const std::string &path() const
@@ -280,8 +280,8 @@ namespace daedalus_turbo::file {
         in(v).or_throw();
     }
 
-    template<typename T>
-    inline void write_vector(const std::string &path, const std::vector<T> &v)
+    template<typename T, typename A>
+    inline void write_vector(const std::string &path, const std::vector<T, A> &v)
     {
         auto tmp_path = fmt::format("{}.tmp", path);
         write_stream os { tmp_path };

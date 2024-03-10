@@ -38,44 +38,6 @@ async function shellCmd(cmd, args, handler=undefined) {
     });
 }
 
-async function createWallet(keyphrase) {
-    let actIdx = 0;
-    let stderrLine = '';
-    const res = await shellCmd(
-        'docker-compose',
-        ['exec', '-T', 'cardano-wallet', 'cardano-wallet', 'wallet', 'create', 'from-recovery-phrase', 'test'],
-        {
-            'stderr': (child, data) => {
-                const promptSep = ': ';
-                for (;;) {
-                    const promptIdx = data.indexOf(promptSep);
-                    if (promptIdx === -1) {
-                        stderrLine += data;
-                        return;
-                    }
-                    const line = stderrLine + data.slice(0, promptIdx);
-                    stderrLine = '';
-                    data = data.slice(promptIdx + promptSep.length);
-                    switch (actIdx++) {
-                        case 0:
-                            child.stdin.write(`${keyphrase}\n`);
-                            break;
-                        case 1:
-                            child.stdin.write(`\n`);
-                            break;
-                        case 2:
-                        case 3:
-                            child.stdin.write(`donotaskme\n`);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-        }
-    );
-}
-
 async function syncStatus() {
     const res = await shellCmd('docker-compose', ['exec', '-T', 'cardano-node', 'cardano-cli', 'query', 'tip', '--mainnet', '--socket-path', '/ipc/node.socket']);
     return JSON.parse(res.stdout.toString());

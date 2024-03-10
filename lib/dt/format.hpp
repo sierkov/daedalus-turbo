@@ -46,8 +46,8 @@ namespace fmt {
     struct formatter<std::span<const uint8_t, SZ>>: formatter<std::span<const uint8_t>> {
     };
 
-    template<typename T>
-    struct formatter<std::vector<T>>: formatter<int> {
+    template<typename T, typename A>
+    struct formatter<std::vector<T, A>>: formatter<int> {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
             auto out_it = ctx.out();
@@ -59,8 +59,8 @@ namespace fmt {
         }
     };
 
-    template<typename T>
-    struct formatter<std::set<T>>: formatter<int> {
+    template<typename T, typename A>
+    struct formatter<std::set<T, std::less<T>, A>>: formatter<int> {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
             auto out_it = ctx.out();

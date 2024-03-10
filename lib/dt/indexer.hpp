@@ -96,20 +96,6 @@ namespace daedalus_turbo::indexer {
                 idxr_ptr->clean_up();
         }
 
-        void import(const chunk_registry &src_cr)
-        {
-            uint8_vector raw_data {}, compressed_data {};
-            target_offset(src_cr.num_bytes());
-            for (const auto &[last_byte_offset, src_chunk]: src_cr.chunks()) {
-                file::read_raw(src_cr.full_path(src_chunk.rel_path()), compressed_data);
-                zstd::decompress(raw_data, compressed_data);
-                auto dst_chunk = parse(src_chunk.offset, src_chunk.orig_rel_path, raw_data, compressed_data.size());
-                file::write(full_path(dst_chunk.rel_path()), compressed_data);
-                add(std::move(dst_chunk), false);
-            }
-            save_state();
-        }
-
         slice_list slices(std::optional<uint64_t> end_offset={}) const
         {
             slice_list copy {};
@@ -204,19 +190,10 @@ namespace daedalus_turbo::indexer {
                     _sched.process(true);
                 }
             }
-            std::ostringstream json_s {};
-            json_s << "[\n";
-            if (!_slices.empty()) {
-                auto end_offset = _slices.rbegin()->second.end_offset();
-                for (const auto &[offset, slice]: _slices) {
-                    json_s << "  " << json::serialize(slice.to_json());
-                    if (slice.offset + slice.size < end_offset)
-                        json_s << ',';
-                    json_s << '\n';
-                }
-            }
-            json_s << "]\n";
-            file::write(_index_state_path, json_s.str());
+            json::array j_slices {};
+            for (const auto &[offset, slice]: _slices)
+                j_slices.emplace_back(slice.to_json());
+            json::save_pretty(_index_state_path, j_slices);
             _epoch_slices.clear();
             _epoch_merged = 0;
             _final_merged = 0;
@@ -290,10 +267,10 @@ namespace daedalus_turbo::indexer {
         {
             chunk_registry::_on_epoch_merge(epoch, info);
             std::vector<std::string> input_slices {};
-            for (const auto &chunk_ptr: info.chunk_ids) {
+            for (const auto &chunk_ptr: info.chunks) {
                 input_slices.emplace_back(fmt::format("update-{}", chunk_ptr->offset));
             }
-            merger::slice output_slice { info.start_offset, info.end_offset - info.start_offset, fmt::format("epoch-{}", epoch) };
+            merger::slice output_slice { info.start_offset(), info.end_offset() - info.start_offset(), fmt::format("epoch-{}", epoch) };
             _merge_slice(output_slice, input_slices, 100, [this, epoch, output_slice] {
                 std::unique_lock lk { _epoch_slices_mutex };
                 _epoch_slices.emplace(epoch, std::move(output_slice));
@@ -386,16 +363,15 @@ namespace daedalus_turbo::indexer {
             }
         }
 
-        chunk_info _parse_normal(uint64_t offset, const std::string &rel_path,
-            const buffer &raw_data, size_t compressed_size, const block_processor &extra_proc) const override
+        chunk_info _parse (uint64_t offset, const std::string &rel_path, const buffer &raw_data, size_t compressed_size, const block_processor &blk_proc) const override
         {
             chunk_indexer_list chunk_indexers {};
             for (auto &[name, idxr_ptr]: _indexers)
                 chunk_indexers.emplace_back(idxr_ptr->make_chunk_indexer("update", offset));
-            return chunk_registry::_parse_normal(offset, rel_path, raw_data, compressed_size, [&chunk_indexers, &extra_proc](const auto &blk) {
+            return chunk_registry::_parse(offset, rel_path, raw_data, compressed_size, [&](const auto &blk) {
+                blk_proc(blk);
                 for (auto &idxr: chunk_indexers)
                     idxr->index(blk);
-                extra_proc(blk);
             });
         }
     };

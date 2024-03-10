@@ -13,7 +13,7 @@ using namespace daedalus_turbo;
 
 suite cardano_byron_bench_suite = [] {
     "cardano::byron"_test = [&] {
-        auto chunk = file::read("./data/chunk-registry/compressed/immutable/526D236112DB8E38E66F37D330C85AFE0C268D81DF853DDDE4E88551EB9B0637.zstd");
+        auto chunk = file::read("./data/chunk-registry/compressed/chunk/526D236112DB8E38E66F37D330C85AFE0C268D81DF853DDDE4E88551EB9B0637.zstd");
         cbor_parser parser { chunk };
         cbor_value block_tuple {};
         parser.read(block_tuple); // skip EBB block

@@ -14,7 +14,7 @@ suite cardano_alonzo_suite = [] {
         "body_hash_ok"_test = [] {
             for (const auto &chunk_hash: { "1A6CC809A5297CFC502B229B4CD31A9B00B71638CEAEDE45409D4F0EBC534356",
                                                           "471C013F34D419FFA96A8FCD8E0D12EAC3DED4414982F5F055D2FD0AD52D035C" }) {
-                auto chunk = file::read(fmt::format("./data/chunk-registry/compressed/immutable/{}.zstd", chunk_hash));
+                auto chunk = file::read(fmt::format("./data/chunk-registry/compressed/chunk/{}.zstd", chunk_hash));
                 cbor_parser parser { chunk };
                 cbor_value block_tuple {};
                 while (!parser.eof()) {

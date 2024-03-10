@@ -9,6 +9,9 @@
 
 namespace daedalus_turbo {
     struct  publisher {
+        static constexpr std::chrono::seconds metadata_lifespan { 3600 };
+        static constexpr std::chrono::seconds volatile_data_lifespan { 6 * 3600 };
+
         publisher(scheduler &sched, chunk_registry &cr, const std::string &node_path, bool strict=true, size_t zstd_max_level=22);
         size_t size() const;
         void publish();

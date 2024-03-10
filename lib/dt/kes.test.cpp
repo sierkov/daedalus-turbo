@@ -26,7 +26,7 @@ suite kes_suite = [] {
             kes_signature<6> sig(sig_data);
             expect(!sig.verify(33, kes_vkey_span(vkey_data), msg_data));
             expect(!sig.verify(35, kes_vkey_span(vkey_data), msg_data));
-            expect( throws([&] { sig.verify(10035, kes_vkey_span(vkey_data), msg_data); }));
+            expect( throws([&] { return sig.verify(10035, kes_vkey_span(vkey_data), msg_data); }));
             auto msg2 = msg_data;
             msg2[0] = msg2[0] ^ msg2[1];
             expect(!sig.verify(34, kes_vkey_span(vkey_data), msg2));

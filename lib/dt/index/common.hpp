@@ -6,6 +6,7 @@
 #define DAEDALUS_TURBO_INDEX_COMMON_HPP
 
 #include <dt/cardano/common.hpp>
+#include <dt/container.hpp>
 #include <dt/index/io.hpp>
 #include <dt/index/merge.hpp>
 #include <dt/mutex.hpp>
@@ -86,15 +87,17 @@ namespace daedalus_turbo::index {
             }
         }
     protected:
+        using data_list = vector<T>;
+
         epoch_observer &_epoch_observer;
         uint64_t _chunk_id;
         std::string _idx_base_path;
-        std::function<void(const std::string &, const std::vector<T> &)> _writer { file::write_vector<T> };
-        std::map<uint64_t, std::vector<T>> _idxs {};
+        std::function<void(const std::string &, const data_list &)> _writer { file::write_vector<T, container_allocator<T>> };
+        map<uint64_t, data_list> _idxs {};
 
-        virtual void _index_epoch(const cardano::block_base &blk, std::vector<T> &idx) =0;
+        virtual void _index_epoch(const cardano::block_base &blk, data_list &idx) =0;
 
-        std::vector<T> &_epoch_data(uint64_t epoch)
+        data_list &_epoch_data(uint64_t epoch)
         {
             return _idxs[epoch];
         }
@@ -115,7 +118,7 @@ namespace daedalus_turbo::index {
         chunk_indexer_multi_epoch_zpp(epoch_observer &observer, uint64_t chunk_id, const std::string &idx_path)
             : chunk_indexer_multi_epoch<T> { observer, chunk_id, idx_path }
         {
-            chunk_indexer_multi_epoch<T>::_writer = file::write_zpp<std::vector<T>>;
+            chunk_indexer_multi_epoch<T>::_writer = file::write_zpp<typename chunk_indexer_multi_epoch<T>::data_list>;
         }
     };
 
@@ -267,8 +270,8 @@ namespace daedalus_turbo::index {
         }
     };
 
-    using chunk_list = std::vector<uint64_t>;
-    using epoch_chunks = std::map<uint64_t, chunk_list>;
+    using chunk_list = vector<uint64_t>;
+    using epoch_chunks = map<uint64_t, chunk_list>;
 
     template<typename T, std::derived_from<chunk_indexer_multi_epoch<T>> ChunkIndexer>
     struct indexer_multi_epoch: indexer_merging<T, ChunkIndexer>, epoch_observer {

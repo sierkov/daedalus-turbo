@@ -11,11 +11,11 @@ list(FILTER LIB_SRCS EXCLUDE REGEX "\\.bench\\.cpp$")
 add_library(lib OBJECT ${LIB_SRCS})
 target_include_directories(lib PUBLIC .)
 target_link_libraries(lib PUBLIC
-        Boost::json Boost::coroutine Boost::url
-        ${Boost_LIBRARIES}
-        ${FMT_LIBRARIES}
-        ${SPDLOG_LIBRARIES}
-        ${ZSTD_LIBRARIES}
+    Boost::json Boost::coroutine Boost::url
+    ${Boost_LIBRARIES}
+    ${FMT_LIBRARIES}
+    ${SPDLOG_LIBRARIES}
+    ${ZSTD_LIBRARIES}
 )
 if (MSVC)
     target_link_libraries(lib PUBLIC libsodium.lib)
@@ -29,6 +29,11 @@ target_link_directories(lib PUBLIC
     ${SPDLOG_LIBRARY_DIRS}
     ${ZSTD_LIBRARY_DIRS}
 )
+if (WIN32)
+    pkg_check_modules(MIMALLOC REQUIRED mimalloc>=2.0.5)
+    target_link_libraries(lib PUBLIC ${MIMALLOC_LIBRARIES})
+    target_link_directories(lib PUBLIC ${MIMALLOC_LIBRARY_DIRS})
+endif()
 set_target_properties(lib PROPERTIES LINKER_LANGUAGE CXX)
 if (MINGW)
     target_link_libraries(lib PUBLIC "ws2_32")

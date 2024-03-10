@@ -19,7 +19,6 @@ namespace daedalus_turbo::cli::validate {
 
         mutable progress::info _parse_progress {};
 
-        std::string _parse_local_chunk(chunk_registry &cr, const chunk_info &chunk, const std::string &save_path) const;
         void _validate_chunks(scheduler &sched, chunk_registry &cr, chunk_list &&chunks) const;
     };
 }

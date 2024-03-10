@@ -185,7 +185,7 @@ namespace daedalus_turbo {
                 _find_used_txos_small(p, sched, txo_tasks, txo_use_idx);
             else
                 _find_used_txos_large(p, sched, num_txos, txo_use_idx);
-            p.update("find spent txos", "100.000%");
+            p.update("find spent txos", 1.0);
             p.inform();
             return txo_tasks;
         }
@@ -284,7 +284,7 @@ namespace daedalus_turbo {
                             }
                         }
                         if (num_ready.fetch_add(1) % 1000 == 0) {
-                            p.update("find spent txos", fmt::format("{:0.3f}%", static_cast<double>(++num_ready) * 100 / transactions.size()));
+                            p.update("find spent txos", ++num_ready, transactions.size());
                             p.inform();
                         }
                     }
@@ -320,7 +320,7 @@ namespace daedalus_turbo {
                             out.use_offset = item.offset;
                             out.use_size = item.size;
                             if (num_ready.fetch_add(1) % 1000 == 0) {
-                                p.update("find spent txos", fmt::format("{:0.3f}%", static_cast<double>(++num_ready) * 100 / num_txos));
+                                p.update("find spent txos", ++num_ready, num_txos);
                                 p.inform();
                             }
                         }
@@ -464,7 +464,7 @@ namespace daedalus_turbo {
         if (!chunk_tasks.empty()) {
             size_t num_ready = 0;
             sched.on_result("parse-chunk", [&](const auto &) {
-                p.update(progress_id, fmt::format("{:0.3f}%", static_cast<double>(++num_ready) * 100 / chunk_tasks.size()));
+                p.update(progress_id, ++num_ready, chunk_tasks.size());
                 p.inform();
             });
             for (auto &[chunk_offset, chunk_info]: chunk_tasks) {
@@ -514,7 +514,7 @@ namespace daedalus_turbo {
             sched.process(false);
             num_disk_reads += chunk_tasks.size();
         }            
-        p.update(progress_id, "100.000%");
+        p.update(progress_id, 1.0);
         p.inform();
     }
 

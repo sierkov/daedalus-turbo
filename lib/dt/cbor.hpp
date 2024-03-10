@@ -11,8 +11,8 @@
 #include <source_location>
 #include <string>
 #include <variant>
-#include <vector>
-#include "util.hpp"
+#include <dt/container.hpp>
+#include <dt/util.hpp>
 
 namespace daedalus_turbo {
     using cbor_error = error;
@@ -26,15 +26,11 @@ namespace daedalus_turbo {
     using cbor_buffer = buffer;
     struct cbor_value;
 
-    template<typename T>
-    using cbor_allocator = std::allocator<T>;
-
     typedef std::pair<cbor_value, cbor_value> cbor_map_value;
-    typedef std::vector<cbor_map_value, cbor_allocator<cbor_map_value>> cbor_map;
+    typedef vector<cbor_map_value> cbor_map;
 
-    struct cbor_array: std::vector<cbor_value, cbor_allocator<cbor_value>>
+    struct cbor_array: vector<cbor_value>
     {
-        using parent_type = std::vector<cbor_value, cbor_allocator<cbor_value>>;
         inline const cbor_value &at(size_t pos, const std::source_location &loc=std::source_location::current()) const;
     };
 
@@ -199,7 +195,7 @@ namespace daedalus_turbo {
     inline const cbor_value &cbor_array::at(size_t pos, const std::source_location &loc) const
     {
         try {
-            return parent_type::at(pos);
+            return vector::at(pos);
         } catch (std::out_of_range &ex) {
             throw cbor_error("invalid element index {} in the array of size {} in file {} line {}!",
                                 pos, size(), loc.file_name(), loc.line());

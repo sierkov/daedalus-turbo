@@ -6,13 +6,12 @@
 #define DAEDALUS_TURBO_PROGRESS_HPP
 
 #include <map>
-#include <optional>
 #include <dt/format.hpp>
 #include <dt/mutex.hpp>
 
 namespace daedalus_turbo {
     struct progress {
-        using state_map = std::map<std::string, std::string>;
+        using state_map = std::map<std::string, double>;
 
         struct info {
             size_t total = 0;
@@ -23,49 +22,21 @@ namespace daedalus_turbo {
 
         static progress &get()
         {
-            static std::optional<progress> p {};
-            if (!p) {
-                alignas(mutex::padding) static std::mutex m {};
-                std::scoped_lock lk { m };
-                // checking again since another thread could have already started initializing the logger
-                if (!p)
-                    p.emplace();
-            }
-            return *p;
+            static progress p {}; // C++ standard guarantees a thread-safe initialization on the first call
+            return p;
         }
 
         void update(const std::string &name, uint64_t current, uint64_t max)
         {
             auto value = current < max ? current : max;
-            auto pct_value = max == 0 ? "100.000%" : fmt::format("{:0.3f}%", static_cast<double>(value) * 100 / max);
+            auto pct_value = max == 0 ? 1.0 : static_cast<double>(value) * 100 / max;
             update(name, pct_value);
         }
 
-        void update(const std::string &name, const std::string &value)
+        void update(const std::string &name, const double value)
         {
-            logger::trace("progress {}: {}", name, value);
             std::scoped_lock lk { _state_mutex };
             _state[name] = value;
-        }
-
-        void update(const state_map &updates)
-        {
-            std::scoped_lock lk { _state_mutex };
-            for (const auto &[name, value]: updates) {
-                logger::trace("progress {}: {}", name, value);
-                _state[name] = value;
-            }
-        }
-
-        void update(const state_map &updates, const state_map &retiring)
-        {
-            std::scoped_lock lk { _state_mutex };
-            for (const auto &[name, value]: retiring)
-                _state.erase(name);
-            for (const auto &[name, value]: updates) {
-                logger::trace("progress {}: {}", name, value);
-                _state[name] = value;
-            }
         }
 
         void retire(const std::string &name)
@@ -74,20 +45,13 @@ namespace daedalus_turbo {
             _state.erase(name);
         }
 
-        void retire(const state_map &retiring)
-        {
-            std::scoped_lock lk { _state_mutex };
-            for (const auto &[name, value]: retiring)
-                _state.erase(name);
-        }
-
         void inform(std::ostream &stream=std::cerr)
         {
             std::string str {};
             {
                 std::scoped_lock lk { _state_mutex };
                 for (const auto &[name, val]: _state)
-                    str += fmt::format("{}: {} ", name, val);
+                    str += fmt::format("{}: {:0.3f}% ", name, val);
             }
             // adjust for the invisible whitespace
             if (str.size() > _max_str)
@@ -114,7 +78,7 @@ namespace daedalus_turbo {
         progress_guard(const std::initializer_list<std::string> &names): _names { names }, _progress { progress::get() }
         {
             for (const auto &name: _names)
-                _progress.update(name, "0.000%");
+                _progress.update(name, 0.0);
         }
 
         ~progress_guard()

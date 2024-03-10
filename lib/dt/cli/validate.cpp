@@ -52,33 +52,21 @@ namespace daedalus_turbo::cli::validate {
         }
     }
 
-    std::string cmd::_parse_local_chunk(chunk_registry &cr, const chunk_info &chunk, const std::string &save_path) const
-    {
-        try {
-            auto compressed = file::read_raw(save_path);
-            uint8_vector data {};
-            zstd::decompress(data, compressed);
-            auto parsed_chunk = cr.parse(chunk.offset, chunk.orig_rel_path, data, compressed.size());
-            if (parsed_chunk.data_hash != chunk.data_hash)
-                throw error("data hash does not match for the chunk: {}", save_path);
-            cr.add(std::move(parsed_chunk));
-            return save_path;
-        } catch (std::exception &ex) {
-            std::filesystem::path orig_path { save_path };
-            auto debug_path = cr.full_path(fmt::format("error/{}", orig_path.filename().string()));
-            logger::warn("moving an unparsable chunk {} to {}", save_path, debug_path);
-            std::filesystem::copy_file(save_path, debug_path, std::filesystem::copy_options::overwrite_existing);
-            throw error("can't parse {}: {}", save_path, ex.what());
-        }
-    }
-
     void cmd::_validate_chunks(scheduler &sched, chunk_registry &cr, chunk_list &&chunks) const
     {
         timer t { "validate chunks" };
         for (const auto &chunk: chunks) {
             auto save_path = cr.full_path(chunk.rel_path());
-            sched.submit("parse", 0 + 100 * (_parse_progress.total - chunk.offset) / _parse_progress.total, [this, &cr, chunk, save_path]() {
-                return _parse_local_chunk(cr, chunk, save_path);
+            sched.submit_void("parse", 0 + 100 * (_parse_progress.total - chunk.offset) / _parse_progress.total, [&cr, chunk, save_path]() {
+                try {
+                    cr.add(chunk.offset, save_path, chunk.data_hash, chunk.orig_rel_path);
+                } catch (std::exception &ex) {
+                    std::filesystem::path orig_path { save_path };
+                    auto debug_path = cr.full_path(fmt::format("error/{}", orig_path.filename().string()));
+                    logger::warn("moving an unparsable chunk {} to {}", save_path, debug_path);
+                    std::filesystem::copy_file(save_path, debug_path, std::filesystem::copy_options::overwrite_existing);
+                    throw error("can't parse {}: {}", save_path, ex.what());
+                }
             });
         }
         sched.process(true);

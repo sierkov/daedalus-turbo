@@ -7,6 +7,7 @@
 
 #include <zpp_bits.h>
 #include <dt/cardano/common.hpp>
+#include <dt/container.hpp>
 #include <dt/index/vrf.hpp>
 #include <dt/vrf.hpp>
 
@@ -42,7 +43,7 @@ namespace daedalus_turbo::cardano::state {
             file::write(path, zpp_data);
         }
 
-        void process_updates(const std::vector<index::vrf::item> &updates)
+        void process_updates(const vector<index::vrf::item> &updates)
         {
             blake2b_256_hash nonce_block {};
             for (const auto &item: updates) {

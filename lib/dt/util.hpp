@@ -7,13 +7,13 @@
 
 #include <algorithm>
 #include <cstring>
-#include <filesystem>
 #include <iomanip>
 #include <iostream>
 #include <source_location>
 #include <span>
 #include <vector>
 #include <dt/array.hpp>
+#include <dt/container.hpp>
 #include <dt/error.hpp>
 
 namespace daedalus_turbo {
@@ -41,8 +41,8 @@ namespace daedalus_turbo {
 
     struct buffer;
 
-    struct uint8_vector: std::vector<uint8_t> {
-        using std::vector<uint8_t>::vector;
+    struct uint8_vector: vector<uint8_t> {
+        using vector::vector;
 
         static uint8_vector from_hex(const std::string_view& hex)
         {
@@ -157,7 +157,7 @@ namespace daedalus_turbo {
         return os;
     }
 
-    inline uint8_vector::uint8_vector(const buffer &buf) : std::vector<uint8_t>(buf.size())
+    inline uint8_vector::uint8_vector(const buffer &buf): vector(buf.size())
     {
         memcpy(data(), buf.data(), buf.size());
     }

@@ -59,7 +59,7 @@ suite partitioned_map_suite = [] {
         };
         "range"_test = [&] {
             size_t cnt = 0;
-            for (const auto &v: pm)
+            for (auto it = pm.begin(); it != pm.end(); ++it)
                 cnt++;
             expect(cnt == 3_ul);
         };

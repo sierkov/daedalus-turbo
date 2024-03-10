@@ -15,7 +15,7 @@ suite file_suite = [] {
             expect(buf.size() == 52'958'359) << buf.size();
         };
         "read_zstd"_test = [] {
-            auto buf = file::read("./data/chunk-registry/compressed/immutable/9C5C0267DCA941851D0330E19B91712618EB6DB4BF17E458BCF00829F84CF3CF.zstd");
+            auto buf = file::read("./data/chunk-registry/compressed/chunk/9C5C0267DCA941851D0330E19B91712618EB6DB4BF17E458BCF00829F84CF3CF.zstd");
             expect(buf.size() == 42'052'372) << buf.size();
         };
         "tmp"_test = [] {
