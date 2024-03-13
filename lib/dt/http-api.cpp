@@ -115,6 +115,9 @@ namespace daedalus_turbo::http_api {
         indexer::indexer_map _indexers {};
         std::unique_ptr<indexer::incremental> _cr {};
         std::unique_ptr<reconstructor> _reconst {};
+        std::chrono::time_point<std::chrono::system_clock> _sync_start {};
+        double _sync_duration {};
+        double _sync_data_mb = 0;
         std::optional<std::string> _sync_error {};
         std::optional<chunk_registry::chunk_info> _sync_last_chunk {};
         std::atomic<sync_status> _sync_status { sync_status::syncing };
@@ -265,16 +268,50 @@ namespace daedalus_turbo::http_api {
             return res;
         }
 
+        json::object _hardware_info()
+        {
+            timer t { "collect hardware info" };
+            auto net_speed = daedalus_turbo::http::internet_speed_mbps();
+            return json::object {
+                { "internet", fmt::format("{:0.1f}/{:0.1f} Mbps", net_speed.current, net_speed.max) },
+                { "threads", fmt::format("{}/{}", _sched.active_workers(), _sched.num_workers()) },
+                { "memory", fmt::format("{:0.1f}/{:0.1f} GiB", static_cast<double>(memory::max_usage_mb()) / (1 << 10), static_cast<double>(memory::physical_mb()) / (1 << 10)) },
+                { "storage", fmt::format("{:0.1f}/{:0.1f} GB", static_cast<double>(file::disk_used(_data_dir)) / (1'000'000'000), static_cast<double>(file::disk_available(_data_dir)) / (1'000'000'000)) }
+            };
+        }
+
+        std::shared_ptr<json::object> _hardware_info_cached()
+        {
+            alignas(mutex::padding) static std::mutex info_mutex {};
+            static auto info = std::make_shared<json::object>(_hardware_info());
+            static constexpr std::chrono::seconds update_delay { 5 };
+            static std::chrono::time_point<std::chrono::system_clock> next_update = std::chrono::system_clock::now() + update_delay;
+            static std::atomic_bool update_in_progress { false };
+            bool exp_false = false;
+            if (std::chrono::system_clock::now() >= next_update && update_in_progress.compare_exchange_strong(exp_false, true)) {
+                std::thread {[&] {
+                    auto new_info = _hardware_info();
+                    std::scoped_lock lkw { info_mutex };
+                    info = std::make_shared<json::object>(std::move(new_info));
+                    next_update = std::chrono::system_clock::now() + update_delay;
+                    update_in_progress = false;
+                } }.detach();
+            }
+            std::scoped_lock lkr { info_mutex };
+            return info;
+        }
+
         http::response<http::string_body> _api_status(const http::request<http::string_body>& req)
         {
             json::object resp {};
             resp.emplace("ready", _sync_status == sync_status::ready);
             resp.emplace("requirements", _requirements_status.to_json());
+            resp.emplace("hardware", *_hardware_info_cached());
             auto progress_copy = progress::get().copy();
             if (!progress_copy.empty()) {
                 json::object task_progress {};
                 for (const auto &[name, value]: progress_copy)
-                    task_progress.emplace(name, value);
+                    task_progress.emplace(name, fmt::format("{:0.3f}%", value * 100));
                 resp.emplace("progress", std::move(task_progress));
             }
             {
@@ -286,6 +323,8 @@ namespace daedalus_turbo::http_api {
             }
             switch (_sync_status) {
                 case sync_status::ready:
+                    resp.emplace("syncDuration", fmt::format("{:0.1f}", _sync_duration / 60));
+                    resp.emplace("syncDataMB", fmt::format("{:0.1f}", _sync_data_mb));
                     if (_sync_last_chunk) {
                         resp.emplace("lastBlock", json::object {
                             { "hash", fmt::format("{}", _sync_last_chunk->last_block_hash) },
@@ -296,8 +335,19 @@ namespace daedalus_turbo::http_api {
                         });
                     }
                     break;
-                case sync_status::syncing:
+                case sync_status::syncing: {
+                    double in_progress = std::chrono::duration<double>(std::chrono::system_clock::now() - _sync_start).count();
+                    resp.emplace("syncDuration", fmt::format("{:0.1f}", in_progress / 60));
+                    if (!progress_copy.empty()) {
+                        double mean_progress = 0.0;
+                        for (const auto &[name, value]: progress_copy)
+                            mean_progress += value;
+                        mean_progress /= progress_copy.size();
+                        if (in_progress >= 10 && mean_progress >= 0.01)
+                            resp.emplace("syncETA", fmt::format("{:0.1f}", in_progress / mean_progress * (1.0 - mean_progress) / 60));
+                    }
                     break;
+                }
                 case sync_status::failed:
                     resp.emplace("error", *_sync_error);
                     break;
@@ -313,14 +363,18 @@ namespace daedalus_turbo::http_api {
             _sync_status = sync_status::syncing;
             _sync_error.reset();
             _sync_last_chunk.reset();
+            _sync_start = std::chrono::system_clock::now();
             try {
                 _cr = std::make_unique<validator::incremental>(_sched, _data_dir, _indexers);
                 {
                     sync::http::syncer syncr { _sched, *_cr, _host, false };
+                    uint64_t start_offset = _cr->num_bytes();
                     syncr.sync();
+                    _sync_data_mb = static_cast<double>(_cr->num_bytes() - start_offset) / 1000000;
                 }
                 _reconst = std::make_unique<reconstructor>(_sched, *_cr);
                 _sync_last_chunk = _cr->last_chunk();
+                _sync_duration = std::chrono::duration<double>(std::chrono::system_clock::now() - _sync_start).count();
                 _sync_status = sync_status::ready;
                 logger::info("synchronization complete, all API endpoints are available now");
             } catch (std::exception &ex) {

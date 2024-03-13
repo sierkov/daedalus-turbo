@@ -1,3 +1,4 @@
+set(Boost_NO_WARN_NEW_VERSIONS 1)
 find_package(Boost 1.83 REQUIRED COMPONENTS json url coroutine)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(FMT REQUIRED fmt>=8.1.1)
@@ -30,6 +31,7 @@ target_link_directories(lib PUBLIC
     ${ZSTD_LIBRARY_DIRS}
 )
 if (WIN32)
+    target_compile_options(lib PUBLIC -DDT_USE_MIMALLOC=1)
     pkg_check_modules(MIMALLOC REQUIRED mimalloc>=2.0.5)
     target_link_libraries(lib PUBLIC ${MIMALLOC_LIBRARIES})
     target_link_directories(lib PUBLIC ${MIMALLOC_LIBRARY_DIRS})

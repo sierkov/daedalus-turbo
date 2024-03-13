@@ -24,7 +24,7 @@ suite chunk_registry_suite = [] {
             "create chunk registry"_test = [&cr] {
                 expect(cr.chunks().size()) << cr.num_chunks();
                 expect(cr.num_chunks() == 8_u) << cr.num_chunks();
-                expect(cr.num_bytes() == 162'960'922_u) << cr.num_bytes();
+                expect(cr.num_bytes() == 175'115'499_u) << cr.num_bytes();
             };
             "find chunk"_test = [&cr] {
                 const auto &orig_rel_path = cr.find(100'000'000).orig_rel_path;
@@ -144,7 +144,7 @@ suite chunk_registry_suite = [] {
                 }
             );
             expect(ok);
-            expect(agg_res.num_txs == 83426_ull);
+            expect(agg_res.num_txs == 90'455_ull);
         };
     };
 };

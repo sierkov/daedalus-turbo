@@ -53,6 +53,16 @@ namespace daedalus_turbo {
         return _num_workers;
     }
 
+    size_t scheduler::active_workers() const
+    {
+        std::scoped_lock lk { _tasks_mutex };
+        size_t cnt = 0;
+        for (const auto &task: _worker_tasks)
+            if (!task.empty())
+                ++cnt;
+        return cnt;
+    }
+
     void scheduler::submit(const std::string &task_group, int priority, const std::function<std::any ()> &action)
     {
         std::unique_lock tasks_lock { _tasks_mutex };

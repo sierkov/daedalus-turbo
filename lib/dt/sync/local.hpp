@@ -431,6 +431,13 @@ namespace daedalus_turbo::sync::local {
                     deletable.emplace(std::move(del_path));
             }
             _cr.target_offset(source_end_offset);
+            // update source chunks to include only actually needed files
+            auto old_source_chunks = std::move(_source_chunks);
+            _source_chunks.clear();
+            for (const auto &chunk: avail_chunks) {
+                if (old_source_chunks.contains(chunk.path))
+                    _source_chunks.try_emplace(chunk.path, std::move(old_source_chunks.at(chunk.path)));
+            }
             _refresh_chunks(avail_chunks, updated, deletable, errors);
             auto deleted = _delete_obsolete(deletable);
             return sync_res { std::move(updated), std::move(deleted), std::move(errors), _cr.max_slot() };

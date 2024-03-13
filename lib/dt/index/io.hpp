@@ -244,8 +244,6 @@ namespace daedalus_turbo::index {
                 zstd::compress(comp_data, data, 3);
 
                 std::scoped_lock lock { _write_mutex };
-                if (buffer { comp_data.data(), 8 }.to<uint64_t>() != data.size())
-                    throw error("Internal error: compressed data has been corrupted!");
                 size_t fact_off = _os.tellp();
                 if (fact_off != _free_off)
                     throw error("internal error with {}: expected file position {} but got {}", _path, (size_t)_free_off, fact_off);

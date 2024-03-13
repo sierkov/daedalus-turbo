@@ -8,13 +8,13 @@
 #include <map>
 #include <set>
 #include <vector>
-#if _WIN32
+#if DT_USE_MIMALLOC
 #   include <mimalloc.h>
 #endif
 
 namespace daedalus_turbo {
     // Standard containers with the default allocator performs perform poorly in multi-threaded scenarios on Windows.
-#if _WIN32
+#if DT_USE_MIMALLOC
     template<typename T>
     using container_allocator = mi_stl_allocator<T>;
 #else

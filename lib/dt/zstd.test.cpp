@@ -15,8 +15,6 @@ suite zstd_suite = [] {
         uint8_vector compressed {};
 
         "compress"_test = [&] {
-            zstd::compress(compressed, std::string_view { "" });
-            expect(compressed.size() > 8_u);
             zstd::compress(compressed, orig);
             expect(compressed.size() > 8_u);
         };
@@ -25,15 +23,24 @@ suite zstd_suite = [] {
             zstd::decompress(out, compressed);
             expect(out == orig);
         };
-        "stream_decompressor"_test = [] {
-            zstd::stream_decompressor dec {};
-            // the loop checks the reuse correctness
-            for (size_t i=0; i < 10; ++i) {
-                file::read_stream is { "./data/chunk-registry/compressed/chunk/9C5C0267DCA941851D0330E19B91712618EB6DB4BF17E458BCF00829F84CF3CF.zstd" };
-                uint8_vector buf {};
-                expect(dec.read_start(buf, is) == 42052372_ull);
-                expect(buf.size() > 10) << buf.size();
-            }
+        "decompressed_size"_test = [] {
+            static std::string_view test_data { "Hello, world!" };
+            auto compressed = zstd::compress(test_data, 3);
+            expect(zstd::decompressed_size(compressed) == test_data.size());
+        };
+        "compress/decompress empty"_test = [] {
+            static std::string_view empty { "" };
+            auto compressed = zstd::compress(empty);
+            expect(compressed.size() > 8_u);
+            expect(zstd::decompressed_size(compressed) == 0_ull);
+            auto decompressed = zstd::decompress(compressed);
+            expect(decompressed.size() == 0_ull);
+        };
+        "file compress/decompress"_test = [] {
+            auto raw = file::read("./data/immutable/04309.chunk");
+            auto compressed = zstd::compress(raw, 1);
+            auto decompressed = zstd::decompress(compressed);
+            expect(decompressed == raw);
         };
         "errors"_test = [&] {
             uint8_vector out {};

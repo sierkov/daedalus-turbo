@@ -27,7 +27,8 @@ namespace daedalus_turbo::cli::stake_history {
             cardano::address_buf addr_raw { args.at(1) };
             if (addr_raw.size() == 28) addr_raw.insert(addr_raw.begin(), 0xE1);
             scheduler sched {};
-            daedalus_turbo::chunk_registry cr { sched, data_dir };
+            auto indexers = indexer::default_list(sched, data_dir);
+            indexer::incremental cr { sched, data_dir, indexers };
             cr.init_state();
             reconstructor r { sched, cr };
             cardano::address addr { addr_raw.span() };

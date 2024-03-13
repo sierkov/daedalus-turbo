@@ -16,7 +16,7 @@ suite file_suite = [] {
         };
         "read_zstd"_test = [] {
             auto buf = file::read("./data/chunk-registry/compressed/chunk/9C5C0267DCA941851D0330E19B91712618EB6DB4BF17E458BCF00829F84CF3CF.zstd");
-            expect(buf.size() == 42'052'372) << buf.size();
+            expect(buf.size() == 54'206'949) << buf.size();
         };
         "tmp"_test = [] {
             std::string tmp_path {};

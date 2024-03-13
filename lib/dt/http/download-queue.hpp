@@ -15,6 +15,13 @@ namespace daedalus_turbo {
 }
 
 namespace daedalus_turbo::http {
+    struct internet_speed {
+        double current = 0.0;
+        double max = 0.0;
+    };
+
+    extern internet_speed internet_speed_mbps(std::optional<double> new_current_speed={});
+
     struct download_queue {
         struct result {
             std::string url {};
@@ -35,7 +42,7 @@ namespace daedalus_turbo::http {
         void process(bool report_progress=false, scheduler *sched = nullptr);
     private:
         struct impl;
-        std::unique_ptr<impl> _impl {};
+        std::unique_ptr<impl> _impl;
     };
 }
 

@@ -5,14 +5,11 @@
 #ifndef DAEDALUS_TURBO_HISTORY_HPP
 #define DAEDALUS_TURBO_HISTORY_HPP
 
-#include <chrono>
 #include <filesystem>
-#include <iostream>
 #include <string>
 #include <utility>
 #include <dt/cardano.hpp>
 #include <dt/cbor.hpp>
-#include <dt/chunk-registry.hpp>
 #include <dt/index/block-meta.hpp>
 #include <dt/index/pay-ref.hpp>
 #include <dt/index/stake-ref.hpp>
@@ -185,7 +182,7 @@ namespace daedalus_turbo {
                 _find_used_txos_small(p, sched, txo_tasks, txo_use_idx);
             else
                 _find_used_txos_large(p, sched, num_txos, txo_use_idx);
-            p.update("find spent txos", 1.0);
+            p.done("find spent txos");
             p.inform();
             return txo_tasks;
         }
@@ -344,15 +341,14 @@ namespace daedalus_turbo {
             }
         };
 
-        reconstructor(scheduler &sched, chunk_registry &cr)
+        reconstructor(scheduler &sched, indexer::incremental &cr)
             : _sched { sched }, _cr { cr }, _idx_dir { indexer::incremental::storage_dir(_cr.data_dir().string()) },
-                _stake_ref_idx { indexer::multi_reader_paths(_idx_dir.string(), "stake-ref") },
-                _pay_ref_idx { indexer::multi_reader_paths(_idx_dir.string(), "pay-ref") },
-                _tx_idx { indexer::multi_reader_paths(_idx_dir.string(), "tx") },
-                _txo_use_idx { indexer::multi_reader_paths(_idx_dir.string(), "txo-use") },
-                _block_index {}
+                _stake_ref_idx { _cr.reader_paths("stake-ref") },
+                _pay_ref_idx { _cr.reader_paths("pay-ref") },
+                _tx_idx { _cr.reader_paths("tx") },
+                _txo_use_idx { _cr.reader_paths("txo-use") }
         {
-            index::reader_multi<index::block_meta::item> block_meta_idx { indexer::multi_reader_paths(_idx_dir.string(), "block-meta") };
+            index::reader_multi<index::block_meta::item> block_meta_idx { _cr.reader_paths("block-meta") };
             _block_index.reserve(block_meta_idx.size());
             index::block_meta::item item {};
             while (block_meta_idx.read(item)) {
@@ -404,7 +400,7 @@ namespace daedalus_turbo {
 
     private:
         scheduler &_sched;
-        chunk_registry &_cr;
+        indexer::incremental &_cr;
         const std::filesystem::path _idx_dir;
         index::reader_multi<index::stake_ref::item> _stake_ref_idx;
         index::reader_multi<index::pay_ref::item> _pay_ref_idx;
@@ -514,7 +510,7 @@ namespace daedalus_turbo {
             sched.process(false);
             num_disk_reads += chunk_tasks.size();
         }            
-        p.update(progress_id, 1.0);
+        p.done(progress_id);
         p.inform();
     }
 

@@ -15,10 +15,10 @@ suite indexer_suite = [] {
         static const std::string src_dir { "./data/chunk-registry" };
         static const std::string data_dir { "./tmp/indexer" };
         static const auto idx_dir = indexer::incremental::storage_dir(data_dir);
-        "incremental"_test = [=] {
+        scheduler sched {};
+        "incremental"_test = [&] {
             std::filesystem::remove_all(data_dir);
             {
-                scheduler sched {};
                 chunk_registry src_cr { sched, src_dir };
                 src_cr.init_state(false);
                 indexer_map indexers {};
@@ -27,13 +27,17 @@ suite indexer_suite = [] {
                 idxr.import(src_cr, false);
             }
             {
-                index::reader_multi<index::txo_use::item> reader { indexer::multi_reader_paths(idx_dir, "txo-use") };
+                indexer_map indexers {};
+                indexers.emplace(std::make_unique<index::txo_use::indexer>(sched, idx_dir, "txo-use"));
+                incremental idxr { sched, data_dir, indexers };
+                idxr.init_state(false);
+                index::reader_multi<index::txo_use::item> reader { idxr.reader_paths("txo-use") };
                 index::txo_use::item i {};
                 size_t read_count = 0;
                 while (reader.read(i)) {
                     ++read_count;
                 }
-                expect(read_count == 226251_u) << read_count;
+                expect(read_count == 244'802_ull) << read_count;
                 expect(read_count == reader.size());
             }
         };

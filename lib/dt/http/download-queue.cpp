@@ -45,6 +45,21 @@ namespace daedalus_turbo::http {
     namespace net = boost::asio;
     using tcp = boost::asio::ip::tcp;
 
+    internet_speed internet_speed_mbps(std::optional<double> new_current_speed)
+    {
+        static std::atomic<double> max_speed { 0.0 };
+        static std::atomic<double> current_speed { 0.0 };
+        if (new_current_speed) {
+            for (;;) {
+                double max_copy = max_speed.load();
+                if (*new_current_speed <= max_copy || max_speed.compare_exchange_strong(max_copy, *new_current_speed))
+                    break;
+            }
+            current_speed = *new_current_speed;
+        }
+        return internet_speed { current_speed.load(), max_speed.load() };
+    }
+
     struct download_queue::impl {
         static constexpr size_t max_connections = 8;
 
@@ -270,8 +285,10 @@ namespace daedalus_turbo::http {
                 auto num_requests = oks + errors;
                 double error_rate = num_requests > 0 ? static_cast<double>(errors) * 100 / num_requests : 0.0;
                 logger::trace("download-queue size: {} active connections: {}", queue_size, active_conns);
+                double speed_mb_sec = static_cast<double>(bytes) / 1'000'000 / duration_secs;
+                internet_speed_mbps(speed_mb_sec * 8);
                 logger::debug("download-queue performance over the last reporting period: download speed: {:0.1f} MB/sec, requests: {}, error rate: {:0.2f}%",
-                    static_cast<double>(bytes) / 1'000'000 / duration_secs, num_requests, error_rate);
+                    speed_mb_sec, num_requests, error_rate);
                 oks = 0;
                 errors = 0;
                 bytes = 0;

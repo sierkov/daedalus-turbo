@@ -147,7 +147,8 @@ try {
     timer t { "complete test" };
     auto [ledger_stake_dist, ledger_slot] = parse_ledger_snapshot(ledger_path);
     scheduler sched {};
-    chunk_registry cr { sched, data_dir };
+    auto indexers = indexer::default_list(sched, data_dir);
+    indexer::incremental cr { sched, data_dir, indexers };
     cr.init_state();
     reconstructor r { sched, cr };
     if (ledger_slot != r.last_slot())

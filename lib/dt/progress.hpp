@@ -26,17 +26,21 @@ namespace daedalus_turbo {
             return p;
         }
 
-        void update(const std::string &name, uint64_t current, uint64_t max)
+        void init(const std::string &name)
         {
-            auto value = current < max ? current : max;
-            auto pct_value = max == 0 ? 1.0 : static_cast<double>(value) * 100 / max;
-            update(name, pct_value);
+            _update(name, 0.0);
         }
 
-        void update(const std::string &name, const double value)
+        void update(const std::string &name, const uint64_t current, const uint64_t max)
         {
-            std::scoped_lock lk { _state_mutex };
-            _state[name] = value;
+            auto value = current < max ? current : max;
+            auto pct_value = max == 0 ? 1.0 : static_cast<double>(value) / max;
+            _update(name, pct_value);
+        }
+
+        void done(const std::string &name)
+        {
+            _update(name, 1.0);
         }
 
         void retire(const std::string &name)
@@ -51,7 +55,7 @@ namespace daedalus_turbo {
             {
                 std::scoped_lock lk { _state_mutex };
                 for (const auto &[name, val]: _state)
-                    str += fmt::format("{}: {:0.3f}% ", name, val);
+                    str += fmt::format("{}: {:0.3f}% ", name, val * 100);
             }
             // adjust for the invisible whitespace
             if (str.size() > _max_str)
@@ -59,7 +63,7 @@ namespace daedalus_turbo {
             stream << fmt::format("{:<{}}\r", str, _max_str);
         }
 
-        const state_map copy() const
+        state_map copy() const
         {
             state_map state_copy {};
             {
@@ -72,13 +76,21 @@ namespace daedalus_turbo {
         alignas(mutex::padding) mutable std::mutex _state_mutex {};
         state_map _state {};
         size_t _max_str = 0;
+
+        void _update(const std::string &name, const double value)
+        {
+            std::scoped_lock lk { _state_mutex };
+            auto [it, created] = _state.try_emplace(name, value);
+            if (!created && value > it->second)
+                it->second = value;
+        }
     };
 
     struct progress_guard {
         progress_guard(const std::initializer_list<std::string> &names): _names { names }, _progress { progress::get() }
         {
             for (const auto &name: _names)
-                _progress.update(name, 0.0);
+                _progress.init(name);
         }
 
         ~progress_guard()

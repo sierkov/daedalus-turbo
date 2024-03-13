@@ -378,15 +378,6 @@ namespace daedalus_turbo::validator {
         logger::trace("prepare_outflows part {}: consumed {} MB of RAM", part_no, ram_used / 1'000'000);
     }
 
-    vector<std::string> incremental::_index_slice_paths(const std::string &name, const indexer::slice_list &slices) const
-    {
-        vector<std::string> paths {};
-        for (const auto &slice: slices)
-            paths.emplace_back(_indexers.at(name)->reader_path(slice.slice_id));
-        logger::trace("slice paths for index {}: {}", name, paths);
-        return paths;
-    }
-
     size_t incremental::_prepare_outflows(uint64_t validate_start_offset, uint64_t validate_end_offset, const indexer::slice_list &slices) const
     {
         timer t { "validator/prepare_outflows" };
@@ -396,8 +387,8 @@ namespace daedalus_turbo::validator {
             if (slice.offset + slice.size > validate_start_offset && slice.offset < validate_end_offset)
                 txo_use_slices.emplace_back(slice);
         }
-        auto txo_use_reader = std::make_shared<index::reader_multi_mt<index::txo_use::item>>(_index_slice_paths("txo-use", txo_use_slices));
-        auto txo_reader = std::make_shared<index::reader_multi_mt<index::txo::item>>(_index_slice_paths("txo", slices));
+        auto txo_use_reader = std::make_shared<index::reader_multi_mt<index::txo_use::item>>(reader_paths("txo-use", txo_use_slices));
+        auto txo_reader = std::make_shared<index::reader_multi_mt<index::txo::item>>(reader_paths("txo", slices));
         auto num_parts = txo_use_reader->num_parts();
         _sched.wait_for_count("prepare-outflows", num_parts, [&] {
             for (size_t pi = 0; pi < num_parts; pi++) {
@@ -636,7 +627,7 @@ namespace daedalus_turbo::validator {
                 snapshot_offsets.emplace_back(einfo.end_offset());
             }
         }
-        index::reader_multi<index::txo::item> txo_reader { _index_slice_paths("txo", slices) };
+        index::reader_multi<index::txo::item> txo_reader { reader_paths("txo", slices) };
         auto vrf_updates = dynamic_cast<index::vrf::indexer &>(*_indexers.at("vrf")).updated_epochs();
         for (uint64_t e = first_epoch; e <= last_epoch; e++) {
             try {

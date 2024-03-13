@@ -170,12 +170,15 @@ Nevertheless, compilation in other environments and with other compilers is poss
 The below notes may be helpful if you decide to build the software outside of Docker.
 
 ## Necessary software packages
-- [CMake >= 3.22.1](https://cmake.org/), a build system
-- [boost == 1.83](https://www.boost.org/), a collection of C++ libraries
-- [fmt >= 8.1.1](https://github.com/fmtlib/fmt), a string formatting library
-- [libsodium >= 1.0.18](https://github.com/jedisct1/libsodium), a cryptographic library
-- [spdlog >= 1.9.2](https://github.com/gabime/spdlog), a logging library
-- [zstd >= 1.4.8](https://github.com/facebook/zstd), a compression library
+- [CMake](https://cmake.org/) >= 3.22.1, a build system
+- [boost](https://www.boost.org/) == 1.83, a collection of C++ libraries
+- [fmt](https://github.com/fmtlib/fmt) >= 8.1.1, a string formatting library
+- [libsodium](https://github.com/jedisct1/libsodium) >= 1.0.18, a cryptographic library
+- [spdlog](https://github.com/gabime/spdlog) >= 1.9.2, a logging library
+- [zstd](https://github.com/facebook/zstd) >= 1.4.8, a compression library
+
+Additionally on Windows:
+- [mimalloc](https://github.com/microsoft/mimalloc) >= 2.0.5, a memory allocator that works well with multi-threaded workloads
 
 ## Tested environments and compilers
 - Ubuntu Linux 22.04 with GCC 11.4.0

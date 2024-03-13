@@ -22,7 +22,8 @@ namespace daedalus_turbo::cli::tx_info {
             const std::string &data_dir = args.at(0);
             const auto tx_hash = bytes_from_hex(args.at(1));
             scheduler sched {};
-            daedalus_turbo::chunk_registry cr { sched, data_dir };
+            auto indexers = indexer::default_list(sched, data_dir);
+            indexer::incremental cr { sched, data_dir, indexers };
             cr.init_state();
             reconstructor r { sched, cr };
             auto tx_info = r.find_tx(tx_hash);

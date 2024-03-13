@@ -37,6 +37,7 @@ namespace daedalus_turbo::sync::http {
             }
             if (!task) {
                 logger::info("local chain is up to date - nothing to do");
+                break;
             } else if (task->start_offset != _cr.num_bytes()) {
                 // truncation may require multiple iterations because the validator has snapshots only at certain points of the blockchain
                 for (auto &&path: _cr.truncate(task->start_offset, false))

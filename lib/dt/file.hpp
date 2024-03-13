@@ -226,7 +226,7 @@ namespace daedalus_turbo::file {
 
     inline uint8_vector read_raw(const std::string &path)
     {
-        uint8_vector buf;
+        uint8_vector buf {};
         read_raw(path, buf);
         return buf;
     }
@@ -235,7 +235,7 @@ namespace daedalus_turbo::file {
         read_raw(path, buffer);
         thread_local std::string_view match { ".zstd" };
         if (path.size() > 5 && path.substr(path.size() - 5) == match) {
-            uint8_vector decompressed;
+            uint8_vector decompressed {};
             zstd::decompress(decompressed, buffer);
             buffer = std::move(decompressed);
         }
@@ -243,7 +243,7 @@ namespace daedalus_turbo::file {
 
     inline uint8_vector read(const std::string &path)
     {
-        uint8_vector buf;
+        uint8_vector buf {};
         read(path, buf);
         return buf;
     }
@@ -313,6 +313,22 @@ namespace daedalus_turbo::file {
         os.write(buffer.data(), buffer.size());
         os.close();
         std::filesystem::rename(tmp_path, path);
+    }
+
+    inline uint64_t disk_used(const std::string &path)
+    {
+        uint64_t sz = 0;
+        for (auto &e: std::filesystem::recursive_directory_iterator(path)) {
+            if (e.is_regular_file())
+                sz += e.file_size();
+        }
+        return sz;
+    }
+
+    inline uint64_t disk_available(const std::string &path)
+    {
+        auto storage = std::filesystem::space(path);
+        return storage.available;
     }
 }
 

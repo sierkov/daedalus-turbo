@@ -65,6 +65,7 @@ namespace daedalus_turbo {
         scheduler(size_t user_num_workers=scheduler::default_worker_count());
         ~scheduler();
         size_t num_workers() const;
+        size_t active_workers() const;
         void submit(const std::string &task_group, int priority, const std::function<std::any ()> &action);
         void submit_void(const std::string &task_group, int priority, const std::function<void ()> &action);
         void on_result(const std::string &task_group, const std::function<void (std::any &&)> &observer, bool replace_if_exists=false);
@@ -77,7 +78,7 @@ namespace daedalus_turbo {
         void wait_for_count(const std::string &task_group, size_t task_count,
             const std::function<void ()> &submit_tasks, const std::function<void (std::any &&)> &process_res=[](auto &&) {});
     private:
-        alignas(mutex::padding) std::mutex _tasks_mutex {};
+        alignas(mutex::padding) mutable std::mutex _tasks_mutex {};
         alignas(mutex::padding) std::condition_variable _tasks_cv {};
         std::priority_queue<scheduled_task> _tasks {};
         std::unordered_map<std::string, size_t> _tasks_cnt {};

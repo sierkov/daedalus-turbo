@@ -29,23 +29,19 @@
 #include <dt/scheduler.hpp>
 
 namespace daedalus_turbo::indexer {
-    inline std::vector<std::string> multi_reader_paths(const std::string &base_path, const std::string &idx_name)
-    {
-        std::vector<std::string> slices {};
-        auto dir_path = std::filesystem::path { base_path } / idx_name;
-        for (const auto &entry: std::filesystem::directory_iterator(dir_path)) {
-            if (!entry.is_regular_file() || !entry.path().filename().string().starts_with("index-slice-") || entry.path().extension() != ".data")
-                continue;
-            auto slice_path = entry.path().string();
-            slices.emplace_back(slice_path.substr(0, slice_path.size() - 5));
-        }
-        std::sort(slices.begin(), slices.end());
-        return slices;
-    }
-
     using chunk_indexer_list = std::vector<std::unique_ptr<index::chunk_indexer_base>>;
     constexpr int min_no_open_files = 2048;
     using slice_list = std::vector<merger::slice>;
+    using slice_path_list = std::vector<std::string>;
+
+    inline slice_path_list multi_reader_paths(const std::string &idx_dir, const std::string &name, const indexer::slice_list &slices)
+    {
+        slice_path_list paths {};
+        for (const auto &slice: slices)
+            paths.emplace_back(index::indexer_base::reader_path(idx_dir, name, slice.slice_id));
+        logger::trace("multi_reader_paths paths for index {}: {}", name, paths);
+        return paths;
+    }
 
     struct indexer_map: public std::map<std::string, std::unique_ptr<index::indexer_base>> {
         using std::map<std::string, std::unique_ptr<index::indexer_base>>::map;
@@ -106,6 +102,16 @@ namespace daedalus_turbo::indexer {
                     copy.emplace_back(s);
             }
             return copy;
+        }
+
+        slice_path_list reader_paths(const std::string &name, const slice_list &slcs) const
+        {
+            return indexer::multi_reader_paths(_idx_dir.string(), name, slcs);
+        }
+
+        slice_path_list reader_paths(const std::string &name) const
+        {
+            return indexer::multi_reader_paths(_idx_dir.string(), name, slices());
         }
 
         file_set truncate(size_t max_end_offset, bool del=true) override

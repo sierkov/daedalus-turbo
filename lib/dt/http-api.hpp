@@ -15,7 +15,7 @@ namespace daedalus_turbo::http_api {
         void serve(const std::string &ip, uint16_t port);
     private:
         struct impl;
-        std::unique_ptr<impl> _impl {};
+        std::unique_ptr<impl> _impl;
     };
 }
 
