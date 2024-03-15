@@ -22,11 +22,43 @@ LinearProgressWithLabel.propTypes = {
     value: PropTypes.number.isRequired,
 };
 
-export default function Progress({ progress, names }) {
+export default function Progress({ progress, names, hardware, duration, eta }) {
+    let durationInfo = <></>;
+    if (duration) {
+        durationInfo = <div className="duration">
+            <div className="time-info eta">
+                <div className="note">remaining time</div>
+                <h2>{eta ? eta >= 1 ? eta + " min" : "< 1 min" : "estimating"}</h2>
+            </div>
+            <div className="time-info">
+                <div className="note">run time</div>
+                <h2>{duration} min</h2>
+            </div>
+        </div>;
+    }
+    let hardwareInfo = <></>;
+    if (hardware) {
+        hardwareInfo = <div className="hw-info">
+            <div className="resource">
+                <div className="name">Internet</div>
+                <div className="value">{hardware?.internet ?? "unknown"}</div>
+            </div>
+            <div className="resource">
+                <div className="name">CPU</div>
+                <div className="value">{hardware?.threads + " threads" ?? "unknown"}</div>
+            </div>
+            <div className="resource">
+                <div className="name">RAM</div>
+                <div className="value">{hardware?.memory ?? "unknown"}</div>
+            </div>
+            <div className="resource">
+                <div className="name">Storage</div>
+                <div className="value">{hardware?.storage ?? "unknown"}</div>
+            </div>
+        </div>;
+    }
     const myProgress = Object.fromEntries(names.map(name => [name, progress[name] ?? "0.000%"]));
     const numItems = Object.keys(myProgress).length;
-    let progressDetails = <></>;
-    let totalProgress = 100;
     const progressItems = Object.entries(myProgress).map((entry, idx) =>
         <div className="progress-item">
             <div>{entry[0]}</div>
@@ -35,17 +67,19 @@ export default function Progress({ progress, names }) {
             </div>
         </div>
     );
-    progressDetails = <>
+    const progressDetails = <>
         {progressItems}
     </>;
-    totalProgress = numItems > 0 ? Object.entries(myProgress).map(e => e[1]).reduce((sum, val) => sum + parseFloat(val?.slice(0, -1)), 0) / numItems : 100;
+    const totalProgress = numItems > 0 ? Object.entries(myProgress).map(e => e[1]).reduce((sum, val) => sum + parseFloat(val?.slice(0, -1)), 0) / numItems : 100;
     return <div className="progress">
-        <div className="progressItem total">
+        {durationInfo}
+        <div className="progress-item total">
             <div>total</div>
             <div>
                 <LinearProgressWithLabel color="primary" variant="determinate" value={totalProgress} />
             </div>
         </div>
         {progressDetails}
+        {hardwareInfo}
     </div>;
 }

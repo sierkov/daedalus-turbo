@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Dashboard from './Dashboard.jsx';
 import Error from './Error.jsx';
 import Sync from './Sync.jsx';
+import SyncReady from './SyncReady.jsx';
 import Transition from './Transition.jsx';
 
 export default function Home() {
@@ -37,6 +38,7 @@ export default function Home() {
         }
     }, []);
     const [forceContinue, setForceContinue] = useState(false);
+    const [readyConfirmed, setReadyConfirmed] = useState(false);
     let homeComponent;
     if (statusInfo?.apiError?.length > 0) {
         const issues = [
@@ -50,10 +52,15 @@ export default function Home() {
         homeComponent = <Error issues={issues} />;
     } else if (statusInfo?.requirements?.issues?.length > 0 && !forceContinue) {
         homeComponent = <Error issues={statusInfo?.requirements?.issues} onContinue={() => setForceContinue(true) }  />;
-    } else if (statusInfo?.ready) {
+    } else if (statusInfo?.ready && (readyConfirmed || statusInfo?.syncDuration < 1.0)) {
         homeComponent = <Dashboard />;
+    } else if (statusInfo?.ready && !readyConfirmed) {
+        homeComponent = <SyncReady hardware={statusInfo?.hardware}
+                              duration={statusInfo?.syncDuration} dataSize={statusInfo?.syncDataMB}
+                              ready={statusInfo?.ready} confirmReady={() => setReadyConfirmed(true)} />;
     } else if (statusInfo?.progress && Object.keys(statusInfo?.progress).length > 0) {
-        homeComponent = <Sync progress={statusInfo.progress} />;
+        homeComponent = <Sync progress={statusInfo.progress} hardware={statusInfo?.hardware}
+                              duration={statusInfo?.syncDuration} eta={statusInfo?.syncETA} />;
     } else {
         return <Transition message="Fetching the updated status, this should be done in a second ..." />;
     }

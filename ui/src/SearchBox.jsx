@@ -49,7 +49,7 @@ export default function SearchBox({ noPadding }) {
     return <div className={['search-box', noPaddingClass].join(' ')}>
             <TextField className="search-input"
                 onChange={validateSearchInput}
-                placeholder="Enter the hexadecimal tx hash or a BECH32 address"
+                placeholder="Enter a hexadecimal transaction hash or a BECH32 address"
                 fullWidth
                 inputRef={input => input && input.focus()}
                 error={!!error}

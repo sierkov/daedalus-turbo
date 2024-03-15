@@ -9,7 +9,8 @@ function multiRequest(name, ...params) {
       if (origReqId in openRequests[name]) {
         const [resolve, reject, start] = openRequests[name][origReqId];
         const duration = (Date.now() - start) / 1000;
-        console.log(`renderer ${name} ${origReqId} took ${duration} secs, sending the data to the UI`);
+        if (duration > 0.100)
+          console.warn(`renderer ${name} ${origReqId} took ${duration} secs, sending the data to the UI`);
         //console.log(`${name} ${origReqId} response:`, err, res);
         delete openRequests[name][origReqId];
         if (err) reject(err);

@@ -2,6 +2,50 @@
     max-width: 480px;
     width: 100%;
 }
-.total {
+.progress-item {
+    color: rgba(255, 255, 255, 0.7);
+}
+.progress-item.total {
     margin-bottom: 32px;
+    color: white;
+}
+.duration {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 32px;
+    margin-bottom: 32px;
+    .time-info {
+        color: #867A80;
+        margin-left: 32px;
+        margin-right: 32px;
+        text-align: center;
+        white-space: nowrap;
+        h2 {
+            margin-bottom: 8px;
+        }
+        .note {
+            margin-bottom: 8px;
+        }
+    }
+    .time-info.eta {
+        color: #f99d1c;
+    }
+}
+.hw-info {
+    margin-top: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .resource {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-left: 16px;
+        margin-right: 16px;
+        color: #867A80;
+        text-align: center;
+        white-space: nowrap;
+    }
 }

@@ -44,7 +44,7 @@ const startAPI = () => {
 };
 
 const createWindow = () => {
-  console.log('creating application window');
+  console.log('creating the application window');
   const win = new BrowserWindow({
     width: 1024,
     height: 768,
@@ -97,7 +97,8 @@ function setupIdRequest(name, baseURI, reqURI) {
         }
       }
       const duration = (Date.now() - start) / 1000;
-      console.log(`main ${name} ${reqId} took ${duration} secs, sending the response to the renderer`);
+      if (duration >= 0.100)
+        console.warn(`main ${name} ${reqId} took ${duration} secs, sending the response to the renderer`);
       ev.reply(name, reqId, undefined, await res);
     } catch (err) {
       ev.reply(name, reqId, err);
