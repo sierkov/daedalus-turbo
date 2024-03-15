@@ -14,28 +14,22 @@ namespace daedalus_turbo::sync::local {
     struct syncer {
         struct sync_res {
             std::vector<std::string> updated {};
-            std::vector<std::string> deleted {};
             std::vector<std::string> errors {};
             cardano::slot last_slot {};
         };
 
-        syncer(scheduler &sched, chunk_registry &cr, const std::string &node_path, bool strict=true, size_t zstd_max_level=3, std::chrono::seconds del_delay=std::chrono::seconds { 3600 })
-            : _sched { sched }, _cr { cr }, _node_path { std::filesystem::canonical(node_path) },
+        syncer(chunk_registry &cr, const std::string &node_path, size_t zstd_max_level=3, std::chrono::seconds del_delay=std::chrono::seconds { 3600 },
+                scheduler &sched=scheduler::get(), file_remover &fr=file_remover::get())
+            : _cr { cr }, _node_path { std::filesystem::canonical(node_path) },
                 _immutable_path { _node_path / "immutable" }, _volatile_path { _node_path / "volatile" },
                 _converted_path { _node_path / "volatile-dt" },
                 _state_path { _cr.full_path("state-local.json") }, _delete_delay { del_delay },
+                _sched { sched }, _file_remover { fr },
                 _zstd_level_immutable { std::min(static_cast<size_t>(22), zstd_max_level) },
-                _zstd_level_volatile { std::min(static_cast<size_t>(3), zstd_max_level) },
-                _strict { strict }
+                _zstd_level_volatile { std::min(static_cast<size_t>(3), zstd_max_level) }
         {
+            logger::trace("sync::locaL::syncer zstd (level-immutable: {} level-volatile: {})", _zstd_level_immutable, _zstd_level_volatile);
             std::filesystem::create_directories(_converted_path);
-            logger::trace("syncer zstd (level-immutable: {} level-volatile: {})", _zstd_level_immutable, _zstd_level_volatile);
-            auto deletable_chunks = _cr.init_state(_strict);
-            auto delete_time = std::chrono::system_clock::now() + _delete_delay;
-            for (auto &&path: deletable_chunks) {
-                logger::trace("unkown chunk found at startup {} - scheduling it for deletion", path);
-                _deleted_chunks.try_emplace(std::move(path), delete_time);
-            }
             _load_state();
         }
 
@@ -48,9 +42,9 @@ namespace daedalus_turbo::sync::local {
         {
             timer t { "sync::local::sync" };
             progress_guard pg { "parse", "merge", "validate" };
-            _cr.clean_up();
             auto res = _refresh();
             _save_state();
+            _file_remover.remove(_delete_delay);
             return res;
         }
     private:
@@ -60,6 +54,11 @@ namespace daedalus_turbo::sync::local {
             uint64_t offset = 0;
             uint64_t data_size = 0;
             cardano_hash_32 data_hash {};
+
+            uint64_t end_offset() const
+            {
+                return offset + data_size;
+            }
 
             bool is_volatile() const
             {
@@ -110,19 +109,19 @@ namespace daedalus_turbo::sync::local {
         using block_hash_list = std::vector<cardano_hash_32>;
         using block_followers_map = std::map<cardano_hash_32, block_hash_list>;
 
-        scheduler &_sched;
         chunk_registry &_cr;
         const std::filesystem::path _node_path;
         const std::filesystem::path _immutable_path;
         const std::filesystem::path _volatile_path;
         const std::filesystem::path _converted_path;
         const std::string _state_path;
-        std::chrono::milliseconds _delete_delay;
+        std::chrono::seconds _delete_delay;
+        scheduler &_sched;
+        file_remover &_file_remover;
         std::map<std::string, source_chunk_info> _source_chunks {};
         std::map<std::string, std::chrono::time_point<std::chrono::system_clock>> _deleted_chunks {};
         const size_t _zstd_level_immutable;
         const size_t _zstd_level_volatile;
-        const bool _strict;
 
         static std::time_t _to_time_t(const std::filesystem::file_time_type &tp)
         {
@@ -163,41 +162,6 @@ namespace daedalus_turbo::sync::local {
             json::save_pretty(_state_path, j_chunks);
         }
 
-        std::vector<std::string> _delete_obsolete(const chunk_registry::file_set &deletable)
-        {
-            timer t { "delete obsolete", logger::level::debug };
-            std::vector<std::string> deleted {};
-            auto now = std::chrono::system_clock::now();
-            auto new_delete_time = now + _delete_delay;
-            for (const auto &path: deletable)
-                _deleted_chunks.try_emplace(path, new_delete_time);
-            for (auto it = _deleted_chunks.begin(); it != _deleted_chunks.end(); ) {
-                if (now >= it->second) {
-                    deleted.emplace_back(it->first);
-                    std::filesystem::remove(it->first);
-                    it = _deleted_chunks.erase(it);
-                } else {
-                    it++;
-                }
-            }
-            auto too_old = now - _delete_delay;
-            auto file_now = std::chrono::file_clock::now();
-            for (auto &entry: std::filesystem::directory_iterator(_converted_path)) {
-                if (entry.is_regular_file()) {
-                    auto path = std::filesystem::weakly_canonical(entry.path()).string();
-                    if (!_source_chunks.contains(path)) {
-                        auto entry_sys_time = std::chrono::time_point_cast<std::chrono::system_clock::duration>(entry.last_write_time() - file_now + now);
-                        if (entry_sys_time < too_old) {
-                            logger::trace("found a converted volatile chunk {} not referenced by source_chunks - deleting it", path);
-                            deleted.emplace_back(path);
-                            std::filesystem::remove(path);
-                        }
-                    }
-                }
-            }
-            return deleted;
-        }
-
         analyze_res _analyze_local_chunk(chunk_update &&update)
         {
             timer t { fmt::format("process chunk path: {} offset: {} size: {}", update.path, update.offset, update.data_size), logger::level::trace };
@@ -223,12 +187,11 @@ namespace daedalus_turbo::sync::local {
             } else {
                 local_path = _cr.full_path(dist_it->second.rel_path());
             }
-            _cr.add(source_info.offset, local_path, source_info.data_hash, source_info.rel_path, _strict);
+            _cr.add(source_info.offset, local_path, source_info.data_hash, source_info.rel_path);
             return analyze_res { std::move(update.path), std::move(source_info), true };
         }
 
-        void _refresh_chunks(avail_chunk_list &avail_chunks,
-            std::vector<std::string> &updated, chunk_registry::file_set &deletable, std::vector<std::string> &errors)
+        void _refresh_chunks(avail_chunk_list &avail_chunks, std::vector<std::string> &updated, std::vector<std::string> &errors)
         {
             timer t { "check chunks for updates", logger::level::debug };
             uint64_t source_offset = 0;
@@ -260,15 +223,8 @@ namespace daedalus_turbo::sync::local {
             }
             if (!updated_chunks.empty()) {
                 auto updated_start_offset = updated_chunks.front().offset;
-                if (updated_start_offset < _cr.num_bytes()) {
-                    // truncate del=false since some files after the truncation offset may have been just updated
-                    for (auto &&del_path: _cr.truncate(updated_start_offset, false)) {
-                        auto source_path = std::filesystem::weakly_canonical(_node_path / _cr.rel_path(del_path)).string();
-                        // only to-be-deleted chunks unknown in the update source-chunk list to the deletable list
-                        if (_source_chunks.find(source_path) == _source_chunks.end())
-                            deletable.emplace(std::move(del_path));
-                    }
-                }
+                if (updated_start_offset < _cr.num_bytes())
+                    _cr.truncate(updated_start_offset);
                 if (updated_start_offset != _cr.num_bytes())
                     throw error("internal error: updated chunk offset {} is greater than the compressed data size {}!",
                         updated_start_offset, _cr.num_bytes());
@@ -339,7 +295,7 @@ namespace daedalus_turbo::sync::local {
             raw_data.resize(volatile_size_in);
             size_t offset = 0;
             for (const auto &info: volatile_chunks) {
-                file::read_span<uint8_t>(std::span { raw_data.data() + offset, info.data_size }, info.path, info.data_size);
+                file::read_span(std::span { raw_data.data() + offset, info.data_size }, info.path, info.data_size);
                 offset += info.data_size;
             }
 
@@ -407,12 +363,22 @@ namespace daedalus_turbo::sync::local {
             return output_size;
         }
 
+        void _truncate(uint64_t end_offset)
+        {
+            _cr.truncate(end_offset);
+            for (auto it = _source_chunks.begin(); it != _source_chunks.end(); ) {
+                if (it->second.end_offset() > end_offset)
+                    it = _source_chunks.erase(it);
+                else
+                    ++it;
+            }
+        }
+
         sync_res _refresh()
         {
             timer t { "sync::local::_refresh" };
             std::vector<std::string> errors {};
             std::vector<std::string> updated {};
-            chunk_registry::file_set deletable {};
             logger::info("analyzing available chunks");
             auto [source_end_offset, avail_chunks] = _find_avail_chunks(_immutable_path.string(), ".chunk");
             auto [volatile_size_in, avail_volatile] = _find_avail_chunks(_volatile_path.string(), ".dat");
@@ -426,10 +392,8 @@ namespace daedalus_turbo::sync::local {
                 source_end_offset += _convert_volatile(avail_chunks, source_end_offset, avail_volatile, volatile_size_in);
             }
             // when the source has a shorter chain, must truncate the local one
-            if (source_end_offset < _cr.num_bytes()) {
-                for (auto &&del_path: _cr.truncate(source_end_offset, false))
-                    deletable.emplace(std::move(del_path));
-            }
+            if (source_end_offset < _cr.num_bytes())
+                _truncate(source_end_offset);
             _cr.target_offset(source_end_offset);
             // update source chunks to include only actually needed files
             auto old_source_chunks = std::move(_source_chunks);
@@ -438,9 +402,9 @@ namespace daedalus_turbo::sync::local {
                 if (old_source_chunks.contains(chunk.path))
                     _source_chunks.try_emplace(chunk.path, std::move(old_source_chunks.at(chunk.path)));
             }
-            _refresh_chunks(avail_chunks, updated, deletable, errors);
-            auto deleted = _delete_obsolete(deletable);
-            return sync_res { std::move(updated), std::move(deleted), std::move(errors), _cr.max_slot() };
+            _refresh_chunks(avail_chunks, updated, errors);
+            _file_remover.remove_old_files(_converted_path, _delete_delay);
+            return sync_res { std::move(updated), std::move(errors), _cr.max_slot() };
         }
     };
 }

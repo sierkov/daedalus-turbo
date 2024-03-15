@@ -146,11 +146,8 @@ try {
         min_pct = std::stod(argv[4]);
     timer t { "complete test" };
     auto [ledger_stake_dist, ledger_slot] = parse_ledger_snapshot(ledger_path);
-    scheduler sched {};
-    auto indexers = indexer::default_list(sched, data_dir);
-    indexer::incremental cr { sched, data_dir, indexers };
-    cr.init_state();
-    reconstructor r { sched, cr };
+    indexer::incremental cr { indexer::default_list(data_dir), data_dir };
+    reconstructor r { cr };
     if (ledger_slot != r.last_slot())
         throw error("ledger last slot: {} does not match raw data last slot: {}", ledger_slot, r.last_slot());
     verify_sample(r, ledger_stake_dist, min_pct, max_pct);

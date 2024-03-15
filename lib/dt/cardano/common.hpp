@@ -978,6 +978,13 @@ namespace daedalus_turbo::cardano {
         {
             return _idx;
         }
+
+        const cbor_value &raw_witness() const
+        {
+            if (!_wit)
+                throw error("transaction wtiness has not beed supplied for this transaction!");
+            return *_wit;
+        }
     protected:
         const cbor_value &_tx;
         const block_base &_blk;

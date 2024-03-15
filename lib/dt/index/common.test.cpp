@@ -44,7 +44,7 @@ suite index_common_suite = [] {
                     idx.emplace(i * 2, (uint16_t)(i % 12));
                 }
             }
-            expect(writer<index_item>::exists(idx_path.path())) << idx_path.path();
+            expect(std::filesystem::exists(idx_path.path())) << idx_path.path();
             {
                 reader<index_item> idx { idx_path };
                 size_t read_items = 0;
@@ -54,7 +54,7 @@ suite index_common_suite = [] {
                 }
                 expect(num_items == read_items) << read_items;
             }
-            writer<index_item>::remove(idx_path.path());
+            std::filesystem::remove(idx_path.path());
         };
 
         "writer/reader partitioned"_test = [] {
@@ -68,7 +68,7 @@ suite index_common_suite = [] {
                         idx.emplace_part(p, p * num_items + i, (uint16_t)(i % 12));
                 }
             }
-            expect(writer<index_item>::exists(idx_path.path())) << idx_path.path();
+            expect(std::filesystem::exists(idx_path.path())) << idx_path.path();
             {
                 reader<index_item> idx { idx_path };
                 std::vector<size_t> read_items(num_parts);
@@ -80,7 +80,7 @@ suite index_common_suite = [] {
                     expect(num_items == read_items[p]) << read_items[p];
                 }
             }
-            writer<index_item>::remove(idx_path.path());
+            std::filesystem::remove(idx_path.path());
         };
 
         "partitioned index search"_test = [] {
@@ -114,7 +114,7 @@ suite index_common_suite = [] {
                     expect(found_cnt == 0) << "found" << i << found_cnt;
                 }
             }
-            writer<index_item>::remove(idx_path.path());
+            std::filesystem::remove(idx_path.path());
         };
 
         "multi-part indices work"_test = [] {
@@ -161,8 +161,8 @@ suite index_common_suite = [] {
                     expect(found_cnt == 0) << found_cnt;
                 }
             }
-            writer<index_item>::remove(idx_path_1.path());
-            writer<index_item>::remove(idx_path_2.path());
+            std::filesystem::remove(idx_path_1.path());
+            std::filesystem::remove(idx_path_2.path());
         };
 
         "multi-part indices one item per slice"_test = [] {
@@ -191,8 +191,8 @@ suite index_common_suite = [] {
                 expect(reader.read(found_item));
                 expect(found_item == search_item);
             }
-            writer<index_item>::remove(idx_path_1.path());
-            writer<index_item>::remove(idx_path_2.path());
+            std::filesystem::remove(idx_path_1.path());
+            std::filesystem::remove(idx_path_2.path());
         };
 
         "index metadata"_test = [] {
@@ -208,7 +208,7 @@ suite index_common_suite = [] {
                 auto offset = reader.get_meta("offset").to<uint64_t>();
                 expect(offset == 0xDEADBEAF) << offset;
             }
-            writer<index_item>::remove(idx_path.path());
+            std::filesystem::remove(idx_path.path());
         };
     };
 };

@@ -48,8 +48,7 @@ namespace daedalus_turbo::file {
 
         ~tmp_directory()
         {
-            if (std::filesystem::exists(_path))
-                std::filesystem::remove_all(_path);
+            std::filesystem::remove_all(_path);
         }
 
         const std::string &path() const
@@ -248,63 +247,14 @@ namespace daedalus_turbo::file {
         return buf;
     }
 
-    template<typename T>
-    inline void read_span(const std::span<T> &v, const std::string &path, size_t num_items=0)
+    inline void read_span(const std::span<uint8_t> &v, const std::string &path, size_t num_bytes=0)
     {
-        if (num_items == 0)
-            num_items = std::filesystem::file_size(path) / sizeof(T);
-        if (v.size() != num_items)
-            throw error("span size: {} != item count in the file: {}", v.size(), num_items);
+        if (num_bytes == 0)
+            num_bytes = std::filesystem::file_size(path);
+        if (v.size() != num_bytes)
+            throw error("span size: {} != the size of the file: {}", v.size(), num_bytes);
         read_stream is { path };
-        is.read(v.data(), v.size() * sizeof(T));
-    }
-
-    template<typename T>
-    inline void read_vector(std::vector<T> &v, const std::string &path, size_t num_items=0)
-    {
-        if (num_items == 0)
-            num_items = std::filesystem::file_size(path) / sizeof(T);
-        v.resize(num_items);
-        read_span<T>(v, path, num_items);
-    }
-
-    template<typename T>
-    inline void read_zpp(T &v, const std::string &path)
-    {
-        uint8_vector zpp_data {};
-        {
-            auto zstd_data = file::read_raw(path);
-            zstd::decompress(zpp_data, zstd_data);
-        }
-        zpp::bits::in in { zpp_data };
-        in(v).or_throw();
-    }
-
-    template<typename T, typename A>
-    inline void write_vector(const std::string &path, const std::vector<T, A> &v)
-    {
-        auto tmp_path = fmt::format("{}.tmp", path);
-        write_stream os { tmp_path };
-        os.write(v.data(), v.size() * sizeof(T));
-        os.close();
-        std::filesystem::rename(tmp_path, path);
-    }
-
-    template<typename T>
-    inline void write_zpp(const std::string &path, const T &v)
-    {
-        uint8_vector zstd_data {};
-        {
-            uint8_vector zpp_data {};
-            zpp::bits::out out { zpp_data };
-            out(v).or_throw();
-            zstd::compress(zstd_data, zpp_data, 3);
-        }
-        auto tmp_path = fmt::format("{}.tmp", path);
-        write_stream os { tmp_path };
-        os.write(zstd_data.data(), zstd_data.size());
-        os.close();
-        std::filesystem::rename(tmp_path, path);
+        is.read(v.data(), v.size());
     }
 
     inline void write(const std::string &path, const buffer &buffer) {
@@ -315,12 +265,35 @@ namespace daedalus_turbo::file {
         std::filesystem::rename(tmp_path, path);
     }
 
+    template<typename T>
+    void read_zpp(T &v, const std::string &path)
+    {
+        uint8_vector zpp_data = file::read_raw(path);
+        zpp::bits::in in { zpp_data };
+        in(v).or_throw();
+    }
+
+    template<typename T>
+    void write_zpp(const std::string &path, const T &v)
+    {
+        uint8_vector zpp_data {};
+        zpp::bits::out out { zpp_data };
+        out(v).or_throw();
+        file::write(path, zpp_data);
+    }
+
     inline uint64_t disk_used(const std::string &path)
     {
         uint64_t sz = 0;
         for (auto &e: std::filesystem::recursive_directory_iterator(path)) {
-            if (e.is_regular_file())
-                sz += e.file_size();
+            if (e.is_regular_file()) {
+                // On Mac file size is not cached so it is possible that the file does not exist any more
+                // when its size is checked
+                std::error_code ec {};
+                auto e_sz = e.file_size(ec);
+                if (!ec)
+                    sz += e_sz;
+            }
         }
         return sz;
     }

@@ -5,24 +5,20 @@
 #ifndef DAEDALUS_TURBO_PUBLISHER_HPP
 #define DAEDALUS_TURBO_PUBLISHER_HPP
 
-#include <dt/sync/local.hpp>
+#include <memory>
+#include <string>
+#include <dt/chunk-registry.hpp>
+#include <dt/file-remover.hpp>
 
 namespace daedalus_turbo {
     struct  publisher {
-        static constexpr std::chrono::seconds metadata_lifespan { 3600 };
-        static constexpr std::chrono::seconds volatile_data_lifespan { 6 * 3600 };
-
-        publisher(scheduler &sched, chunk_registry &cr, const std::string &node_path, bool strict=true, size_t zstd_max_level=22);
+        publisher(chunk_registry &cr, const std::string &node_path, size_t zstd_max_level=22, file_remover &fr=file_remover::get());
+        ~publisher();
         size_t size() const;
         void publish();
-        void run(std::chrono::milliseconds update_interval=std::chrono::milliseconds { 2000 });
     private:
-        sync::local::syncer _syncer;
-        chunk_registry &_cr;
-
-        void _write_index_html(uint64_t total_size, uint64_t total_compressed_size) const;
-        void _write_meta() const;
-        void _remove_old_meta() const;
+        struct impl;
+        std::unique_ptr<impl> _impl;
     };
 }
 

@@ -21,11 +21,8 @@ namespace daedalus_turbo::cli::tx_info {
             if (args.size() < 2) _throw_usage();
             const std::string &data_dir = args.at(0);
             const auto tx_hash = bytes_from_hex(args.at(1));
-            scheduler sched {};
-            auto indexers = indexer::default_list(sched, data_dir);
-            indexer::incremental cr { sched, data_dir, indexers };
-            cr.init_state();
-            reconstructor r { sched, cr };
+            indexer::incremental cr { indexer::default_list(data_dir), data_dir };
+            reconstructor r { cr };
             auto tx_info = r.find_tx(tx_hash);
             if (!tx_info)
                 throw error("unknown transaction hash {}", tx_hash.span());

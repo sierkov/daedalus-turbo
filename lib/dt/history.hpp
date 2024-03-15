@@ -13,7 +13,7 @@
 #include <dt/index/block-meta.hpp>
 #include <dt/index/pay-ref.hpp>
 #include <dt/index/stake-ref.hpp>
-#include <dt/index/tx.hpp>
+#include <dt/index/txo.hpp>
 #include <dt/index/txo-use.hpp>
 #include <dt/indexer.hpp>
 #include <dt/json.hpp>
@@ -341,11 +341,11 @@ namespace daedalus_turbo {
             }
         };
 
-        reconstructor(scheduler &sched, indexer::incremental &cr)
+        reconstructor(indexer::incremental &cr, scheduler &sched=scheduler::get())
             : _sched { sched }, _cr { cr }, _idx_dir { indexer::incremental::storage_dir(_cr.data_dir().string()) },
                 _stake_ref_idx { _cr.reader_paths("stake-ref") },
                 _pay_ref_idx { _cr.reader_paths("pay-ref") },
-                _tx_idx { _cr.reader_paths("tx") },
+                _txo_idx { _cr.reader_paths("txo") },
                 _txo_use_idx { _cr.reader_paths("txo-use") }
         {
             index::reader_multi<index::block_meta::item> block_meta_idx { _cr.reader_paths("block-meta") };
@@ -375,11 +375,12 @@ namespace daedalus_turbo {
         find_tx_res find_tx(const buffer &tx_hash)
         {
             find_tx_res res {};
-            auto [ txo_count, txo_item ] = _tx_idx.find(index::tx::item { tx_hash });
-            if (txo_count == 0) return res;
-            res.offset = txo_item.offset;
-            res.block_info = find_block(txo_item.offset);
-            _cr.read(txo_item.offset, res.tx_raw);
+            auto [ txo_count, txo_item ] = _txo_idx.find(index::txo::item { tx_hash, 0 });
+            if (txo_count > 0) {
+                res.offset = txo_item.offset;
+                res.block_info = find_block(txo_item.offset);
+                _cr.read(txo_item.offset, res.tx_raw);
+            }
             return res;
         }
 
@@ -404,7 +405,7 @@ namespace daedalus_turbo {
         const std::filesystem::path _idx_dir;
         index::reader_multi<index::stake_ref::item> _stake_ref_idx;
         index::reader_multi<index::pay_ref::item> _pay_ref_idx;
-        index::reader_multi<index::tx::item> _tx_idx;
+        index::reader_multi<index::txo::item> _txo_idx;
         index::reader_multi_mt<index::txo_use::item> _txo_use_idx;
         std::vector<index::block_meta::item> _block_index;
 

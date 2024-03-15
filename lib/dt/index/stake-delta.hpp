@@ -19,29 +19,24 @@ namespace daedalus_turbo::index::stake_delta {
         }
     };
 
-    struct chunk_indexer: chunk_indexer_multi_epoch_zpp<item> {
-        using chunk_indexer_multi_epoch_zpp<item>::chunk_indexer_multi_epoch_zpp;
+    struct chunk_indexer: chunk_indexer_one_epoch<item> {
+        using chunk_indexer_one_epoch::chunk_indexer_one_epoch;
         ~chunk_indexer()
         {
-            for (const auto &[epoch, deltas]: _updates) {
-                auto &data = _epoch_data(epoch);
-                for (const auto &[stake_id, delta]: deltas)
-                    data.emplace_back(stake_id, delta);
-            }
+            for (const auto &[stake_id, delta]: _deltas)
+                _data.emplace_back(stake_id, delta);
         }
     protected:
         void _index_epoch(const cardano::block_base &blk, data_list &) override
         {
             blk.foreach_tx([&](const auto &tx) {
-                uint64_t epoch = blk.slot().epoch();
-                auto [up_it, up_created] = _updates.try_emplace(epoch);
                 tx.foreach_output([&](const auto &txo) {
                     if (txo.address.has_stake_id()) {
-                        auto [stake_it, stake_created] = up_it->second.try_emplace(txo.address.stake_id(), txo.amount);
+                        auto [stake_it, stake_created] = _deltas.try_emplace(txo.address.stake_id(), txo.amount);
                         if (!stake_created)
                             stake_it->second += txo.amount;
                     } else if (txo.address.has_pointer()) {
-                        auto [stake_it, stake_created] = up_it->second.try_emplace(txo.address.pointer(), txo.amount);
+                        auto [stake_it, stake_created] = _deltas.try_emplace(txo.address.pointer(), txo.amount);
                         if (!stake_created)
                             stake_it->second += txo.amount;
                     }
@@ -49,10 +44,10 @@ namespace daedalus_turbo::index::stake_delta {
             });
         }
     private:
-        std::map<uint64_t, std::map<cardano::stake_ident_hybrid, int64_t>> _updates {};
+        std::map<cardano::stake_ident_hybrid, int64_t> _deltas {};
     };
 
-    using indexer = indexer_multi_epoch<item, chunk_indexer>;
+    using indexer = indexer_one_epoch<item, chunk_indexer>;
 }
 
 #endif //!DAEDALUS_TURBO_INDEX_STAKE_DELTA_HPP

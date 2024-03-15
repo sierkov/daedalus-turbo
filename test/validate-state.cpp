@@ -44,8 +44,8 @@ namespace {
     const node_ledger_state load_node_state(const std::string &state_path)
     {
         node_ledger_state st {};
-        auto json_data = file::read(state_path);
-        auto j_state = json::parse(json_data);
+        json::monotonic_resource mr {};
+        auto j_state = json::load(state_path, &mr);
 
         st.epoch = json::value_to<uint64_t>(j_state.at("lastEpoch"));
         st.reserves = json::value_to<uint64_t>(j_state.at("stateBefore").at("esAccountState").at("reserves"));

@@ -11,11 +11,12 @@
 #include <string>
 #include <dt/atomic.hpp>
 #include <dt/cardano.hpp>
-#include <dt/storage/chunk_info.hpp>
 #include <dt/file.hpp>
+#include <dt/file-remover.hpp>
 #include <dt/json.hpp>
 #include <dt/progress.hpp>
 #include <dt/scheduler.hpp>
+#include <dt/storage/chunk_info.hpp>
 #include <dt/timer.hpp>
 
 namespace daedalus_turbo {
@@ -86,11 +87,46 @@ namespace daedalus_turbo {
             return std::filesystem::canonical(db_dir);
         }
 
-        chunk_registry(scheduler &sched, const std::string &data_dir)
-            : _sched { sched }, _data_dir { data_dir },
-                _db_dir { init_db_dir((_data_dir / "compressed").string()) },
+        chunk_registry(const std::string &data_dir, bool strict=true, scheduler &sched=scheduler::get(), file_remover &fr=file_remover::get())
+            : _data_dir { data_dir }, _db_dir { init_db_dir((_data_dir / "compressed").string()) },
+                _sched { sched }, _file_remover { fr }, _strict { strict },
                 _state_path { (_db_dir / "state.json").string() }
         {
+            timer t { "chunk-registry construct" };
+            file_set known_chunks {}, deletable_chunks {};
+            if (std::filesystem::exists(_state_path)) {
+                auto j = json::load(_state_path).as_object();
+                uint64_t start_offset = 0;
+                for (const auto &j: j.at("chunks").as_array()) {
+                    auto chunk = chunk_info::from_json(j.as_object());
+                    auto path = full_path(chunk.rel_path());
+                    std::error_code ec {};
+                    uint64_t file_size = std::filesystem::file_size(path, ec);
+                    if (ec) {
+                        logger::info("load_state: file access error for {}: {} - ignoring it and the following chunks!",
+                            chunk.rel_path(), ec.message());
+                        break;
+                    }
+                    if (file_size != chunk.compressed_size) {
+                        logger::info("load_state: file size mismatch for {}: recorded: {} vs actual: {}: ignoring it and the following chunks!",
+                            chunk.rel_path(), chunk.compressed_size, file_size);
+                        break;
+                    }
+                    chunk.offset = start_offset;
+                    start_offset += chunk.data_size;
+                    _add(std::move(chunk), false);
+                    known_chunks.emplace(std::move(path));
+                }
+            }
+            _notify_next_epoch = _epochs.empty() ? 0 : _epochs.rbegin()->first;
+            _notify_end_offset = num_bytes();
+            _parse_start_offset = num_bytes();
+            for (const auto &entry: std::filesystem::recursive_directory_iterator { _db_dir }) {
+                auto path = full_path(entry.path().string());
+                if (entry.is_regular_file() && entry.path().extension() == ".zstd" && !known_chunks.contains(path))
+                    _file_remover.mark(path);
+            }
+            logger::info("chunk_registry has data up to offset {}", num_bytes());
         }
 
         virtual ~chunk_registry() =default;
@@ -112,9 +148,7 @@ namespace daedalus_turbo {
             auto [diffBegin, diffEnd] = std::mismatch(_db_dir.begin(), _db_dir.end(), canon_path.begin());
             if (diffBegin != _db_dir.end())
                 throw error("the supplied path '{}' does not resolve into the host directory '{}'", canon_path.string(), _db_dir.string());
-            auto save_dir = canon_path.parent_path();
-            if (!std::filesystem::exists(save_dir))
-                std::filesystem::create_directories(save_dir);
+            std::filesystem::create_directories(canon_path.parent_path());
             return canon_path.string();
         }
 
@@ -137,21 +171,23 @@ namespace daedalus_turbo {
 
         std::optional<chunk_info> last_chunk() const
         {
-            if (!_chunks.empty())
+            if (!_chunks.empty()) [[likely]]
                 return _chunks.rbegin()->second;
             return {};
         }
 
         cardano::slot max_slot() const
         {
-            if (!_chunks.empty())
+            if (!_chunks.empty()) [[likely]]
                 return _chunks.rbegin()->second.last_slot;
             return 0;
         }
 
-        size_t num_bytes() const
+        uint64_t num_bytes() const
         {
-            return _end_offset;
+            if (!_chunks.empty()) [[likely]]
+                return _chunks.rbegin()->second.end_offset();
+            return 0;
         }
 
         size_t num_chunks() const
@@ -182,8 +218,8 @@ namespace daedalus_turbo {
 
         void read(uint64_t offset, cbor_value &value)
         {
-            if (offset >= _end_offset)
-                throw error("the requested offset {} is larger than the maximum one: {}", offset, _end_offset);
+            if (offset >= num_bytes())
+                throw error("the requested offset {} is larger than the maximum one: {}", offset, num_bytes());
             const auto &chunk = find(offset);
             if (offset >= chunk.offset + chunk.data_size)
                 throw error("the requested chunk segment is too small to parse it");
@@ -231,17 +267,6 @@ namespace daedalus_turbo {
 
         // state modifying methods
 
-        file_set init_state(bool strict=true)
-        {
-            timer t { "chunk-registry init state", logger::level::trace };
-            auto [truncate_offset, deletable_chunks] = _load_state(strict);
-            // give subclasses the time to update their data structures if some chunks weren't loaded / didn't match the state
-            for (auto &&path: truncate(truncate_offset, false))
-                deletable_chunks.emplace(std::move(path));
-            logger::debug("chunk-registry data size: {} num chunks: {} num deletable chunks: {}", num_bytes(), num_chunks(), deletable_chunks.size());
-            return deletable_chunks;
-        }
-
         virtual void save_state()
         {
             timer t { "chunk_registry::save_state" };
@@ -260,59 +285,45 @@ namespace daedalus_turbo {
             for (const auto &[max_offset, chunk]: _chunks)
                 j_chunks.emplace_back(chunk.to_json());
             json::save_pretty(_state_path, json::object { { "chunks", j_chunks } });
-            _parse_start_offset = _end_offset;
+            _parse_start_offset = num_bytes();
             _parsed = 0;
         }
 
-        virtual file_set truncate(size_t max_end_offset, bool del=true)
+        virtual void truncate(size_t max_end_offset)
         {
-            file_set deleted_chunks {};
-            if (max_end_offset >= _end_offset)
-                return deleted_chunks;
-            timer t { fmt::format("truncate chunk registry to size {}", max_end_offset) };
-            auto chunk_it = _find_it(max_end_offset);
-            if (chunk_it->second.offset < max_end_offset)
-                max_end_offset = chunk_it->second.offset;
-            for (auto epoch_it = _epochs.find(chunk_it->second.epoch()); epoch_it != _epochs.end(); ) {
-                if (chunk_it->second.offset <= epoch_it->second.start_offset()) {
-                    epoch_it = _epochs.erase(epoch_it);
-                } else {
-                    std::vector<const chunk_info *> ok_chunks {};
-                    for (const auto &chunk_ptr: epoch_it->second.chunks) {
-                        if (chunk_ptr->offset < max_end_offset) {
-                            ok_chunks.emplace_back(chunk_ptr);
-                        }
+            timer t { fmt::format("truncate chunk_registry to size {}", max_end_offset) };
+            if (num_bytes() > max_end_offset) {
+                auto chunk_it = _find_it(max_end_offset);
+                if (chunk_it->second.offset < max_end_offset)
+                    max_end_offset = chunk_it->second.offset;
+                auto epoch_it = _epochs.find(chunk_it->second.epoch());
+                // filter chunks of the truncated epoch, assumed to be ordered by offsets
+                for (size_t ci = 0; ci < epoch_it->second.chunks.size(); ++ci) {
+                    if (epoch_it->second.chunks[ci]->offset >= max_end_offset) {
+                        epoch_it->second.chunks.resize(ci);
+                        break;
                     }
-                    epoch_it->second.chunks = std::move(ok_chunks);
-                    ++epoch_it;
                 }
+                if (!epoch_it->second.chunks.empty())
+                    ++epoch_it;
+                _epochs.erase(epoch_it, _epochs.end());
+                if (!_epochs.empty()) {
+                    _notify_next_epoch = _epochs.rbegin()->first;
+                    _notify_end_offset = _epochs.rbegin()->second.end_offset();
+                } else {
+                    _notify_next_epoch = 0;
+                    _notify_end_offset = 0;
+                }
+                while (chunk_it != _chunks.end()) {
+                    _file_remover.mark(full_path(chunk_it->second.rel_path()));
+                    chunk_it = _chunks.erase(chunk_it);
+                }
+                _parse_start_offset = num_bytes();
+                _parsed = 0;
             }
-            if (!_epochs.empty()) {
-                _notify_next_epoch = _epochs.rbegin()->first;
-                _notify_end_offset = _epochs.rbegin()->second.end_offset();
-            } else {
-                _notify_next_epoch = 0;
-                _notify_end_offset = 0;
-            }
-            while (chunk_it != _chunks.end()) {
-                auto canon_path = full_path(chunk_it->second.rel_path());
-                deleted_chunks.emplace(canon_path);
-                if (del) std::filesystem::remove(canon_path);
-                chunk_it = _chunks.erase(chunk_it);
-            }
-            if (!_chunks.empty()) {
-                _end_offset = _chunks.rbegin()->second.end_offset();
-            } else {
-                _end_offset = 0;
-            }
-            _parse_start_offset = _end_offset;
-            _parsed = 0;
-            if (!deleted_chunks.empty())
-                logger::info("truncated chunk registry to the end offset: {}", _end_offset);
-            return deleted_chunks;
         }
 
-        void import(const chunk_registry &src_cr, const bool strict=true)
+        void import(const chunk_registry &src_cr)
         {
             uint8_vector raw_data {}, compressed_data {};
             target_offset(src_cr.num_bytes());
@@ -322,12 +333,12 @@ namespace daedalus_turbo {
                 auto data_hash = blake2b<cardano::block_hash>(raw_data);
                 auto local_path = full_path(chunk_info::rel_path_from_hash(data_hash));
                 file::write(local_path, compressed_data);
-                add(src_chunk.offset, local_path, data_hash, src_chunk.orig_rel_path, strict);
+                add(src_chunk.offset, local_path, data_hash, src_chunk.orig_rel_path);
             }
             save_state();
         }
 
-        std::string add(const uint64_t offset, const std::string &local_path, const cardano::block_hash &data_hash, const std::string &orig_rel_path, const bool strict=true)
+        std::string add(const uint64_t offset, const std::string &local_path, const cardano::block_hash &data_hash, const std::string &orig_rel_path)
         {
             auto compressed = file::read_raw(local_path);
             uint8_vector data {};
@@ -339,12 +350,8 @@ namespace daedalus_turbo {
             auto final_path = full_path(parsed_chunk.rel_path());
             if (final_path != local_path)
                 std::filesystem::rename(local_path, final_path);
-            _add(std::move(parsed_chunk), strict);
+            _add(std::move(parsed_chunk));
             return final_path;
-        }
-
-        virtual void clean_up()
-        {
         }
 
         void target_offset(uint64_t offset)
@@ -352,56 +359,14 @@ namespace daedalus_turbo {
             _target_offset.emplace(offset);
         }
     protected:
-        scheduler &_sched;
         const std::filesystem::path _data_dir;
         const std::filesystem::path _db_dir;
+        scheduler &_sched;
+        file_remover &_file_remover;
+        const bool _strict = true;
         std::optional<uint64_t> _target_offset {};
-        uint64_t _end_offset = 0;
         mutable std::atomic_uint64_t _parsed = 0;
         uint64_t _parse_start_offset = 0;
-
-        virtual std::pair<uint64_t, file_set> _load_state(bool strict=true)
-        {
-            timer t { "chunk-registry load state from " + _state_path, logger::level::debug };
-            _chunks.clear();
-            _epochs.clear();
-            _end_offset = 0;
-            file_set known_chunks {}, deletable_chunks {};
-            if (std::filesystem::exists(_state_path)) {
-                auto j = json::load(_state_path).as_object();
-                uint64_t start_offset = 0;
-                for (const auto &j: j.at("chunks").as_array()) {
-                    auto chunk = chunk_info::from_json(j.as_object());
-                    auto path = full_path(chunk.rel_path());
-                    std::error_code ec {};
-                    uint64_t file_size = std::filesystem::file_size(path, ec);
-                    if (ec) {
-                        logger::info("load_state: file access error for {}: {} - ignoring it and the following chunks!",
-                            chunk.rel_path(), ec.message());
-                        break;
-                    }
-                    if (file_size != chunk.compressed_size) {
-                        logger::info("load_state: file size mismatch for {}: recorded: {} vs actual: {}: ignoring it and the following chunks!",
-                            chunk.rel_path(), chunk.compressed_size, file_size);
-                        break;
-                    }
-                    chunk.offset = start_offset;
-                    start_offset += chunk.data_size;
-                    _add(std::move(chunk), strict, false);
-                    known_chunks.emplace(std::move(path));
-                }
-            }
-            _notify_next_epoch = _epochs.empty() ? 0 : _epochs.rbegin()->first;
-            _notify_end_offset = _end_offset;
-            _parse_start_offset = _end_offset;
-            logger::info("chunk_registry has data up to offset {}", _end_offset);
-            for (const auto &entry: std::filesystem::recursive_directory_iterator { _db_dir }) {
-                auto path = full_path(entry.path().string());
-                if (entry.is_regular_file() && entry.path().extension() == ".zstd" && !known_chunks.contains(path))
-                    deletable_chunks.emplace(std::move(path));
-            }
-            return std::make_pair(_end_offset, deletable_chunks);
-        }
 
         virtual void _on_epoch_merge(uint64_t epoch, const epoch_info &info)
         {
@@ -451,10 +416,9 @@ namespace daedalus_turbo {
         epoch_map _epochs {};
         uint64_t _notify_end_offset = 0;
         uint64_t _notify_next_epoch = 0;
-        const std::string _ext = ".zstd";
         static thread_local uint8_vector _read_buffer;
 
-        void _add(chunk_info &&chunk, const bool strict=true, const bool notify=true)
+        void _add(chunk_info &&chunk, const bool notify=true)
         {
             if (_target_offset && *_target_offset < chunk.offset + chunk.data_size)
                 throw error("chunk's data exceeds the target offset: {}", _target_offset);
@@ -467,9 +431,9 @@ namespace daedalus_turbo {
             // chunk variable should not be used after this point due to std::move(chunk) right above
             if (!um_created)
                 throw error("internal error: duplicate chunk offset: {} size: {} from: {}", um_it->second.offset, um_it->second.data_size, um_it->second.orig_rel_path);
-            while (!_unmerged_chunks.empty() && _unmerged_chunks.begin()->second.offset == _end_offset) {
+            while (!_unmerged_chunks.empty() && _unmerged_chunks.begin()->second.offset == num_bytes()) {
                 const auto &tested_chunk = _unmerged_chunks.begin()->second;
-                if (strict) {
+                if (_strict) {
                     if (!_chunks.empty()) {
                         const auto &last = _chunks.rbegin()->second;
                         if (tested_chunk.first_slot < last.last_slot)
@@ -489,7 +453,6 @@ namespace daedalus_turbo {
                 const auto &inserted_chunk = it->second;
                 if (!created)
                     throw error("internal error: duplicate chunk offset: {} size: {}", inserted_chunk.offset, inserted_chunk.data_size);
-                _end_offset += inserted_chunk.data_size;
                 _epochs[inserted_chunk.epoch()].chunks.emplace_back(&inserted_chunk);
             }
             if (notify)
@@ -498,26 +461,29 @@ namespace daedalus_turbo {
 
         void _notify_of_updates(bool force=false)
         {
-            while (_end_offset > _notify_end_offset && (_chunks.rbegin()->second.epoch() > _notify_next_epoch || force)) {
-                auto notify_epoch = _chunks.rbegin()->second.epoch() > _notify_next_epoch ? _notify_next_epoch : _chunks.rbegin()->second.epoch();
+            auto max_epoch = max_slot().epoch();
+            auto end_offset = num_bytes();
+            if (!force && _target_offset && *_target_offset == end_offset)
+                force = true;
+            while (end_offset > _notify_end_offset && (_notify_next_epoch < max_epoch || (force && _notify_next_epoch == max_epoch))) {
                 // in unit-tests chunks may have non-continuous ecpohs
-                if (_epochs.contains(notify_epoch)) {
-                    auto &info = _epochs.at(notify_epoch);
-                    if (info.chunks.empty())
-                        throw error("epoch {} does not have any chunks!", notify_epoch);
+                if (_epochs.contains(_notify_next_epoch)) {
+                    const auto &epoch_info = _epochs.at(_notify_next_epoch);
+                    if (epoch_info.chunks.empty())
+                        throw error("epoch {} does not have any chunks!", _notify_next_epoch);
+                    auto epoch_info_copy = epoch_info;
                     if (force) {
-                        epoch_info info_part {};
-                        for (const auto &chunk: info.chunks) {
+                        epoch_info_copy.chunks.clear();
+                        for (const auto *chunk: epoch_info.chunks) {
                             if (chunk->offset >= _notify_end_offset)
-                                info_part.chunks.emplace_back(chunk);
+                                epoch_info_copy.chunks.emplace_back(chunk);
                         }
-                        _on_epoch_merge(notify_epoch, info_part);
-                    } else {
-                        _on_epoch_merge(notify_epoch, info);
                     }
-                    _notify_end_offset = info.end_offset();
+                    if (!epoch_info_copy.chunks.empty())
+                        _on_epoch_merge(_notify_next_epoch, epoch_info_copy);
+                    _notify_end_offset = epoch_info.end_offset();
                 }
-                _notify_next_epoch = notify_epoch + 1;
+                ++_notify_next_epoch;
             }
         }
 

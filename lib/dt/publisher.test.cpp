@@ -10,14 +10,12 @@ using namespace daedalus_turbo;
 
 suite publisher_suite = [] {
     "publisher"_test = [] {
-        scheduler sched {};
-        const std::string node_path { "./data"s };
-        const std::string dist_path { "./tmp/www"s };
+        const std::string node_path { "./data" };
+        const std::string dist_path { "./tmp/www" };
         if (std::filesystem::exists(dist_path))
             std::filesystem::remove_all(dist_path);
-        chunk_registry cr { sched, dist_path };
-        cr.init_state(false);
-        publisher p { sched, cr, node_path, false, 3 };
+        chunk_registry cr { dist_path, false };
+        publisher p { cr, node_path, 3 };
         p.publish();
         expect(p.size() == 29_ull);
         expect(std::filesystem::exists(dist_path + "/chain.json"));

@@ -60,8 +60,8 @@ namespace daedalus_turbo::index::timed_update {
         }
     };
 
-    struct chunk_indexer: chunk_indexer_multi_epoch_zpp<item> {
-        using chunk_indexer_multi_epoch_zpp<item>::chunk_indexer_multi_epoch_zpp;
+    struct chunk_indexer: chunk_indexer_one_epoch<item> {
+        using chunk_indexer_one_epoch::chunk_indexer_one_epoch;
     protected:
         void _index_epoch(const cardano::block_base &blk, data_list &idx) override
         {
@@ -99,7 +99,7 @@ namespace daedalus_turbo::index::timed_update {
             });
         }
     };
-    using indexer = indexer_multi_epoch<item, chunk_indexer>;
+    using indexer = indexer_one_epoch<item, chunk_indexer>;
 }
 
 #endif //!DAEDALUS_TURBO_INDEX_TIMED_UPDATE_HPP

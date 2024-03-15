@@ -35,6 +35,7 @@
 #include <dt/format.hpp>
 #include <dt/json.hpp>
 #include <dt/history.hpp>
+#include <dt/http/download-queue.hpp>
 #include <dt/http-api.hpp>
 #include <dt/logger.hpp>
 #include <dt/mutex.hpp>
@@ -63,9 +64,9 @@ namespace daedalus_turbo::http_api {
     using tcp = boost::asio::ip::tcp;
 
     struct server::impl {
-        impl(const std::string &data_dir, const std::string &host)
-            : _data_dir { data_dir }, _host { host }, _indexers { validator::default_indexers(_sched, _data_dir) },
-                        _requirements_status { requirements::check(_data_dir) }
+        impl(const std::string &data_dir, const std::string &host, scheduler &sched)
+            : _data_dir { data_dir }, _host { host }, _sched { sched },
+                _requirements_status { requirements::check(_data_dir) }
         {
         }
 
@@ -111,8 +112,7 @@ namespace daedalus_turbo::http_api {
         };
 
         const std::string _data_dir, _host;
-        scheduler _sched {};
-        indexer::indexer_map _indexers {};
+        scheduler &_sched;
         std::unique_ptr<indexer::incremental> _cr {};
         std::unique_ptr<reconstructor> _reconst {};
         std::chrono::time_point<std::chrono::system_clock> _sync_start {};
@@ -365,14 +365,14 @@ namespace daedalus_turbo::http_api {
             _sync_last_chunk.reset();
             _sync_start = std::chrono::system_clock::now();
             try {
-                _cr = std::make_unique<validator::incremental>(_sched, _data_dir, _indexers);
+                _cr = std::make_unique<validator::incremental>(validator::default_indexers(_data_dir), _data_dir);
                 {
-                    sync::http::syncer syncr { _sched, *_cr, _host, false };
+                    sync::http::syncer syncr { *_cr, _host };
                     uint64_t start_offset = _cr->num_bytes();
                     syncr.sync();
                     _sync_data_mb = static_cast<double>(_cr->num_bytes() - start_offset) / 1000000;
                 }
-                _reconst = std::make_unique<reconstructor>(_sched, *_cr);
+                _reconst = std::make_unique<reconstructor>(*_cr);
                 _sync_last_chunk = _cr->last_chunk();
                 _sync_duration = std::chrono::duration<double>(std::chrono::system_clock::now() - _sync_start).count();
                 _sync_status = sync_status::ready;
@@ -566,8 +566,8 @@ namespace daedalus_turbo::http_api {
         }
     };
 
-    server::server(const std::string &data_dir, const std::string &host)
-        : _impl { std::make_unique<impl>(data_dir, host) }
+    server::server(const std::string &data_dir, const std::string &host, scheduler &sched)
+        : _impl { std::make_unique<impl>(data_dir, host, sched) }
     {
     }
 

@@ -63,26 +63,9 @@ namespace daedalus_turbo::index {
 
         static uint64_t disk_size(const std::string &path)
         {
-            if (!exists(path))
+            if (!std::filesystem::exists(path))
                 return 0;
-            return std::filesystem::file_size(path + ".data");
-        }
-
-        static bool exists(const std::string &path)
-        {
-            return std::filesystem::exists(path + ".data");
-        }
-
-        static void rename(const std::string &old_name, const std::string &new_name)
-        {
-            std::filesystem::rename(old_name + ".data", new_name + ".data");
-        }
-
-        static void remove(const std::string &path)
-        {
-            auto full_path = path + ".data";
-            if (std::filesystem::exists(full_path))
-                std::filesystem::remove(full_path);
+            return std::filesystem::file_size(path);
         }
 
         writer() =delete;
@@ -90,9 +73,9 @@ namespace daedalus_turbo::index {
 
         writer(const std::string &path, size_t num_partitions = 1, size_t chunk_size=default_chunk_size)
             : _parts(num_partitions), _bufs(num_partitions), _cnts(num_partitions),
-                _path { path }, _data_path { path + ".data" },
+                _path { path },
                 _num_parts { num_partitions }, _chunk_size { chunk_size },
-                _os { _data_path + ".tmp" }
+                _os { _path + ".tmp" }
         {
             if (_num_parts > max_parts)
                 throw error("num_partitions: {} is greater than the preconfigured maximum: {}!", _num_parts, max_parts);
@@ -102,7 +85,7 @@ namespace daedalus_turbo::index {
 
         writer(writer<T> &&w)
             : _parts { std::move(w._parts) }, _bufs { std::move(w._bufs) }, _cnts { std::move(w._cnts) },
-                _path { std::move(w._path) }, _data_path { std::move(w._data_path) },
+                _path { std::move(w._path) },
                 _num_parts { w._num_parts }, _chunk_size { w._chunk_size },
                 _commited { (bool)w._commited },_os { std::move(w._os) }, _free_off { (size_t)w._free_off }
         {
@@ -147,7 +130,7 @@ namespace daedalus_turbo::index {
 
         void rename(const std::string &new_path) const
         {
-            rename(_path, new_path);
+            std::filesystem::rename(_path, new_path);
         }
 
         void remove() const
@@ -174,7 +157,7 @@ namespace daedalus_turbo::index {
         vector<vector<T>> _bufs;
         vector<size_t> _cnts;
         map<std::string, uint8_vector> _meta {};
-        std::string _path, _data_path;
+        std::string _path;
         size_t _num_parts, _chunk_size;
 
         std::atomic_bool _commited = false;
@@ -224,7 +207,7 @@ namespace daedalus_turbo::index {
             _os.write(&meta_off, sizeof(meta_off));
             _free_off = _os.tellp();
             _os.close();
-            std::filesystem::rename(_data_path + ".tmp", _data_path);
+            std::filesystem::rename(_path + ".tmp", _path);
         }
 
         void _flush_part(size_t part_id)
@@ -322,11 +305,11 @@ namespace daedalus_turbo::index {
         };
 
         reader_mt(const std::string &path)
-            :_path { path }, _data_path { path + ".data" }, _is { _data_path }
+            : _path { path }, _is { _path }
         {
-            auto data_size = std::filesystem::file_size(_data_path);
+            auto data_size = std::filesystem::file_size(_path);
             if (data_size < sizeof(uint64_t))
-                throw error("{} is too small - no metadata can be found", _data_path);
+                throw error("{} is too small - no metadata can be found", _path);
             _is.seek(data_size - sizeof(uint64_t));
             uint64_t meta_off;
             _is.read(&meta_off, sizeof(meta_off));
@@ -339,7 +322,7 @@ namespace daedalus_turbo::index {
             _is.read(&meta_hash, sizeof(meta_hash));
             auto meta_hash_computed = blake2b<blake2b_64_hash>(meta_buf);
             if (meta_hash_computed != meta_hash)
-                throw error("{}: metadata hash mismatch computed: {} vs stored: {}", _data_path, meta_hash_computed, meta_hash);
+                throw error("{}: metadata hash mismatch computed: {} vs stored: {}", _path, meta_hash_computed, meta_hash);
             _is.seek(meta_off);
             _is.read(&_num_parts, sizeof(_num_parts));
             if (_num_parts == 0)
@@ -552,7 +535,7 @@ namespace daedalus_turbo::index {
         }
 
     private:
-        std::string _path, _data_path;
+        std::string _path;
         size_t _num_parts = 0;
         size_t _chunk_size = 0;
         map<std::string, uint8_vector> _meta {};
@@ -594,7 +577,7 @@ namespace daedalus_turbo::index {
             auto packed_hash = blake2b<blake2b_64_hash>(t.read_buf);
             if (packed_hash != chunk.packed_hash)
                 throw error("corrupted chunk data in index {} part {} chunk {} at offset {} size {} hash {} while expected hash {}",
-                        _data_path, part_idx, new_chunk_idx, chunk.file_offset, chunk.packed_size, packed_hash, chunk.packed_hash);            
+                        _path, part_idx, new_chunk_idx, chunk.file_offset, chunk.packed_size, packed_hash, chunk.packed_hash);
             std::span<uint8_t> cache_buf { reinterpret_cast<uint8_t *>(cache.data()), sizeof(T) * cache.size() };
             zstd::decompress(cache_buf, t.read_buf);
             t.num_reads++;

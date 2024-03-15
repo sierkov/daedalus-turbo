@@ -22,18 +22,15 @@ namespace daedalus_turbo::cli::truncate {
             const auto &data_dir = args.at(0);
             requirements::check(data_dir);
             const uint64_t epoch = std::stoull(args.at(1));
-            scheduler sched {};
-            auto indexers = validator::default_indexers(sched, data_dir);
-            validator::incremental idxr { sched, data_dir, indexers };
-            idxr.init_state();
+            validator::incremental idxr { validator::default_indexers(data_dir), data_dir };
             uint64_t min_offset = 0;
             for (const auto &[last_byte_offset, chunk]: idxr.chunks()) {
-                    if (chunk.last_slot.epoch() <= epoch && min_offset < last_byte_offset + 1)
-                        min_offset = last_byte_offset + 1;
+                if (chunk.last_slot.epoch() <= epoch && min_offset < last_byte_offset + 1)
+                    min_offset = last_byte_offset + 1;
             }
-            logger::info("truncating blockchain data from {} to {} bytes", idxr.num_bytes(), min_offset);
             idxr.truncate(min_offset);
             idxr.save_state();
+            file_remover::get().remove();
         }
     };
 }

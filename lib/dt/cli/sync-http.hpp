@@ -43,10 +43,8 @@ namespace daedalus_turbo::cli::sync_http {
                 }
             }
             timer tc { fmt::format("sync-http {} -> {}", host, data_dir) };
-            scheduler sched {};
-            auto indexers = validator::default_indexers(sched, data_dir);
-            validator::incremental cr { sched, data_dir, indexers };
-            sync::http::syncer syncr { sched, cr, host };
+            validator::incremental cr { validator::default_indexers(data_dir), data_dir };
+            sync::http::syncer syncr { cr, host };
             syncr.sync(max_epoch);
         }
     };

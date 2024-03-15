@@ -22,11 +22,10 @@ namespace daedalus_turbo::cli::validate_tx_vkeys {
         {
             if (args.size() != 1) _throw_usage();
             const auto &data_dir = args.at(0);
-            scheduler sched {};
-            chunk_registry cr { sched, data_dir };
-            cr.init_state();
+            chunk_registry cr { data_dir };
             info_map all_infos {};
             size_t num_parsed = 0;
+            auto &sched = scheduler::get();
             sched.on_result("parse-chunk", [&](const std::any &res) {
                 ++num_parsed;
                 if (res.type() == typeid(scheduled_task_error))

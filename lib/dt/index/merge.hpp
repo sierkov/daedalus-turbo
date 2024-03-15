@@ -51,7 +51,7 @@ namespace daedalus_turbo::index {
         if (chunks.size() == 1) {
             auto chunk = chunks.at(0);
             sched.submit_void(task_group, task_prio, [=]() {
-                index::writer<int>::rename(chunk, final_path);
+                std::filesystem::rename(chunk, final_path);
                 logger::trace("merged {} chunks into {}", chunk, final_path);
             });
         } else if (!chunks.empty()) {
@@ -82,7 +82,7 @@ namespace daedalus_turbo::index {
                     out_idx->commit();
                     // all readers must be already closed since all tasks refering to the shared_ptr are finished
                     for (const auto &path: chunks)
-                        index::writer<T>::remove(path);
+                        std::filesystem::remove(path);
                     logger::trace("merged {} chunks into {}", chunks.size(), final_path);
                 }
             });

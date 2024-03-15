@@ -17,8 +17,7 @@ suite index_block_meta_suite = [] {
         "index and read"_test = [] {
             std::string idx_dir { "./tmp/index" };
             std::filesystem::remove_all(idx_dir);
-            scheduler sched {};
-            index::block_meta::indexer idxr { sched, idx_dir, "block-meta" };
+            index::block_meta::indexer idxr { idx_dir, "block-meta" };
             size_t blk_count = 0;
             {
                 auto chunk_idxr = idxr.make_chunk_indexer("update", 0);
@@ -33,7 +32,7 @@ suite index_block_meta_suite = [] {
                 }
             }
             expect(std::filesystem::exists(idx_dir + "/block-meta/index-update-0.data"));
-            reader<index::block_meta::item> rdr { idx_dir + "/block-meta/index-update-0" };
+            reader<index::block_meta::item> rdr { idx_dir + "/block-meta/index-update-0.data" };
             expect(rdr.size() == blk_count);
         };
     };

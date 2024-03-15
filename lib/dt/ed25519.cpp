@@ -7,19 +7,16 @@
 #include <dt/mutex.hpp>
 
 namespace daedalus_turbo::ed25519 {
-    alignas(mutex::padding) static std::mutex m {};
-    static bool sodium_ready = false;
+    struct sodium_initializer {
+        sodium_initializer() {
+            if (sodium_init() == -1)
+                throw error("Failed to initialize libsodium!");
+        }
+    };
 
     void init()
     {
-        if (!sodium_ready) {
-            std::scoped_lock lk { m };
-            // checking again since another thread could have already started initializing the logger
-            if (!sodium_ready) {
-                if (sodium_init() == -1)
-                    throw error("Failed to initialize libsodium!");
-                sodium_ready = true;
-            }
-        }
+        // will be initialized on the first call, after that do nothing
+        static sodium_initializer init {};
     }            
 }

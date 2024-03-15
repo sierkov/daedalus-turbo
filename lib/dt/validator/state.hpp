@@ -503,7 +503,9 @@ namespace daedalus_turbo::validator {
             rotate_snapshots();
             _apply_param_updates();
             _reserves -= _delta_reserves;
+            _delta_reserves = 0;
             _treasury += _delta_treasury;
+            _delta_treasury = 0;
 
             logger::trace("epoch {} before refunds and epoch rewards: treasury: {} reserves: {}",
                 _epoch, cardano::amount { _treasury }, cardano::amount { _reserves });
@@ -529,10 +531,9 @@ namespace daedalus_turbo::validator {
             _compute_rewards();
         }
 
-        void transition_epoch()
+        bool epoch_finished()
         {
-            finish_epoch();
-            start_epoch();
+            return _delta_reserves != 0;
         }
 
         uint64_t epoch() const

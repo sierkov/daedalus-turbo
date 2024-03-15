@@ -73,7 +73,7 @@ namespace daedalus_turbo::cli {
         for (int i = 2; i < argc; ++i)
             args.emplace_back(argv[i]);
         try {
-            timer t { fmt::format("run {}", cmd) };
+            timer t { fmt::format("run {}", cmd), logger::level::info };
             cmd_it->second->run(args);
         } catch (const std::exception &ex) {
             logger::error("{}: {}", cmd, ex.what());

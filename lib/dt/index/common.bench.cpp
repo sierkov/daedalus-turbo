@@ -154,7 +154,7 @@ suite index_common_bench_suite = [] {
                 });
             }
             for (const auto &path: paths)
-                writer<index_item>::remove(path);
+                std::filesystem::remove(path);
         };
     };    
 };

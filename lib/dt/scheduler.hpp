@@ -57,9 +57,15 @@ namespace daedalus_turbo {
     struct scheduler {
         static constexpr std::chrono::milliseconds default_wait_interval { 10 };
 
-        static inline size_t default_worker_count()
+        static size_t default_worker_count()
         {
             return std::thread::hardware_concurrency();
+        }
+
+        static scheduler &get()
+        {
+            static scheduler sched {};
+            return sched;
         }
 
         scheduler(size_t user_num_workers=scheduler::default_worker_count());

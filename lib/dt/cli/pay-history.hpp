@@ -25,11 +25,8 @@ namespace daedalus_turbo::cli::pay_history {
             const auto &data_dir = args.at(0);
             cardano::address_buf addr_raw { args.at(1) };
             if (addr_raw.size() == 28) addr_raw.insert(addr_raw.begin(), 0x61);
-            scheduler sched {};
-            auto indexers = indexer::default_list(sched, data_dir);
-            indexer::incremental cr { sched, data_dir, indexers };
-            cr.init_state();
-            reconstructor r { sched, cr };
+            indexer::incremental cr { indexer::default_list(data_dir), data_dir };
+            reconstructor r { cr };
             cardano::address addr { addr_raw.span() };
             std::cout << fmt::format("{}", r.find_pay_history(addr.pay_id()));
         }

@@ -45,13 +45,11 @@ namespace daedalus_turbo::cli::sync_local {
                 }
             }
             timer tc { "sync-local" };
-            scheduler sched {};
-            auto indexers = validator::default_indexers(sched, data_dir);
-            validator::incremental cr { sched, data_dir, indexers };
-            sync::local::syncer syncr { sched, cr, node_dir, strict, zstd_max_level, std::chrono::seconds { 0 } };
+            validator::incremental cr { validator::default_indexers(data_dir), data_dir, true, strict };
+            sync::local::syncer syncr { cr, node_dir, zstd_max_level, std::chrono::seconds { 0 } };
             auto res = syncr.sync();
-            logger::info("errors: {} chunks: {} deleted: {} dist: {} db_last_slot: {} cycle time: {}",
-                    res.errors.size(), res.updated.size(), res.deleted.size(), syncr.size(), res.last_slot, tc.stop(false));
+            logger::info("errors: {} chunks: {} dist: {} db_last_slot: {} cycle time: {}",
+                    res.errors.size(), res.updated.size(), syncr.size(), res.last_slot, tc.stop(false));
             std::sort(res.errors.begin(), res.errors.end());
             for (const auto &err: res.errors)
                 logger::error("sync error: {}", err);

@@ -20,14 +20,11 @@ suite history_suite = [] {
                 std::filesystem::remove_all(e.path());
         }
         "simple reconstruction"_test = [] {
-            scheduler sched {};
-            chunk_registry src_cr { sched, src_dir };
-            src_cr.init_state(false);
-            auto indexers = indexer::default_list(sched, data_dir);
-            indexer::incremental idxr { sched, data_dir, indexers };
-            idxr.import(src_cr, false);
+            chunk_registry src_cr { src_dir, false };
+            indexer::incremental idxr { indexer::default_list(data_dir), data_dir, false };
+            idxr.import(src_cr);
             
-            reconstructor r { sched, idxr };
+            reconstructor r { idxr };
             const auto &b1 = r.find_block(648087);
             const auto &b2 = r.find_block(648088);
             expect(b1.slot == b2.slot) << b1.slot << " " << b2.slot;
