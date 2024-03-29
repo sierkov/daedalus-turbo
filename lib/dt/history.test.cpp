@@ -37,14 +37,14 @@ suite history_suite = [] {
 
             // known-item search
             {
-                history hist = r.find_stake_history(cardano::address { cardano::address_buf { "stake1uxw70wgydj63u4faymujuunnu9w2976pfeh89lnqcw03pksulgcrg" } }.stake_id());
+                history hist = r.find_history(cardano::address { cardano::address_buf { "stake1uxw70wgydj63u4faymujuunnu9w2976pfeh89lnqcw03pksulgcrg" } }.stake_id());
                 expect(hist.utxo_balance() == 32'476'258'673_ull) << hist.utxo_balance();
                 expect(hist.transactions.size() == 2_u) << hist.transactions.size();
             }
             
             // missing-item search
             {
-                history hist = r.find_stake_history(cardano::address { cardano::address_buf { "0xE10001020304050607080910111213141516171819202122232425262728" } }.stake_id());
+                history hist = r.find_history(cardano::address { cardano::address_buf { "0xE10001020304050607080910111213141516171819202122232425262728" } }.stake_id());
                 expect(hist.transactions.size() == 0_u) << hist.transactions.size();
             }
         };

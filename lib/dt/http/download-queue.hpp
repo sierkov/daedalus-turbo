@@ -9,6 +9,7 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include <dt/json.hpp>
 
 namespace daedalus_turbo {
     struct scheduler;
@@ -21,6 +22,8 @@ namespace daedalus_turbo::http {
     };
 
     extern internet_speed internet_speed_mbps(std::optional<double> new_current_speed={});
+    extern std::string fetch(const std::string &url);
+    extern json::value fetch_json(const std::string &url);
 
     struct download_queue {
         struct result {

@@ -66,7 +66,7 @@ namespace {
             sample_no++;
             try {
                 timer rt { fmt::format("verify sample {}: {}", sample_no, item.id), logger::level::info };
-                history h = r.find_stake_balance(item.id);
+                history h = r.find_history(item.id);
                 uint64_t bal = h.utxo_balance();
                 if (bal != item.balance) {
                     test_error te { item.id, item.balance, bal, (int64_t)te.balance_actual - (int64_t)te.balance_expected, h.transactions.size() };

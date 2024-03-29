@@ -2,6 +2,7 @@ const path = require('path');
 const { app, dialog, ipcMain, BrowserWindow } = require('electron');
 const fetch = require('node-fetch');
 const { spawn } = require('child_process');
+const os = require('os');
 
 console.log('Initializing DT UI cwd:', process.cwd(), 'execPath:', process.execPath);
 const execFilename = path.basename(process.execPath, '.exe').toLowerCase();
@@ -12,9 +13,17 @@ const api = {
   dataDir: path.resolve(path.dirname(process.execPath), '../data'),
   logPath: path.resolve(path.dirname(process.execPath), '../log/dt-api.log'),
   ip: '127.0.0.1',
-  port: 55556
+  port: 55556,
+  os: os.platform()
 };
 api.uri = `http://${api.ip}:${api.port}`;
+if (api.os === 'win32' && !api.dev) {
+  console.log('Windows APPDATA', process?.env?.APPDATA);
+  if (process?.env?.APPDATA) {
+    api.dataDir = `${process.env.APPDATA}/dt-explorer/data`;
+    api.logPath = `${process.env.APPDATA}/dt-explorer/http-api.log`;
+  }
+}
 console.log('api:', api);
 
 let apiServer;

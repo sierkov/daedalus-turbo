@@ -64,8 +64,8 @@ namespace daedalus_turbo::http_api {
     using tcp = boost::asio::ip::tcp;
 
     struct server::impl {
-        impl(const std::string &data_dir, const std::string &host, scheduler &sched)
-            : _data_dir { data_dir }, _host { host }, _sched { sched },
+        impl(const std::string &data_dir, scheduler &sched)
+            : _data_dir { data_dir }, _sched { sched },
                 _requirements_status { requirements::check(_data_dir) }
         {
         }
@@ -111,9 +111,9 @@ namespace daedalus_turbo::http_api {
             }
         };
 
-        const std::string _data_dir, _host;
+        const std::string _data_dir;
         scheduler &_sched;
-        std::unique_ptr<indexer::incremental> _cr {};
+        std::unique_ptr<validator::incremental> _cr {};
         std::unique_ptr<reconstructor> _reconst {};
         std::chrono::time_point<std::chrono::system_clock> _sync_start {};
         double _sync_duration {};
@@ -122,6 +122,8 @@ namespace daedalus_turbo::http_api {
         std::optional<chunk_registry::chunk_info> _sync_last_chunk {};
         std::atomic<sync_status> _sync_status { sync_status::syncing };
         requirements::check_status _requirements_status {};
+        validator::tail_relative_stake_map _tail_relative_stake {};
+        json::array _j_tail_relative_stake {};
 
         // request queue
         alignas(mutex::padding) std::mutex _queue_mutex {};
@@ -367,10 +369,19 @@ namespace daedalus_turbo::http_api {
             try {
                 _cr = std::make_unique<validator::incremental>(validator::default_indexers(_data_dir), _data_dir);
                 {
-                    sync::http::syncer syncr { *_cr, _host };
+                    sync::http::syncer syncr { *_cr };
                     uint64_t start_offset = _cr->num_bytes();
                     syncr.sync();
                     _sync_data_mb = static_cast<double>(_cr->num_bytes() - start_offset) / 1000000;
+                    // prepare JSON array with tail_relative_stake data
+                    _tail_relative_stake = _cr->tail_relative_stake();
+                    _j_tail_relative_stake.clear();
+                    for (const auto &[slot, rel_stake]: _tail_relative_stake) {
+                        _j_tail_relative_stake.emplace_back(json::object {
+                            { "slot", static_cast<uint64_t>(slot) },
+                            { "relativeStake", rel_stake }
+                        });
+                    }
                 }
                 _reconst = std::make_unique<reconstructor>(*_cr);
                 _sync_last_chunk = _cr->last_chunk();
@@ -398,35 +409,75 @@ namespace daedalus_turbo::http_api {
             auto tx_ptr = cardano::make_tx(tx_info.tx_raw, block);
             auto &tx = *tx_ptr; // eliminate a clash with CLang's -Wpotentially-evaluated-expression
             logger::info("tx: {} type: {} slot: {}", tx.hash().span(), typeid(tx).name(), tx_info.block_info.slot);
-            return tx.to_json();
+            return tx.to_json(_tail_relative_stake);
+        }
+
+        template<typename T>
+        history<T> _find_history(const T &id, const std::string &suffix)
+        {
+            struct cache_meta {
+                T id {};
+                cardano::block_hash last_block_hash {};
+            };
+            if (_cr->num_chunks() == 0)
+                return history<T> {};
+            const std::string cache_meta_path = fmt::format("{}/histroy-cache-meta-{}.bin", _data_dir, suffix);
+            const std::string cache_data_path = fmt::format("{}/histroy-cache-data-{}.bin", _data_dir, suffix);
+            if (std::filesystem::exists(cache_meta_path) && std::filesystem::exists(cache_data_path)) {
+                cache_meta meta {};
+                file::read_zpp(meta, cache_meta_path);
+                if (meta.id == id && meta.last_block_hash == _cr->last_chunk()->last_block_hash) {
+                    timer t { fmt::format("load {} cached history for {}", suffix, id), logger::level::info };
+                    history<T> hist {};
+                    file::read_zpp(hist, cache_data_path);
+                    if (hist.id == id) {
+                        return hist;
+                    }
+                }
+            }
+            timer t { fmt::format("find {} history for {}", suffix, id), logger::level::info };
+            auto hist = _reconst->find_history(id);
+            file::write_zpp(cache_data_path, hist);
+            file::write_zpp(cache_meta_path, cache_meta { id, _cr->last_chunk()->last_block_hash });
+            return hist;
+        }
+
+        history<stake_ident> _find_stake_history(const stake_ident &id)
+        {
+            return _find_history(id, "stake");
+        }
+
+        history<pay_ident> _find_pay_history(const pay_ident &id)
+        {
+            return _find_history(id, "pay");
         }
 
         json::value _api_stake_id_info(const stake_ident &id)
         {
-            auto hist = _reconst->find_stake_history(id);
+            auto hist = _find_stake_history(id);
             if (hist.transactions.size() == 0) {
                 return json::object {
                     { "id", hist.id.to_json() },
                     { "error", "could't find any transactions referencing this stake key!" }
                 };
             }
-            return hist.to_json();
+            return hist.to_json(_tail_relative_stake);
         }
 
         json::value _api_stake_txs(const stake_ident &id, size_t offset, size_t max_items)
         {
-            auto hist = _reconst->find_stake_history(id);
+            auto hist = _find_stake_history(id);
             return json::object {
                 { "id", hist.id.to_json() },
                 { "txCount", hist.transactions.size() },
                 { "txOffset", offset },
-                { "transactions", hist.transactions.to_json(offset, max_items) }
+                { "transactions", hist.transactions.to_json(_tail_relative_stake, offset, max_items) }
             };
         }
 
         json::object _api_stake_assets(const stake_ident &id, size_t offset, size_t max_items)
         {
-            auto hist = _reconst->find_stake_history(id);
+            auto hist = _find_stake_history(id);
             return json::object {
                 { "id", hist.id.to_json() },
                 { "assetCount", hist.balance_assets.size() },
@@ -437,30 +488,30 @@ namespace daedalus_turbo::http_api {
 
         json::value _api_pay_id_info(const pay_ident &pay_id)
         {
-            auto hist = _reconst->find_pay_history(pay_id);
+            auto hist = _find_pay_history(pay_id);
             if (hist.transactions.size() == 0) {
                 return json::object {
                     { "id", hist.id.to_json() },
                     { "error", "could't find any transactions referencing this payment key!" }
                 };
             }
-            return hist.to_json();
+            return hist.to_json(_tail_relative_stake);
         }
 
         json::value _api_pay_txs(const pay_ident &id, size_t offset, size_t max_items)
         {
-            auto hist = _reconst->find_pay_history(id);
+            auto hist = _find_pay_history(id);
             return json::object {
                 { "id", hist.id.to_json() },
                 { "txCount", hist.transactions.size() },
                 { "txOffset", offset },
-                { "transactions", hist.transactions.to_json(offset, max_items) }
+                { "transactions", hist.transactions.to_json(_tail_relative_stake, offset, max_items) }
             };
         }
 
         json::object _api_pay_assets(const pay_ident &id, size_t offset, size_t max_items)
         {
-            auto hist = _reconst->find_pay_history(id);
+            auto hist = _find_pay_history(id);
             return json::object {
                 { "id", hist.id.to_json() },
                 { "assetCount", hist.balance_assets.size() },
@@ -566,8 +617,8 @@ namespace daedalus_turbo::http_api {
         }
     };
 
-    server::server(const std::string &data_dir, const std::string &host, scheduler &sched)
-        : _impl { std::make_unique<impl>(data_dir, host, sched) }
+    server::server(const std::string &data_dir, scheduler &sched)
+        : _impl { std::make_unique<impl>(data_dir, sched) }
     {
     }
 

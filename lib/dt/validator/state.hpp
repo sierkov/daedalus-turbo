@@ -314,6 +314,14 @@ namespace daedalus_turbo::validator {
             return _ptr_to_stake;
         }
 
+        cardano::amount unspent_reward(const cardano::stake_ident &id) const
+        {
+            auto part_idx = _rewards.partition_idx(id);
+            const auto &part = _rewards.partition(part_idx);
+            auto it = part.find(id);
+            return cardano::amount { it != part.end() ? it->second : 0 };
+        }
+
         const reward_distribution &reward_dist() const
         {
             return _rewards;

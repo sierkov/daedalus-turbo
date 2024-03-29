@@ -11,10 +11,10 @@
 #include <dt/scheduler.hpp>
 
 namespace daedalus_turbo::requirements {
-    static constexpr size_t ram_recommended_mb = 8192;
-    static constexpr size_t ram_min_mb = 4096;
+    static constexpr size_t ram_recommended_mb = 16384;
+    static constexpr size_t ram_min_mb = 12000;
     static constexpr size_t cores_recommended = 8;
-    static constexpr size_t storage_min_gb = 60;
+    static constexpr size_t storage_min_gb = 80;
 
     struct issue {
         std::string descr {};

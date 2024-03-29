@@ -11,7 +11,8 @@
 namespace daedalus_turbo {
     struct publisher::impl {
         impl(chunk_registry &cr, const std::string &node_path, size_t zstd_max_level=22, file_remover &fr=file_remover::get())
-            : _syncer { cr, node_path, zstd_max_level, volatile_data_lifespan }, _cr { cr }, _file_remover { fr }
+            : _syncer { cr, node_path, zstd_max_level, volatile_data_lifespan }, _cr { cr }, _file_remover { fr },
+                _turbo_hosts(json::load("./etc/turbo.json").at("hosts").as_array())
         {
         }
 
@@ -49,6 +50,7 @@ namespace daedalus_turbo {
         sync::local::syncer _syncer;
         chunk_registry &_cr;
         file_remover &_file_remover;
+        json::array _turbo_hosts;
 
         void _write_index_html(uint64_t total_size, uint64_t total_compressed_size) const
         {
@@ -96,6 +98,13 @@ namespace daedalus_turbo {
             }
         }
 
+        void _write_peers() const
+        {
+            json::save_pretty((_cr.data_dir() / "peers.json").string(), json::object {
+                { "hosts", _turbo_hosts }
+            });
+        }
+
         void _write_meta() const
         {
             uint64_t total_size = 0;
@@ -122,13 +131,18 @@ namespace daedalus_turbo {
                 };
                 json::save_pretty((_cr.data_dir() / fmt::format("epoch-{}-{}.json", epoch, epoch_meta.last_block_hash())).string(), j_epoch_meta);
             }
-            json::save_pretty((_cr.data_dir() / "chain.json").string(), json::object { { "epochs", std::move(j_chain_epochs) } });
-            json::save_pretty((_cr.data_dir() / "api.json").string(), json::object {
-                { "version", 1 },
-                { "metadataLifespanSec", std::chrono::duration<double>(metadata_lifespan).count() },
-                { "volatileDataLifespanSec", std::chrono::duration<double>(volatile_data_lifespan).count() }
-            });
+            json::object meta {
+                { "api", json::object {
+                    { "version", 2 },
+                    { "metadataLifespanSec", std::chrono::duration<double>(metadata_lifespan).count() },
+                    { "volatileDataLifespanSec", std::chrono::duration<double>(volatile_data_lifespan).count() }
+                    }
+                },
+                { "epochs", std::move(j_chain_epochs) }
+            };
+            json::save_pretty((_cr.data_dir() / "chain.json").string(), meta);
             _write_index_html(total_size, total_compressed_size);
+            _write_peers();
         }
     };
 

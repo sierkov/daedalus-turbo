@@ -24,15 +24,11 @@ namespace daedalus_turbo::cli::http_api {
             const auto &data_dir = args.at(0);
             std::string ip { "127.0.0.1" };
             uint16_t port = 55556;
-            std::string host { "turbo1.daedalusturbo.org" };
             if (args.size() > 1) {
-                static std::string_view p_host { "--host=" };
                 static std::string_view p_ip { "--ip=" };
                 static std::string_view p_port { "--port=" };
                 for (const auto &arg: std::ranges::subrange(args.begin() + 1, args.end())) {
-                    if (arg.substr(0, p_host.size()) == p_host) {
-                        host = arg.substr(p_host.size());
-                    } else if (arg.substr(0, p_ip.size()) == p_ip) {
+                    if (arg.substr(0, p_ip.size()) == p_ip) {
                         ip = arg.substr(p_ip.size());
                     } else if (arg.substr(0, p_port.size()) == p_port) {
                         port = std::stoul(arg.substr(p_port.size()));
@@ -42,7 +38,7 @@ namespace daedalus_turbo::cli::http_api {
                 }
             }
             std::cerr << fmt::format("HTTP API listen address {}:{}\n", ip, port);
-            server s { data_dir, host };
+            server s { data_dir };
             s.serve(ip, port);
         }
     };

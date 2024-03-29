@@ -36,5 +36,13 @@ suite json_suite = [] {
             expect(act.size() == exp.size()) << act.size() << exp.size();
             expect(act == exp) << act.span().string_view();
         };
+        "array copy constructor"_test = [] {
+            auto meta = json::load("./etc/turbo.json").as_object();
+            expect(meta.contains("hosts"));
+            const auto &exp_arr = meta.at("hosts").as_array();
+            expect(exp_arr.size() >= 2);
+            json::array copy_arr { meta.at("hosts").as_array() };
+            expect(copy_arr.size() == exp_arr.size());
+        };
     };  
 };

@@ -578,12 +578,50 @@ namespace daedalus_turbo {
                 os << shift_str << "NULL" << " offset: " << (val.data - base.data) << '\n';
                 break;
 
+            case CBOR_SIMPLE_TRUE:
+                os << shift_str << "TRUE" << " offset: " << (val.data - base.data) << '\n';
+                break;
+
+            case CBOR_SIMPLE_FALSE:
+                os << shift_str << "FALSE" << " offset: " << (val.data - base.data) << '\n';
+                break;
+
             default:
-                os << shift_str << "Unsupported CBOR type: " << (unsigned)val.type << '\n';
+                os << shift_str << "Unsupported CBOR type: " << static_cast<unsigned>(val.type) << '\n';
                 break;
         }
     }
 
+    namespace cbor {
+        inline std::string stringify(const cbor_value &item)
+        {
+            std::stringstream ss {};
+            print_cbor_value(ss, item, item, 10, 0, 100);
+            return ss.str();
+        }
+
+        inline std::string stringify(const buffer &raw_data)
+        {
+            std::stringstream ss {};
+            cbor_parser parser { raw_data };
+            cbor_value item {};
+            for (size_t i = 0; !parser.eof(); ++i) {
+                parser.read(item);
+                ss << "ITEM " << i << ": " << stringify(item);
+            }
+            return ss.str();
+        }
+
+        inline cbor_value parse(const buffer &raw_data)
+        {
+            cbor_parser parser { raw_data };
+            if (parser.eof())
+                throw error("byte stream is empty - can't parse it!");
+            cbor_value item {};
+            parser.read(item);
+            return item;
+        }
+    }
 }
 
 namespace fmt {

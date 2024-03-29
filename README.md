@@ -13,6 +13,7 @@ Daedalus Turbo is an open-source project that aims to improve drastically (>=10x
 1. [Highly Parallel Reconstruction of Wallet History in the Cardano Blockchain](./doc/2023_Sierkov_WalletHistoryReconstruction.pdf)
 2. [Scalability of Bulk Synchronization in the Cardano Blockchain](./doc/2023_Sierkov_CardanoBulkSynchronization.pdf)
 3. [Parallelized Ouroboros Praos](./doc/2024-sierkov-parallelized-ouroboros-praos.pdf)
+4. [On the Security of Wallet Nodes in the Cardano Blockchain](./doc/2024-sierkov-on-wallet-security.pdf)
 
 # Features
 Currently supported:
@@ -34,8 +35,8 @@ As the project matures and moves through its [roadmap](#roadmap), the list of su
 # Requirements
 - 8+-core CPU
 - 16+GB of RAM (The more cores a CPU has, the more RAM is needed)
-- a fast SSD with ~70GB of free space:
-  - ~50GB for the compressed blockchain data and search indices
+- a fast SSD with ~80GB of free space:
+  - ~60GB for the compressed blockchain data and search indices
   - ~20GB for temporary use during indexing
 - a fast Internet connection (250 Mbps or better)
 
@@ -68,7 +69,7 @@ docker run -it --rm -v <cardano-dir>:/data/cardano dt
 
 All the following commands are to be run within the container started by the previous command.
 
-Download, validate, and prepare for querying a copy of the Cardano blockchain from a demo compressing server, [turbo1.daedalusturbo.org](http://turbo1.daedalusturbo.org/):
+Download, validate, and prepare for querying a copy of the Cardano blockchain from a network of compressing proxies with entry points listed in [etc/turbo.json](etc/turbo.json):
 ```
 ./dt sync-http /data/cardano
 ```

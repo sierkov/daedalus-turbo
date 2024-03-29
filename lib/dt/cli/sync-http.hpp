@@ -26,15 +26,11 @@ namespace daedalus_turbo::cli::sync_http {
             if (args.size() < 1) _throw_usage();
             const auto &data_dir = args.at(0);
             requirements::check(data_dir);
-            std::string host = "turbo1.daedalusturbo.org";
             std::optional<uint64_t> max_epoch {};
             if (args.size() > 1) {
-                static std::string_view p_host { "--host=" };
                 static std::string_view p_max_epoch { "--max-epoch=" };
                 for (const auto &arg: std::ranges::subrange(args.begin() + 1, args.end())) {
-                    if (arg.substr(0, p_host.size()) == p_host) {
-                        host = arg.substr(p_host.size());
-                    } else if (arg.substr(0, p_max_epoch.size()) == p_max_epoch) {
+                    if (arg.substr(0, p_max_epoch.size()) == p_max_epoch) {
                         std::string max_epoch_s { arg.substr(p_max_epoch.size()) };
                         max_epoch = std::stoull(max_epoch_s);
                     } else {
@@ -42,9 +38,9 @@ namespace daedalus_turbo::cli::sync_http {
                     }
                 }
             }
-            timer tc { fmt::format("sync-http {} -> {}", host, data_dir) };
+            timer tc { fmt::format("sync-http into {}", data_dir) };
             validator::incremental cr { validator::default_indexers(data_dir), data_dir };
-            sync::http::syncer syncr { cr, host };
+            sync::http::syncer syncr { cr };
             syncr.sync(max_epoch);
         }
     };

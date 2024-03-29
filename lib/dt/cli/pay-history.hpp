@@ -28,7 +28,7 @@ namespace daedalus_turbo::cli::pay_history {
             indexer::incremental cr { indexer::default_list(data_dir), data_dir };
             reconstructor r { cr };
             cardano::address addr { addr_raw.span() };
-            std::cout << fmt::format("{}", r.find_pay_history(addr.pay_id()));
+            std::cout << fmt::format("{}", r.find_history(addr.pay_id()));
         }
     };
 }

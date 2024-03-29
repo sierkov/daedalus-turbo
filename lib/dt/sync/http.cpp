@@ -4,13 +4,14 @@
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
 #include <dt/cardano.hpp>
+#include <dt/cardano/network.hpp>
 #include <dt/http/download-queue.hpp>
 #include <dt/sync/http.hpp>
 
 namespace daedalus_turbo::sync::http {
     struct syncer::impl {
-        impl(indexer::incremental &cr, const std::string &src_host, bool report_progress, scheduler &sched, file_remover &fr)
-            : _cr { cr }, _host { src_host }, _report_progress { report_progress }, _sched { sched }, _file_remover { fr }
+        impl(indexer::incremental &cr, peer_selection &ps, scheduler &sched, file_remover &fr)
+            : _cr { cr }, _peer_selection { ps }, _sched { sched }, _file_remover { fr }
         {
         }
 
@@ -19,9 +20,12 @@ namespace daedalus_turbo::sync::http {
             timer t { "http synchronization" };
             progress_guard pg { "download", "parse", "merge", "validate" };
             _epoch_json_cache.clear();
-            auto j_chain = _get_json<json::object>("/chain.json");
+            auto [turbo_host, j_chain] = _select_peer();
             const auto &j_epochs = j_chain.at("epochs").as_array();
-            auto [task, remote_size] = _find_sync_start_position(j_epochs);
+            if (j_epochs.empty())
+                throw error("Remote turbo node reports and empty chain!");
+            auto [task, remote_size] = _find_sync_start_position(turbo_host, j_epochs);
+            _verify_intersection(j_epochs);
             if (max_epoch) {
                 remote_size = 0;
                 for (size_t epoch = 0; epoch < j_epochs.size(); ++epoch) {
@@ -39,7 +43,7 @@ namespace daedalus_turbo::sync::http {
                 }
                 logger::info("synchronization starts from chain offset {} in epoch {}", task->start_offset, task->start_epoch);
                 _cr.target_offset(remote_size);
-                auto updated_chunks = _download_data(j_epochs, remote_size, task->start_epoch);
+                auto updated_chunks = _download_data(turbo_host, j_epochs, remote_size, task->start_epoch);
                 _cr.save_state();
                 // remove updated chunks from the to-be-deleted list
                 for (auto &&path: updated_chunks) {
@@ -67,8 +71,7 @@ namespace daedalus_turbo::sync::http {
         };
 
         indexer::incremental &_cr;
-        std::string _host;
-        const bool _report_progress;
+        peer_selection &_peer_selection;
         scheduler &_sched;
         file_remover &_file_remover;
         download_queue _dlq {};
@@ -76,36 +79,54 @@ namespace daedalus_turbo::sync::http {
         alignas(mutex::padding) std::mutex _epoch_json_cache_mutex {};
         std::map<uint64_t, json::object> _epoch_json_cache {};
 
-        std::string _get_sync(const std::string &target)
+        std::pair<std::string, json::object> _select_peer()
         {
-            file::tmp tmp { "sync-http-download-sync.bin" };
-            std::atomic_bool ready { false };
-            std::optional<std::string> err {};
-            auto url = fmt::format("http://{}{}", _host, target);
-            _dlq.download(url, tmp.path(), 0, [&](const auto &res) {
-                err = std::move(res.error);
-                ready = true;
-            });;
-            while (!ready) {
-                std::this_thread::sleep_for(std::chrono::milliseconds { 100 });
+            static constexpr size_t max_retries = 10;
+            for (size_t n_retries = 0; n_retries < max_retries; ++n_retries) {
+                try {
+                    auto turbo_host = _peer_selection.next_turbo();
+                    logger::info("trying host {} as the compressed blockchain source", turbo_host);
+                    auto j_chain = daedalus_turbo::http::fetch_json(fmt::format("http://{}/chain.json", turbo_host)).as_object();
+                    return std::make_pair(std::move(turbo_host), std::move(j_chain));
+                } catch (std::exception &ex) {
+                    logger::warn(ex.what());
+                }
             }
-            if (err)
-                throw error("download of {} failed: {}", url, *err);
-            auto buf = file::read(tmp.path());
-            return std::string { buf.span().string_view() };
+            throw error("failed to find an operational peer in {} attempts!", max_retries);
         }
 
-        template<typename T>
-        T _get_json(const std::string &target)
+        // j_epochs is checked to be non empty by the caller!
+        void _verify_intersection(const json::array &j_epochs)
         {
-            try {
-                return json::value_to<T>(json::parse(_get_sync(target)));
-            } catch (std::exception &ex) {
-                throw error("GET {} failed with error: {}", target, ex.what());
+            using namespace cardano::network;
+            blockchain_point_list points {};
+            for (auto rit = j_epochs.rbegin(), rend = j_epochs.rend(); rit != rend; ++rit) {
+                const auto &j_epoch = rit->as_object();
+                points.emplace_back(
+                    cardano::block_hash::from_hex(j_epoch.at("lastBlockHash").as_string()),
+                    json::value_to<uint64_t>(j_epoch.at("lastSlot"))
+                );
+                if (points.size() >= 2)
+                    break;
+            }
+            client c {};
+            client::find_response resp {};
+            auto peer_addr = _peer_selection.next_cardano();
+            c.find_intersection(peer_addr, points, [&](client::find_response &&r) {
+                resp = std::move(r);
+            });
+            c.process();
+            if (std::holds_alternative<blockchain_point_pair>(resp.res)) {
+                const auto &[point, tip] = std::get<blockchain_point_pair>(resp.res);
+                logger::info("Cardano network peer confirmed a mutually known block at slot {}", point.slot);
+            } else if (std::holds_alternative<client::error_msg>(resp.res)) {
+                throw error("{}", std::get<client::error_msg>(resp.res));
+            } else {
+                throw error("Cardano network peer reported no known intersection within the last two epochs - stopping!");
             }
         }
 
-        std::tuple<std::optional<sync_task>, uint64_t> _find_sync_start_position(const json::array &j_epochs)
+        std::tuple<std::optional<sync_task>, uint64_t> _find_sync_start_position(const std::string &host, const json::array &j_epochs)
         {
             timer t { "find first epoch to sync" };
 
@@ -131,7 +152,7 @@ namespace daedalus_turbo::sync::http {
             if (check_from_epoch <= _cr.max_slot().epoch()) {
                 auto check_epoch_it = _cr.epochs().find(check_from_epoch);
                 if (check_epoch_it != _cr.epochs().end() && epoch_last_block_hash.contains(check_from_epoch)) {
-                    _epoch_json_cache[check_from_epoch] = _get_json<json::object>(fmt::format("/epoch-{}-{}.json", check_from_epoch, epoch_last_block_hash.at(check_from_epoch)));
+                    _epoch_json_cache[check_from_epoch] = daedalus_turbo::http::fetch_json(fmt::format("http://{}/epoch-{}-{}.json", host, check_from_epoch, epoch_last_block_hash.at(check_from_epoch))).as_object();
                     const auto &j_epoch = _epoch_json_cache.at(check_from_epoch);
                     for (const auto &chunk: j_epoch.at("chunks").as_array()) {
                         auto data_hash = cardano::block_hash::from_hex(json::value_to<std::string_view>(chunk.at("hash")));
@@ -165,7 +186,7 @@ namespace daedalus_turbo::sync::http {
             }
         }
 
-        void _download_chunks(const download_task_list &download_tasks, uint64_t max_offset, chunk_registry::file_set &updated_chunks)
+        void _download_chunks(const std::string &host, const download_task_list &download_tasks, uint64_t max_offset, chunk_registry::file_set &updated_chunks)
         {
             timer t { fmt::format("download chunks: {}", download_tasks.size()) };
             struct saved_chunk {
@@ -198,7 +219,7 @@ namespace daedalus_turbo::sync::http {
                 timer t { "download all chunks and parse immutable ones" };
                 // compute totals before starting the execution to ensure correct progress percentages
                 for (const auto &chunk: download_tasks) {
-                    auto data_url = fmt::format("http://{}/compressed/{}", _host, chunk.rel_path());
+                    auto data_url = fmt::format("http://{}/compressed/{}", host, chunk.rel_path());
                     auto save_path = _cr.full_path(chunk.rel_path());
                     if (!std::filesystem::exists(save_path)) {
                         _dlq.download(data_url, save_path, chunk.offset, [chunk, saved_proc, save_path](download_queue::result &&res) {
@@ -212,12 +233,12 @@ namespace daedalus_turbo::sync::http {
                         saved_proc(saved_chunk { save_path, chunk });
                     }
                 }
-                _dlq.process(_report_progress, &_sched);
-                _sched.process(_report_progress);
+                _dlq.process(true, &_sched);
+                _sched.process(true);
             }
         }
 
-        chunk_registry::file_set _download_data(const json::array &j_epochs, uint64_t max_offset, uint64_t first_synced_epoch)
+        chunk_registry::file_set _download_data(const std::string &host, const json::array &j_epochs, uint64_t max_offset, uint64_t first_synced_epoch)
         {
             timer t { "download data" };
             std::vector<chunk_registry::chunk_info> download_tasks {};
@@ -231,7 +252,7 @@ namespace daedalus_turbo::sync::http {
                 if (epoch >= first_synced_epoch) {
                     epoch_offsets[epoch] = current_offset;
                     if (!_epoch_json_cache.contains(epoch)) {
-                        auto epoch_url = fmt::format("http://{}/epoch-{}-{}.json", _host, epoch, epoch_last_block_hash);
+                        auto epoch_url = fmt::format("http://{}/epoch-{}-{}.json", host, epoch, epoch_last_block_hash);
                         auto save_path = _cr.full_path(fmt::format("remote/epoch-{}.json", epoch));
                         _dlq.download(epoch_url, save_path, epoch, [this, epoch, save_path](auto &&res) {
                             if (res) {
@@ -244,8 +265,8 @@ namespace daedalus_turbo::sync::http {
                 }
                 current_offset += epoch_size;
             }
-            _dlq.process(_report_progress, &_sched);
-            _sched.process(_report_progress);
+            _dlq.process(true, &_sched);
+            _sched.process(true);
             for (const auto &[epoch_id, epoch_start_offset]: epoch_offsets) {
                 if (!_epoch_json_cache.contains(epoch_id))
                     throw error("internal error: epoch cache is missing epoch {} known epochs: {} sync start: {}", epoch_id, j_epochs.size(), first_synced_epoch);
@@ -268,13 +289,13 @@ namespace daedalus_turbo::sync::http {
             }
             chunk_registry::file_set updated_chunks {};
             logger::info("preparing the updated chunks to be downloaded, validated, and indexed: {}", download_tasks.size());
-            _download_chunks(download_tasks, max_offset, updated_chunks);
+            _download_chunks(host, download_tasks, max_offset, updated_chunks);
             return updated_chunks;
         }
     };
 
-    syncer::syncer(indexer::incremental &cr, const std::string &src_host, bool report_progress, scheduler &sched, file_remover &fr)
-        : _impl { std::make_unique<impl>(cr, src_host, report_progress, sched, fr) }
+    syncer::syncer(indexer::incremental &cr, peer_selection &ps, scheduler &sched, file_remover &fr)
+        : _impl { std::make_unique<impl>(cr, ps, sched, fr) }
     {
     }
 

@@ -69,7 +69,8 @@ namespace daedalus_turbo {
 
     struct transaction_input {
         uint64_t tx_offset = 0;
-        const transaction_output *output = nullptr;
+        cardano::amount amount {};
+        cardano::multi_balance assets {};
     };
 
     struct transaction {
@@ -94,22 +95,23 @@ namespace daedalus_turbo {
                 }
             }
             for (const auto &in: inputs) {
-                changes["ADA"] -= (int64_t)in.output->amount;
-                for (const auto &[asset_name, amount]: in.output->assets) {
+                changes["ADA"] -= (int64_t)in.amount;
+                for (const auto &[asset_name, amount]: in.assets) {
                     changes[asset_name] -= amount;
                 }
             }
             return changes;
         }
 
-        inline json::object to_json() const
+        inline json::object to_json(const std::map<cardano::slot, double> &tail_relative_stake) const
         {
             json::object j {
                 { "hash", fmt::format("{}", hash.span()) },
                 { "slot", slot.to_json() },
                 { "balanceChange", fmt::format("{}", balance_change()) },
                 { "spentInputs", inputs.size() },
-                { "newOutputs", outputs.size() }
+                { "newOutputs", outputs.size() },
+                { "relativeStake", cardano::tx::slot_relative_stake(tail_relative_stake, slot) }
             };
             return j;
         }
@@ -118,7 +120,7 @@ namespace daedalus_turbo {
     struct transaction_map: std::map<uint64_t, transaction> {
         using std::map<uint64_t, transaction>::map;
 
-        inline json::array to_json(size_t offset=0, size_t max_items=1000) const
+        inline json::array to_json(const std::map<cardano::slot, double> &tail_relative_stake, size_t offset=0, size_t max_items=1000) const
         {
             size_t end_offset = offset + max_items;
             if (end_offset > size())
@@ -128,7 +130,7 @@ namespace daedalus_turbo {
             size_t i = 0;
             for (const auto &[cr_offset, tx]: *this | std::views::reverse) {
                 if (i >= offset)
-                    txs.emplace_back(tx.to_json());
+                    txs.emplace_back(tx.to_json(tail_relative_stake));
                 if (++i >= end_offset)
                     break;
             }
@@ -196,7 +198,7 @@ namespace daedalus_turbo {
                 for (const auto &out: txo_item.outputs) {
                     if (out.use_offset != 0) {
                         auto it = transactions.emplace_hint(transactions.end(), out.use_offset, transaction { .size=out.use_size });
-                        it->second.inputs.emplace_back(tx_off, &out);
+                        it->second.inputs.emplace_back(tx_off, out.amount, out.assets);
                     }
                 }
             }
@@ -230,7 +232,7 @@ namespace daedalus_turbo {
             return total_withdrawals;
         }
 
-        inline json::object to_json(size_t max_items=1000) const
+        inline json::object to_json(const std::map<cardano::slot, double> &tail_relative_stake, size_t max_items=1000) const
         {
             return json::object {
                 { "id", id.to_json() },
@@ -239,7 +241,7 @@ namespace daedalus_turbo {
                 { "assetCount", balance_assets.size() },
                 { "assets", balance_assets.to_json(0, max_items) },
                 { "withdrawals", total_withdrawals },
-                { "transactions", transactions.to_json(0, max_items) }
+                { "transactions", transactions.to_json(tail_relative_stake, 0, max_items) }
             };
         }
 
@@ -384,21 +386,15 @@ namespace daedalus_turbo {
             return res;
         }
 
-        history<stake_ident> find_stake_balance(const stake_ident &stake_id)
+        template<typename T>
+        history<T> find_history(const T &id)
         {
-            return _balance(_stake_ref_idx, stake_id);
+            if constexpr (std::is_same_v<T, stake_ident>)
+                return _history(_stake_ref_idx, id);
+            if constexpr (std::is_same_v<T, pay_ident>)
+               return _history(_pay_ref_idx, id);;
+            throw error("unsupported type for find_history: {}", typeid(T).name());
         }
-
-        history<stake_ident> find_stake_history(const stake_ident &stake_id)
-        {
-            return _history(_stake_ref_idx, stake_id);
-        }
-
-        history<pay_ident> find_pay_history(const pay_ident &pay_id)
-        {
-            return _history(_pay_ref_idx, pay_id);
-        }
-
     private:
         scheduler &_sched;
         indexer::incremental &_cr;
@@ -430,12 +426,6 @@ namespace daedalus_turbo {
             hist.compute_balances();
             hist.full_history = true;
             return hist;
-        }
-
-        template<typename IDX, typename ID>
-        const history<ID> _balance(index::reader_multi<IDX> &ref_idx, const ID &id)
-        {
-            return _history(ref_idx, id);
         }
     };
 

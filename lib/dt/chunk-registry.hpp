@@ -381,6 +381,8 @@ namespace daedalus_turbo {
             chunk.offset = offset;
             blake2b(chunk.data_hash, raw_data);
             uint64_t prev_slot = 0;
+            // allow up to 5 seconds of time difference as Daedalus does currently
+            auto max_slot = cardano::slot::from_time(std::chrono::system_clock::now() + std::chrono::seconds { 5 });
             cbor_parser parser { raw_data };
             cbor_value block_tuple {};
             while (!parser.eof()) {
@@ -388,16 +390,19 @@ namespace daedalus_turbo {
                 auto blk_ptr = cardano::make_block(block_tuple, chunk.offset + block_tuple.data - raw_data.data());
                 auto &blk = *blk_ptr;
                 try {
-                    if (blk.slot() < prev_slot)
-                        throw error("chunk {} at {}: a block's slot {} is less than the slot of the prev block {}!", rel_path, offset, blk.slot(), prev_slot);
-                    prev_slot = blk.slot();
+                    auto slot = blk.slot();
+                    if (slot >= max_slot)
+                        throw error("a block with time slot from the future: {}!", slot);
+                    if (slot < prev_slot)
+                        throw error("chunk {} at {}: a block's slot {} is less than the slot of the prev block {}!", rel_path, offset, slot, prev_slot);
+                    prev_slot = slot;
                     if (chunk.num_blocks == 0) {
                         chunk.prev_block_hash = blk.prev_hash();
-                        chunk.first_slot = blk.slot();
+                        chunk.first_slot = slot;
                     }
                     chunk.num_blocks++;
                     chunk.last_block_hash = blk.hash();
-                    chunk.last_slot = blk.slot();
+                    chunk.last_slot = slot;
                     blk_proc(blk);
                 } catch (std::exception &ex) {
                     throw error("failed parsing block at slot {}/{} and offset {}: {}", blk.slot().epoch(), blk.slot(), blk.offset(), ex.what());

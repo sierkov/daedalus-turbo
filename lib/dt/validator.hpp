@@ -20,10 +20,14 @@ namespace daedalus_turbo::validator {
     static constexpr uint64_t snapshot_hifreq_distance = static_cast<uint64_t>(1) << 27;;
     static constexpr uint64_t snapshot_normal_distance = indexer::merger::part_size * 2;
 
+    using tail_relative_stake_map = std::map<cardano::slot, double>;
+
     struct incremental: indexer::incremental {
         incremental(indexer::indexer_map &&indexers, const std::string &data_dir, bool on_the_go=true, bool strict=true, scheduler &sched=scheduler::get(), file_remover &fr=file_remover::get());
         void truncate(size_t max_end_offset) override;
         void save_state() override;
+        cardano::amount unspent_reward(const cardano::stake_ident &id) const;
+        tail_relative_stake_map tail_relative_stake() const;
     protected:
         chunk_info _parse(uint64_t offset, const std::string &rel_path,
             const buffer &raw_data, size_t compressed_size, const block_processor &extra_proc) const override;

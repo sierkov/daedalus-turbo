@@ -31,7 +31,7 @@ namespace daedalus_turbo::cli::stake_history {
             cardano::address addr { addr_raw.span() };
             auto id = addr.stake_id();
             _warn_top_stake_key(id.hash);
-            std::cout << fmt::format("{}", r.find_stake_history(id));
+            std::cout << fmt::format("{}", r.find_history(id));
         }
     private:
         void _warn_top_stake_key(const buffer &addr) const

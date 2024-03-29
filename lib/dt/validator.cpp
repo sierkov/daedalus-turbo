@@ -120,6 +120,50 @@ namespace daedalus_turbo::validator {
         }
     }
 
+    cardano::amount incremental::unspent_reward(const cardano::stake_ident &id) const
+    {
+        return _state.unspent_reward(id);
+    }
+
+    std::map<cardano::slot, double> incremental::tail_relative_stake() const
+    {
+        timer t { "tail_relative_stake", logger::level::info };
+        struct stake_info {
+            cardano::pool_hash pool_hash {};
+            double rel_stake = 0;
+        };
+        std::map<cardano::slot, stake_info> slot_rel_stake {};
+        uint64_t min_epoch = _state.epoch() > 1 ? _state.epoch() - 1 : 0;
+        for (auto rit = chunks().rbegin(), rend = chunks().rend(); rit != rend && rit->second.epoch() >= min_epoch; ++rit) {
+            const auto &chunk = rit->second;
+            auto chunk_path = full_path(chunk.rel_path());
+            logger::debug("tail_relative_stake analyzing chunk {} from epoch {}", chunk_path, chunk.epoch());
+            auto chunk_data = file::read(chunk_path);
+            const auto &stake_dist = chunk.epoch() == _state.epoch() ? _state.pool_dist_set() : _state.pool_dist_go();
+            cbor_parser parser { chunk_data };
+            cbor_value block_tuple {};
+            while (!parser.eof()) {
+                parser.read(block_tuple);
+                auto blk = cardano::make_block(block_tuple, chunk.offset + block_tuple.data - chunk_data.data());
+                auto pool_hash = blk->issuer_hash();
+                slot_rel_stake[blk->slot()] = stake_info { pool_hash, static_cast<double>(stake_dist.get(pool_hash)) / stake_dist.total_stake() };
+            }
+            if (slot_rel_stake.size() >= 21600)
+                break;
+        }
+        double rel_stake = 0.0;
+        std::set<cardano::pool_hash> seen_pools {};
+        std::map<cardano::slot, double> slot_cum_rel_stake {};
+        for (auto rit = slot_rel_stake.rbegin(), rend = slot_rel_stake.rend(); rit != rend; ++rit) {
+            if (!seen_pools.contains(rit->second.pool_hash)) {
+                rel_stake += rit->second.rel_stake;
+                seen_pools.emplace(rit->second.pool_hash);
+            }
+            slot_cum_rel_stake[rit->first] = rel_stake;
+        }
+        return slot_cum_rel_stake;
+    }
+
     void incremental::_save_state_snapshot(bool record)
     {
         timer t {

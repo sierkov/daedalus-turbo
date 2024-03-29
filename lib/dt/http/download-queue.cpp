@@ -32,6 +32,7 @@
 #include <boost/beast/http.hpp>
 #include <boost/beast/version.hpp>
 #include <boost/url.hpp>
+#include <dt/blake2b.hpp>
 #include <dt/file.hpp>
 #include <dt/http/download-queue.hpp>
 #include <dt/logger.hpp>
@@ -408,5 +409,34 @@ namespace daedalus_turbo::http {
     void download_queue::process(bool report_progress, scheduler *sched)
     {
         _impl->process(report_progress, sched);
+    }
+
+    std::string fetch(const std::string &url)
+    {
+        auto url_hash = blake2b<blake2b_256_hash>(url);
+        file::tmp tmp { fmt::format("http-fetch-sync-{}.tmp", url_hash) };
+        std::atomic_bool ready { false };
+        std::optional<std::string> err {};
+        download_queue dlq {};
+        dlq.download(url, tmp.path(), 0, [&](const auto &res) {
+            err = std::move(res.error);
+            ready = true;
+        });;
+        while (!ready) {
+            std::this_thread::sleep_for(std::chrono::milliseconds { 100 });
+        }
+        if (err)
+            throw error("download of {} failed: {}", url, *err);
+        auto buf = file::read(tmp.path());
+        return std::string { buf.span().string_view() };
+    }
+
+    json::value fetch_json(const std::string &url)
+    {
+        try {
+            return json::parse(fetch(url));
+        } catch (std::exception &ex) {
+            throw error("fetch {} failed with error: {}", url, ex.what());
+        }
     }
 }

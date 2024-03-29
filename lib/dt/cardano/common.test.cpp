@@ -89,6 +89,10 @@ suite cardano_common_suite = [] {
             expect(cardano::slot::from_epoch(213) == 6652800_u);
             expect(cardano::slot::from_epoch(214) == 7084800_u);
             expect(cardano::slot::from_epoch(215) == 7516800_u);
+
+            // convert a timepoint on the 2024-03-22 in unix time to a cardano slot
+            auto st1 = cardano::slot::from_time(std::chrono::system_clock::time_point { std::chrono::seconds { 1'711'093'053 } });
+            expect(st1 == 119526762_ull);
         };
         "tx_size"_test = [] {
             for (const auto &[sz, exp_sz]: {

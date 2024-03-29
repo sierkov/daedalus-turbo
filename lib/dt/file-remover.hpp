@@ -39,10 +39,10 @@ namespace daedalus_turbo {
 
         void remove(const std::chrono::seconds &delay=std::chrono::seconds { 0 })
         {
-            auto delete_point = std::chrono::system_clock::now() + delay;
+            auto delete_point = std::chrono::system_clock::now() - delay;
             for (auto it = _removable.begin(); it != _removable.end(); ) {
                 if (it->second < delete_point) {
-                    _remove(it->first);
+                    _remove(it->first, fmt::format("deref and older than {} sec", delay.count()));
                     it = _removable.erase(it);
                 } else {
                     ++it;
@@ -52,14 +52,12 @@ namespace daedalus_turbo {
 
         void remove_old_files(const std::filesystem::path &dir_path, const std::chrono::seconds &lifespan=std::chrono::seconds { 86400 }) const
         {
-            auto now = std::chrono::system_clock::now();
-            auto delete_point = now - lifespan;
             auto file_now = std::chrono::file_clock::now();
             for (auto &entry: std::filesystem::directory_iterator(dir_path)) {
-                auto entry_sys_time = std::chrono::time_point_cast<std::chrono::system_clock::duration>(entry.last_write_time() - file_now + now);
-                if (entry.is_regular_file() && entry_sys_time < delete_point) {
+                auto file_age = std::chrono::duration_cast<std::chrono::seconds>(file_now - entry.last_write_time());
+                if (entry.is_regular_file() && file_age > lifespan) {
                     auto path = entry.path().string();
-                    _remove(path);
+                    _remove(path, fmt::format("dir/older than {} sec; age: {} sec", lifespan.count(), file_age.count()));
                 }
             }
         }
@@ -68,8 +66,8 @@ namespace daedalus_turbo {
 
         map<std::string, time_point> _removable {};
 
-        static void _remove(const std::string &path) {
-            logger::trace("found an obsolete file {} - removing it", path);
+        static void _remove(const std::string &path, const std::string &note) {
+            logger::trace("removing obsolete file: {} note: {}", path, note);
             std::filesystem::remove(path);
         }
     };

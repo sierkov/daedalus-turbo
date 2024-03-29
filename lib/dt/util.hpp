@@ -18,7 +18,7 @@
 
 namespace daedalus_turbo {
     template <typename T>
-    inline constexpr T host_to_net(T value) noexcept
+    constexpr T host_to_net(T value) noexcept
     {
         constexpr int x = 1;
         if (*reinterpret_cast<const char *>(&x) == 1) {
@@ -29,7 +29,7 @@ namespace daedalus_turbo {
     }
 
     template <typename T>
-    inline constexpr T net_to_host(T value) noexcept
+    constexpr T net_to_host(T value) noexcept
     {
         constexpr int x = 1;
         if (*reinterpret_cast<const char *>(&x) == 1) {

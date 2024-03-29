@@ -5,6 +5,7 @@
 #ifndef DAEDALUS_TURBO_CARDANO_COMMON_HPP
 #define DAEDALUS_TURBO_CARDANO_COMMON_HPP
 
+#include <chrono>
 #include <ctime>
 #include <functional>
 #include <map>
@@ -151,10 +152,19 @@ namespace daedalus_turbo::cardano {
 
     static constexpr uint64_t _shelley_begin_ts = 1596051891 + 7200;
     static constexpr uint64_t _shelley_begin_slot = 208 * 21600;
+    static constexpr uint64_t _epoch0_begin_ts = _shelley_begin_ts - _shelley_begin_slot;
     
     struct __attribute__((packed)) slot {
         using serialize = zpp::bits::members<1>;
         uint64_t _slot = 0;
+
+        static cardano::slot from_time(const std::chrono::time_point<std::chrono::system_clock> &tp)
+        {
+            uint64_t secs = std::chrono::duration_cast<std::chrono::seconds>(tp.time_since_epoch()).count();
+            if (secs < _shelley_begin_ts)
+                throw cardano_error("time point is before the begin of Shelley era: {} seconds of unix time", secs);
+            return cardano::slot { secs - _epoch0_begin_ts };
+        }
 
         static cardano::slot from_epoch(uint64_t epoch, uint64_t epoch_slot = 0)
         {
@@ -494,6 +504,8 @@ namespace daedalus_turbo::cardano {
     };
 
     struct __attribute__((packed)) tx_size {
+        friend zpp::bits::access;
+        using serialize = zpp::bits::members<1>;
 
         tx_size(): _size { 0 }
         {
@@ -879,6 +891,9 @@ namespace daedalus_turbo::cardano {
         uint64_t _era, _offset;
     };
 
+    using tail_relative_stake_map = std::map<cardano::slot, double>;
+
+
     struct tx {
         struct vkey_wit_ok {
             size_t total = 0;
@@ -899,6 +914,16 @@ namespace daedalus_turbo::cardano {
                 return vkey + script + other;
             };
         };
+
+        static double slot_relative_stake(const tail_relative_stake_map &tail_relative_stake, const cardano::slot &slot)
+        {
+            if (tail_relative_stake.empty())
+                return 0.0;
+            auto it = tail_relative_stake.lower_bound(slot);
+            if (it != tail_relative_stake.end())
+                return it->second;
+            return 1.0;
+        }
 
         tx(const cbor_value &tx, const block_base &blk, const cbor_value *wit=nullptr, size_t idx=0)
             : _tx { tx }, _blk { blk }, _wit { wit }, _idx { idx }
@@ -944,25 +969,7 @@ namespace daedalus_turbo::cardano {
             return _tx.size;
         }
 
-        inline boost::json::value to_json() const
-        {
-            json::array inputs {};
-            foreach_input([&](const auto &tx_in) {
-                inputs.emplace_back(tx_in.to_json());
-            });
-            json::array outputs {};
-            foreach_output([&](const auto &tx_out) {
-                outputs.emplace_back(tx_out.to_json());
-            });
-            return json::object {
-                { "hash", fmt::format("{}", hash().span()) },
-                { "offset", offset() },
-                { "size", size() },
-                { "slot", block().slot().to_json() },
-                { "inputs", std::move(inputs) },
-                { "outputs", std::move(outputs) }
-            };
-        }
+        inline json::object to_json(const tail_relative_stake_map &) const;
 
         inline buffer raw_data() const
         {
@@ -1431,6 +1438,28 @@ namespace daedalus_turbo::cardano {
             j.emplace("assets", std::move(maj));
         }
         return j;
+    }
+
+    inline json::object tx::to_json(const tail_relative_stake_map &tail_relative_stake) const
+    {
+        json::array inputs {};
+        foreach_input([&](const auto &tx_in) {
+            inputs.emplace_back(tx_in.to_json());
+        });
+        json::array outputs {};
+        foreach_output([&](const auto &tx_out) {
+            outputs.emplace_back(tx_out.to_json());
+        });
+        return json::object {
+            { "hash", fmt::format("{}", hash().span()) },
+            { "offset", offset() },
+            { "size", size() },
+            { "slot", block().slot().to_json() },
+            { "fee", fmt::format("{}", fee()) },
+            { "inputs", std::move(inputs) },
+            { "outputs", std::move(outputs) },
+            { "relativeStake", slot_relative_stake(tail_relative_stake, block().slot()) }
+        };
     }
 }
 
