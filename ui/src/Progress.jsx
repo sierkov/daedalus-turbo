@@ -3,6 +3,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import PropTypes from 'prop-types';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import HardwareStatus from './HardwareStatus.jsx';
 import './Progress.scss';
 
 function LinearProgressWithLabel(props) {
@@ -36,27 +37,6 @@ export default function Progress({ progress, names, hardware, duration, eta }) {
             </div>
         </div>;
     }
-    let hardwareInfo = <></>;
-    if (hardware) {
-        hardwareInfo = <div className="hw-info">
-            <div className="resource">
-                <div className="name">Internet</div>
-                <div className="value">{hardware?.internet ?? "unknown"}</div>
-            </div>
-            <div className="resource">
-                <div className="name">CPU</div>
-                <div className="value">{hardware?.threads + " threads" ?? "unknown"}</div>
-            </div>
-            <div className="resource">
-                <div className="name">RAM</div>
-                <div className="value">{hardware?.memory ?? "unknown"}</div>
-            </div>
-            <div className="resource">
-                <div className="name">Storage</div>
-                <div className="value">{hardware?.storage ?? "unknown"}</div>
-            </div>
-        </div>;
-    }
     const myProgress = Object.fromEntries(names.map(name => [name, progress[name] ?? "0.000%"]));
     const numItems = Object.keys(myProgress).length;
     const progressItems = Object.entries(myProgress).map((entry, idx) =>
@@ -80,6 +60,6 @@ export default function Progress({ progress, names, hardware, duration, eta }) {
             </div>
         </div>
         {progressDetails}
-        {hardwareInfo}
+        <HardwareStatus hardware={hardware} />
     </div>;
 }

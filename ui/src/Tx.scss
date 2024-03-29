@@ -32,9 +32,10 @@
         .tx-indexed {
             align-items: start;
             .amount {
-                min-width: 150px;
-                flex: 0 1 auto;
-                margin-right: 8px;
+                width: 300px;
+                flex: 0 0 300px;
+                margin-right: 16px;
+                overflow: hidden;
             }
             .address {
                 flex: 1 1 auto;

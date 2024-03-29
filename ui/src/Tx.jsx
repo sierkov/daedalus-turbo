@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import stringify from 'json-stable-stringify';
+import Tab from '@mui/material/Tab';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
 import Address from './Address.jsx';
-import Asset from './Asset.jsx';
 import Prop from './Prop.jsx';
 import NavBar from './NavBar.jsx';
 import Transition from './Transition.jsx';
+import { shortAssetChange } from './TxRef.jsx';
+import TxRelStake from './TxRelStake.jsx';
 import './Tx.scss';
 
 function TxInput(info) {
@@ -24,19 +29,20 @@ function TxInputs({ items }) {
         <TxInput key={i.hash + '/' + i.outIdx} idx={idx} {...i} />
     );
     return <div className="tx-inputs">
-        <h3>Inputs: {items?.length ?? 0}</h3>
         {domItems}
     </div>;
 }
 
 function TxOutput(info) {
     const addr = <Address {...info?.address} />;
-    const assetList = info?.assets ? Object.entries(info.assets).map(([k, v]) => <Asset key={k} id={k} amount={v} />): undefined;
-    const assets = assetList ? <Prop name="Assets"><div className="assets">{assetList}</div></Prop> : undefined;
+    const assetList = info?.assets ? Object.entries(info.assets).map(([k, v]) => <p title={k}>{v} {shortAssetChange(k)}</p>): undefined;
     return <div className="tx-output">
         <div className="tx-indexed">
             <div className="tx-index">#{info.idx}</div>
-            <div className="amount">{info?.amount}</div>
+            <div className="amount">
+                {info?.amount}
+                {assetList}
+            </div>
             <div className="address">{addr}</div>
         </div>
     </div>;
@@ -47,12 +53,15 @@ function TxOutputs({ items }) {
         <TxOutput key={stringify(i.address) + '/' + i.amount} idx={idx} {...i} />
     );
     return <div className="tx-outputs">
-        <h3>Outputs: {items?.length ?? 0}</h3>
         {domItems}
     </div>;
 }
 
 export default function Tx({ hash }) {
+    const [tab, setTab] = useState("outputs");
+    const changeTab = (ev, newTab) => {
+        setTab(newTab);
+    };
     const params = useParams();
     if (!hash) hash = params.hash;
     const [txInfo, setTxInfo] = useState({});
@@ -63,6 +72,7 @@ export default function Tx({ hash }) {
                 setTxInfo({});
             infoHash = hash;
             appAPI.txInfo(hash).then((r) => {
+                console.log('tx:', r);
                 setTxInfo(r);
             });
         }
@@ -92,15 +102,25 @@ export default function Tx({ hash }) {
                         <Prop name="Slot" value={txInfo?.slot?.slot} />
                     </div>
                 </Prop>
+                <Prop name="Confirming stake">
+                    <TxRelStake relStake={txInfo?.relativeStake} />
+                </Prop>
                 <Prop name="Location">
                     <div className="flex">
                         <Prop name="Offset" value={txInfo?.offset} />
                         <Prop name="Size" value={txInfo?.size + ' bytes'} />
                         </div>
                 </Prop>
+                <Prop name="Fee" value={txInfo?.fee} />
             </div>
-            <TxInputs items={txInfo?.inputs} />
-            <TxOutputs items={txInfo?.outputs} />
+            <TabContext value={tab}>
+                <TabList onChange={changeTab}>
+                    <Tab label={"Outputs: " + txInfo?.outputs?.length} value="outputs" />
+                    <Tab label={"Inputs: " + txInfo?.inputs?.length} value="inputs" />
+                </TabList>
+                <TabPanel value="outputs" sx={{ padding: 0, margin: 0 }}><TxOutputs items={txInfo?.outputs} /></TabPanel>
+                <TabPanel value="inputs" sx={{ padding: 0, margin: 0 }}><TxInputs items={txInfo?.inputs} /></TabPanel>
+            </TabContext>
         </div>
     </div>;
 }

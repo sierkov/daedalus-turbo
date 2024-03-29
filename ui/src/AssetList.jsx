@@ -12,7 +12,7 @@ export default function AssetList({ assets, count, offset, limit, changeOffset }
             <div className="id header">Asset Id</div>
         </div>
         {items}
-        <Button sx={{ marginRight: '8px' }} variant="contained" color="primary" onClick={() => changeOffset(Math.max(offset - limit, 0))} disabled={offset === 0}>Previous {limit}</Button>
+        <Button sx={{ marginRight: '8px' }} variant="contained" color="primary" onClick={() => changeOffset(Math.max(offset - limit, 0))} disabled={offset === 0}>Prev {limit}</Button>
         <Button variant="contained" color="primary" onClick={() => changeOffset(offset + limit)} disabled={offset + limit >= count}>Next {limit}</Button>
     </div>;
 }

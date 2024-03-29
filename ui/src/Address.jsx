@@ -2,10 +2,11 @@ import React from 'react';
 import bs58 from 'bs58';
 import CBOR from 'cbor-sync';
 import { Crc32 } from '@aws-crypto/crc32';
+import './Address.scss';
 
 function hexOrThrow(hex) {
     if (!(hex?.length > 0)) throw Error(`hex string cannot be empty: ${hex}`);
-    if (hex.length % 2 != 0) throw Error(`hex string must have an even number of characters but has ${hex.length}: ${hex}`);
+    if (hex.length % 2 !== 0) throw Error(`hex string must have an even number of characters but has ${hex.length}: ${hex}`);
     const isHex = !!hex?.match(/^[A-F0-9]+$/i);
     if (!isHex) throw Error(`hex string must contain only A-F or 0-9 characters but has: ${hex}`);
 }
@@ -44,7 +45,7 @@ export default function Address(addr) {
         } else {
             base58 = 'unsupported byron address - too long';
         }
-        byronLink = <div>{base58}</div>;
+        byronLink = <div title={base58}>{base58}</div>;
     }
     return <div className="address">
         {payLink}

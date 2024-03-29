@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Button from "@mui/material/Button";
-import './Progress.scss';
+import HardwareStatus from './HardwareStatus.jsx';
 import './SyncReady.scss';
 
 function LinearProgressWithLabel(props) {
@@ -24,25 +24,7 @@ LinearProgressWithLabel.propTypes = {
     value: PropTypes.number.isRequired,
 };
 
-export default function SyncReady({ hardware, duration, dataSize, ready, confirmReady }) {
-    const hardwareInfo = <div className="hw-info">
-        <div className="resource">
-            <div className="name">Internet</div>
-            <div className="value">{hardware?.internet ?? "unknown"}</div>
-        </div>
-        <div className="resource">
-            <div className="name">CPU</div>
-            <div className="value">{hardware?.threads ?? "unknown"}</div>
-        </div>
-        <div className="resource">
-            <div className="name">RAM</div>
-            <div className="value">{hardware?.memory ?? "unknown"}</div>
-        </div>
-        <div className="resource">
-            <div className="name">Storage</div>
-            <div className="value">{hardware?.storage ?? "unknown"}</div>
-        </div>
-    </div>;
+export default function SyncReady({ hardware, duration, dataSize, confirmReady }) {
     return <div className="sync">
         <div>
             <img className="logo-large" src="static/logo.svg"/>
@@ -55,6 +37,6 @@ export default function SyncReady({ hardware, duration, dataSize, ready, confirm
             <Button className="continue-button"
                     variant="contained" color="primary" size="large" onClick={confirmReady}>Explore</Button>
         </div>
-        {hardwareInfo}
+        <HardwareStatus hardware={hardware} summary />
     </div>;
 }
