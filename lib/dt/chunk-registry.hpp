@@ -26,6 +26,12 @@ namespace daedalus_turbo {
         using chunk_map = std::map<uint64_t, chunk_info>;
         using chunk_list = std::vector<chunk_info>;
 
+        struct active_transaction {
+            uint64_t start_offset = 0;
+            uint64_t target_offset = 0;
+            bool prepared = false;
+        };
+
         struct epoch_info {
             std::vector<const chunk_info *> chunks {};
 
@@ -87,10 +93,11 @@ namespace daedalus_turbo {
             return std::filesystem::canonical(db_dir);
         }
 
-        chunk_registry(const std::string &data_dir, bool strict=true, scheduler &sched=scheduler::get(), file_remover &fr=file_remover::get())
+        explicit chunk_registry(const std::string &data_dir, bool strict=true, scheduler &sched=scheduler::get(), file_remover &fr=file_remover::get())
             : _data_dir { data_dir }, _db_dir { init_db_dir((_data_dir / "compressed").string()) },
                 _sched { sched }, _file_remover { fr }, _strict { strict },
-                _state_path { (_db_dir / "state.json").string() }
+                _state_path { (_db_dir / "state.json").string() },
+                _state_pre_path { (_db_dir / "state-pre.json").string() }
         {
             timer t { "chunk-registry construct" };
             file_set known_chunks {}, deletable_chunks {};
@@ -118,9 +125,6 @@ namespace daedalus_turbo {
                     known_chunks.emplace(std::move(path));
                 }
             }
-            _notify_next_epoch = _epochs.empty() ? 0 : _epochs.rbegin()->first;
-            _notify_end_offset = num_bytes();
-            _parse_start_offset = num_bytes();
             for (const auto &entry: std::filesystem::recursive_directory_iterator { _db_dir }) {
                 auto path = full_path(entry.path().string());
                 if (entry.is_regular_file() && entry.path().extension() == ".zstd" && !known_chunks.contains(path))
@@ -195,9 +199,19 @@ namespace daedalus_turbo {
             return _chunks.size();
         }
 
-        std::optional<uint64_t> target_offset() const
+        scheduler &sched() const
         {
-            return _target_offset;
+            return _sched;
+        }
+
+        file_remover &remover() const
+        {
+            return _file_remover;
+        }
+
+        std::optional<active_transaction> tx() const
+        {
+            return _transaction;
         }
 
         const std::filesystem::path &data_dir() const
@@ -267,66 +281,10 @@ namespace daedalus_turbo {
 
         // state modifying methods
 
-        virtual void save_state()
-        {
-            timer t { "chunk_registry::save_state" };
-            if (!_unmerged_chunks.empty()) {
-                if (!_chunks.empty())
-                    logger::trace("last merged chunk: {}", json::serialize(_chunks.rbegin()->second.to_json()));
-                for (const auto &[last_byte_offset, uchunk]: _unmerged_chunks)
-                    logger::trace("unmerged chunk with last byte offset {}: {}", last_byte_offset, json::serialize(uchunk.to_json()));
-                logger::warn("{} unmerged chunks - ignoring them", _unmerged_chunks.size());
-                _unmerged_chunks.clear();
-            }
-            _notify_of_updates(true);
-            // let for the newly scheduled operations in _on_epoch_merge calls to finish
-            _sched.process(true);
-            json::array j_chunks {};
-            for (const auto &[max_offset, chunk]: _chunks)
-                j_chunks.emplace_back(chunk.to_json());
-            json::save_pretty(_state_path, json::object { { "chunks", j_chunks } });
-            _parse_start_offset = num_bytes();
-            _parsed = 0;
-        }
-
-        virtual void truncate(size_t max_end_offset)
-        {
-            timer t { fmt::format("truncate chunk_registry to size {}", max_end_offset) };
-            if (num_bytes() > max_end_offset) {
-                auto chunk_it = _find_it(max_end_offset);
-                if (chunk_it->second.offset < max_end_offset)
-                    max_end_offset = chunk_it->second.offset;
-                auto epoch_it = _epochs.find(chunk_it->second.epoch());
-                // filter chunks of the truncated epoch, assumed to be ordered by offsets
-                for (size_t ci = 0; ci < epoch_it->second.chunks.size(); ++ci) {
-                    if (epoch_it->second.chunks[ci]->offset >= max_end_offset) {
-                        epoch_it->second.chunks.resize(ci);
-                        break;
-                    }
-                }
-                if (!epoch_it->second.chunks.empty())
-                    ++epoch_it;
-                _epochs.erase(epoch_it, _epochs.end());
-                if (!_epochs.empty()) {
-                    _notify_next_epoch = _epochs.rbegin()->first;
-                    _notify_end_offset = _epochs.rbegin()->second.end_offset();
-                } else {
-                    _notify_next_epoch = 0;
-                    _notify_end_offset = 0;
-                }
-                while (chunk_it != _chunks.end()) {
-                    _file_remover.mark(full_path(chunk_it->second.rel_path()));
-                    chunk_it = _chunks.erase(chunk_it);
-                }
-                _parse_start_offset = num_bytes();
-                _parsed = 0;
-            }
-        }
-
         void import(const chunk_registry &src_cr)
         {
             uint8_vector raw_data {}, compressed_data {};
-            target_offset(src_cr.num_bytes());
+            start_tx(num_bytes(), src_cr.num_bytes());
             for (const auto &[last_byte_offset, src_chunk]: src_cr.chunks()) {
                 file::read_raw(src_cr.full_path(src_chunk.rel_path()), compressed_data);
                 zstd::decompress(raw_data, compressed_data);
@@ -335,11 +293,14 @@ namespace daedalus_turbo {
                 file::write(local_path, compressed_data);
                 add(src_chunk.offset, local_path, data_hash, src_chunk.orig_rel_path);
             }
-            save_state();
+            prepare_tx();
+            commit_tx();
         }
 
         std::string add(const uint64_t offset, const std::string &local_path, const cardano::block_hash &data_hash, const std::string &orig_rel_path)
         {
+            if (!_transaction)
+                throw error("add can be executed only inside of a transaction!");
             auto compressed = file::read_raw(local_path);
             uint8_vector data {};
             zstd::decompress(data, compressed);
@@ -354,9 +315,53 @@ namespace daedalus_turbo {
             return final_path;
         }
 
-        void target_offset(uint64_t offset)
+        uint64_t valid_end_offset()
         {
-            _target_offset.emplace(offset);
+            return _valid_end_offset_impl();
+        }
+
+        void start_tx(const uint64_t start_offset, const uint64_t target_offset, const bool truncate=true)
+        {
+            timer t { "chunk_registry::start_tx", logger::level::debug };
+            if (_transaction)
+                throw error("nested transactions are not allowed!");
+            if (start_offset > num_bytes())
+                throw error("start offset cannot be greater than the maximum offset!");
+            if (start_offset > valid_end_offset())
+                throw error("start_offset: {} is greater than valid_end_offset: {}!", start_offset, valid_end_offset());
+            _transaction = active_transaction { start_offset, target_offset };
+            if (truncate && start_offset < num_bytes())
+                _do_truncate(start_offset);
+            _start_tx_impl();
+        }
+
+        void prepare_tx()
+        {
+            timer t { "chunk_registry::preapre_tx", logger::level::debug };
+            if (!_transaction)
+                throw error("prepare_tx can be executed only inside of a transaction!");
+            _prepare_tx_impl();
+            _do_truncate(valid_end_offset());
+            _transaction->prepared = true;
+        }
+
+        void rollback_tx()
+        {
+            if (!_transaction)
+                throw error("rollback_tx can be executed only inside of a transaction!");
+            _rollback_tx_impl();
+            _transaction.reset();
+        }
+
+        void commit_tx()
+        {
+            timer t { "chunk_registry::commit_tx", logger::level::debug };
+            if (!_transaction)
+                throw error("commit_tx can be executed only inside of a transaction!");
+            if (!_transaction->prepared)
+                throw error("commit_tx can only be executed after a successful prepare_tx!");
+            _commit_tx_impl();
+            _transaction.reset();
         }
     protected:
         const std::filesystem::path _data_dir;
@@ -364,9 +369,79 @@ namespace daedalus_turbo {
         scheduler &_sched;
         file_remover &_file_remover;
         const bool _strict = true;
-        std::optional<uint64_t> _target_offset {};
-        mutable std::atomic_uint64_t _parsed = 0;
-        uint64_t _parse_start_offset = 0;
+        std::optional<active_transaction> _transaction {};
+
+        virtual void _truncate_impl(uint64_t max_end_offset)
+        {
+            timer t { fmt::format("chunk_registry::_truncate to size {}", max_end_offset) };
+            auto chunk_it = _find_it(max_end_offset);
+            if (chunk_it->second.offset != max_end_offset)
+                throw error("cannot truncate to offsets not on the boundary between chunks!");
+            auto epoch_it = _epochs.find(chunk_it->second.epoch());
+            // filter chunks of the truncated epoch, must be ordered by their offsets
+            for (size_t ci = 0; ci < epoch_it->second.chunks.size(); ++ci) {
+                if (epoch_it->second.chunks[ci]->offset >= max_end_offset) {
+                    epoch_it->second.chunks.resize(ci);
+                    break;
+                }
+            }
+            if (!epoch_it->second.chunks.empty())
+                ++epoch_it;
+            if (epoch_it != _epochs.end())
+                _epochs.erase(epoch_it, _epochs.end());
+            while (chunk_it != _chunks.end()) {
+                _truncated_chunks.emplace_back(chunk_it->second);
+                chunk_it = _chunks.erase(chunk_it);
+            }
+        }
+
+        virtual void _start_tx_impl()
+        {
+            _parsed = 0;
+            _parsed_base = num_bytes() - _transaction->start_offset;
+            _notify_end_offset = num_bytes();
+            _notify_next_epoch = _epochs.empty() ? 0 : _epochs.rbegin()->first;
+        }
+
+        virtual uint64_t _valid_end_offset_impl()
+        {
+            // chunks are updates only when they become mergeable
+            return num_bytes();
+        }
+
+        virtual void _prepare_tx_impl()
+        {
+            timer t { "chunk_registry::_prepare_tx" };
+            if (!_unmerged_chunks.empty()) {
+                if (!_chunks.empty())
+                    logger::trace("last merged chunk: {}", json::serialize(_chunks.rbegin()->second.to_json()));
+                for (const auto &[last_byte_offset, uchunk]: _unmerged_chunks)
+                    logger::trace("unmerged chunk with last byte offset {}: {}", last_byte_offset, json::serialize(uchunk.to_json()));
+                logger::warn("{} unmerged chunks - ignoring them", _unmerged_chunks.size());
+                _unmerged_chunks.clear();
+            }
+            _notify_of_updates(true);
+            // let for the newly scheduled operations in _on_epoch_merge calls to finish
+            _sched.process(true);
+            json::array j_chunks {};
+            for (const auto &[max_offset, chunk]: _chunks)
+                j_chunks.emplace_back(chunk.to_json());
+            json::save_pretty(_state_pre_path, json::object { { "chunks", j_chunks } });
+        }
+
+        virtual void _rollback_tx_impl()
+        {
+            throw error("rollback_tx not implemented!");
+        }
+
+        virtual void _commit_tx_impl()
+        {
+            if (!std::filesystem::exists(_state_pre_path))
+                throw error("the prepared chunk_registry state file is missing: {}!", _state_pre_path);
+            std::filesystem::rename(_state_pre_path, _state_path);
+            for (const auto &chunk: _truncated_chunks)
+                _file_remover.mark(full_path(chunk.rel_path()));
+        }
 
         virtual void _on_epoch_merge(uint64_t epoch, const epoch_info &info)
         {
@@ -409,24 +484,37 @@ namespace daedalus_turbo {
                 }
             }
             auto new_parsed = atomic_add(_parsed, static_cast<uint64_t>(raw_data.size()));
-            if (_target_offset)
-                progress::get().update("parse", new_parsed, *_target_offset - _parse_start_offset);
+            progress::get().update("parse", _parsed_base + new_parsed, _transaction->target_offset - _transaction->start_offset);
             return chunk;
        }
     private:
         const std::string _state_path;
+        const std::string _state_pre_path;
         alignas(mutex::padding) mutable std::mutex _update_mutex {};
         chunk_map _chunks {};
         chunk_map _unmerged_chunks {};
         epoch_map _epochs {};
+        // Active transaction data
+        uint64_t _parsed_base = 0;
+        mutable std::atomic_uint64_t _parsed = 0;
         uint64_t _notify_end_offset = 0;
         uint64_t _notify_next_epoch = 0;
+        std::vector<chunk_info> _truncated_chunks {};
+
         static thread_local uint8_vector _read_buffer;
 
-        void _add(chunk_info &&chunk, const bool notify=true)
+        void _do_truncate(size_t max_end_offset)
         {
-            if (_target_offset && *_target_offset < chunk.offset + chunk.data_size)
-                throw error("chunk's data exceeds the target offset: {}", _target_offset);
+            if (!_transaction)
+                throw error("truncate can be executed only inside of a transaction!");
+            if (num_bytes() > max_end_offset)
+                _truncate_impl(max_end_offset);
+        }
+
+        void _add(chunk_info &&chunk, const bool normal=true)
+        {
+            if (normal && _transaction->target_offset < chunk.offset + chunk.data_size)
+                throw error("chunk's data exceeds the target offset: {}", _transaction->target_offset);
             if (chunk.data_size == 0 || chunk.num_blocks == 0)
                 throw error("empty chunks are not allowed: {}!", chunk.orig_rel_path);
             if (chunk.first_slot.epoch() != chunk.last_slot.epoch())
@@ -460,7 +548,7 @@ namespace daedalus_turbo {
                     throw error("internal error: duplicate chunk offset: {} size: {}", inserted_chunk.offset, inserted_chunk.data_size);
                 _epochs[inserted_chunk.epoch()].chunks.emplace_back(&inserted_chunk);
             }
-            if (notify)
+            if (normal)
                 _notify_of_updates();
         }
 
@@ -468,7 +556,7 @@ namespace daedalus_turbo {
         {
             auto max_epoch = max_slot().epoch();
             auto end_offset = num_bytes();
-            if (!force && _target_offset && *_target_offset == end_offset)
+            if (!force && _transaction->target_offset == end_offset)
                 force = true;
             while (end_offset > _notify_end_offset && (_notify_next_epoch < max_epoch || (force && _notify_next_epoch == max_epoch))) {
                 // in unit-tests chunks may have non-continuous ecpohs

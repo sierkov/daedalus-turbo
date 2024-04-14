@@ -3,57 +3,82 @@ const { app, dialog, ipcMain, BrowserWindow } = require('electron');
 const fetch = require('node-fetch');
 const { spawn } = require('child_process');
 const os = require('os');
+const fs = require('fs');
+const log4js = require('log4js');
 
-console.log('Initializing DT UI cwd:', process.cwd(), 'execPath:', process.execPath);
 const execFilename = path.basename(process.execPath, '.exe').toLowerCase();
+const devEnv = execFilename === "electron";
+const osEnv = os.platform();
+let installDir = devEnv ? process.cwd() : path.resolve(path.dirname(process.execPath), '..');
+let roamingDataDir = installDir;
+if (osEnv === 'win32' && !devEnv && process?.env?.APPDATA) {
+  roamingDataDir = path.resolve(process.env.APPDATA, 'DaedalusTurbo');
+}
+const roamingDataCfg = path.resolve(installDir, 'etc/data-dir.txt');
+if (fs.existsSync(roamingDataCfg))
+  roamingDataDir = fs.readFileSync(roamingDataCfg).toString();
+log4js.configure({
+  appenders: {
+    file: { type: 'file', filename: path.resolve(roamingDataDir, 'log/dt-ui.log') }
+  },
+  categories: {
+    default: { appenders: ['file'], level: 'all' }
+  }
+});
+const logger = log4js.getLogger();
 const api = {
   execFilename,
   cmd: path.resolve(path.dirname(process.execPath), 'dt'),
-  dev: execFilename === "electron",
-  dataDir: path.resolve(path.dirname(process.execPath), '../data'),
-  logPath: path.resolve(path.dirname(process.execPath), '../log/dt-api.log'),
+  dev: devEnv,
+  dataDir: path.resolve(roamingDataDir, 'data'),
+  logPath: path.resolve(roamingDataDir, 'log/dt-api.log'),
+  etcPath: path.resolve(installDir, 'etc'),
   ip: '127.0.0.1',
   port: 55556,
-  os: os.platform()
+  os: osEnv
 };
 api.uri = `http://${api.ip}:${api.port}`;
-if (api.os === 'win32' && !api.dev) {
-  console.log('Windows APPDATA', process?.env?.APPDATA);
-  if (process?.env?.APPDATA) {
-    api.dataDir = `${process.env.APPDATA}/dt-explorer/data`;
-    api.logPath = `${process.env.APPDATA}/dt-explorer/http-api.log`;
-  }
-}
-console.log('api:', api);
+const startInfo = `Initializing DT UI cwd: ${process.cwd()} execPath: ${process.execPath} ` +
+  `installDir: ${installDir} roamingDataDir: ${roamingDataDir} api: ${JSON.stringify(api, null, 2)}`;
+console.log(startInfo);
+logger.debug(startInfo);
+logger.debug('api config: ' + JSON.stringify(api, null, 2));
 
 let apiServer;
+let apiServerReadyTime;
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const startAPI = () => {
-  if (api.dev)
+  if (api.dev) {
+    apiServerReadyTime = Date.now();
     return;
+  }
   const args = [ 'http-api', api.dataDir, '--ip=' + api.ip, '--port=' + api.port ];
-  const env = { DT_LOG: api.logPath };
-  console.log('starting the DT API server', api.cmd, args, env, { stdio: 'inherit' });
+  const env = { DT_LOG: api.logPath, DT_ETC: api.etcPath };
+  logger.info(`starting the DT API server ${api.cmd} ${args} ${JSON.stringify(env, null, 2)}`);
   try {
+    apiServerReadyTime = Date.now() + 2000;
     apiServer = spawn(api.cmd, args, { env });
     apiServer.on('error', err => {
-      console.error(`the API server failed: ${err}`);
+      logger.error(`the API server failed: ${err}`);
       app.quit();
     });
-    apiServer.on('close', code => {
-      console.error(`the API server exited with code: ${code}, terminating the UI`);
+    apiServer.on('close', (code, signal) => {
+      if (code !== null)
+        logger.error(`the API server exited with code: ${code}, terminating the UI`);
+      else
+        logger.error(`the API server exited due to signal ${signal}, terminating the UI`);
       app.quit();
     });
   } catch (e) {
-    console.error('failed to spawn the API server:', e);
+    logger.error('failed to spawn the API server:', e);
     app.quit();
   }
 };
 
 const createWindow = () => {
-  console.log('creating the application window');
+  logger.info('creating the application window');
   const win = new BrowserWindow({
     width: 1024,
     height: 768,
@@ -65,12 +90,18 @@ const createWindow = () => {
       webSecurity: false
     }
   });
-  //win.removeMenu();
+  if (!api.dev)
+    win.removeMenu();
+  win.once('ready-to-show', () => {
+    win.show();
+    win.focus();
+  })
   win.loadFile('index.html');
 };
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   startAPI();
+  // Give the API server 500ms second to start
   createWindow();
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
@@ -80,18 +111,37 @@ app.whenReady().then(() => {
 });
 app.on('window-all-closed', () => {
   if (apiServer) {
-    console.log('The app window is closed, killing the API server');
+    logger.info('The app window is closed, killing the API server');
     apiServer.kill('SIGKILL');
   }
   app.quit();
 });
 
+const fetchWithRetries = async (url, maxRetries) => {
+  for (let retry = 0; retry < maxRetries; ++retry) {
+    try {
+      return await fetch(url);
+    } catch (err) {
+      logger.warn(`fetch attempt ${retry} for ${url} failed:`, err);
+      await sleep(2000);
+    }
+  }
+  throw Error(`failed to fetch ${url} after ${maxRetries} retries`);
+};
+
 function setupIdRequest(name, baseURI, reqURI) {
   ipcMain.on(name, async (ev, reqId, params) => {
     try {
       const start = Date.now();
+      if (!apiServerReadyTime)
+        throw Error(`API server has not been started!`);
+      if (start < apiServerReadyTime) {
+        const sleepTime = apiServerReadyTime - start;
+        logger.info(`request for ${name} too early, sleeping for ${sleepTime}`);
+        await sleep(sleepTime);
+      }
       const reqTarget = reqURI + params.map(v => encodeURIComponent(v)).join('/');
-      let resRaw = await fetch(baseURI + reqTarget);
+      let resRaw = await fetchWithRetries(baseURI + reqTarget, 3);
       let res = await resRaw.json();
       if (res?.delayed === true) {
         for (;;) {
@@ -107,9 +157,10 @@ function setupIdRequest(name, baseURI, reqURI) {
       }
       const duration = (Date.now() - start) / 1000;
       if (duration >= 0.100)
-        console.warn(`main ${name} ${reqId} took ${duration} secs, sending the response to the renderer`);
+        logger.warn(`main ${name} ${reqId} took ${duration} secs, sending the response to the renderer`);
       ev.reply(name, reqId, undefined, await res);
     } catch (err) {
+      logger.error('HTTP API error:', err);
       ev.reply(name, reqId, err);
     }
   });

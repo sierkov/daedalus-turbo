@@ -41,7 +41,7 @@ namespace daedalus_turbo::cbor {
             return *this;
         }
 
-        const uint8_vector &cbor() const
+        uint8_vector &cbor()
         {
             return _buf;
         }

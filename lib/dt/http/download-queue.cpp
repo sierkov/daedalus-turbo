@@ -32,6 +32,7 @@
 #include <boost/beast/http.hpp>
 #include <boost/beast/version.hpp>
 #include <boost/url.hpp>
+#include <dt/asio.hpp>
 #include <dt/blake2b.hpp>
 #include <dt/file.hpp>
 #include <dt/http/download-queue.hpp>
@@ -46,29 +47,24 @@ namespace daedalus_turbo::http {
     namespace net = boost::asio;
     using tcp = boost::asio::ip::tcp;
 
-    internet_speed internet_speed_mbps(std::optional<double> new_current_speed)
-    {
-        static std::atomic<double> max_speed { 0.0 };
-        static std::atomic<double> current_speed { 0.0 };
-        if (new_current_speed) {
-            for (;;) {
-                double max_copy = max_speed.load();
-                if (*new_current_speed <= max_copy || max_speed.compare_exchange_strong(max_copy, *new_current_speed))
-                    break;
-            }
-            current_speed = *new_current_speed;
-        }
-        return internet_speed { current_speed.load(), max_speed.load() };
-    }
-
-    struct download_queue::impl {
+    struct download_queue_async::impl {
         static constexpr size_t max_connections = 8;
+
+        impl(asio::worker &asio_worker=asio::worker::get())
+            : _asio_worker { asio_worker }, _asio_name { fmt::format("download-queue-{:p}", static_cast<void*>(this)) }
+        {
+            _asio_worker.add_before_action(_asio_name, [this] { _asio_before_run(); });
+            _asio_worker.add_after_action(_asio_name, [this] { _asio_after_run(); });
+        }
 
         ~impl()
         {
-            _shutdown = true;
-            _ioc.stop();
-            _worker.join();
+            while (_queue_size.load() > 0 || _active_conns.load() > 0) {
+                logger::warn("destroying download_queue with active_tasks: waiting for them to finish");
+                std::this_thread::sleep_for(std::chrono::seconds { 1 });
+            }
+            _asio_worker.del_before_action(_asio_name);
+            _asio_worker.del_after_action(_asio_name);
         }
 
         void download(const std::string &url, const std::string &save_path, uint64_t priority, const std::function<void(result &&)> &handler)
@@ -76,7 +72,7 @@ namespace daedalus_turbo::http {
             _add_request(request { url, save_path, priority, handler });
         }
 
-        bool process_ok(bool report_progress=false, scheduler *sched = nullptr)
+        bool process_ok(bool report_progress, scheduler *sched)
         {
             _report = report_progress;
             static constexpr std::chrono::milliseconds report_interval { 5000 };
@@ -101,10 +97,9 @@ namespace daedalus_turbo::http {
             return res;
         }
 
-        void process(bool report_progress=false, scheduler *sched = nullptr)
+        speed_mbps internet_speed()
         {
-            if (!process_ok(report_progress, sched))
-                throw error("some download requests have failed, please check the logs");
+            return speed_mbps { _speed_current.load(), _speed_max.load() };
         }
     private:
         struct request {
@@ -281,63 +276,65 @@ namespace daedalus_turbo::http {
             std::atomic_size_t errors = 0;
             std::atomic_size_t bytes = 0;
 
-            void report(double duration_secs, size_t queue_size, size_t active_conns)
+            double report(double duration_secs, size_t queue_size, size_t active_conns)
             {
                 auto num_requests = oks + errors;
                 double error_rate = num_requests > 0 ? static_cast<double>(errors) * 100 / num_requests : 0.0;
                 logger::trace("download-queue size: {} active connections: {}", queue_size, active_conns);
                 double speed_mb_sec = static_cast<double>(bytes) / 1'000'000 / duration_secs;
-                internet_speed_mbps(speed_mb_sec * 8);
+                auto speed_mbps = speed_mb_sec * 8;
                 logger::debug("download-queue performance over the last reporting period: download speed: {:0.1f} MB/sec, requests: {}, error rate: {:0.2f}%",
                     speed_mb_sec, num_requests, error_rate);
                 oks = 0;
                 errors = 0;
                 bytes = 0;
+                return speed_mbps;
             }
         };
 
-        net::io_context _ioc {};
-        tcp::resolver _resolver { _ioc };
-        std::atomic_bool _shutdown { false };
+        static constexpr size_t stats_report_span_secs = 5;
+        static constexpr std::chrono::seconds stats_report_span { stats_report_span_secs };
+
+        asio::worker &_asio_worker;
+        std::string _asio_name;
+        tcp::resolver _resolver { _asio_worker.io_context() };
         std::atomic_bool _success { true };
         alignas(mutex::padding) std::mutex _queue_mutex {};
         std::priority_queue<request> _queue {};
         std::atomic_size_t _active_conns { 0 };
         std::atomic_size_t _queue_size { 0 };
-        std::thread _worker { [&] { _io_thread(); } };
         perf_stats _stats {};
         std::atomic_bool _report { false };
+        std::atomic<double> _speed_max { 0.0 };
+        std::atomic<double> _speed_current { 0.0 };
+        std::chrono::time_point<std::chrono::system_clock> _stats_next_report { std::chrono::system_clock::now() + stats_report_span };
 
-        void _io_thread()
+        void _asio_before_run()
         {
-            auto report_span = std::chrono::seconds { 5 };
-            auto report_span_secs = std::chrono::duration<double>(report_span).count();
-            auto next_report = std::chrono::system_clock::now() + report_span;
-            for (;;) {
-                try {
-                    if (_queue_size > 0 && _active_conns < max_connections) {
-                        auto conn = std::make_shared<connection>(*this, _ioc, _resolver);
-                        // if successful a copy of the shared_ptr will be kept in the I/O context
-                        conn->run();
-                        logger::trace("created new connection instance use_count: {}", conn.use_count());
+            if (_queue_size > 0 && _active_conns < max_connections) {
+                auto conn = std::make_shared<connection>(*this, _asio_worker.io_context(), _resolver);
+                // if successful a copy of the shared_ptr will be kept in the I/O context
+                conn->run();
+                logger::trace("created new connection instance use_count: {}", conn.use_count());
+            }
+        }
+
+        void _asio_after_run()
+        {
+            const auto now = std::chrono::system_clock::now();
+            if (now >= _stats_next_report) {
+                auto current_speed = _stats.report(stats_report_span_secs, _queue_size, _active_conns);
+                if (current_speed > 0) {
+                    for (;;) {
+                        double max_copy = _speed_max.load();
+                        if (current_speed <= max_copy || _speed_max.compare_exchange_strong(max_copy, current_speed))
+                            break;
                     }
-                    _ioc.run_for(std::chrono::milliseconds { 100 });
-                    auto now = std::chrono::system_clock::now();
-                    if (now >= next_report) {
-                        _stats.report(report_span_secs, _queue_size, _active_conns);
-                        next_report = now + report_span;
-                        if (_report)
-                            progress::get().inform();
-                    }
-                } catch (std::exception &ex) {
-                    logger::warn("async I/O error: {}", ex.what());
+                    _speed_current = current_speed;
                 }
-                if (_shutdown) {
-                    _stats.report(report_span_secs, _queue_size, _active_conns);
-                    break;
-                }
-                if (_ioc.stopped())
-                    _ioc.restart();
+                _stats_next_report = now + stats_report_span;
+                if (_report)
+                    progress::get().inform();
             }
         }
 
@@ -355,11 +352,11 @@ namespace daedalus_turbo::http {
             std::optional<request> res {};
             {
                 std::scoped_lock lock { _queue_mutex };
-                if (!_shutdown && !_queue.empty()) {
+                if (!_queue.empty()) {
                     auto req = _queue.top();
                     _queue.pop();
                     _queue_size = _queue.size();
-                    _active_conns++;
+                    ++_active_conns;
                     res.emplace(std::move(req));
                 }
             }
@@ -368,9 +365,9 @@ namespace daedalus_turbo::http {
 
         void _report_result(request &&req, result &&res, bool recoverable=false)
         {
-            _active_conns--;
+            --_active_conns;
             if (res.error) {
-                _stats.errors++;
+                ++_stats.errors;
                 if (recoverable) {
                     req.errors.emplace_back(*res.error);
                     if (req.errors.size() < 10) {
@@ -383,60 +380,32 @@ namespace daedalus_turbo::http {
                 _success = false;
             } else {
                 logger::trace("downloaded {}", res.url);
-                _stats.oks++;
+                ++_stats.oks;
                 _stats.bytes += res.size;
             }
             req.handler(std::move(res));
         }
     };
 
-    download_queue::download_queue(): _impl { std::make_unique<download_queue::impl>() }
+    download_queue_async::download_queue_async(): _impl { std::make_unique<download_queue_async::impl>() }
     {
     }
 
-    download_queue::~download_queue() =default;
+    download_queue_async::~download_queue_async() =default;
 
-    void download_queue::download(const std::string &url, const std::string &save_path, uint64_t priority, const std::function<void(result &&)> &handler)
+    void download_queue_async::_download_impl(const std::string &url, const std::string &save_path, uint64_t priority, const std::function<void(result &&)> &handler)
     {
         _impl->download(url, save_path, priority, handler);
     }
 
-    bool download_queue::process_ok(bool report_progress, scheduler *sched)
+    bool download_queue_async::_process_ok_impl(bool report_progress, scheduler *sched)
     {
         return _impl->process_ok(report_progress, sched);
     }
 
-    void download_queue::process(bool report_progress, scheduler *sched)
+    download_queue::speed_mbps download_queue_async::_internet_speed_impl()
     {
-        _impl->process(report_progress, sched);
+        return _impl->internet_speed();
     }
 
-    std::string fetch(const std::string &url)
-    {
-        auto url_hash = blake2b<blake2b_256_hash>(url);
-        file::tmp tmp { fmt::format("http-fetch-sync-{}.tmp", url_hash) };
-        std::atomic_bool ready { false };
-        std::optional<std::string> err {};
-        download_queue dlq {};
-        dlq.download(url, tmp.path(), 0, [&](const auto &res) {
-            err = std::move(res.error);
-            ready = true;
-        });;
-        while (!ready) {
-            std::this_thread::sleep_for(std::chrono::milliseconds { 100 });
-        }
-        if (err)
-            throw error("download of {} failed: {}", url, *err);
-        auto buf = file::read(tmp.path());
-        return std::string { buf.span().string_view() };
-    }
-
-    json::value fetch_json(const std::string &url)
-    {
-        try {
-            return json::parse(fetch(url));
-        } catch (std::exception &ex) {
-            throw error("fetch {} failed with error: {}", url, ex.what());
-        }
-    }
 }

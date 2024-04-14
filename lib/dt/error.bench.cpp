@@ -12,7 +12,7 @@ using namespace daedalus_turbo;
 
 inline void create_error(const std::source_location &loc=std::source_location::current())
 {
-    error_src_loc(loc, "Hello {}!", "world");
+    error("Hello {} at {}:{}", "world", loc.file_name(), loc.line());
 }
 
 suite error_bench_suite = [] {

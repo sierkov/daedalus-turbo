@@ -210,6 +210,15 @@ namespace daedalus_turbo::cardano {
             }
         }
 
+        uint64_t chunk_id() const
+        {
+            if (_slot <= 208 * 21600) {
+                return _slot / 21600;
+            } else {
+                return (_slot - 208 * 21600) / (432000 / 20);
+            }
+        }
+
         uint64_t unixtime() const
         {
             if (_slot >= _shelley_begin_slot) {

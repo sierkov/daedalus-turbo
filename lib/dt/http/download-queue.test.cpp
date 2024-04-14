@@ -14,7 +14,7 @@ suite http_download_queue_suite = [] {
     std::filesystem::create_directories(tmp_dir);
     "http::download_queue"_test = [&] {
         "parallel download"_test = [&] {
-            download_queue dlq {};
+            download_queue_async dlq {};
             size_t num_errors = 0;
             size_t num_oks = 0;
             auto handler = [&](auto &&r) {
@@ -30,7 +30,7 @@ suite http_download_queue_suite = [] {
             expect(num_oks == 32_u);
         };
         "retry on recoverable errors"_test = [&] {
-            download_queue dlq {};
+            download_queue_async dlq {};
             size_t num_errors = 0;
             size_t num_oks = 0;
             auto handler = [&](auto &&r) {
@@ -45,7 +45,7 @@ suite http_download_queue_suite = [] {
             expect(num_oks == 0_u);
         };
         "empty queue finishes"_test = [] {
-            download_queue dlq {};
+            download_queue_async dlq {};
             expect(dlq.process_ok());
         };
     };

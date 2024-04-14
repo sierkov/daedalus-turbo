@@ -58,6 +58,11 @@ namespace daedalus_turbo {
         inline uint8_vector(const buffer &buf);
         inline uint8_vector &operator=(const buffer &buf);
         inline const buffer span() const;
+
+        inline std::string_view str() const
+        {
+            return std::string_view { reinterpret_cast<const char *>(data()), size() };
+        }
     };
 
     struct buffer: std::span<const uint8_t> {

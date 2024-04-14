@@ -29,7 +29,7 @@ export default function Home() {
         }
     };
     useEffect(() => {
-        updateInterval = setInterval(() => updateStatus(Date.now()), 100);
+        updateInterval = setInterval(() => updateStatus(Date.now()), 200);
         return () => {
             if (updateInterval) {
                 clearInterval(updateInterval);
@@ -37,7 +37,6 @@ export default function Home() {
             }
         }
     }, []);
-    const [forceContinue, setForceContinue] = useState(false);
     const [readyConfirmed, setReadyConfirmed] = useState(false);
     let homeComponent;
     if (statusInfo?.apiError?.length > 0) {
@@ -45,13 +44,13 @@ export default function Home() {
             { description: statusInfo.apiError, canProceed: false }
         ];
         homeComponent = <Error issues={issues} />;
+    } else if (statusInfo?.requirements?.issues?.length > 0) {
+        homeComponent = <Error issues={statusInfo?.requirements?.issues} />;
     } else if (statusInfo?.error?.length > 0) {
         const issues = [
             { description: `We are sorry, but the synchronization has failed: ${statusInfo.error}.`, canProceed: false }
         ];
         homeComponent = <Error issues={issues} />;
-    } else if (statusInfo?.requirements?.issues?.length > 0 && !forceContinue) {
-        homeComponent = <Error issues={statusInfo?.requirements?.issues} onContinue={() => setForceContinue(true) }  />;
     } else if (statusInfo?.ready && (readyConfirmed || statusInfo?.syncDuration < 1.0)) {
         homeComponent = <Dashboard />;
     } else if (statusInfo?.ready && !readyConfirmed) {

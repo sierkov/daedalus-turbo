@@ -9,7 +9,8 @@
 #   include <SDKDDKVer.h>
 #endif
 #include <boost/asio.hpp>
-#include <dt/cardano/common.hpp>
+#include <dt/asio.hpp>
+#include <dt/cardano.hpp>
 #include <dt/cbor.hpp>
 #include <dt/cbor-encoder.hpp>
 #include <dt/logger.hpp>
@@ -103,10 +104,13 @@ namespace daedalus_turbo::cardano::network {
         }
     };
 
-    struct block_list {
-        uint8_vector data {};
-        std::vector<size_t> sizes {};
+    struct block_parsed {
+        std::unique_ptr<uint8_vector> data {};
+        std::unique_ptr<cbor_value> cbor {};
+        std::unique_ptr<cardano::block_base> blk {};
     };
+    using block_list = std::vector<block_parsed>;
+    using header_list = std::vector<blockchain_point>;
 
     struct client {
         using error_msg = std::string;
@@ -117,49 +121,132 @@ namespace daedalus_turbo::cardano::network {
         };
         using find_handler = std::function<void(find_response &&)>;
 
-        struct fetch_response {
+        struct block_response {
             address addr {};
             blockchain_point from {};
             blockchain_point to {};
             std::variant<block_list, error_msg> res {};
         };
-        using fetch_handler = std::function<void(fetch_response &&)>;
+        using block_handler = std::function<void(block_response &&)>;
 
-        explicit client() =default;
+        struct header_response {
+            address addr {};
+            std::optional<blockchain_point> intersect {};
+            std::optional<blockchain_point> tip {};
+            std::variant<header_list, error_msg> res {};
+        };
+        using header_handler = std::function<void(header_response &&)>;
+
+        virtual ~client() =default;
 
         void find_tip(const address &addr, const find_handler &handler)
         {
             blockchain_point_list empty {};
-            boost::asio::co_spawn(_ioc, _find_intersection(addr, empty, handler), boost::asio::detached);
+            _find_intersection_impl(addr, empty, handler);
         }
 
         void find_intersection(const address &addr, const blockchain_point_list &points, const find_handler &handler)
         {
-            boost::asio::co_spawn(_ioc, _find_intersection(addr, points, handler), boost::asio::detached);
+            _find_intersection_impl(addr, points, handler);
         }
 
-        void fetch_blocks(const address &addr, const blockchain_point &from, const blockchain_point &to, const fetch_handler &handler)
+        void fetch_headers(const address &addr, const blockchain_point_list &points, const size_t max_blocks, const header_handler &handler)
         {
-            boost::asio::co_spawn(_ioc, _fetch_blocks(addr, from, to, handler), boost::asio::detached);
+            _fetch_headers_impl(addr, points, max_blocks, handler);
+        }
+
+        void fetch_blocks(const address &addr, const blockchain_point &from, const blockchain_point &to, std::optional<size_t> max_blocks, const block_handler &handler)
+        {
+            _fetch_blocks_impl(addr, from, to, max_blocks, handler);
         }
 
         void process()
         {
-            try {
-                if (_ioc.stopped())
-                    _ioc.restart();
-                _ioc.run();
-            } catch (const std::exception &ex) {
-                logger::error("network error: {}", ex.what());
-                throw;
-            } catch (...) {
-                logger::error("unkown error while running a network client");
-                throw;
-            }
+            _process_impl();
         }
     private:
-        boost::asio::io_context _ioc {};
-        tcp::resolver _resolver { _ioc };
+        virtual void _find_intersection_impl(const address &/*addr*/, const blockchain_point_list &/*points*/, const find_handler &/*handler*/)
+        {
+            throw error("cardano::network::client::_find_intersection_impl not implemented!");
+        }
+
+        virtual void _fetch_headers_impl(const address &/*addr*/, const blockchain_point_list &/*points*/, const size_t /*max_blocks*/, const header_handler &/*handler*/)
+        {
+            throw error("cardano::network::client::_fetch_headers_impl not implemented!");
+        }
+
+        virtual void _fetch_blocks_impl(const address &/*addr*/, const blockchain_point &/*from*/, const blockchain_point &/*to*/, std::optional<size_t> /*max_blocks*/, const block_handler &/*handler*/)
+        {
+            throw error("cardano::network::client::_fetch_blocks_impl not implemented!");
+        }
+
+        virtual void _process_impl()
+        {
+            throw error("cardano::network::client::_process_impl not implemented!");
+        }
+    };
+
+    struct client_async: client {
+        static client_async &get()
+        {
+            static client_async c {};
+            return c;
+        }
+
+        explicit client_async(asio::worker &asio_worker=asio::worker::get()): _asio_worker { asio_worker }
+        {
+        }
+
+        ~client_async() override =default;
+    private:
+        struct intersect_resp {
+            tcp::socket socket;
+            std::optional<blockchain_point> intersect {};
+            blockchain_point tip {};
+        };
+
+        asio::worker &_asio_worker;
+        tcp::resolver _resolver { _asio_worker.io_context() };
+        std::atomic_size_t _running_requests = 0;
+
+        void _find_intersection_impl(const address &addr, const blockchain_point_list &points, const find_handler &handler) override
+        {
+            ++_running_requests;
+            boost::asio::co_spawn(_asio_worker.io_context(), _find_intersection(addr, points, handler), boost::asio::detached);
+        }
+
+        void _fetch_headers_impl(const address &addr, const blockchain_point_list &points, const size_t max_blocks, const header_handler &handler) override
+        {
+            ++_running_requests;
+            boost::asio::co_spawn(_asio_worker.io_context(), _fetch_headers(addr, points, max_blocks, handler), boost::asio::detached);
+        }
+
+        void _fetch_blocks_impl(const address &addr, const blockchain_point &from, const blockchain_point &to, std::optional<size_t> max_blocks, const block_handler &handler) override
+        {
+            ++_running_requests;
+            boost::asio::co_spawn(_asio_worker.io_context(), _fetch_blocks(addr, from, to, max_blocks, handler), boost::asio::detached);
+        }
+
+        void _process_impl() override
+        {
+            while (_running_requests.load() > 0) {
+                std::this_thread::sleep_for(std::chrono::microseconds { 250 });
+            }
+        }
+
+        static boost::asio::awaitable<uint8_vector> _read_response(tcp::socket &socket, protocol protocol_id)
+        {
+            segment_info recv_info {};
+            co_await boost::asio::async_read(socket, boost::asio::buffer(&recv_info, sizeof(recv_info)), boost::asio::use_awaitable);
+            uint8_vector recv_payload(recv_info.payload_size());
+            co_await boost::asio::async_read(socket, boost::asio::buffer(recv_payload.data(), recv_payload.size()), boost::asio::use_awaitable);
+            if (recv_info.mode() != channel_mode::responder || recv_info.protocol_id() != protocol_id) {
+                logger::error("unexpected message: mode: {} protocol_id: {} body size: {} body: {}", 
+                    static_cast<int>(recv_info.mode()), static_cast<uint16_t>(recv_info.protocol_id()), recv_payload.size(), cbor::stringify(recv_payload));
+                throw error("unexpected message: mode: {} protocol_id: {}", static_cast<int>(recv_info.mode()), static_cast<uint16_t>(recv_info.protocol_id()));
+            }
+            co_return recv_payload;
+        }
 
         static boost::asio::awaitable<uint8_vector> _send_request(tcp::socket &socket, protocol protocol_id, const buffer &data)
         {
@@ -172,13 +259,7 @@ namespace daedalus_turbo::cardano::network {
             segment << buffer::from(send_info);
             segment << data;
             co_await async_write(socket, boost::asio::const_buffer { segment.data(), segment.size() }, boost::asio::use_awaitable);
-            segment_info recv_info {};
-            co_await boost::asio::async_read(socket, boost::asio::buffer(&recv_info, sizeof(recv_info)), boost::asio::use_awaitable);
-            if (recv_info.mode() != channel_mode::responder || recv_info.protocol_id() != protocol_id)
-                throw error("unexpected message: mode: {} protocol_id: {}", static_cast<int>(recv_info.mode()), static_cast<uint16_t>(recv_info.protocol_id()));
-            uint8_vector recv_payload(recv_info.payload_size());
-            co_await boost::asio::async_read(socket, boost::asio::buffer(recv_payload.data(), recv_payload.size()), boost::asio::use_awaitable);
-            co_return recv_payload;
+            co_return co_await _read_response(socket, protocol_id);
         }
 
         boost::asio::awaitable<tcp::socket> _connect_and_handshake(address addr)
@@ -186,62 +267,77 @@ namespace daedalus_turbo::cardano::network {
             auto results = co_await _resolver.async_resolve(addr.host, addr.port, boost::asio::use_awaitable);
             if (results.empty())
                 throw error("DNS resolve for {}:{} returned no results!", addr.host, addr.port);
-            tcp::socket socket { _ioc };
+            tcp::socket socket { _asio_worker.io_context() };
             co_await socket.async_connect(*results.begin(), boost::asio::use_awaitable);
+            static constexpr uint64_t protocol_ver = 7;
             cbor::encoder enc {};
             enc.array(2)
                 .uint(0)
                 .map(1)
-                    .uint(7) // versionNumber
+                    .uint(protocol_ver) // versionNumber
                     .array(2)
                         .uint(764824073) // networkMagic
                         .s_false(); // diffusionMode
             auto resp = co_await _send_request(socket, protocol::handshake, enc.cbor());
+            auto resp_cbor = cbor::parse(resp);
+            auto &resp_items = resp_cbor.array();
+            if (resp_items.at(0).uint() != 1ULL)
+                throw error("peer at {}:{} refused the protocol version {}!", addr.host, addr.port, protocol_ver);
+            if (resp_items.at(1).uint() != protocol_ver)
+                throw error("peer at {}:{} ignored the requested protocol version {}!", addr.host, addr.port, protocol_ver);
             co_return std::move(socket);
+        }
+
+        boost::asio::awaitable<intersect_resp>
+        _find_intersection_do(const address &addr, const blockchain_point_list &points)
+        {
+            intersect_resp iresp { co_await _connect_and_handshake(addr) };
+            cbor::encoder enc {};
+            enc.array(2).uint(4).array(points.size());
+            for (const auto &p: points) {
+                enc.array(2).uint(p.slot).bytes(p.hash);
+            }
+            auto resp = co_await _send_request(iresp.socket, protocol::chain_sync, enc.cbor());
+            auto resp_cbor = cbor::parse(resp);
+            auto &resp_arr = resp_cbor.array();
+            switch (resp_arr.at(0).uint()) {
+                case 5: {
+                    const auto &point = resp_arr.at(1).array();
+                    const auto &tip =  resp_arr.at(2).array();
+                    iresp.intersect = blockchain_point { point.at(1).buf(), point.at(0).uint() };
+                    iresp.tip = blockchain_point { tip.at(0).array().at(1).buf(), tip.at(0).array().at(0).uint(), tip.at(1).uint() };
+                    break;
+                }
+                case 6: {
+                    const auto &tip =  resp_arr.at(1).array();
+                    iresp.tip = blockchain_point { tip.at(0).array().at(1).buf(), tip.at(0).array().at(0).uint(), tip.at(1).uint() };
+                    break;
+                }
+                default:
+                    throw error("unexpected chain_sync message: {}!", resp_arr.at(0).uint());
+            }
+            co_return iresp;
         }
 
         boost::asio::awaitable<void> _find_intersection(address addr, const blockchain_point_list points, const find_handler handler)
         {
             try {
-                auto socket = co_await _connect_and_handshake(addr);
-                cbor::encoder enc {};
-                enc.array(2).uint(4).array(points.size());
-                for (const auto &p: points) {
-                    enc.array(2).uint(p.slot).bytes(p.hash);
-                }
-                auto resp = co_await _send_request(socket, protocol::chain_sync, enc.cbor());
-                auto resp_cbor = cbor::parse(resp);
-                auto &resp_arr = resp_cbor.array();
-                switch (resp_arr.at(0).uint()) {
-                    case 5: {
-                        const auto &point = resp_arr.at(1).array();
-                        const auto &tip =  resp_arr.at(2).array();
-                        handler(find_response { std::move(addr),
-                            blockchain_point_pair {
-                                blockchain_point { point.at(1).buf(), point.at(0).uint() },
-                                blockchain_point { tip.at(0).array().at(1).buf(), tip.at(0).array().at(0).uint(), tip.at(1).uint() }
-                            }
-                        });
-                        break;
-                    }
-                    case 6: {
-                        const auto &tip =  resp_arr.at(1).array();
-                        handler(find_response { std::move(addr),
-                            blockchain_point { tip.at(0).array().at(1).buf(), tip.at(0).array().at(0).uint(), tip.at(1).uint() }
-                        });
-                        break;
-                    }
-                    default:
-                        throw error("unexpected chain_sync message: {}!", resp_arr.at(0).uint());
-                }
+                auto iresp = co_await _find_intersection_do(addr, points);
+                if (iresp.intersect)
+                    handler(find_response { std::move(addr), blockchain_point_pair { *iresp.intersect, iresp.tip } });
+                else
+                    handler(find_response { std::move(addr), iresp.tip });
+                --_running_requests;
             } catch (const std::exception &ex) {
                 handler(find_response { std::move(addr), fmt::format("query_tip error: {}", ex.what()) });
+                --_running_requests;
             } catch (...) {
                 handler(find_response { std::move(addr), "query_tip unknown error!" });
+                --_running_requests;
             }
         }
 
-        static boost::asio::awaitable<block_list> _receive_blocks(tcp::socket &socket, uint8_vector parse_buf)
+        static boost::asio::awaitable<block_list> _receive_blocks(tcp::socket &socket, uint8_vector parse_buf, std::optional<size_t> max_blocks)
         {
             block_list blocks {};
             for (;;) {
@@ -252,9 +348,13 @@ namespace daedalus_turbo::cardano::network {
                         switch (resp_items.at(0).uint()) {
                             case 4: {
                                 const auto &buf = resp_items.at(1).tag().second->buf();
-                                blocks.sizes.emplace_back(buf.size() );
-                                blocks.data.reserve(blocks.data.size() + buf.size());
-                                std::copy(buf.begin(), buf.end(), std::back_inserter(blocks.data));
+                                block_parsed bp {};
+                                bp.data = std::make_unique<uint8_vector>(buf);
+                                bp.cbor = std::make_unique<cbor_value>(cbor::parse(*bp.data));
+                                bp.blk = cardano::make_block(*bp.cbor, 0);
+                                blocks.emplace_back(std::move(bp));
+                                if (max_blocks && blocks.size() >= *max_blocks)
+                                    co_return blocks;
                                 break;
                             }
                             case 5: {
@@ -269,43 +369,104 @@ namespace daedalus_turbo::cardano::network {
                         break;
                     }
                 }
-                segment_info recv_info {};
-                co_await boost::asio::async_read(socket, boost::asio::buffer(&recv_info, sizeof(recv_info)), boost::asio::use_awaitable);
-                if (recv_info.mode() != channel_mode::responder || recv_info.protocol_id() != protocol::block_fetch)
-                    throw error("unexpected message: mode: {} protocol_id: {}", static_cast<int>(recv_info.mode()), static_cast<uint16_t>(recv_info.protocol_id()));
-                uint8_vector recv_payload(recv_info.payload_size());
-                co_await boost::asio::async_read(socket, boost::asio::buffer(recv_payload.data(), recv_payload.size()), boost::asio::use_awaitable);
-                parse_buf << recv_payload;
+                parse_buf << co_await _read_response(socket, protocol::block_fetch);
             }
         }
 
-        boost::asio::awaitable<void> _fetch_blocks(address addr, const blockchain_point from, const blockchain_point to, const fetch_handler handler)
+        boost::asio::awaitable<void> _fetch_blocks(address addr, const blockchain_point from, const blockchain_point to,
+            std::optional<size_t> max_blocks, const block_handler handler)
         {
             try {
                 auto socket = co_await _connect_and_handshake(addr);
                 cbor::encoder enc {};
-                enc.array(3).uint(0).array(2).uint(from.slot).bytes(from.hash).array(2).uint(to.slot).bytes(to.hash);
+                enc.array(3).uint(0);
+                enc.array(2).uint(from.slot).bytes(from.hash);
+                enc.array(2).uint(to.slot).bytes(to.hash);
                 auto resp = co_await _send_request(socket, protocol::block_fetch, enc.cbor());
                 auto resp_cbor = cbor::parse(resp);
                 auto &resp_items = resp_cbor.array();
                 switch (resp_items.at(0).uint()) {
                     case 2: {
                         resp.erase(resp.begin(), resp.begin() + resp_cbor.size);
-                        auto blocks = co_await _receive_blocks(socket, std::move(resp));
-                        handler(fetch_response { std::move(addr), std::move(from), std::move(to), std::move(blocks) });
+                        auto blocks = co_await _receive_blocks(socket, std::move(resp), max_blocks);
+                        handler(block_response { std::move(addr), std::move(from), std::move(to), std::move(blocks) });
                         break;
                     }
                     case 3: {
-                        handler(fetch_response { std::move(addr), std::move(from), std::move(to), "fetch_blocks do not have all requested blocks!" });
+                        handler(block_response { std::move(addr), std::move(from), std::move(to), "fetch_blocks do not have all requested blocks!" });
                         break;
                     }
                     default:
                         throw error("unexpected chain_sync message: {}!", resp_items.at(0).uint());
                 }
+                --_running_requests;
             } catch (const std::exception &ex) {
-                handler(fetch_response { std::move(addr), std::move(from), std::move(to),fmt::format("fetch_blocks error: {}", ex.what()) });
+                handler(block_response { std::move(addr), std::move(from), std::move(to),fmt::format("fetch_blocks error: {}", ex.what()) });
+                --_running_requests;
             } catch (...) {
-                handler(fetch_response { std::move(addr), std::move(from), std::move(to), "fetch_blocks unknown error!" });
+                handler(block_response { std::move(addr), std::move(from), std::move(to), "fetch_blocks unknown error!" });
+                --_running_requests;
+            }
+        }
+
+        boost::asio::awaitable<void> _fetch_headers(address addr, const blockchain_point_list points, const size_t max_blocks, const header_handler handler)
+        {
+            try {
+                header_list headers {};
+                auto iresp = co_await _find_intersection_do(addr, points);
+                cbor::encoder msg_req_next {};
+                msg_req_next.array(1).uint(0);
+                while (headers.size() < max_blocks) {
+                    auto parse_buf = co_await _send_request(iresp.socket, protocol::chain_sync, msg_req_next.cbor());
+                    auto resp_cbor = cbor::parse(parse_buf);
+                    const auto &resp_items = resp_cbor.array();
+                    if (resp_items.at(0).uint() == 1) // MsgAwaitReply
+                        break;
+                    if (resp_items.at(0).uint() == 3) {
+                        const auto &point = resp_items.at(1).array();
+                        const auto &tip =  resp_items.at(2).array();
+                        std::optional<blockchain_point> intersect {};
+                        if (!point.empty())
+                            intersect = blockchain_point { point.at(1).buf(), point.at(0).uint() };
+                        iresp.tip = blockchain_point { tip.at(0).array().at(1).buf(), tip.at(0).array().at(0).uint(), tip.at(1).uint() };
+                        if (iresp.intersect == intersect)
+                            continue;
+                        break;
+                    }
+                    if (resp_items.at(0).uint() != 2) // !MsgRollForward
+                        throw error("unexpected chain_sync message: {}!", resp_items.at(0).uint());
+                    const auto &hdr_items = resp_items.at(1).array();
+                    const auto &tip =  resp_items.at(2).array();
+                    iresp.tip = blockchain_point { tip.at(0).array().at(1).buf(), tip.at(0).array().at(0).uint(), tip.at(1).uint() };
+                    auto era = hdr_items.at(0).uint();
+                    cbor::encoder block_tuple {};
+                    if (era == 0) {
+                        auto hdr_era = hdr_items.at(1).array().at(0).array().at(0).uint();
+                        block_tuple.array(2).uint(hdr_era).array(1);
+                        const auto &hdr_buf = hdr_items.at(1).array().at(1).tag().second->buf();
+                        std::copy(hdr_buf.begin(), hdr_buf.end(), std::back_inserter(block_tuple.cbor()));
+                    } else {
+                        block_tuple.array(2).uint(era).array(1);
+                        const auto &hdr_buf = hdr_items.at(1).tag().second->buf();
+                        std::copy(hdr_buf.begin(), hdr_buf.end(), std::back_inserter(block_tuple.cbor()));
+                    }
+                    auto hdr_cbor = cbor::parse(block_tuple.cbor());
+                    auto blk = cardano::make_block(hdr_cbor, 0);
+                    auto blk_hash = blk->hash();
+                    auto blk_slot = blk->slot();
+                    auto blk_height = blk->height();
+                    headers.emplace_back(blk_hash, blk_slot, blk_height);
+                    if (blk_hash == iresp.tip.hash)
+                        break;
+                }
+                handler(header_response { std::move(addr), iresp.intersect, iresp.tip, std::move(headers) });
+                --_running_requests;
+            } catch (const std::exception &ex) {
+                handler(header_response { .addr=std::move(addr), .res=fmt::format("fetch_headers error: {}", ex.what()) });
+                --_running_requests;
+            } catch (...) {
+                handler(header_response { .addr=std::move(addr), .res="fetch_headers unknown error!" });
+                --_running_requests;
             }
         }
     };

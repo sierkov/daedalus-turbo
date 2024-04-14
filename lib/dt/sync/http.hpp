@@ -7,13 +7,16 @@
 
 #include <dt/indexer.hpp>
 #include <dt/file-remover.hpp>
+#include <dt/http/download-queue.hpp>
 #include <dt/peer-selection.hpp>
 #include <dt/scheduler.hpp>
 
 namespace daedalus_turbo::sync::http {
     struct syncer {
-        syncer(indexer::incremental &cr, peer_selection &ps=peer_selection::get(),
-                scheduler &sched=scheduler::get(), file_remover &fr=file_remover::get());
+        syncer(indexer::incremental &cr, daedalus_turbo::http::download_queue &dq=daedalus_turbo::http::download_queue_async::get(),
+            cardano::network::client &cnc=cardano::network::client_async::get(),
+            peer_selection &ps=peer_selection_simple::get(),
+            scheduler &sched=scheduler::get(), file_remover &fr=file_remover::get());
         ~syncer();
         void sync(std::optional<uint64_t> max_epoch = std::optional<uint64_t> {});
     private:

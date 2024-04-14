@@ -28,8 +28,9 @@ namespace daedalus_turbo::cli::truncate {
                 if (chunk.last_slot.epoch() <= epoch && min_offset < last_byte_offset + 1)
                     min_offset = last_byte_offset + 1;
             }
-            idxr.truncate(min_offset);
-            idxr.save_state();
+            idxr.start_tx(min_offset, min_offset);
+            idxr.prepare_tx();
+            idxr.commit_tx();
             file_remover::get().remove();
         }
     };

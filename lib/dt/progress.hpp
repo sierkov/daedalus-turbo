@@ -5,6 +5,7 @@
 #ifndef DAEDALUS_TURBO_PROGRESS_HPP
 #define DAEDALUS_TURBO_PROGRESS_HPP
 
+#include <iostream>
 #include <map>
 #include <dt/format.hpp>
 #include <dt/mutex.hpp>
@@ -45,7 +46,7 @@ namespace daedalus_turbo {
 
         void retire(const std::string &name)
         {
-            std::scoped_lock lk { _state_mutex };
+            mutex::scoped_lock lk { _state_mutex };
             _state.erase(name);
         }
 
@@ -53,7 +54,7 @@ namespace daedalus_turbo {
         {
             std::string str {};
             {
-                std::scoped_lock lk { _state_mutex };
+                mutex::scoped_lock lk { _state_mutex };
                 for (const auto &[name, val]: _state)
                     str += fmt::format("{}: {:0.3f}% ", name, val * 100);
             }
@@ -67,19 +68,19 @@ namespace daedalus_turbo {
         {
             state_map state_copy {};
             {
-                std::scoped_lock lk { _state_mutex };
+                mutex::scoped_lock lk { _state_mutex };
                 state_copy = _state;
             }
             return state_copy;
         }
     private:
-        alignas(mutex::padding) mutable std::mutex _state_mutex {};
+        alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _state_mutex {};
         state_map _state {};
         size_t _max_str = 0;
 
         void _update(const std::string &name, const double value)
         {
-            std::scoped_lock lk { _state_mutex };
+            mutex::scoped_lock lk { _state_mutex };
             auto [it, created] = _state.try_emplace(name, value);
             if (!created && value > it->second)
                 it->second = value;

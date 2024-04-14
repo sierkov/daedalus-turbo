@@ -78,38 +78,41 @@ namespace daedalus_turbo {
         void clear_observers(const std::string &task_group);
         size_t task_count(const std::string &task_group);
         size_t task_count();
-        bool process_ok(bool report_progress=true, std::chrono::milliseconds update_interval_ms=std::chrono::milliseconds { 1000 }, std::ostream &report_stream=std::cerr);
-        void process(bool report_progress=true, std::chrono::milliseconds update_interval_ms=std::chrono::milliseconds { 1000 }, std::ostream &report_stream=std::cerr);
+        bool process_ok(bool report_progress=true, std::chrono::milliseconds update_interval_ms=std::chrono::milliseconds { 1000 },
+            std::ostream &report_stream=std::cerr, const std::source_location &loc=std::source_location::current());
+        void process(bool report_progress=true, std::chrono::milliseconds update_interval_ms=std::chrono::milliseconds { 1000 },
+            std::ostream &report_stream=std::cerr, const std::source_location &loc=std::source_location::current());
         bool process_once(bool process_tasks=false, std::chrono::milliseconds wait_interval_ms=default_wait_interval);
         void wait_for_count(const std::string &task_group, size_t task_count,
             const std::function<void ()> &submit_tasks, const std::function<void (std::any &&)> &process_res=[](auto &&) {});
     private:
-        alignas(mutex::padding) mutable std::mutex _tasks_mutex {};
-        alignas(mutex::padding) std::condition_variable _tasks_cv {};
+        alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _tasks_mutex {};
+        alignas(mutex::padding) std::condition_variable_any _tasks_cv {};
         std::priority_queue<scheduled_task> _tasks {};
         std::unordered_map<std::string, size_t> _tasks_cnt {};
 
         using observer_list = std::list<std::function<void (std::any &&)>>;
         using observer_map = std::unordered_map<std::string, observer_list>;
-        alignas(mutex::padding) std::mutex _observers_mutex {};
+        alignas(mutex::padding) mutex::unique_lock::mutex_type _observers_mutex {};
         observer_map _observers {};
 
-        alignas(mutex::padding) std::mutex _results_mutex {};
-        alignas(mutex::padding) std::condition_variable _results_cv {};
+        alignas(mutex::padding) mutex::unique_lock::mutex_type _results_mutex {};
+        alignas(mutex::padding) std::condition_variable_any _results_cv {};
         std::priority_queue<scheduled_result> _results {};
         std::atomic_bool _results_processed = false;
 
-        alignas(mutex::padding) std::mutex _retiring_mutex {};
+        alignas(mutex::padding) mutex::unique_lock::mutex_type _retiring_mutex {};
         std::vector<std::string> _retiring_observers {};
 
         std::vector<std::thread> _workers {};
         std::vector<std::string> _worker_tasks {};
         const size_t _num_workers;
+        std::atomic_size_t _num_active = 0;
         std::atomic_bool _destroy { false };
         std::atomic_bool _success { true };
         std::atomic_bool _process_running { false };
 
-        void _process_results(std::unique_lock<std::mutex> &results_lock);
+        void _process_results(mutex::unique_lock &results_lock);
         void _add_result(int priority, const std::string &task_group, std::any &&res);
         bool _worker_try_execute(size_t worker_idx, const std::chrono::milliseconds &wait_interval_ms=default_wait_interval);
         void _worker_thread(size_t worker_idx);

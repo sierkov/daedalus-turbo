@@ -11,6 +11,7 @@
 #include <fstream>
 #include <string>
 #include <zpp_bits.h>
+#include <dt/logger.hpp>
 #include <dt/util.hpp>
 #include <dt/zstd.hpp>
 
@@ -263,6 +264,7 @@ namespace daedalus_turbo::file {
         os.write(buffer.data(), buffer.size());
         os.close();
         std::filesystem::rename(tmp_path, path);
+        logger::trace("written {} bytes to {}", buffer.size(), path);
     }
 
     template<typename T>

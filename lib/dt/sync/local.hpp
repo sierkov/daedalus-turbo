@@ -155,7 +155,6 @@ namespace daedalus_turbo::sync::local {
         void _save_state()
         {
             timer t { "sync::local::save_state", logger::level::debug };
-            _cr.save_state();
             json::array j_chunks {};
             for (const auto &[full_path, chunk]: _source_chunks)
                 j_chunks.emplace_back(chunk.to_json());
@@ -191,7 +190,7 @@ namespace daedalus_turbo::sync::local {
             return analyze_res { std::move(update.path), std::move(source_info), true };
         }
 
-        void _refresh_chunks(avail_chunk_list &avail_chunks, std::vector<std::string> &updated, std::vector<std::string> &errors)
+        void _refresh_chunks(const uint64_t target_offset, avail_chunk_list &avail_chunks, std::vector<std::string> &updated, std::vector<std::string> &errors)
         {
             timer t { "check chunks for updates", logger::level::debug };
             uint64_t source_offset = 0;
@@ -223,8 +222,7 @@ namespace daedalus_turbo::sync::local {
             }
             if (!updated_chunks.empty()) {
                 auto updated_start_offset = updated_chunks.front().offset;
-                if (updated_start_offset < _cr.num_bytes())
-                    _cr.truncate(updated_start_offset);
+                _cr.start_tx(updated_start_offset, target_offset);
                 if (updated_start_offset != _cr.num_bytes())
                     throw error("internal error: updated chunk offset {} is greater than the compressed data size {}!",
                         updated_start_offset, _cr.num_bytes());
@@ -243,12 +241,14 @@ namespace daedalus_turbo::sync::local {
                     if (!created)
                         it->second = std::move(a_res.source_info);
                 });
-                const auto max_offset = *_cr.target_offset();
+                const auto max_offset = target_offset;
                 for (auto &&update: updated_chunks)
                     _sched.submit(task_name, 0 + 100 * (max_offset - update.offset) / max_offset, [&] {
                         return _analyze_local_chunk(std::move(update));
                     });
                 _sched.process(true);
+                _cr.prepare_tx();
+                _cr.commit_tx();
             }
             logger::debug("after refresh: max source offset: {} chunk-registry size: {}", source_offset, _cr.num_bytes());
         }
@@ -363,17 +363,6 @@ namespace daedalus_turbo::sync::local {
             return output_size;
         }
 
-        void _truncate(uint64_t end_offset)
-        {
-            _cr.truncate(end_offset);
-            for (auto it = _source_chunks.begin(); it != _source_chunks.end(); ) {
-                if (it->second.end_offset() > end_offset)
-                    it = _source_chunks.erase(it);
-                else
-                    ++it;
-            }
-        }
-
         sync_res _refresh()
         {
             timer t { "sync::local::_refresh" };
@@ -391,10 +380,6 @@ namespace daedalus_turbo::sync::local {
                 avail_chunks.pop_back();
                 source_end_offset += _convert_volatile(avail_chunks, source_end_offset, avail_volatile, volatile_size_in);
             }
-            // when the source has a shorter chain, must truncate the local one
-            if (source_end_offset < _cr.num_bytes())
-                _truncate(source_end_offset);
-            _cr.target_offset(source_end_offset);
             // update source chunks to include only actually needed files
             auto old_source_chunks = std::move(_source_chunks);
             _source_chunks.clear();
@@ -402,7 +387,7 @@ namespace daedalus_turbo::sync::local {
                 if (old_source_chunks.contains(chunk.path))
                     _source_chunks.try_emplace(chunk.path, std::move(old_source_chunks.at(chunk.path)));
             }
-            _refresh_chunks(avail_chunks, updated, errors);
+            _refresh_chunks(source_end_offset, avail_chunks, updated, errors);
             _file_remover.remove_old_files(_converted_path, _delete_delay);
             return sync_res { std::move(updated), std::move(errors), _cr.max_slot() };
         }

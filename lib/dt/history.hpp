@@ -29,17 +29,17 @@ namespace daedalus_turbo {
 
         cardano_hash_32 hash() const override
         {
-            throw cardano_error("internal error: hash() unsupported for partial blocks!");
+            throw cardano_error("internal error: hash() unsupported for failure blocks!");
         }
 
         const cbor_buffer &prev_hash() const override
         {
-            throw cardano_error("internal error: prev_hash() unsupported for partial blocks!");
+            throw cardano_error("internal error: prev_hash() unsupported for failure blocks!");
         }
 
         uint64_t height() const override
         {
-            throw cardano_error("internal error: height() unsupported for partial blocks!");
+            throw cardano_error("internal error: height() unsupported for failure blocks!");
         }
 
         const cardano::slot slot() const override

@@ -22,7 +22,7 @@ suite cardano_network_suite = [] {
         };
 
         "find_tip"_test = [] {
-            client c {};
+            client_async c {};
             // run a process cycle without requests to test that successive process calls work
             c.process();
             client::find_response resp {};
@@ -42,7 +42,7 @@ suite cardano_network_suite = [] {
         };
 
         "find_intersection"_test = [] {
-            client c {};
+            client_async c {};
             // run a process cycle without requests to test that successive process calls work
             c.process();
             client::find_response resp {};
@@ -67,13 +67,13 @@ suite cardano_network_suite = [] {
         };
 
         "fetch_blocks"_test = [] {
-            client c {};
+            client_async c {};
             // run a process cycle without requests to test that successive process calls work
-            client::fetch_response resp {};
+            client::block_response resp {};
             address addr { "relays-new.cardano-mainnet.iohk.io", "3001" };
             blockchain_point from  { cardano::block_hash::from_hex("262C9CDDB771CEBF1A831E31895056BD1134236E594657F3059C2AF667FEACA3"), 120001846 };
             blockchain_point to { cardano::block_hash::from_hex("DCAF9A85D797207CFA3D68E97E277D6F02D420D25BF52005654C4BDCC5E80037"), 120004080 };
-            c.fetch_blocks(addr, from, to, [&](client::fetch_response &&r) {
+            c.fetch_blocks(addr, from, to, {}, [&](client::block_response &&r) {
                 resp = std::move(r);
             });
             c.process();
@@ -83,16 +83,65 @@ suite cardano_network_suite = [] {
             expect(std::holds_alternative<block_list>(resp.res));
             if (std::holds_alternative<block_list>(resp.res)) {
                 const auto &blocks = std::get<block_list>(resp.res);
-                expect(blocks.sizes.size() == 101_ull);
-                expect(std::accumulate(blocks.sizes.begin(), blocks.sizes.end(), 0ULL) == 4433711_ull);
-                expect(blocks.data.size() == 4433711_ull);
+                expect(blocks.size() == 101_ull);
             } else {
                 logger::warn("client error: {}", std::get<client::error_msg>(resp.res));
             }
         };
-        // get a list of pools from the magic URL
-        // select 10 randomly
-        // query about tip
-        // compare the results
+
+        "fetch_headers"_test = [] {
+            client_async c {};
+            // run a process cycle without requests to test that successive process calls work
+            client::header_response resp {};
+            address addr { "relays-new.cardano-mainnet.iohk.io", "3001" };
+            blockchain_point_list points {};
+            points.emplace_back(cardano::block_hash::from_hex("5B74C3D89844B010020172ACFBFE2F8FC08D895A7CDD5CF77C7BBD853C4CFB79"), 119975873);
+            c.fetch_headers(addr, points, 10, [&](auto &&r) {
+                resp = std::move(r);
+            });
+            c.process();
+            expect(resp.addr == addr) << resp.addr.host << resp.addr.port;
+            expect(static_cast<bool>(resp.intersect));
+            if (resp.intersect)
+                expect(*resp.intersect == points.front());
+            expect(std::holds_alternative<header_list>(resp.res));
+            if (std::holds_alternative<header_list>(resp.res)) {
+                const auto &headers = std::get<header_list>(resp.res);
+                expect(headers.size() == 10_ull);
+                auto prev_slot = points.front().slot;
+                for (const auto &hdr: headers) {
+                    expect(hdr.slot >= prev_slot);
+                    prev_slot = hdr.slot;
+                }
+            } else {
+                logger::warn("client error: {}", std::get<client::error_msg>(resp.res));
+            }
+        };
+
+        "fetch_headers from scratch"_test = [] {
+            client_async c {};
+            // run a process cycle without requests to test that successive process calls work
+            client::header_response resp {};
+            address addr { "relays-new.cardano-mainnet.iohk.io", "3001" };
+            blockchain_point_list points {};
+            c.fetch_headers(addr, points, 10, [&](auto &&r) {
+                resp = std::move(r);
+            });
+            c.process();
+            expect(resp.addr == addr) << resp.addr.host << resp.addr.port;
+            expect(!static_cast<bool>(resp.intersect));
+            expect(std::holds_alternative<header_list>(resp.res));
+            if (std::holds_alternative<header_list>(resp.res)) {
+                const auto &headers = std::get<header_list>(resp.res);
+                expect(headers.size() == 10_ull);
+                uint64_t prev_slot = 0;
+                for (const auto &hdr: headers) {
+                    expect(hdr.slot >= prev_slot);
+                    prev_slot = hdr.slot;
+                }
+            } else {
+                logger::warn("client error: {}", std::get<client::error_msg>(resp.res));
+            }
+        };
     };
 };

@@ -10,7 +10,7 @@ using namespace daedalus_turbo;
 
 suite peer_selection_suite = [] {
     "peer_selection"_test = [] {
-        auto &ps = peer_selection::get();
+        auto &ps = peer_selection_simple::get();
         {
             static size_t num_rolls = 20;
             std::map<std::string, size_t> host_dist {};

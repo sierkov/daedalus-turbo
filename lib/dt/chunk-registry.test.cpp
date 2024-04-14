@@ -34,8 +34,11 @@ suite chunk_registry_suite = [] {
                 expect(block_tuple.type == CBOR_ARRAY) << block_tuple.type;
                 expect(block_tuple.array().size() == 2_u);
             };
+        }
+        {
+            chunk_registry cr { tmp_data_dir, false };
             "full_path"_test = [&] {
-                auto exp = std::filesystem::weakly_canonical(std::filesystem::absolute(data_dir) / "compressed/some-dir/some-file.ext");
+                auto exp = std::filesystem::weakly_canonical(std::filesystem::absolute(tmp_data_dir) / "compressed/some-dir/some-file.ext");
                 auto act = cr.full_path("some-dir/some-file.ext");
                 expect(exp == act) << act;
                 auto dir_path = cr.full_path("some-dir");
@@ -44,7 +47,7 @@ suite chunk_registry_suite = [] {
                 expect(throws([&] { cr.full_path("../../../../../etc/passwd"); }));
             };
             "rel_path"_test = [&] {
-                auto full_path = std::filesystem::weakly_canonical(std::filesystem::absolute(data_dir) / "compressed/some-dir/some-file.ext");
+                auto full_path = std::filesystem::weakly_canonical(std::filesystem::absolute(tmp_data_dir) / "compressed/some-dir/some-file.ext");
                 auto exp = std::filesystem::path { "some-dir/some-file.ext" }.make_preferred().string();
                 auto act = cr.rel_path(full_path);
                 expect(exp == act) << act;
@@ -61,13 +64,21 @@ suite chunk_registry_suite = [] {
                 auto before_size = cr.num_bytes();
                 auto before_slot = cr.max_slot();
                 auto before_chunks = cr.num_chunks();
-                cr.truncate(before_size);
+                cr.start_tx(before_size, before_size);
+                cr.prepare_tx();
+                cr.commit_tx();
                 expect(before_size == cr.num_bytes());
-                cr.truncate(before_size / 2);
-                expect(cr.num_bytes() < before_size / 2);
+                auto mid_offset = cr.find(before_size / 2).end_offset();
+                expect(mid_offset < before_size);
+                cr.start_tx(mid_offset, mid_offset);
+                cr.prepare_tx();
+                cr.commit_tx();
+                expect(cr.num_bytes() == mid_offset);
                 expect(cr.max_slot() < before_slot);
                 expect(cr.num_chunks() < before_chunks);
-                cr.truncate(0);
+                cr.start_tx(0, 0);
+                cr.prepare_tx();
+                cr.commit_tx();
                 expect(cr.num_bytes() == 0_u);
                 expect(cr.max_slot() == 0_u);
                 expect(cr.num_chunks() == 0_u);
@@ -98,6 +109,12 @@ suite chunk_registry_suite = [] {
             auto j_chunks = json::load(src_dir + "/epoch-merge.json").as_array();
             test_chunk_registry cr { tmp_data_dir, false };
             expect(cr.epochs.empty());
+            uint64_t target_offset = 0;
+            for (const auto &j_chunk: j_chunks) {
+                auto src_path = fmt::format("{}/{}", src_dir, static_cast<std::string_view>(j_chunk.at("relPath").as_string()));
+                target_offset += std::filesystem::file_size(src_path);
+            }
+            cr.start_tx(0, target_offset);
             for (const auto &j_chunk: j_chunks) {
                 std::string orig_rel_path { static_cast<std::string_view>(j_chunk.at("relPath").as_string()) };
                 auto src_path = fmt::format("{}/{}", src_dir, orig_rel_path);
@@ -108,10 +125,12 @@ suite chunk_registry_suite = [] {
                 auto compressed = zstd::compress(raw_data, 3);
                 file::write(local_path, compressed);
                 cr.add(offset, local_path, data_hash, orig_rel_path);
-                auto exp_epochs = json::value_to<uint64_t>(j_chunk.at("expNumEpochs"));
-                expect(cr.epochs.size() == exp_epochs) << orig_rel_path << exp_epochs << cr.epochs.size();
+                auto exp_max_epoch = json::value_to<uint64_t>(j_chunk.at("expMaxEpoch"));
+                auto act_max_epoch = cr.epochs.empty() ? 0 : *cr.epochs.rbegin();
+                expect(act_max_epoch == exp_max_epoch) << orig_rel_path << exp_max_epoch << act_max_epoch;
             }
-            cr.save_state();
+            cr.prepare_tx();
+            cr.commit_tx();
             expect(cr.num_chunks == j_chunks.size()) << cr.num_chunks;
             if (!cr.epochs.empty())
                 expect(3 == *cr.epochs.rbegin()) << fmt::format("{}", cr.epochs);

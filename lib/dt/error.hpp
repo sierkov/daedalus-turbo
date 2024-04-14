@@ -5,32 +5,64 @@
 #ifndef DAEDALUS_TURBO_ERROR_HPP
 #define DAEDALUS_TURBO_ERROR_HPP
 
+#define DT_ERROR_WITH_STACKTRACE 0
+
 #include <cerrno>
 #include <cstring>
-#include <source_location>
+#if DT_ERROR_WITH_STACKTRACE
+#   include <stacktrace>
+#endif
 #include <dt/format.hpp>
 
 namespace daedalus_turbo {
+#if DT_ERROR_WITH_STACKTRACE
+    inline std::string my_stacktrace()
+    {
+        std::ostringstream ss {};
+        ss << std::stacktrace::current();
+        return ss.str();
+    }
+#endif
+
     struct error: std::runtime_error {
         template<typename... Args>
-        error(const char *fmt, Args&&... a): std::runtime_error { format(fmt::runtime(fmt), std::forward<Args>(a)...) }
+        explicit error(const char *fmt, Args&&... a)
+            : std::runtime_error { format(fmt::runtime(fmt), std::forward<Args>(a)...) }
+#if DT_ERROR_WITH_STACKTRACE
+                , _stacktrace { my_stacktrace() }
+#endif
         {
         }
+
+#if DT_ERROR_WITH_STACKTRACE
+        const std::string &stacktrace() const
+        {
+            return _stacktrace;
+        }
+    private:
+        std::string _stacktrace;
+#endif
     };
 
     struct error_sys: error {
         template<typename... Args>
-        error_sys(const char *fmt, Args&&... a)
+        explicit error_sys(const char *fmt, Args&&... a)
             : error { "{}, errno: {}, strerror: {}", format(fmt::runtime(fmt), std::forward<Args>(a)...), errno, std::strerror(errno) }
         {
         }
     };
+}
 
-    struct error_src_loc: error {
-        template<typename... Args>
-        error_src_loc(const std::source_location &loc, const char *fmt, Args&&... a)
-            : error { "{} at {}:{}", format(fmt::runtime(fmt), std::forward<Args>(a)...), loc.file_name(), loc.line() }
-        {
+namespace fmt {
+    template<>
+    struct formatter<daedalus_turbo::error>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+#if DT_ERROR_WITH_STACKTRACE
+            return fmt::format_to(ctx.out(), "dt::error: {}, stacktrace: {}", v.what(), v.stacktrace());
+#else
+            return fmt::format_to(ctx.out(), "dt::error: {}", v.what());
+#endif
         }
     };
 }

@@ -26,6 +26,7 @@ Currently supported:
 - Quick search for transaction data
 - ADA and non-ADA assets
 - Blockchain Explorer Desktop User Interface
+- Dynamic querying of nodes using the Cardano network protocol
 
 Currently not supported:
 - Validation of Plutus and other scripts

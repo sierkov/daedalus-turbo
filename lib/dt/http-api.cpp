@@ -31,6 +31,7 @@
 #include <boost/beast/version.hpp>
 #include <boost/config.hpp>
 
+#include <dt/asio.hpp>
 #include <dt/chunk-registry.hpp>
 #include <dt/format.hpp>
 #include <dt/json.hpp>
@@ -65,28 +66,26 @@ namespace daedalus_turbo::http_api {
 
     struct server::impl {
         impl(const std::string &data_dir, scheduler &sched)
-            : _data_dir { data_dir }, _sched { sched },
-                _requirements_status { requirements::check(_data_dir) }
+            : _data_dir { data_dir }, _sched { sched }, _cache_dir { _data_dir / "history" }
         {
         }
 
         void serve(const std::string &ip, uint16_t port)
         {
-            std::thread worker { [&] { _worker_thread(); } };
             {
-                std::scoped_lock results_lk { _results_mutex };
+                mutex::scoped_lock results_lk { _results_mutex };
                 _results.emplace("/sync/", std::optional<json::value> {});
             }
             {
-                std::unique_lock queue_lk { _queue_mutex };
+                mutex::unique_lock queue_lk { _queue_mutex };
                 _queue.emplace_back("/sync/");
                 queue_lk.unlock();
                 _queue_cv.notify_one();
             }
-            net::io_context ioc { 1 };
+            auto &ioc = asio::worker::get().io_context();
             net::spawn(ioc, std::bind(&impl::_do_listen, std::ref(*this), std::ref(ioc),
                 tcp::endpoint { net::ip::make_address(ip), port }, std::placeholders::_1));
-            ioc.run();
+            _worker_thread();
         }
     private:
         enum class sync_status { syncing, ready, failed };
@@ -111,8 +110,9 @@ namespace daedalus_turbo::http_api {
             }
         };
 
-        const std::string _data_dir;
+        const std::filesystem::path _data_dir;
         scheduler &_sched;
+        std::filesystem::path _cache_dir;
         std::unique_ptr<validator::incremental> _cr {};
         std::unique_ptr<reconstructor> _reconst {};
         std::chrono::time_point<std::chrono::system_clock> _sync_start {};
@@ -126,10 +126,10 @@ namespace daedalus_turbo::http_api {
         json::array _j_tail_relative_stake {};
 
         // request queue
-        alignas(mutex::padding) std::mutex _queue_mutex {};
-        alignas(mutex::padding) std::condition_variable _queue_cv;
+        alignas(mutex::padding) mutex::unique_lock::mutex_type _queue_mutex {};
+        alignas(mutex::padding) std::condition_variable_any _queue_cv;
         std::deque<std::string> _queue {};
-        alignas(mutex::padding) std::mutex _results_mutex {};
+        alignas(mutex::padding) mutex::unique_lock::mutex_type _results_mutex {};
         std::map<std::string, std::optional<json::value>> _results {};
 
         std::pair<std::string_view, std::vector<std::string_view>> _parse_target(const std::string_view &target)
@@ -159,7 +159,7 @@ namespace daedalus_turbo::http_api {
 
         json::value _error_response(const std::string &msg)
         {
-            logger::error(msg);
+            logger::error("error response: {}", msg);
             return json::value {
                 { "error", msg }
             };
@@ -224,31 +224,45 @@ namespace daedalus_turbo::http_api {
                     throw error("unsupported endpoint '{}'", req_id);
                 }
                 logger::info("request {} succeeded in {:0.3f} secs", target, t.stop());
-            } catch (std::exception &ex) {
+            } catch (const error &ex) {
+                logger::error("dt::error: {}", ex);
                 resp = _error_response(fmt::format("request {} failed: {}", target, ex.what()));
+            } catch (const std::exception &ex) {
+                resp = _error_response(fmt::format("request {} failed: {}", target, ex.what()));
+            } catch (...) {
+                resp = _error_response(fmt::format("request {} failed: unknown exception", target));
             }
             {
-                std::scoped_lock lk { _results_mutex };
+                mutex::scoped_lock lk { _results_mutex };
                 _results[target] = std::move(resp);
             }
         }
 
         void _worker_thread()
         {
+            mutex::unique_lock lock { _queue_mutex };
             for (;;) {
-                std::unique_lock lock { _queue_mutex };
                 bool have_work = _queue_cv.wait_for(lock, std::chrono::seconds { 1 }, [&]{ return !_queue.empty(); });
                 logger::debug("http-api worker thread waiting for tasks returned with {}", have_work);
                 if (have_work) {
                     const auto target = _queue.front();
                     _queue.pop_front();
                     lock.unlock();
-                    _process_request(target);
+                    try {
+                        _process_request(target);
+                    } catch (const error &ex) {
+                        logger::error("worker process_request {}: {}", target, ex);
+                    } catch (const std::exception &ex) {
+                        logger::error("worker process_request {}: std::exception {}", target, ex.what());
+                    } catch (...) {
+                        logger::error("worker process_request {}: unknown exception", target);
+                    }
+                    lock.lock();
                 }
             }
         }
 
-        http::response<http::string_body> _send_json_response(const http::request<http::string_body>& req, const json::value &json_resp)
+        static http::response<http::string_body> _send_json_response(const http::request<http::string_body>& req, const json::value &json_resp)
         {
             timer t { "http-api serialize json and send the response" };
             auto resp_str = json::serialize(json_resp);
@@ -270,36 +284,42 @@ namespace daedalus_turbo::http_api {
             return res;
         }
 
-        json::object _hardware_info()
+        json::object _hardware_info() const
         {
             timer t { "collect hardware info" };
-            auto net_speed = daedalus_turbo::http::internet_speed_mbps();
+            const auto net_speed = daedalus_turbo::http::download_queue_async::get().internet_speed();
             return json::object {
                 { "internet", fmt::format("{:0.1f}/{:0.1f} Mbps", net_speed.current, net_speed.max) },
                 { "threads", fmt::format("{}/{}", _sched.active_workers(), _sched.num_workers()) },
                 { "memory", fmt::format("{:0.1f}/{:0.1f} GiB", static_cast<double>(memory::max_usage_mb()) / (1 << 10), static_cast<double>(memory::physical_mb()) / (1 << 10)) },
-                { "storage", fmt::format("{:0.1f}/{:0.1f} GB", static_cast<double>(file::disk_used(_data_dir)) / (1'000'000'000), static_cast<double>(file::disk_available(_data_dir)) / (1'000'000'000)) }
+                { "storage", fmt::format("{:0.1f}/{:0.1f} GB", static_cast<double>(file::disk_used(_data_dir.string())) / 1'000'000'000, static_cast<double>(file::disk_available(_data_dir.string())) / 1'000'000'000) }
             };
         }
 
-        std::shared_ptr<json::object> _hardware_info_cached()
+        json::object _hardware_info_cached() const
         {
-            alignas(mutex::padding) static std::mutex info_mutex {};
-            static auto info = std::make_shared<json::object>(_hardware_info());
+            alignas(mutex::padding) static mutex::unique_lock::mutex_type info_mutex {};
+            static auto info = _hardware_info();
             static constexpr std::chrono::seconds update_delay { 5 };
             static std::chrono::time_point<std::chrono::system_clock> next_update = std::chrono::system_clock::now() + update_delay;
             static std::atomic_bool update_in_progress { false };
             bool exp_false = false;
             if (std::chrono::system_clock::now() >= next_update && update_in_progress.compare_exchange_strong(exp_false, true)) {
                 std::thread {[&] {
-                    auto new_info = _hardware_info();
-                    std::scoped_lock lkw { info_mutex };
-                    info = std::make_shared<json::object>(std::move(new_info));
-                    next_update = std::chrono::system_clock::now() + update_delay;
-                    update_in_progress = false;
+                    try {
+                        auto new_info = _hardware_info();
+                        mutex::scoped_lock lkw { info_mutex };
+                        info = std::move(new_info);
+                        next_update = std::chrono::system_clock::now() + update_delay;
+                        update_in_progress = false;
+                    } catch (...) {
+                        next_update = std::chrono::system_clock::now() + update_delay;
+                        update_in_progress = false;
+                        throw;
+                    }
                 } }.detach();
             }
-            std::scoped_lock lkr { info_mutex };
+            mutex::scoped_lock lkr { info_mutex };
             return info;
         }
 
@@ -308,7 +328,7 @@ namespace daedalus_turbo::http_api {
             json::object resp {};
             resp.emplace("ready", _sync_status == sync_status::ready);
             resp.emplace("requirements", _requirements_status.to_json());
-            resp.emplace("hardware", *_hardware_info_cached());
+            resp.emplace("hardware", _hardware_info_cached());
             auto progress_copy = progress::get().copy();
             if (!progress_copy.empty()) {
                 json::object task_progress {};
@@ -318,7 +338,7 @@ namespace daedalus_turbo::http_api {
             }
             {
                 json::object requests {};
-                std::scoped_lock lk { _results_mutex };
+                mutex::scoped_lock lk { _results_mutex };
                 for (const auto &[req_id, resp]: _results)
                     requests.emplace(req_id, static_cast<bool>(resp));
                 resp.emplace("requests", std::move(requests));
@@ -345,7 +365,7 @@ namespace daedalus_turbo::http_api {
                         for (const auto &[name, value]: progress_copy)
                             mean_progress += value;
                         mean_progress /= progress_copy.size();
-                        if (in_progress >= 10 && mean_progress >= 0.01)
+                        if (in_progress >= 60 && mean_progress >= 0.01)
                             resp.emplace("syncETA", fmt::format("{:0.1f}", in_progress / mean_progress * (1.0 - mean_progress) / 60));
                     }
                     break;
@@ -361,13 +381,17 @@ namespace daedalus_turbo::http_api {
 
         json::value _api_sync()
         {
+            timer t { "api_sync" };
             logger::info("sync start");
             _sync_status = sync_status::syncing;
             _sync_error.reset();
             _sync_last_chunk.reset();
             _sync_start = std::chrono::system_clock::now();
             try {
-                _cr = std::make_unique<validator::incremental>(validator::default_indexers(_data_dir), _data_dir);
+                _requirements_status = requirements::check(_data_dir.string());
+                if (!_requirements_status)
+                    throw error("requirements check failed - cannot begin the sync!");
+                _cr = std::make_unique<validator::incremental>(validator::default_indexers(_data_dir.string()), _data_dir.string());
                 {
                     sync::http::syncer syncr { *_cr };
                     uint64_t start_offset = _cr->num_bytes();
@@ -421,8 +445,8 @@ namespace daedalus_turbo::http_api {
             };
             if (_cr->num_chunks() == 0)
                 return history<T> {};
-            const std::string cache_meta_path = fmt::format("{}/histroy-cache-meta-{}.bin", _data_dir, suffix);
-            const std::string cache_data_path = fmt::format("{}/histroy-cache-data-{}.bin", _data_dir, suffix);
+            const std::string cache_meta_path = fmt::format("{}/meta-{}.bin", _cache_dir.string(), suffix);
+            const std::string cache_data_path = fmt::format("{}/data-{}.bin", _cache_dir.string(), suffix);
             if (std::filesystem::exists(cache_meta_path) && std::filesystem::exists(cache_data_path)) {
                 cache_meta meta {};
                 file::read_zpp(meta, cache_meta_path);
@@ -541,7 +565,7 @@ namespace daedalus_turbo::http_api {
                 } else {
                     std::optional<json::value> resp {};
                     {
-                        std::scoped_lock results_lk { _results_mutex };
+                        mutex::scoped_lock results_lk { _results_mutex };
                         if (_results.contains(target)) {
                             auto &cached_res = _results.at(target);
                             if (cached_res) {
@@ -556,7 +580,7 @@ namespace daedalus_turbo::http_api {
                         }
                     }
                     if (!resp) {
-                        std::unique_lock queue_lk { _queue_mutex };
+                        mutex::unique_lock queue_lk { _queue_mutex };
                         _queue.emplace_back(target);
                         queue_lk.unlock();
                         _queue_cv.notify_one();
@@ -570,7 +594,7 @@ namespace daedalus_turbo::http_api {
             }
         }
 
-        void _fail(beast::error_code ec, char const* what)
+        static void _fail(beast::error_code ec, char const* what)
         {
             logger::error("{}: {}", what, ec.message());
         }

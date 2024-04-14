@@ -16,15 +16,6 @@ namespace daedalus_turbo {
 }
 
 namespace daedalus_turbo::http {
-    struct internet_speed {
-        double current = 0.0;
-        double max = 0.0;
-    };
-
-    extern internet_speed internet_speed_mbps(std::optional<double> new_current_speed={});
-    extern std::string fetch(const std::string &url);
-    extern json::value fetch_json(const std::string &url);
-
     struct download_queue {
         struct result {
             std::string url {};
@@ -32,20 +23,98 @@ namespace daedalus_turbo::http {
             std::optional<std::string> error {};
             size_t size = 0;
 
-            operator bool() const
+            explicit operator bool() const
             {
                 return !static_cast<bool>(error);
             }
         };
 
-        download_queue();
-        ~download_queue();
-        void download(const std::string &url, const std::string &save_path, uint64_t priority, const std::function<void(result &&)> &handler);
-        bool process_ok(bool report_progress=false, scheduler *sched = nullptr);
-        void process(bool report_progress=false, scheduler *sched = nullptr);
+        struct speed_mbps {
+            double current = 0.0;
+            double max = 0.0;
+        };
+
+        virtual ~download_queue() =default;
+
+        void download(const std::string &url, const std::string &save_path, uint64_t priority, const std::function<void(result &&)> &handler)
+        {
+            return _download_impl(url, save_path, priority, handler);
+        }
+
+        bool process_ok(bool report_progress=false, scheduler *sched = nullptr)
+        {
+            return _process_ok_impl(report_progress, sched);
+        }
+
+        speed_mbps internet_speed()
+        {
+            return _internet_speed_impl();
+        }
+
+        void process(bool report_progress=false, scheduler *sched = nullptr)
+        {
+            if (!process_ok(report_progress, sched))
+                throw error("some download requests have failed, please check the logs");
+        }
+
+        std::string fetch(const std::string &url)
+        {
+            auto url_hash = blake2b<blake2b_256_hash>(url);
+            file::tmp tmp { fmt::format("http-fetch-sync-{}.tmp", url_hash) };
+            std::atomic_bool ready { false };
+            std::optional<std::string> err {};
+            download(url, tmp.path(), 0, [&](const auto &res) {
+                err = std::move(res.error);
+                ready = true;
+            });;
+            while (!ready) {
+                std::this_thread::sleep_for(std::chrono::milliseconds { 100 });
+            }
+            if (err)
+                throw error("download of {} failed: {}", url, *err);
+            auto buf = file::read(tmp.path());
+            return std::string { buf.span().string_view() };
+        }
+
+        json::value fetch_json(const std::string &url)
+        {
+            try {
+                return json::parse(fetch(url));
+            } catch (std::exception &ex) {
+                throw error("fetch {} failed with error: {}", url, ex.what());
+            }
+        }
+
+        json::value fetch_json_signed(const std::string &url, const buffer &vk)
+        {
+            try {
+                return json::parse_signed(fetch(url), vk);
+            } catch (std::exception &ex) {
+                throw error("fetch {} failed with error: {}", url, ex.what());
+            }
+        }
+    private:
+        virtual void _download_impl(const std::string &url, const std::string &save_path, uint64_t priority, const std::function<void(result &&)> &handler) =0;
+        virtual bool _process_ok_impl(bool report_progress, scheduler *sched) =0;
+        virtual speed_mbps _internet_speed_impl() =0;
+    };
+
+    struct download_queue_async: download_queue {
+        static download_queue_async &get()
+        {
+            static download_queue_async ps {};
+            return ps;
+        }
+
+        download_queue_async();
+        ~download_queue_async() override;
     private:
         struct impl;
         std::unique_ptr<impl> _impl;
+
+        void _download_impl(const std::string &url, const std::string &save_path, uint64_t priority, const std::function<void(result &&)> &handler) override;
+        bool _process_ok_impl(bool report_progress, scheduler *sched) override;
+        speed_mbps _internet_speed_impl() override;
     };
 }
 

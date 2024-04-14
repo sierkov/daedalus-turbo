@@ -29,7 +29,9 @@ namespace daedalus_turbo {
 
         void mark(const std::string &path, const std::chrono::time_point<std::chrono::system_clock> &when=std::chrono::system_clock::now())
         {
-            _removable.emplace(path, when);
+            auto [it, created] = _removable.emplace(path, when);
+            if (!created)
+                it->second = when;
         }
 
         void unmark(const std::string &path)
@@ -42,7 +44,8 @@ namespace daedalus_turbo {
             auto delete_point = std::chrono::system_clock::now() - delay;
             for (auto it = _removable.begin(); it != _removable.end(); ) {
                 if (it->second < delete_point) {
-                    _remove(it->first, fmt::format("deref and older than {} sec", delay.count()));
+                    _remove(it->first, fmt::format("deref: when: {} delete_point: {}",
+                        it->second.time_since_epoch().count(), delete_point.time_since_epoch().count()));
                     it = _removable.erase(it);
                 } else {
                     ++it;

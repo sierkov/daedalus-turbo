@@ -23,7 +23,6 @@ namespace daedalus_turbo::cli::validate {
         timer t { "validation", logger::level::trace };
         const auto &data_dir = args.at(0);
         requirements::check(data_dir);
-        ed25519::init();
         progress_guard pg { "parse", "merge", "validate" };
         uint64_t end_offset = 0;
         chunk_list chunks {};
@@ -37,11 +36,12 @@ namespace daedalus_turbo::cli::validate {
         // remove all previously prepared indices and validator snapshots
         std::filesystem::remove_all(std::filesystem::path { data_dir } / "index");
         std::filesystem::remove_all(std::filesystem::path { data_dir } / "validate");
-        validator::incremental cr { validator::default_indexers(data_dir), data_dir,  };
+        validator::incremental cr { validator::default_indexers(data_dir), data_dir  };
         _parse_progress.total = end_offset;
-        cr.target_offset(end_offset);
+        cr.start_tx(0, end_offset);
         _validate_chunks(scheduler::get(), cr, std::move(chunks));
-        cr.save_state();
+        cr.prepare_tx();
+        cr.commit_tx();
         if (!cr.chunks().empty()) {
             const auto &last_chunk = cr.chunks().rbegin()->second;
             logger::info("validation complete last_slot: {} last_block: {} took: {:0.1f} secs",

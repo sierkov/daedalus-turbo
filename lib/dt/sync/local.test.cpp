@@ -25,8 +25,9 @@ suite sync_local_suite = [] {
         };
         "truncate manual"_test = [&] {
             auto before_slot = idxr.max_slot();
-            idxr.truncate(52958359);
-            idxr.save_state();
+            idxr.start_tx(52958359, 52958359);
+            idxr.prepare_tx();
+            idxr.commit_tx();
             expect(fr.size() == 28_u);
             expect(idxr.max_slot() < before_slot) << idxr.max_slot() << before_slot;
         };
@@ -53,7 +54,7 @@ suite sync_local_suite = [] {
             auto res = syncr.sync();
             expect(res.errors.size() == 0_u);
             expect(res.updated.size() == 0_u);
-            expect(res.last_slot == 0_u);
+            expect(res.last_slot == 93147517_u);
         };
     };
 };

@@ -6,6 +6,8 @@
 #define DAEDALUS_TURBO_JSON_HPP
 
 #include <boost/json.hpp>
+#include <dt/blake2b.hpp>
+#include <dt/ed25519.hpp>
 #include <dt/file.hpp>
 #include <dt/util.hpp>
 
@@ -17,10 +19,30 @@ namespace daedalus_turbo::json {
         return boost::json::parse(boost::json::string_view { reinterpret_cast<const char *>(buf.data()), buf.size() }, sp);
     }
 
+    inline json::value parse_signed(const buffer &buf, const buffer &vk, json::storage_ptr sp={})
+    {
+        auto j_signed = boost::json::parse(boost::json::string_view { reinterpret_cast<const char *>(buf.data()), buf.size() }, sp).as_object();
+        if (!j_signed.contains("signature"))
+            throw error("a signed json must contain signature!");
+        auto sig = ed25519::signature::from_hex(std::string { static_cast<std::string_view>(j_signed.at("signature").as_string()) });
+        j_signed.erase("signature");
+        auto content = json::serialize(j_signed);
+        auto hash = blake2b<blake2b_256_hash>(content);
+        if (!ed25519::verify(sig, vk, hash))
+            throw error("Verification of a signed JSON response has failed!");
+        return j_signed;
+    }
+
     inline json::value load(const std::string &path, json::storage_ptr sp={})
     {
         auto buf = file::read(path);
         return parse(buf, sp);
+    }
+
+    inline json::value load_signed(const std::string &path, const buffer &vk, json::storage_ptr sp={})
+    {
+        auto buf = file::read(path);
+        return parse_signed(buf, vk, sp);
     }
 
     inline void save_pretty(std::ostream& os, json::value const &jv, std::string *indent = nullptr)
@@ -89,6 +111,17 @@ namespace daedalus_turbo::json {
         std::ostringstream os {};
         save_pretty(os, jv);
         file::write(path, os.str());
+    }
+
+    inline void save_pretty_signed(const std::string &path, const json::object &jv, const buffer &sk)
+    {
+        auto content = json::serialize(jv);
+        auto hash = blake2b<blake2b_256_hash>(content);
+        ed25519::signature sig {};
+        ed25519::sign(sig, hash, sk);
+        json::object jv_copy(jv);
+        jv_copy.emplace("signature", fmt::format("{}", sig));
+        save_pretty(path, jv_copy);
     }
 }
 

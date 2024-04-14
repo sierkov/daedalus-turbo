@@ -14,7 +14,7 @@ namespace daedalus_turbo::ed25519 {
         }
     };
 
-    void init()
+    void ensure_initialized()
     {
         // will be initialized on the first call, after that do nothing
         static sodium_initializer init {};

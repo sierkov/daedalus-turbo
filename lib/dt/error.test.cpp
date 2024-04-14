@@ -73,9 +73,5 @@ suite error_suite = [] {
             auto f = [&] { errno = 2; throw error_sys("Hello {}!", "world"); };
             expect_throws_msg(f, "Hello world!, errno: 2, strerror: No such file or directory");
         };
-        "error_src_loc"_test = [] {
-            auto f = [&] { throw error_src_loc(std::source_location::current(), "Hello {}!", "world"); };
-            expect_throws_msg(f, { "Hello world!", "error.test.cpp:77" });
-        };
     };
 };

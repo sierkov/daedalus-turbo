@@ -102,14 +102,14 @@ namespace daedalus_turbo::validator {
             return num_bytes < v.num_bytes;
         }
 
-        operator bool() const
+        explicit operator bool() const
         {
             return num_bytes > 0 && num_blocks > 0 && num_blocks == ok_eligibility;
         }
     };
 
     struct subchain_list: std::map<uint64_t, subchain> {
-        subchain_list(const std::function<void(const subchain &)> &take_snapshot)
+        explicit subchain_list(const std::function<void(const subchain &)> &take_snapshot)
             : _take_snapshot { take_snapshot }
         {
         }

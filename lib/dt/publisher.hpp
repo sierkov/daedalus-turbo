@@ -8,11 +8,12 @@
 #include <memory>
 #include <string>
 #include <dt/chunk-registry.hpp>
+#include <dt/ed25519.hpp>
 #include <dt/file-remover.hpp>
 
 namespace daedalus_turbo {
     struct  publisher {
-        publisher(chunk_registry &cr, const std::string &node_path, size_t zstd_max_level=22, file_remover &fr=file_remover::get());
+        publisher(chunk_registry &cr, const std::string &node_path, const buffer &sk, size_t zstd_max_level=22, file_remover &fr=file_remover::get());
         ~publisher();
         size_t size() const;
         void publish();

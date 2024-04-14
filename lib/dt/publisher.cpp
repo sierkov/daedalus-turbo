@@ -4,15 +4,17 @@
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
 #include <dt/cardano.hpp>
+#include <dt/config.hpp>
 #include <dt/publisher.hpp>
 #include <dt/sync/local.hpp>
 #include <dt/timer.hpp>
 
 namespace daedalus_turbo {
     struct publisher::impl {
-        impl(chunk_registry &cr, const std::string &node_path, size_t zstd_max_level=22, file_remover &fr=file_remover::get())
-            : _syncer { cr, node_path, zstd_max_level, volatile_data_lifespan }, _cr { cr }, _file_remover { fr },
-                _turbo_hosts(json::load("./etc/turbo.json").at("hosts").as_array())
+        impl(chunk_registry &cr, const std::string &node_path, const buffer &sk, size_t zstd_max_level=22, file_remover &fr=file_remover::get())
+            : _syncer { cr, node_path, zstd_max_level, volatile_data_lifespan },
+                _sk { sk }, _cr { cr }, _file_remover { fr },
+                _turbo_hosts(configs::get().at("turbo").at("hosts").as_array())
         {
         }
 
@@ -48,6 +50,7 @@ namespace daedalus_turbo {
         static constexpr std::chrono::seconds volatile_data_lifespan { 6 * 3600 };
 
         sync::local::syncer _syncer;
+        ed25519::skey _sk {};
         chunk_registry &_cr;
         file_remover &_file_remover;
         json::array _turbo_hosts;
@@ -100,9 +103,8 @@ namespace daedalus_turbo {
 
         void _write_peers() const
         {
-            json::save_pretty((_cr.data_dir() / "peers.json").string(), json::object {
-                { "hosts", _turbo_hosts }
-            });
+            json::object j_peers { { "hosts", _turbo_hosts } };
+            json::save_pretty_signed((_cr.data_dir() / "peers.json").string(), j_peers, _sk);
         }
 
         void _write_meta() const
@@ -129,25 +131,25 @@ namespace daedalus_turbo {
                     { "lastBlockHash", fmt::format("{}", epoch_meta.last_block_hash()) },
                     { "chunks", std::move(j_chunks) }
                 };
-                json::save_pretty((_cr.data_dir() / fmt::format("epoch-{}-{}.json", epoch, epoch_meta.last_block_hash())).string(), j_epoch_meta);
+                json::save_pretty_signed((_cr.data_dir() / fmt::format("epoch-{}-{}.json", epoch, epoch_meta.last_block_hash())).string(), j_epoch_meta, _sk);
             }
             json::object meta {
                 { "api", json::object {
                     { "version", 2 },
-                    { "metadataLifespanSec", std::chrono::duration<double>(metadata_lifespan).count() },
-                    { "volatileDataLifespanSec", std::chrono::duration<double>(volatile_data_lifespan).count() }
+                    { "metadataLifespanSec", std::chrono::duration<int64_t>(metadata_lifespan).count() },
+                    { "volatileDataLifespanSec", std::chrono::duration<int64_t>(volatile_data_lifespan).count() }
                     }
                 },
                 { "epochs", std::move(j_chain_epochs) }
             };
-            json::save_pretty((_cr.data_dir() / "chain.json").string(), meta);
+            json::save_pretty_signed((_cr.data_dir() / "chain.json").string(), meta, _sk);
             _write_index_html(total_size, total_compressed_size);
             _write_peers();
         }
     };
 
-    publisher::publisher(chunk_registry &cr, const std::string &node_path, size_t zstd_max_level, file_remover &fr)
-        : _impl { std::make_unique<impl>(cr, node_path, zstd_max_level, fr) }
+    publisher::publisher(chunk_registry &cr, const std::string &node_path, const buffer &sk, size_t zstd_max_level, file_remover &fr)
+        : _impl { std::make_unique<impl>(cr, node_path, sk, zstd_max_level, fr) }
     {
     }
 

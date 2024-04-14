@@ -36,12 +36,28 @@ suite json_suite = [] {
             expect(act.size() == exp.size()) << act.size() << exp.size();
             expect(act == exp) << act.span().string_view();
         };
+        "save_pretty_signed"_test = [] {
+            file::tmp t { "json-save-pretty-signed-test.json" };
+            ed25519::skey sk {};
+            ed25519::vkey vk {};
+            ed25519::create(sk, vk);
+            json::object j_val {
+                { "key1", "val2" },
+                { "key2", 22 }
+            };
+            json::save_pretty_signed(t.path(), j_val, sk);
+            auto j_dec = json::load(t.path()).as_object();
+            expect(j_dec.contains("signature"));
+            expect(nothrow([&] { json::parse_signed(file::read(t.path()), vk); }));
+            auto j_parsed = json::parse_signed(file::read(t.path()), vk);
+            expect(j_parsed == j_val) << json::serialize(j_parsed);
+        };
         "array copy constructor"_test = [] {
             auto meta = json::load("./etc/turbo.json").as_object();
             expect(meta.contains("hosts"));
             const auto &exp_arr = meta.at("hosts").as_array();
             expect(exp_arr.size() >= 2);
-            json::array copy_arr { meta.at("hosts").as_array() };
+            json::array copy_arr(meta.at("hosts").as_array());
             expect(copy_arr.size() == exp_arr.size());
         };
     };  

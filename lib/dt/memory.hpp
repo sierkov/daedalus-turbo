@@ -14,10 +14,14 @@ extern "C" {
 #   include <sys/resource.h>
 #endif
 };
+#include <dt/mutex.hpp>
 
 namespace daedalus_turbo::memory {
     inline size_t max_usage_mb()
     {
+        // Win API is not thread safe by default
+        alignas(mutex::padding) static mutex::unique_lock::mutex_type m {};
+        mutex::scoped_lock lk { m };
 #       ifdef _WIN32
             PROCESS_MEMORY_COUNTERS_EX pmc {};
             GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
@@ -36,6 +40,9 @@ namespace daedalus_turbo::memory {
 
     inline size_t physical_mb()
     {
+        // Win API is not thread safe by default
+        alignas(mutex::padding) static mutex::unique_lock::mutex_type m {};
+        mutex::scoped_lock lk { m };
 #       ifdef _WIN32
             MEMORYSTATUSEX status;
             status.dwLength = sizeof(status);

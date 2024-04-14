@@ -5,7 +5,6 @@
 #ifndef DAEDALUS_TURBO_INDEXER_MERGER_HPP
 #define DAEDALUS_TURBO_INDEXER_MERGER_HPP
 
-#include <functional>
 #include <map>
 #include <string>
 #include <zpp_bits.h>

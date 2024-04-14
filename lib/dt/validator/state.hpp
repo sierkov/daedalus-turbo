@@ -476,9 +476,11 @@ namespace daedalus_turbo::validator {
             static const std::string task_group { "rotate-snapshot" };
             _sched.wait_for_count(task_group, 6, [&] {
                 _sched.submit_void(task_group, 1000, [this] {
+                    timer ts { fmt::format("validator::state epoch: {} copy pool_dist to mark", _epoch), logger::level::trace };
                     _mark.pool_dist = _active_pool_dist;
                 });
                 _sched.submit_void(task_group, 1000, [this] {
+                    timer ts { fmt::format("validator::state epoch: {} copy pool_params to mark", _epoch), logger::level::trace };
                     _mark.pool_params = _active_pool_params;
                 });
                 _sched.submit_void(task_group, 1000, [this] {

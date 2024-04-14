@@ -12,22 +12,40 @@ extern "C" {
 #include <dt/util.hpp>
 
 namespace daedalus_turbo {
-    using ed25519_vkey = array<uint8_t, 32>;
-    using ed25519_signature = array<uint8_t, 64>;
-
     namespace ed25519 {
-        extern void init();
+        using vkey = array<uint8_t, 32>;
+        using skey = array<uint8_t, 64>;
+        using signature = array<uint8_t, 64>;
+
+        extern void ensure_initialized();
+
+        inline void create(skey &sk, vkey &vk)
+        {
+            ensure_initialized();
+            crypto_sign_keypair(vk.data(), sk.data());
+        }
+
+        inline void sign(signature &sig, const buffer &msg, const buffer &sk)
+        {
+            if (sk.size() != sizeof(skey))
+                throw error("private key must have {} bytes but got: {}!", sizeof(skey), sk.size());
+            ensure_initialized();
+            crypto_sign_detached(sig.data(), NULL, msg.data(), msg.size(), sk.data());
+        }
 
         inline bool verify(const buffer &sig, const buffer &vk, const buffer &msg)
         {
-            init();
-            if (sig.size() != 64)
-                throw error("signature must have 64 bytes but got: {}!", sig.size());
-            if (vk.size() != 32)
-                throw error("public key must have 32 bytes but got: {}!", vk.size());
+            if (sig.size() != sizeof(signature))
+                throw error("signature must have {} bytes but got: {}!", sizeof(signature), sig.size());
+            if (vk.size() != sizeof(vkey))
+                throw error("public key must have {} bytes but got: {}!", sizeof(vkey), vk.size());
+            ensure_initialized();
             return crypto_sign_verify_detached(sig.data(), msg.data(), msg.size(), vk.data()) == 0;
         }
     }
+
+    using ed25519_vkey = ed25519::vkey;
+    using ed25519_signature = ed25519::signature;
 }
 
 #endif // !DAEDALUS_TURBO_ED25519_HPP

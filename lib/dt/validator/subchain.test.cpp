@@ -54,7 +54,7 @@ suite validator_subchain_suite = [] {
             m2.emplace(ph0, kes_interval { 6, 11 });
             m2.emplace(ph2, kes_interval { 7, 9 });
             subchain sc2 { 300, 200, 1, 1, m2 };
-            expect(sc2);
+            expect(static_cast<bool>(sc2));
             expect(sc1 < sc2);
             sc1.merge(sc2);
             expect(sc1.offset == 100_ull);

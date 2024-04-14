@@ -1,12 +1,9 @@
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 LABEL MAINTAINER "Alex Sierkov <alex.sierkov@gmail.com>"
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update
 RUN apt-get install -y tzdata screen sudo gnupg2 ca-certificates vim-nox less
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 31F54F3E108EAD31
-RUN echo "deb https://ppa.launchpadcontent.net/mhier/libboost-latest/ubuntu/ jammy main" >> /etc/apt/sources.list.d/mhier-ubuntu-libboost-latest-jammy.list
-RUN apt-get update
 RUN ln -fs /usr/share/zoneinfo/Europe/Berlin /etc/localtime
 RUN dpkg-reconfigure --frontend noninteractive tzdata
 RUN cp /etc/sudoers /etc/sudoers.orig
