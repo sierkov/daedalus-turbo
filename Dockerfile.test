@@ -18,6 +18,7 @@ COPY etc /home/dev/dt/etc
 COPY data /home/dev/dt/data
 COPY test /home/dev/dt/test
 COPY CMakeLists.txt /home/dev/dt
+COPY publisher /home/dev/dt/publisher
 COPY docker-test.sh /home/dev
 RUN chown -R dev:dev /home/dev
 
