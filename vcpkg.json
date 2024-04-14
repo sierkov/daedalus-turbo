@@ -1,0 +1,10 @@
+{
+  "dependencies": [
+    "boost",
+    "fmt",
+    "libsodium",
+    "mimalloc",
+    "spdlog",
+    "zstd"
+  ]
+}
