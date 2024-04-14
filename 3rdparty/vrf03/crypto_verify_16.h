@@ -29,6 +29,6 @@ SOFTWARE.
 size_t crypto_verify_16_bytes(void);
 
 int crypto_verify_16(const unsigned char *x, const unsigned char *y)
-            __attribute__ ((warn_unused_result));
+            /* commented out to compile with MS Visual Studio __attribute__((warn_unused_result)) */;
 
 #endif

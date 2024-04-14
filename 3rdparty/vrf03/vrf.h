@@ -57,14 +57,14 @@ void crypto_vrf_ietfdraft03_sk_to_seed(unsigned char seed[crypto_vrf_ietfdraft03
 				  const unsigned char skpk[crypto_vrf_ietfdraft03_SECRETKEYBYTES]);				
 
 int crypto_vrf_ietfdraft03_is_valid_key(const unsigned char *pk)
-            __attribute__ ((warn_unused_result));
+		/* commented out to compile with MS Visual Studio __attribute__ ((warn_unused_result)) */;
 
 int crypto_vrf_ietfdraft03_verify(unsigned char *output,
 				  const unsigned char *pk,
 				  const unsigned char *proof,
 				  const unsigned char *m,
 				  unsigned long long mlen)
-            __attribute__ ((warn_unused_result));
+					/* commented out to compile with MS Visual Studio  __attribute__ ((warn_unused_result)) */;
 
 int crypto_vrf_ietfdraft03_proof_to_hash(unsigned char *hash,
 				         const unsigned char *proof);
