@@ -9,6 +9,23 @@
 
 using namespace daedalus_turbo;
 
+namespace {
+    static void my_setenv(const char *name, const char *val)
+    {
+        if (name == nullptr)
+            throw error("my_setenv: name cannot be null!");
+#if _WIN32
+        std::string putexpr { fmt::format("{}={}", name, val != nullptr ? val : "") };
+        putenv(putexpr.c_str());
+#else
+        if (val != nullptr)
+            setenv(name, val, 1);
+        else
+            unsetenv(name);
+#endif
+    }
+}
+
 suite config_suite = [] {
     "config"_test = [] {
         "required"_test = [] {
@@ -19,11 +36,11 @@ suite config_suite = [] {
         "non-standard-location"_test = [] {
             expect(std::getenv("DT_ETC") == nullptr);
             expect(configs::default_path() == "./etc");
-            putenv("DT_ETC=./etc-missing");
+            my_setenv("DT_ETC", "./etc-missing");
             expect(std::getenv("DT_ETC") != nullptr);
             expect(configs::default_path() == "./etc-missing") << configs::default_path();
             expect(throws([] { configs cfg { configs::default_path() }; }));
-            putenv("DT_ETC=");
+            my_setenv("DT_ETC", nullptr);
             expect(std::getenv("DT_ETC") == nullptr);
         };
     };
