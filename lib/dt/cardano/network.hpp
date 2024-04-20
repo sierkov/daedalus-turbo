@@ -14,6 +14,7 @@
 #include <dt/cbor.hpp>
 #include <dt/cbor-encoder.hpp>
 #include <dt/logger.hpp>
+#include <dt/mutex.hpp>
 #include <dt/util.hpp>
 
 namespace daedalus_turbo::cardano::network {
@@ -116,48 +117,88 @@ namespace daedalus_turbo::cardano::network {
         using error_msg = std::string;
 
         struct find_response {
-            address addr {};
-            std::variant<blockchain_point_pair, blockchain_point, error_msg> res { "No response or error has yet been assigned" };
+            address addr{};
+            std::variant<blockchain_point_pair, blockchain_point, error_msg> res{
+                    "No response or error has yet been assigned"};
         };
         using find_handler = std::function<void(find_response &&)>;
 
         struct block_response {
-            address addr {};
-            blockchain_point from {};
-            blockchain_point to {};
-            std::variant<block_list, error_msg> res {};
+            address addr{};
+            blockchain_point from{};
+            blockchain_point to{};
+            std::variant<block_list, error_msg> res{};
         };
         using block_handler = std::function<void(block_response &&)>;
 
         struct header_response {
-            address addr {};
-            std::optional<blockchain_point> intersect {};
-            std::optional<blockchain_point> tip {};
-            std::variant<header_list, error_msg> res {};
+            address addr{};
+            std::optional<blockchain_point> intersect{};
+            std::optional<blockchain_point> tip{};
+            std::variant<header_list, error_msg> res{};
         };
         using header_handler = std::function<void(header_response &&)>;
 
-        virtual ~client() =default;
+        virtual ~client() = default;
 
-        void find_tip(const address &addr, const find_handler &handler)
-        {
-            blockchain_point_list empty {};
+        void find_tip(const address &addr, const find_handler &handler) {
+            blockchain_point_list empty{};
             _find_intersection_impl(addr, empty, handler);
         }
 
-        void find_intersection(const address &addr, const blockchain_point_list &points, const find_handler &handler)
-        {
+        void find_intersection(const address &addr, const blockchain_point_list &points, const find_handler &handler) {
             _find_intersection_impl(addr, points, handler);
         }
 
-        void fetch_headers(const address &addr, const blockchain_point_list &points, const size_t max_blocks, const header_handler &handler)
-        {
+        void fetch_headers(const address &addr, const blockchain_point_list &points, const size_t max_blocks,
+                           const header_handler &handler) {
             _fetch_headers_impl(addr, points, max_blocks, handler);
         }
 
-        void fetch_blocks(const address &addr, const blockchain_point &from, const blockchain_point &to, std::optional<size_t> max_blocks, const block_handler &handler)
+        std::pair<header_list, blockchain_point> fetch_headers_sync(const address &addr, const blockchain_point_list &points, const size_t max_blocks)
         {
+            client::header_response iresp {};
+            fetch_headers(addr, points, max_blocks, [&](auto &&r) {
+                iresp = r;
+            });
+            process();
+            if (std::holds_alternative<client::error_msg>(iresp.res))
+                throw error("fetch_headers error: {}", std::get<client::error_msg>(iresp.res));
+            if (!iresp.tip)
+                throw error("no tip information received!");
+            const auto &headers = std::get<header_list>(iresp.res);
+            if (headers.empty())
+                throw error("received and empty header list");
+            return std::make_pair(std::move(headers), std::move(*iresp.tip));
+        }
+
+        std::pair<header_list, blockchain_point> fetch_headers_sync(const address &addr, const std::optional<blockchain_point> &local_tip, const size_t max_blocks)
+        {
+            blockchain_point_list points {};
+            if (local_tip)
+                points.emplace_back(*local_tip);
+            return fetch_headers_sync(addr, points, max_blocks);
+        }
+
+        void fetch_blocks(const address &addr, const blockchain_point &from, const blockchain_point &to,
+                          std::optional<size_t> max_blocks, const block_handler &handler) {
             _fetch_blocks_impl(addr, from, to, max_blocks, handler);
+        }
+
+        block_list fetch_blocks_sync(const address &addr, const blockchain_point &from, const blockchain_point &to,
+                                         std::optional<size_t> max_blocks)
+        {
+            block_response resp {};
+            fetch_blocks(addr, from, to, max_blocks, [&resp] (auto &&r){
+                resp = std::move(r);
+            });
+            process();
+            if (std::holds_alternative<client::error_msg>(resp.res))
+                throw error("fetch_blocks error: {}", std::get<client::error_msg>(resp.res));
+            block_list blocks { std::move(std::get<block_list>(resp.res)) };
+            if (blocks.empty())
+                throw error("received and empty header list");
+            return blocks;
         }
 
         void process()
@@ -197,7 +238,14 @@ namespace daedalus_turbo::cardano::network {
         {
         }
 
-        ~client_async() override =default;
+        ~client_async() override
+        {
+            static constexpr std::chrono::milliseconds sleep_ms { 100 };
+            while (_requests.load() > 0) {
+                std::this_thread::sleep_for(sleep_ms);
+                logger::warn("not all network requests are completed when a client instance is destroyed - waiting");
+            }
+        }
     private:
         struct intersect_resp {
             tcp::socket socket;
@@ -207,31 +255,38 @@ namespace daedalus_turbo::cardano::network {
 
         asio::worker &_asio_worker;
         tcp::resolver _resolver { _asio_worker.io_context() };
-        std::atomic_size_t _running_requests = 0;
+        alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _requests_mutex {};
+        alignas(mutex::padding) std::condition_variable_any _requests_cv {};
+        std::atomic_size_t _requests = 0;
 
         void _find_intersection_impl(const address &addr, const blockchain_point_list &points, const find_handler &handler) override
         {
-            ++_running_requests;
+            ++_requests;
             boost::asio::co_spawn(_asio_worker.io_context(), _find_intersection(addr, points, handler), boost::asio::detached);
         }
 
         void _fetch_headers_impl(const address &addr, const blockchain_point_list &points, const size_t max_blocks, const header_handler &handler) override
         {
-            ++_running_requests;
+            ++_requests;
             boost::asio::co_spawn(_asio_worker.io_context(), _fetch_headers(addr, points, max_blocks, handler), boost::asio::detached);
         }
 
         void _fetch_blocks_impl(const address &addr, const blockchain_point &from, const blockchain_point &to, std::optional<size_t> max_blocks, const block_handler &handler) override
         {
-            ++_running_requests;
+            ++_requests;
             boost::asio::co_spawn(_asio_worker.io_context(), _fetch_blocks(addr, from, to, max_blocks, handler), boost::asio::detached);
         }
 
         void _process_impl() override
         {
-            while (_running_requests.load() > 0) {
-                std::this_thread::sleep_for(std::chrono::microseconds { 250 });
-            }
+            mutex::unique_lock lk { _requests_mutex };
+            _requests_cv.wait(lk, [&]{ return _requests.load() == 0; });
+        }
+
+        void _decrement_requests()
+        {
+            if (--_requests == 0)
+                _requests_cv.notify_all();
         }
 
         static boost::asio::awaitable<uint8_vector> _read_response(tcp::socket &socket, protocol protocol_id)
@@ -327,13 +382,13 @@ namespace daedalus_turbo::cardano::network {
                     handler(find_response { std::move(addr), blockchain_point_pair { *iresp.intersect, iresp.tip } });
                 else
                     handler(find_response { std::move(addr), iresp.tip });
-                --_running_requests;
+                _decrement_requests();
             } catch (const std::exception &ex) {
                 handler(find_response { std::move(addr), fmt::format("query_tip error: {}", ex.what()) });
-                --_running_requests;
+                _decrement_requests();
             } catch (...) {
                 handler(find_response { std::move(addr), "query_tip unknown error!" });
-                --_running_requests;
+                _decrement_requests();
             }
         }
 
@@ -399,13 +454,13 @@ namespace daedalus_turbo::cardano::network {
                     default:
                         throw error("unexpected chain_sync message: {}!", resp_items.at(0).uint());
                 }
-                --_running_requests;
+                _decrement_requests();
             } catch (const std::exception &ex) {
                 handler(block_response { std::move(addr), std::move(from), std::move(to),fmt::format("fetch_blocks error: {}", ex.what()) });
-                --_running_requests;
+                _decrement_requests();
             } catch (...) {
                 handler(block_response { std::move(addr), std::move(from), std::move(to), "fetch_blocks unknown error!" });
-                --_running_requests;
+                _decrement_requests();
             }
         }
 
@@ -460,14 +515,24 @@ namespace daedalus_turbo::cardano::network {
                         break;
                 }
                 handler(header_response { std::move(addr), iresp.intersect, iresp.tip, std::move(headers) });
-                --_running_requests;
+                _decrement_requests();
             } catch (const std::exception &ex) {
                 handler(header_response { .addr=std::move(addr), .res=fmt::format("fetch_headers error: {}", ex.what()) });
-                --_running_requests;
+                _decrement_requests();
             } catch (...) {
                 handler(header_response { .addr=std::move(addr), .res="fetch_headers unknown error!" });
-                --_running_requests;
+                _decrement_requests();
             }
+        }
+    };
+}
+
+namespace fmt {
+    template<>
+    struct formatter<daedalus_turbo::cardano::network::blockchain_point>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "({}, {})", v.hash, v.slot);
         }
     };
 }

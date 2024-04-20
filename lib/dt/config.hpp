@@ -10,21 +10,72 @@
 
 namespace daedalus_turbo {
     struct config {
-        config(const std::string &path);
-        const json::value &at(const std::string_view &name) const;
+        [[nodiscard]] const json::value &at(const std::string_view &name) const
+        {
+            return _at_impl(name);
+        }
+    private:
+        virtual const json::value &_at_impl(const std::string_view &name) const =0;
+    };
+
+    // Used as a config mock
+    struct config_json: config {
+        explicit config_json(json::object &&json): _json { std::move(json) }
+        {
+        }
+    private:
+        const json::object _json;
+
+        const json::value &_at_impl(const std::string_view &name) const override
+        {
+            return _json.at(name);
+        }
+    };
+
+    struct config_file: config {
+        explicit config_file(const std::string &path);
     private:
         uint8_vector _raw;
         json::object _parsed;
+
+        const json::value &_at_impl(const std::string_view &name) const override;
     };
 
     struct configs {
+        [[nodiscard]] const config &at(const std::string &name) const
+        {
+            return _at_impl(name);
+        }
+    private:
+        virtual const config &_at_impl(const std::string &) const =0;
+    };
+
+    struct configs_mock: configs {
+        using map_type = std::map<std::string, config_json>;
+
+        explicit configs_mock() =default;
+
+        explicit configs_mock(map_type &&map): _map { std::move(map) }
+        {
+        }
+    private:
+        const map_type _map;
+
+        const config &_at_impl(const std::string &name) const override
+        {
+            return _map.at(name);
+        }
+    };
+
+    struct configs_dir: configs {
         static std::string default_path();
         static const configs &get();
 
-        configs(const std::string &dir);
-        const config &at(const std::string &) const;
+        explicit configs_dir(const std::string &dir);
     private:
-        std::map<std::string, config> _configs {};
+        std::map<std::string, config_file> _configs {};
+
+        const config &_at_impl(const std::string &) const override;
     };
 }
 

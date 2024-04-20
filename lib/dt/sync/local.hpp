@@ -243,7 +243,7 @@ namespace daedalus_turbo::sync::local {
                 });
                 const auto max_offset = target_offset;
                 for (auto &&update: updated_chunks)
-                    _sched.submit(task_name, 0 + 100 * (max_offset - update.offset) / max_offset, [&] {
+                    _sched.submit(task_name, 100 * static_cast<int>((max_offset - update.offset) / max_offset), [&] {
                         return _analyze_local_chunk(std::move(update));
                     });
                 _sched.process(true);

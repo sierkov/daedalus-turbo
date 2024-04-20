@@ -45,7 +45,7 @@ namespace daedalus_turbo::cli::sync_local {
                 }
             }
             timer tc { "sync-local" };
-            validator::incremental cr { validator::default_indexers(data_dir), data_dir, true, strict };
+            validator::incremental cr { data_dir, configs_dir::get(), true, strict };
             sync::local::syncer syncr { cr, node_dir, zstd_max_level, std::chrono::seconds { 0 } };
             auto res = syncr.sync();
             logger::info("errors: {} chunks: {} dist: {} db_last_slot: {} cycle time: {}",

@@ -32,6 +32,7 @@ const api = {
   dev: devEnv,
   dataDir: path.resolve(roamingDataDir, 'data'),
   logPath: path.resolve(roamingDataDir, 'log/dt-api.log'),
+  uiDataPath: path.resolve(roamingDataDir, 'ui'),
   etcPath: path.resolve(installDir, 'etc'),
   ip: '127.0.0.1',
   port: 55556,
@@ -99,6 +100,7 @@ const createWindow = () => {
   win.loadFile('index.html');
 };
 
+app.setPath('userData', api.uiDataPath);
 app.whenReady().then(async () => {
   startAPI();
   // Give the API server 500ms second to start

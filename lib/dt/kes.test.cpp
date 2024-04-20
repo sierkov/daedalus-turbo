@@ -39,5 +39,15 @@ suite kes_suite = [] {
             kes_signature<6> sig2(sig_data2);
             expect(!sig2.verify(34, kes_vkey_span(vkey_data), msg_data));
         };
+        "sign"_test = [] {
+            auto seed1 = blake2b<ed25519::seed>(std::string_view { "1" });
+            kes::secret<6> sk1 { seed1 };
+            kes::secret<6>::signature sigma1 {};
+            static std::string msg { "hello world!" };
+            sk1.sign(sigma1, msg);
+
+            kes::signature<6> sigv { sigma1 };
+            expect(sigv.verify(0, sk1.vkey(), msg));
+        };
     };
 };

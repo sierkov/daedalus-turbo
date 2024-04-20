@@ -39,6 +39,8 @@ namespace daedalus_turbo {
         return value;
     }
 
+    typedef std::span<uint8_t> write_buffer;
+
     struct buffer;
 
     struct uint8_vector: vector<uint8_t> {

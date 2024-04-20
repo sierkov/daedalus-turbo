@@ -13,7 +13,7 @@ namespace daedalus_turbo::sync::http {
     struct syncer::impl {
         impl(indexer::incremental &cr, daedalus_turbo::http::download_queue &dq, cardano::network::client &cnc, peer_selection &ps, scheduler &sched, file_remover &fr)
             : _cr { cr }, _dlq { dq }, _cnc { cnc }, _peer_selection { ps }, _sched { sched }, _file_remover { fr },
-                _vk { ed25519_vkey::from_hex(std::string { static_cast<std::string_view>(configs::get().at("turbo").at("vkey").as_string()) }) }
+                _vk { ed25519_vkey::from_hex(std::string { static_cast<std::string_view>(configs_dir::get().at("turbo").at("vkey").as_string()) }) }
         {
         }
 
@@ -44,6 +44,8 @@ namespace daedalus_turbo::sync::http {
                 logger::info("synchronization starts from chain offset {} in epoch {}", task->start_offset, task->start_epoch);
                 uint64_t run_start_offset = task->start_offset;
                 uint64_t run_start_epoch = task->start_epoch;
+                // download metadata for the whole sync at once
+                _download_metadata(turbo_host, j_epochs, remote_size, task->start_epoch);
                 while (run_start_offset < remote_size) {
                     auto run_max_offset = _run_max_offset(j_epochs, run_start_offset, remote_size);
                     // set start and target offset to the full task for correct progress computation
@@ -260,7 +262,7 @@ namespace daedalus_turbo::sync::http {
                 if (res.type() == typeid(scheduled_task_error))
                     return;
                 const auto &chunk = std::any_cast<saved_chunk>(res);
-                auto new_downloaded = atomic_add(downloaded, static_cast<uint64_t>(chunk.info.data_size));
+                const auto new_downloaded = atomic_add(downloaded, static_cast<uint64_t>(chunk.info.data_size));
                 progress.update("download", downloaded_base + new_downloaded, _cr.tx()->target_offset - _cr.tx()->start_offset);
                 _sched.submit(parse_task, 0 + 100 * (max_offset - chunk.info.offset) / max_offset, [this, chunk]() {
                     return _parse_local_chunk(chunk.info, chunk.path);
@@ -268,11 +270,11 @@ namespace daedalus_turbo::sync::http {
             };
             _sched.on_result(parse_task, parsed_proc);
             {
-                timer t { "download all chunks and parse immutable ones" };
+                timer td { "download all chunks and parse immutable ones" };
                 // compute totals before starting the execution to ensure correct progress percentages
                 for (const auto &chunk: download_tasks) {
-                    auto data_url = fmt::format("http://{}/compressed/{}", host, chunk.rel_path());
-                    auto save_path = _cr.full_path(chunk.rel_path());
+                    const auto data_url = fmt::format("http://{}/compressed/{}", host, chunk.rel_path());
+                    const auto save_path = _cr.full_path(chunk.rel_path());
                     if (!std::filesystem::exists(save_path)) {
                         _dlq.download(data_url, save_path, chunk.offset, [chunk, saved_proc, save_path](download_queue::result &&res) {
                             if (res) {
@@ -290,26 +292,27 @@ namespace daedalus_turbo::sync::http {
             }
         }
 
-        chunk_registry::file_set _download_data(const std::string &host, const json::array &j_epochs, uint64_t max_offset, uint64_t first_synced_epoch)
+        std::map<uint64_t, uint64_t> _download_metadata(const std::string &host, const json::array &j_epochs, const uint64_t max_offset, const uint64_t first_synced_epoch)
         {
-            timer t { "download data" };
-            std::vector<chunk_registry::chunk_info> download_tasks {};
-            logger::info("downloading metadata about the synchronized epochs and chunks");
             std::map<uint64_t, uint64_t> epoch_offsets {};
             uint64_t current_offset = 0;
-            for (size_t epoch = 0; epoch < j_epochs.size() && current_offset < max_offset; ++epoch) {
+            size_t epochs_to_fetch = 0;
+            for (size_t epoch = 0; epoch <= j_epochs.size() && current_offset < max_offset; ++epoch) {
                 const auto &j_epoch_meta = j_epochs.at(epoch);
-                auto epoch_size = json::value_to<uint64_t>(j_epoch_meta.at("size"));
-                auto epoch_last_block_hash = static_cast<std::string>(j_epoch_meta.at("lastBlockHash").as_string());
+                const auto epoch_size = json::value_to<uint64_t>(j_epoch_meta.at("size"));
+                const auto epoch_last_block_hash = static_cast<std::string>(j_epoch_meta.at("lastBlockHash").as_string());
                 if (epoch >= first_synced_epoch) {
                     epoch_offsets[epoch] = current_offset;
+                    mutex::unique_lock lkr { _epoch_json_cache_mutex };
                     if (!_epoch_json_cache.contains(epoch)) {
-                        auto epoch_url = fmt::format("http://{}/epoch-{}-{}.json", host, epoch, epoch_last_block_hash);
-                        auto save_path = _cr.full_path(fmt::format("remote/epoch-{}.json", epoch));
+                        lkr.unlock();
+                        ++epochs_to_fetch;
+                        const auto epoch_url = fmt::format("http://{}/epoch-{}-{}.json", host, epoch, epoch_last_block_hash);
+                        const auto save_path = _cr.full_path(fmt::format("remote/epoch-{}.json", epoch));
                         _dlq.download(epoch_url, save_path, epoch, [this, epoch, save_path](auto &&res) {
                             if (res) {
-                                auto buf = file::read(save_path);
-                                std::scoped_lock lk { _epoch_json_cache_mutex };
+                                const auto buf = file::read(save_path);
+                                mutex::scoped_lock lkw { _epoch_json_cache_mutex };
                                 _epoch_json_cache[epoch] = json::parse_signed(buf.span().string_view(), _vk).as_object();
                             }
                         });
@@ -317,8 +320,19 @@ namespace daedalus_turbo::sync::http {
                 }
                 current_offset += epoch_size;
             }
-            _dlq.process(true, &_sched);
-            _sched.process(true);
+            if (epochs_to_fetch) {
+                logger::info("downloading metadata about {} synchronized epochs", epochs_to_fetch);
+                _dlq.process(true, &_sched);
+                _sched.process(true);
+            }
+            return epoch_offsets;
+        }
+
+        chunk_registry::file_set _download_data(const std::string &host, const json::array &j_epochs, const uint64_t max_offset, const uint64_t first_synced_epoch)
+        {
+            timer t { "download data" };
+            std::map<uint64_t, uint64_t> epoch_offsets = _download_metadata(host, j_epochs, max_offset, first_synced_epoch);
+            std::vector<chunk_registry::chunk_info> download_tasks {};
             for (const auto &[epoch_id, epoch_start_offset]: epoch_offsets) {
                 if (!_epoch_json_cache.contains(epoch_id))
                     throw error("internal error: epoch cache is missing epoch {} known epochs: {} sync start: {}", epoch_id, j_epochs.size(), first_synced_epoch);

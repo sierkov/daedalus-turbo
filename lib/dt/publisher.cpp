@@ -14,7 +14,7 @@ namespace daedalus_turbo {
         impl(chunk_registry &cr, const std::string &node_path, const buffer &sk, size_t zstd_max_level=22, file_remover &fr=file_remover::get())
             : _syncer { cr, node_path, zstd_max_level, volatile_data_lifespan },
                 _sk { sk }, _cr { cr }, _file_remover { fr },
-                _turbo_hosts(configs::get().at("turbo").at("hosts").as_array())
+                _turbo_hosts(configs_dir::get().at("turbo").at("hosts").as_array())
         {
         }
 

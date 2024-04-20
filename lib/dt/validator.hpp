@@ -5,6 +5,7 @@
 #ifndef DAEDALUS_TURBO_VALIDATOR_HPP
 #define DAEDALUS_TURBO_VALIDATOR_HPP
 
+#include <dt/config.hpp>
 #include <dt/indexer.hpp>
 
 namespace daedalus_turbo::validator {
@@ -12,7 +13,8 @@ namespace daedalus_turbo::validator {
     using tail_relative_stake_map = std::map<cardano::slot, double>;
 
     struct incremental: indexer::incremental {
-        incremental(indexer::indexer_map &&indexers, const std::string &data_dir, bool on_the_go=true, bool strict=true, scheduler &sched=scheduler::get(), file_remover &fr=file_remover::get());
+        incremental(const std::string &data_dir, const configs &cfg=configs_dir::get(),
+            bool on_the_go=true, bool strict=true, scheduler &sched=scheduler::get(), file_remover &fr=file_remover::get());
         ~incremental() override;
         cardano::amount unspent_reward(const cardano::stake_ident &id) const;
         tail_relative_stake_map tail_relative_stake() const;

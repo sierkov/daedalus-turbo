@@ -41,7 +41,12 @@ namespace daedalus_turbo::cbor {
             return *this;
         }
 
-        uint8_vector &cbor()
+        [[nodiscard]] uint8_vector &cbor()
+        {
+            return _buf;
+        }
+
+        [[nodiscard]] const uint8_vector &cbor() const
         {
             return _buf;
         }
@@ -49,6 +54,12 @@ namespace daedalus_turbo::cbor {
         uint8_vector _buf {};
         std::back_insert_iterator<uint8_vector> _it { std::back_inserter(_buf) };
     };
+
+    inline encoder &operator<<(encoder &dst, const encoder &src)
+    {
+        dst.cbor() << src.cbor();
+        return dst;
+    }
 }
 
 #endif // !DAEDALUS_TURBO_CBOR_ENCODER_HPP

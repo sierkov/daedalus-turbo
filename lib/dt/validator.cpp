@@ -29,11 +29,14 @@ namespace daedalus_turbo::validator {
     }
 
     struct incremental::impl {
-        impl(incremental &cr, bool on_the_go)
-        : _cr { cr }, _validate_dir { chunk_registry::init_db_dir((_cr.data_dir() / "validate").string()) },
+        impl(incremental &cr, const configs &cfg, bool on_the_go)
+        : _cr { cr }, _cfg { cfg },
+            _validate_dir { chunk_registry::init_db_dir((_cr.data_dir() / "validate").string()) },
             _state_path { (_validate_dir / "state.json").string() },
             _state_pre_path { (_validate_dir / "state-pre.json").string() },
-            _state { _cr.sched() }, _on_the_go { on_the_go }
+            _pbft_pools { _parse_pbft_pools(_cfg) },
+            _state { _pbft_pools, _cr.sched() },
+            _on_the_go { on_the_go }
         {
             uint64_t end_offset = 0;
             _snapshots.clear();
@@ -273,9 +276,11 @@ namespace daedalus_turbo::validator {
         using snapshot_list = std::set<snapshot>;
 
         incremental &_cr;
+        const configs &_cfg;
         const std::filesystem::path _validate_dir;
         const std::string _state_path;
         const std::string _state_pre_path;
+        const state::pool_set _pbft_pools;
         state _state;
         cardano::state::vrf _vrf_state {};
         alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _subchains_mutex {};
@@ -286,6 +291,16 @@ namespace daedalus_turbo::validator {
         uint64_t _next_last_epoch = 0;
         snapshot_list _snapshots {};
         bool _on_the_go = true;
+
+        static std::set<cardano::pool_hash> _parse_pbft_pools(const configs &cfg)
+        {
+            std::set<cardano::pool_hash> pools {};
+            const config &gen_shelley = cfg.at("genesis-shelley");
+            for (const auto &[id, meta]: gen_shelley.at("genDelegs").as_object()) {
+                pools.emplace(cardano::pool_hash::from_hex(meta.at("delegate").as_string()));
+            }
+            return pools;
+        }
 
         uint64_t _load_state_snapshot(uint64_t end_offset)
         {
@@ -602,7 +617,7 @@ namespace daedalus_turbo::validator {
             const auto &inflow_updates = dynamic_cast<index::stake_delta::indexer &>(*_cr.indexers().at("inflow")).updated_epochs();
             _cr.sched().wait_for_count("epoch-updates", last_epoch - first_epoch + 1, [&] {
                 for (auto epoch = first_epoch; epoch <= last_epoch; ++epoch) {
-                    _cr.sched().submit("epoch-updates", 600 + last_epoch - epoch, [this, epoch, inflow_updates, num_outflow_parts] {
+                    _cr.sched().submit("epoch-updates", 600 + static_cast<int>(last_epoch - epoch), [this, epoch, inflow_updates, num_outflow_parts] {
                         if (inflow_updates.contains(epoch))
                             _process_epoch_updates(epoch, inflow_updates.at(epoch), num_outflow_parts);
                         return epoch;
@@ -824,23 +839,6 @@ namespace daedalus_turbo::validator {
             size_t start_idx, size_t end_idx)
         {
             timer t { fmt::format("validate_leaders for epoch {} block indices from {} to {}", epoch, start_idx, end_idx), logger::level::trace };
-            static const std::set<cardano::pool_hash> pbft_pools {
-                cardano_hash_28 { 0xd9, 0xe5, 0xc7, 0x6a, 0xd5, 0xee, 0x77, 0x89, 0x60, 0x80, 0x40, 0x94, 0xa3, 0x89, 0xf0, 0xb5,
-                                0x46, 0xb5, 0xc2, 0xb1, 0x40, 0xa6, 0x2f, 0x8e, 0xc4, 0x3e, 0xa5, 0x4d },
-                cardano_hash_28 { 0x85, 0x5d, 0x6f, 0xc1, 0xe5, 0x42, 0x74, 0xe3, 0x31, 0xe3, 0x44, 0x78, 0xee, 0xac, 0x8d, 0x06,
-                                0x0b, 0x0b, 0x90, 0xc1, 0xf9, 0xe8, 0xa2, 0xb0, 0x11, 0x67, 0xc0, 0x48 },
-                cardano_hash_28 { 0x7f, 0x72, 0xa1, 0x82, 0x6a, 0xe3, 0xb2, 0x79, 0x78, 0x2a, 0xb2, 0xbc, 0x58, 0x2d, 0x0d, 0x29,
-                                0x58, 0xde, 0x65, 0xbd, 0x86, 0xb2, 0xc4, 0xf8, 0x2d, 0x8b, 0xa9, 0x56 },
-                cardano_hash_28 { 0x69, 0xae, 0x12, 0xf9, 0xe4, 0x5c, 0x0c, 0x91, 0x22, 0x35, 0x6c, 0x8e, 0x62, 0x4b, 0x1f, 0xbb,
-                                0xed, 0x6c, 0x22, 0xa2, 0xe3, 0xb4, 0x35, 0x8c, 0xf0, 0xcb, 0x50, 0x11 },
-                cardano_hash_28 { 0x44, 0x85, 0x70, 0x80, 0x22, 0x83, 0x9a, 0x7b, 0x9b, 0x8b, 0x63, 0x9a, 0x93, 0x9c, 0x85, 0xec,
-                                0x0e, 0xd6, 0x99, 0x9b, 0x5b, 0x6d, 0xc6, 0x51, 0xb0, 0x3c, 0x43, 0xf6 },
-                cardano_hash_28 { 0x65, 0x35, 0xdb, 0x26, 0x34, 0x72, 0x83, 0x99, 0x0a, 0x25, 0x23, 0x13, 0xa7, 0x90, 0x3a, 0x45,
-                                0xe3, 0x52, 0x6e, 0xc2, 0x5d, 0xdb, 0xa3, 0x81, 0xc0, 0x71, 0xb2, 0x5b },
-                cardano_hash_28 { 0x1d, 0x4f, 0x2e, 0x1f, 0xda, 0x43, 0x07, 0x0d, 0x71, 0xbb, 0x22, 0xa5, 0x52, 0x2f, 0x86, 0x94,
-                                0x3c, 0x7c, 0x18, 0xae, 0xb4, 0xfa, 0x47, 0xa3, 0x62, 0xc2, 0x7e, 0x23 }
-            };
-
             for (size_t vi = start_idx; vi < end_idx; ++vi) {
                 const auto &item = vrf_updates_ptr->at(vi);
                 if (item.era < 6) {
@@ -855,8 +853,7 @@ namespace daedalus_turbo::validator {
                     if (!vrf03_verify(item.leader_result, item.vkey, item.leader_proof, vrf_input))
                         throw error("VRF verification failed at slot {} epoch {} era {}", item.slot, item.slot.epoch(), (uint64_t)item.era);
                 }
-                // replace with genesis pools
-                if (!pbft_pools.contains(item.pool_id)) {
+                if (!_pbft_pools.contains(item.pool_id)) {
                     auto pool_it = pool_dist_ptr->find(item.pool_id);
                     if (pool_it == pool_dist_ptr->end())
                         throw error("epoch {} pool-stake distribution misses block-issuing pool id {}!", epoch, item.pool_id);
@@ -919,9 +916,9 @@ namespace daedalus_turbo::validator {
         }
     };
 
-    incremental::incremental(indexer::indexer_map &&indexers, const std::string &data_dir, bool on_the_go, bool strict, scheduler &sched, file_remover &fr)
-        : indexer::incremental { std::move(indexers), data_dir, strict, sched, fr },
-            _impl { std::make_unique<impl>(*this, on_the_go) }
+    incremental::incremental(const std::string &data_dir, const configs &cfg, bool on_the_go, bool strict, scheduler &sched, file_remover &fr)
+        : indexer::incremental { default_indexers(data_dir), data_dir, strict, sched, fr },
+            _impl { std::make_unique<impl>(*this, cfg, on_the_go) }
     {
     }
 

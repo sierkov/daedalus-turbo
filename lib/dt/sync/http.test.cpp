@@ -77,7 +77,7 @@ suite sync_http_suite = [] {
         const std::string data_dir { "./tmp/sync-http-test" };
         "success"_test = [&] {
             std::filesystem::remove_all(data_dir);
-            validator::incremental cr { validator::default_indexers(data_dir), data_dir };
+            validator::incremental cr { data_dir };
             download_queue_mock::response_map responses {};
             responses.emplace("/chain.json", "chain.json");
             responses.emplace("/epoch-0-7C6901C6346781C2BC5CBC49577490E336C2545C320CE4A61605BC71A9C5BED0.json", "epoch-0.json");
@@ -91,7 +91,7 @@ suite sync_http_suite = [] {
         };
         "failure"_test = [&] {
             std::filesystem::remove_all(data_dir);
-            validator::incremental cr { validator::default_indexers(data_dir), data_dir };
+            validator::incremental cr { data_dir };
             download_queue_mock::response_map responses {};
             responses.emplace("/chain.json", "chain.json");
             responses.emplace("/epoch-0-7C6901C6346781C2BC5CBC49577490E336C2545C320CE4A61605BC71A9C5BED0.json", "epoch-0.json");

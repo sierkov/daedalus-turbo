@@ -30,15 +30,18 @@ namespace daedalus_turbo {
         if (_num_workers == 0)
             throw error("the number of worker threads must be greater than zero!");
         logger::info("scheduler started, worker count: {}", _num_workers);
+        _worker_tasks.resize(_num_workers);
+        std::map<std::thread::id, size_t> ids {};
         // One worker is a special case handled by the process method itself
-        if (_num_workers >= 2) {
+        if (_num_workers == 1) {
+            ids.emplace(std::this_thread::get_id(), 0);
+        } else {
             for (size_t i = 0; i < _num_workers; ++i) {
                 _workers.emplace_back([this, i]() { _worker_thread(i); });
-                _worker_tasks.push_back("");
+                ids.emplace(_workers.back().get_id(), i);
             }
-        } else {
-            _worker_tasks.push_back("");
         }
+        _worker_ids = ids;
     }
 
     scheduler::~scheduler()
@@ -53,6 +56,13 @@ namespace daedalus_turbo {
     size_t scheduler::num_workers() const
     {
         return _num_workers;
+    }
+
+    size_t scheduler::num_observers(const std::string &task_group) const
+    {
+        mutex::scoped_lock ob_lk { _observers_mutex };
+        const auto it = _observers.find(task_group);
+        return it != _observers.end() ? it->second.size() : 0;
     }
 
     size_t scheduler::active_workers() const
@@ -90,10 +100,18 @@ namespace daedalus_turbo {
         it->second.emplace_front(observer);
     }
 
+    void scheduler::on_completion(const std::string &task_group, size_t task_count, const std::function<void()> &action)
+    {
+        mutex::scoped_lock lk { _completion_mutex };
+        const auto [it, created] = _completion_actions.try_emplace(task_group, action, task_count);
+        if (!created)
+            throw error("duplicate completion handler for {}", task_group);
+    }
+
     void scheduler::clear_observers(const std::string &task_group)
     {
-        mutex::scoped_lock lk { _retiring_mutex };
-        _retiring_observers.emplace_back(task_group);
+        mutex::scoped_lock ob_lk { _observers_mutex };
+        _observers.erase(task_group);
     }
 
     size_t scheduler::task_count(const std::string &task_group)
@@ -119,69 +137,94 @@ namespace daedalus_turbo {
         return cnt;
     }
 
-    bool scheduler::process_ok(bool report_progress, std::chrono::milliseconds update_interval_ms, std::ostream &report_stream, const std::source_location &loc)
+    bool scheduler::process_ok(bool report_status, const std::source_location &loc)
     {
         timer t { fmt::format("scheduler::process_ok call from {}:{}", loc.file_name(), loc.line()), logger::level::debug };
         bool must_be_false = false;
         if (!_process_running.compare_exchange_strong(must_be_false, true))
             throw error("nested calls to scheduler::process are prohibited!");
-        try {
-            _process(report_progress, report_stream, update_interval_ms);
-            _observers.clear();
-            bool res = _success.load();
+        const auto finalize = [&] {
+            {
+                mutex::scoped_lock observers_lock { _observers_mutex };
+                _observers.clear();
+            }
+            {
+                mutex::scoped_lock completion_lock { _completion_mutex };
+                _completion_actions.clear();
+            }
             _process_running = false;
             _success = true;
+        };
+        try {
+            _process(report_status);
+            const bool res = _success.load();
+            finalize();
             return res;
         } catch (const std::exception &ex) {
-            _observers.clear();
-            _process_running = false;
-            _success = true;
             logger::warn("scheduler::process failed: {}", ex.what());
+            finalize();
             throw;
         }
     }
 
-    void scheduler::process(bool report_progress, std::chrono::milliseconds update_interval_ms, std::ostream &report_stream, const std::source_location &loc)
+    void scheduler::process(bool report_status, const std::source_location &loc)
     {
-        if (!process_ok(report_progress, update_interval_ms, report_stream, loc))
+        if (!process_ok(report_status, loc))
             throw error("some scheduled tasks have failed, please consult logs for more details");
     }
 
-    bool scheduler::process_once(bool process_tasks, std::chrono::milliseconds wait_interval_ms)
+    void scheduler::process_once(const bool report_status)
     {
         // to ensure that result observers are always called from one thread
         // process once will process results only if there is no _process running
-        return _process_once(wait_interval_ms, process_tasks, !_process_running);
+        _process_once(report_status, false, !_process_running);
     }
 
-    void scheduler::wait_for_count(const std::string &task_group, size_t task_count,
-        const std::function<void ()> &submit_tasks, const std::function<void (std::any &&res)> &process_res)
-    {
-        static constexpr std::chrono::milliseconds report_period { 10000 };
-        const auto wait_start = std::chrono::system_clock::now();
-        auto next_warn = wait_start + report_period;
+    void scheduler::wait_for_count(const std::string &task_group, const size_t task_count,
+        const std::function<void()> &submit_tasks, const std::function<void(std::any &&res)> &process_res) {
+        bool exp_false = false;
+        if (!_wait_for_count_running.compare_exchange_strong(exp_false, true))
+            throw error("concurrent wait_for_count calls are not allowed!");
+        if (_num_workers < 4)
+            throw error("wait_for_count relies on a high worker count but got {} worker threads!", _num_workers);
         std::atomic_size_t errors = 0;
-        std::atomic_size_t done_parts = 0;
-        on_result(task_group, [&done_parts, &errors, process_res](auto &&res) {
-            ++done_parts;
-            if (res.type() == typeid(scheduled_task_error)) {
-                ++errors;
-                return;
+        try {
+            static constexpr std::chrono::milliseconds report_period{10000};
+            const auto wait_start = std::chrono::system_clock::now();
+            auto next_warn = wait_start + report_period;
+            std::atomic_size_t done_parts = 0;
+            on_result(task_group, [&done_parts, &errors, process_res](auto &&res) {
+                ++done_parts;
+                if (res.type() == typeid(scheduled_task_error)) {
+                    ++errors;
+                    return;
+                }
+                process_res(std::move(res));
+            }, true);
+            submit_tasks();
+            const auto process_results = !_process_running.load();
+            timer t{fmt::format("wait_for_count task: {} count: {} process_results: {}", task_group,
+                                task_count, process_results)};
+            while (done_parts < task_count) {
+                const auto now = std::chrono::system_clock::now();
+                if (now >= next_warn) {
+                    next_warn = now + report_period;
+                    logger::warn(
+                            "wait_for_count takes longer than expected task: {} count: {} done: {} errors: {} process_results: {} waiting for: {} secs",
+                            task_group, task_count, done_parts.load(), errors.load(), process_results,
+                            std::chrono::duration_cast<std::chrono::seconds>(now - wait_start).count());
+                }
+                _process_once(true, false, process_results);
             }
-            process_res(std::move(res));
-        }, true);
-        submit_tasks();
-        const auto process_tasks = _num_workers <= 16;
-        const auto process_results = !_process_running.load();
-        timer t { fmt::format("wait_for_count task: {} count: {} process_tasks: {} process_results: {}", task_group, task_count, process_tasks, process_results) };
-        while (done_parts < task_count) {
-            const auto now = std::chrono::system_clock::now();
-            if (now >= next_warn) {
-                next_warn = now + report_period;
-                logger::warn("wait_for_count takes longer than expected task: {} count: {} done: {} errors: {} process_tasks: {} process_results: {} waiting for: {} secs",
-                    task_group, task_count, done_parts.load(), errors.load(), process_tasks, process_results, std::chrono::duration_cast<std::chrono::seconds>(now - wait_start).count());
-            }
-            _process_once(default_wait_interval, process_tasks, process_results);
+            _wait_for_count_running = false;
+        } catch (const std::exception &ex) {
+            logger::warn("wait_for_count failed with std::exception: {}", ex.what());
+            _wait_for_count_running = false;
+            throw;
+        } catch (...) {
+            logger::warn("wait_for_count failed with an unknown exception");
+            _wait_for_count_running = false;
+            throw;
         }
         if (errors > 0)
             throw scheduler_error("wait_for_count {} - there were failed tasks; cannot continue", task_group);
@@ -218,7 +261,19 @@ namespace daedalus_turbo {
                                 observer(std::move(res.result));
                         }
                     }
+
+                    {
+                        mutex::scoped_lock completion_lk { _completion_mutex };
+                        auto it = _completion_actions.find(res.task_group);
+                        if (it != _completion_actions.end()) {
+                            if (++it->second.done == it->second.todo) {
+                                it->second.action();
+                                _completion_actions.erase(it);
+                            }
+                        }
+                    }
                     results_lock.lock();
+
                 }
                 _results_processed = false;
             } catch (const std::exception &ex) {
@@ -241,118 +296,128 @@ namespace daedalus_turbo {
         _results_cv.notify_one();
     }
 
-    bool scheduler::_worker_try_execute(size_t worker_idx, const std::chrono::milliseconds &wait_interval)
+    bool scheduler::_worker_try_execute(size_t worker_idx, const std::optional<std::chrono::milliseconds> wait_interval_ms)
     {
         mutex::unique_lock lock { _tasks_mutex };
-        _tasks_cv.wait_for(lock, wait_interval, [&] {
-            return _destroy || (!_tasks.empty());
+        _tasks_cv.wait_for(lock, *wait_interval_ms, [&] {
+            return !_tasks.empty() || _destroy;
         });
         if (_destroy)
             return false;
         if (!_tasks.empty()) {
-            ++_num_active;
+            auto &worker_task = _worker_tasks[worker_idx];
+            const auto prev_task = worker_task;
+            if (!prev_task)
+                ++_num_active;
             std::any task_res {};
-            std::string task_name {};
-            int task_prio = 0;
-            {
-                auto task = _tasks.top();
-                _tasks.pop();
-                _worker_tasks[worker_idx] = task.task_group;
-                lock.unlock();
-                task_name = task.task_group;
-                task_prio = task.priority;
-                try {
-                    task_res = task.task();
-                } catch (const error &err) {
-                    _success = false;
-                    logger::warn("worker-{} task {} dt::error: {}", worker_idx, task_name, err);
-                    task_res = std::make_any<scheduled_task_error>("task: '{}' error: '{}' of type: '{}'!", task_name, err, typeid(err).name());
-                } catch (const std::exception &ex) {
-                    _success = false;
-                    logger::warn("worker-{} task {} std::exception: {}", worker_idx, task_name, ex.what());
-                    task_res = std::make_any<scheduled_task_error>("task: '{}' error: '{}' of type: '{}'!", task_name, ex.what(), typeid(ex).name());
-                } catch (...) {
-                    _success = false;
-                    logger::warn("worker-{} task {} unknown exception", worker_idx, task_name);
-                    task_res = std::make_any<scheduled_task_error>("task: '{}' unknown exception", task_name);
-                }
-                lock.lock();
-                _worker_tasks[worker_idx] = "";
-                lock.unlock();
+            const auto task = _tasks.top();
+            _tasks.pop();
+            if (prev_task)
+                worker_task = fmt::format("{}/{}", *prev_task, task.task_group);
+            else
+                worker_task = task.task_group;
+            lock.unlock();
+            try {
+                task_res = task.task();
+            } catch (const error &err) {
+                _success = false;
+                logger::warn("worker-{} task {} {}", worker_idx, task.task_group, err);
+                task_res = std::make_any<scheduled_task_error>("task: '{}' error: '{}' of type: '{}'!", task.task_group, err, typeid(err).name());
+            } catch (const std::exception &ex) {
+                _success = false;
+                logger::warn("worker-{} task {} std::exception: {}", worker_idx, task.task_group, ex.what());
+                task_res = std::make_any<scheduled_task_error>("task: '{}' error: '{}' of type: '{}'!", task.task_group, ex.what(), typeid(ex).name());
+            } catch (...) {
+                _success = false;
+                logger::warn("worker-{} task {} unknown exception", worker_idx, task.task_group);
+                task_res = std::make_any<scheduled_task_error>("task: '{}' unknown exception", task.task_group);
             }
-            _add_result(task_prio, task_name, std::move(task_res));
-            --_num_active;
+            lock.lock();
+            worker_task = prev_task;
+            lock.unlock();
+            _add_result(task.priority, task.task_group, std::move(task_res));
+            if (!prev_task)
+                --_num_active;
         }
         return true;
     }
 
     void scheduler::_worker_thread(size_t worker_idx)
     {
-        const std::chrono::milliseconds wait_interval { 500 };
-        while (_worker_try_execute(worker_idx, wait_interval)) {
+        static auto wait_ms = default_wait_interval;
+        while (_worker_try_execute(worker_idx, wait_ms)) {
         }
     }
 
-    bool scheduler::_process_once(const std::chrono::milliseconds &wait_interval_ms, const bool process_tasks, const bool process_results)
+    std::optional<size_t> scheduler::_get_worker_id() const
     {
-        {
-            mutex::scoped_lock lk { _retiring_mutex };
-            if (!_retiring_observers.empty()) {
+        const auto w_it = _worker_ids.find(std::this_thread::get_id());
+        if (w_it != _worker_ids.end())
+            return w_it->second;
+        return {};
+    }
+
+    void scheduler::_report_status()
+    {
+        const auto now = std::chrono::system_clock::now();
+        auto prev_next_time = _report_next_time.load();
+        if (now >= prev_next_time) {
+            const auto next_next_time = now + default_update_interval;
+            if (_report_next_time.compare_exchange_strong(prev_next_time, next_next_time)) {
+                size_t num_tasks = 0;
+                std::map<std::string, size_t> active_tasks {};
                 {
-                    mutex::scoped_lock ob_lk { _observers_mutex };
-                    for (const auto &task_group: _retiring_observers)
-                        _observers.erase(task_group);
+                    mutex::scoped_lock tasks_lk { _tasks_mutex };
+                    for (const auto &[task_name, task_cnt]: _tasks_cnt)
+                        num_tasks += task_cnt;
+                    for (const auto &task_name: _worker_tasks) {
+                        if (task_name)
+                            ++active_tasks[*task_name];
+                    }
                 }
-                _retiring_observers.clear();
+                logger::debug("scheduler tasks total: {} active: {}", num_tasks, active_tasks);
+                progress::get().inform();
             }
         }
-        // In the single-worker mode and when called by wait_for_count in some configs, the tasks are executed in the loop
-        if (process_tasks && !_tasks.empty())
-            _worker_try_execute(0);
-        bool have_work = false;
-        if (process_results) {
-            mutex::unique_lock results_lock { _results_mutex };
-            have_work = _results_cv.wait_for(results_lock, wait_interval_ms, [&]{ return !_results.empty(); });
-            if (have_work)
-                _process_results(results_lock);
-        } else if (!process_tasks) {
-            std::this_thread::sleep_for(wait_interval_ms);
-        }
-        return have_work;
     }
 
-    void scheduler::_process(bool report_progress, std::ostream &report_stream, std::chrono::milliseconds update_interval_ms)
+    void scheduler::_process_once(const bool report_status, const bool process_tasks, const bool process_results)
+    {
+        // In the single-worker mode, the tasks are executed in the loop
+        if (process_tasks) {
+            const auto w_id = _get_worker_id();
+            if (w_id)
+                _worker_try_execute(*w_id, default_wait_interval);
+            else
+                logger::warn("Thread {} outside of the worker pool attempted to execute tasks", std::this_thread::get_id());
+        }
+        if (process_results) {
+            mutex::unique_lock results_lock { _results_mutex };
+            if (_results_cv.wait_for(results_lock, default_wait_interval, [&]{ return !_results.empty(); }))
+                _process_results(results_lock);
+        } else if (!process_tasks) {
+            std::this_thread::sleep_for(default_wait_interval);
+        }
+        if (report_status)
+            _report_status();
+    }
+
+    void scheduler::_process(const bool report_status)
     {
         auto &progress = progress::get();
-        auto next_report = std::chrono::system_clock::now() + update_interval_ms;
-        std::string active_tasks {};
         for (;;) {
-            size_t num_tasks = 0;
-            size_t num_results = 0;
-            const bool report_time = report_progress && std::chrono::system_clock::now() >= next_report;
             {
                 mutex::scoped_lock results_lk { _results_mutex };
                 mutex::scoped_lock tasks_lk { _tasks_mutex };
-
-                for (const auto &[task_name, task_cnt]: _tasks_cnt) {
+                size_t num_tasks = 0;
+                for (const auto &[task_name, task_cnt]: _tasks_cnt)
                     num_tasks += task_cnt;
-                    if (report_time)
-                        active_tasks += fmt::format("{}: {} ", task_name, task_cnt);
-                }
-                num_results = _results.size();
-                if (num_tasks == 0 && num_results == 0 && !_results_processed.load())
+                if (num_tasks == 0 && _results.empty() && !_results_processed.load())
                     break;
             }
-            if (report_time) {
-                logger::trace("scheduler active tasks: {}", active_tasks);
-                active_tasks.clear();
-                logger::debug("scheduler total tasks: {} results: {} open files: {} peak open files: {} peak RAM use: {} MB",
-                    num_tasks, num_results, file::stream::open_files(), file::stream::max_open_files(), memory::max_usage_mb());
-                progress.inform(report_stream);
-                next_report = std::chrono::system_clock::now() + update_interval_ms;
-            }
-            _process_once(update_interval_ms, _num_workers == 1, true);
+            _process_once(report_status, _num_workers == 1, true);
         }
-        progress.inform(report_stream);
+        if (report_status)
+            progress.inform();
     }
 }

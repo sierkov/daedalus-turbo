@@ -165,7 +165,8 @@ namespace daedalus_turbo::index {
         {
         }
 
-        virtual void merge(const std::string &/*task_group*/, size_t /*task_prio*/, const std::vector<std::string> &/*chunks*/, const std::string &/*final_path*/)
+        virtual void merge(const std::string &/*task_group*/, size_t /*task_prio*/, const std::vector<std::string> &/*chunks*/,
+                const std::string &/*final_path*/, const std::function<void()> &/*on_complete*/)
         {
             throw error("merge not implemented");
         }
@@ -239,9 +240,10 @@ namespace daedalus_turbo::index {
             return index::reader<T> { reader_path(slice_id) };
         }
 
-        void merge(const std::string &task_group, size_t task_prio, const std::vector<std::string> &chunks, const std::string &final_path) override
+        void merge(const std::string &task_group, size_t task_prio, const std::vector<std::string> &chunks, const std::string &final_path,
+                   const std::function<void()> &on_complete) override
         {
-            merge_one_step<T>(_sched, task_group, task_prio, chunks, final_path);
+            merge_one_step<T>(_sched, task_group, task_prio, chunks, final_path, on_complete);
         }
 
         size_t merge_task_count(const std::vector<std::string> &chunks) const override

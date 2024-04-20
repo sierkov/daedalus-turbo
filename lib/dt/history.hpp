@@ -254,18 +254,18 @@ namespace daedalus_turbo {
 
         void _find_used_txos_small(progress &p, scheduler &sched, std::vector<uint64_t> &txo_tasks, const index::reader_multi_mt<index::txo_use::item> &txo_use_idx)
         {
-            size_t num_parts = sched.num_workers();
+            const size_t num_parts = sched.num_workers();
             std::atomic_size_t num_ready { 0 };
             sched.on_result("search-txo-use", [&](const auto &res) {
                 if (res.type() == typeid(scheduled_task_error))
                     return;
-                auto task_n_reads = std::any_cast<size_t>(res);
+                const auto task_n_reads = std::any_cast<size_t>(res);
                 num_disk_reads += task_n_reads;
                 num_idx_reads += task_n_reads;
             });
             for (size_t i = 0; i < num_parts; ++i) {
-                size_t start_idx = i * txo_tasks.size() / num_parts;
-                size_t end_idx = (i + 1) * txo_tasks.size() / num_parts;
+                const size_t start_idx = i * txo_tasks.size() / num_parts;
+                const size_t end_idx = (i + 1) * txo_tasks.size() / num_parts;
                 sched.submit("search-txo-use", 100, [this, start_idx, end_idx, &txo_tasks, &txo_use_idx, &p, &num_ready]() {
                     auto txo_use_data = txo_use_idx.init_thread();
                     index::txo_use::item search_item {};
@@ -274,7 +274,7 @@ namespace daedalus_turbo {
                         search_item.hash = txo_item.hash;
                         for (auto &out: txo_item.outputs) {
                             search_item.out_idx = out.out_idx;
-                            auto [ use_count, use_item ] = txo_use_idx.find(search_item, txo_use_data);
+                            const auto [ use_count, use_item ] = txo_use_idx.find(search_item, txo_use_data);
                             if (use_count > 0) {
                                 if (use_count > 1)
                                     throw error("internal error: multiple txo-use entries for the same tx offset {}!", txo_tasks[j]);
@@ -283,14 +283,13 @@ namespace daedalus_turbo {
                             }
                         }
                         if (num_ready.fetch_add(1) % 1000 == 0) {
-                            p.update("find spent txos", ++num_ready, transactions.size());
-                            p.inform();
+                            p.update("find spent txos", num_ready, transactions.size());
                         }
                     }
                     return txo_use_data.num_reads;
                 });
             }
-            sched.process(false);
+            sched.process(true);
         }
 
         void _find_used_txos_large(progress &p, scheduler &sched, size_t num_txos, const index::reader_multi_mt<index::txo_use::item> &txo_use_idx)
@@ -303,7 +302,7 @@ namespace daedalus_turbo {
                 num_disk_reads += task_n_reads;
                 num_idx_reads += task_n_reads;
             });
-            size_t num_parts = txo_use_idx.num_parts();
+            const size_t num_parts = txo_use_idx.num_parts();
             for (size_t pi = 0; pi < num_parts; ++pi) {
                 sched.submit("search-txo-use", 100, [this, pi, num_txos, &txo_use_idx, &p, &num_ready]() {
                     auto txo_use_data = txo_use_idx.init_thread(pi);
@@ -319,15 +318,14 @@ namespace daedalus_turbo {
                             out.use_offset = item.offset;
                             out.use_size = item.size;
                             if (num_ready.fetch_add(1) % 1000 == 0) {
-                                p.update("find spent txos", ++num_ready, num_txos);
-                                p.inform();
+                                p.update("find spent txos", num_ready, num_txos);
                             }
                         }
                     }
                     return txo_use_data.num_reads;
                 });
             }
-            sched.process(false);
+            sched.process(true);
         }
     };
 
@@ -430,17 +428,17 @@ namespace daedalus_turbo {
     };
 
     template<typename T>
-    inline void history<T>::fill_raw_tx_data(scheduler &sched, chunk_registry &cr, const reconstructor &r, const bool spending_only)
+    void history<T>::fill_raw_tx_data(scheduler &sched, chunk_registry &cr, const reconstructor &r, const bool spending_only)
     {
         timer t1 { "fill_raw_tx_data - full", logger::level::debug };
         const std::string progress_id { spending_only ? "load spent txo data" : "fetch incoming txos" };
         // group txos by their chunk based on their offsets
         parse_tasks chunk_tasks {};
         for (auto &tx_it: transactions) {
-            if (spending_only && tx_it.second.outputs.size() > 0)
+            if (spending_only && !tx_it.second.outputs.empty())
                 continue;
             const auto &chunk = cr.find(tx_it.first);
-            auto [task_it, created] = chunk_tasks.emplace(chunk.offset, parse_task {});
+            const auto [task_it, created] = chunk_tasks.emplace(chunk.offset, parse_task {});
             if (created) task_it->second.chunk = chunk;
             task_it->second.tasks.emplace_back(&tx_it);
         }
@@ -449,25 +447,25 @@ namespace daedalus_turbo {
         // extract transaction data
         auto &p = progress::get();
         if (!chunk_tasks.empty()) {
-            size_t num_ready = 0;
+            std::atomic_size_t num_ready = 0;
             sched.on_result("parse-chunk", [&](const auto &) {
                 p.update(progress_id, ++num_ready, chunk_tasks.size());
-                p.inform();
             });
             for (auto &[chunk_offset, chunk_info]: chunk_tasks) {
-                sched.submit("parse-chunk", 100, [&]() {
-                    size_t updates = 0;
-                    auto data = file::read(cr.full_path(chunk_info.chunk.rel_path()));
-                    buffer buf { data };
+                sched.submit_void("parse-chunk", 100, [&]() {
+                    const auto data = file::read(cr.full_path(chunk_info.chunk.rel_path()));
+                    const buffer buf { data };
                     cbor_value tx_raw {};
                     for (auto tx_ptr: chunk_info.tasks) {
                         auto &[tx_offset, tx_item] = *tx_ptr;
-                        if (tx_offset < chunk_offset) throw error("task offset: {} < chunk_offset: {}!", tx_offset, chunk_offset);
-                        size_t tx_size = (size_t)tx_item.size;
-                        size_t tx_chunk_offset = tx_offset - chunk_offset;
+                        if (tx_offset < chunk_offset)
+                            throw error("task offset: {} < chunk_offset: {}!", tx_offset, chunk_offset);
+                        auto tx_size = static_cast<size_t>(tx_item.size);
+                        const size_t tx_chunk_offset = tx_offset - chunk_offset;
                         // tx_size is imprecise so bound it down to the chunk size
-                        if (tx_size > buf.size() - tx_chunk_offset) tx_size = buf.size() - tx_chunk_offset;
-                        auto tx_buf = buf.subbuf(tx_chunk_offset, tx_size);
+                        if (tx_size > buf.size() - tx_chunk_offset)
+                            tx_size = buf.size() - tx_chunk_offset;
+                        const auto tx_buf = buf.subbuf(tx_chunk_offset, tx_size);
                         cbor_parser tx_parser { tx_buf };
                         try {
                             tx_parser.read(tx_raw);
@@ -479,8 +477,8 @@ namespace daedalus_turbo {
                             if (tx_item.outputs.size() > 0) {
                                 tx->foreach_output([&](const auto &out) {
                                     auto tx_out_it = std::lower_bound(tx_item.outputs.begin(), tx_item.outputs.end(), out.idx, [&](const auto &el, const auto &v) { return el.out_idx < v; });
-                                    if (tx_out_it == tx_item.outputs.end() || tx_out_it->out_idx != out.idx) return;
-                                    updates++;
+                                    if (tx_out_it == tx_item.outputs.end() || tx_out_it->out_idx != out.idx)
+                                        return;
                                     tx_out_it->amount = out.amount;
                                     if (out.assets != nullptr) {
                                         for (const auto &[policy_id, policy_assets]: *out.assets) {
@@ -491,16 +489,15 @@ namespace daedalus_turbo {
                                     }
                                 });
                             }
-                        } catch (std::exception &ex) {
+                        } catch (const std::exception &ex) {
                             throw error("cannot parse tx at offset {} size {}: {}", tx_offset, (size_t)tx_item.size, ex.what());
                         }
                     }
-                    return updates;
                 });
             }
-            sched.process(false);
+            sched.process(true);
             num_disk_reads += chunk_tasks.size();
-        }            
+        }
         p.done(progress_id);
         p.inform();
     }

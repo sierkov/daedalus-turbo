@@ -5,6 +5,7 @@
 #ifndef DAEDALUS_TURBO_FORMAT_HPP
 #define DAEDALUS_TURBO_FORMAT_HPP
 
+#include <map>
 #include <optional>
 #include <set>
 #include <span>
@@ -67,6 +68,19 @@ namespace fmt {
             for (auto it = v.begin(); it != v.end(); it++) {
                 const std::string sep { std::next(it) == v.end() ? "" : ", " };
                 out_it = fmt::format_to(out_it, "{}{}", *it, sep);
+            }
+            return out_it;
+        }
+    };
+
+    template<typename K, typename V, typename A>
+    struct formatter<std::map<K, V, std::less<K>, A>>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            auto out_it = ctx.out();
+            for (auto it = v.begin(); it != v.end(); it++) {
+                const std::string sep { std::next(it) == v.end() ? "" : ", " };
+                out_it = fmt::format_to(out_it, "({}={}){}", it->first, it->second, sep);
             }
             return out_it;
         }

@@ -29,19 +29,31 @@ namespace {
 suite config_suite = [] {
     "config"_test = [] {
         "required"_test = [] {
-            const auto &cfg = configs::get();
+            const auto &cfg = configs_dir::get();
             expect(cfg.at("turbo").at("vkey").as_string() == std::string_view { "F961D8754397FA2C39D69C97D598566A5E03C34E40FF71DB792E103380E7C105" });
             expect(cfg.at("cardano").at("networkMagic").as_int64() == 764824073_ll);
         };
         "non-standard-location"_test = [] {
             expect(std::getenv("DT_ETC") == nullptr);
-            expect(configs::default_path() == "./etc");
+            expect(configs_dir::default_path() == "./etc");
             my_setenv("DT_ETC", "./etc-missing");
             expect(std::getenv("DT_ETC") != nullptr);
-            expect(configs::default_path() == "./etc-missing") << configs::default_path();
-            expect(throws([] { configs cfg { configs::default_path() }; }));
+            expect(configs_dir::default_path() == "./etc-missing") << configs_dir::default_path();
+            expect(throws([] { configs_dir cfg { configs_dir::default_path() }; }));
             my_setenv("DT_ETC", nullptr);
             expect(std::getenv("DT_ETC") == nullptr);
+        };
+        "mock"_test = [] {
+            configs_mock::map_type cfg_data {};
+            cfg_data.emplace("turbo", json::object {
+                { "vkey", std::string_view { "F961D8754397FA2C39D69C97D598566A5E03C34E40FF71DB792E103380E7C105" } },
+            });
+            cfg_data.emplace("cardano", json::object {
+                { "networkMagic", 764824073 },
+            });
+            configs_mock cfg { std::move(cfg_data) };
+            expect(cfg.at("turbo").at("vkey").as_string() == std::string_view { "F961D8754397FA2C39D69C97D598566A5E03C34E40FF71DB792E103380E7C105" });
+            expect(cfg.at("cardano").at("networkMagic").as_int64() == 764824073_ll);
         };
     };
 };

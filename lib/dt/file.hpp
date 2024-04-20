@@ -36,6 +36,10 @@ namespace daedalus_turbo::file {
             return _path;
         }
 
+        operator std::filesystem::path() const
+        {
+            return std::filesystem::path { _path };
+        }
     private:
         std::string _path;
     };
@@ -60,6 +64,11 @@ namespace daedalus_turbo::file {
         operator const std::string &() const
         {
             return _path;
+        }
+
+        operator std::filesystem::path() const
+        {
+            return std::filesystem::path { _path };
         }
     private:
         std::string _path;
@@ -132,7 +141,7 @@ namespace daedalus_turbo::file {
 
         void read(void *data, size_t num_bytes)
         {
-            if (std::fread(data, 1, num_bytes, _f) != num_bytes)
+            if (num_bytes > 0 && std::fread(data, 1, num_bytes, _f) != num_bytes)
                 throw error_sys("failed to read {} bytes from {}", num_bytes, _path);
         }
 
@@ -204,7 +213,7 @@ namespace daedalus_turbo::file {
 
         void write(const void *data, size_t num_bytes)
         {
-            if (std::fwrite(data, 1, num_bytes, _f) != num_bytes)
+            if (num_bytes > 0 && std::fwrite(data, 1, num_bytes, _f) != num_bytes)
                 throw error_sys("failed to write {} bytes to {}", num_bytes, _path);
         }
 
@@ -265,6 +274,12 @@ namespace daedalus_turbo::file {
         os.close();
         std::filesystem::rename(tmp_path, path);
         logger::trace("written {} bytes to {}", buffer.size(), path);
+    }
+
+    inline void write_zstd(const std::string &path, const buffer &buffer)
+    {
+        const auto compressed = zstd::compress(buffer);
+        write(path, compressed);
     }
 
     template<typename T>

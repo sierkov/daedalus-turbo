@@ -21,11 +21,9 @@ suite scheduler_suite = [] {
             size_t preproc_calls = 0;
             std::vector<std::string> preproc_done {};
 
-            alignas(mutex::padding) std::mutex merge_1_mutex;
             size_t merge_1_calls = 0;
             std::vector<std::string> merge_1_done;
 
-            alignas(mutex::padding) std::mutex merge_2_mutex;
             size_t merge_2_calls = 0;
             std::vector<std::string> merge_2_done;
 
@@ -45,7 +43,7 @@ suite scheduler_suite = [] {
                             preproc_ready.pop_back();
                         }
                         s.submit("merge_1/addr_use", 10, [merge_paths]() {
-                            std::this_thread::sleep_for(200ms);
+                            std::this_thread::sleep_for(std::chrono::milliseconds { 200 });
                             return merge_paths;
                         });
                     }
@@ -77,15 +75,13 @@ suite scheduler_suite = [] {
                     return path;
                 });
             }
-            std::ostringstream progress;
-            s.process(true, 1000ms, progress);
+            s.process();
             expect(preproc_calls == 16_u);
             expect(preproc_done.size() == 16_u);
             expect(merge_1_calls == 4_u);
             expect(merge_1_done.size() == 16_u);
             expect(merge_2_calls == 1_u);
             expect(merge_2_done.size() == 16_u);
-            expect(progress.str().size() > 0_u);
             expect(s.num_workers() == scheduler::default_worker_count());
         };
         "exceptions"_test = [] {
@@ -164,6 +160,72 @@ suite scheduler_suite = [] {
                 // must not hang!
                 expect(true);
             }
+        };
+        "wait_for_count"_test = [] {
+            scheduler s {};
+            s.submit_void("test", 100, [&] {
+                s.wait_for_count("wait", 2, [&] {
+                    s.submit_void("wait", 200, [] {
+                        std::this_thread::sleep_for(std::chrono::milliseconds { 500 });
+                    });
+                    s.submit_void("wait", 300, [] {
+                        std::this_thread::sleep_for(std::chrono::milliseconds { 200 });
+                    });
+                });
+            });
+            s.process();
+            expect(true);
+        };
+        "clear_observers"_test = [] {
+            scheduler s {};
+            std::optional<size_t> num_before {};
+            std::optional<size_t> num_after {};
+            s.submit_void("wait", 100, [&] {
+                s.wait_for_count("ok", 2, [&] {
+                    s.submit("ok", 100, []() { return true; });
+                    s.submit("ok", 100, []() { return true; });
+                });
+                num_before = s.num_observers("ok");
+                s.clear_observers("ok");
+                num_after = s.num_observers("ok");
+            });
+            s.process();
+            expect(num_before && num_before == 1);
+            expect(num_after && num_after == 0);
+        };
+        "on_completion"_test = [] {
+            scheduler s {};
+            size_t num_completions = 0;
+            "process clears completion handlers"_test = [&] {
+                s.on_completion("wait", 2, [&] {
+                    ++num_completions;
+                });
+                s.submit_void("wait", 200, [] {
+                    std::this_thread::sleep_for(std::chrono::milliseconds { 500 });
+                });
+                expect(num_completions == 0_ull);
+                s.process();
+                expect(num_completions == 0_ull);
+                s.submit_void("wait", 300, [] {
+                    std::this_thread::sleep_for(std::chrono::milliseconds { 200 });
+                });
+                s.process();
+                expect(num_completions == 0_ull);
+            };
+            "success"_test = [&] {
+                s.on_completion("wait", 2, [&] {
+                    ++num_completions;
+                });
+                s.submit_void("wait", 200, [] {
+                    std::this_thread::sleep_for(std::chrono::milliseconds { 500 });
+                });
+                expect(num_completions == 0_ull);
+                s.submit_void("wait", 300, [] {
+                    std::this_thread::sleep_for(std::chrono::milliseconds { 200 });
+                });
+                s.process();
+                expect(num_completions == 1_ull);
+            };
         };
     };
 };

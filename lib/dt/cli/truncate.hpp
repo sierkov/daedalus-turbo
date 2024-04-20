@@ -22,7 +22,7 @@ namespace daedalus_turbo::cli::truncate {
             const auto &data_dir = args.at(0);
             requirements::check(data_dir);
             const uint64_t epoch = std::stoull(args.at(1));
-            validator::incremental idxr { validator::default_indexers(data_dir), data_dir };
+            validator::incremental idxr { data_dir };
             uint64_t min_offset = 0;
             for (const auto &[last_byte_offset, chunk]: idxr.chunks()) {
                 if (chunk.last_slot.epoch() <= epoch && min_offset < last_byte_offset + 1)

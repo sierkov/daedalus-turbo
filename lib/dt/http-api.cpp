@@ -121,6 +121,7 @@ namespace daedalus_turbo::http_api {
         std::optional<std::string> _sync_error {};
         std::optional<chunk_registry::chunk_info> _sync_last_chunk {};
         std::atomic<sync_status> _sync_status { sync_status::syncing };
+        alignas(mutex::padding) mutex::unique_lock::mutex_type _requirements_mutex {};
         requirements::check_status _requirements_status {};
         validator::tail_relative_stake_map _tail_relative_stake {};
         json::array _j_tail_relative_stake {};
@@ -132,7 +133,7 @@ namespace daedalus_turbo::http_api {
         alignas(mutex::padding) mutex::unique_lock::mutex_type _results_mutex {};
         std::map<std::string, std::optional<json::value>> _results {};
 
-        std::pair<std::string_view, std::vector<std::string_view>> _parse_target(const std::string_view &target)
+        static std::pair<std::string_view, std::vector<std::string_view>> _parse_target(const std::string_view &target)
         {
             std::optional<std::string_view> req_id {};
             std::vector<std::string_view> params {};
@@ -143,7 +144,7 @@ namespace daedalus_turbo::http_api {
                 size_t end = target.find('/', start);
                 if (end == target.npos)
                     end = target.size();
-                std::string_view part = target.substr(start, end - start);
+                const std::string_view part = target.substr(start, end - start);
                 if (!part.empty()) {
                     if (!req_id)
                         req_id.emplace(part);
@@ -157,7 +158,7 @@ namespace daedalus_turbo::http_api {
             return std::make_pair(std::move(*req_id), std::move(params));
         }
 
-        json::value _error_response(const std::string &msg)
+        static json::value _error_response(const std::string &msg)
         {
             logger::error("error response: {}", msg);
             return json::value {
@@ -175,36 +176,36 @@ namespace daedalus_turbo::http_api {
                 if (req_id == "tx" && params.size() == 1 && params[0].size() == 2 * 32) {
                     resp = _api_tx_info(uint8_vector::from_hex(params[0]));
                 } else if (req_id == "stake" && params.size() == 1) {
-                    auto bytes = uint8_vector::from_hex(params[0]);
-                    cardano::address addr { bytes };
+                    const auto bytes = uint8_vector::from_hex(params[0]);
+                    const cardano::address addr { bytes };
                     if (!addr.has_stake_id())
                         throw error("provided address does not have a stake-key component: {}", bytes);
                     resp = _api_stake_id_info(addr.stake_id());
                 } else if (req_id == "stake-assets" && params.size() == 3) {
-                    auto bytes = uint8_vector::from_hex(params.at(0));
-                    cardano::address addr { bytes };
+                    const auto bytes = uint8_vector::from_hex(params.at(0));
+                    const cardano::address addr { bytes };
                     if (!addr.has_stake_id())
                         throw error("provided address does not have a stake-key component: {}", bytes);
-                    auto offset = std::stoull(static_cast<std::string>(params.at(1)));
-                    auto count = std::stoull(static_cast<std::string>(params.at(2)));
+                    const auto offset = std::stoull(static_cast<std::string>(params.at(1)));
+                    const auto count = std::stoull(static_cast<std::string>(params.at(2)));
                     resp = _api_stake_assets(addr.stake_id(), offset, count);
                 } else if (req_id == "stake-txs" && params.size() == 3) {
-                    auto bytes = uint8_vector::from_hex(params.at(0));
-                    cardano::address addr { bytes };
+                    const auto bytes = uint8_vector::from_hex(params.at(0));
+                    const cardano::address addr { bytes };
                     if (!addr.has_stake_id())
                         throw error("provided address does not have a stake-key component: {}", bytes);
-                    auto offset = std::stoull(static_cast<std::string>(params.at(1)));
-                    auto count = std::stoull(static_cast<std::string>(params.at(2)));
+                    const auto offset = std::stoull(static_cast<std::string>(params.at(1)));
+                    const auto count = std::stoull(static_cast<std::string>(params.at(2)));
                     resp = _api_stake_txs(addr.stake_id(), offset, count);
                 } else if (req_id == "pay" && params.size() == 1) {
-                    auto bytes = uint8_vector::from_hex(params[0]);
-                    cardano::address addr { bytes };
+                    const auto bytes = uint8_vector::from_hex(params[0]);
+                    const cardano::address addr { bytes };
                     if (!addr.has_pay_id())
                         throw error("provided address does not have a payment-key component: {}", bytes);
                     resp = _api_pay_id_info(addr.pay_id());
                 } else if (req_id == "pay-assets" && params.size() == 3) {
                     auto bytes = uint8_vector::from_hex(params.at(0));
-                    cardano::address addr { bytes };
+                    const cardano::address addr { bytes };
                     if (!addr.has_pay_id())
                         throw error("provided address does not have a payment-key component: {}", bytes);
                     auto offset = std::stoull(static_cast<std::string>(params.at(1)));
@@ -212,11 +213,11 @@ namespace daedalus_turbo::http_api {
                     resp = _api_pay_assets(addr.pay_id(), offset, count);
                 } else if (req_id == "pay-txs" && params.size() == 3) {
                     auto bytes = uint8_vector::from_hex(params.at(0));
-                    cardano::address addr { bytes };
+                    const cardano::address addr { bytes };
                     if (!addr.has_pay_id())
                         throw error("provided address does not have a pay-key component: {}", bytes);
-                    auto offset = std::stoull(static_cast<std::string>(params.at(1)));
-                    auto count = std::stoull(static_cast<std::string>(params.at(2)));
+                    const auto offset = std::stoull(static_cast<std::string>(params.at(1)));
+                    const auto count = std::stoull(static_cast<std::string>(params.at(2)));
                     resp = _api_pay_txs(addr.pay_id(), offset, count);
                 } else if (req_id == "sync") {
                     resp = _api_sync();
@@ -240,8 +241,8 @@ namespace daedalus_turbo::http_api {
 
         void _worker_thread()
         {
-            mutex::unique_lock lock { _queue_mutex };
             for (;;) {
+                mutex::unique_lock lock { _queue_mutex };
                 bool have_work = _queue_cv.wait_for(lock, std::chrono::seconds { 1 }, [&]{ return !_queue.empty(); });
                 logger::debug("http-api worker thread waiting for tasks returned with {}", have_work);
                 if (have_work) {
@@ -257,7 +258,6 @@ namespace daedalus_turbo::http_api {
                     } catch (...) {
                         logger::error("worker process_request {}: unknown exception", target);
                     }
-                    lock.lock();
                 }
             }
         }
@@ -325,9 +325,15 @@ namespace daedalus_turbo::http_api {
 
         http::response<http::string_body> _api_status(const http::request<http::string_body>& req)
         {
+            requirements::check_status req_status;
+            {
+                mutex::scoped_lock req_lk { _requirements_mutex };
+                req_status = _requirements_status;
+            }
+            const auto status = _sync_status.load();
             json::object resp {};
-            resp.emplace("ready", _sync_status == sync_status::ready);
-            resp.emplace("requirements", _requirements_status.to_json());
+            resp.emplace("ready", status == sync_status::ready);
+            resp.emplace("requirements", req_status.to_json());
             resp.emplace("hardware", _hardware_info_cached());
             auto progress_copy = progress::get().copy();
             if (!progress_copy.empty()) {
@@ -343,7 +349,7 @@ namespace daedalus_turbo::http_api {
                     requests.emplace(req_id, static_cast<bool>(resp));
                 resp.emplace("requests", std::move(requests));
             }
-            switch (_sync_status) {
+            switch (status) {
                 case sync_status::ready:
                     resp.emplace("syncDuration", fmt::format("{:0.1f}", _sync_duration / 60));
                     resp.emplace("syncDataMB", fmt::format("{:0.1f}", _sync_data_mb));
@@ -358,7 +364,7 @@ namespace daedalus_turbo::http_api {
                     }
                     break;
                 case sync_status::syncing: {
-                    double in_progress = std::chrono::duration<double>(std::chrono::system_clock::now() - _sync_start).count();
+                    const double in_progress = std::chrono::duration<double>(std::chrono::system_clock::now() - _sync_start).count();
                     resp.emplace("syncDuration", fmt::format("{:0.1f}", in_progress / 60));
                     if (!progress_copy.empty()) {
                         double mean_progress = 0.0;
@@ -374,7 +380,7 @@ namespace daedalus_turbo::http_api {
                     resp.emplace("error", *_sync_error);
                     break;
                 default:
-                    throw error("internal error: unsupported value of the internal status: {}", static_cast<int>(_sync_status.load()));
+                    throw error("internal error: unsupported value of the internal status: {}", static_cast<int>(status));
             }
             return _send_json_response(req, std::move(resp));
         }
@@ -383,20 +389,24 @@ namespace daedalus_turbo::http_api {
         {
             timer t { "api_sync" };
             logger::info("sync start");
+            _sync_start = std::chrono::system_clock::now();
             _sync_status = sync_status::syncing;
             _sync_error.reset();
             _sync_last_chunk.reset();
-            _sync_start = std::chrono::system_clock::now();
             try {
-                _requirements_status = requirements::check(_data_dir.string());
-                if (!_requirements_status)
+                const auto req_status = requirements::check(_data_dir.string());
+                {
+                    mutex::scoped_lock req_lk { _requirements_mutex };
+                    _requirements_status = req_status;
+                }
+                if (!req_status)
                     throw error("requirements check failed - cannot begin the sync!");
-                _cr = std::make_unique<validator::incremental>(validator::default_indexers(_data_dir.string()), _data_dir.string());
+                _cr = std::make_unique<validator::incremental>(_data_dir.string());
                 {
                     sync::http::syncer syncr { *_cr };
-                    uint64_t start_offset = _cr->num_bytes();
+                    const uint64_t start_offset = _cr->valid_end_offset();
                     syncr.sync();
-                    _sync_data_mb = static_cast<double>(_cr->num_bytes() - start_offset) / 1000000;
+                    _sync_data_mb = static_cast<double>(_cr->valid_end_offset() - start_offset) / 1000000;
                     // prepare JSON array with tail_relative_stake data
                     _tail_relative_stake = _cr->tail_relative_stake();
                     _j_tail_relative_stake.clear();
@@ -488,7 +498,7 @@ namespace daedalus_turbo::http_api {
             return hist.to_json(_tail_relative_stake);
         }
 
-        json::value _api_stake_txs(const stake_ident &id, size_t offset, size_t max_items)
+        json::value _api_stake_txs(const stake_ident &id, const size_t offset, const size_t max_items)
         {
             auto hist = _find_stake_history(id);
             return json::object {
@@ -499,7 +509,7 @@ namespace daedalus_turbo::http_api {
             };
         }
 
-        json::object _api_stake_assets(const stake_ident &id, size_t offset, size_t max_items)
+        json::object _api_stake_assets(const stake_ident &id, const size_t offset, const size_t max_items)
         {
             auto hist = _find_stake_history(id);
             return json::object {
@@ -522,7 +532,7 @@ namespace daedalus_turbo::http_api {
             return hist.to_json(_tail_relative_stake);
         }
 
-        json::value _api_pay_txs(const pay_ident &id, size_t offset, size_t max_items)
+        json::value _api_pay_txs(const pay_ident &id, const size_t offset, const size_t max_items)
         {
             auto hist = _find_pay_history(id);
             return json::object {
@@ -533,7 +543,7 @@ namespace daedalus_turbo::http_api {
             };
         }
 
-        json::object _api_pay_assets(const pay_ident &id, size_t offset, size_t max_items)
+        json::object _api_pay_assets(const pay_ident &id, const size_t offset, const size_t max_items)
         {
             auto hist = _find_pay_history(id);
             return json::object {
@@ -588,7 +598,7 @@ namespace daedalus_turbo::http_api {
                     }
                     send(_send_json_response(req, std::move(*resp)));
                 }
-            } catch (std::exception &ex) {
+            } catch (const std::exception &ex) {
                 logger::error("request {}: {}", target, ex.what());
                 send(_send_json_response(req, _error_response("Illegal request")));
             }

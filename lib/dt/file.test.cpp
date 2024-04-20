@@ -18,6 +18,14 @@ suite file_suite = [] {
             auto buf = file::read("./data/chunk-registry/compressed/chunk/9C5C0267DCA941851D0330E19B91712618EB6DB4BF17E458BCF00829F84CF3CF.zstd");
             expect(buf.size() == 54'206'949) << buf.size();
         };
+        "write 0 bytes"_test = [] {
+            file::tmp tmp { "empty.txt" };
+            std::string_view empty { "" };
+            expect(!std::filesystem::exists(tmp));
+            file::write(tmp, empty);
+            expect(std::filesystem::exists(tmp));
+            expect(std::filesystem::file_size(tmp) == 0_ull);
+        };
         "tmp"_test = [] {
             std::string tmp_path {};
             {

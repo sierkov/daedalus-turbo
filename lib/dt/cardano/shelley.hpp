@@ -10,6 +10,8 @@
 #include <dt/ed25519.hpp>
 
 namespace daedalus_turbo::cardano::shelley {
+    static constexpr uint64_t kes_period_slots = 129600;
+
     struct tx;
 
     struct block: block_base {
@@ -143,9 +145,9 @@ namespace daedalus_turbo::cardano::shelley {
             if (kes_.vkey.size() != sizeof(cardano::vkey))
                 throw error("vkey size mismatch!");
             memcpy(ocert_data.data(), kes_.vkey.data(), kes_.vkey.size());
-            uint64_t ctr = host_to_net<uint64_t>(kes_.counter);
+            const auto ctr = host_to_net<uint64_t>(kes_.counter);
             memcpy(ocert_data.data() + sizeof(cardano_vkey), &ctr, sizeof(uint64_t));
-            uint64_t kp = host_to_net<uint64_t>(kes_.period);
+            const auto kp = host_to_net<uint64_t>(kes_.period);
             memcpy(ocert_data.data() + kes_.vkey.size() + sizeof(uint64_t), &kp, sizeof(uint64_t));
             return ed25519::verify(kes_.vkey_sig, issuer_vkey_, ocert_data);
         }
@@ -156,7 +158,7 @@ namespace daedalus_turbo::cardano::shelley {
                 logger::error("the signature of the block's operational certificate is invalid!");
                 return false;
             }
-            uint64_t kp = static_cast<uint64_t>(slot_) / 129600;
+            uint64_t kp = static_cast<uint64_t>(slot_) / kes_period_slots;
             if (kes_.period > kp) {
                 logger::error("vkey kes period {} is greater than current kes_period {}", kes_.period, kp);
                 return false;

@@ -46,13 +46,13 @@ namespace daedalus_turbo {
 
         explicit peer_selection_simple()
         {
-            auto j_cardano_hosts = configs::get().at("cardano").at("hosts").as_array();
+            auto j_cardano_hosts = configs_dir::get().at("cardano").at("hosts").as_array();
             for (const auto &j_host: j_cardano_hosts) {
                 _cardano_hosts.emplace(std::string { static_cast<std::string_view>(j_host.as_string()) }, "3001");
             }
             if (_cardano_hosts.empty())
                 throw error("The list of cardano hosts cannot be empty!");
-            auto j_turbo_hosts = configs::get().at("turbo").at("hosts").as_array();
+            auto j_turbo_hosts = configs_dir::get().at("turbo").at("hosts").as_array();
             for (const auto &j_host: j_turbo_hosts) {
                 std::string host { static_cast<std::string_view>(j_host.as_string()) };
                 if (_update_peers_from(host))

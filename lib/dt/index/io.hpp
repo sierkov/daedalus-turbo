@@ -533,7 +533,6 @@ namespace daedalus_turbo::index {
             std::scoped_lock lock { _read_mutex };
             _is.close();
         }
-
     private:
         std::string _path;
         size_t _num_parts = 0;

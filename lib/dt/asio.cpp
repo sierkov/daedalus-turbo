@@ -118,11 +118,11 @@ namespace daedalus_turbo::asio {
 
         std::atomic_bool _shutdown { false };
         net::io_context _ioc {};
-        std::thread _worker { [&] { _io_thread(); } };
         alignas(mutex::padding) mutex::unique_lock::mutex_type _before_actions_mutex {};
         std::map<std::string, std::function<void()>> _before_actions {};
         alignas(mutex::padding) mutex::unique_lock::mutex_type _after_actions_mutex {};
         std::map<std::string, std::function<void()>> _after_actions {};
+        std::thread _worker { [&] { _io_thread(); } };
     };
 
     worker &worker::get()

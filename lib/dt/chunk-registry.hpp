@@ -244,33 +244,35 @@ namespace daedalus_turbo {
             parser.read(value);
         }
 
+        // assumes no concurent modifications to chunk_refistry data
         template<typename T>
         bool parse_parallel(
             const std::function<void(T &res, const std::string &chunk_path, cardano::block_base &blk)> &act,
             const std::function<void(std::string &&chunk_path, T &&res)> &agg,
-            bool progress=true)
+            const bool progress=true)
         {
             using parse_res = std::pair<std::string, T>;
             progress_guard pg { "parse" };
-            size_t num_parsed = 0;
+            std::atomic_size_t num_tasks = 0;
+            std::atomic_size_t num_parsed = 0;
             _sched.on_result("parse-chunk", [&](auto &&res) {
                 if (res.type() == typeid(scheduled_task_error))
                     return;
                 auto &&[chunk_path, chunk_res] = std::any_cast<parse_res>(res);
                 agg(std::move(chunk_path), std::move(chunk_res));
-                progress::get().update("parse", ++num_parsed, num_chunks());
+                progress::get().update("parse", ++num_parsed, num_tasks.load());
             });
             for (const auto &[chunk_offset, chunk_info]: _chunks) {
+                ++num_tasks;
                 _sched.submit("parse-chunk", 100, [this, chunk_offset, chunk_info, &act]() {
                     T res {};
-                    auto data = file::read(full_path(chunk_info.rel_path()));
-                    buffer buf { data };
-                    cbor_parser block_parser { buf };
-                    cbor_value block_tuple;
                     auto canon_path = full_path(chunk_info.rel_path());
+                    const auto data = file::read(canon_path);
+                    cbor_parser block_parser { data };
+                    cbor_value block_tuple {};
                     while (!block_parser.eof()) {
                         block_parser.read(block_tuple);
-                        auto blk = cardano::make_block(block_tuple, chunk_offset + block_tuple.data - buf.data());
+                        const auto blk = cardano::make_block(block_tuple, chunk_offset + block_tuple.data - data.data());
                         act(res, canon_path, *blk);
                     }
                     return parse_res { std::move(canon_path), std::move(res) };
@@ -420,8 +422,11 @@ namespace daedalus_turbo {
                 logger::warn("{} unmerged chunks - ignoring them", _unmerged_chunks.size());
                 _unmerged_chunks.clear();
             }
-            _notify_of_updates(true);
-            // let for the newly scheduled operations in _on_epoch_merge calls to finish
+            {
+                mutex::unique_lock update_lk { _update_mutex };
+                _notify_of_updates(update_lk, true);
+            }
+            // let the operations potentially scheduled in _on_epoch_merge calls to finish
             _sched.process(true);
             json::array j_chunks {};
             for (const auto &[max_offset, chunk]: _chunks)
@@ -519,7 +524,7 @@ namespace daedalus_turbo {
                 throw error("empty chunks are not allowed: {}!", chunk.orig_rel_path);
             if (chunk.first_slot.epoch() != chunk.last_slot.epoch())
                 throw error("chunks containing blocks from only one epoch are allowed: {}", chunk.orig_rel_path);
-            std::scoped_lock lk { _update_mutex };
+            std::unique_lock update_lk { _update_mutex };
             auto [um_it, um_created] = _unmerged_chunks.try_emplace(chunk.offset + chunk.data_size - 1, std::move(chunk));
             // chunk variable should not be used after this point due to std::move(chunk) right above
             if (!um_created)
@@ -549,13 +554,15 @@ namespace daedalus_turbo {
                 _epochs[inserted_chunk.epoch()].chunks.emplace_back(&inserted_chunk);
             }
             if (normal)
-                _notify_of_updates();
+                _notify_of_updates(update_lk);
         }
 
-        void _notify_of_updates(bool force=false)
+        void _notify_of_updates(mutex::unique_lock &update_lk, bool force=false)
         {
-            auto max_epoch = max_slot().epoch();
-            auto end_offset = num_bytes();
+            if (!update_lk)
+                throw error("update_mutex must be locked when _notify_of_updates is called!");
+            const auto max_epoch = max_slot().epoch();
+            const auto end_offset = num_bytes();
             if (!force && _transaction->target_offset == end_offset)
                 force = true;
             while (end_offset > _notify_end_offset && (_notify_next_epoch < max_epoch || (force && _notify_next_epoch == max_epoch))) {
@@ -565,12 +572,10 @@ namespace daedalus_turbo {
                     if (epoch_info.chunks.empty())
                         throw error("epoch {} does not have any chunks!", _notify_next_epoch);
                     auto epoch_info_copy = epoch_info;
-                    if (force) {
-                        epoch_info_copy.chunks.clear();
-                        for (const auto *chunk: epoch_info.chunks) {
-                            if (chunk->offset >= _notify_end_offset)
-                                epoch_info_copy.chunks.emplace_back(chunk);
-                        }
+                    epoch_info_copy.chunks.clear();
+                    for (const auto *chunk: epoch_info.chunks) {
+                        if (chunk->offset >= _notify_end_offset)
+                            epoch_info_copy.chunks.emplace_back(chunk);
                     }
                     if (!epoch_info_copy.chunks.empty())
                         _on_epoch_merge(_notify_next_epoch, epoch_info_copy);

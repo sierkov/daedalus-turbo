@@ -36,7 +36,7 @@ namespace daedalus_turbo::cli::validate {
         // remove all previously prepared indices and validator snapshots
         std::filesystem::remove_all(std::filesystem::path { data_dir } / "index");
         std::filesystem::remove_all(std::filesystem::path { data_dir } / "validate");
-        validator::incremental cr { validator::default_indexers(data_dir), data_dir  };
+        validator::incremental cr { data_dir  };
         _parse_progress.total = end_offset;
         cr.start_tx(0, end_offset);
         _validate_chunks(scheduler::get(), cr, std::move(chunks));

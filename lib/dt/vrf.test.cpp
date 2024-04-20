@@ -179,5 +179,17 @@ suite vrf_suite = [] {
             rational leader_stake_rel { 32451895600839, 12521840766545450 };
             expect(vrf_leader_is_eligible(vrf_leader_value(result), 0.05, leader_stake_rel));
         };
+
+        "vrf keypair create, prove, verify"_test = [&] {
+            vrf_skey sk {};
+            vrf_vkey vk {};
+            vrf_seed seed {};
+            vrf03_create_from_seed(sk, vk, seed);
+            vrf_result res {};
+            vrf_proof proof {};
+            const std::string msg { "Hello, world!" };
+            vrf03_prove(proof, res, sk, msg);
+            expect(vrf03_verify(res, vk, proof, msg));
+        };
     };
 };

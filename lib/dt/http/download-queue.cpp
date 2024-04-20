@@ -72,27 +72,30 @@ namespace daedalus_turbo::http {
             _add_request(request { url, save_path, priority, handler });
         }
 
-        bool process_ok(bool report_progress, scheduler *sched)
+        bool process_ok(const bool report_progress, scheduler *sched)
         {
             _report = report_progress;
             static constexpr std::chrono::milliseconds report_interval { 5000 };
             auto next_report = std::chrono::system_clock::now() + report_interval;
             for (;;) {
-                auto queue_sz = _queue_size.load();
-                auto n_conns = _active_conns.load();
-                auto now = std::chrono::system_clock::now();
+                const auto queue_sz = _queue_size.load();
+                const auto n_conns = _active_conns.load();
+                const auto now = std::chrono::system_clock::now();
                 if (now >= next_report) {
-                    logger::debug("download_queue::process_ok queue_size: {} active_conns: {}", queue_sz, n_conns);
+                    logger::debug("download_queue::process_ok scheduler: {} queue_size: {} active_conns: {}",
+                        sched != nullptr, queue_sz, n_conns);
                     next_report = now + report_interval;
                 }
                 if (queue_sz == 0 && n_conns == 0)
                     break;
-                if (sched != nullptr)
+                if (sched != nullptr) {
                     sched->process_once();
-                else
-                    std::this_thread::sleep_for(scheduler::default_wait_interval);
+                } else {
+                    mutex::unique_lock lk { _work_mutex };
+                    _work_cv.wait_for(lk, scheduler::default_wait_interval);
+                }
             }
-            auto res = _success.load();
+            const auto res = _success.load();
             _success = true;
             return res;
         }
@@ -119,6 +122,12 @@ namespace daedalus_turbo::http {
             connection(impl &dlq, net::io_context& ioc, tcp::resolver &resolver)
                 : _dlq { dlq }, _ioc { ioc }, _resolver { resolver }
             {
+                _dlq._connection_create();
+            }
+
+            ~connection()
+            {
+                _dlq._connection_close();
             }
 
             void run()
@@ -301,6 +310,8 @@ namespace daedalus_turbo::http {
         std::atomic_bool _success { true };
         alignas(mutex::padding) std::mutex _queue_mutex {};
         std::priority_queue<request> _queue {};
+        alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _work_mutex {};
+        alignas(mutex::padding) std::condition_variable_any _work_cv {};
         std::atomic_size_t _active_conns { 0 };
         std::atomic_size_t _queue_size { 0 };
         perf_stats _stats {};
@@ -312,7 +323,7 @@ namespace daedalus_turbo::http {
         void _asio_before_run()
         {
             if (_queue_size > 0 && _active_conns < max_connections) {
-                auto conn = std::make_shared<connection>(*this, _asio_worker.io_context(), _resolver);
+                const auto conn = std::make_shared<connection>(*this, _asio_worker.io_context(), _resolver);
                 // if successful a copy of the shared_ptr will be kept in the I/O context
                 conn->run();
                 logger::trace("created new connection instance use_count: {}", conn.use_count());
@@ -338,7 +349,21 @@ namespace daedalus_turbo::http {
             }
         }
 
-        void _add_request(request &&req, bool update_priority=false)
+        void _connection_create()
+        {
+            auto num_active = ++_active_conns;
+            logger::debug("connection_create: active_conns: {}", num_active);
+        }
+
+        void _connection_close()
+        {
+            auto num_active = --_active_conns;
+            logger::debug("connection_close: active_conns: {}", num_active);
+            if (num_active == 0)
+                _work_cv.notify_one();
+        }
+
+        void _add_request(request &&req, const bool update_priority=false)
         {
             std::scoped_lock lk { _queue_mutex };
             if (update_priority && !_queue.empty())
@@ -356,7 +381,6 @@ namespace daedalus_turbo::http {
                     auto req = _queue.top();
                     _queue.pop();
                     _queue_size = _queue.size();
-                    ++_active_conns;
                     res.emplace(std::move(req));
                 }
             }
@@ -365,7 +389,6 @@ namespace daedalus_turbo::http {
 
         void _report_result(request &&req, result &&res, bool recoverable=false)
         {
-            --_active_conns;
             if (res.error) {
                 ++_stats.errors;
                 if (recoverable) {
@@ -383,7 +406,18 @@ namespace daedalus_turbo::http {
                 ++_stats.oks;
                 _stats.bytes += res.size;
             }
-            req.handler(std::move(res));
+            try {
+                req.handler(std::move(res));
+            } catch (const error &err) {
+                _success = false;
+                logger::error("request handler for url {} failed: {}", req.url, err);
+            } catch (const std::exception &ex) {
+                _success = false;
+                logger::error("request handler for url {} failed: std::exception: {}", req.url, ex.what());
+            } catch (...) {
+                _success = false;
+                logger::error("request handler for url {} failed: unknown exception", req.url);
+            }
         }
     };
 

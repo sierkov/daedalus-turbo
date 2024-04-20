@@ -58,7 +58,7 @@ namespace daedalus_turbo::indexer {
             return chunk_registry::init_db_dir(data_dir + "/index").string();
         }
 
-        incremental(indexer_map &&indexers, const std::string &data_dir, bool strict=true, scheduler &sched=scheduler::get(), file_remover &fr=file_remover::get())
+        incremental(indexer_map &&indexers, const std::string &data_dir, const bool strict=true, scheduler &sched=scheduler::get(), file_remover &fr=file_remover::get())
             : chunk_registry { data_dir, strict, sched, fr }, _indexers { std::move(indexers) },
                 _idx_dir { storage_dir(data_dir) },
                 _index_state_path { (_idx_dir / "state.json").string() },
@@ -224,7 +224,7 @@ namespace daedalus_turbo::indexer {
             // merge final not-yet merged epochs
             {
                 std::unique_lock lk { _epoch_slices_mutex };
-                _schedule_final_merge(std::move(lk), true);
+                _schedule_final_merge(lk, true);
             }
             _sched.process(true);
             /* combine small recent slices
@@ -288,19 +288,19 @@ namespace daedalus_turbo::indexer {
             merger::slice output_slice { info.start_offset(), info.end_offset() - info.start_offset(), fmt::format("epoch-{}", epoch) };
             _merge_slice(output_slice, input_slices, 100, [this, epoch, output_slice] {
                 std::unique_lock lk { _epoch_slices_mutex };
-                _epoch_slices.emplace(epoch, std::move(output_slice));
+                _epoch_slices.emplace(epoch, output_slice);
                 if (output_slice.end_offset() > _transaction->start_offset) {
-                    auto newly_merged = output_slice.offset >= _transaction->start_offset ? output_slice.size : output_slice.end_offset() - _transaction->start_offset;
-                    auto new_epoch_merged = atomic_add(_epoch_merged, newly_merged);
+                    const auto newly_merged = output_slice.offset >= _transaction->start_offset ? output_slice.size : output_slice.end_offset() - _transaction->start_offset;
+                    const auto new_epoch_merged = atomic_add(_epoch_merged, newly_merged);
                     progress::get().update("merge", new_epoch_merged + _epoch_merged_base + _final_merged, (_transaction->target_offset - _transaction->start_offset) * 2);
                 }
-                _schedule_final_merge(std::move(lk));
+                _schedule_final_merge(lk);
             });
         }
 
         void _merge_slice(const merger::slice &output_slice, const std::vector<std::string> &input_slices, size_t prio_base, const std::function<void()> &on_merge)
         {
-            auto indices_awaited = std::make_shared<std::set<std::string>>(_mergeable);
+            auto indices_awaited = std::make_shared<std::atomic_size_t>(_mergeable.size());
             for (const auto &idxr_name: _mergeable) {
                 auto idxr_ptr = _indexers.at(idxr_name).get();
                 std::vector<std::string> input_paths {};
@@ -312,30 +312,24 @@ namespace daedalus_turbo::indexer {
                 auto end_offset = _transaction->target_offset;
                 if (end_offset < output_slice.offset)
                     end_offset = output_slice.offset;
-                size_t priority = prio_base + (end_offset - output_slice.offset) * 50 / end_offset; // [prio_base;prio_base+50) range
-                auto done_parts = std::make_shared<std::atomic_size_t>(0);
-                auto todo_parts = std::make_shared<std::atomic_size_t>(idxr_ptr->merge_task_count(input_paths));
-                _sched.on_result(output_path, [this, priority, todo_parts, done_parts, indices_awaited, output_path, idxr_name, on_merge] (const auto &res) {
-                    if (res.type() == typeid(scheduled_task_error))
-                        return;
-                    if (++*done_parts >= *todo_parts) {
-                        indices_awaited->erase(idxr_name);
-                        if (indices_awaited->empty()) {
+                const size_t priority = prio_base + (end_offset - output_slice.offset) * 50 / end_offset; // [prio_base;prio_base+50) range
+                _sched.submit_void("schedule-" + output_path, priority, [this, idxr_ptr, output_path, priority, input_paths, indices_awaited, on_merge] {
+                    // merge tasks must have a higher priority + 50 so that the actual merge tasks free up file handles
+                    // and other tied resources quicker than they are consumed
+                    idxr_ptr->merge(output_path, priority + 50, input_paths, output_path, [this, indices_awaited, output_path, priority, on_merge] {
+                        if (--(*indices_awaited) == 0) {
                             _sched.submit_void("ready-" + output_path, priority, on_merge);
                             _sched.clear_observers(output_path);
                         }
-                    }
-                });
-                _sched.submit_void("schedule-" + output_path, priority, [idxr_ptr, output_path, priority, input_paths] {
-                    // merge tasks must have a higher priority + 50 so that the actual merge tasks free up file handles
-                    // and other tied resources quicker than they are consumed
-                    idxr_ptr->merge(output_path, priority + 50, input_paths, output_path);
+                    });
                 });
             }
         }
         
-        void _schedule_final_merge(std::unique_lock<std::mutex> &&epoch_slices_lk, bool force=false)
+        void _schedule_final_merge(std::unique_lock<std::mutex> &epoch_slices_lk, const bool force=false)
         {
+            if (!epoch_slices_lk)
+                throw error("_schedule_final_merge requires epoch_slices_mutex to be locked!");
             while (!_epoch_slices.empty()) {
                 uint64_t total_size = 0;
                 for (const auto &[epoch, slice]: _epoch_slices) {
@@ -363,7 +357,7 @@ namespace daedalus_turbo::indexer {
                 _merge_slice(output_slice, input_slices, 200, [this, output_slice, first_epoch, last_epoch] {
                     {
                         std::scoped_lock lk { _slices_mutex };
-                        _slices.add(std::move(output_slice));
+                        _slices.add(output_slice);
                         _final_merged = _slices.continuous_size() - _transaction->start_offset;
                     }
                     progress::get().update("merge", _epoch_merged + _epoch_merged_base + _final_merged, (_transaction->target_offset - _transaction->start_offset) * 2);

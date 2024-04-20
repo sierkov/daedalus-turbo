@@ -33,9 +33,13 @@ namespace daedalus_turbo::validator {
     using pool_info_map = std::map<cardano::pool_hash, pool_info>;
 
     struct state {
+        using pool_set = std::set<cardano::pool_hash>;
+
         constexpr static auto serialize(auto &archive, auto &self)
         {
             return archive(
+                self._pbft_pools,
+
                 self._epoch,
                 self._end_offset,
                 self._delta_treasury,
@@ -131,7 +135,8 @@ namespace daedalus_turbo::validator {
             ws.write(rewards);
         }
 
-        state(scheduler &sched): _sched { sched }
+        explicit state(const pool_set &pbft_pools=pool_set {}, scheduler &sched=scheduler::get())
+            : _sched { sched }, _pbft_pools { pbft_pools }
         {
         }
 
@@ -309,6 +314,11 @@ namespace daedalus_turbo::validator {
             }
         }
 
+        const pool_set &pbft_pools() const
+        {
+            return _pbft_pools;
+        }
+
         const ptr_to_stake_map &pointers() const
         {
             return _ptr_to_stake;
@@ -389,7 +399,7 @@ namespace daedalus_turbo::validator {
 
         void add_pool_blocks(const cardano::pool_hash &pool_id, uint64_t num_blocks)
         {
-            if (_genesis_pools().contains(pool_id))
+            if (_pbft_pools.contains(pool_id))
                 return;
             if (_go.pool_params.contains(pool_id)) {
                 _blocks_current.add(pool_id, num_blocks);
@@ -473,30 +483,30 @@ namespace daedalus_turbo::validator {
                 _set = std::move(_mark);
             }
             timer ts { fmt::format("validator::state epoch: {} copy active snapshot to mark", _epoch), logger::level::trace };
-            static const std::string task_group { "rotate-snapshot" };
+            const std::string task_group = fmt::format("rotate-snapshots-epoch-{}", _epoch);
             _sched.wait_for_count(task_group, 6, [&] {
                 _sched.submit_void(task_group, 1000, [this] {
-                    timer ts { fmt::format("validator::state epoch: {} copy pool_dist to mark", _epoch), logger::level::trace };
+                    timer tsi { fmt::format("validator::state epoch: {} copy pool_dist to mark", _epoch), logger::level::trace };
                     _mark.pool_dist = _active_pool_dist;
                 });
                 _sched.submit_void(task_group, 1000, [this] {
-                    timer ts { fmt::format("validator::state epoch: {} copy pool_params to mark", _epoch), logger::level::trace };
+                    timer tsi { fmt::format("validator::state epoch: {} copy pool_params to mark", _epoch), logger::level::trace };
                     _mark.pool_params = _active_pool_params;
                 });
                 _sched.submit_void(task_group, 1000, [this] {
-                    timer ts { fmt::format("validator::state epoch: {} copy delegs to mark", _epoch), logger::level::trace };
+                    timer tsi { fmt::format("validator::state epoch: {} copy delegs to mark", _epoch), logger::level::trace };
                     _mark.delegs = _active_delegs;
                 });
                 _sched.submit_void(task_group, 1000, [this] {
-                    timer ts { fmt::format("validator::state epoch: {} copy inv_delegs to mark", _epoch), logger::level::trace };
+                    timer tsi { fmt::format("validator::state epoch: {} copy inv_delegs to mark", _epoch), logger::level::trace };
                     _mark.inv_delegs = _active_inv_delegs;
                 });
                 _sched.submit_void(task_group, 1000, [this] {
-                    timer ts { fmt::format("validator::state epoch: {} copy stake_dist to mark", _epoch), logger::level::trace };
+                    timer tsi { fmt::format("validator::state epoch: {} copy stake_dist to mark", _epoch), logger::level::trace };
                     _mark.stake_dist = _active_stake_dist;
                 });
                 _sched.submit_void(task_group, 1000, [this] {
-                    timer ts { fmt::format("validator::state epoch: {} copy rewards to mark", _epoch), logger::level::trace };
+                    timer tsi { fmt::format("validator::state epoch: {} copy rewards to mark", _epoch), logger::level::trace };
                     _mark.reward_dist = _rewards;
                 });
             });
@@ -553,6 +563,7 @@ namespace daedalus_turbo::validator {
 
         void clear()
         {
+            _pbft_pools.clear();
             _epoch = 0;
             _end_offset = 0;
             _mark.clear();
@@ -637,6 +648,7 @@ namespace daedalus_turbo::validator {
         };
 
         scheduler &_sched;
+        pool_set _pbft_pools;
         uint64_t _epoch = 0;
         uint64_t _end_offset = 0;
         // stateBefore.esSnapshots
@@ -782,7 +794,7 @@ namespace daedalus_turbo::validator {
             uint64_t filtered = 0;
             for (auto &[pool_id, pool_info]: _reward_pool_params) {
                 uint64_t pool_blocks = pools_active.get(pool_id);
-                if (pool_blocks > 0 && !_genesis_pools().contains(pool_id)) {
+                if (pool_blocks > 0 && !_pbft_pools.contains(pool_id)) {
                     _rewards_prepare_pool_params(total, filtered, staking_reward_pot, total_stake, pool_id, pool_info, pool_blocks);
                 }
             }
@@ -1115,51 +1127,6 @@ namespace daedalus_turbo::validator {
                     sd.try_emplace(stake_id, stake);
             }
             return sd;
-        }
-
-        static const std::span<const std::pair<cardano::stake_ident, cardano::pool_hash>> _genesis_delegates()
-        {
-            static const array<std::pair<cardano::stake_ident, cardano::pool_hash>, 7> delegates {
-                {
-                    cardano::stake_ident { cardano::key_hash::from_hex("ad5463153dc3d24b9ff133e46136028bdc1edbb897f5a7cf1b37950c") },
-                    cardano::pool_hash::from_hex("d9e5c76ad5ee778960804094a389f0b546b5c2b140a62f8ec43ea54d")
-                },
-                {
-                    cardano::stake_ident { cardano::key_hash::from_hex("b9547b8a57656539a8d9bc42c008e38d9c8bd9c8adbb1e73ad529497") },
-                    cardano::pool_hash::from_hex("855d6fc1e54274e331e34478eeac8d060b0b90c1f9e8a2b01167c048")
-                },
-                {
-                    cardano::stake_ident { cardano::key_hash::from_hex("60baee25cbc90047e83fd01e1e57dc0b06d3d0cb150d0ab40bbfead1") },
-                    cardano::pool_hash::from_hex("7f72a1826ae3b279782ab2bc582d0d2958de65bd86b2c4f82d8ba956")
-                },
-                {
-                    cardano::stake_ident { cardano::key_hash::from_hex("f7b341c14cd58fca4195a9b278cce1ef402dc0e06deb77e543cd1757") },
-                    cardano::pool_hash::from_hex("69ae12f9e45c0c9122356c8e624b1fbbed6c22a2e3b4358cf0cb5011")
-                },
-                {
-                    cardano::stake_ident { cardano::key_hash::from_hex("162f94554ac8c225383a2248c245659eda870eaa82d0ef25fc7dcd82") },
-                    cardano::pool_hash::from_hex("4485708022839a7b9b8b639a939c85ec0ed6999b5b6dc651b03c43f6")
-                },
-                {
-                    cardano::stake_ident { cardano::key_hash::from_hex("2075a095b3c844a29c24317a94a643ab8e22d54a3a3a72a420260af6") },
-                    cardano::pool_hash::from_hex("6535db26347283990a252313a7903a45e3526ec25ddba381c071b25b")
-                },
-                {
-                    cardano::stake_ident { cardano::key_hash::from_hex("268cfc0b89e910ead22e0ade91493d8212f53f3e2164b2e4bef0819b") },
-                    cardano::pool_hash::from_hex("1d4f2e1fda43070d71bb22a5522f86943c7c18aeb4fa47a362c27e23")
-                }
-            };
-            return delegates;
-        }
-
-        static const std::set<cardano::pool_hash> &_genesis_pools()
-        {
-            static std::set<cardano::pool_hash> pools {};
-            if (pools.empty()) {
-                for (const auto &it: _genesis_delegates())
-                    pools.emplace(it.second);
-            }
-            return pools;
         }
     };
 }

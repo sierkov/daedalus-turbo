@@ -15,8 +15,8 @@ suite http_download_queue_suite = [] {
     "http::download_queue"_test = [&] {
         "parallel download"_test = [&] {
             download_queue_async dlq {};
-            size_t num_errors = 0;
-            size_t num_oks = 0;
+            std::atomic_size_t num_errors = 0;
+            std::atomic_size_t num_oks = 0;
             auto handler = [&](auto &&r) {
                 if (r.error)
                     ++num_errors;
@@ -26,13 +26,13 @@ suite http_download_queue_suite = [] {
             for (size_t i = 0; i < 32; ++i)
                 dlq.download("http://turbo1.daedalusturbo.org/chain.json", fmt::format("{}/chain-{}.json", tmp_dir, i), 0, handler);
             dlq.process();
-            expect(num_errors == 0_u);
-            expect(num_oks == 32_u);
+            expect(num_errors.load() == 0_u);
+            expect(num_oks.load() == 32_u);
         };
         "retry on recoverable errors"_test = [&] {
             download_queue_async dlq {};
-            size_t num_errors = 0;
-            size_t num_oks = 0;
+            std::atomic_size_t num_errors = 0;
+            std::atomic_size_t num_oks = 0;
             auto handler = [&](auto &&r) {
                 if (r.error)
                     ++num_errors;
@@ -40,9 +40,9 @@ suite http_download_queue_suite = [] {
                     ++num_oks;
             };
             dlq.download("http://turbo1.daedalusturbo.org/epoch-unknown.json", tmp_dir + "/epoch-unknown", 0, handler);
-            expect(dlq.process_ok() == false);
-            expect(num_errors == 1_u);
-            expect(num_oks == 0_u);
+            expect(!dlq.process_ok());
+            expect(num_errors.load() == 1_u);
+            expect(num_oks.load() == 0_u);
         };
         "empty queue finishes"_test = [] {
             download_queue_async dlq {};

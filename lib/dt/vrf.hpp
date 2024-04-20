@@ -18,9 +18,11 @@ extern "C" {
 #include <dt/util.hpp>
 
 namespace daedalus_turbo {
-    using vrf_result = array<uint8_t, 64>;
-    using vrf_vkey = array<uint8_t, 32>;
-    using vrf_proof = array<uint8_t, 80>;
+    using vrf_result = array<uint8_t, crypto_vrf_ietfdraft03_OUTPUTBYTES>;
+    using vrf_skey = array<uint8_t, crypto_vrf_ietfdraft03_SECRETKEYBYTES>;
+    using vrf_vkey = array<uint8_t, crypto_vrf_ietfdraft03_PUBLICKEYBYTES>;
+    using vrf_proof = array<uint8_t, crypto_vrf_ietfdraft03_PROOFBYTES>;
+    using vrf_seed = array<uint8_t, crypto_vrf_ietfdraft03_SEEDBYTES>;
     using vrf_nonce = array<uint8_t, 32>;
 
     inline blake2b_256_hash vrf_make_input(uint64_t slot, const buffer &nonce)
@@ -109,6 +111,67 @@ namespace daedalus_turbo {
         if (ok)
             ok = memcmp(res.data(), exp_res.data(), res.size()) == 0;
         return ok;
+    }
+
+    inline void vrf03_prove(const write_buffer &proof, const write_buffer &result, const buffer &sk, const buffer &msg)
+    {
+        if (proof.size() != sizeof(vrf_proof))
+            throw error("proof must be {} bytes but got {}!", sizeof(vrf_proof), proof.size());
+        if (result.size() != sizeof(vrf_result))
+            throw error("seed must be {} bytes but got {}!", sizeof(vrf_result), result.size());
+        if (sk.size() != sizeof(vrf_skey))
+            throw error("skey must be {} bytes but got {}!", sizeof(vrf_skey), sk.size());
+        if (crypto_vrf_ietfdraft03_prove(proof.data(), sk.data(), msg.data(), msg.size()) != 0)
+            throw error("VRF prove failed!");
+        if (crypto_vrf_ietfdraft03_proof_to_hash(result.data(), proof.data()) != 0)
+            throw error("VRF output generation failed!");
+    }
+
+    inline void vrf03_create(const write_buffer &sk, const write_buffer &vk)
+    {
+        if (vk.size() != sizeof(vrf_vkey))
+            throw error("vkey must be {} bytes but got {}!", sizeof(vrf_vkey), vk.size());
+        if (sk.size() != sizeof(vrf_skey))
+            throw error("skey must be {} bytes but got {}!", sizeof(vrf_skey), sk.size());
+        if (crypto_vrf_ietfdraft03_keypair(vk.data(), sk.data()) != 0)
+            throw error("VRF keypair generation failed!");
+    }
+
+    inline void vrf03_create_from_seed(const write_buffer &sk, const write_buffer &vk, const buffer &seed)
+    {
+        if (vk.size() != sizeof(vrf_vkey))
+            throw error("vkey must be {} bytes but got {}!", sizeof(vrf_vkey), vk.size());
+        if (sk.size() != sizeof(vrf_skey))
+            throw error("skey must be {} bytes but got {}!", sizeof(vrf_skey), sk.size());
+        if (seed.size() != sizeof(vrf_seed))
+            throw error("seed must be {} bytes but got {}!", sizeof(vrf_seed), seed.size());
+        if (crypto_vrf_ietfdraft03_keypair_from_seed(vk.data(), sk.data(), seed.data()) != 0)
+            throw error("VRF keypair generation failed!");
+    }
+
+    inline void vrf03_extract_vk(const write_buffer &vk, const buffer &sk)
+    {
+        if (vk.size() != sizeof(vrf_vkey))
+            throw error("vkey must be {} bytes but got {}!", sizeof(vrf_vkey), vk.size());
+        if (sk.size() != sizeof(vrf_skey))
+            throw error("skey must be {} bytes but got {}!", sizeof(vrf_skey), sk.size());
+        // cannot fail
+        crypto_vrf_ietfdraft03_sk_to_pk(vk.data(), sk.data());
+    }
+
+    inline vrf_vkey vrf03_extract_vk(const buffer &sk)
+    {
+        vrf_vkey vk {};
+        vrf03_extract_vk(vk, sk);
+        return vk;
+    }
+
+    inline vrf_skey vrf03_create_sk_from_seed(const buffer &seed)
+    {
+        vrf_skey sk {};
+        vrf_vkey vk {};
+        vrf03_create_from_seed(sk, vk, seed);
+        return sk;
     }
 
     inline bool vrf_leader_is_eligible(const buffer &result, const double f, const rational &leader_stake_rel)

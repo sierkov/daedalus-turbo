@@ -8,7 +8,6 @@
 #include <dt/cardano.hpp>
 #include <dt/cli.hpp>
 #include <dt/history.hpp>
-#include <dt/scheduler.hpp>
 
 namespace daedalus_turbo::cli::pay_history {
     struct cmd: command {

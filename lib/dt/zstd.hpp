@@ -15,9 +15,8 @@ namespace daedalus_turbo::zstd {
     static constexpr size_t max_zstd_buffer = static_cast<size_t>(1) << 28;
 
     struct compress_context {
-        compress_context()
+        explicit compress_context(): _ctx { ZSTD_createCCtx() }
         {
-            _ctx = ZSTD_createCCtx();
             if (_ctx == nullptr)
                 throw error("failed to create ZSTD compression context!");
         }
@@ -47,13 +46,12 @@ namespace daedalus_turbo::zstd {
                 throw error("ZSTD: failed to change the compression level to {}: {}", level, ZSTD_getErrorName(res));
         }
     private:
-        ZSTD_CCtx* _ctx = nullptr;
+        ZSTD_CCtx* _ctx;
     };
 
     struct decompress_context {
-        decompress_context()
+        decompress_context(): _ctx { ZSTD_createDCtx() }
         {
-            _ctx = ZSTD_createDCtx();
             if (_ctx == nullptr)
                 throw error("failed to create ZSTD decompression context!");
         }
@@ -76,7 +74,7 @@ namespace daedalus_turbo::zstd {
                 throw error("ZSTD: failed to reset a compression context: {}", ZSTD_getErrorName(res));
         }
     private:
-        ZSTD_DCtx* _ctx = nullptr;
+        ZSTD_DCtx* _ctx;
     };
 
     inline void compress(uint8_vector &compressed, const buffer &orig, int level=22)
