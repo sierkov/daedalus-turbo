@@ -4,6 +4,7 @@
     "fmt",
     "libsodium",
     "mimalloc",
+    "pkgconf",
     "spdlog",
     "zstd"
   ],

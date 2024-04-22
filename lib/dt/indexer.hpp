@@ -172,6 +172,8 @@ namespace daedalus_turbo::indexer {
         {
             chunk_registry::_truncate_impl(max_end_offset);
             // merge final not-yet merged epochs
+            if (_slices.continuous_size() <= max_end_offset)
+                return;
             timer t { fmt::format("truncate indices to max offset {}", max_end_offset) };
             std::vector<merger::slice> updated {};
             for (auto it = _slices.begin(); it != _slices.end(); ) {
@@ -319,7 +321,6 @@ namespace daedalus_turbo::indexer {
                     idxr_ptr->merge(output_path, priority + 50, input_paths, output_path, [this, indices_awaited, output_path, priority, on_merge] {
                         if (--(*indices_awaited) == 0) {
                             _sched.submit_void("ready-" + output_path, priority, on_merge);
-                            _sched.clear_observers(output_path);
                         }
                     });
                 });

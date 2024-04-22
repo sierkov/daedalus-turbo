@@ -78,7 +78,7 @@ namespace daedalus_turbo::index {
                 _os { _path + ".tmp" }
         {
             if (_num_parts > max_parts)
-                throw error("num_partitions: {} is greater than the preconfigured maximum: {}!", _num_parts, max_parts);
+                throw error("num_partitions: {} is greater than the pre-configured maximum: {}!", _num_parts, max_parts);
             for (auto &buf: _bufs)
                 buf.resize(chunk_size);
         }
@@ -141,6 +141,8 @@ namespace daedalus_turbo::index {
         void set_meta(const std::string &name, const buffer &data)
         {
             std::scoped_lock lock { _write_mutex };
+            if (_commited)
+                throw error("set_meta called for {} after it has been commited!", _path);
             if (name.size() > 255)
                 throw error("name of metadata item is too long: {}!", name.size());
             if (data.size() > 255)
@@ -173,6 +175,7 @@ namespace daedalus_turbo::index {
                 std::scoped_lock lock { _write_mutex };
                 _commited = true;
             }
+            // flush takes _write_mutex so need to release it first
             for (size_t i = 0; i < _num_parts; ++i)
                 _flush_part(i);
             std::scoped_lock lock { _write_mutex };
@@ -255,7 +258,8 @@ namespace daedalus_turbo::index {
         template<typename ...A>
         const T &emplace_part(size_t part_idx, A &&...args)
         {
-            if (_commited) throw error("sorting-writer::emplace_part {} has already been commited!", _writer.path());
+            if (_commited)
+                throw error("sorting-writer::emplace_part {} has already been commited!", _writer.path());
             auto &buf = _bufs.at(part_idx);
             auto &item = buf.emplace_back(std::forward<A>(args)...);
             return item;

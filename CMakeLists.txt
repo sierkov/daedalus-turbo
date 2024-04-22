@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20)
 project(DT)
 set(CMAKE_PROJECT_VERSION_MAJOR 0)
 set(CMAKE_PROJECT_VERSION_MINOR 4)
-set(CMAKE_PROJECT_VERSION_PATCH 6)
+set(CMAKE_PROJECT_VERSION_PATCH 11)
 if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
     message(FATAL_ERROR "In-source builds are not allowed")
 endif()
@@ -16,7 +16,7 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_EXTENSIONS NO)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wthread-safety")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic")
 endif()
@@ -42,23 +42,24 @@ install(TARGETS dt RUNTIME DESTINATION bin)
 install(DIRECTORY etc/ DESTINATION etc)
 if (WIN32)
     if (MINGW)
-        add_custom_command(TARGET dt POST_BUILD COMMAND ls ${CMAKE_BINARY_DIR}/*.dll > ${CMAKE_BINARY_DIR}/dlls.txt COMMAND_EXPAND_LISTS)
+        add_custom_command(TARGET dt POST_BUILD COMMAND ldd ${CMAKE_BINARY_DIR}/dt.exe | awk '{ print $$3 }' | grep -vi system > ${CMAKE_BINARY_DIR}/dlls.txt)
+        add_custom_command(TARGET dt POST_BUILD COMMAND cygpath -w -f ${CMAKE_BINARY_DIR}/dlls.txt > ${CMAKE_BINARY_DIR}/dlls-win-path.txt)
         install(CODE [[
-        file(READ $<TARGET_FILE_DIR:dt>/dlls.txt DLLS)
-        string(REPLACE "\n" ";" DLLS_LIST ${DLLS})
-        file(COPY ${DLLS_LIST} DESTINATION $<INSTALL_PREFIX>/bin)
-    ]])
+            file(READ $<TARGET_FILE_DIR:dt>/dlls-win-path.txt DLLS)
+            string(REPLACE "\n" ";" DLLS_LIST ${DLLS})
+            file(COPY ${DLLS_LIST} DESTINATION $<INSTALL_PREFIX>/bin)
+        ]])
     else()
         file(TO_NATIVE_PATH ${CMAKE_BINARY_DIR} BIN_DIR_WIN)
         add_custom_command(TARGET dt POST_BUILD COMMAND dir /b ${BIN_DIR_WIN}\\*.dll > ${BIN_DIR_WIN}\\dlls.txt COMMAND_EXPAND_LISTS)
         install(CODE [[
-        file(READ $<TARGET_FILE_DIR:dt>/dlls.txt DLLS)
-        string(REPLACE "\n" ";" DLLS_LIST ${DLLS})
-        foreach(lib ${DLLS_LIST})
-            LIST(APPEND DLLS_WITH_PATH "$<TARGET_FILE_DIR:dt>/${lib}")
-        endforeach()
-        file(COPY ${DLLS_WITH_PATH} DESTINATION $<INSTALL_PREFIX>/bin)
-    ]])
+            file(READ $<TARGET_FILE_DIR:dt>/dlls.txt DLLS)
+            string(REPLACE "\n" ";" DLLS_LIST ${DLLS})
+            foreach(lib ${DLLS_LIST})
+                LIST(APPEND DLLS_WITH_PATH "$<TARGET_FILE_DIR:dt>/${lib}")
+            endforeach()
+            file(COPY ${DLLS_WITH_PATH} DESTINATION $<INSTALL_PREFIX>/bin)
+        ]])
     endif()
 endif()
 
@@ -90,32 +91,55 @@ endif()
 message("copying test data")
 file(COPY data DESTINATION .)
 
-if (CMAKE_BUILD_TYPE STREQUAL Valgrind)
+if(CMAKE_BUILD_TYPE STREQUAL Valgrind)
     if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O1 -fsanitize=thread")
-    elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O3")
+        set(SANITIZER "thread")
+        if(SANITIZER)
+            target_compile_options(lib PRIVATE -fsanitize=${SANITIZER})
+            target_compile_options(run-test PRIVATE -fsanitize=${SANITIZER})
+            target_link_options(run-test PRIVATE -fsanitize=${SANITIZER})
+            target_link_options(dt PRIVATE -fsanitize=${SANITIZER})
+        endif()
+    else()
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O1")
     endif()
-elseif (CMAKE_BUILD_TYPE STREQUAL Profile)
+elseif(CMAKE_BUILD_TYPE STREQUAL Profile)
     target_compile_options(lib PRIVATE -pg -g -O1)
     target_compile_options(dt PRIVATE -pg -g -O1)
     target_link_options(dt PRIVATE -pg -g)
-elseif (CMAKE_BUILD_TYPE STREQUAL Coverage)
-    target_compile_options(lib PRIVATE -g --coverage)
-    target_compile_options(run-test PRIVATE -g --coverage)
-    target_link_options(run-test PRIVATE -g --coverage -lgcov)
-    add_custom_command(TARGET run-test PRE_BUILD COMMAND
-            find ${CMAKE_BINARY_DIR} -type f -name '*.gcda' -exec rm {} +)
-    find_program(GCOVR_PATH gcovr)
-    if (GCOVR_PATH)
-        message("adding target coverage using ${GCOVR_PATH}")
+elseif(CMAKE_BUILD_TYPE STREQUAL Coverage)
+    if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        target_compile_options(lib PRIVATE -fprofile-instr-generate -fcoverage-mapping -g -O3)
+        target_compile_options(run-test PRIVATE -fprofile-instr-generate -fcoverage-mapping -g -O3)
+        target_link_options(run-test PRIVATE -fprofile-instr-generate -fcoverage-mapping -g)
         add_custom_target(coverage
-            COMMENT "Running test coverage ..."
-            COMMAND $<TARGET_FILE:run-test> ${COVERAGE_ARGS}
-            COMMAND mkdir -p ${CMAKE_BINARY_DIR}/coverage
-            COMMAND ${GCOVR_PATH} -j 8 -r ${CMAKE_SOURCE_DIR} --gcov-ignore-parse-errors=negative_hits.warn --merge-mode-functions=separate --html-details ${CMAKE_BINARY_DIR}/coverage/coverage.html .
-            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+                COMMENT "Running test coverage ..."
+                COMMAND $<TARGET_FILE:run-test> ${COVERAGE_ARGS}
+                COMMAND echo "Indexing raw profdata"
+                COMMAND llvm-profdata merge -sparse default.profraw -o run-test.profdata
+                COMMAND echo "Generating coverage report"
+                COMMAND llvm-cov report $<TARGET_FILE:run-test> -instr-profile=run-test.profdata
+                DEPENDS run-test
+                WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         )
+    else()
+        target_compile_options(lib PRIVATE -g --coverage)
+        target_compile_options(run-test PRIVATE -g --coverage)
+        target_link_options(run-test PRIVATE -g --coverage -lgcov)
+        add_custom_command(TARGET run-test PRE_BUILD COMMAND
+                find ${CMAKE_BINARY_DIR} -type f -name '*.gcda' -exec rm {} +)
+        find_program(GCOVR_PATH gcovr)
+        if (GCOVR_PATH)
+            message("adding target coverage using ${GCOVR_PATH}")
+            add_custom_target(coverage
+                COMMENT "Running test coverage ..."
+                COMMAND $<TARGET_FILE:run-test> ${COVERAGE_ARGS}
+                COMMAND mkdir -p ${CMAKE_BINARY_DIR}/coverage
+                COMMAND ${GCOVR_PATH} -j 8 -r ${CMAKE_SOURCE_DIR} --gcov-ignore-parse-errors=negative_hits.warn --merge-mode-functions=separate --html-details ${CMAKE_BINARY_DIR}/coverage/coverage.html .
+                WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+            )
+        endif()
     endif()
 endif()
 

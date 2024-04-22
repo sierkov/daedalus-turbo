@@ -8,6 +8,8 @@
 #ifndef SPDLOG_FMT_EXTERNAL
 #   define SPDLOG_FMT_EXTERNAL 1
 #endif
+#include <functional>
+#include <source_location>
 #include <spdlog/spdlog.h>
 #include <dt/error.hpp>
 #include <dt/format.hpp>
@@ -116,6 +118,37 @@ namespace daedalus_turbo::logger {
     inline void flush()
     {
         get().flush();
+    }
+
+    using action = std::function<void()>;
+    using optional_action = std::optional<action>;
+
+    inline void run_and_log_errors(const action &main, const optional_action &cleanup={}, const bool rethrow=true,
+            const std::source_location &loc=std::source_location::current())
+    {
+        try {
+            main();
+            if (cleanup)
+                (*cleanup)();
+        } catch (const daedalus_turbo::error &err) {
+            logger::error("block at {}:{} failed with {}", loc.file_name(), loc.line(), err);
+            if (cleanup)
+                (*cleanup)();
+            if (rethrow)
+                throw;
+        } catch (const std::exception &ex) {
+            logger::error("block at {}:{} failed with std::exception: {}", loc.file_name(), loc.line(), ex.what());
+            if (cleanup)
+                (*cleanup)();
+            if (rethrow)
+                throw;
+        } catch (...) {
+            logger::error("block at {}:{} failed with an unknown error", loc.file_name(), loc.line());
+            if (cleanup)
+                (*cleanup)();
+            if (rethrow)
+                throw;
+        }
     }
 }
 

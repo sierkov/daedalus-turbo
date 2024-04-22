@@ -77,6 +77,8 @@ namespace daedalus_turbo::validator {
         {
             timer t { "validator::truncate" };
             _cr._parent_truncate_impl(max_end_offset);
+            if (std::max(_subchains.valid_size(), _state.end_offset()) <= max_end_offset)
+                return;
             if (!_snapshots.empty() && _snapshots.rbegin()->end_offset > max_end_offset) {
                 for (auto it = _snapshots.begin(); it != _snapshots.end(); ) {
                     if (it->end_offset > max_end_offset) {
@@ -614,12 +616,12 @@ namespace daedalus_turbo::validator {
         void _process_updates(size_t num_outflow_parts, uint64_t first_epoch, uint64_t last_epoch)
         {
             timer t { "validator/process_updates" };
-            const auto &inflow_updates = dynamic_cast<index::stake_delta::indexer &>(*_cr.indexers().at("inflow")).updated_epochs();
             _cr.sched().wait_for_count("epoch-updates", last_epoch - first_epoch + 1, [&] {
                 for (auto epoch = first_epoch; epoch <= last_epoch; ++epoch) {
-                    _cr.sched().submit("epoch-updates", 600 + static_cast<int>(last_epoch - epoch), [this, epoch, inflow_updates, num_outflow_parts] {
-                        if (inflow_updates.contains(epoch))
-                            _process_epoch_updates(epoch, inflow_updates.at(epoch), num_outflow_parts);
+                    _cr.sched().submit("epoch-updates", 600 + static_cast<int>(last_epoch - epoch), [this, epoch, num_outflow_parts] {
+                        const auto inflow_chunks = dynamic_cast<index::stake_delta::indexer &>(*_cr.indexers().at("inflow")).epoch_chunks(epoch);
+                        if (!inflow_chunks.empty())
+                            _process_epoch_updates(epoch, inflow_chunks, num_outflow_parts);
                         return epoch;
                     });
                 }
@@ -628,13 +630,12 @@ namespace daedalus_turbo::validator {
 
         template<typename T>
         std::optional<uint64_t> _gather_updates(vector<T> &updates, uint64_t epoch, uint64_t min_offset,
-            const std::string &name, const index::epoch_chunks &updated_chunks)
+            const std::string &name, const index::chunk_list &updated_chunks)
         {
             updates.clear();
             std::optional<uint64_t> min_chunk_id {};
-            auto it = updated_chunks.find(epoch);
-            if (it != updated_chunks.end()) {
-                for (const uint64_t chunk_id: it->second) {
+            if (!updated_chunks.empty()) {
+                for (const uint64_t chunk_id: updated_chunks) {
                     if (chunk_id >= min_offset) {
                         if (!min_chunk_id || *min_chunk_id > chunk_id)
                             min_chunk_id = chunk_id;
@@ -650,7 +651,7 @@ namespace daedalus_turbo::validator {
         }
 
         void _apply_ledger_state_updates_for_epoch(uint64_t e, index::reader_multi<index::txo::item> &txo_reader,
-            const index::epoch_chunks &vrf_updates, const vector<uint64_t> &snapshot_offsets, bool fast)
+            const vector<uint64_t> &snapshot_offsets, bool fast)
         {
             timer te { fmt::format("apply_ledger_state_updates for epoch {}", e) };
             try {
@@ -673,7 +674,7 @@ namespace daedalus_turbo::validator {
                 }
 
                 vector<index::block_fees::item> fee_updates {};
-                auto min_epoch_offset = _gather_updates(fee_updates, e, last_offset, "block-fees", dynamic_cast<index::block_fees::indexer &>(*_cr.indexers().at("block-fees")).updated_epochs());
+                auto min_epoch_offset = _gather_updates(fee_updates, e, last_offset, "block-fees", dynamic_cast<index::block_fees::indexer &>(*_cr.indexers().at("block-fees")).epoch_chunks(e));
                 if (!min_epoch_offset)
                     return;
                 {
@@ -691,7 +692,7 @@ namespace daedalus_turbo::validator {
                 {
                     timed_update_list timed_updates {};
                     timer tp { fmt::format("validator epoch: {} process {} timed updates", e, timed_updates.size()) };
-                    _gather_updates(timed_updates, e, last_offset, "timed-update", dynamic_cast<index::timed_update::indexer &>(*_cr.indexers().at("timed-update")).updated_epochs());
+                    _gather_updates(timed_updates, e, last_offset, "timed-update", dynamic_cast<index::timed_update::indexer &>(*_cr.indexers().at("timed-update")).epoch_chunks(e));
                     std::sort(timed_updates.begin(), timed_updates.end());
                     for (const auto &upd: timed_updates) {
                         switch (upd.update.index()) {
@@ -769,8 +770,9 @@ namespace daedalus_turbo::validator {
                         }
                     }
                 }
-                if (vrf_updates.contains(e))
-                    _process_vrf_update_chunks(*min_epoch_offset, _vrf_state, vrf_updates.at(e), fast);
+                const auto vrf_chunks = dynamic_cast<index::vrf::indexer &>(*_cr.indexers().at("vrf")).epoch_chunks(e);
+                if (!vrf_chunks.empty())
+                    _process_vrf_update_chunks(*min_epoch_offset, _vrf_state, vrf_chunks, fast);
                 if (!_state.reward_dist().empty() && _state.epoch() < _cr.max_slot().epoch()) {
                     _state.finish_epoch();
                     if (_on_the_go) {
@@ -817,11 +819,10 @@ namespace daedalus_turbo::validator {
                 logger::debug("planned snapshot offsets between epochs {} and {}: {}", first_epoch, last_epoch, snapshot_offsets);
             }
             index::reader_multi<index::txo::item> txo_reader { _cr.reader_paths("txo", slices) };
-            auto vrf_updates = dynamic_cast<index::vrf::indexer &>(*_cr.indexers().at("vrf")).updated_epochs();
             for (uint64_t e = first_epoch; e <= last_epoch; e++) {
                 timer te { fmt::format("apply ledger updates for epoch: {}", e) };
                 try {
-                    _apply_ledger_state_updates_for_epoch(e, txo_reader, vrf_updates, snapshot_offsets, fast);
+                    _apply_ledger_state_updates_for_epoch(e, txo_reader, snapshot_offsets, fast);
                     logger::info("applied ledger updates for epoch: {} end offset: {}", _state.epoch(), _state.end_offset());
                 } catch (const std::exception &ex) {
                     logger::error("failed to process epoch {} updates: {}", e, ex.what());

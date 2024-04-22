@@ -54,13 +54,14 @@ namespace daedalus_turbo {
         {
             std::string str {};
             {
-                mutex::scoped_lock lk { _state_mutex };
+                mutex::scoped_lock state_lk { _state_mutex };
                 for (const auto &[name, val]: _state)
                     str += fmt::format("{}: {:0.3f}% ", name, val * 100);
             }
             // adjust for the invisible whitespace
             if (str.size() > _max_str)
                 _max_str = str.size();
+            mutex::scoped_lock io_lk { _io_mutex };
             stream << fmt::format("{:<{}}\r", str, _max_str);
         }
 
@@ -77,6 +78,7 @@ namespace daedalus_turbo {
         alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _state_mutex {};
         state_map _state {};
         size_t _max_str = 0;
+        alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _io_mutex {};
 
         void _update(const std::string &name, const double value)
         {

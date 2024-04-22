@@ -74,15 +74,14 @@ namespace daedalus_turbo::index {
         }
         auto out_idx = std::make_shared<index::writer<T>>(final_path, num_parts);
         auto max_offset = std::make_shared<std::atomic<uint64_t>>(0);
-        sched.on_completion(task_group, num_parts, [out_idx, max_offset, readers, chunks, final_path, on_complete] {
+        sched.on_completion(task_group, num_parts, [out_idx, max_offset, readers, final_path, on_complete] {
             out_idx->set_meta("max_offset", buffer::from(*max_offset));
             out_idx->commit();
-            // close all readers to ensure that on Windows the source files can be removed
-            for (auto &r: readers)
+            for (auto &r: readers) {
                 r->close();
-            for (const auto &path: chunks)
-                std::filesystem::remove(path);
-            logger::trace("merged {} chunks into {}", chunks.size(), final_path);
+                std::filesystem::remove(r->path());
+            }
+            logger::trace("merged {} chunks into {}", readers.size(), final_path);
             on_complete();
         });
         sched.on_result(task_group, [max_offset](auto &&res) {

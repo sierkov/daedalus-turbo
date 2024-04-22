@@ -310,16 +310,19 @@ namespace daedalus_turbo::index {
 
         void reset() override
         {
+            std::scoped_lock lk { _updated_epochs_mutex };
             _updated_epochs.clear();
         }
 
-        const epoch_chunks &updated_epochs() const
+        chunk_list epoch_chunks(uint64_t epoch) const
         {
-            return _updated_epochs;
+            std::scoped_lock lk { _updated_epochs_mutex };
+            const auto it = _updated_epochs.find(epoch);
+            return it != _updated_epochs.end() ? it->second : chunk_list {};
         }
     private:
-        alignas(mutex::padding) std::mutex _updated_epochs_mutex {};
-        epoch_chunks _updated_epochs {};
+        alignas(mutex::padding) mutable std::mutex _updated_epochs_mutex {};
+        index::epoch_chunks _updated_epochs {};
     };
 
     template<typename T>

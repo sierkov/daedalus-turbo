@@ -92,8 +92,8 @@ namespace daedalus_turbo::cli::stake_history {
             auto it = std::find_if(top_stake_keys.begin(), top_stake_keys.end(),
                 [&](const cardano_hash_28 &sk) { return memcmp(sk.data(), addr.data(), addr.size()) == 0; });
             if (it != top_stake_keys.end()) {
-                std::cerr << "WARNING: The key " << addr << " is in the top " << top_stake_keys.size() << " by the number of transactions!\n"
-                    << "WARNING: The history reconstruction can take a minute and longer.\n";
+                logger::warn("The key {} is in the top {} by the number of transactions!", addr, top_stake_keys.size());
+                logger::warn("The history reconstruction can take a minute and longer.");
             }
         }
     };

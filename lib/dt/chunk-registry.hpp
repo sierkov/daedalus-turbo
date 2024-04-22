@@ -332,7 +332,7 @@ namespace daedalus_turbo {
             if (start_offset > valid_end_offset())
                 throw error("start_offset: {} is greater than valid_end_offset: {}!", start_offset, valid_end_offset());
             _transaction = active_transaction { start_offset, target_offset };
-            if (truncate && start_offset < num_bytes())
+            if (truncate)
                 _do_truncate(start_offset);
             _start_tx_impl();
         }
@@ -375,6 +375,8 @@ namespace daedalus_turbo {
 
         virtual void _truncate_impl(uint64_t max_end_offset)
         {
+            if (num_bytes() <= max_end_offset)
+                return;
             timer t { fmt::format("chunk_registry::_truncate to size {}", max_end_offset) };
             auto chunk_it = _find_it(max_end_offset);
             if (chunk_it->second.offset != max_end_offset)
@@ -446,6 +448,8 @@ namespace daedalus_turbo {
             std::filesystem::rename(_state_pre_path, _state_path);
             for (const auto &chunk: _truncated_chunks)
                 _file_remover.mark(full_path(chunk.rel_path()));
+            for (const auto &[last_byte_offset, chunk]: _chunks)
+                _file_remover.unmark(full_path(chunk.rel_path()));
         }
 
         virtual void _on_epoch_merge(uint64_t epoch, const epoch_info &info)

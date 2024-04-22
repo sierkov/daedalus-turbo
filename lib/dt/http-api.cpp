@@ -298,24 +298,30 @@ namespace daedalus_turbo::http_api {
 
         json::object _hardware_info_cached() const
         {
+            static constexpr std::chrono::seconds update_delay { 5 };
             alignas(mutex::padding) static mutex::unique_lock::mutex_type info_mutex {};
             static auto info = _hardware_info();
-            static constexpr std::chrono::seconds update_delay { 5 };
-            static std::chrono::time_point<std::chrono::system_clock> next_update = std::chrono::system_clock::now() + update_delay;
+            static std::atomic<std::chrono::time_point<std::chrono::system_clock>> next_update { std::chrono::system_clock::now() + update_delay };
             static std::atomic_bool update_in_progress { false };
-            bool exp_false = false;
-            if (std::chrono::system_clock::now() >= next_update && update_in_progress.compare_exchange_strong(exp_false, true)) {
+
+            auto old_next_update = next_update.load();
+            const auto now = std::chrono::system_clock::now();
+            const auto new_next_update = now + update_delay;
+            if (next_update.compare_exchange_strong(old_next_update, new_next_update)) {
                 std::thread {[&] {
-                    try {
-                        auto new_info = _hardware_info();
-                        mutex::scoped_lock lkw { info_mutex };
-                        info = std::move(new_info);
-                        next_update = std::chrono::system_clock::now() + update_delay;
-                        update_in_progress = false;
-                    } catch (...) {
-                        next_update = std::chrono::system_clock::now() + update_delay;
-                        update_in_progress = false;
-                        throw;
+                    bool exp_false = false;
+                    if (update_in_progress.compare_exchange_strong(exp_false, true)) {
+                        logger::run_and_log_errors(
+                            [&] {
+                                auto new_info = _hardware_info();
+                                mutex::scoped_lock lkw { info_mutex };
+                                info = std::move(new_info);
+                            },
+                            [&] {
+                                update_in_progress = false;
+                            },
+                            false
+                        );
                     }
                 } }.detach();
             }

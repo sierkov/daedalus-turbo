@@ -238,42 +238,47 @@ namespace daedalus_turbo {
         if (_results_processed.compare_exchange_strong(must_be_false, true)) {
             try {
                 while (!_results.empty()) {
-                    auto res = _results.top();
-                    _results.pop();
-                    results_lock.unlock();
+                    std::optional<std::string> completion_task_group {};
+                    // ensure that the result object is destroyed before completion actions are called
                     {
-                        mutex::scoped_lock tasks_lock { _tasks_mutex };
-                        auto it = _tasks_cnt.find(res.task_group);
-                        if (it != _tasks_cnt.end()) {
-                            if (it->second == 1)
-                                _tasks_cnt.erase(it);
-                            else
-                                it->second--;
+                        auto res = _results.top();
+                        _results.pop();
+                        results_lock.unlock();
+                        completion_task_group = res.task_group;
+                        {
+                            mutex::scoped_lock tasks_lock { _tasks_mutex };
+                            auto it = _tasks_cnt.find(res.task_group);
+                            if (it != _tasks_cnt.end()) {
+                                if (it->second == 1)
+                                    _tasks_cnt.erase(it);
+                                else
+                                    it->second--;
+                            }
                         }
-                    }
-                    {
-                        mutex::unique_lock observers_lock { _observers_mutex };
-                        auto it = _observers.find(res.task_group);
-                        if (it != _observers.end()) {
-                            observers_lock.unlock();
-                            // assumes that the observer list for a task group is configured before task submission
-                            for (const auto &observer: it->second)
-                                observer(std::move(res.result));
-                        }
-                    }
-
-                    {
-                        mutex::scoped_lock completion_lk { _completion_mutex };
-                        auto it = _completion_actions.find(res.task_group);
-                        if (it != _completion_actions.end()) {
-                            if (++it->second.done == it->second.todo) {
-                                it->second.action();
-                                _completion_actions.erase(it);
+                        {
+                            mutex::unique_lock observers_lock { _observers_mutex };
+                            auto it = _observers.find(res.task_group);
+                            if (it != _observers.end()) {
+                                observers_lock.unlock();
+                                // assumes that the observer list for a task group is configured before task submission
+                                for (const auto &observer: it->second)
+                                    observer(std::move(res.result));
                             }
                         }
                     }
+                    {
+                        if (!completion_task_group)
+                            throw scheduler_error("internal error: completion task group is undefined!");
+                        mutex::unique_lock completion_lk { _completion_mutex };
+                        auto it = _completion_actions.find(*completion_task_group);
+                        if (it != _completion_actions.end() && ++it->second.done == it->second.todo) {
+                            auto node = _completion_actions.extract(it);
+                            completion_lk.unlock();
+                            clear_observers(*completion_task_group);
+                            node.mapped().action();
+                        }
+                    }
                     results_lock.lock();
-
                 }
                 _results_processed = false;
             } catch (const std::exception &ex) {
@@ -310,32 +315,42 @@ namespace daedalus_turbo {
             if (!prev_task)
                 ++_num_active;
             std::any task_res {};
-            const auto task = _tasks.top();
-            _tasks.pop();
-            if (prev_task)
-                worker_task = fmt::format("{}/{}", *prev_task, task.task_group);
-            else
-                worker_task = task.task_group;
-            lock.unlock();
-            try {
-                task_res = task.task();
-            } catch (const error &err) {
-                _success = false;
-                logger::warn("worker-{} task {} {}", worker_idx, task.task_group, err);
-                task_res = std::make_any<scheduled_task_error>("task: '{}' error: '{}' of type: '{}'!", task.task_group, err, typeid(err).name());
-            } catch (const std::exception &ex) {
-                _success = false;
-                logger::warn("worker-{} task {} std::exception: {}", worker_idx, task.task_group, ex.what());
-                task_res = std::make_any<scheduled_task_error>("task: '{}' error: '{}' of type: '{}'!", task.task_group, ex.what(), typeid(ex).name());
-            } catch (...) {
-                _success = false;
-                logger::warn("worker-{} task {} unknown exception", worker_idx, task.task_group);
-                task_res = std::make_any<scheduled_task_error>("task: '{}' unknown exception", task.task_group);
+            // need to create copies since the task will be destroyed before reporting its result.
+            std::optional<int> res_prio {};
+            std::optional<std::string> res_task_group {};
+            // ensure that the task instance is destroyed before its results are reported
+            {
+                const auto task = _tasks.top();
+                _tasks.pop();
+                if (prev_task)
+                    worker_task = fmt::format("{}/{}", *prev_task, task.task_group);
+                else
+                    worker_task = task.task_group;
+                lock.unlock();
+                res_prio = task.priority;
+                res_task_group = task.task_group;
+                try {
+                    task_res = task.task();
+                } catch (const error &err) {
+                    _success = false;
+                    logger::warn("worker-{} task {} {}", worker_idx, task.task_group, err);
+                    task_res = std::make_any<scheduled_task_error>("task: '{}' error: '{}' of type: '{}'!", task.task_group, err, typeid(err).name());
+                } catch (const std::exception &ex) {
+                    _success = false;
+                    logger::warn("worker-{} task {} std::exception: {}", worker_idx, task.task_group, ex.what());
+                    task_res = std::make_any<scheduled_task_error>("task: '{}' error: '{}' of type: '{}'!", task.task_group, ex.what(), typeid(ex).name());
+                } catch (...) {
+                    _success = false;
+                    logger::warn("worker-{} task {} unknown exception", worker_idx, task.task_group);
+                    task_res = std::make_any<scheduled_task_error>("task: '{}' unknown exception", task.task_group);
+                }
             }
             lock.lock();
             worker_task = prev_task;
             lock.unlock();
-            _add_result(task.priority, task.task_group, std::move(task_res));
+            if (!(res_prio && res_task_group))
+                throw scheduler_error("internal error: result priority or task group are not defined!");
+            _add_result(*res_prio, *res_task_group, std::move(task_res));
             if (!prev_task)
                 --_num_active;
         }

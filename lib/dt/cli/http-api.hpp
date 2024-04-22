@@ -37,7 +37,7 @@ namespace daedalus_turbo::cli::http_api {
                     }
                 }
             }
-            std::cerr << fmt::format("HTTP API listen address {}:{}\n", ip, port);
+            logger::info("HTTP API listens at the address {}:{}\n", ip, port);
             server s { data_dir };
             s.serve(ip, port);
         }

@@ -168,7 +168,7 @@ namespace daedalus_turbo::cardano::network {
                 throw error("no tip information received!");
             const auto &headers = std::get<header_list>(iresp.res);
             if (headers.empty())
-                throw error("received and empty header list");
+                throw error("received an empty header list");
             return std::make_pair(std::move(headers), std::move(*iresp.tip));
         }
 

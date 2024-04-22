@@ -93,7 +93,7 @@ namespace daedalus_turbo::validator {
                 _sched.submit_void(task_group, 1000, [&] {
                     timer t { fmt::format("serializing small for snapshot {}", path), logger::level::trace };
                     zpp::bits::out out { small };
-                    out(_epoch, _end_offset, _delta_treasury, _delta_reserves, _reserves, _treasury, _fees_next_reward,
+                    out(_pbft_pools, _epoch, _end_offset, _delta_treasury, _delta_reserves, _reserves, _treasury, _fees_next_reward,
                         _epoch_accounts, _instant_rewards_reserves, _instant_rewards_treasury, _reward_pool_params,
                         _blocks_current, _blocks_before, _params, _params_prev, _ppups, _ppups_future).or_throw();
                 });
