@@ -5,6 +5,7 @@
 #include <dt/file.hpp>
 #include <dt/json.hpp>
 #include <dt/validator.hpp>
+#include <dt/validator/state.hpp>
 
 namespace {
     using namespace daedalus_turbo;
