@@ -13,9 +13,8 @@ namespace daedalus_turbo::sync::p2p {
     using namespace daedalus_turbo::cardano;
 
     struct syncer::impl {
-        impl(indexer::incremental &cr, cardano::network::client &client, peer_selection &ps, scheduler &sched, file_remover &fr)
-            : _cr { cr }, _client { client }, _peer_selection { ps }, _sched { sched }, _file_remover { fr },
-                _raw_dir { _cr.data_dir() / "raw" }
+        impl(indexer::incremental &cr, cardano::network::client &client, peer_selection &ps)
+            : _cr { cr }, _client { client }, _peer_selection { ps }, _raw_dir { _cr.data_dir() / "raw" }
         {
             std::filesystem::create_directories(_raw_dir);
         }
@@ -45,8 +44,6 @@ namespace daedalus_turbo::sync::p2p {
         indexer::incremental &_cr;
         cardano::network::client &_client;
         peer_selection &_peer_selection;
-        scheduler &_sched;
-        file_remover &_file_remover;
         std::filesystem::path _raw_dir;
         uint8_vector _last_chunk {};
         std::optional<uint64_t> _last_chunk_id {};
@@ -134,8 +131,8 @@ namespace daedalus_turbo::sync::p2p {
         }
     };
 
-    syncer::syncer(indexer::incremental &cr, cardano::network::client &cnc, peer_selection &ps, scheduler &sched, file_remover &fr)
-        : _impl { std::make_unique<impl>(cr, cnc, ps, sched, fr) }
+    syncer::syncer(indexer::incremental &cr, cardano::network::client &cnc, peer_selection &ps)
+        : _impl { std::make_unique<impl>(cr, cnc, ps) }
     {
     }
 

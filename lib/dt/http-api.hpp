@@ -11,7 +11,7 @@
 
 namespace daedalus_turbo::http_api {
     struct server {
-        server(const std::string &data_dir, scheduler &sched=scheduler::get());
+        server(const std::string &data_dir, const bool ignore_requirements=false, scheduler &sched=scheduler::get());
         ~server();
         void serve(const std::string &ip, uint16_t port);
     private:

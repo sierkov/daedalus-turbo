@@ -10,10 +10,11 @@
 
 namespace daedalus_turbo {
     struct timer {
-        explicit timer(const std::string_view &title, logger::level lev=logger::level::trace)
+        explicit timer(const std::string_view &title, logger::level lev=logger::level::trace, const bool report_start=false)
             : _title { title }, _level { lev }, _start_time { std::chrono::system_clock::now() }
         {
-            logger::trace("timer '{}' created", _title, duration(), std::uncaught_exceptions());
+            if (report_start)
+                logger::log(_level, "timer '{}' created", _title);
         }
 
         ~timer() {

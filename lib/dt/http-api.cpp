@@ -65,8 +65,9 @@ namespace daedalus_turbo::http_api {
     using tcp = boost::asio::ip::tcp;
 
     struct server::impl {
-        impl(const std::string &data_dir, scheduler &sched)
-            : _data_dir { data_dir }, _sched { sched }, _cache_dir { _data_dir / "history" }
+        impl(const std::string &data_dir, const bool ignore_requirements, scheduler &sched)
+            : _data_dir { data_dir }, _sched { sched }, _cache_dir { _data_dir / "history" },
+                _ignore_requirements { ignore_requirements }
         {
         }
 
@@ -113,9 +114,12 @@ namespace daedalus_turbo::http_api {
         const std::filesystem::path _data_dir;
         scheduler &_sched;
         std::filesystem::path _cache_dir;
+        const bool _ignore_requirements;
         std::unique_ptr<validator::incremental> _cr {};
         std::unique_ptr<reconstructor> _reconst {};
         std::chrono::time_point<std::chrono::system_clock> _sync_start {};
+        std::atomic<std::optional<cardano::slot>> _sync_start_slot {};
+        std::atomic<std::optional<cardano::slot>> _sync_target_slot {};
         double _sync_duration {};
         double _sync_data_mb = 0;
         std::optional<std::string> _sync_error {};
@@ -264,17 +268,11 @@ namespace daedalus_turbo::http_api {
 
         static http::response<http::string_body> _send_json_response(const http::request<http::string_body>& req, const json::value &json_resp)
         {
-            timer t { "http-api serialize json and send the response" };
             auto resp_str = json::serialize(json_resp);
             resp_str += '\n';
-            const auto target = std::string_view { req.target().data(), req.target().size() };
-            if (!target.starts_with("/status/"))
-                logger::info("response to {} size: {}", target, resp_str.size());
-            else
-                logger::trace("response to {} size: {}", target, resp_str.size());
             http::string_body::value_type body { std::move(resp_str) };
             const std::string &mime_type = "application/json";
-            auto const size = body.size();
+            const auto size = body.size();
 
             http::response<http::string_body> res { std::piecewise_construct, std::make_tuple(std::move(body)), std::make_tuple(http::status::ok, req.version()) };
             res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
@@ -307,7 +305,7 @@ namespace daedalus_turbo::http_api {
             auto old_next_update = next_update.load();
             const auto now = std::chrono::system_clock::now();
             const auto new_next_update = now + update_delay;
-            if (next_update.compare_exchange_strong(old_next_update, new_next_update)) {
+            if (now >= old_next_update && next_update.compare_exchange_strong(old_next_update, new_next_update)) {
                 std::thread {[&] {
                     bool exp_false = false;
                     if (update_in_progress.compare_exchange_strong(exp_false, true)) {
@@ -372,6 +370,10 @@ namespace daedalus_turbo::http_api {
                 case sync_status::syncing: {
                     const double in_progress = std::chrono::duration<double>(std::chrono::system_clock::now() - _sync_start).count();
                     resp.emplace("syncDuration", fmt::format("{:0.1f}", in_progress / 60));
+                    if (const auto start_slot = _sync_start_slot.load())
+                        resp.emplace("syncStartSlot", fmt::format("from slot {} in epoch {}", static_cast<uint64_t>(*start_slot), start_slot->epoch()));
+                    if (const auto target_slot = _sync_target_slot.load())
+                        resp.emplace("syncTargetSlot", fmt::format("to slot {} in epoch {}", static_cast<uint64_t>(*target_slot), target_slot->epoch()));
                     if (!progress_copy.empty()) {
                         double mean_progress = 0.0;
                         for (const auto &[name, value]: progress_copy)
@@ -400,18 +402,26 @@ namespace daedalus_turbo::http_api {
             _sync_error.reset();
             _sync_last_chunk.reset();
             try {
-                const auto req_status = requirements::check(_data_dir.string());
-                {
-                    mutex::scoped_lock req_lk { _requirements_mutex };
-                    _requirements_status = req_status;
+                if (!_ignore_requirements) {
+                    const auto req_status = requirements::check(_data_dir.string());
+                    {
+                        mutex::scoped_lock req_lk { _requirements_mutex };
+                        _requirements_status = req_status;
+                    }
+                    if (!req_status)
+                        throw error("requirements check failed - cannot begin the sync!");
                 }
-                if (!req_status)
-                    throw error("requirements check failed - cannot begin the sync!");
                 _cr = std::make_unique<validator::incremental>(_data_dir.string());
                 {
                     sync::http::syncer syncr { *_cr };
                     const uint64_t start_offset = _cr->valid_end_offset();
-                    syncr.sync();
+                    auto peer = syncr.find_peer();
+                    if (start_offset > 0)
+                        _sync_start_slot = _cr->find(start_offset - 1).last_slot;
+                    else
+                        _sync_start_slot = 0;
+                    _sync_target_slot = peer.last_slot();
+                    syncr.sync(std::move(peer));
                     _sync_data_mb = static_cast<double>(_cr->valid_end_offset() - start_offset) / 1000000;
                     // prepare JSON array with tail_relative_stake data
                     _tail_relative_stake = _cr->tail_relative_stake();
@@ -657,8 +667,8 @@ namespace daedalus_turbo::http_api {
         }
     };
 
-    server::server(const std::string &data_dir, scheduler &sched)
-        : _impl { std::make_unique<impl>(data_dir, sched) }
+    server::server(const std::string &data_dir, const bool ignore_requirements, scheduler &sched)
+        : _impl { std::make_unique<impl>(data_dir, ignore_requirements, sched) }
     {
     }
 

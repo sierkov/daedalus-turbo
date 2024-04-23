@@ -23,7 +23,7 @@ LinearProgressWithLabel.propTypes = {
     value: PropTypes.number.isRequired,
 };
 
-export default function Progress({ progress, names, hardware, duration, eta }) {
+export default function Progress({ progress, names, hardware, duration, eta, slotRange }) {
     let durationInfo = <></>;
     if (duration) {
         durationInfo = <div className="duration">
@@ -51,6 +51,12 @@ export default function Progress({ progress, names, hardware, duration, eta }) {
         {progressItems}
     </>;
     const totalProgress = numItems > 0 ? Object.entries(myProgress).map(e => e[1]).reduce((sum, val) => sum + parseFloat(val?.slice(0, -1)), 0) / numItems : 100;
+    const slotRangeDiv = slotRange
+        ?   <div className="slot-range">
+                <div className="start">{slotRange.start}</div>
+                <div className="target">{slotRange.target}</div>
+            </div>
+        :  <></>;
     return <div className="progress">
         {durationInfo}
         <div className="progress-item total">
@@ -58,6 +64,7 @@ export default function Progress({ progress, names, hardware, duration, eta }) {
             <div>
                 <LinearProgressWithLabel color="primary" variant="determinate" value={totalProgress} />
             </div>
+            {slotRangeDiv}
         </div>
         {progressDetails}
         <HardwareStatus hardware={hardware} />

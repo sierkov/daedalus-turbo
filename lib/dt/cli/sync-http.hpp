@@ -41,7 +41,7 @@ namespace daedalus_turbo::cli::sync_http {
             timer tc { fmt::format("sync-http into {}", data_dir) };
             validator::incremental cr { data_dir };
             sync::http::syncer syncr { cr };
-            syncr.sync(max_epoch);
+            syncr.sync({}, max_epoch);
         }
     };
 }

@@ -3,6 +3,7 @@
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
+#include <dt/config.hpp>
 #include <dt/http/download-queue.hpp>
 #include <dt/test.hpp>
 
@@ -47,6 +48,12 @@ suite http_download_queue_suite = [] {
         "empty queue finishes"_test = [] {
             download_queue_async dlq {};
             expect(dlq.process_ok());
+        };
+        "fetch_json_signed"_test = [] {
+            download_queue_async dlq {};
+            const auto vk = ed25519_vkey::from_hex(static_cast<std::string_view>(configs_dir::get().at("turbo").at("vkey").as_string()));
+            const auto j_chain = dlq.fetch_json_signed("http://turbo1.daedalusturbo.org/chain.json", vk).as_object();
+            expect(!j_chain.at("epochs").as_array().empty());
         };
     };
 };

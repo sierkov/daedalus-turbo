@@ -255,10 +255,7 @@ namespace daedalus_turbo::indexer {
                     _sched.process(true);
                 }
             }*/
-            json::array j_slices {};
-            for (const auto &[offset, slice]: _slices)
-                j_slices.emplace_back(slice.to_json());
-            json::save_pretty(_index_state_pre_path, j_slices);
+            _save_json_slices(_index_state_pre_path);
         }
 
         void _rollback_tx_impl() override
@@ -360,6 +357,8 @@ namespace daedalus_turbo::indexer {
                         std::scoped_lock lk { _slices_mutex };
                         _slices.add(output_slice);
                         _final_merged = _slices.continuous_size() - _transaction->start_offset;
+                        // experimental support for on-the-go checkpoints
+                        _save_json_slices(_index_state_path);
                     }
                     progress::get().update("merge", _epoch_merged + _epoch_merged_base + _final_merged, (_transaction->target_offset - _transaction->start_offset) * 2);
                     _on_slice_ready(first_epoch, last_epoch, output_slice);
@@ -378,6 +377,14 @@ namespace daedalus_turbo::indexer {
                 for (auto &idxr: chunk_indexers)
                     idxr->index(blk);
             });
+        }
+    private:
+        void _save_json_slices(const std::string &path)
+        {
+            json::array j_slices {};
+            for (const auto &[offset, slice]: _slices)
+                j_slices.emplace_back(slice.to_json());
+            json::save_pretty(path, j_slices);
         }
     };
 

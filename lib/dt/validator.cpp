@@ -8,6 +8,7 @@
 #include <dt/cardano/state/vrf.hpp>
 #include <dt/container.hpp>
 #include <dt/index/block-fees.hpp>
+#include <dt/index/stake-delta.hpp>
 #include <dt/index/timed-update.hpp>
 #include <dt/index/txo.hpp>
 #include <dt/index/vrf.hpp>
@@ -127,15 +128,17 @@ namespace daedalus_turbo::validator {
                 _subchains.merge_valid();
                 if (_subchains.size() != 1 || !_subchains.begin()->second)
                     throw error("The provided data contains unmergeable blockchain segments!");
-                _save_subchains_snapshot(_subchains.begin()->second);
+                _save_kes_snapshot(_subchains.begin()->second);
             }
             {
-                if (_snapshots.empty() || _state.end_offset() > _snapshots.rbegin()->end_offset)
+                if (_snapshots.empty() || _state.end_offset() > _snapshots.rbegin()->end_offset) {
                     _save_state_snapshot();
+                    _cr.sched().process(true);
+                }
                 if (_snapshots.size() > 5) {
                     logger::info("removing unnecessary snapshots of the validator state");
                     uint64_t last_offset = 0;
-                    uint64_t end_offset = _snapshots.rbegin()->end_offset;
+                    const uint64_t end_offset = _snapshots.rbegin()->end_offset;
                     for (auto it = _snapshots.begin(); it != _snapshots.end(); ) {
                         if (((end_offset - it->end_offset <= snapshot_hifreq_end_offset_range && it->end_offset - last_offset < snapshot_hifreq_distance)
                             || (end_offset - it->end_offset > snapshot_hifreq_end_offset_range && it->end_offset - last_offset < snapshot_normal_distance))
@@ -151,11 +154,6 @@ namespace daedalus_turbo::validator {
                         }
                     }
                 }
-
-                json::array j_snapshots {};
-                for (const auto &j_snap: _snapshots)
-                    j_snapshots.emplace_back(j_snap.to_json());
-                json::save_pretty(_state_pre_path, j_snapshots);
             }
             _remove_temporary_data();
         }
@@ -168,9 +166,9 @@ namespace daedalus_turbo::validator {
         void commit_tx_impl()
         {
             _cr._parent_commit_tx_impl();
-            if (!std::filesystem::exists(_state_pre_path))
+            /*if (!std::filesystem::exists(_state_pre_path))
                 throw error("the prepared chunk_registry state file is missing: {}!", _state_pre_path);
-            std::filesystem::rename(_state_pre_path, _state_path);
+            std::filesystem::rename(_state_pre_path, _state_path);*/
         }
 
         cardano::amount unspent_reward(const cardano::stake_ident &id) const
@@ -286,7 +284,7 @@ namespace daedalus_turbo::validator {
         state _state;
         cardano::state::vrf _vrf_state {};
         alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _subchains_mutex {};
-        mutable subchain_list _subchains { [this](const auto &sc) { _save_subchains_snapshot(sc); } };
+        mutable subchain_list _subchains { [this](const auto &sc) { _save_kes_snapshot(sc); } };
         std::atomic_bool _validation_running { false };
         alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _next_task_mutex {};
         uint64_t _next_end_offset = 0;
@@ -302,6 +300,14 @@ namespace daedalus_turbo::validator {
                 pools.emplace(cardano::pool_hash::from_hex(meta.at("delegate").as_string()));
             }
             return pools;
+        }
+
+        void _save_json_snapshots(const std::string &path)
+        {
+            json::array j_snapshots {};
+            for (const auto &j_snap: _snapshots)
+                j_snapshots.emplace_back(j_snap.to_json());
+            json::save_pretty(path, j_snapshots);
         }
 
         uint64_t _load_state_snapshot(uint64_t end_offset)
@@ -324,7 +330,7 @@ namespace daedalus_turbo::validator {
             return std::filesystem::weakly_canonical(_validate_dir / fmt::format("{}-{:013}.bin", prefix, end_offset)).string();
         }
 
-        void _save_state_snapshot(bool record=true)
+        void _save_state_snapshot()
         {
             logger::debug("initiating the saving of the validator state snapshot epoch: {} end_offset: {}", _state.epoch(), _state.end_offset());
             timer t {
@@ -334,15 +340,15 @@ namespace daedalus_turbo::validator {
             _vrf_state.save(_storage_path("vrf", _state.end_offset()));
             logger::debug("saving the validator state");
             _state.save(_storage_path("ledger", _state.end_offset()));
-            if (record) {
-                logger::debug("recording the new snapshot");
-                snapshot latest { _state.epoch(), _state.end_offset() };
-                _snapshots.emplace(std::move(latest));
-            }
+            logger::debug("recording the new snapshot");
+            snapshot latest { _state.epoch(), _state.end_offset() };
+            _snapshots.emplace(std::move(latest));
+            // experimental support for on-the-go checkpointing
+            _save_json_snapshots(_state_path);
         }
 
         // _suchain_mutex must be heldby the caller!
-        void _save_subchains_snapshot(const subchain &sc) const
+        void _save_kes_snapshot(const subchain &sc) const
         {
             logger::debug("saving KES state snapshot for end_offset: {}", sc.end_offset());
             timer t { fmt::format("saving KES state snapshot for end_offset: {}", sc.end_offset()) };
@@ -797,26 +803,14 @@ namespace daedalus_turbo::validator {
             }
         }
 
-        void _apply_ledger_state_updates(uint64_t first_epoch, uint64_t last_epoch, const indexer::slice_list &slices, bool fast)
+        void _apply_ledger_state_updates(uint64_t first_epoch, uint64_t last_epoch, const indexer::slice_list &slices, const bool fast)
         {
             timer t { fmt::format("validator::_apply_ledger_state_updates first_epoch: {} last_epoch: {} fast: {}", first_epoch, last_epoch, fast), logger::level::debug };
+            // add extra snapshots closer to the tip since rollbacks are more likely there
             vector<uint64_t> snapshot_offsets {};
-            {
-                mutex::scoped_lock lk { _subchains_mutex };
-                auto target_offset = _cr.tx()->target_offset;
-                snapshot_offsets.emplace_back(target_offset / 2);
-                uint64_t max_offset = _cr.num_bytes();
-                while (snapshot_offsets.back() < max_offset) {
-                    uint64_t last_offset = snapshot_offsets.back();
-                    uint64_t next_offset = std::min(last_offset + std::max((target_offset - last_offset) / 2, snapshot_normal_distance), max_offset);
-                    if (target_offset - next_offset <= snapshot_hifreq_end_offset_range)
-                        next_offset = std::min(last_offset + std::max((target_offset - last_offset) / 2, snapshot_hifreq_distance), max_offset);
-                    auto einfo = _cr.epoch(_cr.find(next_offset - 1).epoch());
-                    auto it = _subchains.find(einfo.end_offset() - 1);
-                    it->second.snapshot = true;
-                    snapshot_offsets.emplace_back(einfo.end_offset());
-                }
-                logger::debug("planned snapshot offsets between epochs {} and {}: {}", first_epoch, last_epoch, snapshot_offsets);
+            for (const auto &slice: slices) {
+                if ((_cr.tx()->target_offset - slice.end_offset()) < indexer::merger::part_size)
+                    snapshot_offsets.emplace_back(slice.end_offset());
             }
             index::reader_multi<index::txo::item> txo_reader { _cr.reader_paths("txo", slices) };
             for (uint64_t e = first_epoch; e <= last_epoch; e++) {

@@ -10,6 +10,7 @@
 #include <optional>
 #include <string>
 #include <dt/json.hpp>
+#include <dt/mutex.hpp>
 
 namespace daedalus_turbo {
     struct scheduler;
@@ -59,21 +60,24 @@ namespace daedalus_turbo::http {
 
         std::string fetch(const std::string &url)
         {
-            auto url_hash = blake2b<blake2b_256_hash>(url);
-            file::tmp tmp { fmt::format("http-fetch-sync-{}.tmp", url_hash) };
+            alignas(mutex::padding) mutex::unique_lock::mutex_type m {};
+            alignas(mutex::padding) std::condition_variable_any cv {};
+            const auto url_hash = blake2b<blake2b_256_hash>(url);
+            const file::tmp tmp { fmt::format("http-fetch-sync-{}.tmp", url_hash) };
             std::atomic_bool ready { false };
             std::optional<std::string> err {};
             download(url, tmp.path(), 0, [&](const auto &res) {
                 err = std::move(res.error);
                 ready = true;
+                cv.notify_one();
             });;
-            while (!ready) {
-                std::this_thread::sleep_for(std::chrono::milliseconds { 100 });
+            {
+                mutex::unique_lock lk { m };
+                cv.wait(lk, [&] { return ready.load(); });
             }
             if (err)
                 throw error("download of {} failed: {}", url, *err);
-            auto buf = file::read(tmp.path());
-            return std::string { buf.span().string_view() };
+            return std::string { file::read(tmp.path()).span().string_view() };
         }
 
         json::value fetch_json(const std::string &url)

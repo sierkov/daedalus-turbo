@@ -6,12 +6,11 @@
 #define DAEDALUS_TURBO_VALIDATOR_STATE_HPP
 
 #include <unordered_map>
-#include <unordered_set>
 #include <zpp_bits.h>
 #include <dt/atomic.hpp>
 #include <dt/file.hpp>
 #include <dt/format.hpp>
-#include <dt/index/stake-delta.hpp>
+#include <dt/scheduler.hpp>
 #include <dt/static-map.hpp>
 #include <dt/timer.hpp>
 #include <dt/validator/types.hpp>
@@ -38,8 +37,6 @@ namespace daedalus_turbo::validator {
         constexpr static auto serialize(auto &archive, auto &self)
         {
             return archive(
-                self._pbft_pools,
-
                 self._epoch,
                 self._end_offset,
                 self._delta_treasury,
@@ -93,7 +90,7 @@ namespace daedalus_turbo::validator {
                 _sched.submit_void(task_group, 1000, [&] {
                     timer t { fmt::format("serializing small for snapshot {}", path), logger::level::trace };
                     zpp::bits::out out { small };
-                    out(_pbft_pools, _epoch, _end_offset, _delta_treasury, _delta_reserves, _reserves, _treasury, _fees_next_reward,
+                    out(_epoch, _end_offset, _delta_treasury, _delta_reserves, _reserves, _treasury, _fees_next_reward,
                         _epoch_accounts, _instant_rewards_reserves, _instant_rewards_treasury, _reward_pool_params,
                         _blocks_current, _blocks_before, _params, _params_prev, _ppups, _ppups_future).or_throw();
                 });
@@ -563,7 +560,6 @@ namespace daedalus_turbo::validator {
 
         void clear()
         {
-            _pbft_pools.clear();
             _epoch = 0;
             _end_offset = 0;
             _mark.clear();
@@ -599,6 +595,8 @@ namespace daedalus_turbo::validator {
         }
     private:
         struct ledger_copy {
+            using serialize = zpp::bits::members<6>;
+
             stake_distribution_copy stake_dist {};
             reward_distribution_copy reward_dist {};
             pool_stake_distribution pool_dist {};
@@ -648,7 +646,7 @@ namespace daedalus_turbo::validator {
         };
 
         scheduler &_sched;
-        pool_set _pbft_pools;
+        const pool_set _pbft_pools;
         uint64_t _epoch = 0;
         uint64_t _end_offset = 0;
         // stateBefore.esSnapshots
@@ -836,7 +834,7 @@ namespace daedalus_turbo::validator {
         uint64_t _compute_pool_rewards_parallel(const pool_block_dist &pools_active, const uint64_t staking_reward_pot, const uint64_t total_stake)
         {
             const std::string task_group { "staking-rewards-part" };
-            auto [init_total, init_filtered] = _rewards_prepare_pools(pools_active, staking_reward_pot, total_stake);
+            const auto [init_total, init_filtered] = _rewards_prepare_pools(pools_active, staking_reward_pot, total_stake);
             std::atomic_uint64_t total = init_total;
             std::atomic_uint64_t filtered = init_filtered;
             _sched.wait_for_count(task_group, _potential_rewards.num_parts,
@@ -848,7 +846,7 @@ namespace daedalus_turbo::validator {
                     }
                 },
                 [&](auto &&res) {
-                    auto [part_total, part_filtered] = std::any_cast<std::pair<uint64_t, uint64_t>>(std::move(res));
+                    const auto [part_total, part_filtered] = std::any_cast<std::pair<uint64_t, uint64_t>>(std::move(res));
                     atomic_add(total, part_total);
                     atomic_add(filtered, part_filtered);
                 }

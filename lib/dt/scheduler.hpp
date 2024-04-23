@@ -56,7 +56,7 @@ namespace daedalus_turbo {
 
     struct scheduler {
         static constexpr std::chrono::milliseconds default_wait_interval { 10 };
-        static constexpr std::chrono::milliseconds default_update_interval { 1000 };
+        static constexpr std::chrono::milliseconds default_update_interval { 5000 };
 
         static size_t default_worker_count()
         {
@@ -69,7 +69,7 @@ namespace daedalus_turbo {
             return sched;
         }
 
-        scheduler(size_t user_num_workers=scheduler::default_worker_count());
+        explicit scheduler(size_t user_num_workers=scheduler::default_worker_count());
         ~scheduler();
         size_t num_workers() const;
         size_t num_observers(const std::string &task_group) const;

@@ -1,4 +1,5 @@
 dist
 bin
 dt-ui-*
+ui/**
 *.dmg

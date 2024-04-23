@@ -58,8 +58,12 @@ export default function Home() {
                               duration={statusInfo?.syncDuration} dataSize={statusInfo?.syncDataMB}
                               ready={statusInfo?.ready} confirmReady={() => setReadyConfirmed(true)} />;
     } else if (statusInfo?.progress && Object.keys(statusInfo?.progress).length > 0) {
+        let slotRange;
+        if (statusInfo?.syncStartSlot && statusInfo?.syncTargetSlot)
+            slotRange = { start: statusInfo?.syncStartSlot, target: statusInfo?.syncTargetSlot };
         homeComponent = <Sync progress={statusInfo.progress} hardware={statusInfo?.hardware}
-                              duration={statusInfo?.syncDuration} eta={statusInfo?.syncETA} />;
+                              duration={statusInfo?.syncDuration} eta={statusInfo?.syncETA}
+                              slotRange={slotRange} />;
     } else {
         return <Transition message="Fetching the updated status, this should be done in a second ..." />;
     }

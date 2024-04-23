@@ -8,17 +8,33 @@
 #include <dt/indexer.hpp>
 #include <dt/file-remover.hpp>
 #include <dt/http/download-queue.hpp>
+#include <dt/json.hpp>
 #include <dt/peer-selection.hpp>
 #include <dt/scheduler.hpp>
 
 namespace daedalus_turbo::sync::http {
+    struct peer_info {
+        std::string host {};
+        json::object chain {};
+
+        [[nodiscard]] cardano::slot last_slot() const
+        {
+            const auto &j_epochs = chain.at("epochs").as_array();
+            if (j_epochs.empty())
+                return 0;
+            return json::value_to<uint64_t>(j_epochs.back().at("lastSlot"));
+        }
+    };
+
     struct syncer {
         syncer(indexer::incremental &cr, daedalus_turbo::http::download_queue &dq=daedalus_turbo::http::download_queue_async::get(),
             cardano::network::client &cnc=cardano::network::client_async::get(),
             peer_selection &ps=peer_selection_simple::get(),
             scheduler &sched=scheduler::get(), file_remover &fr=file_remover::get());
         ~syncer();
-        void sync(std::optional<uint64_t> max_epoch = std::optional<uint64_t> {});
+        [[nodiscard]] peer_info find_peer() const;
+        void sync(std::optional<peer_info> peer=std::optional<peer_info> {},
+            const std::optional<uint64_t> max_epoch=std::optional<uint64_t> {});
     private:
         struct impl;
         std::unique_ptr<impl> _impl;

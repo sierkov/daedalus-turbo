@@ -139,7 +139,7 @@ namespace daedalus_turbo {
 
     bool scheduler::process_ok(bool report_status, const std::source_location &loc)
     {
-        timer t { fmt::format("scheduler::process_ok call from {}:{}", loc.file_name(), loc.line()), logger::level::debug };
+        timer t { fmt::format("scheduler::process_ok call from {}:{}", loc.file_name(), loc.line()), logger::level::debug, true };
         bool must_be_false = false;
         if (!_process_running.compare_exchange_strong(must_be_false, true))
             throw error("nested calls to scheduler::process are prohibited!");

@@ -14,8 +14,7 @@
 namespace daedalus_turbo::sync::p2p {
     struct syncer {
         syncer(indexer::incremental &cr, cardano::network::client &cnc=cardano::network::client_async::get(),
-            peer_selection &ps=peer_selection_simple::get(), scheduler &sched=scheduler::get(),
-            file_remover &fr=file_remover::get());
+            peer_selection &ps=peer_selection_simple::get());
         ~syncer();
         void sync(std::optional<cardano::slot> max_slot=std::optional<cardano::slot> {});
     private:

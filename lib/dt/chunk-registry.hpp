@@ -430,10 +430,7 @@ namespace daedalus_turbo {
             }
             // let the operations potentially scheduled in _on_epoch_merge calls to finish
             _sched.process(true);
-            json::array j_chunks {};
-            for (const auto &[max_offset, chunk]: _chunks)
-                j_chunks.emplace_back(chunk.to_json());
-            json::save_pretty(_state_pre_path, json::object { { "chunks", j_chunks } });
+            _save_json_chunks(_state_pre_path);
         }
 
         virtual void _rollback_tx_impl()
@@ -512,6 +509,15 @@ namespace daedalus_turbo {
 
         static thread_local uint8_vector _read_buffer;
 
+        void _save_json_chunks(const std::string &path)
+        {
+            // the caller is responsible to hold a lock protecting access to the _chunks!
+            json::array j_chunks {};
+            for (const auto &[max_offset, chunk]: _chunks)
+                j_chunks.emplace_back(chunk.to_json());
+            json::save_pretty(path, json::object { { "chunks", j_chunks } });
+        }
+
         void _do_truncate(size_t max_end_offset)
         {
             if (!_transaction)
@@ -581,8 +587,11 @@ namespace daedalus_turbo {
                         if (chunk->offset >= _notify_end_offset)
                             epoch_info_copy.chunks.emplace_back(chunk);
                     }
-                    if (!epoch_info_copy.chunks.empty())
+                    if (!epoch_info_copy.chunks.empty()) {
+                        // experimental support for on-the-go checkpoints
+                        _save_json_chunks(_state_path);
                         _on_epoch_merge(_notify_next_epoch, epoch_info_copy);
+                    }
                     _notify_end_offset = epoch_info.end_offset();
                 }
                 ++_notify_next_epoch;

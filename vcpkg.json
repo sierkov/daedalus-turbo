@@ -7,6 +7,5 @@
     "pkgconf",
     "spdlog",
     "zstd"
-  ],
-  "builtin-baseline": "3df33117ffc0a3a1141decaa2c842a700a785092"
+  ]
 }

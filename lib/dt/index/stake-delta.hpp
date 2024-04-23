@@ -21,7 +21,7 @@ namespace daedalus_turbo::index::stake_delta {
 
     struct chunk_indexer: chunk_indexer_one_epoch<item> {
         using chunk_indexer_one_epoch::chunk_indexer_one_epoch;
-        ~chunk_indexer()
+        ~chunk_indexer() override
         {
             for (const auto &[stake_id, delta]: _deltas)
                 _data.emplace_back(stake_id, delta);

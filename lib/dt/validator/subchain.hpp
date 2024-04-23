@@ -153,8 +153,9 @@ namespace daedalus_turbo::validator {
                     next_it = erase(next_it))
                 {
                     it->second.merge(next_it->second);
-                    if (next_it->second.snapshot)
-                        _take_snapshot(it->second);
+                    //if (next_it->second.snapshot)
+                    // experimental support for on-the-go checkpoints
+                    _take_snapshot(it->second);
                 }
                 _adjust_updated_subchain(it);
             }

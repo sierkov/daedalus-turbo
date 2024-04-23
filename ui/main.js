@@ -6,8 +6,18 @@ const os = require('os');
 const fs = require('fs');
 const log4js = require('log4js');
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const processIsAlive = (pid) => {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
+
 const execFilename = path.basename(process.execPath, '.exe').toLowerCase();
-const devEnv = execFilename === "electron";
+const devEnv = execFilename === "electron" || process?.argv?.includes("--dev");
 const osEnv = os.platform();
 let installDir = devEnv ? process.cwd() : path.resolve(path.dirname(process.execPath), '..');
 let roamingDataDir = installDir;
@@ -34,6 +44,7 @@ const api = {
   logPath: path.resolve(roamingDataDir, 'log/dt-api.log'),
   uiDataPath: path.resolve(roamingDataDir, 'ui'),
   etcPath: path.resolve(installDir, 'etc'),
+  pidPath: path.resolve(roamingDataDir, 'dt-ui.pid'),
   ip: '127.0.0.1',
   port: 55556,
   os: osEnv
@@ -41,14 +52,23 @@ const api = {
 api.uri = `http://${api.ip}:${api.port}`;
 const startInfo = `Initializing DT UI cwd: ${process.cwd()} execPath: ${process.execPath} ` +
   `installDir: ${installDir} roamingDataDir: ${roamingDataDir} api: ${JSON.stringify(api, null, 2)}`;
+// log to the console first for the case the logger configuration is broken
 console.log(startInfo);
 logger.debug(startInfo);
 logger.debug('api config: ' + JSON.stringify(api, null, 2));
+if (fs.existsSync(api.pidPath)) {
+  const pid = parseInt(fs.readFileSync(api.pidPath).toString());
+  if (processIsAlive(pid)) {
+    const msg = `Discovered another UI process with pid ${pid}: exiting`;
+    logger.error(msg);
+    console.error(msg);
+    process.exit(1);
+  }
+}
+fs.writeFileSync(api.pidPath, process.pid.toString());
 
 let apiServer;
 let apiServerReadyTime;
-
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const startAPI = () => {
   if (api.dev) {
@@ -117,6 +137,9 @@ app.on('window-all-closed', () => {
     apiServer.kill('SIGKILL');
   }
   app.quit();
+});
+app.on('quit', () => {
+  fs.unlinkSync(api.pidPath);
 });
 
 const fetchWithRetries = async (url, maxRetries) => {

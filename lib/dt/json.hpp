@@ -16,18 +16,18 @@ namespace daedalus_turbo::json {
 
     inline json::value parse(const buffer &buf, json::storage_ptr sp={})
     {
-        return boost::json::parse(boost::json::string_view { reinterpret_cast<const char *>(buf.data()), buf.size() }, sp);
+        return boost::json::parse(buf.string_view(), sp);
     }
 
     inline json::value parse_signed(const buffer &buf, const buffer &vk, json::storage_ptr sp={})
     {
-        auto j_signed = boost::json::parse(boost::json::string_view { reinterpret_cast<const char *>(buf.data()), buf.size() }, sp).as_object();
+        auto j_signed = boost::json::parse(buf.string_view(), sp).as_object();
         if (!j_signed.contains("signature"))
             throw error("a signed json must contain signature!");
-        auto sig = ed25519::signature::from_hex(std::string { static_cast<std::string_view>(j_signed.at("signature").as_string()) });
+        const auto sig = ed25519::signature::from_hex(static_cast<std::string_view>(j_signed.at("signature").as_string()));
         j_signed.erase("signature");
-        auto content = json::serialize(j_signed);
-        auto hash = blake2b<blake2b_256_hash>(content);
+        const auto content = json::serialize(j_signed);
+        const auto hash = blake2b<blake2b_256_hash>(content);
         if (!ed25519::verify(sig, vk, hash))
             throw error("Verification of a signed JSON response has failed!");
         return j_signed;
@@ -35,14 +35,12 @@ namespace daedalus_turbo::json {
 
     inline json::value load(const std::string &path, json::storage_ptr sp={})
     {
-        auto buf = file::read(path);
-        return parse(buf, sp);
+        return parse(file::read(path), sp);
     }
 
     inline json::value load_signed(const std::string &path, const buffer &vk, json::storage_ptr sp={})
     {
-        auto buf = file::read(path);
-        return parse_signed(buf, vk, sp);
+        return parse_signed(file::read(path), vk, sp);
     }
 
     inline void save_pretty(std::ostream& os, json::value const &jv, std::string *indent = nullptr)
@@ -55,7 +53,7 @@ namespace daedalus_turbo::json {
             case json::kind::object: {
                 os << "{\n";
                 indent->append(indent_step, ' ');
-                auto const &obj = jv.get_object();
+                const auto &obj = jv.get_object();
                 for (auto it = obj.begin(), last = std::prev(obj.end()); it != obj.end(); ++it) {
                     os << *indent << json::serialize(it->key()) << ": ";
                     save_pretty(os, it->value(), indent);
@@ -70,7 +68,7 @@ namespace daedalus_turbo::json {
             case json::kind::array: {
                 os << "[\n";
                 indent->append(indent_step, ' ');
-                auto const &arr = jv.get_array();
+                const auto &arr = jv.get_array();
                 for (auto it = arr.begin(), last = std::prev(arr.end()); it != arr.end(); ++it) {
                     os << *indent;
                     save_pretty(os, *it, indent);
@@ -115,8 +113,8 @@ namespace daedalus_turbo::json {
 
     inline void save_pretty_signed(const std::string &path, const json::object &jv, const buffer &sk)
     {
-        auto content = json::serialize(jv);
-        auto hash = blake2b<blake2b_256_hash>(content);
+        const auto content = json::serialize(jv);
+        const auto hash = blake2b<blake2b_256_hash>(content);
         ed25519::signature sig {};
         ed25519::sign(sig, hash, sk);
         json::object jv_copy(jv);

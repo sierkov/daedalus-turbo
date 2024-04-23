@@ -5,15 +5,32 @@
 #ifndef DAEDALUS_TURBO_PROGRESS_HPP
 #define DAEDALUS_TURBO_PROGRESS_HPP
 
-#include <iostream>
 #include <map>
 #include <dt/format.hpp>
+#include <dt/logger.hpp>
 #include <dt/mutex.hpp>
 
 namespace daedalus_turbo {
-    struct progress {
-        using state_map = std::map<std::string, double>;
+    using progress_state = std::map<std::string, double>;
+}
 
+namespace fmt {
+    template<>
+    struct formatter<daedalus_turbo::progress_state>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            auto out_it = ctx.out();
+            for (auto it = v.begin(); it != v.end(); ++it) {
+                const std::string_view sep { std::next(it) == v.end() ? "" : ", " };
+                out_it = fmt::format_to(out_it, "{}: {:0.3f}%{}", it->first, it->second * 100, sep);
+            }
+            return out_it;
+        }
+    };
+}
+
+namespace daedalus_turbo {
+    struct progress {
         struct info {
             size_t total = 0;
             size_t active = 0;
@@ -34,8 +51,8 @@ namespace daedalus_turbo {
 
         void update(const std::string &name, const uint64_t current, const uint64_t max)
         {
-            auto value = current < max ? current : max;
-            auto pct_value = max == 0 ? 1.0 : static_cast<double>(value) / max;
+            const auto value = current < max ? current : max;
+            const auto pct_value = max == 0 ? 1.0 : static_cast<double>(value) / max;
             _update(name, pct_value);
         }
 
@@ -50,24 +67,15 @@ namespace daedalus_turbo {
             _state.erase(name);
         }
 
-        void inform(std::ostream &stream=std::cerr)
+        void inform() const
         {
-            std::string str {};
-            {
-                mutex::scoped_lock state_lk { _state_mutex };
-                for (const auto &[name, val]: _state)
-                    str += fmt::format("{}: {:0.3f}% ", name, val * 100);
-            }
-            // adjust for the invisible whitespace
-            if (str.size() > _max_str)
-                _max_str = str.size();
-            mutex::scoped_lock io_lk { _io_mutex };
-            stream << fmt::format("{:<{}}\r", str, _max_str);
+            const auto state_copy = copy();
+            logger::info("progress: {}", state_copy);
         }
 
-        state_map copy() const
+        progress_state copy() const
         {
-            state_map state_copy {};
+            progress_state state_copy {};
             {
                 mutex::scoped_lock lk { _state_mutex };
                 state_copy = _state;
@@ -76,9 +84,7 @@ namespace daedalus_turbo {
         }
     private:
         alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _state_mutex {};
-        state_map _state {};
-        size_t _max_str = 0;
-        alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _io_mutex {};
+        progress_state _state {};
 
         void _update(const std::string &name, const double value)
         {

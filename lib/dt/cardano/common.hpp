@@ -13,12 +13,14 @@
 #include <ranges>
 #include <set>
 #include <span>
+#include <variant>
 #include <zpp_bits.h>
 #include <dt/cardano/type.hpp>
 #include <dt/cbor.hpp>
 #include <dt/file.hpp>
 #include <dt/format.hpp>
 #include <dt/json.hpp>
+#include <dt/mutex.hpp>
 #include <dt/rational.hpp>
 #include <dt/util.hpp>
 
@@ -230,10 +232,14 @@ namespace daedalus_turbo::cardano {
 
         std::string timestamp() const
         {
-            std::time_t t = unixtime();
-            std::tm* tm = std::gmtime(&t);
+            alignas(mutex::padding) static mutex::unique_lock::mutex_type gmtime_mutex {};
             std::stringstream ss {};
-            ss << std::put_time(tm, "%Y-%m-%d %H:%M:%S");
+            std::time_t t = unixtime();
+            {
+                mutex::scoped_lock lk { gmtime_mutex };
+                std::tm* tm = std::gmtime(&t);
+                ss << std::put_time(tm, "%Y-%m-%d %H:%M:%S");
+            }
             return ss.str();
         }
 

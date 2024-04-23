@@ -13,22 +13,28 @@ namespace daedalus_turbo::sync::http {
     struct syncer::impl {
         impl(indexer::incremental &cr, daedalus_turbo::http::download_queue &dq, cardano::network::client &cnc, peer_selection &ps, scheduler &sched, file_remover &fr)
             : _cr { cr }, _dlq { dq }, _cnc { cnc }, _peer_selection { ps }, _sched { sched }, _file_remover { fr },
-                _vk { ed25519_vkey::from_hex(std::string { static_cast<std::string_view>(configs_dir::get().at("turbo").at("vkey").as_string()) }) }
+                _vk { ed25519_vkey::from_hex(static_cast<std::string_view>(configs_dir::get().at("turbo").at("vkey").as_string())) }
         {
         }
 
-        void sync(std::optional<uint64_t> max_epoch)
+        [[nodiscard]] peer_info find_peer() const
+        {
+            return _select_peer();
+        }
+
+        void sync(std::optional<peer_info> peer, const std::optional<uint64_t> max_epoch)
         {
             timer t { "http synchronization" };
             progress_guard pg { "download", "parse", "merge", "validate" };
 
             // determine the synchronization peer and task
             _epoch_json_cache.clear();
-            auto [turbo_host, j_chain] = _select_peer();
-            const auto &j_epochs = j_chain.at("epochs").as_array();
+            if (!peer)
+                peer = _select_peer();
+            const auto &j_epochs = peer->chain.at("epochs").as_array();
             if (j_epochs.empty())
                 throw error("Remote turbo node reports and empty chain!");
-            auto [task, remote_size] = _find_sync_start_position(turbo_host, j_epochs);
+            auto [task, remote_size] = _find_sync_start_position(peer->host, j_epochs);
             if (max_epoch) {
                 remote_size = 0;
                 for (size_t epoch = 0; epoch < j_epochs.size(); ++epoch) {
@@ -45,15 +51,15 @@ namespace daedalus_turbo::sync::http {
                 uint64_t run_start_offset = task->start_offset;
                 uint64_t run_start_epoch = task->start_epoch;
                 // download metadata for the whole sync at once
-                _download_metadata(turbo_host, j_epochs, remote_size, task->start_epoch);
+                _download_metadata(peer->host, j_epochs, remote_size, task->start_epoch);
                 while (run_start_offset < remote_size) {
-                    auto run_max_offset = _run_max_offset(j_epochs, run_start_offset, remote_size);
+                    const auto run_max_offset = _run_max_offset(j_epochs, run_start_offset, remote_size);
                     // set start and target offset to the full task for correct progress computation
                     _cr.start_tx(task->start_offset, remote_size, run_start_offset == task->start_offset);
                     chunk_registry::file_set updated_chunks {};
                     try {
                         timer td { "sync::http::download_data", logger::level::debug };
-                        updated_chunks = _download_data(turbo_host, j_epochs, run_max_offset, run_start_epoch);
+                        updated_chunks = _download_data(peer->host, j_epochs, run_max_offset, run_start_epoch);
                     } catch (const std::exception &ex) {
                         logger::error("sync error: {}", ex.what());
                         ex_ptr = std::current_exception();
@@ -111,9 +117,9 @@ namespace daedalus_turbo::sync::http {
         alignas(mutex::padding) std::mutex _epoch_json_cache_mutex {};
         std::map<uint64_t, json::object> _epoch_json_cache {};
 
-        static uint64_t _run_max_offset(const json::array &j_epochs, uint64_t start_offset, uint64_t max_offset)
+        static uint64_t _run_max_offset(const json::array &j_epochs, const uint64_t start_offset, const uint64_t max_offset)
         {
-            static constexpr uint64_t max_sync_part = static_cast<uint64_t>(1) << 35;
+            static constexpr uint64_t max_sync_part = static_cast<uint64_t>(1) << 34;
             uint64_t run_max_offset = 0;
             for (size_t epoch = 0; epoch < j_epochs.size(); ++epoch) {
                 const auto &j_epoch_meta = j_epochs.at(epoch);
@@ -125,7 +131,7 @@ namespace daedalus_turbo::sync::http {
             return std::min(run_max_offset, max_offset);
         }
 
-        std::pair<std::string, json::object> _select_peer()
+        [[nodiscard]] peer_info _select_peer() const
         {
             static constexpr size_t max_supported_api_version = 2;
             static constexpr size_t max_retries = 10;
@@ -136,8 +142,8 @@ namespace daedalus_turbo::sync::http {
                     auto j_chain = _dlq.fetch_json_signed(fmt::format("http://{}/chain.json", turbo_host), _vk).as_object();
                     if (max_supported_api_version < json::value_to<size_t>(j_chain.at("api").at("version")))
                         throw error("Please, upgrade the application to the latest version. Your current version does not support the latest network protocol version.");
-                    return std::make_pair(std::move(turbo_host), std::move(j_chain));
-                } catch (std::exception &ex) {
+                    return peer_info { std::move(turbo_host), std::move(j_chain) };
+                } catch (const std::exception &ex) {
                     logger::warn(ex.what());
                 }
             }
@@ -367,8 +373,13 @@ namespace daedalus_turbo::sync::http {
 
     syncer::~syncer() =default;
 
-    void syncer::sync(std::optional<uint64_t> max_epoch)
+    [[nodiscard]] peer_info syncer::find_peer() const
     {
-        _impl->sync(max_epoch);
+        return _impl->find_peer();
+    }
+
+    void syncer::sync(std::optional<peer_info> peer, const std::optional<uint64_t> max_epoch)
+    {
+        _impl->sync(std::move(peer), max_epoch);
     }
 }

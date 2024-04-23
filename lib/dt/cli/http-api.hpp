@@ -24,21 +24,25 @@ namespace daedalus_turbo::cli::http_api {
             const auto &data_dir = args.at(0);
             std::string ip { "127.0.0.1" };
             uint16_t port = 55556;
+            bool ignore_requirements = false;
             if (args.size() > 1) {
                 static std::string_view p_ip { "--ip=" };
                 static std::string_view p_port { "--port=" };
+                static std::string_view p_ignore { "--ignore-requirements" };
                 for (const auto &arg: std::ranges::subrange(args.begin() + 1, args.end())) {
                     if (arg.substr(0, p_ip.size()) == p_ip) {
                         ip = arg.substr(p_ip.size());
                     } else if (arg.substr(0, p_port.size()) == p_port) {
                         port = std::stoul(arg.substr(p_port.size()));
+                    } else if (arg == p_ignore) {
+                        ignore_requirements = true;
                     } else {
                         throw error("unsupported option: {}", arg);
                     }
                 }
             }
             logger::info("HTTP API listens at the address {}:{}\n", ip, port);
-            server s { data_dir };
+            server s { data_dir, ignore_requirements };
             s.serve(ip, port);
         }
     };
