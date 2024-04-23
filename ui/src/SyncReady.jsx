@@ -31,7 +31,7 @@ export default function SyncReady({ hardware, duration, dataSize, confirmReady }
         </div>
         <h1>Synchronization complete</h1>
         <div className="achievement">
-            <h2 className="eta">Processed {dataSize} MB of data in {duration} min</h2>
+            <h2 className="eta">Processed {Math.round(dataSize) / 1000} GB of data in {duration} min</h2>
         </div>
         <div>
             <Button className="continue-button"
