@@ -18,7 +18,7 @@ namespace daedalus_turbo::sync::local {
             cardano::slot last_slot {};
         };
 
-        syncer(chunk_registry &cr, const std::string &node_path, size_t zstd_max_level=3, std::chrono::seconds del_delay=std::chrono::seconds { 3600 },
+        syncer(chunk_registry &cr, const std::string &node_path, const size_t zstd_max_level=3, std::chrono::seconds del_delay=std::chrono::seconds { 3600 },
                 scheduler &sched=scheduler::get(), file_remover &fr=file_remover::get())
             : _cr { cr }, _node_path { std::filesystem::canonical(node_path) },
                 _immutable_path { _node_path / "immutable" }, _volatile_path { _node_path / "volatile" },

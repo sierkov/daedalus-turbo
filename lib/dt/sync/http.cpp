@@ -114,7 +114,7 @@ namespace daedalus_turbo::sync::http {
         file_remover &_file_remover;
         ed25519::vkey _vk {};
         chunk_registry::file_set _deletable_chunks {};
-        alignas(mutex::padding) std::mutex _epoch_json_cache_mutex {};
+        alignas(mutex::padding) mutex::unique_lock::mutex_type _epoch_json_cache_mutex {};
         std::map<uint64_t, json::object> _epoch_json_cache {};
 
         static uint64_t _run_max_offset(const json::array &j_epochs, const uint64_t start_offset, const uint64_t max_offset)

@@ -74,7 +74,6 @@ namespace daedalus_turbo::http {
 
         bool process_ok(const bool report_progress, scheduler *sched)
         {
-            _report = report_progress;
             static constexpr std::chrono::milliseconds report_interval { 5000 };
             auto next_report = std::chrono::system_clock::now() + report_interval;
             for (;;) {
@@ -85,6 +84,8 @@ namespace daedalus_turbo::http {
                     logger::debug("download_queue::process_ok scheduler: {} queue_size: {} active_conns: {}",
                         sched != nullptr, queue_sz, n_conns);
                     next_report = now + report_interval;
+                    if (report_progress)
+                        progress::get().inform();
                 }
                 if (queue_sz == 0 && n_conns == 0)
                     break;
@@ -183,10 +184,8 @@ namespace daedalus_turbo::http {
             void _resolve(const std::string_view &host, const std::string_view &port)
             {
                 if (_host == host && _port == port && _connect_endpoint) {
-                    logger::trace("{}: skipping resolving {}:{} - cached", _req.url, host, port);
                     _connect();
                 } else {
-                    logger::trace("{}: resolving {}:{}", _req.url, host, port);
                     _host = host;
                     _port = port;
                     if (_stream) {
@@ -211,10 +210,8 @@ namespace daedalus_turbo::http {
             void _connect()
             {
                 if (_host && _port && _stream) {
-                    logger::trace("{}: skipping reconnecting to {}:{} - connection already available", _req.url, *_host, *_port);
                     _write();
                 } else {
-                    logger::trace("{}: connecting to {}:{}", _req.url, *_host, *_port);
                     _stream.emplace(_ioc);
                     _stream->expires_after(std::chrono::seconds(10));
                     _stream->async_connect(*_connect_endpoint, beast::bind_front_handler(&connection::_on_connect, shared_from_this()));
@@ -232,7 +229,6 @@ namespace daedalus_turbo::http {
 
             void _write()
             {
-                logger::trace("{}: sending HTTP request", _req.url);
                 _stream->expires_after(std::chrono::seconds(10));
                 http::async_write(*_stream, *_http_req, beast::bind_front_handler(&connection::_on_write, shared_from_this()));
             }
@@ -245,7 +241,6 @@ namespace daedalus_turbo::http {
                 }
                 _http_parser.emplace();
                 _http_parser->body_limit(1 << 26);
-                logger::trace("{}: waiting for HTTP response", _req.url);
                 _buffer.clear();
                 _stream->expires_after(std::chrono::seconds(30));
                 http::async_read(*_stream, _buffer, *_http_parser, beast::bind_front_handler(&connection::_on_read, shared_from_this()));
@@ -287,13 +282,12 @@ namespace daedalus_turbo::http {
 
             double report(double duration_secs, size_t queue_size, size_t active_conns)
             {
-                auto num_requests = oks + errors;
-                double error_rate = num_requests > 0 ? static_cast<double>(errors) * 100 / num_requests : 0.0;
-                logger::trace("download-queue size: {} active connections: {}", queue_size, active_conns);
-                double speed_mb_sec = static_cast<double>(bytes) / 1'000'000 / duration_secs;
-                auto speed_mbps = speed_mb_sec * 8;
-                logger::debug("download-queue performance over the last reporting period: download speed: {:0.1f} MB/sec, requests: {}, error rate: {:0.2f}%",
-                    speed_mb_sec, num_requests, error_rate);
+                const auto num_requests = oks + errors;
+                const double error_rate = num_requests > 0 ? static_cast<double>(errors) * 100 / num_requests : 0.0;
+                const double speed_mb_sec = static_cast<double>(bytes) / 1'000'000 / duration_secs;
+                const auto speed_mbps = speed_mb_sec * 8;
+                logger::debug("download-queue size: {} connections: {} download speed: {:0.1f} MB/sec, requests: {}, fail rate: {:0.2f}%",
+                    queue_size, active_conns, speed_mb_sec, num_requests, error_rate);
                 oks = 0;
                 errors = 0;
                 bytes = 0;
@@ -308,14 +302,13 @@ namespace daedalus_turbo::http {
         std::string _asio_name;
         tcp::resolver _resolver { _asio_worker.io_context() };
         std::atomic_bool _success { true };
-        alignas(mutex::padding) std::mutex _queue_mutex {};
+        alignas(mutex::padding) mutex::unique_lock::mutex_type _queue_mutex {};
         std::priority_queue<request> _queue {};
         alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _work_mutex {};
         alignas(mutex::padding) std::condition_variable_any _work_cv {};
         std::atomic_size_t _active_conns { 0 };
         std::atomic_size_t _queue_size { 0 };
         perf_stats _stats {};
-        std::atomic_bool _report { false };
         std::atomic<double> _speed_max { 0.0 };
         std::atomic<double> _speed_current { 0.0 };
         std::chrono::time_point<std::chrono::system_clock> _stats_next_report { std::chrono::system_clock::now() + stats_report_span };
@@ -326,7 +319,7 @@ namespace daedalus_turbo::http {
                 const auto conn = std::make_shared<connection>(*this, _asio_worker.io_context(), _resolver);
                 // if successful a copy of the shared_ptr will be kept in the I/O context
                 conn->run();
-                logger::trace("created new connection instance use_count: {}", conn.use_count());
+                logger::debug("created new connection instance use_count: {}", conn.use_count());
             }
         }
 
@@ -334,7 +327,7 @@ namespace daedalus_turbo::http {
         {
             const auto now = std::chrono::system_clock::now();
             if (now >= _stats_next_report) {
-                auto current_speed = _stats.report(stats_report_span_secs, _queue_size, _active_conns);
+                const auto current_speed = _stats.report(stats_report_span_secs, _queue_size, _active_conns);
                 if (current_speed > 0) {
                     for (;;) {
                         double max_copy = _speed_max.load();
@@ -344,8 +337,6 @@ namespace daedalus_turbo::http {
                     _speed_current = current_speed;
                 }
                 _stats_next_report = now + stats_report_span;
-                if (_report)
-                    progress::get().inform();
             }
         }
 
@@ -365,7 +356,7 @@ namespace daedalus_turbo::http {
 
         void _add_request(request &&req, const bool update_priority=false)
         {
-            std::scoped_lock lk { _queue_mutex };
+            mutex::scoped_lock lk { _queue_mutex };
             if (update_priority && !_queue.empty())
                 req.priority = _queue.top().priority + 1;
             _queue.emplace(std::move(req));
@@ -376,7 +367,7 @@ namespace daedalus_turbo::http {
         {
             std::optional<request> res {};
             {
-                std::scoped_lock lock { _queue_mutex };
+                mutex::scoped_lock lock { _queue_mutex };
                 if (!_queue.empty()) {
                     auto req = _queue.top();
                     _queue.pop();
@@ -402,7 +393,7 @@ namespace daedalus_turbo::http {
                 logger::error("download of {} failed: {}", res.url, *res.error);
                 _success = false;
             } else {
-                logger::trace("downloaded {}", res.url);
+                logger::debug("downloaded {}", res.url);
                 ++_stats.oks;
                 _stats.bytes += res.size;
             }

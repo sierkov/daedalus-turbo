@@ -183,10 +183,11 @@ Additionally on Windows:
 - [mimalloc](https://github.com/microsoft/mimalloc) >= 2.0.5, a memory allocator that works well with multi-threaded workloads
 
 ## Tested environments and compilers
-- Ubuntu Linux 22.04 with GCC 11.4.0
+- Ubuntu Linux 24.04 with GCC 13.2
+- Ubuntu Linux 24.04 with Clang 18
 - Mac OS Sonoma 14.2.1 with Clang 17.0.6 installed with ```brew install llvm@17```
 - Windows 11 with Visual C++ 19.39.33520.0 that comes with Visual Studio 2022 Community Edition
-- Windows 11 with GCC 13.2.0 that comes with MinGW64
+- Windows 11 with GCC 13.2 that comes with MinGW64
 
 ## Build instructions
 Verify the presence of the necessary libraries and generate build files in `cmake-build-release` directory for a release build:

@@ -13,20 +13,92 @@ namespace daedalus_turbo::sync::p2p {
     using namespace daedalus_turbo::cardano;
 
     struct syncer::impl {
-        impl(indexer::incremental &cr, cardano::network::client &client, peer_selection &ps)
+        impl(indexer::incremental &cr, client &client, peer_selection &ps)
             : _cr { cr }, _client { client }, _peer_selection { ps }, _raw_dir { _cr.data_dir() / "raw" }
         {
             std::filesystem::create_directories(_raw_dir);
         }
 
-        void sync(std::optional<cardano::slot> max_slot)
+        // Todo ensure that the same TCP connection is reused during all queries to a single client!!!
+        // Finds a peer and the best possible intersection at a chunk boundary
+        [[nodiscard]] peer_info find_peer() const
+        {
+            // Try to fit into a single packet of 1.5KB
+            static constexpr size_t max_points = 24;
+            auto addr = _peer_selection.next_cardano();
+            if (_cr.num_chunks() == 0) {
+                auto tip = _client.find_tip_sync(addr);
+                return { std::move(addr), std::move(tip) };
+            }
+
+            // first check against the most recent chunks (most likely to succeed)
+            blockchain_point_list points {};
+            for (auto rit = _cr.chunks().rbegin(), rend = _cr.chunks().rend(); rit != rend && points.size() < max_points; ++rit) {
+                points.emplace_back(rit->second.last_block_hash, rit->second.last_slot);
+            }
+
+            auto intersection = _client.find_intersection_sync(addr, points);
+            if (intersection.isect)
+                return { std::move(addr), std::move(intersection.tip), std::move(intersection.isect) };
+
+            // select equidistant points
+            std::vector<uint64_t> offsets {};
+            points.clear();
+            const auto step_size = std::max(static_cast<size_t>(1), _cr.num_chunks() / max_points);
+            for (auto rit = _cr.chunks().rbegin(), rend = _cr.chunks().rend(); rit != rend && points.size() < max_points; ++rit) {
+                points.emplace_back(rit->second.last_block_hash, rit->second.first_slot);
+                offsets.emplace_back(rit->second.offset);
+                for (size_t i = 0; i < step_size; ++i) {
+                    if (++rit == rend)
+                        break;
+                }
+            }
+            // explicitly add the first block
+            {
+                const auto &first_chunk = _cr.chunks().begin()->second;
+                points.emplace_back(first_chunk.last_block_hash);
+                offsets.emplace_back(first_chunk.offset);
+            }
+
+            intersection = _client.find_intersection_sync(addr, points);
+            // no shared blocks
+            if (!intersection.isect)
+                return { std::move(addr), std::move(intersection.tip) };
+
+            // find the exact chunk
+            std::optional<std::pair<uint64_t, uint64_t>> offset_range {};
+            for (size_t i = 0; i < points.size(); ++i) {
+                if (*intersection.isect == points[i]) {
+                    offset_range = std::make_pair(offsets[i], i + 1 < points.size() ? offsets[i + 1] : _cr.num_bytes());
+                    break;
+                }
+            }
+            if (!offset_range)
+                throw error("internal issue: failed to find an offset range for the intersection!");
+            points.clear();
+            offsets.clear();
+
+            for (auto chunk_it = _cr.find_it(offset_range->first); chunk_it != _cr.chunks().end() && chunk_it->second.offset < offset_range->second; ++chunk_it) {
+                points.emplace_back(chunk_it->second.last_block_hash);
+                offsets.emplace_back(chunk_it->second.offset);
+            }
+
+            intersection = _client.find_intersection_sync(addr, points);
+            if (!intersection.isect)
+                throw error("internal issue: failed to locate an intersection at the chunk boundary!");
+
+            return { std::move(addr), std::move(intersection.tip), std::move(intersection.isect) };
+        }
+
+        void sync(std::optional<peer_info> peer, const std::optional<slot> max_slot)
         {
             std::optional<blockchain_point> local_tip {};
-            auto last_chunk = _cr.last_chunk();
-            if (last_chunk)
+            if (const auto last_chunk = _cr.last_chunk())
                 local_tip = blockchain_point { last_chunk->last_block_hash, last_chunk->last_slot };
+            if (!peer)
+                peer = find_peer();
             for (;;) {
-                const auto continue_from = _fetch_iteration(local_tip, max_slot);
+                const auto continue_from = _fetch_iteration(*peer, local_tip, max_slot);
                 if (!continue_from)
                     break;
                 local_tip = continue_from;
@@ -42,7 +114,7 @@ namespace daedalus_turbo::sync::p2p {
         };
 
         indexer::incremental &_cr;
-        cardano::network::client &_client;
+        client &_client;
         peer_selection &_peer_selection;
         std::filesystem::path _raw_dir;
         uint8_vector _last_chunk {};
@@ -50,33 +122,58 @@ namespace daedalus_turbo::sync::p2p {
         std::vector<ready_chunk> _ready_chunks {};
         uint64_t _ready_data_size = 0;
 
-        std::optional<blockchain_point> _fetch_iteration(const std::optional<blockchain_point> &start_point, const std::optional<slot> &max_slot)
+        bool _is_chain_better(const peer_info &peer, const std::optional<blockchain_point> &start_point)
+        {
+            static constexpr size_t batch_size = 21600 / 20;
+            static constexpr size_t max_retries = 3;
+
+            // Any chain is better than an empty one
+            if (!start_point)
+                return true;
+            const auto last_slot = start_point->slot + cardano::density_default_window;
+            size_t num_data_blocks = 0;
+            const auto [headers, tip] = _client.fetch_headers_sync(peer.addr, start_point, 1);
+            std::optional continue_from = headers.front();
+            while (continue_from && *continue_from != tip && continue_from->slot <= last_slot) {
+                for (size_t retry = 0; retry < max_retries; ++retry) {
+                    if (!logger::run_log_errors([&] {
+                            const auto blocks = _client.fetch_blocks_sync(peer.addr, *continue_from, tip, batch_size);
+                            for (auto &&b: blocks) {
+                                if (b.blk->slot() > last_slot)
+                                    break;
+                                if (b.blk->era() > 0)
+                                    ++num_data_blocks;
+                            }
+                            continue_from = blockchain_point { blocks.back().blk->hash(), blocks.back().blk->slot() };
+                            }))
+                        break;
+                }
+            }
+            const auto local_num_blocks = _cr.count_blocks_in_window(start_point->slot, cardano::density_default_window);
+            return num_data_blocks > local_num_blocks;
+        }
+
+        std::optional<blockchain_point> _fetch_iteration(const peer_info &peer, const std::optional<blockchain_point> &start_point, const std::optional<slot> &max_slot)
         {
             static constexpr size_t batch_size = 21600 / 20;
             static constexpr size_t max_retries = 3;
 
             std::optional<blockchain_point> continue_from {};
             for (size_t retry = 0; retry < max_retries; ++retry) {
-                try {
-                    logger::run_and_log_errors([&] {
-                        const auto addr = _peer_selection.next_cardano();
-                        const auto [headers, tip] = _client.fetch_headers_sync(addr, start_point, 1);
-                        if (!start_point || start_point != tip) {
-                            const auto blocks = _client.fetch_blocks_sync(addr, headers.front(), tip, batch_size);
-                            for (auto &&b: blocks) {
-                                if (!max_slot || b.blk->slot() <= *max_slot)
-                                    _add_block(*b.blk);
-                            }
-                            const auto last_point = blockchain_point{ blocks.back().blk->hash(), blocks.back().blk->slot() };
-                            if (last_point != tip && (!max_slot || last_point.slot < *max_slot))
-                                continue_from = last_point;
+                if (!logger::run_log_errors([&] {
+                    const auto [headers, tip] = _client.fetch_headers_sync(peer.addr, start_point, 1);
+                    if (!start_point || start_point != tip) {
+                        const auto blocks = _client.fetch_blocks_sync(peer.addr, headers.front(), tip, batch_size);
+                        for (auto &&b: blocks) {
+                            if (!max_slot || b.blk->slot() <= *max_slot)
+                                _add_block(*b.blk);
                         }
-                    });
+                        const auto last_point = blockchain_point{ blocks.back().blk->hash(), blocks.back().blk->slot() };
+                        if (last_point != tip && (!max_slot || last_point.slot < *max_slot))
+                            continue_from = last_point;
+                    }
+                }))
                     break;
-                } catch (...) {
-                    // the error is already logged so can simply continue
-                    continue;
-                }
             }
             return continue_from;
         }
@@ -118,7 +215,7 @@ namespace daedalus_turbo::sync::p2p {
             _schedule_validation(force_validation);
         }
 
-        void _add_block(const cardano::block_base &blk)
+        void _add_block(const block_base &blk)
         {
             auto blk_chunk_id = blk.slot().chunk_id();
             if (!_last_chunk_id)
@@ -131,15 +228,20 @@ namespace daedalus_turbo::sync::p2p {
         }
     };
 
-    syncer::syncer(indexer::incremental &cr, cardano::network::client &cnc, peer_selection &ps)
+    syncer::syncer(indexer::incremental &cr, client &cnc, peer_selection &ps)
         : _impl { std::make_unique<impl>(cr, cnc, ps) }
     {
     }
 
     syncer::~syncer() =default;
 
-    void syncer::sync(std::optional<cardano::slot> max_slot)
+    [[nodiscard]] peer_info syncer::find_peer() const
     {
-        _impl->sync(max_slot);
+        return _impl->find_peer();
+    }
+
+    void syncer::sync(std::optional<peer_info> peer, const std::optional<slot> max_slot)
+    {
+        _impl->sync(peer, max_slot);
     }
 }

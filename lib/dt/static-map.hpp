@@ -5,10 +5,10 @@
 #ifndef DAEDALUS_TURBO_STATIC_MAP_HPP
 #define DAEDALUS_TURBO_STATIC_MAP_HPP
 
+#include <algorithm>
 #include <map>
 #include <vector>
 #include <unordered_map>
-#include <dt/logger.hpp>
 #include <dt/partitioned-map.hpp>
 
 namespace daedalus_turbo {

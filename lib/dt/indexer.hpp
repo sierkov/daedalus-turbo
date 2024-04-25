@@ -119,7 +119,7 @@ namespace daedalus_turbo::indexer {
         slice_list slices(std::optional<uint64_t> end_offset={}) const
         {
             slice_list copy {};
-            std::scoped_lock lk { _slices_mutex };
+            mutex::scoped_lock lk { _slices_mutex };
             copy.reserve(_slices.size());
             for (const auto &[offset, s]: _slices) {
                 if (!end_offset || *end_offset >= s.end_offset())
@@ -140,7 +140,7 @@ namespace daedalus_turbo::indexer {
 
         uint64_t indexed_bytes() const
         {
-            std::scoped_lock lk { _slices_mutex };
+            mutex::scoped_lock lk { _slices_mutex };
             return _slices.continuous_size();
         }
 
@@ -159,13 +159,13 @@ namespace daedalus_turbo::indexer {
         const std::string _index_state_path;
         const std::string _index_state_pre_path;
         std::set<std::string> _mergeable {};
-        alignas(mutex::padding) mutable std::mutex _slices_mutex {};
+        alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _slices_mutex {};
         merger::tree _slices {};
         uint64_t _epoch_merged_base = 0;
         std::atomic_uint64_t _epoch_merged = 0;
         std::atomic_uint64_t _final_merged = 0;
         uint64_t _merge_next_offset = 0;
-        alignas(mutex::padding) mutable std::mutex _epoch_slices_mutex {};
+        alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _epoch_slices_mutex {};
         std::map<uint64_t, merger::slice> _epoch_slices {};
 
         void _truncate_impl(uint64_t max_end_offset) override
@@ -225,7 +225,7 @@ namespace daedalus_turbo::indexer {
             chunk_registry::_prepare_tx_impl();
             // merge final not-yet merged epochs
             {
-                std::unique_lock lk { _epoch_slices_mutex };
+                mutex::unique_lock lk { _epoch_slices_mutex };
                 _schedule_final_merge(lk, true);
             }
             _sched.process(true);
@@ -286,7 +286,7 @@ namespace daedalus_turbo::indexer {
             }
             merger::slice output_slice { info.start_offset(), info.end_offset() - info.start_offset(), fmt::format("epoch-{}", epoch) };
             _merge_slice(output_slice, input_slices, 100, [this, epoch, output_slice] {
-                std::unique_lock lk { _epoch_slices_mutex };
+                mutex::unique_lock lk { _epoch_slices_mutex };
                 _epoch_slices.emplace(epoch, output_slice);
                 if (output_slice.end_offset() > _transaction->start_offset) {
                     const auto newly_merged = output_slice.offset >= _transaction->start_offset ? output_slice.size : output_slice.end_offset() - _transaction->start_offset;
@@ -324,7 +324,7 @@ namespace daedalus_turbo::indexer {
             }
         }
         
-        void _schedule_final_merge(std::unique_lock<std::mutex> &epoch_slices_lk, const bool force=false)
+        void _schedule_final_merge(mutex::unique_lock &epoch_slices_lk, const bool force=false)
         {
             if (!epoch_slices_lk)
                 throw error("_schedule_final_merge requires epoch_slices_mutex to be locked!");
@@ -354,7 +354,7 @@ namespace daedalus_turbo::indexer {
                 epoch_slices_lk.unlock();
                 _merge_slice(output_slice, input_slices, 200, [this, output_slice, first_epoch, last_epoch] {
                     {
-                        std::scoped_lock lk { _slices_mutex };
+                        mutex::scoped_lock lk { _slices_mutex };
                         _slices.add(output_slice);
                         _final_merged = _slices.continuous_size() - _transaction->start_offset;
                         // experimental support for on-the-go checkpoints
@@ -367,7 +367,7 @@ namespace daedalus_turbo::indexer {
             }
         }
 
-        chunk_info _parse (uint64_t offset, const std::string &rel_path, const buffer &raw_data, size_t compressed_size, const block_processor &blk_proc) const override
+        chunk_info _parse(uint64_t offset, const std::string &rel_path, const buffer &raw_data, size_t compressed_size, const block_processor &blk_proc) const override
         {
             chunk_indexer_list chunk_indexers {};
             for (auto &[name, idxr_ptr]: _indexers)

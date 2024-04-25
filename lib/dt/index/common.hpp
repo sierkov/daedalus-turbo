@@ -286,7 +286,7 @@ namespace daedalus_turbo::index {
 
         void mark_epoch(uint64_t epoch, uint64_t chunk_id) override
         {
-            std::scoped_lock lk { _updated_epochs_mutex };
+            mutex::scoped_lock lk { _updated_epochs_mutex };
             auto [it, created] = _updated_epochs.try_emplace(epoch);
             it->second.emplace_back(chunk_id);
         }
@@ -310,18 +310,18 @@ namespace daedalus_turbo::index {
 
         void reset() override
         {
-            std::scoped_lock lk { _updated_epochs_mutex };
+            mutex::scoped_lock lk { _updated_epochs_mutex };
             _updated_epochs.clear();
         }
 
         chunk_list epoch_chunks(uint64_t epoch) const
         {
-            std::scoped_lock lk { _updated_epochs_mutex };
+            mutex::scoped_lock lk { _updated_epochs_mutex };
             const auto it = _updated_epochs.find(epoch);
             return it != _updated_epochs.end() ? it->second : chunk_list {};
         }
     private:
-        alignas(mutex::padding) mutable std::mutex _updated_epochs_mutex {};
+        alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _updated_epochs_mutex {};
         index::epoch_chunks _updated_epochs {};
     };
 

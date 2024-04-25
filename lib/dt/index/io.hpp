@@ -140,7 +140,7 @@ namespace daedalus_turbo::index {
 
         void set_meta(const std::string &name, const buffer &data)
         {
-            std::scoped_lock lock { _write_mutex };
+            mutex::scoped_lock lock { _write_mutex };
             if (_commited)
                 throw error("set_meta called for {} after it has been commited!", _path);
             if (name.size() > 255)
@@ -163,7 +163,7 @@ namespace daedalus_turbo::index {
         size_t _num_parts, _chunk_size;
 
         std::atomic_bool _commited = false;
-        alignas(mutex::padding) std::mutex _write_mutex {};
+        alignas(mutex::padding) mutex::unique_lock::mutex_type _write_mutex {};
         file::write_stream _os;
         size_t _free_off = 0;
 
@@ -172,13 +172,13 @@ namespace daedalus_turbo::index {
             if (_commited)
                 throw error("writer::commit {} has already been commited!", _path);
             {
-                std::scoped_lock lock { _write_mutex };
+                mutex::scoped_lock lock { _write_mutex };
                 _commited = true;
             }
             // flush takes _write_mutex so need to release it first
             for (size_t i = 0; i < _num_parts; ++i)
                 _flush_part(i);
-            std::scoped_lock lock { _write_mutex };
+            mutex::scoped_lock lock { _write_mutex };
             uint64_t meta_off = _os.tellp();
             if (_meta.size() > 255)
                 throw error("internal error: only up to 255 meta items are supported but got: {}", _meta.size());
@@ -229,7 +229,7 @@ namespace daedalus_turbo::index {
                 thread_local uint8_vector comp_data {};
                 zstd::compress(comp_data, data, 3);
 
-                std::scoped_lock lock { _write_mutex };
+                mutex::scoped_lock lock { _write_mutex };
                 size_t fact_off = _os.tellp();
                 if (fact_off != _free_off)
                     throw error("internal error with {}: expected file position {} but got {}", _path, (size_t)_free_off, fact_off);
@@ -534,7 +534,7 @@ namespace daedalus_turbo::index {
 
         void close()
         {
-            std::scoped_lock lock { _read_mutex };
+            mutex::scoped_lock lock { _read_mutex };
             _is.close();
         }
     private:
@@ -545,7 +545,7 @@ namespace daedalus_turbo::index {
         vector<vector<chunk_info<T>>> _chunk_lists {};
         vector<size_t> _cnts {};
         vector<T> _max_items {};
-        alignas(mutex::padding) mutable std::mutex _read_mutex {};
+        alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _read_mutex {};
         mutable file::read_stream _is;
 
         static size_t _thread_part_idx(size_t part_idx, thread_data &t)
@@ -573,7 +573,7 @@ namespace daedalus_turbo::index {
             t.read_buf.resize(chunk.packed_size);
 
             {
-                std::scoped_lock lock { _read_mutex };
+                mutex::scoped_lock lock { _read_mutex };
                 _is.seek(chunk.file_offset);
                 _is.read(t.read_buf.data(), t.read_buf.size());
             }

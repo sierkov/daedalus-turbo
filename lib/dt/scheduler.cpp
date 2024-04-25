@@ -419,7 +419,6 @@ namespace daedalus_turbo {
 
     void scheduler::_process(const bool report_status)
     {
-        auto &progress = progress::get();
         for (;;) {
             {
                 mutex::scoped_lock results_lk { _results_mutex };
@@ -433,6 +432,6 @@ namespace daedalus_turbo {
             _process_once(report_status, _num_workers == 1, true);
         }
         if (report_status)
-            progress.inform();
+            progress::get().inform();
     }
 }

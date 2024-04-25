@@ -70,7 +70,8 @@ namespace daedalus_turbo {
         void inform() const
         {
             const auto state_copy = copy();
-            logger::info("progress: {}", state_copy);
+            if (!state_copy.empty())
+                logger::info("progress: {}", state_copy);
         }
 
         progress_state copy() const

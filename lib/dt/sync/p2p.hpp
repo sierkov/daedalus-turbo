@@ -12,11 +12,18 @@
 #include <dt/scheduler.hpp>
 
 namespace daedalus_turbo::sync::p2p {
+    struct peer_info {
+        cardano::network::address addr {};
+        cardano::network::blockchain_point tip {};
+        std::optional<cardano::network::blockchain_point> isect {};
+    };
+
     struct syncer {
-        syncer(indexer::incremental &cr, cardano::network::client &cnc=cardano::network::client_async::get(),
+        explicit syncer(indexer::incremental &cr, cardano::network::client &cnc=cardano::network::client_async::get(),
             peer_selection &ps=peer_selection_simple::get());
+        [[nodiscard]] peer_info find_peer() const;
         ~syncer();
-        void sync(std::optional<cardano::slot> max_slot=std::optional<cardano::slot> {});
+        void sync(std::optional<peer_info> peer={}, std::optional<cardano::slot> max_slot={});
     private:
         struct impl;
         std::unique_ptr<impl> _impl;

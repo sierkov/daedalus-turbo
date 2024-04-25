@@ -77,10 +77,12 @@ const startAPI = () => {
   }
   const args = [ 'http-api', api.dataDir, '--ip=' + api.ip, '--port=' + api.port ];
   const env = { DT_LOG: api.logPath, DT_ETC: api.etcPath };
+  if ('DT_DEBUG' in process?.env)
+    env.DT_DEBUG = '1';
   logger.info(`starting the DT API server ${api.cmd} ${args} ${JSON.stringify(env, null, 2)}`);
   try {
     apiServerReadyTime = Date.now() + 2000;
-    apiServer = spawn(api.cmd, args, { env });
+    apiServer = spawn(api.cmd, args, { env, stdio: 'ignore' });
     apiServer.on('error', err => {
       logger.error(`the API server failed: ${err}`);
       app.quit();

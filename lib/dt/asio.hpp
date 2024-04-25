@@ -7,10 +7,13 @@
 
 #include <functional>
 #include <memory>
-#include <boost/asio/io_context.hpp>
+#include <string>
+
+namespace boost::asio {
+    struct io_context;
+}
 
 namespace daedalus_turbo::asio {
-    namespace net = boost::asio;
 
     struct worker {
         using action_type = std::function<void()>;
@@ -22,7 +25,7 @@ namespace daedalus_turbo::asio {
         void del_before_action(const std::string &name);
         void add_after_action(const std::string &name, const action_type &act);
         void del_after_action(const std::string &name);
-        net::io_context &io_context();
+        boost::asio::io_context &io_context();
     private:
         struct impl;
         std::unique_ptr<impl> _impl;

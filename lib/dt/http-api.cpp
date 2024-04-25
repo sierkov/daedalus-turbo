@@ -248,7 +248,7 @@ namespace daedalus_turbo::http_api {
             for (;;) {
                 mutex::unique_lock lock { _queue_mutex };
                 bool have_work = _queue_cv.wait_for(lock, std::chrono::seconds { 1 }, [&]{ return !_queue.empty(); });
-                logger::debug("http-api worker thread waiting for tasks returned with {}", have_work);
+                logger::trace("http-api worker thread waiting for tasks returned with {}", have_work);
                 if (have_work) {
                     const auto target = _queue.front();
                     _queue.pop_front();
@@ -309,7 +309,7 @@ namespace daedalus_turbo::http_api {
                 std::thread {[&] {
                     bool exp_false = false;
                     if (update_in_progress.compare_exchange_strong(exp_false, true)) {
-                        logger::run_and_log_errors(
+                        logger::run_log_errors(
                             [&] {
                                 auto new_info = _hardware_info();
                                 mutex::scoped_lock lkw { info_mutex };
@@ -317,8 +317,7 @@ namespace daedalus_turbo::http_api {
                             },
                             [&] {
                                 update_in_progress = false;
-                            },
-                            false
+                            }
                         );
                     }
                 } }.detach();

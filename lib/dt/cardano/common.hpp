@@ -103,6 +103,8 @@ namespace daedalus_turbo {
 }
 
 namespace daedalus_turbo::cardano {
+    static constexpr uint64_t density_default_window = 9600; // slots
+
     using stake_ident = daedalus_turbo::stake_ident;
     using pay_ident = daedalus_turbo::pay_ident;
 

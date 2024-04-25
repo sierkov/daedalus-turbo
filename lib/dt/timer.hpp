@@ -6,14 +6,15 @@
 #define DAEDALUS_TURBO_TIMER_HPP
 
 #include <exception>
+#include <dt/debug.hpp>
 #include <dt/logger.hpp>
 
 namespace daedalus_turbo {
     struct timer {
-        explicit timer(const std::string_view &title, logger::level lev=logger::level::trace, const bool report_start=false)
+        explicit timer(const std::string_view &title, const logger::level lev=logger::level::trace, const bool report_start=false)
             : _title { title }, _level { lev }, _start_time { std::chrono::system_clock::now() }
         {
-            if (report_start)
+            if (report_start || debug::tracing_enabled())
                 logger::log(_level, "timer '{}' created", _title);
         }
 
@@ -31,8 +32,10 @@ namespace daedalus_turbo {
         {
             if (!_printed) {
                 _printed = true;
-                logger::log(_level, "timer '{}' finished in {:0.3f} secs, uncaught exceptions: {}",
-                    _title, duration(), std::uncaught_exceptions());
+                if (std::uncaught_exceptions() == 0)
+                    logger::log(_level, "timer '{}' completed in {:0.3f} secs", _title, duration());
+                else
+                    logger::log(_level, "timer '{}' an exception after {:0.3f} secs", _title, duration());
             }
         }
 

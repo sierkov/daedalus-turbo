@@ -27,17 +27,17 @@ namespace daedalus_turbo::storage {
             return fmt::format("chunk/{}.zstd", data_hash.span());
         }
 
-        std::string rel_path() const
+        [[nodiscard]] std::string rel_path() const
         {
             return rel_path_from_hash(data_hash);
         }
 
-        uint64_t end_offset() const
+        [[nodiscard]] uint64_t end_offset() const
         {
             return offset + data_size;
         }
 
-        uint64_t epoch() const
+        [[nodiscard]] uint64_t epoch() const
         {
             return first_slot.epoch();
         }
@@ -59,15 +59,15 @@ namespace daedalus_turbo::storage {
             return chunk;
         }
 
-        json::object to_json() const
+        [[nodiscard]] json::object to_json() const
         {
             return json::object {
                 { "relPath", orig_rel_path },
                 { "size", data_size },
                 { "compressedSize", compressed_size },
                 { "numBlocks", num_blocks },
-                { "firstSlot", (size_t)first_slot },
-                { "lastSlot", (size_t)last_slot },
+                { "firstSlot", static_cast<uint64_t>(first_slot) },
+                { "lastSlot", static_cast<uint64_t>(last_slot) },
                 { "hash", fmt::format("{}", data_hash.span()) },
                 { "prevBlockHash", fmt::format("{}", prev_block_hash.span()) },
                 { "lastBlockHash", fmt::format("{}", last_block_hash.span()) }

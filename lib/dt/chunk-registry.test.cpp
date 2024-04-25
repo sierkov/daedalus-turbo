@@ -85,6 +85,16 @@ suite chunk_registry_suite = [] {
             };
         }
 
+        "count_blocks_in_window"_test = [&] {
+            chunk_registry src_cr { data_dir, false };
+            expect(src_cr.count_blocks_in_window(0) == 9601_ull);
+            expect(src_cr.count_blocks_in_window(21'500) == 100_ull);
+            expect(throws([&]{ src_cr.count_blocks_in_window(71'405'000); }));
+            expect(src_cr.count_blocks_in_window(71'415'000) == 475_ull);
+            expect(src_cr.count_blocks_in_window(74'030'000) == 492_ull);
+            expect(throws([&]{ src_cr.count_blocks_in_window(100'000'000); }));
+        };
+
         "epoch-level auto-merge"_test = [&] {
             struct test_chunk_registry: chunk_registry
             {

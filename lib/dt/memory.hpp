@@ -7,9 +7,11 @@
 
 extern "C" {
 #ifdef _WIN32
+#   define NOMINMAX 1
 #   include <windows.h>
 #   include <psapi.h>
 #else
+#   include <unistd.h>
 #   include <sys/time.h>
 #   include <sys/resource.h>
 #endif

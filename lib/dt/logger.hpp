@@ -5,12 +5,9 @@
 #ifndef DAEDALUS_TURBO_LOGGER_HPP
 #define DAEDALUS_TURBO_LOGGER_HPP
 
-#ifndef SPDLOG_FMT_EXTERNAL
-#   define SPDLOG_FMT_EXTERNAL 1
-#endif
+#include <exception>
 #include <functional>
 #include <source_location>
-#include <spdlog/spdlog.h>
 #include <dt/error.hpp>
 #include <dt/format.hpp>
 
@@ -19,136 +16,79 @@ namespace daedalus_turbo::logger {
         trace, debug, info, warn, error
     };
 
-    inline const char *log_path()
-    {
-        const char *log_path = "./log/dt.log";
-        const char *env_log_path = std::getenv("DT_LOG");
-        if (env_log_path != nullptr)
-            log_path = env_log_path;
-        return log_path;
-    }
-
-    extern spdlog::logger &get();
+    extern void log(level lev, const std::string &msg);
 
     template<typename... Args>
-    inline void log(const level &lev, const std::string_view &fmt, Args&&... a)
+    void log(const level lev, const std::string_view &fmt, Args&&... a)
     {
-        auto msg = format(fmt::runtime(fmt), std::forward<Args>(a)...);
-        switch (lev) {
-            case level::trace:
-                get().trace(msg);
-                break;
-
-            case level::debug:
-                get().debug(msg);
-                break;
-
-            case level::info:
-                get().info(msg);
-                break;
-
-            case level::warn:
-                get().warn(msg);
-                break;
-
-            case level::error:
-                get().error(msg);
-                break;
-
-            default:
-                throw error("unsupported log level: {}", (int)lev);
-        }
-    }
-
-    inline void trace(const std::string_view &msg)
-    {
-        get().trace(msg);
+        log(lev, format(fmt::runtime(fmt), std::forward<Args>(a)...));
     }
 
     template<typename... Args>
-    inline void trace(const std::string_view &fmt, Args&&... a)
+    void trace(const std::string_view &fmt, Args&&... a)
     {
-        trace(format(fmt::runtime(fmt), std::forward<Args>(a)...));
-    }
-
-    inline void debug(const std::string_view &msg)
-    {
-        get().debug(msg);
+        log(level::trace, fmt, std::forward<Args>(a)...);
     }
 
     template<typename... Args>
-    inline void debug(const std::string_view &fmt, Args&&... a)
+    void debug(const std::string_view &fmt, Args&&... a)
     {
-        debug(format(fmt::runtime(fmt), std::forward<Args>(a)...));
-    }
-
-    inline void info(const std::string_view &msg)
-    {
-        get().info(msg);
+        log(level::debug, fmt, std::forward<Args>(a)...);
     }
 
     template<typename... Args>
-    inline void info(const std::string_view &fmt, Args&&... a)
+    void info(const std::string_view &fmt, Args&&... a)
     {
-        info(format(fmt::runtime(fmt), std::forward<Args>(a)...));
-    }
-
-    inline void warn(const std::string_view &msg)
-    {
-        get().warn(msg);
+        log(level::info, fmt, std::forward<Args>(a)...);
     }
 
     template<typename... Args>
-    inline void warn(const std::string_view &fmt, Args&&... a)
+    void warn(const std::string_view &fmt, Args&&... a)
     {
-        warn(format(fmt::runtime(fmt), std::forward<Args>(a)...));
-    }
-
-    inline void error(const std::string_view &msg)
-    {
-        get().error(msg);
+        log(level::warn, fmt, std::forward<Args>(a)...);
     }
 
     template<typename... Args>
-    inline void error(const std::string_view &fmt, Args&&... a)
+    void error(const std::string_view &fmt, Args&&... a)
     {
-        error(format(fmt::runtime(fmt), std::forward<Args>(a)...));
-    }
-
-    inline void flush()
-    {
-        get().flush();
+        log(level::error, fmt, std::forward<Args>(a)...);
     }
 
     using action = std::function<void()>;
     using optional_action = std::optional<action>;
 
-    inline void run_and_log_errors(const action &main, const optional_action &cleanup={}, const bool rethrow=true,
+    inline std::exception_ptr run_log_errors(const action &main, const optional_action &cleanup={},
             const std::source_location &loc=std::source_location::current())
     {
+        std::exception_ptr cur_ex {};
         try {
             main();
             if (cleanup)
                 (*cleanup)();
         } catch (const daedalus_turbo::error &err) {
+            cur_ex = std::current_exception();
             logger::error("block at {}:{} failed with {}", loc.file_name(), loc.line(), err);
             if (cleanup)
                 (*cleanup)();
-            if (rethrow)
-                throw;
         } catch (const std::exception &ex) {
+            cur_ex = std::current_exception();
             logger::error("block at {}:{} failed with std::exception: {}", loc.file_name(), loc.line(), ex.what());
             if (cleanup)
                 (*cleanup)();
-            if (rethrow)
-                throw;
         } catch (...) {
+            cur_ex = std::current_exception();
             logger::error("block at {}:{} failed with an unknown error", loc.file_name(), loc.line());
             if (cleanup)
                 (*cleanup)();
-            if (rethrow)
-                throw;
         }
+        return cur_ex;
+    }
+
+    inline void run_log_errors_rethrow(const action &main, const optional_action &cleanup={},
+        const std::source_location &loc=std::source_location::current())
+    {
+        if (const auto cur_ex = run_log_errors(main, cleanup, loc))
+            std::rethrow_exception(cur_ex);
     }
 }
 

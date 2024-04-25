@@ -17,7 +17,6 @@
 #   define BOOST_ALLOW_DEPRECATED_HEADERS
 #   define DT_CLEAR_BOOST_DEPRECATED_HEADERS
 #endif
-#include <boost/asio/connect.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #ifdef DT_CLEAR_BOOST_DEPRECATED_HEADERS
 #   undef BOOST_ALLOW_DEPRECATED_HEADERS
@@ -79,34 +78,20 @@ namespace daedalus_turbo::asio {
             return _ioc;
         }
     private:
-        static void _run_isolated(const std::string_view &name, const action_type &act)
-        {
-            try {
-                act();
-            } catch (const error &ex) {
-                logger::error("asio {} failed: {}", name, ex);
-            } catch (const std::exception &ex) {
-                logger::error("asio {} std::exception: {}", name, ex.what());
-            } catch (...) {
-                logger::error("asio {} failed: unknown exception", name);
-            }
-        }
-
         void _io_thread()
         {
             for (;;) {
-                static std::string_view loop_name { "asio loop" };
-                _run_isolated(loop_name, [&] {
+                logger::run_log_errors([&] {
                     {
                         mutex::scoped_lock lk { _before_actions_mutex };
                         for (const auto &[name, act]: _before_actions)
-                            _run_isolated(name, act);
+                            logger::run_log_errors(act);
                     }
                     _ioc.run_for(std::chrono::milliseconds { 100 });
                     {
                         mutex::scoped_lock lk { _after_actions_mutex };
                         for (const auto &[name, act]: _after_actions)
-                            _run_isolated(name, act);
+                            logger::run_log_errors(act);
                     }
                 });
                 if (_shutdown)

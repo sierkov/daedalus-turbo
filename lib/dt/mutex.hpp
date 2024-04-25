@@ -7,6 +7,7 @@
 
 #define DT_MUTEX_WITH_STACKTRACE 0
 
+#include <condition_variable>
 #include <chrono>
 #include <mutex>
 #include <source_location>
@@ -98,6 +99,8 @@ namespace daedalus_turbo::mutex {
 
     using scoped_lock = std::scoped_lock<std::mutex>;
     using unique_lock = std::unique_lock<std::mutex>;
+    //using scoped_lock = tracing_lock;
+    //using unique_lock = tracing_lock;
 }
 
 #endif // !DAEDALUS_TURBO_MUTEX_HPP

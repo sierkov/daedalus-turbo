@@ -10,6 +10,7 @@ CMakeSettings.json
 build-*
 cmake-build-*
 ui/dt-ui-*
+**/*.pid
 **/*.profdata
 **/*.profraw
 **/*-arm64

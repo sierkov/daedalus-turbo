@@ -169,7 +169,7 @@ namespace daedalus_turbo {
         // can be called concurrently with parse/add activities
         epoch_info epoch(uint64_t epoch) const
         {
-            std::scoped_lock lk { _update_mutex };
+            mutex::scoped_lock lk { _update_mutex };
             return _epochs.at(epoch);
         }
 
@@ -224,10 +224,49 @@ namespace daedalus_turbo {
             return _find_it(offset)->second;
         }
 
+        chunk_map::const_iterator find_it(uint64_t offset) const
+        {
+            return _find_it(offset);
+        }
+
         chunk_map::const_iterator find(const buffer &data_hash) const
         {
             return std::find_if(_chunks.begin(), _chunks.end(),
                 [&](const auto &el) { return el.second.data_hash == data_hash; });
+        }
+
+        size_t count_blocks(const cardano::slot &first_slot, const cardano::slot &last_slot)
+        {
+            // cannot allow updates because that will invalidate the iterators
+            mutex::scoped_lock lk { _update_mutex };
+            auto it = std::lower_bound(_chunks.begin(), _chunks.end(), first_slot, [&](const auto &el, const auto &val) {
+                return el.second.last_slot < val;
+            });
+            if (it == _chunks.end())
+                throw error("requested slot {} is beyond max known slot", first_slot);
+            if (it->second.first_slot > first_slot)
+                throw error("no chunk has block with slot {}", first_slot);
+            size_t num_data_blocks = 0;
+            for (; it != _chunks.end() && it->second.first_slot <= last_slot; ++it) {
+                const auto chunk_path = full_path(it->second.rel_path());
+                const auto chunk_data = file::read(chunk_path);
+                cbor_parser parser { chunk_data };
+                cbor_value block_tuple {};
+                while (!parser.eof()) {
+                    parser.read(block_tuple);
+                    const auto blk = cardano::make_block(block_tuple, it->second.offset + block_tuple.data - chunk_data.data());
+                    if (blk->slot() > last_slot)
+                        break;
+                    if (blk->slot() >= first_slot && blk->era() > 0)
+                        ++num_data_blocks;
+                }
+            }
+            return num_data_blocks;
+        }
+
+        size_t count_blocks_in_window(const cardano::slot &first_slot, const uint64_t window_size=cardano::density_default_window)
+        {
+            return count_blocks(first_slot, first_slot + window_size);
         }
 
         void read(uint64_t offset, cbor_value &value)
@@ -481,7 +520,7 @@ namespace daedalus_turbo {
                         chunk.prev_block_hash = blk.prev_hash();
                         chunk.first_slot = slot;
                     }
-                    chunk.num_blocks++;
+                    ++chunk.num_blocks;
                     chunk.last_block_hash = blk.hash();
                     chunk.last_slot = slot;
                     blk_proc(blk);
@@ -496,7 +535,7 @@ namespace daedalus_turbo {
     private:
         const std::string _state_path;
         const std::string _state_pre_path;
-        alignas(mutex::padding) mutable std::mutex _update_mutex {};
+        alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _update_mutex {};
         chunk_map _chunks {};
         chunk_map _unmerged_chunks {};
         epoch_map _epochs {};
@@ -534,7 +573,7 @@ namespace daedalus_turbo {
                 throw error("empty chunks are not allowed: {}!", chunk.orig_rel_path);
             if (chunk.first_slot.epoch() != chunk.last_slot.epoch())
                 throw error("chunks containing blocks from only one epoch are allowed: {}", chunk.orig_rel_path);
-            std::unique_lock update_lk { _update_mutex };
+            mutex::unique_lock update_lk { _update_mutex };
             auto [um_it, um_created] = _unmerged_chunks.try_emplace(chunk.offset + chunk.data_size - 1, std::move(chunk));
             // chunk variable should not be used after this point due to std::move(chunk) right above
             if (!um_created)
