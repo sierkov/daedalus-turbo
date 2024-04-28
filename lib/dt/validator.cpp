@@ -899,11 +899,12 @@ namespace daedalus_turbo::validator {
                     const auto &uc_nonce = vrf_state.uc_nonce();
                     const auto &uc_leader = vrf_state.uc_leader();
                     static constexpr size_t batch_size = 250;
+                    static std::string task_name { validate_leaders_task };
                     for (size_t start = 0; start < vrf_updates_ptr->size(); start += batch_size) {
                         auto end = std::min(start + batch_size, vrf_updates_ptr->size());
-                        _cr.sched().submit_void("validate-epoch", -epoch, [this, epoch, epoch_min_offset, vrf_updates_ptr, pool_dist_ptr, nonce_epoch, uc_nonce, uc_leader, start, end] {
+                        _cr.sched().submit_void(task_name, -static_cast<int64_t>(epoch), [this, epoch, epoch_min_offset, vrf_updates_ptr, pool_dist_ptr, nonce_epoch, uc_nonce, uc_leader, start, end] {
                             _validate_epoch_leaders(epoch, epoch_min_offset, vrf_updates_ptr, pool_dist_ptr, nonce_epoch, uc_nonce, uc_leader, start, end);
-                        });
+                        }, chunk_offset_t { epoch_min_offset });
                     }
                 }
                 vrf_state.process_updates(*vrf_updates_ptr);

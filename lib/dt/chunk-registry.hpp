@@ -20,6 +20,8 @@
 #include <dt/timer.hpp>
 
 namespace daedalus_turbo {
+    typedef uint64_t chunk_offset_t;
+
     struct chunk_registry {
         // Shall be a multiple of an SSD's sector size and larger than Cardano's largest block (including Byron boundary ones too!)
         using chunk_info = storage::chunk_info;

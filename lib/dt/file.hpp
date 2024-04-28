@@ -104,7 +104,7 @@ namespace daedalus_turbo::file {
     // C-style IO is used since on Mac OS the standard C++ library has very slow I/O performance.
     // At the same time C-style IO works well on Mac, Linux, and Windows.
     struct read_stream: protected stream {
-        read_stream(const std::string &path): _path { path }
+        explicit read_stream(const std::string &path): _path { path }
         {
             _f = std::fopen(_path.c_str(), "rb");
             if (_f == NULL)
@@ -125,7 +125,7 @@ namespace daedalus_turbo::file {
                 if (std::fclose(_f) != 0)
                     throw error("failed to close file {}!", _path);
                 _f = NULL;
-                _open_files--;
+                --_open_files;
             }
         }
 
@@ -153,7 +153,7 @@ namespace daedalus_turbo::file {
     // C-style IO is used since on Mac OS the standard C++ library has very slow I/O performance.
     // At the same time C-style IO works well on Mac, Linux, and Windows.
     struct write_stream: protected stream {
-        write_stream(const std::string &path, std::ios_base::openmode mode=std::ios::binary): _path { path }
+        explicit write_stream(const std::string &path, std::ios_base::openmode mode=std::ios::binary): _path { path }
         {
             auto dir_path = std::filesystem::path { _path }.parent_path();
             if (!dir_path.empty())

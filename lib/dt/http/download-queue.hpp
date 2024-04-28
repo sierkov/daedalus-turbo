@@ -30,12 +30,32 @@ namespace daedalus_turbo::http {
             }
         };
 
+        struct request {
+            std::string url {};
+            std::string save_path {};
+            uint64_t priority = 0;
+            std::function<void(result &&)> handler {};
+            std::vector<std::string> errors {};
+
+            bool operator<(const request &b) const
+            {
+                return priority > b.priority;
+            }
+        };
+
         struct speed_mbps {
             double current = 0.0;
             double max = 0.0;
         };
 
+        using cancel_predicate = std::function<bool(const request &req)>;
+
         virtual ~download_queue() =default;
+
+        size_t cancel(const cancel_predicate &pred)
+        {
+            return _cancel_impl(pred);
+        }
 
         void download(const std::string &url, const std::string &save_path, uint64_t priority, const std::function<void(result &&)> &handler)
         {
@@ -98,6 +118,11 @@ namespace daedalus_turbo::http {
             }
         }
     private:
+        virtual size_t _cancel_impl(const cancel_predicate &pred)
+        {
+            throw error("cancellation are not supported!");
+        }
+
         virtual void _download_impl(const std::string &url, const std::string &save_path, uint64_t priority, const std::function<void(result &&)> &handler) =0;
         virtual bool _process_ok_impl(bool report_progress, scheduler *sched) =0;
         virtual speed_mbps _internet_speed_impl() =0;
@@ -116,6 +141,7 @@ namespace daedalus_turbo::http {
         struct impl;
         std::unique_ptr<impl> _impl;
 
+        size_t _cancel_impl(const cancel_predicate &pred) override;
         void _download_impl(const std::string &url, const std::string &save_path, uint64_t priority, const std::function<void(result &&)> &handler) override;
         bool _process_ok_impl(bool report_progress, scheduler *sched) override;
         speed_mbps _internet_speed_impl() override;

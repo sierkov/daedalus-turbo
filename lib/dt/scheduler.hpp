@@ -21,15 +21,15 @@
 
 namespace daedalus_turbo {
     typedef error scheduler_error;
-    typedef error scheduled_task_error;
 
     struct scheduled_task {
-        int priority;
+        int64_t priority;
         std::string task_group;
         std::function<std::any ()> task;
+        std::optional<std::any> param {};
 
-        scheduled_task(int prio, const std::string &tg, const std::function<std::any ()> &t)
-            : priority { prio }, task_group { tg }, task { t }
+        scheduled_task(int64_t prio, const std::string &tg, const std::function<std::any ()> &t, std::optional<std::any> param_)
+            : priority { prio }, task_group { tg }, task { t }, param { std::move(param_) }
         {
         }
 
@@ -38,12 +38,29 @@ namespace daedalus_turbo {
             return priority < t.priority;
         }
     };
+
+    struct scheduled_task_error: scheduler_error {
+        template<typename... Args>
+        scheduled_task_error(scheduled_task &&task, const char *fmt, Args&&... a)
+            : scheduler_error { fmt, std::forward<Args>(a)... }, _task { std::move(task) }
+        {
+        }
+
+        const scheduled_task &task() const
+        {
+            return _task;
+        }
+    private:
+        scheduled_task _task;
+    };
+
+
     struct scheduled_result {
-        int priority;
+        int64_t priority;
         std::string task_group;
         std::any result;
 
-        scheduled_result(int prio, const std::string &tg, const std::any &res)
+        scheduled_result(int64_t prio, const std::string &tg, const std::any &res)
             : priority(prio), task_group(tg), result(res)
         {
         }
@@ -55,6 +72,8 @@ namespace daedalus_turbo {
     };
 
     struct scheduler {
+        using cancel_predicate = std::function<bool(const std::string &, const std::optional<std::any> &param)>;
+
         static constexpr std::chrono::milliseconds default_wait_interval { 10 };
         static constexpr std::chrono::milliseconds default_update_interval { 5000 };
 
@@ -74,8 +93,9 @@ namespace daedalus_turbo {
         size_t num_workers() const;
         size_t num_observers(const std::string &task_group) const;
         size_t active_workers() const;
-        void submit(const std::string &task_group, int priority, const std::function<std::any ()> &action);
-        void submit_void(const std::string &task_group, int priority, const std::function<void ()> &action);
+        size_t cancel(const cancel_predicate &pred);
+        void submit(const std::string &task_group, int64_t priority, const std::function<std::any ()> &action, std::optional<std::any> param={});
+        void submit_void(const std::string &task_group, int64_t priority, const std::function<void ()> &action, std::optional<std::any> param={});
         void on_result(const std::string &task_group, const std::function<void (std::any &&)> &observer, bool replace_if_exists=false);
         void on_completion(const std::string &task_group, size_t task_count, const std::function<void()> &action);
         void clear_observers(const std::string &task_group);
@@ -83,7 +103,7 @@ namespace daedalus_turbo {
         size_t task_count();
         bool process_ok(bool report_status=true, const std::source_location &loc=std::source_location::current());
         void process(bool report_status=true, const std::source_location &loc=std::source_location::current());
-        void process_once(const bool report_statues=true);
+        void process_once(bool report_statues=true);
         void wait_for_count(const std::string &task_group, size_t task_count,
             const std::function<void ()> &submit_tasks, const std::function<void (std::any &&)> &process_res=[](auto &&) {});
     private:
@@ -92,10 +112,11 @@ namespace daedalus_turbo {
             size_t todo = 0;
             size_t done = 0;
         };
+        using task_queue = std::priority_queue<scheduled_task>;
 
         alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _tasks_mutex {};
         alignas(mutex::padding) std::condition_variable_any _tasks_cv {};
-        std::priority_queue<scheduled_task> _tasks {};
+        task_queue _tasks {};
         std::unordered_map<std::string, size_t> _tasks_cnt {};
 
         using observer_list = std::list<std::function<void (std::any &&)>>;
@@ -124,7 +145,7 @@ namespace daedalus_turbo {
 
         void _report_status();
         void _process_results(mutex::unique_lock &results_lock);
-        void _add_result(int priority, const std::string &task_group, std::any &&res);
+        void _add_result(int64_t priority, const std::string &task_group, std::any &&res);
         bool _worker_try_execute(size_t worker_idx, const std::optional<std::chrono::milliseconds> wait_interval_ms);
         void _worker_thread(size_t worker_idx);
         static size_t _find_num_workers(size_t user_num_workers);

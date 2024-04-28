@@ -9,6 +9,8 @@
 #include <dt/indexer.hpp>
 
 namespace daedalus_turbo::validator {
+    static constexpr std::string_view validate_leaders_task { "validate-epoch" };
+
     extern indexer::indexer_map default_indexers(const std::string &data_dir, scheduler &sched=scheduler::get());
     using tail_relative_stake_map = std::map<cardano::slot, double>;
 

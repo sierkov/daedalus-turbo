@@ -5,8 +5,8 @@
 
 #include <iostream>
 #include <vector>
-#include <sstream>
 #include <string>
+#include <dt/atomic.hpp>
 #include <dt/scheduler.hpp>
 #include <dt/test.hpp>
 #include <dt/util.hpp>
@@ -227,5 +227,27 @@ suite scheduler_suite = [] {
                 expect(num_completions == 1_ull);
             };
         };
+        "cancel"_test = [] {
+            scheduler s { 2 };
+            std::atomic_size_t num_cancelled = 0;
+            s.on_result("task1", [&](auto &&res) {
+                atomic_add(num_cancelled, s.cancel([](const auto &name, const auto &param) { return name == "task1" && param && std::any_cast<bool>(*param) == true; }));
+            });
+            for (size_t i = 0; i < 1000; ++i) {
+                // slow higher-priority tasks
+                s.submit_void("task1", 100, [] {
+                    std::this_thread::sleep_for(std::chrono::seconds { 1 });
+                }, true);
+                // fast lower-priority tasks
+                s.submit_void("task1", 10, [] {
+                    std::this_thread::sleep_for(std::chrono::milliseconds { 10 });
+                }, false);
+            }
+            const auto num_tasks = s.task_count();
+            expect(num_tasks == 2000_ull);
+            s.process();
+            const auto num_cancelled_tasks = num_cancelled.load();
+            expect(num_cancelled_tasks >= 900 && num_cancelled_tasks < 1000) << num_cancelled_tasks;
+        };
     };
-};
+};;

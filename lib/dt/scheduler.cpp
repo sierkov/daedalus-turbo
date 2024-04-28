@@ -70,23 +70,46 @@ namespace daedalus_turbo {
         return _num_active.load();
     }
 
-    void scheduler::submit(const std::string &task_group, int priority, const std::function<std::any ()> &action)
+    size_t scheduler::cancel(const cancel_predicate &pred)
+    {
+        size_t num_cancelled = 0;
+        mutex::unique_lock tasks_lock { _tasks_mutex };
+        task_queue new_tasks {};
+        while (!_tasks.empty()) {
+            auto task = _tasks.top();
+            _tasks.pop();
+            if (pred(task.task_group, task.param)) {
+                --_tasks_cnt[task.task_group];
+                ++num_cancelled;
+            } else {
+                new_tasks.emplace(std::move(task));
+            }
+        }
+        _tasks = std::move(new_tasks);
+        return num_cancelled;
+    }
+
+    void scheduler::submit(const std::string &task_group, int64_t priority, const std::function<std::any ()> &action, std::optional<std::any> param)
     {
         mutex::unique_lock tasks_lock { _tasks_mutex };
-        _tasks.emplace(priority, task_group, action);
+        _tasks.emplace(priority, task_group, action, std::move(param));
         auto [ it, created ] = _tasks_cnt.emplace(task_group, 1);
         if (!created)
-            it->second++;
+            ++it->second;
         tasks_lock.unlock();
         _tasks_cv.notify_one();
     }
 
-    void scheduler::submit_void(const std::string &task_group, int priority, const std::function<void ()> &action)
+    void scheduler::submit_void(const std::string &task_group, int64_t priority, const std::function<void ()> &action, std::optional<std::any> param)
     {
-        submit(task_group, priority, [action] {
-            action();
-            return true;
-        });
+        submit(
+            task_group, priority,
+            [action] {
+                action();
+                return true;
+            },
+            std::move(param)
+        );
     }
 
     void scheduler::on_result(const std::string &task_group, const std::function<void (std::any &&)> &observer, bool replace_if_exists)
@@ -252,7 +275,7 @@ namespace daedalus_turbo {
                                 if (it->second == 1)
                                     _tasks_cnt.erase(it);
                                 else
-                                    it->second--;
+                                    --it->second;
                             }
                         }
                         {
@@ -261,8 +284,11 @@ namespace daedalus_turbo {
                             if (it != _observers.end()) {
                                 observers_lock.unlock();
                                 // assumes that the observer list for a task group is configured before task submission
-                                for (const auto &observer: it->second)
-                                    observer(std::move(res.result));
+                                for (const auto &observer: it->second) {
+                                    logger::run_log_errors([&] {
+                                        observer(std::move(res.result));
+                                    });
+                                }
                             }
                         }
                     }
@@ -275,7 +301,9 @@ namespace daedalus_turbo {
                             auto node = _completion_actions.extract(it);
                             completion_lk.unlock();
                             clear_observers(*completion_task_group);
-                            node.mapped().action();
+                            logger::run_log_errors([&] {
+                                node.mapped().action();
+                            });
                         }
                     }
                     results_lock.lock();
@@ -293,7 +321,7 @@ namespace daedalus_turbo {
         }
     }
 
-    void scheduler::_add_result(int priority, const std::string &task_group, std::any &&res)
+    void scheduler::_add_result(int64_t priority, const std::string &task_group, std::any &&res)
     {
         mutex::unique_lock results_lock { _results_mutex };
         _results.emplace(priority, task_group, res);
@@ -316,11 +344,11 @@ namespace daedalus_turbo {
                 ++_num_active;
             std::any task_res {};
             // need to create copies since the task will be destroyed before reporting its result.
-            std::optional<int> res_prio {};
+            std::optional<int64_t> res_prio {};
             std::optional<std::string> res_task_group {};
             // ensure that the task instance is destroyed before its results are reported
             {
-                const auto task = _tasks.top();
+                auto task = _tasks.top();
                 _tasks.pop();
                 if (prev_task)
                     worker_task = fmt::format("{}/{}", *prev_task, task.task_group);
@@ -334,15 +362,15 @@ namespace daedalus_turbo {
                 } catch (const error &err) {
                     _success = false;
                     logger::warn("worker-{} task {} {}", worker_idx, task.task_group, err);
-                    task_res = std::make_any<scheduled_task_error>("task: '{}' error: '{}' of type: '{}'!", task.task_group, err, typeid(err).name());
+                    task_res = std::make_any<scheduled_task_error>(std::move(task), "task: '{}' error: '{}' of type: '{}'!", task.task_group, err, typeid(err).name());
                 } catch (const std::exception &ex) {
                     _success = false;
                     logger::warn("worker-{} task {} std::exception: {}", worker_idx, task.task_group, ex.what());
-                    task_res = std::make_any<scheduled_task_error>("task: '{}' error: '{}' of type: '{}'!", task.task_group, ex.what(), typeid(ex).name());
+                    task_res = std::make_any<scheduled_task_error>(std::move(task), "task: '{}' error: '{}' of type: '{}'!", task.task_group, ex.what(), typeid(ex).name());
                 } catch (...) {
                     _success = false;
                     logger::warn("worker-{} task {} unknown exception", worker_idx, task.task_group);
-                    task_res = std::make_any<scheduled_task_error>("task: '{}' unknown exception", task.task_group);
+                    task_res = std::make_any<scheduled_task_error>(std::move(task), "task: '{}' unknown exception", task.task_group);
                 }
             }
             lock.lock();

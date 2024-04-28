@@ -8,6 +8,7 @@
 #include <dt/config.hpp>
 #include <dt/http/download-queue.hpp>
 #include <dt/sync/http.hpp>
+#include <dt/validator.hpp>
 
 namespace daedalus_turbo::sync::http {
     struct syncer::impl {
@@ -29,6 +30,7 @@ namespace daedalus_turbo::sync::http {
 
             // determine the synchronization peer and task
             _epoch_json_cache.clear();
+            _cancel_min_offset.reset();
             if (!peer)
                 peer = _select_peer();
             const auto &j_epochs = peer->chain.at("epochs").as_array();
@@ -116,6 +118,8 @@ namespace daedalus_turbo::sync::http {
         chunk_registry::file_set _deletable_chunks {};
         alignas(mutex::padding) mutex::unique_lock::mutex_type _epoch_json_cache_mutex {};
         std::map<uint64_t, json::object> _epoch_json_cache {};
+        alignas(mutex::padding) mutex::unique_lock::mutex_type _cancel_mutex {};
+        std::optional<uint64_t> _cancel_min_offset {};
 
         static uint64_t _run_max_offset(const json::array &j_epochs, const uint64_t start_offset, const uint64_t max_offset)
         {
@@ -248,6 +252,22 @@ namespace daedalus_turbo::sync::http {
             }
         }
 
+        void _cancel_tasks(uint64_t new_failure_offset)
+        {
+            mutex::scoped_lock lk { _cancel_mutex };
+            if (!_cancel_min_offset || *_cancel_min_offset > new_failure_offset) {
+                const auto num_downloads = _dlq.cancel([new_failure_offset](const auto &req) {
+                    return req.priority >= new_failure_offset;
+                });
+                const auto num_tasks = _sched.cancel([new_failure_offset](const auto &name, const auto &param) {
+                    return param && param->type() == typeid(chunk_offset_t) && std::any_cast<chunk_offset_t>(*param) >= new_failure_offset;
+                });
+                logger::info("validation failure at offset {}: cancelled {} download tasks and {} scheduler tasks",
+                    new_failure_offset, num_downloads, num_tasks);
+                _cancel_min_offset = new_failure_offset;
+            }
+        }
+
         void _download_chunks(const std::string &host, const download_task_list &download_tasks, uint64_t max_offset, chunk_registry::file_set &updated_chunks)
         {
             timer t { fmt::format("download chunks: {}", download_tasks.size()) };
@@ -259,21 +279,27 @@ namespace daedalus_turbo::sync::http {
             std::atomic<uint64_t> downloaded = 0;
             const uint64_t downloaded_base = _cr.num_bytes() - _cr.tx()->start_offset;
             auto &progress = progress::get();
-            std::function<void(const std::any&)> parsed_proc = [&](const std::any &res) {
-                if (res.type() == typeid(scheduled_task_error))
+            auto parsed_proc = [&](std::any &&res) {
+                if (res.type() == typeid(scheduled_task_error)) {
+                    const auto &task = std::any_cast<scheduled_task_error>(res).task();
+                    _cancel_tasks(std::any_cast<chunk_offset_t>(*task.param));
                     return;
+                }
                 updated_chunks.emplace(std::any_cast<std::string>(res));
             };
-            std::function<void(const std::any&)> saved_proc = [&](const auto &res) {
-                if (res.type() == typeid(scheduled_task_error))
-                    return;
-                const auto &chunk = std::any_cast<saved_chunk>(res);
+            auto saved_proc = [&](saved_chunk &&chunk) {
                 const auto new_downloaded = atomic_add(downloaded, static_cast<uint64_t>(chunk.info.data_size));
                 progress.update("download", downloaded_base + new_downloaded, _cr.tx()->target_offset - _cr.tx()->start_offset);
-                _sched.submit(parse_task, 0 + 100 * (max_offset - chunk.info.offset) / max_offset, [this, chunk]() {
+                _sched.submit(parse_task, 100 * (max_offset - chunk.info.offset) / max_offset, [this, chunk]() {
                     return _parse_local_chunk(chunk.info, chunk.path);
-                });
+                }, chunk_offset_t { chunk.info.offset });
             };
+            _sched.on_result(std::string { daedalus_turbo::validator::validate_leaders_task }, [&](auto &&res) {
+                if (res.type() == typeid(scheduled_task_error)) {
+                    const auto &task = std::any_cast<scheduled_task_error>(res).task();
+                    _cancel_tasks(std::any_cast<chunk_offset_t>(*task.param));
+                }
+            });
             _sched.on_result(parse_task, parsed_proc);
             {
                 timer td { "download all chunks and parse immutable ones" };
@@ -282,11 +308,12 @@ namespace daedalus_turbo::sync::http {
                     const auto data_url = fmt::format("http://{}/compressed/{}", host, chunk.rel_path());
                     const auto save_path = _cr.full_path(chunk.rel_path());
                     if (!std::filesystem::exists(save_path)) {
-                        _dlq.download(data_url, save_path, chunk.offset, [chunk, saved_proc, save_path](download_queue::result &&res) {
+                        _dlq.download(data_url, save_path, chunk.offset, [this, chunk, saved_proc, save_path](download_queue::result &&res) {
                             if (res) {
                                 saved_proc(saved_chunk { save_path, chunk });
                             } else {
                                 logger::error("download of {} failed: {}", res.url, *res.error);
+                                _cancel_tasks(chunk.offset);
                             }
                         });
                     } else {

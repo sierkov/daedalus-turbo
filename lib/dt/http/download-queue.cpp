@@ -59,12 +59,34 @@ namespace daedalus_turbo::http {
 
         ~impl()
         {
+            const auto num_reqs = cancel([](const auto req) { return true; });
+            if (num_reqs > 0)
+                logger::warn("download_queue destroyed before completion: cancelled {} requests", num_reqs);
             while (_queue_size.load() > 0 || _active_conns.load() > 0) {
                 logger::warn("destroying download_queue with active_tasks: waiting for them to finish");
                 std::this_thread::sleep_for(std::chrono::seconds { 1 });
             }
             _asio_worker.del_before_action(_asio_name);
             _asio_worker.del_after_action(_asio_name);
+        }
+
+        size_t cancel(const cancel_predicate &pred)
+        {
+            size_t num_cancelled = 0;
+            request_queue new_queue {};
+            mutex::scoped_lock lk { _queue_mutex };
+            while (!_queue.empty()) {
+                auto req = _queue.top();
+                _queue.pop();
+                if (pred(req)) {
+                    ++num_cancelled;
+                } else {
+                    new_queue.emplace(std::move(req));
+                }
+            }
+            _queue = std::move(new_queue);
+            _queue_size = _queue.size();
+            return num_cancelled;
         }
 
         void download(const std::string &url, const std::string &save_path, uint64_t priority, const std::function<void(result &&)> &handler)
@@ -106,19 +128,6 @@ namespace daedalus_turbo::http {
             return speed_mbps { _speed_current.load(), _speed_max.load() };
         }
     private:
-        struct request {
-            std::string url {};
-            std::string save_path {};
-            uint64_t priority = 0;
-            std::function<void(result &&)> handler {};
-            std::vector<std::string> errors {};
-
-            bool operator<(const request &b) const
-            {
-                return priority > b.priority;
-            }
-        };
-
         struct connection: std::enable_shared_from_this<connection> {
             connection(impl &dlq, net::io_context& ioc, tcp::resolver &resolver)
                 : _dlq { dlq }, _ioc { ioc }, _resolver { resolver }
@@ -295,6 +304,8 @@ namespace daedalus_turbo::http {
             }
         };
 
+        using request_queue = std::priority_queue<request>;
+
         static constexpr size_t stats_report_span_secs = 5;
         static constexpr std::chrono::seconds stats_report_span { stats_report_span_secs };
 
@@ -303,7 +314,7 @@ namespace daedalus_turbo::http {
         tcp::resolver _resolver { _asio_worker.io_context() };
         std::atomic_bool _success { true };
         alignas(mutex::padding) mutex::unique_lock::mutex_type _queue_mutex {};
-        std::priority_queue<request> _queue {};
+        request_queue _queue {};
         alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _work_mutex {};
         alignas(mutex::padding) std::condition_variable_any _work_cv {};
         std::atomic_size_t _active_conns { 0 };
@@ -417,6 +428,11 @@ namespace daedalus_turbo::http {
     }
 
     download_queue_async::~download_queue_async() =default;
+
+    size_t download_queue_async::_cancel_impl(const cancel_predicate &pred)
+    {
+        return _impl->cancel(pred);
+    }
 
     void download_queue_async::_download_impl(const std::string &url, const std::string &save_path, uint64_t priority, const std::function<void(result &&)> &handler)
     {
