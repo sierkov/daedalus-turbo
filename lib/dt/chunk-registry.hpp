@@ -221,6 +221,12 @@ namespace daedalus_turbo {
             return _data_dir;
         }
 
+        uint64_t find_epoch(const uint64_t offset) const
+        {
+            mutex::scoped_lock lk { _update_mutex };
+            return find(offset).epoch();
+        }
+
         const chunk_info &find(uint64_t offset) const
         {
             return _find_it(offset)->second;
@@ -418,7 +424,7 @@ namespace daedalus_turbo {
         {
             if (num_bytes() <= max_end_offset)
                 return;
-            timer t { fmt::format("chunk_registry::_truncate to size {}", max_end_offset) };
+            timer t { fmt::format("chunk_registry::_truncate to size {}", max_end_offset), logger::level::info };
             auto chunk_it = _find_it(max_end_offset);
             if (chunk_it->second.offset != max_end_offset)
                 throw error("cannot truncate to offsets not on the boundary between chunks!");

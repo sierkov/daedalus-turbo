@@ -76,10 +76,10 @@ namespace daedalus_turbo::validator {
 
         void truncate_impl(uint64_t max_end_offset)
         {
-            timer t { "validator::truncate" };
             _cr._parent_truncate_impl(max_end_offset);
             if (std::max(_subchains.valid_size(), _state.end_offset()) <= max_end_offset)
                 return;
+            timer t { fmt::format("validator::truncate to size: {}", max_end_offset), logger::level::info };
             if (!_snapshots.empty() && _snapshots.rbegin()->end_offset > max_end_offset) {
                 for (auto it = _snapshots.begin(); it != _snapshots.end(); ) {
                     if (it->end_offset > max_end_offset) {
@@ -232,7 +232,7 @@ namespace daedalus_turbo::validator {
             return chunk;
         }
 
-        void on_slice_ready(uint64_t first_epoch, uint64_t last_epoch, const indexer::merger::slice &slice)
+        void on_slice_ready(const uint64_t first_epoch, const uint64_t last_epoch, const indexer::merger::slice &slice)
         {
             _cr._parent_on_slice_ready(first_epoch, last_epoch, slice);
             // only one thread at a time must work on this
@@ -426,14 +426,14 @@ namespace daedalus_turbo::validator {
                         mutex::unique_lock lk2 { _next_task_mutex };
                         while (_state.end_offset() < _next_end_offset) {
                             logger::debug("acquired _naxt_task mutex and configuring the validation task");
-                            auto start_offset = _state.end_offset();
-                            auto end_offset = _next_end_offset;
-                            auto first_epoch = _state.epoch();
-                            auto last_epoch = _next_last_epoch;
-                            auto ready_slices = _cr.slices(end_offset);
+                            const auto start_offset = _state.end_offset();
+                            const auto end_offset = _next_end_offset;
+                            const auto first_epoch = _state.epoch();
+                            const auto last_epoch = _next_last_epoch;
+                            const auto ready_slices = _cr.slices(end_offset);
                             lk2.unlock();
                             logger::info("pre-aggregating data for ledger state updates between epochs {} and {}", first_epoch, last_epoch);
-                            auto num_outflow_parts = _prepare_outflows(start_offset, end_offset, ready_slices);
+                            const auto num_outflow_parts = _prepare_outflows(start_offset, end_offset, ready_slices);
                             logger::debug("outflows ready, preparing the per-epoch deltas");
                             _process_updates(num_outflow_parts, first_epoch, last_epoch);
                             logger::debug("per-epoch deltas are ready, merging subchains from the same epoch");
@@ -750,7 +750,8 @@ namespace daedalus_turbo::validator {
                                 index::txo::item search_item { cc.tx_hash, cc.txo_idx };
                                 auto [ txo_count, txo_item ] = txo_reader.find(search_item);
                                 if (txo_count != 1)
-                                    throw error("each input used as a collateral must be present exactly once but got: {} for {} #{}", txo_count, cc.tx_hash, cc.txo_idx);
+                                    throw error("slot {}: each input used as a collateral must be present exactly once but got: {} for {} #{} index slices: {}",
+                                        upd.slot, txo_count, cc.tx_hash, cc.txo_idx, txo_reader.paths());
                                 _state.add_fees(txo_item.amount);
                                 break;
                             }

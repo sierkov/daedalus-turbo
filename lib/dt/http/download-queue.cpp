@@ -59,7 +59,7 @@ namespace daedalus_turbo::http {
 
         ~impl()
         {
-            const auto num_reqs = cancel([](const auto req) { return true; });
+            const auto num_reqs = cancel([](const auto &) { return true; });
             if (num_reqs > 0)
                 logger::warn("download_queue destroyed before completion: cancelled {} requests", num_reqs);
             while (_queue_size.load() > 0 || _active_conns.load() > 0) {

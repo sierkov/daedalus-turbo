@@ -41,7 +41,7 @@ namespace daedalus_turbo::cli::http_api {
                     }
                 }
             }
-            logger::info("HTTP API listens at the address {}:{}\n", ip, port);
+            logger::info("HTTP API listens at the address {}:{}", ip, port);
             server s { data_dir, ignore_requirements };
             s.serve(ip, port);
         }

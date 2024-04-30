@@ -174,7 +174,7 @@ namespace daedalus_turbo::indexer {
             // merge final not-yet merged epochs
             if (_slices.continuous_size() <= max_end_offset)
                 return;
-            timer t { fmt::format("truncate indices to max offset {}", max_end_offset) };
+            timer t { fmt::format("truncate indices to max offset {}", max_end_offset), logger::level::info };
             std::vector<merger::slice> updated {};
             for (auto it = _slices.begin(); it != _slices.end(); ) {
                 const auto &s = it->second;
@@ -341,27 +341,35 @@ namespace daedalus_turbo::indexer {
                     break;
                 if (total_size < merger::part_size && !force && _merge_next_offset + total_size < _transaction->target_offset)
                     break;
-                auto first_epoch = _epoch_slices.begin()->first;
-                auto last_epoch = first_epoch;
                 std::vector<std::string> input_slices {};
                 while (!_epoch_slices.empty() && _epoch_slices.begin()->second.offset < _merge_next_offset + total_size) {
                     input_slices.emplace_back(_epoch_slices.begin()->second.slice_id);
-                    last_epoch = _epoch_slices.begin()->first;
                     _epoch_slices.erase(_epoch_slices.begin());
                 }   
                 merger::slice output_slice { _merge_next_offset, total_size };
                 _merge_next_offset += total_size;
                 epoch_slices_lk.unlock();
-                _merge_slice(output_slice, input_slices, 200, [this, output_slice, first_epoch, last_epoch] {
+                _merge_slice(output_slice, input_slices, 200, [this, output_slice] {
+                    // ensures notifications are sent only in their continuous order
+                    std::vector<merger::slice> notify_slices {};
                     {
                         mutex::scoped_lock lk { _slices_mutex };
+                        const auto old_indexed_size = _slices.continuous_size();
                         _slices.add(output_slice);
+                        const auto new_indexed_size = _slices.continuous_size();
+                        if (new_indexed_size > old_indexed_size) {
+                            for (auto slice_it = _slices.find(old_indexed_size); slice_it != _slices.end() && slice_it->second.end_offset() <= new_indexed_size; ++slice_it)
+                                notify_slices.emplace_back(slice_it->second);
+                        }
                         _final_merged = _slices.continuous_size() - _transaction->start_offset;
                         // experimental support for on-the-go checkpoints
                         _save_json_slices(_index_state_path);
                     }
                     progress::get().update("merge", _epoch_merged + _epoch_merged_base + _final_merged, (_transaction->target_offset - _transaction->start_offset) * 2);
-                    _on_slice_ready(first_epoch, last_epoch, output_slice);
+                    for (const auto &ns: notify_slices) {
+                        if (ns.size > 0)
+                            _on_slice_ready(find_epoch(ns.offset), find_epoch(ns.end_offset() - 1), ns);
+                    }
                 });
                 epoch_slices_lk.lock();
             }

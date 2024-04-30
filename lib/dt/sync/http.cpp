@@ -123,7 +123,7 @@ namespace daedalus_turbo::sync::http {
 
         static uint64_t _run_max_offset(const json::array &j_epochs, const uint64_t start_offset, const uint64_t max_offset)
         {
-            static constexpr uint64_t max_sync_part = static_cast<uint64_t>(1) << 34;
+            static constexpr uint64_t max_sync_part = static_cast<uint64_t>(1) << 35;
             uint64_t run_max_offset = 0;
             for (size_t epoch = 0; epoch < j_epochs.size(); ++epoch) {
                 const auto &j_epoch_meta = j_epochs.at(epoch);
@@ -259,7 +259,7 @@ namespace daedalus_turbo::sync::http {
                 const auto num_downloads = _dlq.cancel([new_failure_offset](const auto &req) {
                     return req.priority >= new_failure_offset;
                 });
-                const auto num_tasks = _sched.cancel([new_failure_offset](const auto &name, const auto &param) {
+                const auto num_tasks = _sched.cancel([new_failure_offset](const auto &, const auto &param) {
                     return param && param->type() == typeid(chunk_offset_t) && std::any_cast<chunk_offset_t>(*param) >= new_failure_offset;
                 });
                 logger::info("validation failure at offset {}: cancelled {} download tasks and {} scheduler tasks",
@@ -281,7 +281,7 @@ namespace daedalus_turbo::sync::http {
             auto &progress = progress::get();
             auto parsed_proc = [&](std::any &&res) {
                 if (res.type() == typeid(scheduled_task_error)) {
-                    const auto &task = std::any_cast<scheduled_task_error>(res).task();
+                    const auto task = std::any_cast<scheduled_task_error>(std::move(res)).task();
                     _cancel_tasks(std::any_cast<chunk_offset_t>(*task.param));
                     return;
                 }
@@ -296,7 +296,7 @@ namespace daedalus_turbo::sync::http {
             };
             _sched.on_result(std::string { daedalus_turbo::validator::validate_leaders_task }, [&](auto &&res) {
                 if (res.type() == typeid(scheduled_task_error)) {
-                    const auto &task = std::any_cast<scheduled_task_error>(res).task();
+                    const auto task = std::any_cast<scheduled_task_error>(std::move(res)).task();
                     _cancel_tasks(std::any_cast<chunk_offset_t>(*task.param));
                 }
             });

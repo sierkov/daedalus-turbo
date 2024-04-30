@@ -798,6 +798,14 @@ namespace daedalus_turbo::index {
             return tot_size; 
         }
 
+        [[nodiscard]] vector<std::string> paths() const
+        {
+            vector<std::string> p {};
+            p.reserve(_readers.size());
+            for (const auto &r: _readers)
+                p.emplace_back(r->path());
+            return p;
+        }
     private:
         vector<std::unique_ptr<reader_mt<T>>> _readers;
 
@@ -839,6 +847,10 @@ namespace daedalus_turbo::index {
             return _reader.size();
         }
 
+        [[nodiscard]] vector<std::string> paths() const
+        {
+            return _reader.paths();
+        }
     private:
         reader_multi_mt<T> _reader;
         reader_multi_mt<T>::thread_data _data;

@@ -118,7 +118,7 @@ namespace daedalus_turbo::http {
             }
         }
     private:
-        virtual size_t _cancel_impl(const cancel_predicate &pred)
+        virtual size_t _cancel_impl(const cancel_predicate &/*pred*/)
         {
             throw error("cancellation are not supported!");
         }
