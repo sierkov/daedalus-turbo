@@ -28,21 +28,20 @@ const getLastSlot = async(host) => {
 
 const measure = async(host) => {
     let lastBlockTime = shelleySlotToTime(await getLastSlot(host));
-    let nextRequest = Date.now();
-    const lastRequest = nextRequest + 3_600_000;
     const requestPeriod = 1000;
-    while (nextRequest <= lastRequest) {
+    for (let ri = 0; ri < 3600; ++ri) {
+        const reqTime = Date.now();
         const lastSlot = await getLastSlot(host);
         const lastSlotTime = shelleySlotToTime(lastSlot);
         const now = Date.now();
         if (lastSlotTime > lastBlockTime) {
             const delay = now - lastSlotTime;
-            console.log(host, now, lastSlot, lastSlotTime, delay);
+            console.log(host, ri, now, lastSlot, lastSlotTime, delay);
             lastBlockTime = lastSlotTime;
         }
-        nextRequest += requestPeriod;
-        if (nextRequest > now)
-            await sleep(now - nextRequest);
+        const reqDuration = now - reqTime;
+        if (reqDuration < requestPeriod)
+            await sleep(requestPeriod - reqDuration);
     }
 };
 
