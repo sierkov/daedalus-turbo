@@ -121,7 +121,7 @@ namespace daedalus_turbo {
                 total_size += epoch_meta.size();
                 total_compressed_size += epoch_meta.compressed_size();
                 json::array j_chunks {};
-                for (const chunk_registry::chunk_info *chunk: epoch_meta.chunks)
+                for (const chunk_registry::chunk_info *chunk: epoch_meta.chunks())
                     j_chunks.emplace_back(chunk->to_json());
                 json::object j_epoch_meta {
                     { "lastSlot", (size_t)epoch_meta.last_slot() },

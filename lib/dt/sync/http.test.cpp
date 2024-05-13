@@ -12,16 +12,26 @@ using namespace daedalus_turbo;
 
 namespace {
     struct cardano_client_mock: cardano::network::client {
+        using client::client;
     private:
-        void _find_intersection_impl(const cardano::network::address &addr, const cardano::network::blockchain_point_list &points, const find_handler &handler) override
+        void _find_intersection_impl(const cardano::point_list &points, const find_handler &handler) override
         {
             if (points.empty())
                 throw error("cardano::network::client::_find_intersection_impl: unsupported parameters!");
-            handler(find_response { addr, cardano::network::blockchain_point_pair { points.front(), points.front() } } );
+            handler(find_response { _addr, cardano::point_pair { points.front(), points.front() } } );
         }
 
-        void _process_impl() override
+        void _process_impl(scheduler */*sched*/) override
         {
+        }
+    };
+
+    struct cardano_client_manager_mock: cardano::network::client_manager
+    {
+    private:
+        std::unique_ptr<cardano::network::client> _connect_impl(const cardano::network::address &addr, asio::worker &/*asio_worker*/) override
+        {
+            return std::make_unique<cardano_client_mock>(addr);
         }
     };
 
@@ -36,6 +46,12 @@ namespace {
         const std::string _data_dir;
         response_map _responses;
         std::atomic_size_t _num_err = 0;
+
+        size_t _cancel_impl(const cancel_predicate &/*pred*/) override
+        {
+            // all requests are executed immediately so there is nothing to cancel
+            return 0;
+        }
 
         void _download_impl(const std::string &url, const std::string &save_path, uint64_t /*priority*/, const std::function<void(download_queue::result &&)> &handler) override
         {
@@ -82,8 +98,8 @@ suite sync_http_suite = [] {
             responses.emplace("/chain.json", "chain.json");
             responses.emplace("/epoch-0-7C6901C6346781C2BC5CBC49577490E336C2545C320CE4A61605BC71A9C5BED0.json", "epoch-0.json");
             download_queue_mock dq { "./data/sync-http/success", std::move(responses) };
-            cardano_client_mock cnc {};
-            sync::http::syncer syncer { cr, dq, cnc };
+            cardano_client_manager_mock ccm {};
+            sync::http::syncer syncer { cr, dq, ccm };
             expect(cr.max_slot() == 0_ull);
             syncer.sync();
             expect(cr.max_slot() == 19_ull);
@@ -96,8 +112,8 @@ suite sync_http_suite = [] {
             responses.emplace("/chain.json", "chain.json");
             responses.emplace("/epoch-0-7C6901C6346781C2BC5CBC49577490E336C2545C320CE4A61605BC71A9C5BED0.json", "epoch-0.json");
             download_queue_mock dq { "./data/sync-http/failure", std::move(responses) };
-            cardano_client_mock cnc {};
-            sync::http::syncer syncer { cr, dq, cnc };
+            cardano_client_manager_mock ccm {};
+            sync::http::syncer syncer { cr, dq, ccm };
             expect(cr.max_slot() == 0_ull);
             expect(throws([&] { syncer.sync(); }));
             expect(cr.max_slot() == 9_ull);

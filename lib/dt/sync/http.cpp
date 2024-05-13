@@ -12,8 +12,8 @@
 
 namespace daedalus_turbo::sync::http {
     struct syncer::impl {
-        impl(indexer::incremental &cr, daedalus_turbo::http::download_queue &dq, cardano::network::client &cnc, peer_selection &ps, scheduler &sched, file_remover &fr)
-            : _cr { cr }, _dlq { dq }, _cnc { cnc }, _peer_selection { ps }, _sched { sched }, _file_remover { fr },
+        impl(indexer::incremental &cr, daedalus_turbo::http::download_queue &dq, cardano::network::client_manager &ccm, peer_selection &ps, scheduler &sched, file_remover &fr)
+            : _cr { cr }, _dlq { dq }, _client_manager { ccm }, _peer_selection { ps }, _sched { sched }, _file_remover { fr },
                 _vk { ed25519_vkey::from_hex(static_cast<std::string_view>(configs_dir::get().at("turbo").at("vkey").as_string())) }
         {
         }
@@ -59,13 +59,10 @@ namespace daedalus_turbo::sync::http {
                     // set start and target offset to the full task for correct progress computation
                     _cr.start_tx(task->start_offset, remote_size, run_start_offset == task->start_offset);
                     chunk_registry::file_set updated_chunks {};
-                    try {
+                    ex_ptr = logger::run_log_errors([&] {
                         timer td { "sync::http::download_data", logger::level::debug };
                         updated_chunks = _download_data(peer->host, j_epochs, run_max_offset, run_start_epoch);
-                    } catch (const std::exception &ex) {
-                        logger::error("sync error: {}", ex.what());
-                        ex_ptr = std::current_exception();
-                    }
+                    });
                     _cr.prepare_tx();
                     // if no progress has been made, rethrow the exception
                     // Otherwise, try to record the progress and continue
@@ -110,7 +107,7 @@ namespace daedalus_turbo::sync::http {
 
         indexer::incremental &_cr;
         download_queue &_dlq;
-        cardano::network::client &_cnc;
+        cardano::network::client_manager &_client_manager;
         peer_selection &_peer_selection;
         scheduler &_sched;
         file_remover &_file_remover;
@@ -157,30 +154,29 @@ namespace daedalus_turbo::sync::http {
         void _verify_intersection()
         {
             timer t { "verify_intersection", logger::level::debug };
-            static constexpr size_t max_intersection_slots = 4000;
+            static constexpr size_t max_intersection_slots = 600;
             using namespace cardano::network;
-            uint64_t max_slot = _cr.max_slot();
+            const uint64_t max_slot = _cr.max_slot();
             if (max_slot > 0) {
-                blockchain_point_list points {};
-                for (auto rit = _cr.epochs().rbegin(), rend = _cr.epochs().rend(); rit != rend; ++rit) {
-                    if (max_slot - static_cast<uint64_t>(rit->second.last_slot()) > max_intersection_slots)
+                cardano::point_list points {};
+                for (auto rit = _cr.chunks().rbegin(), rend = _cr.chunks().rend(); rit != rend; ++rit) {
+                    if (max_slot - rit->second.last_slot > max_intersection_slots)
                         break;
-                    points.emplace_back(rit->second.last_block_hash(), rit->second.last_slot());
+                    for (const auto &block: rit->second.blocks) {
+                        if (max_slot - block.slot > max_intersection_slots)
+                            break;
+                        points.emplace_back(block.hash, block.slot);
+                    }
                 }
                 for (size_t retry = 0; retry < peer_selection::max_retries; ++retry) {
-                    client::find_response resp {};
-                    auto peer_addr = _peer_selection.next_cardano();
-                    _cnc.find_intersection(peer_addr, points, [&](client::find_response &&r) {
-                        resp = std::move(r);
+                    const auto ex_ptr = logger::run_log_errors([&] {
+                        const auto peer_addr = _peer_selection.next_cardano();
+                        const auto client = _client_manager.connect(peer_addr);
+                        const auto isect = client->find_intersection_sync(points);
+                        logger::info("a Cardano network peer confirmed a mutually known block at slot {}", isect.isect->slot);
                     });
-                    _cnc.process();
-                    if (std::holds_alternative<blockchain_point_pair>(resp.res)) {
-                        const auto &[point, tip] = std::get<blockchain_point_pair>(resp.res);
-                        logger::info("a Cardano network peer confirmed a mutually known block at slot {}", point.slot);
+                    if (!ex_ptr)
                         return;
-                    }
-                    if (std::holds_alternative<client::error_msg>(resp.res))
-                        logger::error("verify_intersect attempt: {} error: {}", retry, std::get<client::error_msg>(resp.res));
                     logger::warn("a Cardano network peer reports no know intersections within last {} slots; retrying ...", max_intersection_slots);
                 }
                 throw error("Failed to confirm an intersection point within {} slots with the Cardano network - stopping!", max_intersection_slots);
@@ -203,24 +199,23 @@ namespace daedalus_turbo::sync::http {
                 auto epoch_size = json::value_to<uint64_t>(j_epoch_meta.at("size"));
                 remote_chain_size += epoch_size;
                 if (epoch == check_from_epoch && check_from_offset + epoch_size <= max_start_offset) {
-                    auto epoch_it = _cr.epochs().find(epoch);
-                    if (epoch_it != _cr.epochs().end()
-                        && epoch_it->second.last_block_hash() == cardano::block_hash::from_hex(j_epoch_meta.at("lastBlockHash").as_string()))
-                    {
-                        check_from_epoch = epoch + 1;
-                        check_from_offset += epoch_size;
+                    if (_cr.has_epoch(epoch)) {
+                        const auto einfo = _cr.epoch(epoch);
+                        if (einfo.last_block_hash() == cardano::block_hash::from_hex(j_epoch_meta.at("lastBlockHash").as_string())) {
+                            check_from_epoch = epoch + 1;
+                            check_from_offset += epoch_size;
+                        }
                     }
                 }
             }
             if (check_from_epoch <= _cr.max_slot().epoch()) {
-                auto check_epoch_it = _cr.epochs().find(check_from_epoch);
-                if (check_epoch_it != _cr.epochs().end() && epoch_last_block_hash.contains(check_from_epoch)) {
+                if (_cr.has_epoch(check_from_epoch) && epoch_last_block_hash.contains(check_from_epoch)) {
                     _epoch_json_cache[check_from_epoch] = _dlq.fetch_json_signed(
                         fmt::format("http://{}/epoch-{}-{}.json", host, check_from_epoch, epoch_last_block_hash.at(check_from_epoch)), _vk).as_object();
                     const auto &j_epoch = _epoch_json_cache.at(check_from_epoch);
                     for (const auto &chunk: j_epoch.at("chunks").as_array()) {
                         auto data_hash = cardano::block_hash::from_hex(json::value_to<std::string_view>(chunk.at("hash")));
-                        auto chunk_it = _cr.find(data_hash);
+                        auto chunk_it = _cr.find_data_hash_it(data_hash);
                         if (chunk_it == _cr.chunks().end() || chunk_it->second.offset != check_from_offset || chunk_it->second.end_offset() > max_start_offset)
                             break;
                         check_from_offset += chunk_it->second.data_size;
@@ -375,7 +370,7 @@ namespace daedalus_turbo::sync::http {
                     auto chunk_size = chunk.data_size;
                     if (chunk_start_offset + chunk_size > max_offset)
                         break;
-                    const auto chunk_it = _cr.find(chunk.data_hash);
+                    const auto chunk_it = _cr.find_data_hash_it(chunk.data_hash);
                     if (chunk_it == _cr.chunks().end()) {
                         chunk.offset = chunk_start_offset;
                         download_tasks.emplace_back(std::move(chunk));
@@ -393,8 +388,8 @@ namespace daedalus_turbo::sync::http {
         }
     };
 
-    syncer::syncer(indexer::incremental &cr, daedalus_turbo::http::download_queue &dq, cardano::network::client &cnc, peer_selection &ps, scheduler &sched, file_remover &fr)
-        : _impl { std::make_unique<impl>(cr, dq, cnc, ps, sched, fr) }
+    syncer::syncer(indexer::incremental &cr, daedalus_turbo::http::download_queue &dq, cardano::network::client_manager &ccm, peer_selection &ps, scheduler &sched, file_remover &fr)
+        : _impl { std::make_unique<impl>(cr, dq, ccm, ps, sched, fr) }
     {
     }
 

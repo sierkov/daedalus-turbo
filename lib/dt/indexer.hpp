@@ -17,7 +17,6 @@
 #include <dt/cardano.hpp>
 #include <dt/chunk-registry.hpp>
 #include <dt/index/common.hpp>
-#include <dt/index/block-meta.hpp>
 #include <dt/index/pay-ref.hpp>
 #include <dt/index/stake-ref.hpp>
 #include <dt/index/txo.hpp>
@@ -62,7 +61,8 @@ namespace daedalus_turbo::indexer {
             : chunk_registry { data_dir, strict, sched, fr }, _indexers { std::move(indexers) },
                 _idx_dir { storage_dir(data_dir) },
                 _index_state_path { (_idx_dir / "state.json").string() },
-                _index_state_pre_path { (_idx_dir / "state-pre.json").string() }
+                _index_state_pre_path { (_idx_dir / "state-pre.json").string() },
+                _mergeable { _mergeable_indexers(_indexers) }
         {
 #           ifdef _WIN32
                 if (_setmaxstdio(min_no_open_files) < min_no_open_files)
@@ -84,8 +84,6 @@ namespace daedalus_turbo::indexer {
                 }
 #           endif
             for (auto &[name, idxr_ptr]: _indexers) {
-                if (idxr_ptr && idxr_ptr->mergeable())
-                    _mergeable.emplace(name);
                 idxr_ptr->clean_up();
             }
             uint64_t end_offset = 0;
@@ -158,7 +156,7 @@ namespace daedalus_turbo::indexer {
         const std::filesystem::path _idx_dir;
         const std::string _index_state_path;
         const std::string _index_state_pre_path;
-        std::set<std::string> _mergeable {};
+        const std::set<std::string> _mergeable;
         alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _slices_mutex {};
         merger::tree _slices {};
         uint64_t _epoch_merged_base = 0;
@@ -167,6 +165,9 @@ namespace daedalus_turbo::indexer {
         uint64_t _merge_next_offset = 0;
         alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _epoch_slices_mutex {};
         std::map<uint64_t, merger::slice> _epoch_slices {};
+        // rollback tracking
+        std::vector<merger::slice> _slices_truncated {};
+        std::vector<merger::slice> _slices_added {};
 
         void _truncate_impl(uint64_t max_end_offset) override
         {
@@ -182,17 +183,13 @@ namespace daedalus_turbo::indexer {
                     ++it;
                 } else { // s.end_offset() > max_end_offset
                     logger::trace("truncate index slice {}", s.slice_id);
-                    if (s.offset >= max_end_offset) {
-                        for (auto &[name, idxr_ptr]: _indexers)
-                            _file_remover.mark(idxr_ptr->reader_path(s.slice_id));
-                    } else {
+                    _slices_truncated.emplace_back(s);
+                    if (s.offset < max_end_offset) {
                         merger::slice new_slice { s.offset, std::min(s.size, max_end_offset - s.offset) };
                         updated.emplace_back(new_slice);
                         for (auto &[name, idxr_ptr]: _indexers) {
-                            _sched.submit_void("truncate-init-" + name, 25, [&idxr_ptr, s, new_slice, max_end_offset] {
-                                idxr_ptr->schedule_truncate(s.slice_id, max_end_offset, [&idxr_ptr, s, new_slice] {
-                                    std::filesystem::rename(idxr_ptr->reader_path(s.slice_id), idxr_ptr->reader_path(new_slice.slice_id));
-                                });
+                            _sched.submit_void("truncate:init-" + name, 25, [&idxr_ptr, s, new_slice, max_end_offset] {
+                                idxr_ptr->schedule_truncate(s.slice_id, new_slice.slice_id, max_end_offset);
                             });
                         }
                     }
@@ -202,12 +199,18 @@ namespace daedalus_turbo::indexer {
             _sched.process(true);
             for (auto &&new_slice: updated) {
                 _slices.add(new_slice);
+                _slices_added.emplace_back(new_slice);
             }
         }
 
         uint64_t _valid_end_offset_impl() override
         {
             return std::min(_slices.continuous_size(), chunk_registry::_valid_end_offset_impl());
+        }
+
+        uint64_t _max_end_offset_impl() override
+        {
+            return std::max(_slices.continuous_size(), chunk_registry::_valid_end_offset_impl());
         }
 
         void _start_tx_impl() override
@@ -260,7 +263,17 @@ namespace daedalus_turbo::indexer {
 
         void _rollback_tx_impl() override
         {
-            throw error("not implemented");
+            chunk_registry::_rollback_tx_impl();
+            for (const auto &s: _slices_added) {
+                _slices.erase(s.offset);
+                for (auto &[name, idxr_ptr]: _indexers)
+                    _file_remover.mark(idxr_ptr->reader_path(s.slice_id));
+            }
+            _slices_added.clear();
+            for (const auto &s: _slices_truncated) {
+                _slices.add(s);
+            }
+            _slices_truncated.clear();
         }
 
         void _commit_tx_impl() override
@@ -269,6 +282,12 @@ namespace daedalus_turbo::indexer {
             if (!std::filesystem::exists(_index_state_pre_path))
                 throw error("the prepared chunk_registry state file is missing: {}!", _index_state_pre_path);
             std::filesystem::rename(_index_state_pre_path, _index_state_path);
+            for (const auto &s: _slices_truncated) {
+                for (auto &[name, idxr_ptr]: _indexers)
+                    _file_remover.mark(idxr_ptr->reader_path(s.slice_id));
+            }
+            _slices_truncated.clear();
+            _slices_added.clear();
         }
 
         virtual void _on_slice_ready(uint64_t first_epoch, uint64_t last_epoch, const merger::slice &slice)
@@ -281,7 +300,7 @@ namespace daedalus_turbo::indexer {
         {
             chunk_registry::_on_epoch_merge(epoch, info);
             std::vector<std::string> input_slices {};
-            for (const auto &chunk_ptr: info.chunks) {
+            for (const auto &chunk_ptr: info.chunks()) {
                 input_slices.emplace_back(fmt::format("update-{}", chunk_ptr->offset));
             }
             merger::slice output_slice { info.start_offset(), info.end_offset() - info.start_offset(), fmt::format("epoch-{}", epoch) };
@@ -312,12 +331,12 @@ namespace daedalus_turbo::indexer {
                 if (end_offset < output_slice.offset)
                     end_offset = output_slice.offset;
                 const size_t priority = prio_base + (end_offset - output_slice.offset) * 50 / end_offset; // [prio_base;prio_base+50) range
-                _sched.submit_void("schedule-" + output_path, priority, [this, idxr_ptr, output_path, priority, input_paths, indices_awaited, on_merge] {
+                _sched.submit_void("merge:schedule-" + output_path, priority, [this, idxr_ptr, output_path, priority, input_paths, indices_awaited, on_merge] {
                     // merge tasks must have a higher priority + 50 so that the actual merge tasks free up file handles
                     // and other tied resources quicker than they are consumed
-                    idxr_ptr->merge(output_path, priority + 50, input_paths, output_path, [this, indices_awaited, output_path, priority, on_merge] {
+                    idxr_ptr->merge("merge:" + output_path, priority + 50, input_paths, output_path, [this, indices_awaited, output_path, priority, on_merge] {
                         if (--(*indices_awaited) == 0) {
-                            _sched.submit_void("ready-" + output_path, priority, on_merge);
+                            _sched.submit_void("merge:ready-" + output_path, priority, on_merge);
                         }
                     });
                 });
@@ -387,6 +406,16 @@ namespace daedalus_turbo::indexer {
             });
         }
     private:
+        static std::set<std::string> _mergeable_indexers(const indexer_map &indexers)
+        {
+            std::set<std::string> m {};
+            for (auto &[name, idxr_ptr]: indexers) {
+                if (idxr_ptr && idxr_ptr->mergeable())
+                    m.emplace(name);
+            }
+            return m;
+        }
+
         void _save_json_slices(const std::string &path)
         {
             json::array j_slices {};
@@ -400,7 +429,6 @@ namespace daedalus_turbo::indexer {
     {
         const auto idx_dir = incremental::storage_dir(data_dir);
         indexer_map indexers {};
-        indexers.emplace(std::make_shared<index::block_meta::indexer>(idx_dir, "block-meta", sched));
         indexers.emplace(std::make_shared<index::stake_ref::indexer>(idx_dir, "stake-ref", sched));
         indexers.emplace(std::make_shared<index::pay_ref::indexer>(idx_dir, "pay-ref", sched));
         indexers.emplace(std::make_shared<index::txo::indexer>(idx_dir, "txo", sched));

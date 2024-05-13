@@ -3,7 +3,7 @@ if (WIN32)
         ui
         COMMAND npm i
         COMMAND npm run pkg-build-win
-        COMMAND npx shx mv dt-ui-win32-x64 bin
+        COMMAND npx shx mv dt-explorer-win32-x64 bin
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/ui
     )
     install(DIRECTORY ${CMAKE_SOURCE_DIR}/ui/bin/ DESTINATION bin)

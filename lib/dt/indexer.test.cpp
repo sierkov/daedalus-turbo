@@ -15,7 +15,7 @@ suite indexer_suite = [] {
         static const std::string src_dir { "./data/chunk-registry" };
         static const std::string data_dir { "./tmp/indexer" };
         static const auto idx_dir = indexer::incremental::storage_dir(data_dir);
-        "incremental"_test = [&] {
+        "create"_test = [&] {
             std::filesystem::remove_all(data_dir);
             {
                 chunk_registry src_cr { src_dir, false };
@@ -37,6 +37,24 @@ suite indexer_suite = [] {
                 expect(read_count == 244'802_ull) << read_count;
                 expect(read_count == reader.size());
             }
+        };
+        "rollback"_test = [&] {
+            std::filesystem::remove_all(data_dir);
+            chunk_registry src_cr { src_dir, false };
+            indexer_map indexers {};
+            indexers.emplace(std::make_unique<index::txo_use::indexer>(idx_dir, "txo-use"));
+            incremental idxr { std::move(indexers), data_dir, false };
+            idxr.import(src_cr);
+            const auto before_size = idxr.valid_end_offset();
+            idxr.transact(before_size / 2, [] {
+                // rollback the initial truncation
+                throw error("something went wrong");
+            });
+            expect(idxr.valid_end_offset() == before_size) << idxr.valid_end_offset() << before_size;
+            idxr.transact(before_size / 2, [] {
+                // do nothing just truncate
+            });
+            expect(idxr.valid_end_offset() < before_size) << idxr.valid_end_offset() << before_size;
         };
     };    
 };

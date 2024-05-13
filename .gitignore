@@ -9,7 +9,7 @@ log
 CMakeSettings.json
 build-*
 cmake-build-*
-ui/dt-ui-*
+ui/dt-explorer-*
 **/*.pid
 **/*.profdata
 **/*.profraw

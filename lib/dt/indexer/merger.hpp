@@ -7,7 +7,6 @@
 
 #include <map>
 #include <string>
-#include <zpp_bits.h>
 #include <dt/error.hpp>
 #include <dt/json.hpp>
 
@@ -15,10 +14,14 @@ namespace daedalus_turbo::indexer::merger {
     static constexpr uint64_t part_size = static_cast<uint64_t>(1) << 33;
 
     struct slice {
-        using serialize = zpp::bits::members<3>;
         uint64_t offset = 0;
         uint64_t size = 0;
         std::string slice_id {};
+
+        constexpr static auto serialize(auto &archive, auto &self)
+        {
+            return archive(self.offset, self.size, self.slice_id);
+        }
 
         static slice from_json(const json::object &j)
         {

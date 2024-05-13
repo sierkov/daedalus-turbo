@@ -45,6 +45,7 @@
 #include <dt/sync/http.hpp>
 #include <dt/util.hpp>
 #include <dt/validator.hpp>
+#include <dt/zpp.hpp>
 
 namespace fmt {
     template<>
@@ -229,9 +230,6 @@ namespace daedalus_turbo::http_api {
                     throw error("unsupported endpoint '{}'", req_id);
                 }
                 logger::info("request {} succeeded in {:0.3f} secs", target, t.stop());
-            } catch (const error &ex) {
-                logger::error("dt::error: {}", ex);
-                resp = _error_response(fmt::format("request {} failed: {}", target, ex.what()));
             } catch (const std::exception &ex) {
                 resp = _error_response(fmt::format("request {} failed: {}", target, ex.what()));
             } catch (...) {
@@ -255,8 +253,6 @@ namespace daedalus_turbo::http_api {
                     lock.unlock();
                     try {
                         _process_request(target);
-                    } catch (const error &ex) {
-                        logger::error("worker process_request {}: {}", target, ex);
                     } catch (const std::exception &ex) {
                         logger::error("worker process_request {}: std::exception {}", target, ex.what());
                     } catch (...) {
@@ -416,7 +412,7 @@ namespace daedalus_turbo::http_api {
                     const uint64_t start_offset = _cr->valid_end_offset();
                     auto peer = syncr.find_peer();
                     if (start_offset > 0)
-                        _sync_start_slot = _cr->find(start_offset - 1).last_slot;
+                        _sync_start_slot = _cr->find_offset(start_offset - 1).last_slot;
                     else
                         _sync_start_slot = 0;
                     _sync_target_slot = peer.last_slot();
@@ -474,11 +470,11 @@ namespace daedalus_turbo::http_api {
             const std::string cache_data_path = fmt::format("{}/data-{}.bin", _cache_dir.string(), suffix);
             if (std::filesystem::exists(cache_meta_path) && std::filesystem::exists(cache_data_path)) {
                 cache_meta meta {};
-                file::read_zpp(meta, cache_meta_path);
+                zpp::load(meta, cache_meta_path);
                 if (meta.id == id && meta.last_block_hash == _cr->last_chunk()->last_block_hash) {
                     timer t { fmt::format("load {} cached history for {}", suffix, id), logger::level::info };
                     history<T> hist {};
-                    file::read_zpp(hist, cache_data_path);
+                    zpp::load(hist, cache_data_path);
                     if (hist.id == id) {
                         return hist;
                     }
@@ -486,8 +482,8 @@ namespace daedalus_turbo::http_api {
             }
             timer t { fmt::format("find {} history for {}", suffix, id), logger::level::info };
             auto hist = _reconst->find_history(id);
-            file::write_zpp(cache_data_path, hist);
-            file::write_zpp(cache_meta_path, cache_meta { id, _cr->last_chunk()->last_block_hash });
+            zpp::save(cache_data_path, hist);
+            zpp::save(cache_meta_path, cache_meta { id, _cr->last_chunk()->last_block_hash });
             return hist;
         }
 

@@ -29,7 +29,7 @@ if (fs.existsSync(roamingDataCfg))
   roamingDataDir = fs.readFileSync(roamingDataCfg).toString();
 log4js.configure({
   appenders: {
-    file: { type: 'file', filename: path.resolve(roamingDataDir, 'log/dt-ui.log') }
+    file: { type: 'file', filename: path.resolve(roamingDataDir, 'log/dt-explorer.log') }
   },
   categories: {
     default: { appenders: ['file'], level: 'all' }
@@ -44,18 +44,21 @@ const api = {
   logPath: path.resolve(roamingDataDir, 'log/dt-api.log'),
   uiDataPath: path.resolve(roamingDataDir, 'ui'),
   etcPath: path.resolve(installDir, 'etc'),
-  pidPath: path.resolve(roamingDataDir, 'dt-ui.pid'),
   ip: '127.0.0.1',
   port: 55556,
   os: osEnv
 };
 api.uri = `http://${api.ip}:${api.port}`;
+api.pidPath = path.resolve(api.dataDir, 'dt-explorer.pid');
 const startInfo = `Initializing DT UI cwd: ${process.cwd()} execPath: ${process.execPath} ` +
   `installDir: ${installDir} roamingDataDir: ${roamingDataDir} api: ${JSON.stringify(api, null, 2)}`;
 // log to the console first for the case the logger configuration is broken
 console.log(startInfo);
 logger.debug(startInfo);
 logger.debug('api config: ' + JSON.stringify(api, null, 2));
+// ensure that api.dataDir exists so that pid file creation is possible
+if (!fs.existsSync(api.dataDir))
+  fs.mkdirSync(api.dataDir);
 if (fs.existsSync(api.pidPath)) {
   const pid = parseInt(fs.readFileSync(api.pidPath).toString());
   if (processIsAlive(pid)) {
@@ -134,14 +137,16 @@ app.whenReady().then(async () => {
   });
 });
 app.on('window-all-closed', () => {
+  app.quit();
+});
+app.on('quit', () => {
+  logger.debug("received quit event - cleaning up and terminating");
   if (apiServer) {
     logger.info('The app window is closed, killing the API server');
     apiServer.kill('SIGKILL');
   }
-  app.quit();
-});
-app.on('quit', () => {
-  fs.unlinkSync(api.pidPath);
+  if (fs.existsSync(api.pidPath))
+    fs.unlinkSync(api.pidPath);
 });
 
 const fetchWithRetries = async (url, maxRetries) => {

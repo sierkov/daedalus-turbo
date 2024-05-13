@@ -6,7 +6,6 @@
 #define DAEDALUS_TURBO_VALIDATOR_TYPES_HPP
 
 #include <unordered_set>
-#include <zpp_bits.h>
 #include <dt/cardano/common.hpp>
 #include <dt/partitioned-map.hpp>
 #include <dt/static-map.hpp>
@@ -129,11 +128,15 @@ namespace daedalus_turbo::validator {
         member
     };
     struct reward_update {
-        using serialize = zpp::bits::members<4>;
         reward_type type {};
         cardano::pool_hash pool_id {};
         uint64_t amount {};
         std::optional<cardano::pool_hash> delegated_pool_id {};
+
+        constexpr static auto serialize(auto &archive, auto &self)
+        {
+            return archive(self.type, self.pool_id, self.amount, self.delegated_pool_id);
+        }
 
         bool operator<(const auto &b) const
         {
@@ -246,8 +249,6 @@ namespace daedalus_turbo::validator {
     using stake_to_ptr_map = std::map<cardano::stake_ident, cardano::stake_pointer>;
 
     struct protocol_params {
-        using serialize = zpp::bits::members<21>;
-
         double f = 0.05;
         uint64_t k = 2160;
         uint64_t epoch_blocks = 21'600;
@@ -269,6 +270,20 @@ namespace daedalus_turbo::validator {
         cardano::nonce extra_entropy {};
         cardano::protocol_version protocol_ver {};
         uint64_t min_utxo_value {};
+
+        constexpr static auto serialize(auto &archive, auto &self)
+        {
+            return archive(
+                self.f, self.k, self.epoch_blocks,
+                self.max_lovelace_supply, self.min_fee_a, self.min_fee_b,
+                self.max_block_body_size, self.max_transaction_size, self.max_block_header_size,
+                self.key_deposit, self.pool_deposit, self.max_epoch,
+                self.n_opt, self.n_opt, self.pool_pledge_influence,
+                self.expansion_rate, self.treasury_growth_rate, self.decentralization,
+                self.decentralizationThreshold, self.extra_entropy, self.protocol_ver,
+                self.min_utxo_value
+            );
+        }
 
         uint64_t stability_window()
         {

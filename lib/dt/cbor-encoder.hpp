@@ -8,6 +8,10 @@
 #include <cppbor/cppbor.h>
 #include <dt/util.hpp>
 
+#ifdef FALSE
+#   undef FALSE
+#endif
+
 namespace daedalus_turbo::cbor {
     struct encoder {
         encoder &array(size_t sz)

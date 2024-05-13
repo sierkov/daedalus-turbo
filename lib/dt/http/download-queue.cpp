@@ -6,6 +6,7 @@
 #include <functional>
 #include <memory>
 #include <optional>
+#include <queue>
 #include <string>
 #ifdef __clang__
 #   pragma GCC diagnostic push
@@ -410,9 +411,6 @@ namespace daedalus_turbo::http {
             }
             try {
                 req.handler(std::move(res));
-            } catch (const error &err) {
-                _success = false;
-                logger::error("request handler for url {} failed: {}", req.url, err);
             } catch (const std::exception &ex) {
                 _success = false;
                 logger::error("request handler for url {} failed: std::exception: {}", req.url, ex.what());

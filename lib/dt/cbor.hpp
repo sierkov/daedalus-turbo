@@ -15,13 +15,26 @@
 #include <dt/util.hpp>
 
 namespace daedalus_turbo {
-    using cbor_error = error;
+    namespace cbor {
+        static constexpr size_t default_max_collection_size = 0x100'000;
 
-    struct cbor_incomplete_data_error: cbor_error {
-        cbor_incomplete_data_error(): cbor_error("CBOR value extends beyond the end of stream")
-        {
-        }
-    };
+        typedef daedalus_turbo::error error;
+        struct collection_too_big_error: error {
+            explicit collection_too_big_error(const size_t size):
+                error { fmt::format("Trying to create an array or map larger than {} items", size), my_stacktrace() }
+            {
+            }
+        };
+        // inherit directly from std::runtime_error to save on the expensive stackstrace creation
+        struct incomplete_error: std::runtime_error {
+            explicit incomplete_error(): std::runtime_error { "CBOR value extends beyond the end of stream" }
+            {
+            }
+        };
+    }
+
+    using cbor_error = cbor::error;
+    using cbor_incomplete_data_error = cbor::incomplete_error;
 
     using cbor_buffer = buffer;
     struct cbor_value;
@@ -126,7 +139,7 @@ namespace daedalus_turbo {
         inline std::string_view text(const std::source_location &loc = std::source_location::current()) const
         {
             const auto &buf = get_ref<cbor_buffer>(CBOR_TEXT, loc);
-            return std::string_view(reinterpret_cast<const char *>(buf.data()), buf.size());
+            return { reinterpret_cast<const char *>(buf.data()), buf.size() };
         }
 
         inline const buffer &span(const std::source_location &loc = std::source_location::current()) const
@@ -231,20 +244,28 @@ namespace daedalus_turbo {
             if (!indefinite) {
                 cbor_value size;
                 _read_unsigned_int(size, augVal, augBuf);
-                size_t stringSize = size.uint();
-                if (_offset + stringSize > _size) throw cbor_incomplete_data_error();
-                val.set_content(cbor_buffer(&_data[_offset], stringSize));
-                _offset += stringSize;
+                const size_t string_size = size.uint();
+                if (string_size > _max_collection_size)
+                    throw cbor::collection_too_big_error { _max_collection_size };
+                if (_offset + string_size > _size)
+                    throw cbor_incomplete_data_error();
+                val.set_content(cbor_buffer(&_data[_offset], string_size));
+                _offset += string_size;
             } else {
                 std::unique_ptr<uint8_vector> storage = std::make_unique<uint8_vector>();
                 cbor_value chunk;
                 for (;;) {
                     read(chunk);
-                    if (chunk.type == CBOR_SIMPLE_BREAK) break;
-                    if (chunk.type != val.type) throw cbor_error("badly encoded indefinite byte string!");
+                    if (chunk.type == CBOR_SIMPLE_BREAK)
+                        break;
+                    if (chunk.type != val.type)
+                        throw cbor_error("badly encoded indefinite byte string!");
                     const cbor_buffer &chunk_buf = chunk.buf();
-                    size_t chunk_off = storage->size();
-                    storage->resize(storage->size() + chunk_buf.size());
+                    const size_t chunk_off = storage->size();
+                    const auto new_size = storage->size() + chunk_buf.size();
+                    if (new_size > _max_collection_size)
+                        throw cbor::collection_too_big_error { _max_collection_size };
+                    storage->resize(new_size);
                     memcpy(storage->data() + chunk_off, chunk_buf.data(), chunk_buf.size());
                 }
                 storage->shrink_to_fit();
@@ -258,27 +279,33 @@ namespace daedalus_turbo {
             cbor_value size;
             _read_unsigned_int(size, augVal, augBuf);
             val.type = CBOR_TEXT;
-            size_t stringSize = size.uint();
-            if (_offset + stringSize > _size) throw cbor_incomplete_data_error();
-            val.set_content(cbor_buffer(&_data[_offset], stringSize));
-            _offset += stringSize;
+            const size_t string_size = size.uint();
+            if (_offset + string_size > _size)
+                throw cbor_incomplete_data_error();
+            val.set_content(cbor_buffer { &_data[_offset], string_size });
+            _offset += string_size;
         }
 
         void _read_array(cbor_value &val, uint8_t augVal, const cbor_buffer &augBuf, bool indefinite) {
-            cbor_array items;
+            cbor_array items {};
             if (indefinite) {
+                cbor_value item;
                 for (;;) {
-                    cbor_value item;
                     read(item);
-                    if (item.type == CBOR_SIMPLE_BREAK) break;
+                    if (item.type == CBOR_SIMPLE_BREAK)
+                        break;
+                    if (items.size() >= _max_collection_size)
+                        throw cbor::collection_too_big_error { _max_collection_size };
                     items.emplace_back(std::move(item));
                 }
             } else {
                 cbor_value size;
                 _read_unsigned_int(size, augVal, augBuf);
-                size_t arraySize = size.uint();
-                items.resize(arraySize);
-                for (size_t i = 0; i < arraySize; ++i) {
+                const size_t array_size = size.uint();
+                if (array_size > _max_collection_size)
+                    throw cbor::collection_too_big_error { _max_collection_size };
+                items.resize(array_size);
+                for (size_t i = 0; i < array_size; ++i) {
                     read(items[i]);
                 }
             }
@@ -287,10 +314,12 @@ namespace daedalus_turbo {
         }
 
         void _read_map(cbor_value &val, uint8_t augVal, const cbor_buffer &augBuf, bool indefinite) {
-            cbor_map map;
+            cbor_map map {};
             if (indefinite) {
+                cbor_value itemKey, itemValue;
                 for (;;) {
-                    cbor_value itemKey, itemValue;
+                    if (map.size() >= _max_collection_size)
+                        throw cbor::collection_too_big_error { _max_collection_size };
                     read(itemKey);
                     if (itemKey.type == CBOR_SIMPLE_BREAK) break;
                     read(itemValue);
@@ -299,9 +328,11 @@ namespace daedalus_turbo {
             } else {
                 cbor_value size;
                 _read_unsigned_int(size, augVal, augBuf);
-                size_t mapSize = size.uint();
-                map.resize(mapSize);
-                for (size_t i = 0; i < mapSize; ++i) {
+                const size_t map_size = size.uint();
+                if (map_size >= _max_collection_size)
+                    throw cbor::collection_too_big_error { _max_collection_size };
+                map.resize(map_size);
+                for (size_t i = 0; i < map_size; ++i) {
                     read(map[i].first);
                     read(map[i].second);
                 }
@@ -365,8 +396,9 @@ namespace daedalus_turbo {
         }
 
     public:
+        const size_t _max_collection_size = cbor::default_max_collection_size;
 
-        cbor_parser(const buffer &buf): _data(buf.data()), _size(buf.size())
+        explicit cbor_parser(const buffer &buf): _data(buf.data()), _size(buf.size())
         {
         }
 

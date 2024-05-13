@@ -8,7 +8,6 @@
 #include <exception>
 #include <functional>
 #include <source_location>
-#include <dt/error.hpp>
 #include <dt/format.hpp>
 
 namespace daedalus_turbo::logger {
@@ -63,11 +62,6 @@ namespace daedalus_turbo::logger {
         std::exception_ptr cur_ex {};
         try {
             main();
-            if (cleanup)
-                (*cleanup)();
-        } catch (const daedalus_turbo::error &err) {
-            cur_ex = std::current_exception();
-            logger::error("block at {}:{} failed with {}", loc.file_name(), loc.line(), err);
             if (cleanup)
                 (*cleanup)();
         } catch (const std::exception &ex) {

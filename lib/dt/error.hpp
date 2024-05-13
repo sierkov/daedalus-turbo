@@ -5,64 +5,47 @@
 #ifndef DAEDALUS_TURBO_ERROR_HPP
 #define DAEDALUS_TURBO_ERROR_HPP
 
-#define DT_ERROR_WITH_STACKTRACE 0
-
 #include <cerrno>
 #include <cstring>
-#if DT_ERROR_WITH_STACKTRACE
-#   include <stacktrace>
+#ifdef __APPLE__
+#   define _GNU_SOURCE 1
 #endif
+#include <boost/stacktrace.hpp>
 #include <dt/format.hpp>
+#include <dt/logger.hpp>
 
 namespace daedalus_turbo {
-#if DT_ERROR_WITH_STACKTRACE
-    inline std::string my_stacktrace()
-    {
-        std::ostringstream ss {};
-        ss << std::stacktrace::current();
-        return ss.str();
-    }
-#endif
-
     struct error: std::runtime_error {
+        static std::string my_stacktrace()
+        {
+            std::ostringstream ss {};
+            ss << boost::stacktrace::stacktrace();
+            return ss.str();
+        }
+
+        static const std::string &trace_error(const std::string &msg, const std::string &stack)
+        {
+            logger::debug("error created: {}, stacktrace: {}", msg, stack);
+            return msg;
+        }
+
         template<typename... Args>
         explicit error(const char *fmt, Args&&... a)
-            : std::runtime_error { format(fmt::runtime(fmt), std::forward<Args>(a)...) }
-#if DT_ERROR_WITH_STACKTRACE
-                , _stacktrace { my_stacktrace() }
-#endif
+            : error { format(fmt::runtime(fmt), std::forward<Args>(a)...), my_stacktrace() }
         {
         }
 
-#if DT_ERROR_WITH_STACKTRACE
-        const std::string &stacktrace() const
+        explicit error(const std::string &msg, const std::string &stack=my_stacktrace())
+            : std::runtime_error { trace_error(msg, stack) }
         {
-            return _stacktrace;
         }
-    private:
-        std::string _stacktrace;
-#endif
     };
 
     struct error_sys: error {
         template<typename... Args>
         explicit error_sys(const char *fmt, Args&&... a)
-            : error { "{}, errno: {}, strerror: {}", format(fmt::runtime(fmt), std::forward<Args>(a)...), errno, std::strerror(errno) }
+            : error { fmt::format("{}, errno: {}, strerror: {}", format(fmt::runtime(fmt), std::forward<Args>(a)...), errno, std::strerror(errno)), my_stacktrace() }
         {
-        }
-    };
-}
-
-namespace fmt {
-    template<>
-    struct formatter<daedalus_turbo::error>: formatter<int> {
-        template<typename FormatContext>
-        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
-#if DT_ERROR_WITH_STACKTRACE
-            return fmt::format_to(ctx.out(), "dt::error: {}, stacktrace: {}", v.what(), v.stacktrace());
-#else
-            return fmt::format_to(ctx.out(), "dt::error: {}", v.what());
-#endif
         }
     };
 }

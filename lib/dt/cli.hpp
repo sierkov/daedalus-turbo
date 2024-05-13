@@ -75,9 +75,6 @@ namespace daedalus_turbo::cli {
         try {
             timer t { fmt::format("run {}", cmd), logger::level::info };
             cmd_it->second->run(args);
-        } catch (const daedalus_turbo::error &ex) {
-            logger::error("{}: {}", cmd, ex);
-            return 1;
         } catch (const std::exception &ex) {
             logger::error("{}: {}", cmd, ex.what());
             return 1;

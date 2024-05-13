@@ -3,6 +3,7 @@
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
+#include <dt/cardano.hpp>
 #include <dt/file.hpp>
 #include <dt/index/common.hpp>
 #include <dt/test.hpp>
@@ -209,6 +210,82 @@ suite index_common_suite = [] {
                 expect(offset == 0xDEADBEAF) << offset;
             }
             std::filesystem::remove(idx_path.path());
+        };
+
+        "schedule truncate"_test = [] {
+            struct item {
+                uint8_t a = 0;
+                uint8_t b = 0;
+                uint64_t offset = 0;
+
+                bool operator<(const item &o) const
+                {
+                    return a < o.a && b < o.b && offset < o.offset;
+                }
+
+                bool index_less(const item &o) const
+                {
+                    return *this < o;
+                }
+
+                bool operator==(const item &o) const
+                {
+                    return a == o.a && b == o.b && offset == o.offset;
+                }
+            };
+
+            struct my_chunk_indexer: chunk_indexer_multi_part<item> {
+                using chunk_indexer_multi_part<item>::chunk_indexer_multi_part;
+            protected:
+                void _index(const cardano::block_base &blk) override
+                {
+                    blk.foreach_tx([&](const auto &tx) {
+                        tx.foreach_output([&](const auto &tx_out) {
+                            cardano::address addr { tx_out.address };
+                            if (!addr.has_pay_id()) return;
+                            const auto id = addr.pay_id();
+                            _idx.emplace_part(id.hash.data()[0] / _part_range, id.hash.data()[0], id.hash.data()[1], blk.offset());
+                        });
+                    });
+                }
+            };
+            using my_indexer = indexer_offset<item, my_chunk_indexer>;
+
+            file::tmp_directory tmp_idx_dir { "test-index-common" };
+            const auto raw_data = file::read("./data/chunk-registry/compressed/chunk/977E9BB3D15A5CFF5C5E48617288C5A731DB654C0B42D63627C690CEADC9E1F3.zstd");
+            my_indexer idxr { tmp_idx_dir, "myidx" };
+            {
+                auto ch_idxr = idxr.make_chunk_indexer("update", 0);
+                cbor_parser p { raw_data };
+                cbor_value block_tuple {};
+                while (!p.eof()) {
+                    p.read(block_tuple);
+                    auto blk = cardano::make_block(block_tuple, block_tuple.data - raw_data.data());
+                    ch_idxr->index(*blk);
+                }
+            }
+
+            uint64_t size1 {};
+            {
+                auto reader = idxr.make_reader("update-0");
+                expect(reader.size() > 0);
+                size1 = reader.size();
+            }
+            {
+                idxr.schedule_truncate("update-0", "update-0-half", raw_data.size() / 2);
+                scheduler::get().process();
+                expect(std::filesystem::exists(idxr.reader_path("update-0-half")));
+                expect(std::filesystem::exists(idxr.reader_path("update-0")));
+            }
+            {
+                auto reader = idxr.make_reader("update-0");
+                expect(reader.size() == size1);
+            }
+            {
+                auto reader = idxr.make_reader("update-0-half");
+                expect(reader.size() > 0);
+                expect(reader.size() < size1);
+            }
         };
     };
 };

@@ -29,11 +29,12 @@ namespace {
         uint64_t treasury = 0;
         uint64_t fees_reward_snapshot = 0;
         uint64_t delta_reserves = 0;
+        uint64_t delta_treasury = 0;
     };
 
     cardano::stake_ident extract_stake_id(const json::value &j)
     {
-        bool is_script = j.as_object().contains("script hash");
+        const bool is_script = j.as_object().contains("script hash");
         return cardano::stake_ident {
             is_script
                 ? cardano::key_hash::from_hex(j.at("script hash").as_string())
@@ -46,16 +47,17 @@ namespace {
     {
         node_ledger_state st {};
         json::monotonic_resource mr {};
-        auto j_state = json::load(state_path, &mr);
+        const auto j_state = json::load(state_path, &mr);
 
         st.epoch = json::value_to<uint64_t>(j_state.at("lastEpoch"));
         st.reserves = json::value_to<uint64_t>(j_state.at("stateBefore").at("esAccountState").at("reserves"));
         st.treasury = json::value_to<uint64_t>(j_state.at("stateBefore").at("esAccountState").at("treasury"));
         st.fees_reward_snapshot = json::value_to<uint64_t>(j_state.at("stateBefore").at("esSnapshots").at("feeSS"));
         st.delta_reserves = static_cast<uint64_t>(-json::value_to<int64_t>(j_state.at("possibleRewardUpdate").at("deltaR")));
+        st.delta_treasury = json::value_to<uint64_t>(j_state.at("possibleRewardUpdate").at("deltaT"));
 
         for (const auto &j_reward: j_state.at("possibleRewardUpdate").at("rs").as_array()) {
-            auto stake_id = extract_stake_id(j_reward.at(0));
+            const auto stake_id = extract_stake_id(j_reward.at(0));
             for (const auto &j_ru: j_reward.at(1).as_array()) {
                 validator::reward_update upd {
                     j_ru.at("rewardType").as_string() == "LeaderReward" ? reward_type::leader : reward_type::member,
@@ -71,15 +73,15 @@ namespace {
             const auto &j_stake_distrib = j_state.at("stakeDistrib");
             uint64_t max_active_stake = 0;
             for (const auto &[j_pool_id, j_stake_info]: j_stake_distrib.as_object()) {
-                auto denom = json::value_to<uint64_t>(j_stake_info.at("individualPoolStake").at("denominator"));
+                const auto denom = json::value_to<uint64_t>(j_stake_info.at("individualPoolStake").at("denominator"));
                 if (denom > max_active_stake)
                     max_active_stake = denom;
             }
             for (const auto &[j_pool_id, j_stake_info]: j_stake_distrib.as_object()) {
-                auto pool_id = cardano::pool_hash::from_hex(static_cast<std::string_view>(j_pool_id));
-                auto num = json::value_to<uint64_t>(j_stake_info.at("individualPoolStake").at("numerator"));
-                auto denom = json::value_to<uint64_t>(j_stake_info.at("individualPoolStake").at("denominator"));
-                auto coeff = max_active_stake / denom;
+                const auto pool_id = cardano::pool_hash::from_hex(static_cast<std::string_view>(j_pool_id));
+                const auto num = json::value_to<uint64_t>(j_stake_info.at("individualPoolStake").at("numerator"));
+                const auto denom = json::value_to<uint64_t>(j_stake_info.at("individualPoolStake").at("denominator"));
+                const auto coeff = max_active_stake / denom;
                 st.pool_dist.create(pool_id);
                 st.pool_dist.add(pool_id, num * coeff);
             }
@@ -87,24 +89,24 @@ namespace {
         {
             const auto &j_rewards = j_state.at("stateBefore").at("esLState").at("delegationState").at("dstate").at("irwd").at("iRReserves").as_array();
             for (const auto &j_reward: j_rewards) {
-                auto stake_id = extract_stake_id(j_reward.at(0));
-                auto reward = json::value_to<uint64_t>(j_reward.at(1));
+                const auto stake_id = extract_stake_id(j_reward.at(0));
+                const auto reward = json::value_to<uint64_t>(j_reward.at(1));
                 st.instant_rewards_r.add(stake_id, reward);
             }
         }
         {
             const auto &j_rewards = j_state.at("stateBefore").at("esLState").at("delegationState").at("dstate").at("irwd").at("iRTreasury").as_array();
             for (const auto &j_reward: j_rewards) {
-                auto stake_id = extract_stake_id(j_reward.at(0));
-                auto reward = json::value_to<uint64_t>(j_reward.at(1));
+                const auto stake_id = extract_stake_id(j_reward.at(0));
+                const auto reward = json::value_to<uint64_t>(j_reward.at(1));
                 st.instant_rewards_t.add(stake_id, reward);
             }
         }
         {
             const auto &j_rewards = j_state.at("stateBefore").at("esLState").at("delegationState").at("dstate").at("unified").at("credentials").as_array();
             for (const auto &j_reward: j_rewards) {
-                auto reward = json::value_to<uint64_t>(j_reward.at(1).at("reward"));
-                auto stake_id = extract_stake_id(j_reward.at(0));
+                const auto reward = json::value_to<uint64_t>(j_reward.at(1).at("reward"));
+                const auto stake_id = extract_stake_id(j_reward.at(0));
                 st.rewards.create(stake_id);
                 st.rewards.add(stake_id, reward);
             }
@@ -116,52 +118,52 @@ namespace {
                     json::value_to<size_t>(j_ptr.at(0).at("txIndex")),
                     json::value_to<size_t>(j_ptr.at(0).at("certIndex"))
                 };
-                auto stake_id = extract_stake_id(j_ptr.at(1));
+                const auto stake_id = extract_stake_id(j_ptr.at(1));
                 st.pointers[ptr] = stake_id;
             }
         }
         {
             const auto &j_stake_dist = j_state.at("stateBefore").at("esSnapshots").at("pstakeMark").at("stake").as_array();
             for (const auto &j_stake: j_stake_dist) {
-                auto stake_id = extract_stake_id(j_stake.at(0));
+                const auto stake_id = extract_stake_id(j_stake.at(0));
                 st.pstake_mark.stakes.add(stake_id, json::value_to<uint64_t>(j_stake.at(1)));
             }
         }
         {
             const auto &j_delegs = j_state.at("stateBefore").at("esSnapshots").at("pstakeMark").at("delegations").as_array();
             for (const auto &j_deleg: j_delegs) {
-                auto stake_id = extract_stake_id(j_deleg.at(0));
-                auto pool_id = cardano::pool_hash::from_hex(j_deleg.at(1).as_string());
+                const auto stake_id = extract_stake_id(j_deleg.at(0));
+                const auto pool_id = cardano::pool_hash::from_hex(j_deleg.at(1).as_string());
                 st.pstake_mark.delegs.try_emplace(stake_id, pool_id);
             }
         }
         {
             const auto &j_stake_dist = j_state.at("stateBefore").at("esSnapshots").at("pstakeSet").at("stake").as_array();
             for (const auto &j_stake: j_stake_dist) {
-                auto stake_id = extract_stake_id(j_stake.at(0));
+                const auto stake_id = extract_stake_id(j_stake.at(0));
                 st.pstake_set.stakes.add(stake_id, json::value_to<uint64_t>(j_stake.at(1)));
             }
         }
         {
             const auto &j_delegs = j_state.at("stateBefore").at("esSnapshots").at("pstakeSet").at("delegations").as_array();
             for (const auto &j_deleg: j_delegs) {
-                auto stake_id = extract_stake_id(j_deleg.at(0));
-                auto pool_id = cardano::pool_hash::from_hex(j_deleg.at(1).as_string());
+                const auto stake_id = extract_stake_id(j_deleg.at(0));
+                const auto pool_id = cardano::pool_hash::from_hex(j_deleg.at(1).as_string());
                 st.pstake_set.delegs.try_emplace(stake_id, pool_id);
             }
         }
         {
             const auto &j_stake_dist = j_state.at("stateBefore").at("esSnapshots").at("pstakeGo").at("stake").as_array();
             for (const auto &j_stake: j_stake_dist) {
-                auto stake_id = extract_stake_id(j_stake.at(0));
+                const auto stake_id = extract_stake_id(j_stake.at(0));
                 st.pstake_go.stakes.add(stake_id, json::value_to<uint64_t>(j_stake.at(1)));
             }
         }
         {
             const auto &j_delegs = j_state.at("stateBefore").at("esSnapshots").at("pstakeGo").at("delegations").as_array();
             for (const auto &j_deleg: j_delegs) {
-                auto stake_id = extract_stake_id(j_deleg.at(0));
-                auto pool_id = cardano::pool_hash::from_hex(j_deleg.at(1).as_string());
+                const auto stake_id = extract_stake_id(j_deleg.at(0));
+                const auto pool_id = cardano::pool_hash::from_hex(j_deleg.at(1).as_string());
                 st.pstake_go.delegs.try_emplace(stake_id, pool_id);
             }
         }
@@ -221,14 +223,16 @@ int main(int argc, char **argv)
         std::cerr << "Usage: validate-state <node-state.json> <dt-state.bin>\n";
         return 1;
     }
-    scheduler sched {};
-    validator::state dt_state { sched };
+    validator::state dt_state {};
     dt_state.load(argv[2]);
-    auto node_state = load_node_state(argv[1]);
+    if (!dt_state.epoch_finished())
+        dt_state.finish_epoch();
+    const auto node_state = load_node_state(argv[1]);
     
     compare_values("epoch", node_state.epoch, dt_state.epoch());
     compare_values("feeSS", node_state.fees_reward_snapshot, dt_state.fees_reward_snapshot());
     compare_values("deltaR", node_state.delta_reserves, dt_state.delta_reserves());
+    compare_values("deltaT", node_state.delta_treasury, dt_state.delta_treasury());
 
     compare_values("reserves", node_state.reserves, dt_state.reserves());
     compare_values("treasury", node_state.treasury, dt_state.treasury());

@@ -18,22 +18,29 @@
 namespace daedalus_turbo::logger {
     static const char *log_path()
     {
-        const char *log_path = "./log/dt.log";
         const char *env_log_path = std::getenv("DT_LOG");
-        if (env_log_path != nullptr)
-            log_path = env_log_path;
-        return log_path;
+        return env_log_path ? env_log_path : "./log/dt.log";
+    }
+
+    static bool console_enabled()
+    {
+        return !std::getenv("DT_LOG_NO_CONSOLE");
     }
 
     static spdlog::logger create(const std::string &path)
     {
-        auto console_sink = std::make_shared<spdlog::sinks::stderr_color_sink_mt>();
-        console_sink->set_level(spdlog::level::info);
-        console_sink->set_pattern("[%^%l%$] %v");
+        std::shared_ptr<spdlog::sinks::stderr_color_sink_mt> console_sink {};
+        if (console_enabled()) {
+            console_sink = std::make_shared<spdlog::sinks::stderr_color_sink_mt>();
+            console_sink->set_level(spdlog::level::info);
+            console_sink->set_pattern("[%^%l%$] %v");
+        }
         auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(path);
         file_sink->set_level(spdlog::level::trace);
         file_sink->set_pattern("[%Y-%m-%d %T %z] [%P:%t] [%n] [%l] %v");
-        auto logger = spdlog::logger("dt", { console_sink, file_sink });
+        auto logger = console_sink
+            ? spdlog::logger("dt", { console_sink, file_sink })
+            : spdlog::logger("dt", { file_sink });
         if (debug::tracing_enabled())
             logger.set_level(spdlog::level::trace);
         else

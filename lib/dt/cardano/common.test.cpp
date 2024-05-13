@@ -94,6 +94,12 @@ suite cardano_common_suite = [] {
             auto st1 = cardano::slot::from_time(std::chrono::system_clock::time_point { std::chrono::seconds { 1'711'093'053 } });
             expect(st1 == 119526762_ull);
         };
+        "chunk_id"_test = [] {
+            expect(cardano::slot { 4363200 }.chunk_id() == 202_ull);
+            expect(cardano::slot { 4492840 }.chunk_id() == 208_ull);
+            expect(cardano::slot { 4514400 }.chunk_id() == 209_ull);
+            expect(cardano::slot { 4557600 }.chunk_id() == 211_ull);
+        };
         "tx_size"_test = [] {
             for (const auto &[sz, exp_sz]: {
                 std::pair { 0U, 0U },
@@ -131,7 +137,7 @@ suite cardano_common_suite = [] {
             expect(boost::ut::throws<error>([]() { cardano::tx_out_idx { 100000 }; }));
         };
         "stake_deleg"_test = [] {
-            auto chunk = file::read("./data/chunk-registry/compressed/chunk/9C5C0267DCA941851D0330E19B91712618EB6DB4BF17E458BCF00829F84CF3CF.zstd");
+            auto chunk = file::read("./data/chunk-registry/compressed/chunk/977E9BB3D15A5CFF5C5E48617288C5A731DB654C0B42D63627C690CEADC9E1F3.zstd");
             cbor_parser parser { chunk };
             cbor_value block_tuple {};
             size_t num_delegs = 0;
@@ -169,7 +175,7 @@ suite cardano_common_suite = [] {
             expect(cardano::extract_epoch("./data/chunk-registry/compressed/chunk/7C46426DDF73FFFAD5970B0F1C0983A3A98F5AC3EC080BDFB59DBF86AC1AE9A1.zstd") == 267_ull);
             expect(cardano::extract_epoch("./data/chunk-registry/compressed/chunk/1A6CC809A5297CFC502B229B4CD31A9B00B71638CEAEDE45409D4F0EBC534356.zstd") == 297_ull);
             expect(cardano::extract_epoch("./data/chunk-registry/compressed/chunk/47F62675C9B0161211B9261B7BB1CF801EDD4B9C0728D9A6C7A910A1581EED41.zstd") == 362_ull);
-            expect(cardano::extract_epoch("./data/chunk-registry/compressed/chunk/9C5C0267DCA941851D0330E19B91712618EB6DB4BF17E458BCF00829F84CF3CF.zstd") == 368_ull);
+            expect(cardano::extract_epoch("./data/chunk-registry/compressed/chunk/977E9BB3D15A5CFF5C5E48617288C5A731DB654C0B42D63627C690CEADC9E1F3.zstd") == 368_ull);
         };
     };  
 };

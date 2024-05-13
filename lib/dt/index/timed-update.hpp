@@ -28,9 +28,12 @@ namespace daedalus_turbo::index::timed_update {
         uint64_t amount {};
         cardano::reward_source source {};
     };
-    struct collected_collateral {
+    struct collected_collateral_input {
         cardano::tx_hash tx_hash {};
         cardano::tx_out_idx txo_idx {};
+    };
+    struct collected_collateral_amount {
+        cardano::amount collateral {};
     };
     using variant = std::variant<
         stake_reg,
@@ -41,7 +44,8 @@ namespace daedalus_turbo::index::timed_update {
         stake_del,
         cardano::pool_unreg,
         cardano::param_update,
-        collected_collateral>;
+        collected_collateral_input,
+        collected_collateral_amount>;
     struct item {
         uint64_t slot {};
         size_t tx_idx = 0;
@@ -93,8 +97,16 @@ namespace daedalus_turbo::index::timed_update {
                 });
             });
             blk.foreach_invalid_tx([&](const auto &tx) {
+                const auto *babbage_tx = dynamic_cast<const cardano::babbage::tx *>(&tx);
+                if (babbage_tx) {
+                    const auto c_ret = babbage_tx->collateral_return();
+                    if (c_ret) {
+                        idx.emplace_back(blk.slot(), tx.index(), 0, collected_collateral_amount { babbage_tx->total_collateral() });
+                        return;
+                    }
+                }
                 tx.foreach_collateral([&](const auto &tx_in) {
-                    idx.emplace_back(blk.slot(), tx.index(), 0, collected_collateral { tx_in.tx_hash, tx_in.txo_idx });
+                    idx.emplace_back(blk.slot(), tx.index(), 0, collected_collateral_input { tx_in.tx_hash, tx_in.txo_idx });
                 });
             });
         }

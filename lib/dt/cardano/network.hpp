@@ -10,6 +10,7 @@
 #include <dt/cbor.hpp>
 #include <dt/cbor-encoder.hpp>
 #include <dt/logger.hpp>
+#include <dt/scheduler.hpp>
 #include <dt/util.hpp>
 
 namespace daedalus_turbo::cardano::network {
@@ -68,19 +69,6 @@ namespace daedalus_turbo::cardano::network {
     };
     static_assert(sizeof(segment_info) == 8);
 
-    struct blockchain_point {
-        cardano::block_hash hash {};
-        cardano::slot slot {};
-        uint64_t height = 0;
-
-        bool operator==(const auto &o) const
-        {
-            return hash == o.hash && slot == o.slot;
-        }
-    };
-    using blockchain_point_pair = std::pair<blockchain_point, blockchain_point>;
-    using blockchain_point_list = std::vector<blockchain_point>;
-
     struct address {
         std::string host {};
         std::string port {};
@@ -104,88 +92,96 @@ namespace daedalus_turbo::cardano::network {
         std::unique_ptr<cardano::block_base> blk {};
     };
     using block_list = std::vector<block_parsed>;
-    using header_list = std::vector<blockchain_point>;
+    using header_list = point_list;
 
     struct client {
         using error_msg = std::string;
 
         struct intersection_info {
-            blockchain_point tip {};
-            std::optional<blockchain_point> isect {};
+            point tip {};
+            std::optional<point> isect{};
         };
 
         struct find_response {
             address addr{};
-            std::variant<blockchain_point_pair, blockchain_point, error_msg> res{"No response or error has yet been assigned"};
+            std::variant<point_pair, point, error_msg> res{
+                    "No response or error has yet been assigned"};
         };
         using find_handler = std::function<void(find_response &&)>;
 
         struct block_response {
-            address addr{};
-            blockchain_point from{};
-            blockchain_point to{};
-            std::variant<block_list, error_msg> res{};
+            std::optional<block_parsed> block {};
+            std::optional<std::string> err {};
         };
-        using block_handler = std::function<void(block_response &&)>;
+        using block_handler = std::function<bool(block_response &&)>;
 
         struct header_response {
-            address addr{};
-            std::optional<blockchain_point> intersect{};
-            std::optional<blockchain_point> tip{};
-            std::variant<header_list, error_msg> res{};
+            address addr {};
+            std::optional<point> intersect {};
+            std::optional<point> tip {};
+            std::variant<header_list, error_msg> res {};
         };
         using header_handler = std::function<void(header_response &&)>;
 
+        explicit client(const address &addr): _addr{addr}
+        {
+        }
+
         virtual ~client() = default;
 
-        void find_tip(const address &addr, const find_handler &handler) {
-            blockchain_point_list empty{};
-            _find_intersection_impl(addr, empty, handler);
+        const address &addr() const
+        {
+            return _addr;
         }
 
-        void find_intersection(const address &addr, const blockchain_point_list &points, const find_handler &handler) {
-            _find_intersection_impl(addr, points, handler);
+        void find_tip(const find_handler &handler) {
+            point_list empty {};
+            _find_intersection_impl(empty, handler);
         }
 
-        void fetch_headers(const address &addr, const blockchain_point_list &points, const size_t max_blocks,
+        void find_intersection(const point_list &points, const find_handler &handler) {
+            _find_intersection_impl(points, handler);
+        }
+
+        void fetch_headers(const point_list &points, const size_t max_blocks,
                            const header_handler &handler) {
-            _fetch_headers_impl(addr, points, max_blocks, handler);
+            _fetch_headers_impl(points, max_blocks, handler);
         }
 
-        blockchain_point find_tip_sync(const address &addr)
+        point find_tip_sync()
         {
             find_response iresp {};
-            _find_intersection_impl(addr, {}, [&](auto &&r) { iresp = std::move(r); });
+            _find_intersection_impl({}, [&](auto &&r) { iresp = std::move(r); });
             process();
             if (std::holds_alternative<error_msg>(iresp.res))
                 throw error("find_tip error: {}", std::get<error_msg>(iresp.res));
-            if (std::holds_alternative<blockchain_point>(iresp.res))
-                return std::get<blockchain_point>(iresp.res);
-            if (std::holds_alternative<blockchain_point_pair>(iresp.res))
-                return std::get<blockchain_point_pair>(iresp.res).second;
+            if (std::holds_alternative<point>(iresp.res))
+                return std::get<point>(iresp.res);
+            if (std::holds_alternative<point_pair>(iresp.res))
+                return std::get<point_pair>(iresp.res).second;
             throw error("internal error: find_tip received an unsupported response type");
         }
 
-        intersection_info find_intersection_sync(const address &addr, const blockchain_point_list &points)
+        intersection_info find_intersection_sync(const point_list &points)
         {
             find_response iresp {};
-            _find_intersection_impl(addr, points, [&](auto &&r) { iresp = std::move(r); });
+            _find_intersection_impl(points, [&](auto &&r) { iresp = std::move(r); });
             process();
             if (std::holds_alternative<error_msg>(iresp.res))
                 throw error("find_intersection error: {}", std::get<error_msg>(iresp.res));
-            if (std::holds_alternative<blockchain_point>(iresp.res))
-                return { std::get<blockchain_point>(iresp.res) };
-            if (std::holds_alternative<blockchain_point_pair>(iresp.res)) {
-                auto &&[isect, tip] = std::get<blockchain_point_pair>(iresp.res);
+            if (std::holds_alternative<point>(iresp.res))
+                return { std::get<point>(iresp.res) };
+            if (std::holds_alternative<point_pair>(iresp.res)) {
+                auto &&[isect, tip] = std::get<point_pair>(iresp.res);
                 return { std::move(tip), std::move(isect) };
             }
             throw error("internal error: find_intersection received an unsupported response type");
         }
 
-        std::pair<header_list, blockchain_point> fetch_headers_sync(const address &addr, const blockchain_point_list &points, const size_t max_blocks)
+        std::pair<header_list, point> fetch_headers_sync(const point_list &points, const size_t max_blocks, const bool allow_empty=false)
         {
             client::header_response iresp {};
-            fetch_headers(addr, points, max_blocks, [&](auto &&r) {
+            fetch_headers(points, max_blocks, [&](auto &&r) {
                 iresp = r;
             });
             process();
@@ -194,87 +190,103 @@ namespace daedalus_turbo::cardano::network {
             if (!iresp.tip)
                 throw error("no tip information received!");
             const auto &headers = std::get<header_list>(iresp.res);
-            if (headers.empty())
+            if (headers.empty() && !allow_empty)
                 throw error("received an empty header list");
             return std::make_pair(std::move(headers), std::move(*iresp.tip));
         }
 
-        std::pair<header_list, blockchain_point> fetch_headers_sync(const address &addr, const std::optional<blockchain_point> &local_tip, const size_t max_blocks)
+        std::pair<header_list, point> fetch_headers_sync(const std::optional<point> &local_tip, const size_t max_blocks, const bool allow_empty=false)
         {
-            blockchain_point_list points {};
+            point_list points {};
             if (local_tip)
                 points.emplace_back(*local_tip);
-            return fetch_headers_sync(addr, points, max_blocks);
+            return fetch_headers_sync(points, max_blocks, allow_empty);
         }
 
-        void fetch_blocks(const address &addr, const blockchain_point &from, const blockchain_point &to,
-                          std::optional<size_t> max_blocks, const block_handler &handler) {
-            _fetch_blocks_impl(addr, from, to, max_blocks, handler);
+        void fetch_blocks(const point &from, const point &to, const block_handler &handler) {
+            _fetch_blocks_impl(from, to, handler);
         }
 
-        block_list fetch_blocks_sync(const address &addr, const blockchain_point &from, const blockchain_point &to,
-                                         std::optional<size_t> max_blocks)
+        void process(daedalus_turbo::scheduler *sched=nullptr)
         {
-            block_response resp {};
-            fetch_blocks(addr, from, to, max_blocks, [&resp] (auto &&r){
-                resp = std::move(r);
-            });
-            process();
-            if (std::holds_alternative<client::error_msg>(resp.res))
-                throw error("fetch_blocks error: {}", std::get<client::error_msg>(resp.res));
-            block_list blocks { std::move(std::get<block_list>(resp.res)) };
-            if (blocks.empty())
-                throw error("received and empty header list");
-            return blocks;
+            _process_impl(sched);
         }
 
-        void process()
+        void reset()
         {
-            _process_impl();
+            _reset_impl();
         }
+    protected:
+        const address _addr;
+
     private:
-        virtual void _find_intersection_impl(const address &/*addr*/, const blockchain_point_list &/*points*/, const find_handler &/*handler*/)
+        virtual void _find_intersection_impl(const point_list &/*points*/, const find_handler &/*handler*/)
         {
             throw error("cardano::network::client::_find_intersection_impl not implemented!");
         }
 
-        virtual void _fetch_headers_impl(const address &/*addr*/, const blockchain_point_list &/*points*/, const size_t /*max_blocks*/, const header_handler &/*handler*/)
+        virtual void _fetch_headers_impl(const point_list &/*points*/, const size_t /*max_blocks*/, const header_handler &/*handler*/)
         {
             throw error("cardano::network::client::_fetch_headers_impl not implemented!");
         }
 
-        virtual void _fetch_blocks_impl(const address &/*addr*/, const blockchain_point &/*from*/, const blockchain_point &/*to*/, std::optional<size_t> /*max_blocks*/, const block_handler &/*handler*/)
+        virtual void _fetch_blocks_impl(const point &/*from*/, const point &/*to*/, const block_handler &/*handler*/)
         {
             throw error("cardano::network::client::_fetch_blocks_impl not implemented!");
         }
 
-        virtual void _process_impl()
+        virtual void _process_impl(scheduler */*sched*/)
         {
             throw error("cardano::network::client::_process_impl not implemented!");
         }
+
+        virtual void _reset_impl()
+        {
+            throw error("cardano::network::client::_reset_impl not implemented!");
+        }
     };
 
-    struct client_async: client {
-        static client_async &get();
-        explicit client_async(asio::worker &asio_worker=asio::worker::get());
-        ~client_async() override;
+    struct client_manager {
+        virtual ~client_manager() =default;
+
+        std::unique_ptr<client> connect(const address &addr, asio::worker &asio_worker=asio::worker::get())
+        {
+            return _connect_impl(addr, asio_worker);
+        }
+    private:
+        virtual std::unique_ptr<client> _connect_impl(const address &/*addr*/, asio::worker &/*asio_worker*/)
+        {
+            throw error("cardano::network::client_manager::_connect_impl not implemented!");
+        }
+    };
+
+    struct client_connection: client {
+        explicit client_connection(const address &addr, asio::worker &asio_worker=asio::worker::get());
+        ~client_connection() override;
     private:
         struct impl;
         std::unique_ptr<impl> _impl;
 
-        void _find_intersection_impl(const address &addr, const blockchain_point_list &points, const find_handler &handler) override;
-        void _fetch_headers_impl(const address &addr, const blockchain_point_list &points, const size_t max_blocks, const header_handler &handler) override;
-        void _fetch_blocks_impl(const address &addr, const blockchain_point &from, const blockchain_point &to, std::optional<size_t> max_blocks, const block_handler &handler) override;
-        void _process_impl() override;
+        void _find_intersection_impl(const point_list &points, const find_handler &handler) override;
+        void _fetch_headers_impl(const point_list &points, const size_t max_blocks, const header_handler &handler) override;
+        void _fetch_blocks_impl(const point &from, const point &to, const block_handler &handler) override;
+        void _process_impl(scheduler *sched) override;
+        void _reset_impl() override;
+    };
+
+    struct client_manager_async: client_manager {
+        static client_manager_async &get();
+    private:
+        std::unique_ptr<client> _connect_impl(const address &addr, asio::worker &asio_worker) override;
     };
 }
 
 namespace fmt {
     template<>
-    struct formatter<daedalus_turbo::cardano::network::blockchain_point>: formatter<int> {
+    struct formatter<daedalus_turbo::cardano::network::address>: formatter<int> {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
-            return fmt::format_to(ctx.out(), "({}, {})", v.hash, v.slot);
+            return fmt::format_to(ctx.out(), "{}:{}", v.host, v.port);
         }
     };
 }

@@ -12,7 +12,7 @@ using namespace daedalus_turbo;
 suite cardano_babbage_suite = [] {
     "cardano::babbage"_test = [] {
         "body_hash_ok"_test = [] {
-            auto chunk = file::read("./data/chunk-registry/compressed/chunk/9C5C0267DCA941851D0330E19B91712618EB6DB4BF17E458BCF00829F84CF3CF.zstd");
+            auto chunk = file::read("./data/chunk-registry/compressed/chunk/977E9BB3D15A5CFF5C5E48617288C5A731DB654C0B42D63627C690CEADC9E1F3.zstd");
             cbor_parser parser { chunk };
             cbor_value block_tuple {};
             while (!parser.eof()) {

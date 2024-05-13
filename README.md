@@ -58,7 +58,7 @@ Windows builds are tested with Windows 11 (earlier versions may work but have ye
 ### How to install (Mac)
 - Download the Mac image from the Assets section under the post.
 - Open the image. This is a development (unsigned) image, so Mac OS will ask you if you trust the developer: [See Apple's explanation and instructions](https://support.apple.com/en-is/guide/mac-help/mh40616/mac).
-- Copy dt-ui app to your Applications folder.
+- Copy dt-explorer app to your Applications folder.
 - Both program and blockchain data will be stored in that folder, so when deleted all used space will be recovered.
 - Launch the app from the Applications folder. If Mac OS says that the app is damaged, follow [these instructions from Stackoverflow](https://apple.stackexchange.com/questions/58050/damaged-and-cant-be-open-app-error-message).
 
@@ -99,12 +99,17 @@ All the following commands are to be run within the container started by the pre
 
 Download, validate, and prepare for querying a copy of the Cardano blockchain from a network of compressing proxies with entry points listed in [etc/turbo.json](etc/turbo.json):
 ```
-./dt sync-http /data/cardano
+./dt sync-turbo /data/cardano
 ```
 
-(Optional) Revalidate the data downloaded by sync-http for benchmark purposes:
+(Optional) Revalidate the data downloaded by sync-turbo for benchmark purposes:
 ```
 ./dt revalidate /data/cardano
+```
+
+(Optional) Compare the downloaded chain vs a Cardano Network node and fetch differences if necessary:
+```
+./dt sync-p2p /data/cardano
 ```
 
 Reconstruct the latest balance and transaction history of a stake key:

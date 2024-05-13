@@ -1,17 +1,17 @@
 {
-  "name": "dt-ui",
-  "version": "0.1.0",
+  "name": "dt-explorer",
+  "version": "0.5.0",
   "description": "Daedalus Turbo - Local Explorer",
   "main": "main.js",
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack --config webpack.ui.config.js --stats-error-details",
     "build-dev": "cross-env NODE_ENV=development webpack --config webpack.ui.config.js",
     "start": "npm run build-dev && electron .",
-    "pkg-clean": "rm -rf ./dt-ui-* ./bin ./data ./log ./etc/dt-ui.app ./dt-ui.dmg",
+    "pkg-clean": "rm -rf ./dt-explorer-* ./bin ./data ./log ./etc/dt-explorer.app ./dt-explorer.dmg",
     "pkg-build-win": "npm run pkg-clean && npm run build && electron-packager . --overwrite --icon=./etc/logo.ico",
     "pkg-build-mac": "npm run pkg-clean && npm run build && electron-packager . --overwrite --icon=./etc/logo.icns",
-    "pkg-mac-app": "npm run pkg-build-mac && node ./script/mac-copy-libs.js ../cmake-build-release/dt ./dt-ui-darwin-arm64/dt-ui.app/Contents/MacOS && cp -r ../etc ./dt-ui-darwin-arm64/dt-ui.app/Contents",
-    "pkg-mac": "npm run pkg-mac-app && mv ./dt-ui-darwin-arm64/dt-ui.app ./etc && appdmg ./etc/appdmg.json ./dt-ui.dmg && rm -rf ./etc/dt-ui.app"
+    "pkg-mac-app": "npm run pkg-build-mac && node ./script/mac-copy-libs.js ../cmake-build-release/dt ./dt-explorer-darwin-arm64/dt-explorer.app/Contents/MacOS && cp -r ../etc ./dt-explorer-darwin-arm64/dt-explorer.app/Contents",
+    "pkg-mac": "npm run pkg-mac-app && mv ./dt-explorer-darwin-arm64/dt-explorer.app ./etc && appdmg ./etc/appdmg.json ./dt-explorer.dmg && rm -rf ./etc/dt-explorer.app"
   },
   "private": true,
   "devDependencies": {

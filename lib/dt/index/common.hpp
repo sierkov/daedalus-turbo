@@ -10,6 +10,7 @@
 #include <dt/index/io.hpp>
 #include <dt/index/merge.hpp>
 #include <dt/mutex.hpp>
+#include <dt/zpp.hpp>
 
 namespace daedalus_turbo::index {
     struct chunk_indexer_base {
@@ -81,7 +82,7 @@ namespace daedalus_turbo::index {
             if (!_data.empty()) {
                 _epoch_observer.mark_epoch(*_epoch, _chunk_id);
                 std::sort(_data.begin(), _data.end());
-                file::write_zpp(fmt::format("{}-{}.bin", _idx_base_path, *_epoch), _data);
+                zpp::save(fmt::format("{}-{}.bin", _idx_base_path, *_epoch), _data);
             }
         }
     protected:
@@ -171,11 +172,6 @@ namespace daedalus_turbo::index {
             throw error("merge not implemented");
         }
 
-        virtual size_t merge_task_count(const std::vector<std::string> &/*chunks*/) const
-        {
-            throw error("merge_task_count not implemented");
-        }
-
         virtual void clean_up() const
         {
             for (const auto &entry: std::filesystem::directory_iterator(chunk_dir())) {
@@ -217,7 +213,7 @@ namespace daedalus_turbo::index {
 
         virtual uint64_t disk_size(const std::string &slice_id) const =0;
         virtual std::unique_ptr<chunk_indexer_base> make_chunk_indexer(const std::string &slice_id, uint64_t chunk_id) =0;
-        virtual void schedule_truncate(const std::string &slice_id, uint64_t new_end_offset, const std::function<void()> &on_done) =0;
+        virtual void schedule_truncate(const std::string &slice_id, const std::string &new_slice_id, uint64_t new_end_offset) =0;
     protected:
         scheduler &_sched;
         std::string _idx_dir;
@@ -244,11 +240,6 @@ namespace daedalus_turbo::index {
                    const std::function<void()> &on_complete) override
         {
             merge_one_step<T>(_sched, task_group, task_prio, chunks, final_path, on_complete);
-        }
-
-        size_t merge_task_count(const std::vector<std::string> &chunks) const override
-        {
-            return merge_estimate_task_count<T>(chunks);
         }
 
         bool mergeable() const override
@@ -303,7 +294,7 @@ namespace daedalus_turbo::index {
                 indexer_merging<T, ChunkIndexer>::chunk_path(slice_id, chunk_id));
         }
 
-        void schedule_truncate(const std::string &, uint64_t, const std::function<void()> &) override
+        void schedule_truncate(const std::string &, const std::string &, uint64_t) override
         {
             // update-only index, do nothing
         }
@@ -334,25 +325,31 @@ namespace daedalus_turbo::index {
     struct indexer_offset: indexer_no_offset<T, ChunkIndexer> {
         using indexer_no_offset<T, ChunkIndexer>::indexer_no_offset;
 
-        void schedule_truncate(const std::string &slice_id, uint64_t new_end_offset, const std::function<void()> &on_done) override
+        void schedule_truncate(const std::string &slice_id, const std::string &new_slice_id, uint64_t new_end_offset) override
         {
-            auto src_path = indexer_no_offset<T, ChunkIndexer>::reader_path(slice_id);
-            const std::string task_name = fmt::format("truncate-{}", src_path);
+            const auto src_path = indexer_no_offset<T, ChunkIndexer>::reader_path(slice_id);
+            const auto new_path = indexer_no_offset<T, ChunkIndexer>::reader_path(new_slice_id);
+            const std::string task_name = fmt::format("truncate:{}", src_path);
             logger::debug("truncate {} to {} bytes", src_path, new_end_offset);
             if (!std::filesystem::exists(src_path))
                 return;
             if (new_end_offset > 0) {
                 auto reader = std::make_shared<index::reader_mt<T>>(src_path);
-                auto index_max_offset = reader->get_meta("max_offset").template to<uint64_t>();
-                bool truncation_needed = index_max_offset >= new_end_offset;
+                const auto index_max_offset = reader->get_meta("max_offset").template to<uint64_t>();
+                const bool truncation_needed = index_max_offset >= new_end_offset;
                 logger::trace("truncate {} - current max offset: {} truncation needed: {}", src_path, index_max_offset, truncation_needed);
                 if (!truncation_needed)
                     return;
                 size_t num_parts = reader->num_parts();
                 auto writer = std::make_shared<index::writer<T>>(src_path + "-new", num_parts);
-                auto scheduled = std::make_shared<std::atomic_bool>(false);
                 auto new_max_offset = std::make_shared<uint64_t>(0);
-                indexer_no_offset<T, ChunkIndexer>::_sched.on_result(task_name, [this, on_done, new_max_offset, src_path, reader, writer, scheduled, task_name](const auto &res) mutable {
+                indexer_no_offset<T, ChunkIndexer>::_sched.on_completion(task_name, num_parts, [reader, writer, src_path, new_path, new_max_offset] {
+                    reader->close();
+                    writer->set_meta("max_offset", buffer::from(*new_max_offset));
+                    writer->commit();
+                    writer->rename(new_path);
+                });
+                indexer_no_offset<T, ChunkIndexer>::_sched.on_result(task_name, [new_max_offset, task_name](const auto &res) {
                     if (res.type() == typeid(scheduled_task_error)) {
                         logger::error("task {} {}", task_name, std::any_cast<scheduled_task_error>(res).what());
                         return;
@@ -360,13 +357,6 @@ namespace daedalus_turbo::index {
                     auto task_max_offset = std::any_cast<uint64_t>(res);
                     if (task_max_offset > *new_max_offset)
                         *new_max_offset = task_max_offset;
-                    if (!*scheduled || indexer_no_offset<T, ChunkIndexer>::_sched.task_count(task_name) > 0)
-                        return;
-                    reader->close();
-                    writer->set_meta("max_offset", buffer::from(*new_max_offset));
-                    writer->commit();
-                    writer->rename(src_path);
-                    on_done();
                 });
                 for (size_t pi = 0; pi < num_parts; ++pi) {
                     indexer_no_offset<T, ChunkIndexer>::_sched.submit(task_name, reader->size() >> 20, [reader, writer, pi, new_end_offset]() {
@@ -383,7 +373,6 @@ namespace daedalus_turbo::index {
                         return max_offset + sizeof(item);
                     });
                 }
-                *scheduled = true;
             } else {
                 // just delete index if new_end_offset == 0
                 std::filesystem::remove(src_path);

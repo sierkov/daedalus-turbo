@@ -65,18 +65,35 @@ namespace {
 
 suite validator_suite = [] {
     "validator"_test = [] {
-        "success"_test = [] {
-            static std::string data_dir { "tmp/validator" };
+        static std::string data_dir { "tmp/validator" };
+        "success"_test = [&] {
             std::filesystem::remove_all(data_dir);
             const auto genesis_hash = block_hash::from_hex("5F20DF933584822601F9E3F8C024EB5EB252FE8CEFB24D1317DC3D432E940EBB");
             const std::string chunk1_name { "chunk1.chunk" };
             const auto chunk1_path = fmt::format("{}/{}", data_dir, chunk1_name);
-            auto chain1 = gen_chain1(chunk1_path, genesis_hash);
+            const auto chain1 = gen_chain1(chunk1_path, genesis_hash);
             validator::incremental cr { data_dir, chain1.configs };
-            cr.start_tx(0, chain1.size);
-            cr.add(0, chunk1_path, chain1.hash, chunk1_name);
-            cr.prepare_tx();
-            cr.commit_tx();
+            expect(cr.valid_end_offset() == 0_ull);
+            const auto ex_ptr = cr.transact(0, chain1.size, [&] {
+                cr.add(0, chunk1_path, chain1.hash, chunk1_name);
+            });
+            expect(!ex_ptr);
+            expect(cr.valid_end_offset() == chain1.size) << cr.valid_end_offset();
+        };
+        "rollback"_test = [&] {
+            std::filesystem::remove_all(data_dir);
+            const auto genesis_hash = block_hash::from_hex("5F20DF933584822601F9E3F8C024EB5EB252FE8CEFB24D1317DC3D432E940EBB");
+            const std::string chunk1_name { "chunk1.chunk" };
+            const auto chunk1_path = fmt::format("{}/{}", data_dir, chunk1_name);
+            const auto chain1 = gen_chain1(chunk1_path, genesis_hash);
+            validator::incremental cr { data_dir, chain1.configs };
+            expect(cr.valid_end_offset() == 0_ull);
+            const auto ex_ptr = cr.transact(0, chain1.size, [&] {
+                cr.add(0, chunk1_path, chain1.hash, chunk1_name);
+                throw error("some failure, rollback now");
+            });
+            expect(static_cast<bool>(ex_ptr));
+            expect(cr.valid_end_offset() == 0_ull);
         };
     };
 };

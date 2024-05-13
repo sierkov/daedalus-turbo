@@ -22,15 +22,14 @@ namespace daedalus_turbo {
 
         explicit file_remover() =default;
 
-        size_t size() const
+        [[nodiscard]] size_t size() const
         {
             return _removable.size();
         }
 
         void mark(const std::string &path, const std::chrono::time_point<std::chrono::system_clock> &when=std::chrono::system_clock::now())
         {
-            auto [it, created] = _removable.emplace(path, when);
-            if (!created)
+            if (auto [it, created] = _removable.emplace(path, when); !created)
                 it->second = when;
         }
 
@@ -41,7 +40,7 @@ namespace daedalus_turbo {
 
         void remove(const std::chrono::seconds &delay=std::chrono::seconds { 0 })
         {
-            auto delete_point = std::chrono::system_clock::now() - delay;
+            const auto delete_point = std::chrono::system_clock::now() - delay;
             for (auto it = _removable.begin(); it != _removable.end(); ) {
                 if (it->second < delete_point) {
                     _remove(it->first, fmt::format("deref: when: {} delete_point: {}",
@@ -55,11 +54,11 @@ namespace daedalus_turbo {
 
         void remove_old_files(const std::filesystem::path &dir_path, const std::chrono::seconds &lifespan=std::chrono::seconds { 86400 }) const
         {
-            auto file_now = std::chrono::file_clock::now();
+            const auto file_now = std::chrono::file_clock::now();
             for (auto &entry: std::filesystem::directory_iterator(dir_path)) {
-                auto file_age = std::chrono::duration_cast<std::chrono::seconds>(file_now - entry.last_write_time());
+                const auto file_age = std::chrono::duration_cast<std::chrono::seconds>(file_now - entry.last_write_time());
                 if (entry.is_regular_file() && file_age > lifespan) {
-                    auto path = entry.path().string();
+                    const auto path = entry.path().string();
                     _remove(path, fmt::format("dir/older than {} sec; age: {} sec", lifespan.count(), file_age.count()));
                 }
             }
@@ -70,7 +69,7 @@ namespace daedalus_turbo {
         map<std::string, time_point> _removable {};
 
         static void _remove(const std::string &path, const std::string &note) {
-            logger::trace("removing obsolete file: {} note: {}", path, note);
+            logger::debug("removing obsolete file: {} note: {}", path, note);
             std::filesystem::remove(path);
         }
     };

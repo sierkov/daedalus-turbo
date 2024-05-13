@@ -11,12 +11,11 @@ using namespace daedalus_turbo;
 
 int main(int argc, char **argv)
 {
-    std::ios_base::sync_with_stdio(false);
     if (argc >= 2) {
         std::cerr << "using test-filter mask: " << argv[1] << '\n';
         cfg<override> = { .filter = argv[1] };
     }
-    bool res = cfg<override>.run();
+    const bool res = cfg<override>.run();
     logger::info("run-test finished with {}", res ? "failures" : "success");
     return 0;
 }

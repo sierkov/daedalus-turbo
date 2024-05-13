@@ -6,9 +6,10 @@
 #include <dt/cli/http-api.hpp>
 #include <dt/cli/pay-history.hpp>
 #include <dt/cli/stake-history.hpp>
-#include <dt/cli/sync-http.hpp>
+#include <dt/cli/sync-turbo.hpp>
 #include <dt/cli/sync-local.hpp>
 #include <dt/cli/sync-p2p.hpp>
+#include <dt/cli/tip.hpp>
 #include <dt/cli/truncate.hpp>
 #include <dt/cli/tx-info.hpp>
 #include <dt/cli/validate.hpp>
@@ -21,9 +22,10 @@ int main(int argc, char **argv)
         std::make_unique<http_api::cmd>(),
         std::make_unique<pay_history::cmd>(),
         std::make_unique<stake_history::cmd>(),
-        std::make_unique<sync_http::cmd>(),
+        std::make_unique<sync_turbo::cmd>(),
         std::make_unique<sync_local::cmd>(),
         std::make_unique<sync_p2p::cmd>(),
+        std::make_unique<tip::cmd>(),
         std::make_unique<truncate::cmd>(),
         std::make_unique<tx_info::cmd>(),
         std::make_unique<validate::cmd>(),

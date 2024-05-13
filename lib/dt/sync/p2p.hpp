@@ -5,6 +5,7 @@
 #ifndef DAEDALUS_TURBO_SYNC_P2P_HPP
 #define DAEDALUS_TURBO_SYNC_P2P_HPP
 
+#include <dt/cardano/common.hpp>
 #include <dt/indexer.hpp>
 #include <dt/file-remover.hpp>
 #include <dt/http/download-queue.hpp>
@@ -13,20 +14,36 @@
 
 namespace daedalus_turbo::sync::p2p {
     struct peer_info {
-        cardano::network::address addr {};
-        cardano::network::blockchain_point tip {};
-        std::optional<cardano::network::blockchain_point> isect {};
+        std::unique_ptr<cardano::network::client> client;
+        cardano::point tip {};
+        std::optional<cardano::point> isect {};
+
+        const cardano::network::address &addr() const
+        {
+            return client->addr();
+        }
     };
 
     struct syncer {
-        explicit syncer(indexer::incremental &cr, cardano::network::client &cnc=cardano::network::client_async::get(),
+        explicit syncer(indexer::incremental &cr, cardano::network::client_manager &cnc=cardano::network::client_manager_async::get(),
             peer_selection &ps=peer_selection_simple::get());
-        [[nodiscard]] peer_info find_peer() const;
+        [[nodiscard]] peer_info find_peer(std::optional<cardano::network::address> addr={}) const;
         ~syncer();
-        void sync(std::optional<peer_info> peer={}, std::optional<cardano::slot> max_slot={});
+        bool sync(std::optional<peer_info> peer={}, std::optional<cardano::slot> max_slot={});
     private:
         struct impl;
         std::unique_ptr<impl> _impl;
+    };
+}
+
+namespace fmt {
+    template<>
+    struct formatter<daedalus_turbo::sync::p2p::peer_info>: public formatter<int> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out())
+        {
+            return fmt::format_to(ctx.out(), "(addr: {}, tip: {})", v.client->addr(), v.tip);
+        }
     };
 }
 

@@ -54,6 +54,18 @@ namespace daedalus_turbo::index::txo {
                         _idx.emplace_part(tx.hash().data()[0] / _part_range, tx.hash(), txo.idx, txo.amount, tx.offset());
                 });
             });
+            blk.foreach_invalid_tx([&](const auto &tx) {
+                if (const auto *babbage_tx = dynamic_cast<const cardano::babbage::tx *>(&tx); babbage_tx) {
+                    if (const auto c_ret = babbage_tx->collateral_return(); c_ret) {
+                        if (c_ret->address.has_stake_id())
+                            _idx.emplace_part(tx.hash().data()[0] / _part_range, tx.hash(), 0, c_ret->amount, tx.offset(), c_ret->address.stake_id());
+                        else if (c_ret->address.has_pointer())
+                            _idx.emplace_part(tx.hash().data()[0] / _part_range, tx.hash(), 0, c_ret->amount, tx.offset(), c_ret->address.pointer());
+                        else
+                            _idx.emplace_part(tx.hash().data()[0] / _part_range, tx.hash(), 0, c_ret->amount, tx.offset());
+                    }
+                }
+            });
         }
     };
 

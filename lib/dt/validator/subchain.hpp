@@ -7,15 +7,18 @@
 
 #include <functional>
 #include <map>
-#include <zpp_bits.h>
 #include <dt/cardano/type.hpp>
 #include <dt/error.hpp>
 
 namespace daedalus_turbo::validator {
     struct kes_interval {
-        using serialize = zpp::bits::members<2>;
         size_t first_counter = 0;
         size_t last_counter = 0;
+
+        constexpr static auto serialize(auto &archive, auto &self)
+        {
+            return archive(self.first_counter, self.last_counter);
+        }
 
         kes_interval() =default;
 

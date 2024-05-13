@@ -230,7 +230,7 @@ suite scheduler_suite = [] {
         "cancel"_test = [] {
             scheduler s { 2 };
             std::atomic_size_t num_cancelled = 0;
-            s.on_result("task1", [&](auto &&res) {
+            s.on_result("task1", [&](auto &&/*res*/) {
                 atomic_add(num_cancelled, s.cancel([](const auto &name, const auto &param) { return name == "task1" && param && std::any_cast<bool>(*param) == true; }));
             });
             for (size_t i = 0; i < 1000; ++i) {

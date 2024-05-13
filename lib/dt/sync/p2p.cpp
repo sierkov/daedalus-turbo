@@ -3,6 +3,7 @@
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
+#include <algorithm>
 #include <dt/cardano.hpp>
 #include <dt/cardano/network.hpp>
 #include <dt/config.hpp>
@@ -13,99 +14,92 @@ namespace daedalus_turbo::sync::p2p {
     using namespace daedalus_turbo::cardano;
 
     struct syncer::impl {
-        impl(indexer::incremental &cr, client &client, peer_selection &ps)
-            : _cr { cr }, _client { client }, _peer_selection { ps }, _raw_dir { _cr.data_dir() / "raw" }
+        impl(indexer::incremental &cr, client_manager &cm, peer_selection &ps)
+            : _cr { cr }, _client_manager { cm }, _peer_selection { ps }, _raw_dir { _cr.data_dir() / "raw" }
         {
             std::filesystem::create_directories(_raw_dir);
+            const auto valid_size = _cr.valid_end_offset();
+            if (valid_size != _cr.num_bytes()) {
+                _cr.start_tx(valid_size, valid_size);
+                _cr.prepare_tx();
+                _cr.commit_tx();
+            }
         }
 
-        // Todo ensure that the same TCP connection is reused during all queries to a single client!!!
-        // Finds a peer and the best possible intersection at a chunk boundary
-        [[nodiscard]] peer_info find_peer() const
+        // Finds a peer and the best intersection point
+        [[nodiscard]] peer_info find_peer(std::optional<cardano::network::address> addr) const
         {
+            if (!addr)
+                addr = _peer_selection.next_cardano();
             // Try to fit into a single packet of 1.5KB
-            static constexpr size_t max_points = 24;
-            auto addr = _peer_selection.next_cardano();
+            auto client = _client_manager.connect(*addr);
             if (_cr.num_chunks() == 0) {
-                auto tip = _client.find_tip_sync(addr);
-                return { std::move(addr), std::move(tip) };
+                auto tip = client->find_tip_sync();
+                return { std::move(client), std::move(tip) };
             }
 
-            // first check against the most recent chunks (most likely to succeed)
-            blockchain_point_list points {};
-            for (auto rit = _cr.chunks().rbegin(), rend = _cr.chunks().rend(); rit != rend && points.size() < max_points; ++rit) {
-                points.emplace_back(rit->second.last_block_hash, rit->second.last_slot);
-            }
-
-            auto intersection = _client.find_intersection_sync(addr, points);
-            if (intersection.isect)
-                return { std::move(addr), std::move(intersection.tip), std::move(intersection.isect) };
-
-            // select equidistant points
-            std::vector<uint64_t> offsets {};
-            points.clear();
-            const auto step_size = std::max(static_cast<size_t>(1), _cr.num_chunks() / max_points);
-            for (auto rit = _cr.chunks().rbegin(), rend = _cr.chunks().rend(); rit != rend && points.size() < max_points; ++rit) {
-                points.emplace_back(rit->second.last_block_hash, rit->second.first_slot);
-                offsets.emplace_back(rit->second.offset);
-                for (size_t i = 0; i < step_size; ++i) {
-                    if (++rit == rend)
-                        break;
+            // iteratively determine the chunk containing the intersection point
+            auto first_chunk_it = _cr.chunks().begin();
+            auto last_chunk_it = _cr.chunks().end();
+            static constexpr size_t points_per_query = 24;
+            for (uint64_t chunk_dist = std::distance(first_chunk_it, last_chunk_it); chunk_dist > 1; chunk_dist = std::distance(first_chunk_it, last_chunk_it)) {
+                const auto step_size = std::max(static_cast<uint64_t>(1), chunk_dist / points_per_query);
+                point_list points {};
+                for (auto chunk_it = first_chunk_it; chunk_it != last_chunk_it; std::ranges::advance(chunk_it, step_size, last_chunk_it)) {
+                    points.emplace_back(chunk_it->second.first_block_hash(), chunk_it->second.first_slot);
                 }
-            }
-            // explicitly add the first block
-            {
-                const auto &first_chunk = _cr.chunks().begin()->second;
-                points.emplace_back(first_chunk.last_block_hash);
-                offsets.emplace_back(first_chunk.offset);
-            }
+                // ensure that the last chunk is always present
+                if (points.back().hash != _cr.last_chunk()->first_block_hash())
+                    points.emplace_back(_cr.last_chunk()->first_block_hash(), _cr.last_chunk()->first_slot);
 
-            intersection = _client.find_intersection_sync(addr, points);
-            // no shared blocks
+                // points must be in the reverse order
+                std::reverse(points.begin(), points.end());
+                const auto intersection = client->find_intersection_sync(points);
+                if (!intersection.isect)
+                    return { std::move(client), std::move(intersection.tip) };
+
+                first_chunk_it = _cr.find_slot_it(intersection.isect->slot);
+                last_chunk_it = first_chunk_it;
+                std::ranges::advance(last_chunk_it, step_size, _cr.chunks().end());
+            }
+            if (std::distance(first_chunk_it, last_chunk_it) != 1)
+                throw error("internal error: wasn't able to find a chunk for the intersection point!");
+
+            // determine the block of the intersection point
+            point_list points {};
+            for (const auto &block: first_chunk_it->second.blocks)
+                points.emplace_back(block.hash, block.slot);
+            std::reverse(points.begin(), points.end());
+            const auto intersection = client->find_intersection_sync(points);
             if (!intersection.isect)
-                return { std::move(addr), std::move(intersection.tip) };
-
-            // find the exact chunk
-            std::optional<std::pair<uint64_t, uint64_t>> offset_range {};
-            for (size_t i = 0; i < points.size(); ++i) {
-                if (*intersection.isect == points[i]) {
-                    offset_range = std::make_pair(offsets[i], i + 1 < points.size() ? offsets[i + 1] : _cr.num_bytes());
-                    break;
-                }
-            }
-            if (!offset_range)
-                throw error("internal issue: failed to find an offset range for the intersection!");
-            points.clear();
-            offsets.clear();
-
-            for (auto chunk_it = _cr.find_it(offset_range->first); chunk_it != _cr.chunks().end() && chunk_it->second.offset < offset_range->second; ++chunk_it) {
-                points.emplace_back(chunk_it->second.last_block_hash);
-                offsets.emplace_back(chunk_it->second.offset);
-            }
-
-            intersection = _client.find_intersection_sync(addr, points);
-            if (!intersection.isect)
-                throw error("internal issue: failed to locate an intersection at the chunk boundary!");
-
-            return { std::move(addr), std::move(intersection.tip), std::move(intersection.isect) };
+                throw error("internal error: wasn't able to narrow down the intersection point to a block!");
+            return { std::move(client), std::move(intersection.tip), std::move(intersection.isect) };
         }
 
-        void sync(std::optional<peer_info> peer, const std::optional<slot> max_slot)
+        bool sync(std::optional<peer_info> peer, const std::optional<slot> max_slot)
         {
-            std::optional<blockchain_point> local_tip {};
-            if (const auto last_chunk = _cr.last_chunk())
-                local_tip = blockchain_point { last_chunk->last_block_hash, last_chunk->last_slot };
             if (!peer)
-                peer = find_peer();
-            for (;;) {
-                const auto continue_from = _fetch_iteration(*peer, local_tip, max_slot);
-                if (!continue_from)
-                    break;
-                local_tip = continue_from;
-            }
-            _save_last_chunk(true);
+                peer = find_peer({});
+            logger::info("trying to sync with {} starting from {}", peer->addr(), peer->isect);
+            // target offset is unbounded since the cardano network protocol does not provide the size information
+            const auto ex_ptr = logger::run_log_errors([&] {
+                _validation_failed = false;
+                _next_chunk_offset = 0;
+                if (peer->isect)
+                    _next_chunk_offset = _cr.find_block(peer->isect->slot, peer->isect->hash).end_offset();
+                const auto tx_ex_ptr = _cr.transact(_next_chunk_offset, [&] {
+                    _sync(*peer, peer->isect, max_slot);
+                    _save_last_chunk();
+                    _cr.sched().process();
+                });
+                if (tx_ex_ptr)
+                    std::rethrow_exception(tx_ex_ptr);
+            });
+            return !ex_ptr;
         }
     private:
+        static constexpr size_t max_retries = 3;
+
         struct ready_chunk {
             std::string path {};
             std::string name {};
@@ -114,113 +108,99 @@ namespace daedalus_turbo::sync::p2p {
         };
 
         indexer::incremental &_cr;
-        client &_client;
+        client_manager &_client_manager;
         peer_selection &_peer_selection;
         std::filesystem::path _raw_dir;
         uint8_vector _last_chunk {};
         std::optional<uint64_t> _last_chunk_id {};
-        std::vector<ready_chunk> _ready_chunks {};
-        uint64_t _ready_data_size = 0;
+        uint64_t _next_chunk_offset = 0;
+        std::atomic_bool _validation_failed = false;
 
-        bool _is_chain_better(const peer_info &peer, const std::optional<blockchain_point> &start_point)
+        void _sync(const peer_info &peer, const std::optional<point> &local_tip, const std::optional<slot> &max_slot)
         {
-            static constexpr size_t batch_size = 21600 / 20;
-            static constexpr size_t max_retries = 3;
-
-            // Any chain is better than an empty one
-            if (!start_point)
-                return true;
-            const auto last_slot = start_point->slot + cardano::density_default_window;
-            size_t num_data_blocks = 0;
-            const auto [headers, tip] = _client.fetch_headers_sync(peer.addr, start_point, 1);
-            std::optional continue_from = headers.front();
-            while (continue_from && *continue_from != tip && continue_from->slot <= last_slot) {
-                for (size_t retry = 0; retry < max_retries; ++retry) {
-                    if (!logger::run_log_errors([&] {
-                            const auto blocks = _client.fetch_blocks_sync(peer.addr, *continue_from, tip, batch_size);
-                            for (auto &&b: blocks) {
-                                if (b.blk->slot() > last_slot)
-                                    break;
-                                if (b.blk->era() > 0)
-                                    ++num_data_blocks;
-                            }
-                            continue_from = blockchain_point { blocks.back().blk->hash(), blocks.back().blk->slot() };
-                            }))
-                        break;
-                }
-            }
-            const auto local_num_blocks = _cr.count_blocks_in_window(start_point->slot, cardano::density_default_window);
-            return num_data_blocks > local_num_blocks;
-        }
-
-        std::optional<blockchain_point> _fetch_iteration(const peer_info &peer, const std::optional<blockchain_point> &start_point, const std::optional<slot> &max_slot)
-        {
-            static constexpr size_t batch_size = 21600 / 20;
-            static constexpr size_t max_retries = 3;
-
-            std::optional<blockchain_point> continue_from {};
+            const size_t local_num_blocks = _cr.count_blocks_in_window(local_tip, cardano::density_default_window);
+            // the intersection point is included in the count
+            size_t remote_num_blocks = local_tip ? 1 : 0;
+            const auto density_first_slot = local_tip ? local_tip->slot : cardano::slot { 0 };
+            const auto density_last_slot = density_first_slot + cardano::density_default_window;
+            cardano::network::block_list density_blocks {};
+            const auto add_density_blocks = [&] {
+                for (const auto &block: density_blocks)
+                    _add_block(*block.blk);
+                density_blocks.clear();
+            };
+            std::optional<point> continue_from = local_tip;
             for (size_t retry = 0; retry < max_retries; ++retry) {
-                if (!logger::run_log_errors([&] {
-                    const auto [headers, tip] = _client.fetch_headers_sync(peer.addr, start_point, 1);
-                    if (!start_point || start_point != tip) {
-                        const auto blocks = _client.fetch_blocks_sync(peer.addr, headers.front(), tip, batch_size);
-                        for (auto &&b: blocks) {
-                            if (!max_slot || b.blk->slot() <= *max_slot)
-                                _add_block(*b.blk);
-                        }
-                        const auto last_point = blockchain_point{ blocks.back().blk->hash(), blocks.back().blk->slot() };
-                        if (last_point != tip && (!max_slot || last_point.slot < *max_slot))
-                            continue_from = last_point;
+                const auto ex_ptr = logger::run_log_errors([&] {
+                    const auto [headers, tip] = peer.client->fetch_headers_sync(continue_from, 1, true);
+                    if (!headers.empty() && (!max_slot || headers.front().slot <= *max_slot)) {
+                        // current implementation of fetch_blocks does not leave its connection in a working state
+                        std::optional<std::string> err {};
+                        peer.client->fetch_blocks(headers.front(), tip, [&](auto &&resp) {
+                            if (resp.err) {
+                                err = std::move(*resp.err);
+                                return false;
+                            }
+                            if (_validation_failed.load() || (max_slot && resp.block->blk->slot() > *max_slot))
+                                return false;
+                            if (resp.block->blk->slot() <= density_last_slot) {
+                                if (resp.block->blk->era() > 0)
+                                    ++remote_num_blocks;
+                                density_blocks.emplace_back(std::move(*resp.block));
+                            } else {
+                                if (!density_blocks.empty()) {
+                                    if (remote_num_blocks <= local_num_blocks)
+                                        return false;
+                                    add_density_blocks();
+                                }
+                                _add_block(*resp.block->blk);
+                                continue_from = point{ resp.block->blk->hash(), resp.block->blk->slot(), resp.block->blk->height() };
+                            }
+                            return true;
+                        });
+                        peer.client->process(&_cr.sched());
+                        if (err)
+                            throw error("fetch_block has failed with error: {}", err);
                     }
-                }))
+                });
+                logger::info("sync cycle ended continue_from: {}, error: {}, retry: {}", continue_from, static_cast<bool>(ex_ptr), retry);
+                if (!ex_ptr)
                     break;
+                peer.client->reset();
             }
-            return continue_from;
+            if (remote_num_blocks <= local_num_blocks)
+                throw error("the local chain has better properties than the remote one - refusing to sync");
+            if (!density_blocks.empty())
+                add_density_blocks();
         }
 
-        void _schedule_validation(const bool force=false)
-        {
-            if (_ready_chunks.empty())
-                return;
-            if (!force && _ready_chunks.size() < scheduler::default_worker_count())
-                return;
-            uint64_t start_offset = _cr.valid_end_offset();
-            _cr.start_tx(start_offset, start_offset + _ready_data_size);
-            for (auto &chunk: _ready_chunks) {
-                _cr.add(start_offset, chunk.path, chunk.hash, chunk.name);
-                start_offset += chunk.size;
-            }
-            _cr.prepare_tx();
-            _cr.commit_tx();
-            _ready_chunks.clear();
-            _ready_data_size = 0;
-        }
-
-        void _add_chunk(const std::string &path, const std::string &name, const uint64_t size, const buffer &hash)
-        {
-            _ready_chunks.emplace_back(path, name, size, hash);
-            _ready_data_size += size;
-            logger::info("added chunk {} of {} bytes", path, size);
-        }
-
-        void _save_last_chunk(const bool force_validation=false)
+        void _save_last_chunk()
         {
             if (!_last_chunk.empty()) {
-                auto chunk_name = fmt::format("{:05d}.zstd", *_last_chunk_id);
-                auto chunk_path = (_raw_dir / chunk_name).string();
-                file::write_zstd(chunk_path, _last_chunk);
-                _add_chunk(chunk_path, chunk_name, _last_chunk.size(), daedalus_turbo::blake2b<cardano::block_hash>(_last_chunk));
+                const auto chunk_data = std::make_shared<uint8_vector>(std::move(_last_chunk));
+                const auto chunk_name = fmt::format("{:05d}.zstd", *_last_chunk_id);
+                const auto chunk_path = (_raw_dir / chunk_name).string();
+                const auto chunk_offset = _next_chunk_offset;
                 _last_chunk.clear();
+                _cr.sched().submit_void("parse", 100, [this, chunk_offset, chunk_data, chunk_name, chunk_path] {
+                    try {
+                        const auto chunk_hash = blake2b<cardano::block_hash>(*chunk_data);
+                        file::write_zstd(chunk_path, *chunk_data);
+                        _cr.add(chunk_offset, chunk_path, chunk_hash, chunk_name);
+                    } catch (...) {
+                        _validation_failed = true;
+                        throw;
+                    }
+                });
+                _next_chunk_offset += chunk_data->size();
             }
-            _schedule_validation(force_validation);
         }
 
         void _add_block(const block_base &blk)
         {
-            auto blk_chunk_id = blk.slot().chunk_id();
-            if (!_last_chunk_id)
-                _last_chunk_id = blk_chunk_id;
-            if (_last_chunk_id != blk_chunk_id && !_last_chunk.empty()) {
+            const auto blk_chunk_id = blk.slot().chunk_id();
+            if (!_last_chunk_id || _last_chunk_id != blk_chunk_id) {
+                logger::info("block from a new chunk: slot: {} hash: {} height: {}", blk.slot(), blk.hash(), blk.height());
                 _save_last_chunk();
                 _last_chunk_id = blk_chunk_id;
             }
@@ -228,20 +208,20 @@ namespace daedalus_turbo::sync::p2p {
         }
     };
 
-    syncer::syncer(indexer::incremental &cr, client &cnc, peer_selection &ps)
-        : _impl { std::make_unique<impl>(cr, cnc, ps) }
+    syncer::syncer(indexer::incremental &cr, client_manager &ccm, peer_selection &ps)
+        : _impl { std::make_unique<impl>(cr, ccm, ps) }
     {
     }
 
     syncer::~syncer() =default;
 
-    [[nodiscard]] peer_info syncer::find_peer() const
+    [[nodiscard]] peer_info syncer::find_peer(std::optional<cardano::network::address> addr) const
     {
-        return _impl->find_peer();
+        return _impl->find_peer(addr);
     }
 
-    void syncer::sync(std::optional<peer_info> peer, const std::optional<slot> max_slot)
+    bool syncer::sync(std::optional<peer_info> peer, const std::optional<slot> max_slot)
     {
-        _impl->sync(peer, max_slot);
+        return _impl->sync(std::move(peer), max_slot);
     }
 }

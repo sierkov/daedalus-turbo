@@ -22,16 +22,19 @@ namespace daedalus_turbo::cli::truncate {
             const auto &data_dir = args.at(0);
             requirements::check(data_dir);
             const uint64_t epoch = std::stoull(args.at(1));
-            validator::incremental idxr { data_dir };
+            validator::incremental cr { data_dir };
+            if (const auto target_offset = cr.valid_end_offset(); target_offset != cr.max_end_offset()) {
+                cr.transact(target_offset, [] {
+                    logger::warn("chain is not in a consistent state, performing maintenance ...");
+                });
+            }
             uint64_t min_offset = 0;
-            for (const auto &[last_byte_offset, chunk]: idxr.chunks()) {
+            for (const auto &[last_byte_offset, chunk]: cr.chunks()) {
                 if (chunk.last_slot.epoch() <= epoch && min_offset < last_byte_offset + 1)
                     min_offset = last_byte_offset + 1;
             }
-            idxr.start_tx(min_offset, min_offset);
-            idxr.prepare_tx();
-            idxr.commit_tx();
-            file_remover::get().remove();
+            cr.truncate(min_offset);
+            cr.remover().remove();
         }
     };
 }

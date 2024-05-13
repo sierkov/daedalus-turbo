@@ -10,7 +10,6 @@
 #include <utility>
 #include <dt/cardano.hpp>
 #include <dt/cbor.hpp>
-#include <dt/index/block-meta.hpp>
 #include <dt/index/pay-ref.hpp>
 #include <dt/index/stake-ref.hpp>
 #include <dt/index/txo.hpp>
@@ -22,7 +21,7 @@
 
 namespace daedalus_turbo {
     struct history_mock_block: cardano::block_base {
-        history_mock_block(const index::block_meta::item &block_meta, const cbor_value &tx, uint64_t tx_offset)
+        history_mock_block(const storage::block_info &block_meta, const cbor_value &tx, uint64_t tx_offset)
             : cardano::block_base { tx, block_meta.offset, block_meta.era, tx }, _block_meta { block_meta }, _tx { tx }, _tx_offset { tx_offset }
         {
         }
@@ -54,7 +53,7 @@ namespace daedalus_turbo {
             return _tx_offset;
         }
     private:
-        const index::block_meta::item &_block_meta;
+        const storage::block_info &_block_meta;
         const cbor_value &_tx;
         uint64_t _tx_offset;
     };
@@ -333,7 +332,7 @@ namespace daedalus_turbo {
         struct find_tx_res {
             uint64_t offset = 0;
             cbor_value tx_raw {};
-            index::block_meta::item block_info {};
+            storage::block_info block_info {};
 
             explicit operator bool() const
             {
@@ -348,29 +347,14 @@ namespace daedalus_turbo {
                 _txo_idx { _cr.reader_paths("txo") },
                 _txo_use_idx { _cr.reader_paths("txo-use") }
         {
-            index::reader_multi<index::block_meta::item> block_meta_idx { _cr.reader_paths("block-meta") };
-            _block_index.reserve(block_meta_idx.size());
-            index::block_meta::item item {};
-            while (block_meta_idx.read(item)) {
-                _block_index.emplace_back(std::move(item));
-            }
         }
 
         uint64_t last_slot() const
         {
-            uint64_t last_slot = 0;
-            if (_block_index.size() > 0) last_slot = _block_index.rbegin()->slot;
-            return last_slot;
+            return _cr.max_slot();
         }
 
-        const index::block_meta::item &find_block(uint64_t tx_offset) const {
-            auto bi_it = lower_bound(_block_index.begin(), _block_index.end(), tx_offset, [](const auto &b, size_t off) { return b.offset + b.size - 1 < off; });
-            if (bi_it == _block_index.end())
-                throw error("unknown offset: {}!", tx_offset);
-            if (!(tx_offset >= bi_it->offset && tx_offset < bi_it->offset + bi_it->size))
-                throw error("internal error block metadata does not match the transaction!");
-            return *bi_it;
-        }
+
 
         find_tx_res find_tx(const buffer &tx_hash)
         {
@@ -378,7 +362,7 @@ namespace daedalus_turbo {
             auto [ txo_count, txo_item ] = _txo_idx.find(index::txo::item { tx_hash, 0 });
             if (txo_count > 0) {
                 res.offset = txo_item.offset;
-                res.block_info = find_block(txo_item.offset);
+                res.block_info = _cr.find_block(txo_item.offset);
                 _cr.read(txo_item.offset, res.tx_raw);
             }
             return res;
@@ -393,6 +377,11 @@ namespace daedalus_turbo {
                return _history(_pay_ref_idx, id);;
             throw error("unsupported type for find_history: {}", typeid(T).name());
         }
+
+        const storage::block_info &find_block(uint64_t tx_offset) const
+        {
+            return _cr.find_block(tx_offset);
+        }
     private:
         scheduler &_sched;
         indexer::incremental &_cr;
@@ -401,7 +390,6 @@ namespace daedalus_turbo {
         index::reader_multi<index::pay_ref::item> _pay_ref_idx;
         index::reader_multi<index::txo::item> _txo_idx;
         index::reader_multi_mt<index::txo_use::item> _txo_use_idx;
-        std::vector<index::block_meta::item> _block_index;
 
         template<typename IDX, typename ID>
         const history<ID> _history(index::reader_multi<IDX> &ref_idx, const ID &id)
@@ -409,9 +397,9 @@ namespace daedalus_turbo {
             timer t { "history reconstruction", logger::level::debug };
             progress_guard pg { "fetch incoming txos", "find spent txos", "load spent txo data" };
             history<ID> hist { id };
-            if (_block_index.size() == 0)
+            if (_cr.num_chunks() == 0)
                 return hist;
-            const auto &last_block = *_block_index.rbegin();
+            const auto last_block = *_cr.last_block();
             hist.last_slot = last_block.slot;
             if (!hist.find_incoming_txos(ref_idx))
                 return hist;
@@ -437,7 +425,7 @@ namespace daedalus_turbo {
         for (auto &tx_it: transactions) {
             if (spending_only && !tx_it.second.outputs.empty())
                 continue;
-            const auto &chunk = cr.find(tx_it.first);
+            const auto &chunk = cr.find_offset(tx_it.first);
             const auto [task_it, created] = chunk_tasks.emplace(chunk.offset, parse_task {});
             if (created) task_it->second.chunk = chunk;
             task_it->second.tasks.emplace_back(&tx_it);
@@ -469,7 +457,7 @@ namespace daedalus_turbo {
                         cbor_parser tx_parser { tx_buf };
                         try {
                             tx_parser.read(tx_raw);
-                            const index::block_meta::item &block_meta = r.find_block(tx_offset);
+                            const auto block_meta = r.find_block(tx_offset);
                             history_mock_block mock_blk { block_meta, tx_raw, tx_offset };
                             auto tx = cardano::make_tx(tx_raw, mock_blk);
                             tx_item.hash = tx->hash();

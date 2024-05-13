@@ -173,7 +173,7 @@ namespace daedalus_turbo::sync::local {
                 update.update_time, update.offset, update.data_size
             };
             blake2b(source_info.data_hash, chunk);
-            const auto dist_it = _cr.find(source_info.data_hash);
+            const auto dist_it = _cr.find_data_hash_it(source_info.data_hash);
             // even if the data is the same, the offset change requires reparse/reindex
             if (dist_it != _cr.chunks().end() && dist_it->second.offset == source_info.offset)
                 return analyze_res { std::move(update.path), std::move(source_info), false };

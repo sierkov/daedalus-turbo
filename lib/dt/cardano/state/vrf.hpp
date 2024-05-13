@@ -5,7 +5,6 @@
 #ifndef DAEDALUS_TURBO_CARDANO_STATE_VRF_HPP
 #define DAEDALUS_TURBO_CARDANO_STATE_VRF_HPP
 
-#include <zpp_bits.h>
 #include <dt/cardano/common.hpp>
 #include <dt/container.hpp>
 #include <dt/index/vrf.hpp>
@@ -28,20 +27,8 @@ namespace daedalus_turbo::cardano::state {
             );
         }
 
-        void load(const std::string &path)
-        {
-            auto zpp_data = file::read(path);
-            zpp::bits::in in { zpp_data };
-            in(*this).or_throw();
-        }
-
-        void save(const std::string &path) const
-        {
-            uint8_vector zpp_data {};
-            zpp::bits::out out { zpp_data };
-            out(*this).or_throw();
-            file::write(path, zpp_data);
-        }
+        void load(const std::string &path);
+        void save(const std::string &path) const;
 
         void process_updates(const vector<index::vrf::item> &updates)
         {

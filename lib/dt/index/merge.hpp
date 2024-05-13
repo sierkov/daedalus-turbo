@@ -35,17 +35,6 @@ namespace daedalus_turbo::index {
     }
 
     template<typename T>
-    inline size_t merge_estimate_task_count(const std::vector<std::string> &chunks)
-    {
-        if (chunks.empty())
-            return 0;
-        else if (chunks.size() == 1)
-            return 1;
-        index::reader_mt<T> reader { chunks.at(0) };
-        return reader.num_parts();
-    }
-
-    template<typename T>
     void merge_one_step(scheduler &sched, const std::string &task_group, size_t task_prio,
         const std::vector<std::string> &chunks, const std::string &final_path,
         const std::function<void()> &on_complete)

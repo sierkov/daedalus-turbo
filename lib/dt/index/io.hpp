@@ -7,10 +7,11 @@
 
 #include <atomic>
 #include <memory>
-#include <mutex>
+#include <queue>
 #include <dt/blake2b.hpp>
 #include <dt/container.hpp>
 #include <dt/file.hpp>
+#include <dt/mutex.hpp>
 #include <dt/scheduler.hpp>
 #include <dt/util.hpp>
 

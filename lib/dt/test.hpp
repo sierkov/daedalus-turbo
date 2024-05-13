@@ -8,6 +8,7 @@
 #include <filesystem>
 #define BOOST_UT_DISABLE_MODULE 1
 #include <boost/ut.hpp>
+#include <dt/error.hpp>
 #include <dt/logger.hpp>
 
 namespace daedalus_turbo {

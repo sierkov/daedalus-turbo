@@ -23,6 +23,7 @@ namespace daedalus_turbo::validator {
     protected:
         void _truncate_impl(uint64_t max_end_offset) override;
         uint64_t _valid_end_offset_impl() override;
+        uint64_t _max_end_offset_impl() override;
         void _start_tx_impl() override;
         void _prepare_tx_impl() override;
         void _rollback_tx_impl() override;
@@ -40,6 +41,7 @@ namespace daedalus_turbo::validator {
         void _parent_on_slice_ready(uint64_t first_epoch, uint64_t last_epoch, const indexer::merger::slice &slice);
         void _parent_truncate_impl(uint64_t max_end_offset);
         uint64_t _parent_valid_end_offset_impl();
+        uint64_t _parent_max_end_offset_impl();
         void _parent_start_tx_impl();
         void _parent_prepare_tx_impl();
         void _parent_rollback_tx_impl();

@@ -14,7 +14,6 @@
 #include <set>
 #include <span>
 #include <variant>
-#include <zpp_bits.h>
 #include <dt/cardano/type.hpp>
 #include <dt/cbor.hpp>
 #include <dt/file.hpp>
@@ -113,7 +112,7 @@ namespace daedalus_turbo::cardano {
         return fmt::format("{} {}", buffer_readable { asset_name }, policy_id.span());
     }
 
-    struct __attribute__((packed)) amount {
+    struct amount {
         uint64_t coins { 0 };
 
         operator uint64_t() const
@@ -159,8 +158,12 @@ namespace daedalus_turbo::cardano {
     static constexpr uint64_t _epoch0_begin_ts = _shelley_begin_ts - _shelley_begin_slot;
     
     struct __attribute__((packed)) slot {
-        using serialize = zpp::bits::members<1>;
         uint64_t _slot = 0;
+
+        constexpr static auto serialize(auto &archive, auto &self)
+        {
+            return archive(self._slot);
+        }
 
         static cardano::slot from_time(const std::chrono::time_point<std::chrono::system_clock> &tp)
         {
@@ -219,7 +222,9 @@ namespace daedalus_turbo::cardano {
             if (_slot <= 208 * 21600) {
                 return _slot / 21600;
             } else {
-                return (_slot - 208 * 21600) / (432000 / 20);
+                const auto shelley_slot = _slot - 208 * 21600;
+                const auto shelley_chunk = shelley_slot / (432000 / 20);
+                return 208 + shelley_chunk;
             }
         }
 
@@ -261,9 +266,17 @@ namespace daedalus_turbo::cardano {
     };
 
     struct point {
-        cardano::block_hash hash {};
-        cardano::slot slot {};
+        block_hash hash {};
+        slot slot {};
+        uint64_t height = 0;
+
+        bool operator==(const auto &o) const
+        {
+            return hash == o.hash && slot == o.slot;
+        }
     };
+    using point_pair = std::pair<point, point>;
+    using point_list = std::vector<point>;
 
     struct stake_pointer {
         cardano::slot slot {};
@@ -428,15 +441,7 @@ namespace daedalus_turbo::cardano {
             switch (type) {
                 case 0b0100: // pointer key
                 case 0b0101: // pointer script
-                    return true;struct vkey_wit_ok {
-            size_t total = 0;
-            size_t ok = 0;
-
-            bool operator()() const noexcept
-            {
-                return total == ok;
-            }
-        };
+                    return true;
                     break;
 
                 default:
@@ -521,8 +526,10 @@ namespace daedalus_turbo::cardano {
     };
 
     struct __attribute__((packed)) tx_size {
-        friend zpp::bits::access;
-        using serialize = zpp::bits::members<1>;
+        constexpr static auto serialize(auto &archive, auto &self)
+        {
+            return archive(self._size);
+        }
 
         tx_size(): _size { 0 }
         {
@@ -545,8 +552,10 @@ namespace daedalus_turbo::cardano {
     };
 
     struct tx_out_idx {
-        friend zpp::bits::access;
-        using serialize = zpp::bits::members<1>;
+        constexpr static auto serialize(auto &archive, auto &self)
+        {
+            return archive(self._out_idx);
+        }
 
         tx_out_idx(): _out_idx { 0 } {}
 
@@ -599,8 +608,10 @@ namespace daedalus_turbo::cardano {
     };
 
     struct __attribute__((packed)) epoch {
-        friend zpp::bits::access;
-        using serialize = zpp::bits::members<1>;
+        constexpr static auto serialize(auto &archive, auto &self)
+        {
+            return archive(self._epoch);
+        }
 
         static void check(uint64_t epoch)
         {
@@ -653,6 +664,11 @@ namespace daedalus_turbo::cardano {
         inline json::object to_json() const;
     };
 
+    struct collateral_return {
+        const cardano::address address;
+        const cardano::amount amount;
+    };
+
     struct tx_withdrawal {
         const cardano::address &address;
         const cardano::amount amount;
@@ -682,8 +698,6 @@ namespace daedalus_turbo::cardano {
     using nonce = std::optional<cardano_hash_32>;
 
     struct param_update {
-        using serialize=zpp::bits::members<18>;
-
         cardano::pool_hash pool_id {};
         uint64_t epoch = 0;
         std::optional<uint64_t> min_fee_a {};
@@ -702,6 +716,17 @@ namespace daedalus_turbo::cardano {
         std::optional<cardano::nonce> extra_entropy {};
         std::optional<protocol_version> protocol_ver {};
         std::optional<uint64_t> min_utxo_value {};
+
+        constexpr static auto serialize(auto &archive, auto &self)
+        {
+            return archive(self.pool_id, self.epoch,
+                self.min_fee_a, self.min_fee_b, self.max_block_body_size,
+                self.max_transaction_size, self.max_block_header_size, self.key_deposit,
+                self.pool_deposit, self.max_epoch, self.n_opt,
+                self.pool_pledge_influence, self.expansion_rate, self.treasury_growth_rate,
+                self.decentralization, self.extra_entropy, self.protocol_ver, self.min_utxo_value
+            );
+        }
 
         bool operator==(const auto &b) const
         {
@@ -893,8 +918,10 @@ namespace daedalus_turbo::cardano {
             return _offset;
         }
 
-        inline size_t size() const
+        inline uint32_t size() const
         {
+            if (_block_tuple.size > std::numeric_limits<uint32_t>::max())
+                throw error("block size is too large: {}", _block_tuple.size);
             return _block_tuple.size;
         }
 
@@ -1098,7 +1125,7 @@ namespace fmt {
     struct formatter<daedalus_turbo::cardano::slot>: public formatter<uint64_t> {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
-            return fmt::format_to(ctx.out(), "{}/{}/{}", v.epoch(), static_cast<uint64_t>(v), v.epoch_slot());
+            return fmt::format_to(ctx.out(), "{}/{}/{}", v.epoch(), v.epoch_slot(), static_cast<uint64_t>(v));
         }
     };
 
@@ -1388,6 +1415,14 @@ namespace fmt {
             if (v.min_utxo_value)
                 out_it = fmt::format_to(out_it, "min_utxo_value: {} ", *v.min_utxo_value);
             return fmt::format_to(out_it, "]");
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::cardano::point>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "({}, {})", v.hash, v.slot);
         }
     };
 }

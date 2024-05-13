@@ -1,5 +1,5 @@
 dist
 bin
-dt-ui-*
+dt-explorer-*
 ui/**
 *.dmg

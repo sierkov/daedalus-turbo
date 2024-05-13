@@ -18,8 +18,8 @@ namespace daedalus_turbo::cli::sync_p2p {
         const command_info &info() const override
         {
             static const command_info i {
-                "sync-p2p", "<data-dir> [--max-epoch=<epoch>]",
-                "synchronize the blockchain with the Cardano P2P network"
+                "sync-p2p", "<data-dir> [relays-new.cardano-mainnet.iohk.io:3001]",
+                "synchronize the blockchain with a peer on the Cardano Network"
             };
             return i;
         }
@@ -29,9 +29,20 @@ namespace daedalus_turbo::cli::sync_p2p {
             if (args.empty())
                 _throw_usage();
             const auto &data_dir = args.at(0);
+            std::optional<cardano::network::address> addr {};
+            if (args.size() >= 2) {
+                const auto &addr_str = args.at(1);
+                const auto port_pos = addr_str.find(':');
+                if (port_pos != addr_str.npos) {
+                    addr = { addr_str.substr(0, port_pos), addr_str.substr(port_pos + 1) };
+                } else {
+                    addr = { addr_str, "3001" };
+                }
+            }
             validator::incremental cr { data_dir };
             sync::p2p::syncer syncer { cr };
-            syncer.sync();
+            auto peer = syncer.find_peer(addr);
+            syncer.sync(std::move(peer));
         }
     };
 }

@@ -13,7 +13,7 @@
 using namespace daedalus_turbo;
 
 static std::string no_error_msg {
-#ifdef __clang__
+#ifdef __APPLE__
     "Undefined error: 0"
 #elif _WIN32
     "No error"

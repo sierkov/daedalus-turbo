@@ -9,6 +9,7 @@ pkg_check_modules(ZSTD REQUIRED libzstd>=1.4.8)
 file(GLOB_RECURSE LIB_SRCS dt/*.cpp)
 list(FILTER LIB_SRCS EXCLUDE REGEX "\\.test\\.cpp$")
 list(FILTER LIB_SRCS EXCLUDE REGEX "\\.bench\\.cpp$")
+list(FILTER LIB_SRCS EXCLUDE REGEX "\\.fuzz\\.cpp$")
 add_library(lib OBJECT ${LIB_SRCS})
 target_include_directories(lib PUBLIC .)
 target_link_libraries(lib PUBLIC
@@ -31,7 +32,7 @@ target_link_directories(lib PUBLIC
     ${ZSTD_LIBRARY_DIRS}
 )
 if (WIN32)
-    target_compile_options(lib PUBLIC -DDT_USE_MIMALLOC=1)
+    target_compile_options(lib PUBLIC -DDT_USE_MIMALLOC=1 -DNOMINMAX=1)
     pkg_check_modules(MIMALLOC REQUIRED mimalloc>=2.0.5)
     target_link_libraries(lib PUBLIC ${MIMALLOC_LIBRARIES})
     target_link_directories(lib PUBLIC ${MIMALLOC_LIBRARY_DIRS})

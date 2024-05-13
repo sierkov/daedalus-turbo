@@ -6,7 +6,6 @@
 #define DAEDALUS_TURBO_VALIDATOR_STATE_HPP
 
 #include <unordered_map>
-#include <zpp_bits.h>
 #include <dt/atomic.hpp>
 #include <dt/file.hpp>
 #include <dt/format.hpp>
@@ -75,66 +74,48 @@ namespace daedalus_turbo::validator {
             );
         }
 
-        void load(const std::string &path)
-        {
-            auto zpp_data = file::read(path);
-            zpp::bits::in in { zpp_data };
-            in(*this).or_throw();
-        }
-
-        void save(const std::string &path)
-        {
-            uint8_vector small {}, mark {}, set {}, go {}, active {}, rewards {};
-            static const std::string task_group { "save-state-snapshot" };
-            _sched.wait_for_count(task_group, 6, [&] {
-                _sched.submit_void(task_group, 1000, [&] {
-                    timer t { fmt::format("serializing small for snapshot {}", path), logger::level::trace };
-                    zpp::bits::out out { small };
-                    out(_epoch, _end_offset, _delta_treasury, _delta_reserves, _reserves, _treasury, _fees_next_reward,
-                        _epoch_accounts, _instant_rewards_reserves, _instant_rewards_treasury, _reward_pool_params,
-                        _blocks_current, _blocks_before, _params, _params_prev, _ppups, _ppups_future).or_throw();
-                });
-                _sched.submit_void(task_group, 1000, [&] {
-                    timer t { fmt::format("serializing mark for snapshot {}", path), logger::level::trace };
-                    zpp::bits::out out { mark };
-                    out(_mark).or_throw();
-                });
-                _sched.submit_void(task_group, 1000, [&] {
-                    timer t { fmt::format("serializing set for snapshot {}", path), logger::level::trace };
-                    zpp::bits::out out { set };
-                    out(_set).or_throw();
-                });
-                _sched.submit_void(task_group, 1000, [&] {
-                    timer t { fmt::format("serializing go for snapshot {}", path), logger::level::trace };
-                    zpp::bits::out out { go };
-                    out(_go).or_throw();
-                });
-                _sched.submit_void(task_group, 1000, [&] {
-                    timer t { fmt::format("serializing active for snapshot {}", path), logger::level::trace };
-                    zpp::bits::out out { active };
-                    out(_active_stake_dist, _active_pool_dist, _active_pool_params, _active_delegs,
-                        _active_inv_delegs, _pools_retiring).or_throw();
-                });
-                _sched.submit_void(task_group, 1000, [&] {
-                    timer t { fmt::format("serializing rewards for snapshot {}", path), logger::level::trace };
-                    zpp::bits::out out { rewards };
-                    out(_rewards, _reward_pulsing_snapshot, _reward_pulsing_start, _potential_rewards,
-                        _ptr_to_stake, _stake_to_ptr).or_throw();
-                });
-            });
-            timer t { fmt::format("writing serialized data to {}", path), logger::level::trace };
-            file::write_stream ws { path };
-            ws.write(small);
-            ws.write(mark);
-            ws.write(set);
-            ws.write(go);
-            ws.write(active);
-            ws.write(rewards);
-        }
-
         explicit state(const pool_set &pbft_pools=pool_set {}, scheduler &sched=scheduler::get())
             : _sched { sched }, _pbft_pools { pbft_pools }
         {
+        }
+
+        void load(const std::string &path);
+        void save(const std::string &path);
+
+        void clear()
+        {
+            _epoch = 0;
+            _end_offset = 0;
+            _mark.clear();
+            _set.clear();
+            _go.clear();
+            _pools_retiring.clear();
+            _active_stake_dist.clear();
+            _active_pool_dist.clear();
+            _active_pool_params.clear();
+            _active_delegs.clear();
+            _active_inv_delegs.clear();
+            _params = {};
+            _params_prev = {};
+            _ppups.clear();
+            _ppups_future.clear();
+            _epoch_accounts = {};
+            _fees_next_reward = 0;
+            _rewards.clear();
+            _ptr_to_stake.clear();
+            _stake_to_ptr.clear();
+            _instant_rewards_reserves.clear();
+            _instant_rewards_treasury.clear();
+            _reward_pool_params.clear();
+            _blocks_current.clear();
+            _blocks_before.clear();
+            _delta_treasury = 0;
+            _delta_reserves = 0;
+            _potential_rewards.clear();
+            _reward_pulsing_start = {};
+            _reward_pulsing_snapshot.clear();
+            _reserves = 0;
+            _treasury = 0;
         }
 
         template<std::ranges::input_range T>
@@ -465,6 +446,11 @@ namespace daedalus_turbo::validator {
             return _delta_reserves;
         }
 
+        uint64_t delta_treasury() const
+        {
+            return _delta_treasury;
+        }
+
         void rotate_snapshots()
         {
             timer t { fmt::format("validator::state epoch: {} rotate_snapshots", _epoch), logger::level::trace };
@@ -480,7 +466,7 @@ namespace daedalus_turbo::validator {
                 _set = std::move(_mark);
             }
             timer ts { fmt::format("validator::state epoch: {} copy active snapshot to mark", _epoch), logger::level::trace };
-            const std::string task_group = fmt::format("rotate-snapshots-epoch-{}", _epoch);
+            const std::string task_group = fmt::format("ledger-state:rotate-snapshots:epoch-{}", _epoch);
             _sched.wait_for_count(task_group, 6, [&] {
                 _sched.submit_void(task_group, 1000, [this] {
                     timer tsi { fmt::format("validator::state epoch: {} copy pool_dist to mark", _epoch), logger::level::trace };
@@ -557,52 +543,34 @@ namespace daedalus_turbo::validator {
         {
             return _epoch;
         }
-
-        void clear()
-        {
-            _epoch = 0;
-            _end_offset = 0;
-            _mark.clear();
-            _set.clear();
-            _go.clear();
-            _pools_retiring.clear();
-            _active_stake_dist.clear();
-            _active_pool_dist.clear();
-            _active_pool_params.clear();
-            _active_delegs.clear();
-            _active_inv_delegs.clear();
-            _params = {};
-            _params_prev = {};
-            _ppups.clear();
-            _ppups_future.clear();
-            _epoch_accounts = {};
-            _fees_next_reward = 0;
-            _rewards.clear();
-            _ptr_to_stake.clear();
-            _stake_to_ptr.clear();
-            _instant_rewards_reserves.clear();
-            _instant_rewards_treasury.clear();
-            _reward_pool_params.clear();
-            _blocks_current.clear();
-            _blocks_before.clear();
-            _delta_treasury = 0;
-            _delta_reserves = 0;
-            _potential_rewards.clear();
-            _reward_pulsing_start = {};
-            _reward_pulsing_snapshot.clear();
-            _reserves = 0;
-            _treasury = 0;
-        }
     private:
-        struct ledger_copy {
-            using serialize = zpp::bits::members<6>;
+        struct stake_account_info {
+            std::optional<uint64_t> active_stake {};
+            std::optional<uint64_t> active_reward {};
+            std::optional<cardano::pool_hash> active_deleg {};
+            std::optional<uint64_t> mark_stake {};
+            std::optional<uint64_t> mark_reward {};
+            std::optional<cardano::pool_hash> mark_deleg {};
+            std::optional<uint64_t> set_stake {};
+            std::optional<uint64_t> set_reward {};
+            std::optional<cardano::pool_hash> set_deleg {};
+            std::optional<uint64_t> go_stake {};
+            std::optional<uint64_t> go_reward {};
+            std::optional<cardano::pool_hash> go_deleg {};
+        };
 
+        struct ledger_copy {
             stake_distribution_copy stake_dist {};
             reward_distribution_copy reward_dist {};
             pool_stake_distribution pool_dist {};
             delegation_map_copy delegs {};
             inv_delegation_map_copy inv_delegs {};
             pool_info_map pool_params {};
+
+            constexpr static auto serialize(auto &archive, auto &self)
+            {
+                return archive(self.stake_dist, self.reward_dist, self.pool_dist, self.delegs, self.inv_delegs, self.pool_params);
+            }
 
             void clear()
             {
@@ -616,11 +584,15 @@ namespace daedalus_turbo::validator {
         };
 
         struct pool_reward_item {
-            using serialize = zpp::bits::members<4>;
             cardano::stake_ident stake_id {};
             reward_type type {};
             uint64_t amount = 0;
             std::optional<cardano::pool_hash> delegated_pool_id {};
+
+            constexpr static auto serialize(auto &archive, auto &self)
+            {
+                return archive(self.stake_id, self.type, self.amount, self.delegated_pool_id);
+            }
         };
 
         using pool_block_dist = distribution<std::map<cardano::pool_hash, uint64_t>>;
@@ -654,6 +626,9 @@ namespace daedalus_turbo::validator {
         // delegationState.pstate.retiring
         std::map<cardano::pool_hash, uint64_t> _pools_retiring {};
 
+        // stake account state
+        std::map<cardano::stake_ident, stake_account_info> _stake_accounts {};
+
         // active state
         stake_distribution _active_stake_dist {};
         pool_stake_distribution _active_pool_dist {};
@@ -668,9 +643,10 @@ namespace daedalus_turbo::validator {
         std::map<cardano::pool_hash, cardano::param_update> _ppups_future {};
 
         // rewards-related data
+        reward_distribution _rewards {};
+
         epoch_info _epoch_accounts {};
         uint64_t _fees_next_reward = 0;
-        reward_distribution _rewards {};
         ptr_to_stake_map _ptr_to_stake {};
         stake_to_ptr_map _stake_to_ptr {};
         stake_distribution _instant_rewards_reserves {};
@@ -833,7 +809,7 @@ namespace daedalus_turbo::validator {
 
         uint64_t _compute_pool_rewards_parallel(const pool_block_dist &pools_active, const uint64_t staking_reward_pot, const uint64_t total_stake)
         {
-            const std::string task_group { "staking-rewards-part" };
+            const std::string task_group { "ledger-state:staking-rewards-part" };
             const auto [init_total, init_filtered] = _rewards_prepare_pools(pools_active, staking_reward_pot, total_stake);
             std::atomic_uint64_t total = init_total;
             std::atomic_uint64_t filtered = init_filtered;
@@ -868,7 +844,7 @@ namespace daedalus_turbo::validator {
             _blocks_before = std::move(_blocks_current);
             _blocks_current.clear();
             _reward_pulsing_snapshot.clear();
-            static const std::string task_group { "clean-potential-rewards" };
+            static const std::string task_group { "ledger-state:clean-potential-rewards" };
             _sched.wait_for_count(task_group, _potential_rewards.num_parts,
                 [&] {
                     for (size_t part_idx = 0; part_idx < _potential_rewards.num_parts; ++part_idx) {
@@ -987,14 +963,14 @@ namespace daedalus_turbo::validator {
             const bool force_active = !aggregated || forgo_prefilter;
             timer t { fmt::format("validator::state epoch: {} transfer_potential_rewards aggregated forgo_prefilter: {}", _epoch, forgo_prefilter), logger::level::trace };
             using pool_update_map = std::unordered_map<cardano::pool_hash, uint64_t>;
-            static const std::string task_group { "transfer-rewards-part" };
+            static const std::string task_group { "ledger-state:transfer-rewards-part" };
             std::atomic_uint64_t treasury_update = 0;
             std::vector<pool_update_map> part_updates(_potential_rewards.num_parts);
             // all rewards must be already created to ensure no allocation is necessary
             _sched.wait_for_count(task_group, _potential_rewards.num_parts,
                 [&] {
                     for (size_t part_idx = 0; part_idx < _potential_rewards.num_parts; ++part_idx) {
-                        _sched.submit_void("transfer-rewards-part", 1000, [this, &part_updates, &treasury_update, part_idx, aggregated, force_active] () {
+                        _sched.submit_void(task_group, 1000, [this, &part_updates, &treasury_update, part_idx, aggregated, force_active] () {
                             // relies on _rewards, _potential_rewards, _pulsing_snapshot being ordered containers!
                             auto reward_it = _rewards.partition(part_idx).begin();
                             const auto reward_end = _rewards.partition(part_idx).end();
@@ -1028,7 +1004,7 @@ namespace daedalus_turbo::validator {
             logger::trace("epoch {} transfer_potential_rewards treasury_update: {}", _epoch, treasury_update.load());
             _treasury += treasury_update;
             {
-                timer t { fmt::format("epoch: {} transfer_potential_rewards sequential application of updates", _epoch), logger::level::trace };
+                timer t2 { fmt::format("epoch: {} transfer_potential_rewards sequential application of updates", _epoch), logger::level::trace };
                 // updates are applied in the same order as if they were computed sequentially
                 for (const auto &pool_dist_updates: part_updates) {
                     for (const auto &[pool_id, amount]: pool_dist_updates)

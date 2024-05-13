@@ -8,9 +8,7 @@
 #include <cstdio>
 #include <atomic>
 #include <filesystem>
-#include <fstream>
 #include <string>
-#include <zpp_bits.h>
 #include <dt/logger.hpp>
 #include <dt/util.hpp>
 #include <dt/zstd.hpp>
@@ -257,6 +255,14 @@ namespace daedalus_turbo::file {
         return buf;
     }
 
+    inline uint8_vector read_all(const std::span<std::string> &paths)
+    {
+        uint8_vector data {};
+        for (const auto &p: paths)
+            data << read(p);
+        return data;
+    }
+
     inline void read_span(const std::span<uint8_t> &v, const std::string &path, size_t num_bytes=0)
     {
         if (num_bytes == 0)
@@ -268,35 +274,19 @@ namespace daedalus_turbo::file {
     }
 
     inline void write(const std::string &path, const buffer &buffer) {
-        auto tmp_path = fmt::format("{}.tmp", path);
-        write_stream os { tmp_path };
-        os.write(buffer.data(), buffer.size());
-        os.close();
+        const auto tmp_path = fmt::format("{}.tmp", path);
+        {
+            write_stream os { tmp_path };
+            os.write(buffer.data(), buffer.size());
+        }
         std::filesystem::rename(tmp_path, path);
         logger::trace("written {} bytes to {}", buffer.size(), path);
     }
 
-    inline void write_zstd(const std::string &path, const buffer &buffer)
+    inline void write_zstd(const std::string &path, const buffer &buffer, int level=3)
     {
-        const auto compressed = zstd::compress(buffer);
+        const auto compressed = zstd::compress(buffer, level);
         write(path, compressed);
-    }
-
-    template<typename T>
-    void read_zpp(T &v, const std::string &path)
-    {
-        uint8_vector zpp_data = file::read_raw(path);
-        zpp::bits::in in { zpp_data };
-        in(v).or_throw();
-    }
-
-    template<typename T>
-    void write_zpp(const std::string &path, const T &v)
-    {
-        uint8_vector zpp_data {};
-        zpp::bits::out out { zpp_data };
-        out(v).or_throw();
-        file::write(path, zpp_data);
     }
 
     inline uint64_t disk_used(const std::string &path)

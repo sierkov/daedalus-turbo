@@ -6,7 +6,6 @@
 #define DAEDALUS_TURBO_RATIONAL_HPP
 
 #include <boost/multiprecision/cpp_int.hpp>
-#include <zpp_bits.h>
 #include <dt/format.hpp>
 
 namespace daedalus_turbo {
@@ -16,9 +15,13 @@ namespace daedalus_turbo {
     using boost::multiprecision::denominator;
 
     struct rational_u64 {
-        using serialize = zpp::bits::members<2>;
         uint64_t numerator = 0;
         uint64_t denominator = 1;
+
+        constexpr static auto serialize(auto &archive, auto &self)
+        {
+            return archive(self.numerator, self.denominator);
+        }
 
         bool operator==(const auto &b) const
         {

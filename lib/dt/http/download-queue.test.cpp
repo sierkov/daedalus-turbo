@@ -59,7 +59,7 @@ suite http_download_queue_suite = [] {
             {
                 download_queue_async dlq {};
                 for (size_t i = 0; i < 32; ++i)
-                    dlq.download("http://turbo1.daedalusturbo.org/chain.json", fmt::format("{}/chain-{}.json", tmp_dir, i), 0, [](auto &&r) {});
+                    dlq.download("http://turbo1.daedalusturbo.org/chain.json", fmt::format("{}/chain-{}.json", tmp_dir, i), 0, [](auto &&) {});
                 // do not call process and destroy the queue
                 // should cancel the tasks and quit
             }

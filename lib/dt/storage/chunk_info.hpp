@@ -10,6 +10,25 @@
 #include <dt/format.hpp>
 
 namespace daedalus_turbo::storage {
+    struct block_info {
+        cardano::slot slot {};
+        uint64_t offset = 0;
+        cardano::block_hash hash {};
+        uint32_t size = 0;
+        uint8_t era = 0; // necessary to exclude boundary blocks (era=0) during density estimation
+
+        constexpr static auto serialize(auto &archive, auto &self)
+        {
+            return archive(self.slot, self.offset, self.hash, self.size, self.era);
+        }
+
+        [[nodiscard]] uint64_t end_offset() const
+        {
+            return offset + size;
+        }
+    };
+    using block_list = std::vector<block_info>;
+
     struct chunk_info {
         std::string orig_rel_path {};
         size_t data_size = 0;
@@ -21,6 +40,18 @@ namespace daedalus_turbo::storage {
         cardano::block_hash prev_block_hash {};
         cardano::block_hash last_block_hash {};
         uint64_t offset = 0;
+        // A field that is not serialized to json
+        std::vector<block_info> blocks {};
+
+        constexpr static auto serialize(auto &archive, auto &self)
+        {
+            return archive(
+                self.orig_rel_path, self.data_size, self.compressed_size,
+                self.num_blocks, self.first_slot, self.last_slot,
+                self.data_hash, self.prev_block_hash, self.last_block_hash,
+                self.offset, self.blocks
+            );
+        }
 
         static std::string rel_path_from_hash(const cardano::block_hash &data_hash)
         {
@@ -30,6 +61,13 @@ namespace daedalus_turbo::storage {
         [[nodiscard]] std::string rel_path() const
         {
             return rel_path_from_hash(data_hash);
+        }
+
+        [[nodiscard]] const cardano::block_hash &first_block_hash() const
+        {
+            if (blocks.empty())
+                throw error("chunk cannot be empty!");
+            return blocks.front().hash;
         }
 
         [[nodiscard]] uint64_t end_offset() const
