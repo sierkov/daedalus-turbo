@@ -18,8 +18,10 @@ Daedalus Turbo is an open-source project that aims to improve drastically (>=10x
 # Features
 Currently supported:
 - Incremental synchronization and indexing of compressed blockchain data over the Internet
+- Incremental synchronization and indexing using the Cardano Network protocol
 - Incremental synchronization and indexing from a local Cardano Node instance
 - Parallelized Ouroboros Praos data validation
+- Ouroboros Genesis chain selection rule when synchronizing with a Cardano Network peer
 - Reconstruction of balances and transaction histories of stake addresses
 - Reconstruction of balances and transaction histories of payment addresses
 - Direct history reconstruction from compressed blockchain data
@@ -30,7 +32,6 @@ Currently supported:
 
 In active development:
 - Validation of Plutus and other scripts
-- Ouroboros Genesis support
 
 As the project matures and moves through its [roadmap](#roadmap), the list of supported features will grow.
 
