@@ -107,7 +107,7 @@ Download, validate, and prepare for querying a copy of the Cardano blockchain fr
 ./dt revalidate /data/cardano
 ```
 
-(Optional) Compare the downloaded chain vs a Cardano Network node and fetch differences if necessary:
+(Optional) Compare the downloaded chain vs a Cardano Network node (`relays-new.cardano-mainnet.iohk.io` by default) and fetch differences if necessary:
 ```
 ./dt sync-p2p /data/cardano
 ```
