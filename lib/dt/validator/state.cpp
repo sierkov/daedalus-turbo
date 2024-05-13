@@ -24,35 +24,35 @@ namespace daedalus_turbo::validator {
         _sched.wait_for_count(task_group, 6, [&] {
             _sched.submit_void(task_group, 1000, [&] {
                 timer t { fmt::format("serializing small for snapshot {}", path), logger::level::trace };
-                typename ::zpp::bits::out out { small };
+                ::zpp::bits::out out { small };
                 out(_epoch, _end_offset, _delta_treasury, _delta_reserves, _reserves, _treasury, _fees_next_reward,
                     _epoch_accounts, _instant_rewards_reserves, _instant_rewards_treasury, _reward_pool_params,
                     _blocks_current, _blocks_before, _params, _params_prev, _ppups, _ppups_future).or_throw();
             });
             _sched.submit_void(task_group, 1000, [&] {
                 timer t { fmt::format("serializing mark for snapshot {}", path), logger::level::trace };
-                typename ::zpp::bits::out out { mark };
+                ::zpp::bits::out out { mark };
                 out(_mark).or_throw();
             });
             _sched.submit_void(task_group, 1000, [&] {
                 timer t { fmt::format("serializing set for snapshot {}", path), logger::level::trace };
-                typename ::zpp::bits::out out { set };
+                ::zpp::bits::out out { set };
                 out(_set).or_throw();
             });
             _sched.submit_void(task_group, 1000, [&] {
                 timer t { fmt::format("serializing go for snapshot {}", path), logger::level::trace };
-                typename ::zpp::bits::out out { go };
+                ::zpp::bits::out out { go };
                 out(_go).or_throw();
             });
             _sched.submit_void(task_group, 1000, [&] {
                 timer t { fmt::format("serializing active for snapshot {}", path), logger::level::trace };
-                typename ::zpp::bits::out out { active };
+                ::zpp::bits::out out { active };
                 out(_active_stake_dist, _active_pool_dist, _active_pool_params, _active_delegs,
                     _active_inv_delegs, _pools_retiring).or_throw();
             });
             _sched.submit_void(task_group, 1000, [&] {
                 timer t { fmt::format("serializing rewards for snapshot {}", path), logger::level::trace };
-                typename ::zpp::bits::out out { rewards };
+                ::zpp::bits::out out { rewards };
                 out(_rewards, _reward_pulsing_snapshot, _reward_pulsing_start, _potential_rewards,
                     _ptr_to_stake, _stake_to_ptr).or_throw();
             });

@@ -157,7 +157,7 @@ namespace daedalus_turbo::cardano {
     static constexpr uint64_t _shelley_begin_slot = 208 * 21600;
     static constexpr uint64_t _epoch0_begin_ts = _shelley_begin_ts - _shelley_begin_slot;
     
-    struct __attribute__((packed)) slot {
+    struct slot {
         uint64_t _slot = 0;
 
         constexpr static auto serialize(auto &archive, auto &self)
@@ -267,7 +267,7 @@ namespace daedalus_turbo::cardano {
 
     struct point {
         block_hash hash {};
-        slot slot {};
+        cardano::slot slot {};
         uint64_t height = 0;
 
         bool operator==(const auto &o) const
@@ -525,7 +525,7 @@ namespace daedalus_turbo::cardano {
         }
     };
 
-    struct __attribute__((packed)) tx_size {
+    struct tx_size {
         constexpr static auto serialize(auto &archive, auto &self)
         {
             return archive(self._size);
@@ -580,7 +580,7 @@ namespace daedalus_turbo::cardano {
         uint16_t _out_idx;
     };
 
-    struct __attribute__((packed)) cert_idx {
+    struct cert_idx {
 
         cert_idx(): _idx { 0 } {}
 
@@ -607,7 +607,7 @@ namespace daedalus_turbo::cardano {
         uint16_t _idx;
     };
 
-    struct __attribute__((packed)) epoch {
+    struct epoch {
         constexpr static auto serialize(auto &archive, auto &self)
         {
             return archive(self._epoch);

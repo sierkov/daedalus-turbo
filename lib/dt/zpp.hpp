@@ -14,7 +14,7 @@ namespace daedalus_turbo::zpp {
     void load(T &v, const std::string &path)
     {
         const auto zpp_data = file::read_raw(path);
-        typename ::zpp::bits::in in { zpp_data };
+        ::zpp::bits::in in { zpp_data };
         in(v).or_throw();
     }
 
@@ -22,7 +22,7 @@ namespace daedalus_turbo::zpp {
     void save(const std::string &path, const T &v)
     {
         uint8_vector zpp_data {};
-        typename ::zpp::bits::out out { zpp_data };
+        ::zpp::bits::out out { zpp_data };
         out(v).or_throw();
         file::write(path, zpp_data);
     }
