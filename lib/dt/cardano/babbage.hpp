@@ -65,87 +65,73 @@ namespace daedalus_turbo::cardano::babbage {
 
         void foreach_output(const std::function<void(const tx_output &)> &observer) const override
         {
-            const cbor_array *outputs = nullptr;
             for (const auto &[entry_type, entry]: _tx.map()) {
-                if (entry_type.uint() == 1) outputs = &entry.array();
-            }
-            if (outputs == nullptr) return;
-            for (size_t i = 0; i < outputs->size(); i++) {
-                const cbor_value *address = nullptr;
-                const cbor_value *amount = nullptr;
-                switch (outputs->at(i).type) {
-                case CBOR_ARRAY: {
-                    const auto &out = outputs->at(i).array();
-                    address = &out.at(0);
-                    amount = &out.at(1);
-                    break;
+                if (entry_type.uint() == 1) {
+                    const auto &outputs = entry.array();
+                    for (size_t i = 0; i < outputs.size(); i++)
+                        observer(_parse_tx_output(outputs.at(i), i));
                 }
-
-                case CBOR_MAP:
-                    for (const auto &[o_type, o_entry]: outputs->at(i).map()) {
-                        switch (o_type.uint()) {
-                        case 0: address = &o_entry; break;
-                        case 1: amount = &o_entry; break;
-                        default: break;
-                        }
-                    }
-                    break;
-
-                default:
-                    throw cardano_error("unsupported transaction output format era: {}, slot: {}!", _blk.era(), (uint64_t)_blk.slot());
-                }
-                
-                if (address == nullptr) throw cardano_error("transaction output misses address field!");
-                if (amount == nullptr) throw cardano_error("transaction output misses amount field!");
-                _extract_assets(*address, *amount, i, observer);
             }
         }
 
-        virtual std::optional<cardano::collateral_return> collateral_return() const
+        virtual std::optional<tx_output> collateral_return() const
         {
-            std::optional<cardano::collateral_return> c_out {};
+            size_t num_outputs = 0;
+            foreach_output([&](const auto &){ ++num_outputs; });
+            std::optional<tx_output> c_out {};
             _if_item_present(16, [&](const auto &c_out_raw) {
-                const cbor_value *address = nullptr;
-                const cbor_value *amount = nullptr;
-                switch (c_out_raw.type) {
-                    case CBOR_ARRAY: {
-                        const auto &out = c_out_raw.array();
-                        address = &out.at(0);
-                        amount = &out.at(1);
-                        break;
-                    }
-
-                    case CBOR_MAP:
-                        for (const auto &[o_type, o_entry]: c_out_raw.map()) {
-                            switch (o_type.uint()) {
-                            case 0: address = &o_entry; break;
-                            case 1: amount = &o_entry; break;
-                            default: break;
-                            }
-                        }
-                        break;
-
-                    default:
-                        throw cardano_error("unsupported transaction output format era: {}, slot: {}!", _blk.era(), _blk.slot());
-                }
-                if (address == nullptr)
-                    throw cardano_error("transaction output misses address field!");
-                if (amount == nullptr)
-                    throw cardano_error("transaction output misses amount field!");
-                _extract_assets(*address, *amount, 0, [&](const auto &tx_out) {
-                    c_out.emplace(tx_out.address, tx_out.amount);
-                });
+                c_out.emplace(_parse_tx_output(c_out_raw, num_outputs));
             });
             return c_out;
         }
 
-        virtual cardano::amount total_collateral() const
+        virtual std::optional<uint64_t> collateral_value() const
         {
-            uint64_t coin = 0;
+            std::optional<uint64_t> coin {};
             _if_item_present(17, [&](const auto &tot_collateral_raw) {
                 coin = tot_collateral_raw.uint();
             });
-            return { coin };
+            return coin;
+        }
+    private:
+        tx_output _parse_tx_output(const cbor_value &tx_out, const size_t idx) const {
+            const cbor_value *address = nullptr;
+            const cbor_value *amount = nullptr;
+            const cbor_value *datum = nullptr;
+            const cbor_value *script_ref = nullptr;
+            switch (tx_out.type) {
+                case CBOR_ARRAY: {
+                    const auto &out = tx_out.array();
+                    address = &out.at(0);
+                    amount = &out.at(1);
+                    if (out.size() > 2)
+                        datum = &out.at(2);
+                    break;
+                }
+
+                case CBOR_MAP:
+                    for (const auto &[o_type, o_entry]: tx_out.map()) {
+                        switch (o_type.uint()) {
+                            case 0: address = &o_entry; break;
+                            case 1: amount = &o_entry; break;
+                            case 2: datum = &o_entry; break;
+                            case 3: script_ref = &o_entry; break;
+                            default: break;
+                        }
+                    }
+                break;
+
+                default:
+                    throw cardano_error("unsupported transaction output format era: {}, slot: {}!", _blk.era(), (uint64_t)_blk.slot());
+            }
+            if (address == nullptr)
+                throw cardano_error("transaction output misses address field!");
+            if (amount == nullptr)
+                throw cardano_error("transaction output misses amount field!");
+            auto res = _extract_assets(*address, *amount, idx);
+            res.datum = datum;
+            res.script_ref = script_ref;
+            return res;
         }
     };
 
@@ -153,13 +139,9 @@ namespace daedalus_turbo::cardano::babbage {
     {
         const auto &txs = transactions();
         const auto &wits = witnesses();
-        if (txs.size() != wits.size())
-            throw error("slot: {}, the number of transactions {} does not match the number of witnesses {}", (uint64_t)slot(), txs.size(), wits.size());
         std::set<size_t> invalid_tx_idxs {};
-        if (protocol_ver().major >= 6) {
-            for (const auto &tx_idx: invalid_transactions())
-                invalid_tx_idxs.emplace(tx_idx.uint());
-        }
+        for (const auto &tx_idx: invalid_transactions())
+            invalid_tx_idxs.emplace(tx_idx.uint());
         for (size_t i = 0; i < txs.size(); ++i)
             if (!invalid_tx_idxs.contains(i))
                 observer(tx { txs.at(i), *this, &wits.at(i), i });
@@ -167,12 +149,10 @@ namespace daedalus_turbo::cardano::babbage {
 
     inline void block::foreach_invalid_tx(const std::function<void(const cardano::tx &)> &observer) const
     {
-        if (protocol_ver().major >= 6) {
-            const auto &txs = transactions();
-            const auto &wits = witnesses();
-            if (txs.size() != wits.size())
-                throw error("slot: {}, the number of transactions {} does not match the number of witnesses {}", slot(), txs.size(), wits.size());
-            for (const auto &tx_idx: invalid_transactions())
+        const auto &txs = transactions();
+        const auto &wits = witnesses();
+        if (const auto &inv_txs = invalid_transactions(); !inv_txs.empty()) [[unlikely]] {
+            for (const auto &tx_idx: inv_txs)
                 observer(tx { txs.at(tx_idx.uint()), *this, &wits.at(tx_idx.uint()), tx_idx.uint() });
         }
     }

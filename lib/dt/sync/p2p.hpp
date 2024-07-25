@@ -1,35 +1,63 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
-* Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_SYNC_P2P_HPP
 #define DAEDALUS_TURBO_SYNC_P2P_HPP
 
 #include <dt/cardano/common.hpp>
-#include <dt/indexer.hpp>
-#include <dt/file-remover.hpp>
 #include <dt/http/download-queue.hpp>
-#include <dt/peer-selection.hpp>
-#include <dt/scheduler.hpp>
+#include <dt/sync/base.hpp>
 
 namespace daedalus_turbo::sync::p2p {
-    struct peer_info {
-        std::unique_ptr<cardano::network::client> client;
-        cardano::point tip {};
-        std::optional<cardano::point> isect {};
-
-        const cardano::network::address &addr() const
+    struct peer_info: sync::peer_info {
+        peer_info(std::unique_ptr<cardano::network::client> &&client, const std::optional<cardano::point> &tip,
+            const std::optional<cardano::point> &isect)
+            : _client { std::move(client) }, _tip { tip }, _isect { isect }
         {
-            return client->addr();
         }
+
+        peer_info(std::unique_ptr<cardano::network::client> &&client, const std::optional<cardano::point> &tip)
+            : _client { std::move(client) }, _tip { tip }
+        {
+            if (!_client)
+                throw error("client instance must be defined for all p2p peers");
+        }
+
+        ~peer_info() override =default;
+
+        std::string id() const override
+        {
+            return fmt::format("{}", _client->addr());
+        }
+
+        const cardano::optional_point &tip() const override
+        {
+            return _tip;
+        }
+
+        const cardano::optional_point &intersection() const override
+        {
+            return _isect;
+        }
+
+        cardano::network::client &client()
+        {
+            return *_client;
+        }
+    private:
+        std::unique_ptr<cardano::network::client> _client;
+        std::optional<cardano::point> _tip {};
+        std::optional<cardano::point> _isect {};
     };
 
-    struct syncer {
-        explicit syncer(indexer::incremental &cr, cardano::network::client_manager &cnc=cardano::network::client_manager_async::get(),
-            peer_selection &ps=peer_selection_simple::get());
-        [[nodiscard]] peer_info find_peer(std::optional<cardano::network::address> addr={}) const;
-        ~syncer();
-        bool sync(std::optional<peer_info> peer={}, std::optional<cardano::slot> max_slot={});
+    struct syncer: sync::syncer {
+        explicit syncer(chunk_registry &cr, peer_selection &ps=peer_selection_simple::get(),
+            cardano::network::client_manager &cnc=cardano::network::client_manager_async::get());
+        ~syncer() override;
+        [[nodiscard]] std::shared_ptr<sync::peer_info> find_peer(std::optional<cardano::network::address> addr={}) const;
+        void cancel_tasks(uint64_t max_valid_offset) override;
+        void sync_attempt(sync::peer_info &peer, cardano::optional_slot max_slot) override;
     private:
         struct impl;
         std::unique_ptr<impl> _impl;
@@ -38,7 +66,7 @@ namespace daedalus_turbo::sync::p2p {
 
 namespace fmt {
     template<>
-    struct formatter<daedalus_turbo::sync::p2p::peer_info>: public formatter<int> {
+    struct formatter<daedalus_turbo::sync::p2p::peer_info>: formatter<int> {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out())
         {

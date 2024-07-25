@@ -90,8 +90,8 @@ namespace daedalus_turbo {
         bool process_ok(bool report_status=true, const std::source_location &loc=std::source_location::current());
         void process(bool report_status=true, const std::source_location &loc=std::source_location::current());
         void process_once(bool report_statues=true);
-        void wait_for_count(const std::string &task_group, size_t task_count,
-            const std::function<void ()> &submit_tasks, const std::function<void (std::any &&)> &process_res=[](auto &&) {});
+        void wait_all_done(const std::string &task_group, size_t task_count,
+            const std::function<void ()> &submit_tasks, const std::function<void (std::any &&, size_t, size_t)> &process_res=[](auto &&, auto, auto) {});
     private:
         struct impl;
         std::unique_ptr<impl> _impl;

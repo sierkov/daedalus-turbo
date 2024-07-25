@@ -6,7 +6,7 @@
 #include <dt/debug.hpp>
 
 namespace daedalus_turbo::debug {
-    extern bool tracing_enabled()
+    bool &tracing_enabled()
     {
         static bool enabled = std::getenv("DT_DEBUG") != nullptr;
         return enabled;

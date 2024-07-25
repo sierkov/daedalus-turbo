@@ -7,10 +7,10 @@
 
 void daedalus_turbo::cardano::state::vrf::load(const std::string &path)
 {
-    zpp::load(*this, path);
+    daedalus_turbo::zpp::load(*this, path);
 }
 
 void daedalus_turbo::cardano::state::vrf::save(const std::string &path) const
 {
-    zpp::save(path, *this);
+    daedalus_turbo::zpp::save(path, *this);
 }

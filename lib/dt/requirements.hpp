@@ -9,6 +9,8 @@
 #include <dt/json.hpp>
 #include <dt/memory.hpp>
 #include <dt/scheduler.hpp>
+#include <dt/timer.hpp>
+#include <dt/vrf.hpp>
 
 namespace daedalus_turbo::requirements {
     static constexpr size_t ram_min_mb = 15000;

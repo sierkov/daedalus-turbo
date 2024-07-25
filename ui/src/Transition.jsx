@@ -3,7 +3,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Progress from './Progress.jsx';
 import './Transition.scss';
 
-export default function Transition({ message }) {
+export default function Transition({ message, progressWeights }) {
     if (!message)
         message = 'Please wait, processing the data ...';
     const [progress, setProgress] = useState({});
@@ -39,7 +39,7 @@ export default function Transition({ message }) {
     if (Object.keys(progress).length > 0) {
         return <div className="transition">
             <h1>Operation in progress</h1>
-            <Progress progress={progress} names={Object.keys(progress)} />
+            <Progress progress={progress} names={Object.keys(progress)} weights={progressWeights} />
         </div>;
     } else {
         return <div className="transition">

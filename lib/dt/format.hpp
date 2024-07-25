@@ -44,19 +44,31 @@ namespace fmt {
     };
 
     template<size_t SZ>
-    struct formatter<std::span<const uint8_t, SZ>>: formatter<std::span<const uint8_t>> {
+    struct formatter<char[SZ]>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const char v[SZ], FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "{}", std::string_view { v, SZ });
+        }
+    };
+
+    template<typename X, typename Y>
+    struct formatter<std::pair<X, Y>>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "({}, {})", v.first, v.second);
+        }
     };
 
     template<typename T, typename A>
     struct formatter<std::vector<T, A>>: formatter<int> {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
-            auto out_it = ctx.out();
-            for (auto it = v.begin(); it != v.end(); it++) {
+            auto out_it = fmt::format_to(ctx.out(), "[");
+            for (auto it = v.begin(); it != v.end(); ++it) {
                 const std::string sep { std::next(it) == v.end() ? "" : ", " };
                 out_it = fmt::format_to(out_it, "{}{}", *it, sep);
             }
-            return out_it;
+            return fmt::format_to(out_it, "]");
         }
     };
 
@@ -64,12 +76,12 @@ namespace fmt {
     struct formatter<std::set<T, std::less<T>, A>>: formatter<int> {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
-            auto out_it = ctx.out();
-            for (auto it = v.begin(); it != v.end(); it++) {
+            auto out_it = fmt::format_to(ctx.out(), "[");
+            for (auto it = v.begin(); it != v.end(); ++it) {
                 const std::string sep { std::next(it) == v.end() ? "" : ", " };
                 out_it = fmt::format_to(out_it, "{}{}", *it, sep);
             }
-            return out_it;
+            return fmt::format_to(out_it, "]");
         }
     };
 
@@ -77,12 +89,12 @@ namespace fmt {
     struct formatter<std::map<K, V, std::less<K>, A>>: formatter<int> {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
-            auto out_it = ctx.out();
-            for (auto it = v.begin(); it != v.end(); it++) {
+            auto out_it = fmt::format_to(ctx.out(), "{{");
+            for (auto it = v.begin(); it != v.end(); ++it) {
                 const std::string sep { std::next(it) == v.end() ? "" : ", " };
-                out_it = fmt::format_to(out_it, "({}={}){}", it->first, it->second, sep);
+                out_it = fmt::format_to(out_it, "{}={}{}", it->first, it->second, sep);
             }
-            return out_it;
+            return fmt::format_to(out_it, "}}");
         }
     };
 
@@ -92,8 +104,7 @@ namespace fmt {
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
             if (v)
                 return fmt::format_to(ctx.out(), "{}", *v);
-            else
-                return fmt::format_to(ctx.out(), "std::nullopt");
+            return fmt::format_to(ctx.out(), "std::nullopt");
         }
     };
 

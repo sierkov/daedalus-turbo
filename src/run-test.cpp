@@ -5,17 +5,14 @@
 
 #include <iostream>
 #include <dt/test.hpp>
-#include <dt/logger.hpp>
 
-using namespace daedalus_turbo;
-
-int main(int argc, char **argv)
+int main(const int argc, const char **argv)
 {
     if (argc >= 2) {
         std::cerr << "using test-filter mask: " << argv[1] << '\n';
-        cfg<override> = { .filter = argv[1] };
+        boost::ut::cfg<boost::ut::override> = { .filter = argv[1] };
     }
-    const bool res = cfg<override>.run();
-    logger::info("run-test finished with {}", res ? "failures" : "success");
+    const bool res = boost::ut::cfg<boost::ut::override>.run();
+    daedalus_turbo::logger::info("run-test finished with {}", res ? "failures" : "success");
     return 0;
 }

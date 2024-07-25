@@ -11,11 +11,35 @@
 
 namespace daedalus_turbo::zpp {
     template<typename T>
+    void deserialize(T &v, const buffer zpp_data)
+    {
+        ::zpp::bits::in in { zpp_data };
+        in(v).or_throw();
+    }
+
+    template<typename T>
     void load(T &v, const std::string &path)
     {
         const auto zpp_data = file::read_raw(path);
         ::zpp::bits::in in { zpp_data };
         in(v).or_throw();
+    }
+
+    template<typename T>
+    void load_zstd(T &v, const std::string &path)
+    {
+        const auto zpp_data = file::read_zstd(path);
+        ::zpp::bits::in in { zpp_data };
+        in(v).or_throw();
+    }
+
+    template<typename T>
+    uint8_vector serialize(const T &v)
+    {
+        uint8_vector zpp_data {};
+        ::zpp::bits::out out { zpp_data };
+        out(v).or_throw();
+        return zpp_data;
     }
 
     template<typename T>
@@ -25,6 +49,15 @@ namespace daedalus_turbo::zpp {
         ::zpp::bits::out out { zpp_data };
         out(v).or_throw();
         file::write(path, zpp_data);
+    }
+
+    template<typename T>
+    void save_zstd(const std::string &path, const T &v)
+    {
+        uint8_vector zpp_data {};
+        ::zpp::bits::out out { zpp_data };
+        out(v).or_throw();
+        file::write_zstd(path, zpp_data);
     }
 }
 

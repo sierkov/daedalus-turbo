@@ -90,8 +90,7 @@ namespace daedalus_turbo {
         void _update(const std::string &name, const double value)
         {
             mutex::scoped_lock lk { _state_mutex };
-            auto [it, created] = _state.try_emplace(name, value);
-            if (!created && value > it->second)
+            if (auto [it, created] = _state.try_emplace(name, value); !created && value > it->second)
                 it->second = value;
         }
     };
@@ -107,6 +106,11 @@ namespace daedalus_turbo {
         {
             for (const auto &name: _names)
                 _progress.retire(name);
+        }
+
+        std::span<const std::string> names() const
+        {
+            return _names;
         }
     private:
         const std::vector<std::string> _names;

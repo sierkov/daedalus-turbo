@@ -16,72 +16,7 @@
 
 using namespace std::literals;
 using namespace daedalus_turbo;
-
-namespace {
-    inline std::tuple<uint8_t, size_t> from_haskell_char(const std::string_view sv)
-    {
-        static std::map<uint8_t, uint8_t> one_char_codes {
-            { '0', 0x00 }, { 'a', 0x07 }, { 'b', 0x08 }, { 'f', 0x0C },
-            { 'n', 0x0A }, { 'r', 0x0D }, { 't', 0x09 }, { 'v', 0x0B },
-            { '"', 0x22 }, { '\'', 0x27 }, { '\\', 0x5C }
-        };
-        static std::map<std::string, uint8_t> multichar_codes {
-            { "BS"s, 0x08 }, { "HT"s, 0x09 }, { "LF"s, 0x0A }, { "VT"s, 0x0B },
-            { "FF"s, 0x0C }, { "CR"s, 0x0D }, { "SO"s, 0x0E }, { "SI"s, 0x0F },
-            { "EM"s, 0x19 }, { "FS"s, 0x1C }, { "GS"s, 0x1D }, { "RS"s, 0x1E },
-            { "US"s, 0x1F }, { "SP"s, 0x20 },
-            
-            // SO and SOH share the same prefix, so the resolution should go from longest to shortest matches!
-            { "NUL"s, 0x00 }, { "SOH"s, 0x01 }, { "STX"s, 0x02 }, { "ETX"s, 0x03 },
-            { "EOT"s, 0x04 }, { "ENQ"s, 0x05 }, { "ACK"s, 0x06 }, { "BEL"s, 0x07 },            
-            { "DLE"s, 0x10 }, { "DC1"s, 0x11 }, { "DC2"s, 0x12 }, { "DC3"s, 0x13 },
-            { "DC4"s, 0x14 }, { "NAK"s, 0x15 }, { "SYN"s, 0x16 }, { "ETB"s, 0x17 },
-            { "CAN"s, 0x18 }, { "SUB"s, 0x1A }, { "ESC"s, 0x1B }, { "DEL"s, 0x7F }
-        };
-        if (sv[0] >= '1' && sv[0] <= '9') {
-            auto end = sv.find_first_not_of("0123456789"sv);
-            if (end == std::string_view::npos) end = sv.size();
-            std::string text { sv.substr(0, end) };
-            uint8_t byte = std::stoul(text);
-            return std::make_tuple(byte, end);
-        } else if (sv[0] >= 'A' && sv[0] <= 'Z') {
-            for (size_t n_chars = sv.size() > 3 ? 3 : sv.size(); n_chars >= 1; --n_chars) {
-                std::string text { sv.substr(0, n_chars) };
-                auto it = multichar_codes.find(text);
-                if (it != multichar_codes.end()) {
-                    return std::make_tuple(it->second, n_chars);
-                }
-            }
-            throw error("Unsupported escape sequence starting with {}!", sv);
-        } else {
-            auto it = one_char_codes.find(sv[0]);
-            if (it != one_char_codes.end()) {
-                return std::make_tuple(it->second, 1);
-            }
-            throw error("Escape sequence starts from an unsupported character: '{}' code {}!", sv[0], (int)sv[0]);
-        }
-    }
-
-    inline uint8_vector from_haskell(const std::string_view sv)
-    {
-        uint8_vector bytes;
-        for (size_t i = 0; i < sv.size(); ++i) {
-            if (sv[i] != '\\') {
-                bytes.push_back(sv[i]);
-            } else if (i + 1 < sv.size()) {
-                if (sv[i + 1] != '&') {
-                    const auto [byte, extra_size] = from_haskell_char(sv.substr(i + 1));
-                    bytes.push_back(byte);
-                    i += extra_size;
-                } else {
-                    // empty string, just skip it
-                    i += 1;
-                }
-            }
-        }
-        return bytes;
-    }
-}
+using namespace daedalus_turbo::cardano;
 
 suite cardano_byron_suite = [] {
     "cardano::byron"_test = [] {
@@ -113,12 +48,12 @@ suite cardano_byron_suite = [] {
             cbor_parser parser(buf);
             cbor_value block_raw;
             parser.read(block_raw);
-            auto blk = cardano::make_block(block_raw, 0);
-            auto &byron_blk = dynamic_cast<cardano::byron::block &>(*blk);
-            auto msg = byron_blk.make_signed_data();
+            const auto blk = cardano::make_block(block_raw, 0);
+            const auto &byron_blk = dynamic_cast<cardano::byron::block &>(*blk);
+            const auto msg = byron_blk.make_signed_data();
             const auto signature = byron_blk.signature();
-            auto vkey = signature.delegate_vkey();
-            auto sig = signature.signature();
+            const auto vkey = signature.delegate_vkey();
+            const auto sig = signature.signature();
             expect(ed25519::verify(sig, vkey, msg));
             expect(byron_blk.signature_ok());
         };
@@ -163,7 +98,7 @@ suite cardano_byron_suite = [] {
             cbor_value block_tuple {};
             parser.read(block_tuple);
             expect(block_tuple.array().at(0).uint() == 0_ull);
-            auto blk = cardano::make_block(block_tuple, 0);
+            const auto blk = cardano::make_block(block_tuple, 0);
             expect(blk->slot() == 0_ull);
             expect(blk->prev_hash() == genesis_hash);
             expect(blk->hash() == hash);

@@ -5,47 +5,27 @@
 #ifndef DAEDALUS_TURBO_VALIDATOR_HPP
 #define DAEDALUS_TURBO_VALIDATOR_HPP
 
-#include <dt/config.hpp>
 #include <dt/indexer.hpp>
 
 namespace daedalus_turbo::validator {
     static constexpr std::string_view validate_leaders_task { "validate-epoch" };
 
     extern indexer::indexer_map default_indexers(const std::string &data_dir, scheduler &sched=scheduler::get());
-    using tail_relative_stake_map = std::map<cardano::slot, double>;
 
-    struct incremental: indexer::incremental {
-        incremental(const std::string &data_dir, const configs &cfg=configs_dir::get(),
-            bool on_the_go=true, bool strict=true, scheduler &sched=scheduler::get(), file_remover &fr=file_remover::get());
-        ~incremental() override;
+    struct state;
+
+    struct incremental {
+        incremental(chunk_registry &cr);
+        ~incremental();
         cardano::amount unspent_reward(const cardano::stake_ident &id) const;
-        tail_relative_stake_map tail_relative_stake() const;
-    protected:
-        void _truncate_impl(uint64_t max_end_offset) override;
-        uint64_t _valid_end_offset_impl() override;
-        uint64_t _max_end_offset_impl() override;
-        void _start_tx_impl() override;
-        void _prepare_tx_impl() override;
-        void _rollback_tx_impl() override;
-        void _commit_tx_impl() override;
-        chunk_info _parse(uint64_t offset, const std::string &rel_path,
-            const buffer &raw_data, size_t compressed_size, const block_processor &extra_proc) const override;
-        void _on_slice_ready(uint64_t first_epoch, uint64_t last_epoch, const indexer::merger::slice &slice) override;
+        cardano::tail_relative_stake_map tail_relative_stake() const;
+        std::optional<cardano::point> tip() const;
+        cardano::optional_slot can_export(const cardano::optional_point &immutable_tip) const;
+        std::string node_export(const std::filesystem::path &ledger_dir, const cardano::optional_point &immutable_tip, int prio=1000) const;
+        const state &state() const;
     private:
         struct impl;
-        friend impl;
         std::unique_ptr<impl> _impl;
-
-        chunk_info _parent_parse(uint64_t offset, const std::string &rel_path,
-            const buffer &raw_data, size_t compressed_size, const block_processor &extra_proc) const;
-        void _parent_on_slice_ready(uint64_t first_epoch, uint64_t last_epoch, const indexer::merger::slice &slice);
-        void _parent_truncate_impl(uint64_t max_end_offset);
-        uint64_t _parent_valid_end_offset_impl();
-        uint64_t _parent_max_end_offset_impl();
-        void _parent_start_tx_impl();
-        void _parent_prepare_tx_impl();
-        void _parent_rollback_tx_impl();
-        void _parent_commit_tx_impl();
     };
 }
 

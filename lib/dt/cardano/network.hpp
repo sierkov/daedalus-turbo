@@ -7,6 +7,7 @@
 
 #include <dt/asio.hpp>
 #include <dt/cardano.hpp>
+#include <dt/cardano/config.hpp>
 #include <dt/cbor.hpp>
 #include <dt/cbor-encoder.hpp>
 #include <dt/logger.hpp>
@@ -89,7 +90,7 @@ namespace daedalus_turbo::cardano::network {
     struct block_parsed {
         std::unique_ptr<uint8_vector> data {};
         std::unique_ptr<cbor_value> cbor {};
-        std::unique_ptr<cardano::block_base> blk {};
+        std::unique_ptr<block_base> blk {};
     };
     using block_list = std::vector<block_parsed>;
     using header_list = point_list;
@@ -123,7 +124,8 @@ namespace daedalus_turbo::cardano::network {
         };
         using header_handler = std::function<void(header_response &&)>;
 
-        explicit client(const address &addr): _addr{addr}
+        explicit client(const address &addr, const cardano::config &/*cfg*/=cardano::config::get())
+            : _addr { addr }
         {
         }
 
@@ -249,19 +251,19 @@ namespace daedalus_turbo::cardano::network {
     struct client_manager {
         virtual ~client_manager() =default;
 
-        std::unique_ptr<client> connect(const address &addr, asio::worker &asio_worker=asio::worker::get())
+        std::unique_ptr<client> connect(const address &addr, const cardano::config &cfg=cardano::config::get(), asio::worker &asio_worker=asio::worker::get())
         {
-            return _connect_impl(addr, asio_worker);
+            return _connect_impl(addr, cfg, asio_worker);
         }
     private:
-        virtual std::unique_ptr<client> _connect_impl(const address &/*addr*/, asio::worker &/*asio_worker*/)
+        virtual std::unique_ptr<client> _connect_impl(const address &/*addr*/, const cardano::config &/*cfg*/, asio::worker &/*asio_worker*/)
         {
             throw error("cardano::network::client_manager::_connect_impl not implemented!");
         }
     };
 
     struct client_connection: client {
-        explicit client_connection(const address &addr, asio::worker &asio_worker=asio::worker::get());
+        explicit client_connection(const address &addr, const cardano::config &cfg=cardano::config::get(), asio::worker &asio_worker=asio::worker::get());
         ~client_connection() override;
     private:
         struct impl;
@@ -277,7 +279,7 @@ namespace daedalus_turbo::cardano::network {
     struct client_manager_async: client_manager {
         static client_manager_async &get();
     private:
-        std::unique_ptr<client> _connect_impl(const address &addr, asio::worker &asio_worker) override;
+        std::unique_ptr<client> _connect_impl(const address &addr, const cardano::config &cfg, asio::worker &asio_worker) override;
     };
 }
 

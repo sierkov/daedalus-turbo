@@ -44,8 +44,19 @@ suite util_suite = [] {
             {
                 auto bytes = bytes_from_hex("534f554c");
                 auto text = fmt::format("{}", buffer_readable { bytes });
-                expect(text == "SOUL") << text;
+                expect(text == "'SOUL'") << text;
             }
+        };
+        "buffer comparisons"_test = [] {
+            const auto d1 = uint8_vector::from_hex("001122");
+            const auto d2 = uint8_vector::from_hex("001122");
+            const auto d3 = uint8_vector::from_hex("001133");
+            test_same(d1.span(), d2.span());
+            expect(!(d1.span() < d2.span()));
+            expect(!(d2.span() < d1.span()));
+            expect(d1.span() != d3.span());
+            expect(d1.span() < d3.span());
+            expect(!(d3.span() < d1.span()));
         };
     };
 };

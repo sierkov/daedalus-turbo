@@ -17,26 +17,25 @@ Daedalus Turbo is an open-source project that aims to improve drastically (>=10x
 
 # Features
 Currently supported:
-- Incremental synchronization and indexing of compressed blockchain data over the Internet
-- Incremental synchronization and indexing using the Cardano Network protocol
-- Incremental synchronization and indexing from a local Cardano Node instance
-- Parallelized Ouroboros Praos data validation
+- Incremental synchronization of compressed blockchain data over the Internet (the Turbo protocol)
+- Incremental synchronization using the normal Cardano Network protocol (no compression)
+- Incremental synchronization from a local Cardano Node instance
+- Parallelized Ouroboros Praos data validation (full concensus validation)
 - Ouroboros Genesis chain selection rule when synchronizing with a Cardano Network peer
-- Reconstruction of balances and transaction histories of stake addresses
-- Reconstruction of balances and transaction histories of payment addresses
-- Direct history reconstruction from compressed blockchain data
-- Quick search for transaction data
+- Interactive reconstruction of balances and transaction histories of stake and payment addresses
+- Compressed local storage of blockchain data (compression ratio ~4.5x)
+- Interactive search for transaction data
 - ADA and non-ADA assets
 - Blockchain Explorer Desktop User Interface
-- Dynamic querying of nodes using the Cardano network protocol
 
 In active development:
 - Validation of Plutus and other scripts
+- Support for Cardano Chang hard fork
 
 As the project matures and moves through its [roadmap](#roadmap), the list of supported features will grow.
 
 # Requirements
-- 8+-core CPU
+- a modern CPU with 8+ physical cores (will refuse to work on anything weaker than an Orange Pi 5 Plus)
 - 16+GB of RAM (The more cores a CPU has, the more RAM is needed)
 - a fast SSD with ~80GB of free space:
   - ~60GB for the compressed blockchain data and search indices
@@ -44,26 +43,31 @@ As the project matures and moves through its [roadmap](#roadmap), the list of su
 - a fast Internet connection (250 Mbps or better)
 
 # Test it yourself
+One can test the software using two methods:
+- Downloading and installing a prebuilt binary
+- Building the software from the source code using Docker
+
+Each is described in more detail below.
 
 ## Pre-built binaries for Windows and Mac (ARM64)
 
-The latest builds of the DT Explorer application can be found in the Assets section of [the latest GitHub release](https://github.com/sierkov/daedalus-turbo/releases/latest).
+The latest builds of the DT Explorer application can be found in the Assets section of [the latest GitHub release](https://github.com/sierkov/daedalus-turbo/releases/latest) page.
 It shows the new synchronization and history-reconstruction algorithms in a safe and easy-to-test way by working without private keys and directly reconstructing history of any payment and stake address.
 
 ### How to install on Windows
-- Download and launch the installer from the Assets section under the post.
+- Download and launch the installer from the Assets section of [the latest release](https://github.com/sierkov/daedalus-turbo/releases/latest) page.
 - Choose locations for the program files and blockchain data (each will be asked individually). For optimal performance, it's important to select your fastest SSD drive if you have multiple storage devices. 
 
-Windows builds are tested with Windows 11 (earlier versions may work but have yet to be be tested).
+Windows builds have been tested with Windows 11 (earlier versions may work but have yet to be be tested).
 
 ### How to install on Mac
-- Download the Mac image from the Assets section under the post.
+- Download the Mac image from the Assets section of [the latest release](https://github.com/sierkov/daedalus-turbo/releases/latest) page.
 - Open the image. This is a development (unsigned) image, so Mac OS will ask you if you trust the developer: [See Apple's explanation and instructions](https://support.apple.com/en-is/guide/mac-help/mh40616/mac).
 - Copy dt-explorer app to your Applications folder.
 - Both program and blockchain data will be stored in that folder, so when deleted all used space will be recovered.
-- Launch the app from the Applications folder. If Mac OS says that the app is damaged, follow [these instructions from Stackoverflow](https://apple.stackexchange.com/questions/58050/damaged-and-cant-be-open-app-error-message).
+- Launch the app from the Applications folder. If Mac OS says that the app is damaged, open a terminal and run ```sudo xattr -rc <path-to-build>``` command, where ```<path-to-build>``` is the path to the downloaded mac build.
 
-Mac builds has been tested with Mac OS Sonoma (earlier versions may work but have yet to be be tested).
+Mac builds have been tested with Mac OS Sonoma (earlier versions may work but have yet to be be tested).
 
 ### How to use
 - Synchronization (full or partial) always happens at the app's launch; to catch up, simply restart the app. If you restart before the synchronization is finished, the app will reuse already downloaded data but may reprocess and revalidate some of them.
@@ -98,7 +102,7 @@ docker run -it --rm -v <cardano-dir>:/data/cardano dt
 
 All the following commands are to be run within the container started by the previous command.
 
-Download, validate, and prepare for querying a copy of the Cardano blockchain from a network of compressing proxies with entry points listed in [etc/turbo.json](etc/turbo.json):
+Download, validate, and prepare for querying a copy of the Cardano blockchain from a network of compressing proxies with entry points listed in [etc/mainnet/turbo.json](etc/mainnet/turbo.json):
 ```
 ./dt sync-turbo /data/cardano
 ```
@@ -136,11 +140,9 @@ The high-speed delivery of blockchain data depends on a network of compressing p
 to support a billion clients is presented in the [Scalability of Bulk Synchronization in the Cardano Blockchain](./doc/2023_Sierkov_CardanoBulkSynchronization.pdf) paper.
 
 # Quality
-The accuracy of the ledger state reconstruction has been tested by comparing the reconstructed components
-of the ledger state with those prepared by Cardano Node at the end of each Shelley+ epoch on the Cardano's mainnet up to epoch 465.
-The code of the test is located in the [test/validate-state.cpp](test/validate-state.cpp) file.
+The accuracy of the ledger state reconstruction has been tested by recreating the ledger state from raw blockchain data at the end (the presented method batches updates) of each post-Shelley epoch up to the mainnet's epoch 494, exporting it into the Cardano Node format, and comparing it with the snapshot produced by Cardano Node version 8.9.2. The source code of the tools used for the comparison are located in [lib/dt/cli-test/test-node-state.cpp](lib/dt/cli-test/test-node-state.cpp) and [lib/dt/cli-test/test-export-full.cpp](lib/dt/cli-test/test-export-full.cpp)
 
-The indexing and history-reconstruction code has been tested using a sample of ten thousand randomly-selected stake keys. For 100% of those, the reconstructed ADA balance (excluding rewards) precisely matched the stake recorded in the ledger snapshot produced by Cardano Node. The testing was performed with slot number 106012751 at the tip of the blockchain. The code of the test is located in the [test/validate-balance.cpp](test/validate-balance.cpp) file.
+The indexing and history-reconstruction code has been tested using a sample of ten thousand randomly-selected stake keys. For 100% of those, the reconstructed ADA balance (excluding rewards) precisely matched the stake recorded in the ledger snapshot produced by Cardano Node. The testing was performed with slot number 106012751 at the tip of the blockchain. The code of the test is located in the [lib/dt/cli-test/test-stake-balances.cpp](lib/dt/cli-test/test-stake-balances.cpp) file.
 
 # Roadmap
 The development of the project is organized into the following milestones:
@@ -149,7 +151,7 @@ The development of the project is organized into the following milestones:
 | M1: Show that transaction history can be reconstructed 10x quicker | February 2023 | Ready |
 | M2: Analyze the scalability of the Cardano network protocol and prepare requirements for the accelerated one | June 2023 | Ready |
 | M3: Full POC of Daedalus Turbo: fast blockchain data delivery and transaction-history reconstruction | April 2024 | In review |
-| M4: Integrate the POC into the official Daedalus builds | March 2025 | Planned |
+| M4: Integrate the POC with the official Daedalus builds | March 2025 | In Progress |
 
 Due to the experimental nature of the project, the ETAs are tentative.
 The development can go both faster and slower than expected.
@@ -163,7 +165,7 @@ Nevertheless, compilation in other environments and with other compilers is poss
 The below notes may be helpful if you decide to build the software outside of Docker.
 
 ## Necessary software packages
-- [CMake](https://cmake.org/) >= 3.22.1, a build system
+- [CMake](https://cmake.org/) >= 3.28, a build system
 - [boost](https://www.boost.org/) == 1.83, a collection of C++ libraries
 - [fmt](https://github.com/fmtlib/fmt) >= 8.1.1, a string formatting library
 - [libsodium](https://github.com/jedisct1/libsodium) >= 1.0.18, a cryptographic library

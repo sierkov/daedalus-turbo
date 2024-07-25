@@ -23,7 +23,7 @@ LinearProgressWithLabel.propTypes = {
     value: PropTypes.number.isRequired,
 };
 
-export default function Progress({ progress, names, hardware, duration, eta, slotRange }) {
+export default function Progress({ progress, names, weights, titles, hardware, duration, eta, slotRange }) {
     let durationInfo = <></>;
     if (duration) {
         durationInfo = <div className="duration">
@@ -37,11 +37,13 @@ export default function Progress({ progress, names, hardware, duration, eta, slo
             </div>
         </div>;
     }
+    const normWeights = weights ?? Object.fromEntries(names.map(name => [name, 1.0 / names.length]));
+    const normTitles = titles ?? Object.fromEntries(names.map(name => [name, name]));
     const myProgress = Object.fromEntries(names.map(name => [name, progress[name] ?? "0.000%"]));
     const numItems = Object.keys(myProgress).length;
     const progressItems = Object.entries(myProgress).map((entry, idx) =>
         <div className="progress-item">
-            <div>{entry[0]}</div>
+            <div>{normTitles[entry[0]]}</div>
             <div>
                 <LinearProgressWithLabel color="primary" variant="determinate" value={entry[1].slice(0, -1)} />
             </div>
@@ -50,7 +52,13 @@ export default function Progress({ progress, names, hardware, duration, eta, slo
     const progressDetails = <>
         {progressItems}
     </>;
-    const totalProgress = numItems > 0 ? Object.entries(myProgress).map(e => e[1]).reduce((sum, val) => sum + parseFloat(val?.slice(0, -1)), 0) / numItems : 100;
+    let totalProgress = 100;
+    if (numItems > 0) {
+        totalProgress = 0;
+        for (let [k, v] of Object.entries(myProgress)) {
+            totalProgress += parseFloat(v?.slice(0, -1)) * normWeights[k];
+        }
+    }
     const slotRangeDiv = slotRange
         ?   <div className="slot-range">
                 <div className="start">{slotRange.start}</div>

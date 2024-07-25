@@ -14,7 +14,7 @@
 
 namespace daedalus_turbo::index {
     struct chunk_indexer_base {
-        virtual ~chunk_indexer_base() {}
+        virtual ~chunk_indexer_base() =default;
 
         void index(const cardano::block_base &blk)
         {
@@ -26,13 +26,23 @@ namespace daedalus_turbo::index {
             _index(blk);
         }
 
+        virtual void index_tx(const cardano::tx &)
+        {
+        }
+
+        virtual void index_invalid_tx(const cardano::tx &)
+        {
+        }
+
         uint64_t max_offset() const
         {
             return _max_offset;
         }
 
     protected:
-        virtual void _index(const cardano::block_base &blk) =0;
+        virtual void _index(const cardano::block_base &)
+        {
+        }
 
     private:
         uint64_t _max_offset = 0;
@@ -68,48 +78,62 @@ namespace daedalus_turbo::index {
     };
 
     struct epoch_observer {
-        virtual void mark_epoch(uint64_t epoch, uint64_t chunk_id) =0;
+        virtual void mark_epoch(const cardano::slot_range &slots, uint64_t chunk_id) =0;
     };
 
     template<typename T>
-    struct chunk_indexer_one_epoch: chunk_indexer_base {
-        chunk_indexer_one_epoch(epoch_observer &observer, uint64_t chunk_id, const std::string &idx_path)
-            : _epoch_observer { observer }, _chunk_id { chunk_id }, _idx_base_path { idx_path }
-        {}
+    struct chunk_indexer_one_epoch_base: chunk_indexer_base {
+        using data_type = T;
 
-        ~chunk_indexer_one_epoch() override
+        chunk_indexer_one_epoch_base(epoch_observer &observer, const uint64_t chunk_id, const std::string &idx_path)
+            : _epoch_observer { observer }, _chunk_id { chunk_id }, _idx_base_path { idx_path }
         {
-            if (!_data.empty()) {
-                _epoch_observer.mark_epoch(*_epoch, _chunk_id);
-                std::sort(_data.begin(), _data.end());
-                zpp::save(fmt::format("{}-{}.bin", _idx_base_path, *_epoch), _data);
+        }
+
+        ~chunk_indexer_one_epoch_base() override
+        {
+            if (_slots) {
+                _epoch_observer.mark_epoch(*_slots, _chunk_id);
+                zpp::save_zstd(fmt::format("{}.bin", _idx_base_path), _data);
             }
         }
     protected:
-        using data_list = vector<T>;
-
         epoch_observer &_epoch_observer;
         uint64_t _chunk_id;
         std::string _idx_base_path;
-        data_list _data {};
-        std::optional<uint64_t> _epoch {};
+        data_type _data {};
+        std::optional<cardano::slot_range> _slots {};
 
-        virtual void _index_epoch(const cardano::block_base &blk, data_list &idx) =0;
+        virtual void _index_epoch(const cardano::block_base &/*blk*/, data_type &/*idx*/)
+        {
+        }
 
         void _index(const cardano::block_base &blk) override
         {
             try {
-                auto blk_epoch = blk.slot().epoch();
-                if (_epoch) [[likely]] {
-                    if (*_epoch != blk_epoch)
-                        throw error("all blocks must contains the same epoch: {} but got {}", *_epoch, blk_epoch);
-                } else {
-                    _epoch = blk_epoch;
+                if (_slots)
+                    _slots->update(blk.slot());
+                else {
+                    _slots.emplace(blk.slot());
                 }
                 _index_epoch(blk, _data);
             } catch (std::exception &ex) {
                 logger::warn("one_epoch index {} indexing error: {}", _idx_base_path, ex.what());
             }
+        }
+    };
+
+    template<typename T>
+    struct chunk_indexer_one_epoch: chunk_indexer_one_epoch_base<vector<T>> {
+        chunk_indexer_one_epoch(epoch_observer &observer, const uint64_t chunk_id, const std::string &idx_path)
+            : chunk_indexer_one_epoch_base<vector<T>> { observer, chunk_id, idx_path }
+        {
+        }
+
+        ~chunk_indexer_one_epoch() override
+        {
+            if (!chunk_indexer_one_epoch_base<vector<T>>::_data.empty())
+                std::sort(chunk_indexer_one_epoch_base<vector<T>>::_data.begin(), chunk_indexer_one_epoch_base<vector<T>>::_data.end());
         }
     };
 
@@ -222,24 +246,29 @@ namespace daedalus_turbo::index {
 
     extern const size_t two_step_merge_num_files;
 
-    template<typename T, typename ChunkIndexer>
-    struct indexer_merging: indexer_base {
+    template<typename ChunkIndexer>
+    struct indexer_chunked: indexer_base {
         using indexer_base::indexer_base;
 
         uint64_t disk_size(const std::string &slice_id="") const override
         {
-            return writer<T>::disk_size(reader_path(slice_id));
+            return writer<int>::disk_size(reader_path(slice_id));
         }
+    };
 
-        index::reader<T> make_reader(const std::string slice_id="") const
+    template<typename T, typename ChunkIndexer>
+    struct indexer_merging: indexer_chunked<ChunkIndexer> {
+        using indexer_chunked<ChunkIndexer>::indexer_chunked;
+
+        index::reader<T> make_reader(const std::string &slice_id="") const
         {
-            return index::reader<T> { reader_path(slice_id) };
+            return index::reader<T> { indexer_base::reader_path(slice_id) };
         }
 
         void merge(const std::string &task_group, size_t task_prio, const std::vector<std::string> &chunks, const std::string &final_path,
                    const std::function<void()> &on_complete) override
         {
-            merge_one_step<T>(_sched, task_group, task_prio, chunks, final_path, on_complete);
+            merge_one_step<T>(indexer_chunked<ChunkIndexer>::_sched, task_group, task_prio, chunks, final_path, on_complete);
         }
 
         bool mergeable() const override
@@ -259,26 +288,21 @@ namespace daedalus_turbo::index {
     };
 
     using chunk_list = vector<uint64_t>;
-    using epoch_chunks = map<uint64_t, chunk_list>;
+    using epoch_chunks = map<cardano::slot_range, chunk_list>;
 
-    template<typename T, std::derived_from<chunk_indexer_one_epoch<T>> ChunkIndexer>
-    struct indexer_one_epoch: indexer_merging<T, ChunkIndexer>, epoch_observer {
-        indexer_one_epoch(const std::string &idx_dir, const std::string &idx_name, scheduler &sched=scheduler::get())
-            : indexer_merging<T, ChunkIndexer> { idx_dir, idx_name, sched }
-        {
-        }
-
-        using indexer_merging<T, ChunkIndexer>::indexer_merging;
+    template<typename ChunkIndexer>
+    struct indexer_one_epoch: indexer_chunked<ChunkIndexer>, epoch_observer {
+        using indexer_chunked<ChunkIndexer>::indexer_chunked;
 
         bool mergeable() const override
         {
             return false;
         }
 
-        void mark_epoch(uint64_t epoch, uint64_t chunk_id) override
+        void mark_epoch(const cardano::slot_range &slots, const uint64_t chunk_id) override
         {
             mutex::scoped_lock lk { _updated_epochs_mutex };
-            auto [it, created] = _updated_epochs.try_emplace(epoch);
+            auto [it, created] = _updated_epochs.try_emplace(slots);
             it->second.emplace_back(chunk_id);
         }
 
@@ -291,7 +315,7 @@ namespace daedalus_turbo::index {
         std::unique_ptr<chunk_indexer_base> make_chunk_indexer(const std::string &slice_id, uint64_t chunk_id) override
         {
             return std::make_unique<ChunkIndexer>(*this, chunk_id,
-                indexer_merging<T, ChunkIndexer>::chunk_path(slice_id, chunk_id));
+                indexer_chunked<ChunkIndexer>::chunk_path(slice_id, chunk_id));
         }
 
         void schedule_truncate(const std::string &, const std::string &, uint64_t) override
@@ -305,11 +329,23 @@ namespace daedalus_turbo::index {
             _updated_epochs.clear();
         }
 
-        chunk_list epoch_chunks(uint64_t epoch) const
+        chunk_list chunks(const cardano::slot_range &epoch_slots) const
         {
             mutex::scoped_lock lk { _updated_epochs_mutex };
-            const auto it = _updated_epochs.find(epoch);
-            return it != _updated_epochs.end() ? it->second : chunk_list {};
+            chunk_list chunks {};
+            for (auto it = _updated_epochs.lower_bound(epoch_slots); it != _updated_epochs.end(); ++it) {
+                if (it->first.min() > epoch_slots.max())
+                    break;
+                if (it->first.min() >= epoch_slots.min()) {
+                    if (it->first.max() <= epoch_slots.max()) {
+                        for (const auto chunk_id: it->second)
+                            chunks.emplace_back(chunk_id);
+                    } else {
+                        throw error("the chunk with slot range {} does not fit into the epoch slot range {}", it->first, epoch_slots);
+                    }
+                }
+            }
+            return chunks;
         }
     private:
         alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _updated_epochs_mutex {};

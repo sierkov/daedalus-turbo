@@ -11,10 +11,9 @@
 
 namespace daedalus_turbo {
     struct publisher::impl {
-        impl(chunk_registry &cr, const std::string &node_path, const buffer &sk, size_t zstd_max_level=22, file_remover &fr=file_remover::get())
-            : _syncer { cr, node_path, zstd_max_level, volatile_data_lifespan },
-                _sk { sk }, _cr { cr }, _file_remover { fr },
-                _turbo_hosts(configs_dir::get().at("turbo").at("hosts").as_array())
+        impl(chunk_registry &cr, const std::string &node_dir, const buffer &sk, size_t zstd_max_level=22, file_remover &fr=file_remover::get())
+            : _syncer { cr, zstd_max_level, volatile_data_lifespan }, _node_dir { node_dir },
+              _sk { sk }, _cr { cr }, _file_remover { fr }, _turbo_hosts(configs_dir::get().at("turbo").at("hosts").as_array())
         {
         }
 
@@ -27,18 +26,11 @@ namespace daedalus_turbo {
         {
             timer tc { "publish cycle" };
             try {
-                auto res = _syncer.sync();
+                const auto peer = _syncer.find_peer(_node_dir);
+                _syncer.sync(peer);
                 _write_meta();
-                _file_remover.remove_old_files(_cr.data_dir(), metadata_lifespan);
-                logger::info("errors: {} updated: {} dist: {}, size: {} max_slot: {} cycle time: {}",
-                    res.errors.size(), res.updated.size(), _cr.chunks().size(),
-                    _cr.num_bytes(), _cr.max_slot(), tc.stop(false));
-                std::sort(res.updated.begin(), res.updated.end());
-                for (const auto &rel_path: res.updated)
-                    logger::debug("publisher updated: {}", rel_path);
-                std::sort(res.errors.begin(), res.errors.end());
-                for (const auto &err: res.errors)
-                    logger::error("publisher error: {}", err);
+                _file_remover.mark_old_files(_cr.data_dir(), metadata_lifespan);
+                logger::info("publisher cycle time: {} sec", tc.stop(false));
             } catch (std::exception &ex) {
                 logger::info("dist: {}, size: {} max_slot: {} cycle time: {}",
                         _cr.chunks().size(), _cr.num_bytes(), _cr.max_slot(), tc.stop(false));
@@ -50,12 +42,13 @@ namespace daedalus_turbo {
         static constexpr std::chrono::seconds volatile_data_lifespan { 6 * 3600 };
 
         sync::local::syncer _syncer;
+        const std::filesystem::path _node_dir;
         ed25519::skey _sk {};
         chunk_registry &_cr;
         file_remover &_file_remover;
         json::array _turbo_hosts;
 
-        void _write_index_html(uint64_t total_size, uint64_t total_compressed_size) const
+        void _write_index_html(const uint64_t total_size, const uint64_t total_compressed_size) const
         {
             for (const auto &entry: std::filesystem::directory_iterator("./publisher/www/")) {
                 if (!entry.is_regular_file())
@@ -63,13 +56,13 @@ namespace daedalus_turbo {
                 if (entry.path().extension() == ".html") {
                     std::string html { file::read(entry.path().string()).span().string_view() };
                     cardano::block_hash last_block_hash {};
-                    cardano::slot last_block_slot {};
-                    cardano::slot last_chunk_first_slot {};
+                    auto last_block_slot = _cr.make_slot(0);
+                    auto last_chunk_first_slot = _cr.make_slot(0);
                     auto last_chunk_it = _cr.chunks().rbegin();
                     if (last_chunk_it != _cr.chunks().rend()) {
                         last_block_hash = last_chunk_it->second.last_block_hash;
-                        last_block_slot = last_chunk_it->second.last_slot;
-                        last_chunk_first_slot = last_chunk_it->second.first_slot;
+                        last_block_slot = _cr.make_slot(last_chunk_it->second.last_slot);
+                        last_chunk_first_slot = _cr.make_slot(last_chunk_it->second.first_slot);
                     }
                     std::map<std::string, std::string> vars {};
                     vars["total_size"] = fmt::format("{:0.1f}", static_cast<double>(total_size) / 1'000'000'000);
@@ -116,7 +109,8 @@ namespace daedalus_turbo {
                 j_chain_epochs.emplace_back(json::object {
                     { "lastSlot", epoch_meta.last_slot() },
                     { "lastBlockHash", fmt::format("{}", epoch_meta.last_block_hash()) },
-                    { "size", epoch_meta.size() }
+                    { "size", epoch_meta.size() },
+                    { "era", epoch_meta.era() }
                 });
                 total_size += epoch_meta.size();
                 total_compressed_size += epoch_meta.compressed_size();
@@ -135,7 +129,7 @@ namespace daedalus_turbo {
             }
             json::object meta {
                 { "api", json::object {
-                    { "version", 2 },
+                    { "version", 3 },
                     { "metadataLifespanSec", std::chrono::duration<int64_t>(metadata_lifespan).count() },
                     { "volatileDataLifespanSec", std::chrono::duration<int64_t>(volatile_data_lifespan).count() }
                     }

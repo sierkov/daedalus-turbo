@@ -20,7 +20,7 @@ namespace daedalus_turbo {
     template <typename T>
     constexpr T host_to_net(T value) noexcept
     {
-        constexpr int x = 1;
+        const int x = 1;
         if (*reinterpret_cast<const char *>(&x) == 1) {
             char* ptr = reinterpret_cast<char*>(&value);
             std::reverse(ptr, ptr + sizeof(T));
@@ -31,7 +31,7 @@ namespace daedalus_turbo {
     template <typename T>
     constexpr T net_to_host(T value) noexcept
     {
-        constexpr int x = 1;
+        const int x = 1;
         if (*reinterpret_cast<const char *>(&x) == 1) {
             char* ptr = reinterpret_cast<char*>(&value);
             std::reverse(ptr, ptr + sizeof(T));
@@ -71,12 +71,21 @@ namespace daedalus_turbo {
         using std::span<const uint8_t>::span;
 
         template<typename M>
-        static buffer from(const M &val)
+        static constexpr buffer from(const M &val)
         {
             return buffer { reinterpret_cast<const uint8_t *>(&val), sizeof(val) };
         }
 
         buffer(const std::span<const uint8_t> &s): std::span<const uint8_t>(s)
+        {
+        }
+
+        buffer(const uint8_vector &v): std::span<const uint8_t>(v.data(), v.size())
+        {
+        }
+
+        template<size_t SZ>
+        buffer(const array<uint8_t, SZ> &v): std::span<const uint8_t>(v.data(), v.size())
         {
         }
 
@@ -105,22 +114,46 @@ namespace daedalus_turbo {
         }
 
         template<typename M>
-        const M to() const
+        constexpr M to() const
         {
             if (size() != sizeof(M))
                 throw error("buffer size: {} does not match the type's size: {}!", size(), sizeof(M));
             return *reinterpret_cast<const M*>(data());
         }
 
-        inline std::string_view string_view() const
+        template<typename M>
+        constexpr M to_host() const
+        {
+            if (size() != sizeof(M))
+                throw error("buffer size: {} does not match the type's size: {}!", size(), sizeof(M));
+            return net_to_host(*reinterpret_cast<const M*>(data()));
+        }
+
+        template<typename M>
+        constexpr M to_net() const
+        {
+            if (size() != sizeof(M))
+                throw error("buffer size: {} does not match the type's size: {}!", size(), sizeof(M));
+            return host_to_net(*reinterpret_cast<const M*>(data()));
+        }
+
+        std::string_view string_view() const
         {
             return std::string_view { reinterpret_cast<const char *>(data()), size() };
         }
 
-        buffer subbuf(size_t offset, size_t sz) const
+        buffer subbuf(const size_t offset, const size_t sz) const
         {
-            if (offset + sz > size()) throw error("requested offset: {} and size: {} end over the end of buffer's size: {}!", offset, sz, size());
+            if (offset + sz > size())
+                throw error("requested offset: {} and size: {} end over the end of buffer's size: {}!", offset, sz, size());
             return buffer { data() + offset, sz };
+        }
+
+        buffer subbuf(const size_t offset) const
+        {
+            if (offset > size())
+                throw error("a buffer's offset {} is greater than its size {}", offset, size());
+            return subbuf(offset, size() - offset);
         }
 
         buffer subspan(size_t offset, size_t sz) const
@@ -155,15 +188,6 @@ namespace daedalus_turbo {
         return !(lhs == rhs);
     }
 
-    inline std::ostream &operator<<(std::ostream &os, const buffer &buf) {
-        os << std::hex;
-        for (const uint8_t *byte_ptr = buf.data(); byte_ptr < buf.data() + buf.size(); ++byte_ptr) {
-            os << std::setfill('0') << std::setw(2) << static_cast<int>(*byte_ptr);
-        }
-        os << std::dec;
-        return os;
-    }
-
     inline uint8_vector::uint8_vector(const buffer &buf): vector(buf.size())
     {
         memcpy(data(), buf.data(), buf.size());
@@ -179,6 +203,14 @@ namespace daedalus_turbo {
     inline const buffer uint8_vector::span() const
     {
         return buffer { *this };
+    }
+
+    inline uint8_vector &operator<<(uint8_vector &v, uint8_t b)
+    {
+        const size_t end_off = v.size();
+        v.resize(end_off + 1);
+        v[end_off] = b;
+        return v;
     }
 
     inline uint8_vector &operator<<(uint8_vector &v, const buffer buf)
@@ -250,6 +282,13 @@ namespace daedalus_turbo {
         else
             return last;
     }
+
+    inline std::string to_lower(const std::string &s)
+    {
+        std::string res {};
+        std::transform(s.begin(), s.end(), std::back_inserter(res), ::tolower);
+        return res;
+    }
 }
 
 namespace fmt {
@@ -270,17 +309,15 @@ namespace fmt {
         template<typename FormatContext>
         auto format(const auto &bytes, FormatContext &ctx) const -> decltype(ctx.out()) {
             bool readable = true;
-            bool has_space = false;
             for (const uint8_t *p = bytes.data(), *end = bytes.data() + bytes.size(); p < end; ++p) {
-                if (*p == 0x20) has_space = true;
-                if (*p < 0x20 || *p >= 0x7F) readable = false;
+                if (*p < 0x20 || *p > 0x7F) {
+                    readable = false;
+                    break;
+                }
             }
-            if (readable) {
-                if (has_space) return fmt::format_to(ctx.out(), "'{}'", std::string_view { reinterpret_cast<const char *>(bytes.data()), bytes.size() });
-                else return fmt::format_to(ctx.out(), "{}", std::string_view { reinterpret_cast<const char *>(bytes.data()), bytes.size() });
-            } else {
-                return fmt::format_to(ctx.out(), "{}", bytes.span());
-            }
+            if (readable)
+                return fmt::format_to(ctx.out(), "'{}'", std::string_view { reinterpret_cast<const char *>(bytes.data()), bytes.size() });
+            return fmt::format_to(ctx.out(), "{}", bytes.span());
         }
     };
 }

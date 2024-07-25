@@ -11,7 +11,7 @@
 namespace daedalus_turbo::index::stake_ref {
 
     struct item {
-        stake_ident id;
+        cardano::stake_ident id;
         uint64_t offset = 0;
         cardano::tx_size size {};
         cardano::tx_out_idx out_idx {};
@@ -38,16 +38,13 @@ namespace daedalus_turbo::index::stake_ref {
     struct chunk_indexer: chunk_indexer_multi_part<item> {
         using chunk_indexer_multi_part<item>::chunk_indexer_multi_part;
     protected:
-        void _index(const cardano::block_base &blk) override
+        void index_tx(const cardano::tx &tx) override
         {
-            blk.foreach_tx([&](const auto &tx) {
-                tx.foreach_output([&](const auto &tx_out) {
-                    cardano::address addr { tx_out.address };
-                    if (!addr.has_stake_id()) return;
-                    const auto id = addr.stake_id();
-                    _idx.emplace_part(id.hash.data()[0] / _part_range,
-                        std::move(id), tx.offset(), tx.size(), tx_out.idx);
-                });
+            tx.foreach_output([&](const auto &tx_out) {
+                if (!tx_out.address.has_stake_id())
+                    return;
+                const auto id = tx_out.address.stake_id();
+                _idx.emplace_part(id.hash.data()[0] / _part_range, std::move(id), tx.offset(), tx.size(), tx_out.idx);
             });
         }
     };
@@ -57,7 +54,7 @@ namespace daedalus_turbo::index::stake_ref {
 
 namespace fmt {
     template<>
-    struct formatter<daedalus_turbo::index::stake_ref::item>: public formatter<uint64_t> {
+    struct formatter<daedalus_turbo::index::stake_ref::item>: formatter<uint64_t> {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
             return fmt::format_to(ctx.out(), "stake-ref::item(id: {}, offset: {}, size: {}, out_idx: {})",

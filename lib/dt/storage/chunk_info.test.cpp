@@ -14,7 +14,6 @@ suite storage_chunk_info_suite = [] {
             storage::chunk_info chunk {};
             expect(chunk.offset == 0_ull);
             expect(chunk.data_size == 0_ull);
-            expect(chunk.orig_rel_path == "");
             expect(chunk.data_hash == cardano::block_hash::from_hex("0000000000000000000000000000000000000000000000000000000000000000"));
         };
         "rel_path"_test = [] {
@@ -30,14 +29,6 @@ suite storage_chunk_info_suite = [] {
             expect(chunk.end_offset() == 22_ull);
             chunk.offset = 78;
             expect(chunk.end_offset() == 100_ull);
-        };
-        "end_offset"_test = [] {
-            storage::chunk_info chunk {};
-            expect(chunk.epoch() == 0_ull);
-            chunk.last_slot = cardano::slot::from_epoch(255, 123456);
-            expect(chunk.epoch() == 0_ull);
-            chunk.first_slot = cardano::slot::from_epoch(254, 423123);
-            expect(chunk.epoch() == 254_ull);
         };
     };
 };

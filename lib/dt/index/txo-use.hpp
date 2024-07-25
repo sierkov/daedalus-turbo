@@ -15,7 +15,6 @@ namespace daedalus_turbo::index::txo_use {
         cardano::tx_out_idx out_idx;
         uint64_t offset = 0;
         cardano::tx_size size {};
-        cardano::epoch epoch {};
         
         bool operator<(const auto &b) const
         {
@@ -43,29 +42,27 @@ namespace daedalus_turbo::index::txo_use {
     struct chunk_indexer: chunk_indexer_multi_part<item> {
         using chunk_indexer_multi_part<item>::chunk_indexer_multi_part;
     protected:
-        void _index(const cardano::block_base &blk) override
+        void index_tx(const cardano::tx &tx) override
         {
-            blk.foreach_tx([&](const auto &tx) {
-                // necessary since some transactions contain duplicate inputs and Cardano Node allows it!
-                std::set<std::pair<cardano_hash_32, cardano::tx_out_idx>> inputs {};
-                tx.foreach_input([&](const auto &tx_in) {
-                    inputs.emplace(tx_in.tx_hash, tx_in.txo_idx);
-                });
-                for (const auto &[tx_hash, txo_idx]: inputs) {
-                    _idx.emplace_part(tx_hash[0] / _part_range,
-                        tx_hash, txo_idx, tx.offset(), tx.size(), blk.slot().epoch());
-                }
+            // necessary since some transactions contain duplicate inputs and Cardano Node allows it!
+            std::set<std::pair<cardano_hash_32, cardano::tx_out_idx>> inputs {};
+            tx.foreach_input([&](const auto &tx_in) {
+                inputs.emplace(tx_in.tx_hash, tx_in.txo_idx);
             });
-            blk.foreach_invalid_tx([&](const auto &tx) {
-                std::set<std::pair<cardano_hash_32, cardano::tx_out_idx>> inputs {};
-                tx.foreach_collateral([&](const auto &tx_in) {
-                    inputs.emplace(tx_in.tx_hash, tx_in.txo_idx);
-                });
-                for (const auto &[tx_hash, txo_idx]: inputs) {
-                    _idx.emplace_part(tx_hash[0] / _part_range,
-                        tx_hash, txo_idx, tx.offset(), tx.size(), blk.slot().epoch());
-                }
+            for (const auto &[tx_hash, txo_idx]: inputs) {
+                _idx.emplace_part(tx_hash[0] / _part_range, tx_hash, txo_idx, tx.offset(), tx.size());
+            }
+        }
+
+        void index_invalid_tx(const cardano::tx &tx) override
+        {
+            std::set<std::pair<cardano_hash_32, cardano::tx_out_idx>> inputs {};
+            tx.foreach_collateral([&](const auto &tx_in) {
+                inputs.emplace(tx_in.tx_hash, tx_in.txo_idx);
             });
+            for (const auto &[tx_hash, txo_idx]: inputs) {
+                _idx.emplace_part(tx_hash[0] / _part_range, tx_hash, txo_idx, tx.offset(), tx.size());
+            }
         }
     };
 
@@ -77,8 +74,8 @@ namespace fmt {
     struct formatter<daedalus_turbo::index::txo_use::item>: formatter<uint64_t> {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
-            return fmt::format_to(ctx.out(), "txo_use::item(hash: {} out_idx: {} offset: {} size: {} epoch: {})",
-                v.hash, static_cast<size_t>(v.out_idx), static_cast<uint64_t>(v.offset), static_cast<size_t>(v.size), static_cast<uint64_t>(v.epoch));
+            return fmt::format_to(ctx.out(), "hash: {} out_idx: {} offset: {} size: {}",
+                v.hash, static_cast<size_t>(v.out_idx), static_cast<uint64_t>(v.offset), static_cast<size_t>(v.size));
         }
     };
 }

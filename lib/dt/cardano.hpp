@@ -33,23 +33,23 @@ namespace daedalus_turbo::cardano {
         }
     }
 
-    inline std::unique_ptr<block_base> make_block(const cbor_value &block_tuple, uint64_t offset)
+    inline std::unique_ptr<block_base> make_block(const cbor_value &block_tuple, uint64_t offset, const config &cfg=cardano::config::get())
     {
         uint64_t era = block_tuple.array().at(0).uint();
         const cbor_value &block = block_tuple.array().at(1);
         switch (era) {
         case 0:
-            return std::make_unique<byron::boundary_block>(block_tuple, offset, era, block);
+            return std::make_unique<byron::boundary_block>(block_tuple, offset, era, block, cfg);
         case 1:
-            return std::make_unique<byron::block>(block_tuple, offset, era, block);
+            return std::make_unique<byron::block>(block_tuple, offset, era, block, cfg);
         case 2:
         case 3:
-            return std::make_unique<cardano::shelley::block>(block_tuple, offset, era, block);
+            return std::make_unique<shelley::block>(block_tuple, offset, era, block, cfg);
         case 4:
         case 5:
-            return std::make_unique<cardano::alonzo::block>(block_tuple, offset, era, block);
+            return std::make_unique<alonzo::block>(block_tuple, offset, era, block, cfg);
         case 6:
-            return std::make_unique<cardano::babbage::block>(block_tuple, offset, era, block);
+            return std::make_unique<babbage::block>(block_tuple, offset, era, block, cfg);
         default:
             throw cardano_error("unsupported era {}!", era);
         }

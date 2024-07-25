@@ -13,7 +13,7 @@
 #include <dt/util.hpp>
 
 namespace daedalus_turbo {
-    using kes_vkey = ed25519_vkey;
+    using kes_vkey = ed25519::vkey;
     using kes_vkey_span = std::span<const uint8_t, sizeof(kes_vkey)>;
 
     template <size_t DEPTH>
@@ -23,7 +23,7 @@ namespace daedalus_turbo {
 
         static constexpr size_t size()
         {
-            return sizeof(ed25519_signature) + DEPTH * 2 * sizeof(ed25519_vkey);
+            return sizeof(ed25519::signature) + DEPTH * 2 * sizeof(ed25519::vkey);
         }
 
         explicit kes_signature(const buffer &bytes)
@@ -55,7 +55,7 @@ namespace daedalus_turbo {
     struct kes_signature<0> {
         static constexpr size_t size()
         {
-            return sizeof(ed25519_signature);
+            return sizeof(_signature);
         }
 
         explicit kes_signature(const buffer &bytes)
@@ -70,7 +70,7 @@ namespace daedalus_turbo {
             return ed25519::verify(_signature, vkey, msg);
         }
     private:
-        ed25519_signature _signature {};
+        ed25519::signature _signature {};
     };
 
     namespace kes {
@@ -80,7 +80,7 @@ namespace daedalus_turbo {
             ed25519::seed left;
             ed25519::seed right;
 
-            explicit split_seed(const std::span<uint8_t> &sd) {
+            explicit split_seed(const buffer &sd) {
                 if (sd.size() != sizeof(ed25519::seed))
                     throw error("seed buffer must be of of {} bytes but got {}!", sizeof(ed25519::seed), sd.size());
                 uint8_vector tmp {};
@@ -89,7 +89,6 @@ namespace daedalus_turbo {
                 tmp.clear();
                 tmp << std::string_view { "\x02" } << sd;
                 blake2b(right, tmp);
-                memset(sd.data(), 0, sd.size());
             }
         };
 
@@ -104,7 +103,7 @@ namespace daedalus_turbo {
 
             using signature = array<uint8_t, signature_size>;
 
-            explicit secret(const std::span<uint8_t> &bytes)
+            explicit secret(const buffer &bytes)
                 : _seed { bytes }, _left { _seed.left }, _right { _seed.right }
             {
                 uint8_vector tmp {};

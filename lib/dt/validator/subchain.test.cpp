@@ -11,92 +11,56 @@ using namespace daedalus_turbo::validator;
 
 suite validator_subchain_suite = [] {
     "validator::subchain"_test = [] {
-        "kes_interval"_test = [] {
-            expect(throws([] { kes_interval { 6, 5 }; }));
-            kes_interval i1 { 5, 7 };
-            expect(i1.can_merge(kes_interval { 7, 9 }));
-            expect(i1.can_merge(kes_interval { 7, 7 }));
-            expect(i1.can_merge(kes_interval { 15, 20 }));
-            expect(!i1.can_merge(kes_interval { 3, 4 }));
-            expect(!i1.can_merge(kes_interval { 5, 7 }));
-            expect(!i1.can_merge(kes_interval { 6, 7 }));
-        };
-
-        auto ph0 = cardano::pool_hash::from_hex("00000000000000000000000000000000000000000000000000000000");
-        auto ph1 = cardano::pool_hash::from_hex("11111111111111111111111111111111111111111111111111111111");
-        auto ph2 = cardano::pool_hash::from_hex("22222222222222222222222222222222222222222222222222222222");
-        "kes_interval_map"_test = [&] {
-            kes_interval_map m1 {};
-            m1.emplace(ph0, kes_interval { 2, 5 });
-            m1.emplace(ph1, kes_interval { 1, 2 });
-            kes_interval_map m2 {};
-            m2.emplace(ph0, kes_interval { 6, 11 });
-            m2.emplace(ph2, kes_interval { 7, 9 });
-            m1.merge(m2, 0);
-            expect(m1.size() == 3_ull);
-            expect(m1.at(ph0) == kes_interval { 2, 11 });
-            expect(m1.at(ph1) == kes_interval { 1, 2 });
-            expect(m1.at(ph2) == kes_interval { 7, 9 });
-            kes_interval_map m3 {};
-            m3.emplace(ph0, kes_interval { 0, 0 });
-            expect(throws([&] { m1.merge(m3, 0); }));
-        };
-
         "subchain"_test = [&] {
-            kes_interval_map m1 {};
-            m1.emplace(ph0, kes_interval { 2, 5 });
-            m1.emplace(ph1, kes_interval { 1, 2 });
-            subchain sc1 { 100, 200, 2, 0, m1 };
+            subchain sc1 { 100, 200, 2, 0 };
             expect(!sc1);
-            expect(sc1.kes_intervals.size() == 2_ull);
             expect(sc1.end_offset() == 300_ull);
-            kes_interval_map m2 {};
-            m2.emplace(ph0, kes_interval { 6, 11 });
-            m2.emplace(ph2, kes_interval { 7, 9 });
-            subchain sc2 { 300, 200, 1, 1, m2 };
-            expect(static_cast<bool>(sc2));
+            subchain sc2 { 300, 200, 1, 1 };
+            expect(!!sc2);
             expect(sc1 < sc2);
             sc1.merge(sc2);
             expect(sc1.offset == 100_ull);
             expect(sc1.num_bytes == 400_ull);
             expect(sc1.end_offset() == 500_ull);
             expect(sc1.num_blocks == 3);
-            expect(sc1.ok_eligibility == 1);
-            expect(sc1.kes_intervals.size() == 3_ull);
+            expect(sc1.valid_blocks == 1);
             expect(!sc1);
         };
 
         "subchain_list"_test = []
         {
-            "merge_valid"_test = [] {
-                std::vector<subchain> saved {};
-                subchain_list sl { [&] (const auto &sc) { saved.emplace_back(sc); } };
-                subchain sc1 { 200, 200, 1, 1 };
-                sc1.snapshot = true;
+            // keep an own instance to prevent the sharing of shelley_start_epoch with other tests
+            const cardano::config cfg { configs_dir::get() };
+            const auto hash1 = blake2b<cardano::block_hash>(std::string_view { "1" });
+            const auto hash2 = blake2b<cardano::block_hash>(std::string_view { "2" });
+            const auto hash3 = blake2b<cardano::block_hash>(std::string_view { "3" });
+            const auto hash4 = blake2b<cardano::block_hash>(std::string_view { "4" });
+            const auto hash5 = blake2b<cardano::block_hash>(std::string_view { "5" });
+            const auto hash6 = blake2b<cardano::block_hash>(std::string_view { "6" });
+            "merge_valid"_test = [&] {
+                subchain_list sl {};
+                subchain sc1 { 200, 200, 1, 1, 1'000, hash2, 1'500, hash3 };
                 sl.add(sc1);
-                sl.add(subchain { 1000, 200, 1, 1 });
-                expect(sl.valid_size() == 0_ull);
-                expect(saved.empty());
-                sl.add(subchain { 0, 200, 2, 2 });
-                expect(sl.valid_size() == 400_ull);
+                sl.add(subchain { 1000, 200, 1, 1, 10'000, hash3, 10'500, hash4 });
+                test_same(sl.valid_size(), 0);
+                test_same(sl.max_valid_point(), cardano::optional_point {});
+                sl.add(subchain { 0, 200, 2, 2, 0, hash1, 900, hash2 });
+                test_same(sl.valid_size(), 400);
+                test_same(sl.max_valid_point(), cardano::point { hash3, 1'500 });
                 expect(sl.size() == 2_ull);
-                expect(!saved.empty());
             };
-            "merge_same_epoch"_test = [] {
-                std::vector<subchain> saved {};
-                subchain_list sl { [&] (const auto &sc) { saved.emplace_back(sc); } };
-                sl.add(subchain { 200, 200, 1, 1, {}, 2 });
-                sl.add(subchain { 1000, 200, 1, 0, {}, 3 });
-                sl.add(subchain { 1200, 200, 1, 0, {}, 3 });
-                sl.add(subchain { 1400, 200, 1, 0, {}, 3 });
-                sl.add(subchain { 1600, 200, 1, 0, {}, 4 });
-                expect(sl.valid_size() == 0_ull);
-                expect(sl.size() == 5_ull);
-                expect(saved.empty());
-                sl.merge_same_epoch();
-                expect(sl.valid_size() == 0_ull);
-                expect(sl.size() == 3_ull);
-                expect(saved.empty());
+            "merge_same_epoch"_test = [&] {
+                subchain_list sl {};
+                sl.add(subchain { 200, 200, 1, 1, 21600 * 2, hash1, 21600 * 3 - 1, hash2 });
+                sl.add(subchain { 1000, 200, 1, 0, 21600 * 3, hash2, 21600 * 3 + 100, hash3 });
+                sl.add(subchain { 1200, 200, 1, 0, 21600 * 3 + 101, hash3, 21600 * 3 + 1000, hash4 });
+                sl.add(subchain { 1400, 200, 1, 0, 21600 * 3 + 1001, hash4, 21600 * 3 + 2000, hash5 });
+                sl.add(subchain { 1600, 200, 1, 0, 21600 * 4, hash5, 21600 * 5 - 1, hash6 });
+                test_same(sl.valid_size(), 0);
+                test_same(sl.size(), 5);
+                sl.merge_same_epoch(cfg);
+                test_same(sl.valid_size(), 0);
+                test_same(sl.size(), 3);
             };
         };
     };

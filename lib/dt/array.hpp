@@ -12,8 +12,6 @@
 #include <dt/format.hpp>
 
 namespace daedalus_turbo {
-    using array_error = error;
-
     inline uint8_t uint_from_hex(char k)
     {
         switch (std::tolower(k)) {
@@ -42,7 +40,7 @@ namespace daedalus_turbo {
 #   ifndef _MSC_VER
         __attribute__((packed))
 #   endif
-        array: std::array<T, SZ> {
+    array: std::array<T, SZ> {
         using std::array<T, SZ>::array;
 
         static array<T, SZ> from_hex(const std::string_view &hex)
@@ -58,7 +56,7 @@ namespace daedalus_turbo {
         array(std::initializer_list<T> s) {
             static_assert(sizeof(*this) == SZ * sizeof(T));
             if (s.size() != SZ)
-                throw array_error("span must be of size {} but got {}", SZ, s.size());
+                throw error("span must be of size {} but got {}", SZ, s.size());
 #if !defined(__clang__) && !defined(_MSC_VER)
 #   pragma GCC diagnostic push
 #   pragma GCC diagnostic ignored "-Wclass-memaccess"
@@ -72,21 +70,21 @@ namespace daedalus_turbo {
         array(const std::span<const T> &s)
         {
             if (s.size() != SZ)
-                throw array_error("span must be of size {} but got {}", SZ, s.size());
+                throw error("span must be of size {} but got {}", SZ, s.size());
             memcpy(this, std::data(s), SZ * sizeof(T));
         }
 
         array(const std::string_view s)
         {
             if (s.size() != SZ * sizeof(T))
-                throw array_error("string_view must be of size {} but got {}", SZ * sizeof(T), s.size());
+                throw error("string_view must be of size {} but got {}", SZ * sizeof(T), s.size());
             memcpy(this, std::data(s), SZ * sizeof(T));
         }
 
         array &operator=(const std::span<const T> &s)
         {
             if (s.size() != SZ)
-                throw array_error("span must of size {} but got {}", SZ, s.size());
+                throw error("span must of size {} but got {}", SZ, s.size());
             memcpy(this, std::data(s), SZ * sizeof(T));
             return *this;
         }
@@ -94,7 +92,7 @@ namespace daedalus_turbo {
         array &operator=(const std::string_view s)
         {
             if (s.size() != SZ * sizeof(T))
-                throw array_error("string_view must be of size {} but got {}", SZ * sizeof(T), s.size());
+                throw error("string_view must be of size {} but got {}", SZ * sizeof(T), s.size());
             memcpy(this, std::data(s), SZ * sizeof(T));
             return *this;
         }
@@ -104,16 +102,40 @@ namespace daedalus_turbo {
             return std::span<const T> { *this };
         }
     };
+
+    template<typename T, size_t SZ>
+    struct secure_array: array<T, SZ> {
+        using array<T, SZ>::array;
+
+        static secure_array<T, SZ> from_hex(const std::string_view &hex)
+        {
+            secure_array<T, SZ> data;
+            if (hex.size() != SZ * 2)
+                throw error("hex string must have {} characters but got {}!", SZ * 2, hex.size());
+            for (size_t i = 0; i < SZ; ++i)
+                data[i] = uint_from_hex(hex[i * 2]) << 4 | uint_from_hex(hex[i * 2 + 1]);
+            return data;
+        }
+
+        ~secure_array()
+        {
+            memset(this->data(), 0, this->size() * sizeof(T));
+        }
+    };
 }
 
 namespace fmt {
     template<size_t SZ>
-    struct formatter<daedalus_turbo::array<uint8_t, SZ>>: public formatter<int> {
+    struct formatter<daedalus_turbo::array<uint8_t, SZ>>: formatter<int> {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out())
         {
             return fmt::format_to(ctx.out(), "{}", std::span(v));
         }
+    };
+
+    template<size_t SZ>
+    struct formatter<daedalus_turbo::secure_array<uint8_t, SZ>>: formatter<daedalus_turbo::array<uint8_t, SZ>> {
     };
 }
 

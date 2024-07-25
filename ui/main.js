@@ -113,7 +113,8 @@ const createWindow = () => {
     icon: './static/logo-256.png',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
-      webSecurity: false
+      webSecurity: false,
+      enableRemoteModule: true
     }
   });
   if (!api.dev)
@@ -199,6 +200,17 @@ function setupIdRequest(name, baseURI, reqURI) {
 }
 
 ipcMain.on("exit", () => app.quit());
+ipcMain.on('selectDir', async (event, reqId, params) => {
+  try {
+    const result = await dialog.showOpenDialog({ properties: ['openDirectory'] });
+    console.log('selectDir OK:', result);
+    event.reply('selectDir', reqId, undefined, result);
+  } catch (e) {
+    console.log('selectDir ERROR:', e);
+    event.reply('selectDir', reqId, e, undefined);
+  }
+});
+setupIdRequest('export', api.uri, '/export/');
 setupIdRequest('status', api.uri, '/status/');
 setupIdRequest('txInfo', api.uri, '/tx/');
 setupIdRequest('stakeInfo', api.uri, '/stake/');

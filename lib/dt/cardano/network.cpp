@@ -18,7 +18,9 @@ namespace daedalus_turbo::cardano::network {
     using boost::asio::ip::tcp;
 
     struct client_connection::impl {
-        impl(const address &addr, asio::worker &asio_worker): _addr { addr }, _asio_worker(asio_worker)
+        impl(const address &addr, const cardano::config &cfg, asio::worker &asio_worker)
+            : _addr { addr }, _protocol_magic { json::value_to<uint64_t>(cfg.byron_genesis.at("protocolConsts").at("protocolMagic"))  },
+                _asio_worker(asio_worker)
         {
         }
 
@@ -74,6 +76,7 @@ namespace daedalus_turbo::cardano::network {
         }
     private:
         const address _addr;
+        const uint64_t _protocol_magic;
         asio::worker &_asio_worker;
         tcp::resolver _resolver { _asio_worker.io_context() };
         std::optional<tcp::socket> _conn {};
@@ -129,13 +132,13 @@ namespace daedalus_turbo::cardano::network {
                     .map(1)
                     .uint(protocol_ver) // versionNumber
                     .array(2)
-                    .uint(764824073) // networkMagic
+                    .uint(_protocol_magic) // networkMagic
                     .s_false(); // diffusionMode
             auto resp = co_await _send_request(socket, protocol::handshake, enc.cbor());
             auto resp_cbor = cbor::parse(resp);
             auto &resp_items = resp_cbor.array();
             if (resp_items.at(0).uint() != 1ULL)
-                throw error("peer at {}:{} refused the protocol version {}!", _addr.host, _addr.port, protocol_ver);
+                throw error("peer at {}:{} refused the protocol version {}: {}!", _addr.host, _addr.port, protocol_ver, resp_cbor);
             if (resp_items.at(1).uint() != protocol_ver)
                 throw error("peer at {}:{} ignored the requested protocol version {}!", _addr.host, _addr.port, protocol_ver);
             co_return socket;
@@ -330,8 +333,8 @@ namespace daedalus_turbo::cardano::network {
         }
     };
 
-    client_connection::client_connection(const address &addr, asio::worker &asio_worker)
-        : client { addr }, _impl { std::make_unique<impl>(addr, asio_worker) }
+    client_connection::client_connection(const address &addr, const cardano::config &cfg, asio::worker &asio_worker)
+        : client { addr }, _impl { std::make_unique<impl>(addr, cfg, asio_worker) }
     {
     }
 
@@ -368,8 +371,8 @@ namespace daedalus_turbo::cardano::network {
         return m;
     }
 
-    std::unique_ptr<client> client_manager_async::_connect_impl(const address &addr, asio::worker &asio_worker)
+    std::unique_ptr<client> client_manager_async::_connect_impl(const address &addr, const cardano::config &cfg, asio::worker &asio_worker)
     {
-        return std::make_unique<client_connection>(addr, asio_worker);
+        return std::make_unique<client_connection>(addr, cfg, asio_worker);
     }
 }

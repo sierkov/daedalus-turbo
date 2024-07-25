@@ -198,6 +198,21 @@ suite cbor_parser_suite = [] {
             expect(boost::ut::nothrow([&] { items.at(2); }));
             expect(throws<cbor_error>([&] { items.at(3); }));
         };
+
+        "indefinite"_test = [] {
+            {
+                cbor_array a {};
+                a.indefinite = true;
+                auto b = std::move(a);
+                expect(b.indefinite);
+            }
+            {
+                cbor_map a {};
+                a.indefinite = true;
+                auto b = std::move(a);
+                expect(b.indefinite);
+            }
+        };
     };
 
 };

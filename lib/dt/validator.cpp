@@ -2,19 +2,17 @@
  * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
-
 #include <dt/cardano/common.hpp>
 #include <dt/cardano/state/vrf.hpp>
+#include <dt/chunk-registry.hpp>
 #include <dt/container.hpp>
 #include <dt/index/block-fees.hpp>
-#include <dt/index/stake-delta.hpp>
 #include <dt/index/timed-update.hpp>
-#include <dt/index/txo.hpp>
+#include <dt/index/utxo.hpp>
 #include <dt/index/vrf.hpp>
 #include <dt/mutex.hpp>
 #include <dt/validator.hpp>
 #include <dt/validator/state.hpp>
-#include <dt/validator/subchain.hpp>
 #include <dt/zpp.hpp>
 
 namespace daedalus_turbo::validator {
@@ -24,34 +22,37 @@ namespace daedalus_turbo::validator {
         auto indexers = indexer::default_list(data_dir, sched);
         indexers.emplace(std::make_shared<index::block_fees::indexer>(idx_dir, "block-fees", sched));
         indexers.emplace(std::make_shared<index::timed_update::indexer>(idx_dir, "timed-update", sched));
-        indexers.emplace(std::make_shared<index::stake_delta::indexer>(idx_dir, "inflow", sched));
         indexers.emplace(std::make_shared<index::vrf::indexer>(idx_dir, "vrf", sched));
+        indexers.emplace(std::make_shared<index::utxo::indexer>(idx_dir, "utxo", sched));
         return indexers;
     }
 
     struct incremental::impl {
-        impl(incremental &cr, const configs &cfg, const bool on_the_go)
-        : _cr { cr }, _cfg { cfg },
+        impl(chunk_registry &cr)
+        : _cr { cr },
             _validate_dir { chunk_registry::init_db_dir((_cr.data_dir() / "validate").string()) },
             _state_path { (_validate_dir / "state.json").string() },
             _state_pre_path { (_validate_dir / "state-pre.json").string() },
-            _pbft_pools { _parse_pbft_pools(_cfg) },
-            _state { _pbft_pools, _cr.sched() },
-            _on_the_go { on_the_go }
+            _state { _cr.config(), _cr.sched() }
         {
             _load_state();
+            _cr.register_processor(_proc);
+            logger::info("protocol magic: {} byron genesis: {}", _cr.config().byron_protocol_magic, _cr.config().byron_genesis_hash);
         }
 
-        void truncate_impl(uint64_t max_end_offset)
+        ~impl()
         {
-            _cr._parent_truncate_impl(max_end_offset);
-            if (std::max(_subchains.valid_size(), _state.end_offset()) <= max_end_offset)
-                return;
-            timer t { fmt::format("validator::truncate to size: {}", max_end_offset), logger::level::info };
+            _cr.remove_processor(_proc);
+        }
+
+        void my_truncate(const cardano::optional_point &new_tip, const bool /*track_changes*/)
+        {
+            timer t { fmt::format("validator::truncate to {}", new_tip), logger::level::debug };
+            const auto max_end_offset = new_tip ? new_tip->end_offset : 0;
             if (!_snapshots.empty() && _snapshots.rbegin()->end_offset > max_end_offset) {
                 for (auto it = _snapshots.begin(); it != _snapshots.end(); ) {
                     if (it->end_offset > max_end_offset) {
-                        for (const auto &prefix: { "kes", "ledger", "vrf" })
+                        for (const auto &prefix: { "ledger" })
                             _cr.remover().mark(_storage_path(prefix, it->end_offset));
                         it = _snapshots.erase(it);
                     } else {
@@ -63,34 +64,29 @@ namespace daedalus_turbo::validator {
                     logger::info("validator's closest snapshot is for epoch {} and end_offset: {}", last_snapshot.epoch, last_snapshot.end_offset);
                     _load_state_snapshot(last_snapshot.end_offset);
                 } else {
-                    logger::info("validator has no applicable snapshots, the new end_offset: 0");
+                    _state.clear();
+                    logger::info("validator has no applicable snapshots, reprocessing the chain data to create one");
                 }
                 _apply_ledger_updates_fast();
                 _remove_temporary_data();
             }
         }
 
-        uint64_t max_end_offset_impl()
+        uint64_t my_end_offset() const
         {
-            return std::max(std::max(_subchains.valid_size(), _state.end_offset()), _cr._parent_max_end_offset_impl());
+            return _state.end_offset();
         }
 
-        uint64_t valid_end_offset_impl()
+        void my_start_tx()
         {
-            return std::min(std::min(_subchains.valid_size(), _state.end_offset()), _cr._parent_valid_end_offset_impl());
-        }
-
-        void start_tx_impl()
-        {
-            _cr._parent_start_tx_impl();
             _next_end_offset = _state.end_offset();
-            _next_last_epoch = _state.epoch();
+            _next_tasks.clear();
+            _reserve_snapshot.reset();
         }
 
-        void prepare_tx_impl()
+        void my_prepare_tx()
         {
             timer t { "validator::_prepare_tx" };
-            _cr._parent_prepare_tx_impl();
             // previous validation task must be finished by now
             if (_cr.num_bytes() > _state.end_offset()) {
                 mutex::unique_lock lk { _next_task_mutex };
@@ -101,52 +97,65 @@ namespace daedalus_turbo::validator {
                 _save_state_snapshot();
                 _cr.sched().process(true);
             }
-            if (_cr.num_bytes() > 0) {
-                mutex::scoped_lock subchains_lk { _subchains_mutex };
-                _subchains.merge_valid();
-                if (_subchains.size() != 1 || !_subchains.begin()->second)
-                    throw error("The provided data contains unmergeable blockchain segments!");
-                if (_subchains.valid_size() != _state.end_offset())
-                    logger::warn("KES subchain end offset: {} mismatches the ledger state end offset: {}",
-                        _subchains.valid_size(), _state.end_offset());
-                _save_kes_snapshot(_subchains.begin()->second);
+            if (_state.valid_end_offset() < _state.end_offset()) {
+                throw error("valid subchain end offset: {} is less than the final state end offset: {}",
+                    _state.valid_end_offset(), _state.end_offset());
             }
+            if (_reserve_snapshot && _state.valid_end_offset() < _reserve_snapshot->end_offset)
+                throw error("valid subchain end offset: {} is less than the reserve state end offset: {}",
+                    _state.valid_end_offset(), _reserve_snapshot->end_offset);
         }
 
-        void rollback_tx_impl()
+        void my_rollback_tx()
         {
             _load_state();
+            if (_reserve_snapshot)
+                std::filesystem::remove(_storage_path("ledger-reserve", _reserve_snapshot->end_offset));
         }
 
-        void commit_tx_impl()
+        void my_commit_tx()
         {
-            _cr._parent_commit_tx_impl();
-            if (_snapshots.size() > 5) {
-                uint64_t last_offset = 0;
-                const uint64_t end_offset = _snapshots.rbegin()->end_offset;
-                for (auto it = _snapshots.begin(); it != _snapshots.end(); ) {
-                    if (((end_offset - it->end_offset <= snapshot_hifreq_end_offset_range && it->end_offset - last_offset < snapshot_hifreq_distance)
-                        || (end_offset - it->end_offset > snapshot_hifreq_end_offset_range && it->end_offset - last_offset < snapshot_normal_distance))
-                        && it->end_offset != end_offset)
-                    {
-                        logger::info("removing unnecessary snapshot of the validator state for end offset {}", it->end_offset);
-                        for (const auto &prefix: { "kes", "ledger", "vrf" }) {
-                            const auto path = _storage_path(prefix, it->end_offset);
-                            logger::debug("marking state file {} for future deletion", path);
-                            _cr.remover().mark(path);
-                        }
-                        it = _snapshots.erase(it);
-                    } else {
-                        for (const auto &prefix: { "kes", "ledger", "vrf" }) {
-                            _cr.remover().unmark(_storage_path(prefix, it->end_offset));
-                        }
-                        last_offset = it->end_offset;
-                        ++it;
+            if (_reserve_snapshot) {
+                std::filesystem::rename(_storage_path("ledger-reserve", _reserve_snapshot->end_offset),
+                    _storage_path("ledger", _reserve_snapshot->end_offset));
+                _snapshots.emplace(*_reserve_snapshot);
+            }
+            const uint64_t end_offset = _snapshots.rbegin()->end_offset;
+            uint64_t last_offset = 0;
+            for (auto it = _snapshots.begin(); it != _snapshots.end(); ) {
+                if (_snapshots.size() > 5
+                    && ((end_offset - it->end_offset <= snapshot_hifreq_end_offset_range && it->end_offset - last_offset < snapshot_hifreq_distance)
+                    || (end_offset - it->end_offset > snapshot_hifreq_end_offset_range && it->end_offset - last_offset < snapshot_normal_distance))
+                    && it->end_offset != end_offset)
+                {
+                    logger::info("removing unnecessary snapshot of the validator state for end offset {}", it->end_offset);
+                    for (const auto &prefix: { "ledger" }) {
+                        const auto path = _storage_path(prefix, it->end_offset);
+                        logger::debug("marking state file {} for future deletion", path);
+                        _cr.remover().mark(path);
                     }
+                    it = _snapshots.erase(it);
+                } else {
+                    for (const auto &prefix: { "ledger" }) {
+                        _cr.remover().unmark(_storage_path(prefix, it->end_offset));
+                    }
+                    last_offset = it->end_offset;
+                    ++it;
                 }
             }
             _save_json_snapshots(_state_path);
             _remove_temporary_data();
+        }
+
+        void my_on_epoch_update(const uint64_t epoch, const epoch_info &info)
+        {
+            // only one thread at a time must work on this
+            mutex::unique_lock lk { _next_task_mutex };
+            // slice merge notifications may arrive out of order even though they are scheduled in order
+            if (info.end_offset() > _next_end_offset)
+                _next_end_offset = info.end_offset();
+            _next_tasks.try_emplace(epoch, info.first_slot(), info.last_slot());
+            _schedule_validation(std::move(lk), false);
         }
 
         cardano::amount unspent_reward(const cardano::stake_ident &id) const
@@ -154,27 +163,28 @@ namespace daedalus_turbo::validator {
             return _state.unspent_reward(id);
         }
 
-        std::map<cardano::slot, double> tail_relative_stake() const
+        cardano::tail_relative_stake_map tail_relative_stake() const
         {
             timer t { "tail_relative_stake", logger::level::info };
             struct stake_info {
                 cardano::pool_hash pool_hash {};
                 double rel_stake = 0;
             };
-            std::map<cardano::slot, stake_info> slot_rel_stake {};
+            std::map<uint64_t, stake_info> slot_rel_stake {};
             uint64_t min_epoch = _state.epoch() > 1 ? _state.epoch() - 1 : 0;
-            for (auto rit = _cr.chunks().rbegin(), rend = _cr.chunks().rend(); rit != rend && rit->second.epoch() >= min_epoch; ++rit) {
+            for (auto rit = _cr.chunks().rbegin(), rend = _cr.chunks().rend(); rit != rend && _cr.make_slot(rit->second.first_slot).epoch() >= min_epoch; ++rit) {
+                const auto chunk_epoch = _cr.make_slot(rit->second.first_slot).epoch();
                 const auto &chunk = rit->second;
                 auto chunk_path = _cr.full_path(chunk.rel_path());
-                logger::debug("tail_relative_stake analyzing chunk {} from epoch {}", chunk_path, chunk.epoch());
+                logger::debug("tail_relative_stake analyzing chunk {} from epoch {}", chunk_path, chunk_epoch);
                 auto chunk_data = file::read(chunk_path);
-                const auto &stake_dist = chunk.epoch() == _state.epoch() ? _state.pool_dist_set() : _state.pool_dist_go();
+                const auto &stake_dist = chunk_epoch == _state.epoch() ? _state.pool_dist_set() : _state.pool_dist_go();
                 cbor_parser parser { chunk_data };
                 cbor_value block_tuple {};
                 while (!parser.eof()) {
                     parser.read(block_tuple);
-                    auto blk = cardano::make_block(block_tuple, chunk.offset + block_tuple.data - chunk_data.data());
-                    auto pool_hash = blk->issuer_hash();
+                    const auto blk = cardano::make_block(block_tuple, chunk.offset + block_tuple.data - chunk_data.data(), _cr.config());
+                    const auto pool_hash = blk->issuer_hash();
                     slot_rel_stake[blk->slot()] = stake_info { pool_hash, static_cast<double>(stake_dist.get(pool_hash)) / stake_dist.total_stake() };
                 }
                 if (slot_rel_stake.size() >= 21600)
@@ -182,7 +192,7 @@ namespace daedalus_turbo::validator {
             }
             double rel_stake = 0.0;
             std::set<cardano::pool_hash> seen_pools {};
-            std::map<cardano::slot, double> slot_cum_rel_stake {};
+            cardano::tail_relative_stake_map slot_cum_rel_stake {};
             for (auto rit = slot_rel_stake.rbegin(), rend = slot_rel_stake.rend(); rit != rend; ++rit) {
                 if (!seen_pools.contains(rit->second.pool_hash)) {
                     rel_stake += rit->second.rel_stake;
@@ -193,35 +203,96 @@ namespace daedalus_turbo::validator {
             return slot_cum_rel_stake;
         }
 
-        chunk_registry::chunk_info parse(uint64_t offset, const std::string &rel_path,
-            const buffer &raw_data, size_t compressed_size, const block_processor &blk_proc) const
+        void my_on_block_validate(const cardano::block_base &blk) const
         {
-            subchain sc { offset, raw_data.size() };
-            auto chunk = _cr._parent_parse(offset, rel_path, raw_data, compressed_size, [&](const auto &blk) {
-                blk_proc(blk);
-                auto slot = blk.slot();
-                if (!blk.signature_ok())
-                    throw error("validation of the block signature at slot {} failed!", slot);
-                if (blk.era() >= 2 && !blk.body_hash_ok())
-                    throw error("validation of the block body hash at slot {} failed!", slot);
-                _parse_update_subchain(sc, blk, rel_path);
-            });
-            _parse_register_subchain(std::move(sc), rel_path);
-            return chunk;
+            auto slot = blk.slot();
+            if (!blk.signature_ok())
+                throw error("validation of the block signature at slot {} failed!", slot);
+            if (blk.era() >= 2 && !blk.body_hash_ok())
+                throw error("validation of the block body hash at slot {} failed!", slot);
+            switch (blk.era()) {
+                case 0: {
+                    static auto boundary_issuer_vkey = cardano::vkey::from_hex("0000000000000000000000000000000000000000000000000000000000000000");
+                    if (blk.issuer_vkey() != boundary_issuer_vkey)
+                        throw error("boundary block contains an unexpected issuer_vkey: {}", blk.issuer_vkey());
+                    break;
+                }
+                case 1: {
+                    static std::set<cardano::vkey> byron_issuers {
+                        cardano::vkey::from_hex("0BDB1F5EF3D994037593F2266255F134A564658BB2DF814B3B9CEFB96DA34FA9"),
+                        cardano::vkey::from_hex("1BC97A2FE02C297880CE8ECFD997FE4C1EC09EE10FEEEE9F686760166B05281D"),
+                        cardano::vkey::from_hex("26566E86FC6B9B177C8480E275B2B112B573F6D073F9DEEA53B8D99C4ED976B3"),
+                        cardano::vkey::from_hex("50733161FDAFB6C8CB6FAE0E25BDF9555105B3678EFB08F1775B9E90DE4F5C77"),
+                        cardano::vkey::from_hex("993A8F056D2D3E50B0AC60139F10DF8F8123D5F7C4817B40DAC2B5DD8AA94A82"),
+                        cardano::vkey::from_hex("9A6FA343C8C6C36DE1A3556FEB411BFDF8708D5AF88DE8626D0FC6BFA4EEBB6D"),
+                        cardano::vkey::from_hex("D2965C869901231798C5D02D39FCA2A79AA47C3E854921B5855C82FD14708915"),
+                    };
+                    if (!byron_issuers.contains(blk.issuer_vkey()))
+                        throw error("unexpected Byron issuer_vkey: {}", blk.issuer_vkey());
+                    break;
+                }
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                    // do nothing here, the block signer's eligibility is tested later process_vrf_chunks
+                    break;
+                default:
+                    throw error("unsupported block era: {}", blk.era());
+            }
         }
 
-        void on_slice_ready(const uint64_t first_epoch, const uint64_t last_epoch, const indexer::merger::slice &slice)
+        void my_on_chunk_add(const storage::chunk_info &chunk, const bool fast=false)
         {
-            _cr._parent_on_slice_ready(first_epoch, last_epoch, slice);
-            // only one thread at a time must work on this
-            mutex::unique_lock lk { _next_task_mutex };
-            // slice merge notifications may arrive out of order even though the are scheduled in order
-            if (slice.end_offset() > _next_end_offset)
-                _next_end_offset = slice.end_offset();
-            if (last_epoch > _next_last_epoch)
-                _next_last_epoch = last_epoch;
-            if (_on_the_go)
-                _schedule_validation(std::move(lk), false);
+            subchain sc {
+                chunk.offset, chunk.data_size, chunk.blocks.size(), 0,
+                chunk.first_slot, chunk.first_block_hash(), chunk.last_slot, chunk.last_block_hash
+            };
+            if (!fast) {
+                for (const auto &blk: chunk.blocks) {
+                    if (blk.era < 2)
+                        ++sc.valid_blocks;
+                }
+            } else {
+                sc.valid_blocks = sc.num_blocks;
+            }
+            _parse_register_subchain(std::move(sc));
+        }
+
+        std::optional<cardano::point> tip() const
+        {
+            if (const auto last_block = _cr.last_valid_block(); last_block)
+                return cardano::point { last_block->hash, last_block->slot, last_block->height };
+            return {};
+        }
+
+        cardano::optional_slot can_export(const cardano::optional_point &immutable_tip) const
+        {
+            if (const auto snap = _best_exportable_snapshot(immutable_tip); snap)
+                return snap->last_slot;
+            return {};
+        }
+
+        std::string node_export(const std::filesystem::path &ledger_dir, const cardano::optional_point &immutable_tip, const int prio_base) const
+        {
+            // export only the reserve (penultimate snapshot) so that Cardano Node have some space to rollback blocks if necessary
+            if (const auto best_snap = _best_exportable_snapshot(immutable_tip); best_snap && best_snap->end_offset) {
+                logger::info("selected the ledger snapshot with end_offset {} last_slot {} for export",
+                    best_snap->end_offset, cardano::slot { best_snap->last_slot, _cr.config() });
+                validator::state snap_state { _cr.config(), _cr.sched() };
+                snap_state.load(_storage_path("ledger", best_snap->end_offset));
+                const auto snap_tip = _cr.find_block_by_offset(best_snap->end_offset - 1).point();
+                const auto path = (ledger_dir / fmt::format("{}_dt", best_snap->last_slot)).string();
+                snap_state.save_node(path, snap_tip, prio_base);
+                return path;
+            }
+            throw error("do not have an exportable snapshot");
+        }
+
+        const validator::state &state() const
+        {
+            return _state;
         }
     private:
         static constexpr uint64_t snapshot_hifreq_end_offset_range = static_cast<uint64_t>(1) << 30;
@@ -230,15 +301,37 @@ namespace daedalus_turbo::validator {
 
         using timed_update_list = vector<index::timed_update::item>;
         struct snapshot {
-            uint64_t epoch = 0;
-            uint64_t end_offset = 0;
+            uint64_t epoch;
+            uint64_t end_offset;
+            uint64_t last_slot;
+            bool exportable;
+
+            snapshot(const validator::state &st)
+                : epoch { st.epoch() }, end_offset { st.end_offset() }, last_slot { st.last_slot() }, exportable { st.exportable() }
+            {
+            }
+
+            snapshot(const uint64_t epoch_, const uint64_t end_offset_, const uint64_t last_slot_, const bool exportable_)
+                : epoch { epoch_ }, end_offset { end_offset_ }, last_slot { last_slot_ }, exportable { exportable_ }
+            {
+            }
 
             static snapshot from_json(const json::value &j)
             {
-                return snapshot { json::value_to<uint64_t>(j.at("epoch")), json::value_to<uint64_t>(j.at("endOffset")) };
+                return snapshot {
+                    json::value_to<uint64_t>(j.at("epoch")),
+                    json::value_to<uint64_t>(j.at("endOffset")),
+                    json::value_to<uint64_t>(j.at("lastSlot")),
+                    json::value_to<bool>(j.at("exportable"))
+                };
             }
 
-            bool operator<(const auto &b) const
+            bool operator==(const snapshot &o) const
+            {
+                return epoch == o.epoch && end_offset == o.end_offset && last_slot == o.last_slot && exportable == o.exportable;
+            }
+
+            bool operator<(const snapshot &b) const
             {
                 return end_offset < b.end_offset;
             }
@@ -247,66 +340,63 @@ namespace daedalus_turbo::validator {
             {
                 return json::object {
                     { "epoch", epoch },
-                    { "endOffset", end_offset }
+                    { "endOffset", end_offset },
+                    { "lastSlot", last_slot },
+                    { "exportable", exportable }
                 };
             }
         };
         using snapshot_list = std::set<snapshot>;
+        using epoch_task_map = map<uint64_t, cardano::slot_range>;
 
-        incremental &_cr;
-        const configs &_cfg;
+        chunk_registry &_cr;
         const std::filesystem::path _validate_dir;
         const std::string _state_path;
         const std::string _state_pre_path;
-        const state::pool_set _pbft_pools;
-        state _state;
-        cardano::state::vrf _vrf_state {};
-        alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _subchains_mutex {};
-        mutable subchain_list _subchains { [this](const auto &sc) { _save_kes_snapshot(sc); } };
+        validator::state _state;
         std::atomic_bool _validation_running { false };
         alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _next_task_mutex {};
         uint64_t _next_end_offset = 0;
-        uint64_t _next_last_epoch = 0;
+        epoch_task_map _next_tasks {};
         snapshot_list _snapshots {};
-        bool _on_the_go = true;
+        std::optional<snapshot> _reserve_snapshot {};
+        chunk_processor _proc {
+            [this] { return my_end_offset(); },
+            [this] { my_start_tx(); },
+            [this] { my_prepare_tx(); },
+            [this] { my_rollback_tx(); },
+            [this] { my_commit_tx(); },
+            [this](const auto &new_tip, const auto track) { my_truncate(new_tip, track); },
+            [this](const auto &block) { my_on_block_validate(block); },
+            [this](const auto &chunk) { my_on_chunk_add(chunk); },
+            [this](const auto epoch, const auto &info) { my_on_epoch_update(epoch, info); },
+        };
 
-        static std::set<cardano::pool_hash> _parse_pbft_pools(const configs &cfg)
+        const snapshot *_best_exportable_snapshot(const cardano::optional_point &imm_tip) const
         {
-            std::set<cardano::pool_hash> pools {};
-            const config &gen_shelley = cfg.at("genesis-shelley");
-            for (const auto &[id, meta]: gen_shelley.at("genDelegs").as_object()) {
-                pools.emplace(cardano::pool_hash::from_hex(meta.at("delegate").as_string()));
+            if (!_snapshots.empty() && imm_tip) {
+                for (const auto &snap: _snapshots | std::ranges::views::reverse) {
+                    if (snap.exportable && snap.end_offset <= imm_tip->end_offset)
+                        return &snap;
+                }
             }
-            return pools;
+            return nullptr;
         }
 
         void _load_state()
         {
             uint64_t end_offset = 0;
             _state.clear();
-            _vrf_state.clear();
-            _subchains.clear();
             _snapshots.clear();
-            file_set known_files {};
+            chunk_registry::file_set known_files {};
             if (std::filesystem::exists(_state_path)) {
                 known_files.emplace(_state_path);
                 const auto j_snapshots = json::load(_state_path).as_array();
                 for (const auto &j_s: j_snapshots) {
                     const auto snap = snapshot::from_json(j_s.as_object());
-                    bool ok = true;
-                    for (const auto &prefix: { "kes", "ledger", "vrf" }) {
-                        const auto snap_path = _storage_path(prefix, snap.end_offset);
-                        if (!std::filesystem::exists(snap_path)) {
-                            logger::warn("missing snapshot file: {} - ignoring the snapshot for end offset {}", snap_path, snap.end_offset);
-                            ok = false;
-                            break;
-                        }
-                    }
-                    if (ok) {
+                    if (const auto snap_path = _storage_path("ledger", snap.end_offset); std::filesystem::exists(snap_path)) {
                         _snapshots.emplace(std::move(snap));
-                        for (const auto &prefix: { "kes", "ledger", "vrf" }) {
-                            known_files.insert(_storage_path(prefix, snap.end_offset));
-                        }
+                        known_files.insert(snap_path);
                     }
                 }
                 if (!_snapshots.empty())
@@ -328,22 +418,25 @@ namespace daedalus_turbo::validator {
             json::save_pretty(path, j_snapshots);
         }
 
-        uint64_t _load_state_snapshot(uint64_t end_offset)
+        uint64_t _load_state_snapshot(const uint64_t end_offset)
         {
-            _vrf_state.load(_storage_path("vrf", end_offset));
             _state.load(_storage_path("ledger", end_offset));
-            {
-                subchain sc {};
-                zpp::load(sc, _storage_path("kes", _state.end_offset()));
-                _subchains.clear();
-                _subchains.add(std::move(sc));
-            }
+            if (_state.end_offset() != end_offset)
+                throw error("loaded state does not match the recorded end offset: {} != {}", _state.end_offset(), end_offset);
+            if (_state.end_offset() != _state.valid_end_offset())
+                throw error("validator state is in inconsistent state valid_end_offset: {} vs end_offset: {}", _state.valid_end_offset(), _state.end_offset());
             return _state.end_offset();
         }
 
         std::string _storage_path(const std::string_view &prefix, uint64_t end_offset) const
         {
             return std::filesystem::weakly_canonical(_validate_dir / fmt::format("{}-{:013}.bin", prefix, end_offset)).string();
+        }
+
+        void _save_reserve_snapshot()
+        {
+            _state.save(_storage_path("ledger-reserve", _state.end_offset()));
+            _reserve_snapshot.emplace(_state);
         }
 
         void _save_state_snapshot()
@@ -353,38 +446,27 @@ namespace daedalus_turbo::validator {
                 fmt::format("saved the ledger's state snapshot epoch: {} end_offset: {}", _state.epoch(), _state.end_offset()),
                     logger::level::info };
             logger::debug("saving VRF state");
-            _vrf_state.save(_storage_path("vrf", _state.end_offset()));
             logger::debug("saving the validator state");
             _state.save(_storage_path("ledger", _state.end_offset()));
             logger::debug("recording the new snapshot");
-            snapshot latest { _state.epoch(), _state.end_offset() };
+            snapshot latest { _state };
             _snapshots.emplace(std::move(latest));
-        }
-
-        // _suchain_mutex must be heldby the caller!
-        void _save_kes_snapshot(const subchain &sc) const
-        {
-            timer t { fmt::format("saving KES state snapshot for end_offset: {}", sc.end_offset()) };
-            const auto path = _storage_path("kes", sc.end_offset());
-            logger::debug("saving KES state snapshot for end_offset {} to {}", sc.end_offset(), path);
-            zpp::save(path, sc);
-            if (!std::filesystem::exists(path))
-                throw error("internal error: the KES snapshot file is missing!");
         }
 
         void _remove_temporary_data()
         {
             timer t { "validator::remove_temporary_data" };
-            for (auto &[name, idxr_ptr]: _cr.indexers()) {
+            const auto &indexer = _cr.indexer();
+            for (auto &[name, idxr_ptr]: indexer.indexers()) {
                 if (!idxr_ptr->mergeable()) {
                     std::filesystem::remove_all(idxr_ptr->chunk_dir());
                     idxr_ptr->reset();
                 }
             }
             for (const auto &name: { "epoch-delta", "outflow" }) {
-                std::filesystem::remove_all(_cr.idx_dir() / name);
-                if (_cr.indexers().contains(name))
-                    _cr.indexers().at(name)->reset();
+                std::filesystem::remove_all(indexer.idx_dir() / name);
+                if (indexer.indexers().contains(name))
+                    indexer.indexers().at(name)->reset();
             }
         }
 
@@ -393,38 +475,51 @@ namespace daedalus_turbo::validator {
         // since it already has been validated up to this point
         void _apply_ledger_updates_fast()
         {
-            std::vector<index::indexer_base *> idxrs {
-                _cr.indexers().at("block-fees").get(),
-                _cr.indexers().at("timed-update").get(),
-                _cr.indexers().at("inflow").get(),
-                _cr.indexers().at("vrf").get()
-            };
+            std::vector<index::indexer_base *> idxrs {};
+            for (const auto &[name, idxr]: _cr.indexer().indexers()) {
+                if (!idxr->mergeable())
+                    idxrs.emplace_back(idxr.get());
+            }
             _next_end_offset = _cr.num_bytes();
-            _next_last_epoch = _cr.max_slot().epoch();
+            _next_tasks.clear();
             const auto state_start_offset = _state.end_offset();
             if (state_start_offset < _cr.num_bytes()) {
-                for (auto it = _cr.find_offset_it(state_start_offset); it != _cr.chunks().end(); ++it) {
-                    const auto chunk_offset = it->second.offset;
+                auto it = _cr.find_offset_it(state_start_offset);
+                if (it->second.offset != state_start_offset)
+                    throw error("internal error: a chunk that doesn't begin right after the snapshot's end");
+                for (; it != _cr.chunks().end(); ++it) {
+                    const auto &chunk = it->second;
                     const auto chunk_path = _cr.full_path(it->second.rel_path());
-                    _cr.sched().submit_void("parse-fast", 100, [this, state_start_offset, chunk_offset, chunk_path, &idxrs] {
+                    for (const auto slot: { chunk.first_slot, chunk.last_slot }) {
+                        const auto chunk_slot = _cr.make_slot(slot);
+                        const auto [task_it, task_created] = _next_tasks.try_emplace(chunk_slot.epoch(), slot);
+                        if (!task_created)
+                            task_it->second.update(slot);
+                    }
+                    _cr.sched().submit_void("parse-fast", 100, [this, state_start_offset, chunk, chunk_path, &idxrs] {
                         indexer::chunk_indexer_list chunk_indexers {};
                         for (auto *idxr_ptr: idxrs)
-                            chunk_indexers.emplace_back(idxr_ptr->make_chunk_indexer("update", chunk_offset));
+                            chunk_indexers.emplace_back(idxr_ptr->make_chunk_indexer("update", chunk.offset));
                         const auto raw_data = file::read(chunk_path);
                         cbor_parser parser { raw_data };
-                        cbor_value block_tuple {};
-                        subchain sc { chunk_offset, raw_data.size() };
+                        cbor::value block_tuple {};
                         while (!parser.eof()) {
                             parser.read(block_tuple);
-                            const auto blk = cardano::make_block(block_tuple, chunk_offset + block_tuple.data - raw_data.data());
+                            auto blk = cardano::make_block(block_tuple, chunk.offset + block_tuple.data - raw_data.data(), _cr.config());
                             if (blk->offset() >= state_start_offset) {
                                 for (auto &idxr: chunk_indexers)
                                     idxr->index(*blk);
-                                _parse_update_subchain(sc, *blk, chunk_path);
+                                blk->foreach_tx([&](const auto &tx) {
+                                    for (auto &idxr: chunk_indexers)
+                                        idxr->index_tx(tx);
+                                });
+                                blk->foreach_invalid_tx([&](const auto &tx) {
+                                    for (auto &idxr: chunk_indexers)
+                                        idxr->index_invalid_tx(tx);
+                                });
                             }
                         }
-                        sc.ok_eligibility = sc.num_blocks;
-                        _parse_register_subchain(std::move(sc), chunk_path);
+                        my_on_chunk_add(chunk, true);
                     });
                 }
                 _cr.sched().process(true);
@@ -443,25 +538,20 @@ namespace daedalus_turbo::validator {
                 _cr.sched().submit_void("validate", 400, [this, fast] {
                     try {
                         mutex::unique_lock lk2 { _next_task_mutex };
-                        while (_state.end_offset() < _next_end_offset) {
-                            logger::debug("acquired _naxt_task mutex and configuring the validation task");
+                        while (_state.end_offset() < _next_end_offset && !_next_tasks.empty()) {
+                            logger::debug("acquired _next_task mutex and configuring the validation task");
                             const auto start_offset = _state.end_offset();
                             const auto end_offset = _next_end_offset;
-                            const auto first_epoch = _state.epoch();
-                            const auto last_epoch = _next_last_epoch;
-                            const auto ready_slices = _cr.slices(end_offset);
+                            const auto tasks = _next_tasks;
+                            _next_tasks.clear();
+                            const auto ready_slices = _cr.indexer().slices(end_offset);
                             lk2.unlock();
-                            logger::info("pre-aggregating data for ledger state updates between epochs {} and {}", first_epoch, last_epoch);
-                            const auto num_outflow_parts = _prepare_outflows(start_offset, end_offset, ready_slices);
-                            logger::debug("outflows ready, preparing the per-epoch deltas");
-                            _process_updates(num_outflow_parts, first_epoch, last_epoch);
-                            logger::debug("per-epoch deltas are ready, merging subchains from the same epoch");
-                            {
-                                mutex::scoped_lock sc_lk { _subchains_mutex };
-                                _subchains.merge_same_epoch();
-                            }
+                            logger::debug("merging subchains from the same epoch");
+                            _state.merge_same_epoch_subchains();
                             logger::debug("begin applying ledger state updates");
-                            _apply_ledger_state_updates(first_epoch, last_epoch, ready_slices, fast);
+                            _apply_ledger_state_updates(tasks, ready_slices, fast);
+                            if (_state.end_offset() == start_offset)
+                                throw error("the application of state has failed to make any progress");
                             logger::debug("done applying ledger state updates, acquiring _next_task lock");
                             lk2.lock();
                         }
@@ -475,190 +565,20 @@ namespace daedalus_turbo::validator {
             }
         }
 
-        void _parse_register_subchain(subchain &&sc, const std::string &rel_path) const
+        void _parse_register_subchain(subchain &&sc)
         {
-            if (sc.num_blocks == 0)
-                throw error("chunk {} contains no blocks!", rel_path);
-            {
-                mutex::unique_lock sc_lk { _subchains_mutex };
-                _subchains.add(std::move(sc));
-                const uint64_t valid = _subchains.valid_size();
-                sc_lk.unlock();
-                const auto tx = _cr.tx();
-                if (valid >= tx->start_offset)
-                    progress::get().update("validate", valid - tx->start_offset, tx->target_offset - tx->start_offset);
+            if (sc.num_blocks) [[likely]] {
+                if (const auto valid_point = _state.add_subchain(std::move(sc)); valid_point)
+                    _cr.report_progress("validate", { valid_point->slot, valid_point->end_offset });
+            } else {
+                throw error("chunk at offset {} contains no blocks!", sc.offset);
             }
         }
 
-        void _parse_update_subchain(subchain &sc, const cardano::block_base &blk, const std::string &rel_path) const
+        template<typename I, typename T>
+        std::optional<uint64_t> _gather_updates(vector<T> &updates, const std::string &name, const cardano::slot_range &slots, const uint64_t min_offset)
         {
-            auto slot = blk.slot();
-            switch (blk.era()) {
-                case 0: {
-                    static auto boundary_issuer_vkey = cardano::vkey::from_hex("0000000000000000000000000000000000000000000000000000000000000000");
-                    if (blk.issuer_vkey() != boundary_issuer_vkey)
-                        throw error("boundary block contains an unexpected issuer_vkey: {}", blk.issuer_vkey());
-                    ++sc.ok_eligibility;
-                    break;
-                }
-                case 1: {
-                    static std::set<cardano::vkey> byron_issuers {
-                        cardano::vkey::from_hex("0BDB1F5EF3D994037593F2266255F134A564658BB2DF814B3B9CEFB96DA34FA9"),
-                        cardano::vkey::from_hex("1BC97A2FE02C297880CE8ECFD997FE4C1EC09EE10FEEEE9F686760166B05281D"),
-                        cardano::vkey::from_hex("26566E86FC6B9B177C8480E275B2B112B573F6D073F9DEEA53B8D99C4ED976B3"),
-                        cardano::vkey::from_hex("50733161FDAFB6C8CB6FAE0E25BDF9555105B3678EFB08F1775B9E90DE4F5C77"),
-                        cardano::vkey::from_hex("993A8F056D2D3E50B0AC60139F10DF8F8123D5F7C4817B40DAC2B5DD8AA94A82"),
-                        cardano::vkey::from_hex("9A6FA343C8C6C36DE1A3556FEB411BFDF8708D5AF88DE8626D0FC6BFA4EEBB6D"),
-                        cardano::vkey::from_hex("D2965C869901231798C5D02D39FCA2A79AA47C3E854921B5855C82FD14708915"),
-                    };
-                    if (!byron_issuers.contains(blk.issuer_vkey()))
-                        throw error("unexpected Byron issuer_vkey: {}", blk.issuer_vkey());
-                    ++sc.ok_eligibility;
-                    break;
-                }
-                case 2:
-                case 3:
-                case 4:
-                case 5:
-                case 6: {
-                    auto kes = blk.kes();
-                    auto pool_id = blk.issuer_hash();
-                    kes_interval pool_kes { kes.counter, kes.counter };
-                    auto [kes_it, kes_created] = sc.kes_intervals.try_emplace(pool_id, pool_kes);
-                    if (!kes_created)
-                        kes_it->second.merge(pool_kes, pool_id, blk.offset());
-                    break;
-                }
-                default:
-                    throw error("unsupported block era: {}", blk.era());
-            }
-            if (sc.num_blocks > 0) {
-                    if (sc.epoch != slot.epoch())
-                        throw error("chunks must contains blocks from one era only but got rel_path: {} block slot: {}", rel_path, slot);
-                } else {
-                    sc.epoch = slot.epoch();
-                }
-            ++sc.num_blocks;
-        }
-
-        void _prepare_outflows_part(index::reader_multi_mt<index::txo_use::item> &txo_use_reader,
-            index::reader_multi_mt<index::txo::item> &txo_reader, size_t part_no,
-            uint64_t validate_start_offset, uint64_t validate_end_offset) const
-        {
-            auto txo_use_data = txo_use_reader.init_thread(part_no);
-            auto txo_data = txo_reader.init_thread(part_no);
-            std::optional<index::txo_use::item> txo_use_item {};
-            if (!txo_use_reader.eof_part(part_no, txo_use_data)) {
-                txo_use_item.emplace();
-                txo_use_reader.read_part(part_no, *txo_use_item, txo_use_data);
-            }
-            std::optional<index::txo::item> txo_item {};
-            if (!txo_reader.eof_part(part_no, txo_data)) {
-                txo_item.emplace();
-                txo_reader.read_part(part_no, *txo_item, txo_data);
-            }
-            // TODO: RAM use is unconstrained. Not a problem right now, but needs to be reworked in the future.
-            std::map<uint64_t, std::map<cardano::stake_ident_hybrid, int64_t>> epoch_idxs {};
-
-            // this is an inner join so can ignore non-matching elements from any reader
-            while (txo_use_item && txo_item) {
-                int cmp = memcmp(txo_use_item->hash.data(), txo_item->hash.data(), txo_use_item->hash.size());
-                if (cmp == 0)
-                    cmp = static_cast<int>(txo_use_item->out_idx) - static_cast<int>(txo_item->out_idx);
-                if (cmp == 0 && txo_use_item->offset >= validate_start_offset && txo_use_item->offset < validate_end_offset && txo_item->stake_id) {
-                    epoch_idxs[txo_use_item->epoch][*txo_item->stake_id] -= static_cast<int64_t>(txo_item->amount);
-                }
-                if (cmp <= 0 && !txo_use_reader.read_part(part_no, *txo_use_item, txo_use_data))
-                    txo_use_item.reset();
-                if (cmp >= 0 && !txo_reader.read_part(part_no, *txo_item, txo_data))
-                    txo_item.reset();
-            }
-
-            size_t ram_used = 0;
-            for (const auto &[epoch, deltas]: epoch_idxs) {
-                auto epoch_path = index::indexer_base::chunk_path(_cr.idx_dir().string(), "outflow", std::to_string(epoch), part_no);
-                index::writer<index::stake_delta::item> writer { epoch_path, 1 };
-                for (const auto &[stake_id, delta]: deltas)
-                    writer.emplace(stake_id, delta);
-                ram_used += deltas.size() * sizeof(std::map<cardano::stake_ident_hybrid, int64_t>::value_type);
-            }
-            logger::trace("prepare_outflows part {}: consumed {} MB of RAM", part_no, ram_used / 1'000'000);
-        }
-
-        size_t _prepare_outflows(uint64_t validate_start_offset, uint64_t validate_end_offset, const indexer::slice_list &slices) const
-        {
-            timer t { "validator/prepare_outflows" };
-            logger::info("determining outflow transactions between offsets {} and {} ...", validate_start_offset, validate_end_offset);
-            indexer::slice_list txo_use_slices {};
-            for (const auto &slice: slices) {
-                if (slice.offset + slice.size > validate_start_offset && slice.offset < validate_end_offset)
-                    txo_use_slices.emplace_back(slice);
-            }
-            auto txo_use_reader = std::make_shared<index::reader_multi_mt<index::txo_use::item>>(_cr.reader_paths("txo-use", txo_use_slices));
-            auto txo_reader = std::make_shared<index::reader_multi_mt<index::txo::item>>(_cr.reader_paths("txo", slices));
-            auto num_parts = txo_use_reader->num_parts();
-            _cr.sched().wait_for_count("prepare-outflows", num_parts, [&] {
-                for (size_t pi = 0; pi < num_parts; pi++) {
-                    _cr.sched().submit("prepare-outflows", 500, [this, txo_use_reader, txo_reader, pi, validate_start_offset, validate_end_offset] {
-                        _prepare_outflows_part(*txo_use_reader, *txo_reader, pi, validate_start_offset, validate_end_offset);
-                        return pi;
-                    });
-                }
-            });
-            return num_parts;
-        }
-
-        void _process_epoch_updates(uint64_t epoch, const vector<uint64_t> &inflow_chunks, size_t num_outflow_parts) const
-        {
-            std::map<cardano::stake_ident_hybrid, int64_t> dist {};
-            for (const uint64_t chunk_id: inflow_chunks) {
-                if (chunk_id < _state.end_offset())
-                    continue;
-                auto chunk_path = fmt::format("{}-{}.bin", _cr.indexers().at("inflow")->chunk_path("update", chunk_id), epoch);
-                vector<index::stake_delta::item> deltas {};
-                zpp::load(deltas, chunk_path);
-                for (const auto &delta: deltas) {
-                    dist[delta.stake_id] += delta.delta;
-                }
-            }
-
-            for (size_t pi = 0; pi < num_outflow_parts; pi++) {
-                auto outflow_path = index::indexer_base::chunk_path(_cr.idx_dir().string(), "outflow", std::to_string(epoch), pi);
-                if (std::filesystem::exists(outflow_path)) {
-                    index::reader<index::stake_delta::item> reader { outflow_path };
-                    index::stake_delta::item item {};
-                    while (reader.read(item)) {
-                        dist[item.stake_id] += item.delta;
-                    }
-                }
-            }
-
-            auto delta_path = index::indexer_base::reader_path(_cr.idx_dir().string(), "epoch-delta", std::to_string(epoch));
-            logger::trace("saving {} deltas to {}", dist.size(), delta_path);
-            index::writer<index::stake_delta::item> writer { delta_path, 1 };
-            for (const auto &[id, delta]: dist)
-                writer.emplace(id, delta);
-        }
-
-        void _process_updates(size_t num_outflow_parts, uint64_t first_epoch, uint64_t last_epoch)
-        {
-            timer t { "validator/process_updates" };
-            _cr.sched().wait_for_count("epoch-updates", last_epoch - first_epoch + 1, [&] {
-                for (auto epoch = first_epoch; epoch <= last_epoch; ++epoch) {
-                    _cr.sched().submit("epoch-updates", 600 + static_cast<int>(last_epoch - epoch), [this, epoch, num_outflow_parts] {
-                        const auto inflow_chunks = dynamic_cast<index::stake_delta::indexer &>(*_cr.indexers().at("inflow")).epoch_chunks(epoch);
-                        if (!inflow_chunks.empty())
-                            _process_epoch_updates(epoch, inflow_chunks, num_outflow_parts);
-                        return epoch;
-                    });
-                }
-            });
-        }
-
-        template<typename T>
-        std::optional<uint64_t> _gather_updates(vector<T> &updates, uint64_t epoch, uint64_t min_offset,
-            const std::string &name, const index::chunk_list &updated_chunks)
-        {
+            const auto &updated_chunks = dynamic_cast<I &>(*_cr.indexer().indexers().at(name)).chunks(slots);
             updates.clear();
             std::optional<uint64_t> min_chunk_id {};
             if (!updated_chunks.empty()) {
@@ -666,9 +586,9 @@ namespace daedalus_turbo::validator {
                     if (chunk_id >= min_offset) {
                         if (!min_chunk_id || *min_chunk_id > chunk_id)
                             min_chunk_id = chunk_id;
-                        auto chunk_path = fmt::format("{}-{}.bin", _cr.indexers().at(name)->chunk_path("update", chunk_id), epoch);
+                        const auto chunk_path = fmt::format("{}.bin", _cr.indexer().indexers().at(name)->chunk_path("update", chunk_id));
                         vector<T> chunk_updates {};
-                        zpp::load(chunk_updates, chunk_path);
+                        zpp::load_zstd(chunk_updates, chunk_path);
                         for (const auto &u: chunk_updates)
                             updates.emplace_back(std::move(u));
                     }
@@ -677,49 +597,59 @@ namespace daedalus_turbo::validator {
             return min_chunk_id;
         }
 
-        void _apply_ledger_state_updates_for_epoch(uint64_t e, index::reader_multi<index::txo::item> &txo_reader,
-            const vector<uint64_t> &snapshot_offsets, bool fast)
+        void _apply_utxo_updates(const uint64_t epoch, const uint64_t min_offset, const std::string &name, const index::chunk_list &updated_chunks)
+        {
+            index::chunk_list relevant_chunks {};
+            for (const uint64_t c_id: updated_chunks) {
+                if (c_id >= min_offset)
+                    relevant_chunks.emplace_back(c_id);
+            }
+            if (!relevant_chunks.empty()) {
+                const std::string task_group = fmt::format("ledger-state:load-utxo-updates:epoch-{}", epoch);
+                vector<index::utxo::chunk_indexer::data_type> chunk_updates(relevant_chunks.size());
+                _cr.sched().wait_all_done(task_group, relevant_chunks.size(), [&] {
+                    for (size_t ci = 0; ci < relevant_chunks.size(); ++ci) {
+                        const auto chunk_path = fmt::format("{}.bin", _cr.indexer().indexers().at(name)->chunk_path("update", relevant_chunks[ci]));
+                        _cr.sched().submit_void(task_group, 1000, [ci, chunk_path, &chunk_updates] {
+                            zpp::load_zstd(chunk_updates[ci], chunk_path);
+                            std::filesystem::remove(chunk_path);
+                        });
+                    }
+                });
+                _state.utxo_apply_updates(chunk_updates);
+            }
+        }
+
+        void _apply_ledger_state_updates_for_epoch(uint64_t e, const cardano::slot_range &slots, bool fast)
         {
             timer te { fmt::format("apply_ledger_state_updates for epoch {}", e) };
             try {
-                auto last_epoch = _state.epoch();
-                auto last_offset = _state.end_offset();
-                if (last_epoch < e) {
-                    if (!_state.reward_dist().empty() && !_state.epoch_finished())
-                        _state.finish_epoch();
+                const auto last_epoch = _state.epoch();
+                const auto last_offset = _state.end_offset();
+                if (!last_offset || last_epoch < e)
                     _state.start_epoch(e);
-                    if (_vrf_state.epoch_updates() > 0)
-                        _vrf_state.finish_epoch(_state.params().extra_entropy);
-                    switch (e) {
-                        case 208: // First Shelley/Ouroboros Praos epoch - set the reserves based on the final Byron UTXO balance
-                            _state.reserves(13'888'022'852'926'644);
-                            break;
-                        case 236: // Allegra fork - return byron redeemer addresses to reserves
-                            _state.reserves(_state.reserves() + 318'200'635'000'000);
-                            break;
-                    }
-                }
 
                 vector<index::block_fees::item> fee_updates {};
-                auto min_epoch_offset = _gather_updates(fee_updates, e, last_offset, "block-fees", dynamic_cast<index::block_fees::indexer &>(*_cr.indexers().at("block-fees")).epoch_chunks(e));
+                const auto min_epoch_offset = _gather_updates<index::block_fees::indexer>(fee_updates, "block-fees", slots, last_offset);
                 if (!min_epoch_offset)
                     return;
+                std::sort(fee_updates.begin(), fee_updates.end());
                 {
                     std::map<cardano::pool_hash, size_t> pool_blocks {};
-                    for (const auto &[issuer_id, fees, end_offset, era]: fee_updates) {
-                        _state.add_fees(fees);
-                        _state.end_offset(end_offset);
+                    for (const auto &[slot, issuer_id, fees, end_offset, era]: fee_updates) {
+                        _state.process_block(end_offset, era, slot, fees);
                         if (era > 1)
-                            pool_blocks[issuer_id]++;
+                            ++pool_blocks[issuer_id];
                     }
                     for (const auto &[pool_id, num_blocks]: pool_blocks)
                         _state.add_pool_blocks(pool_id, num_blocks);
                 }
 
+                vector<cardano::tx_out_ref> collected_collateral {};
                 {
                     timed_update_list timed_updates {};
                     timer tp { fmt::format("validator epoch: {} process {} timed updates", e, timed_updates.size()) };
-                    _gather_updates(timed_updates, e, last_offset, "timed-update", dynamic_cast<index::timed_update::indexer &>(*_cr.indexers().at("timed-update")).epoch_chunks(e));
+                    _gather_updates<index::timed_update::indexer>(timed_updates, "timed-update", slots, last_offset);
                     std::sort(timed_updates.begin(), timed_updates.end());
                     for (const auto &upd: timed_updates) {
                         switch (upd.update.index()) {
@@ -728,11 +658,9 @@ namespace daedalus_turbo::validator {
                                 _state.register_stake(upd.slot, u.stake_id, upd.tx_idx, upd.cert_idx);
                                 break;
                             }
-                            case 1: {
-                                const auto &pr = std::get<cardano::pool_reg>(upd.update);
-                                _state.register_pool(pr.pool_id, pr.reward_id, pr.owners, pr.pledge, pr.cost, rational_u64 { pr.margin_num, pr.margin_denom });
+                            case 1:
+                                _state.register_pool(std::get<cardano::pool_reg>(upd.update));
                                 break;
-                            }
                             case 2: {
                                 const auto &ir = std::get<index::timed_update::instant_reward_single>(upd.update);
                                 if (ir.source == cardano::reward_source::reserves)
@@ -762,23 +690,28 @@ namespace daedalus_turbo::validator {
                                 break;
                             }
                             case 7: {
-                                const auto &pupd = std::get<cardano::param_update>(upd.update);
-                                _state.propose_update(upd.slot, pupd);
+                                const auto &prop = std::get<cardano::param_update_proposal>(upd.update);
+                                _state.propose_update(upd.slot, prop);
                                 break;
                             }
                             case 8: {
-                                const auto &cc = std::get<index::timed_update::collected_collateral_input>(upd.update);
-                                index::txo::item search_item { cc.tx_hash, cc.txo_idx };
-                                auto [ txo_count, txo_item ] = txo_reader.find(search_item);
-                                if (txo_count != 1)
-                                    throw error("slot {}: each input used as a collateral must be present exactly once but got: {} for {} #{} index slices: {}",
-                                        upd.slot, txo_count, cc.tx_hash, cc.txo_idx, txo_reader.paths());
-                                _state.add_fees(txo_item.amount);
+                                _state.proposal_vote(upd.slot, std::get<cardano::param_update_vote>(upd.update));
                                 break;
                             }
                             case 9: {
-                                const auto &cca = std::get<index::timed_update::collected_collateral_amount>(upd.update);
-                                _state.add_fees(cca.collateral);
+                                const auto &cc = std::get<index::timed_update::collected_collateral_input>(upd.update);
+                                collected_collateral.emplace_back(cc.tx_hash, cc.txo_idx);
+                                break;
+                            }
+                            case 10: {
+                                const auto &cca = std::get<index::timed_update::collected_collateral_refund>(upd.update);
+                                logger::debug("refunded fees from refunded collateral {}", cca.refund);
+                                _state.sub_fees(cca.refund);
+                                break;
+                            }
+                            case 11: {
+                                const auto &deleg = std::get<index::timed_update::gen_deleg>(upd.update);
+                                _state.genesis_deleg_update(deleg.hash, deleg.pool_id, deleg.vrf_vkey);
                                 break;
                             }
                             default:
@@ -786,35 +719,36 @@ namespace daedalus_turbo::validator {
                         }
                     }
                 }
+
                 {
-                    timer td { fmt::format("validator epoch: {} process stake delta update", e) };
-                    auto delta_path = index::indexer_base::reader_path(_cr.idx_dir().string(), "epoch-delta", std::to_string(e));
-                    if (std::filesystem::exists(delta_path)) {
-                        index::reader<index::stake_delta::item> reader { delta_path };
-                        logger::trace("validator epoch: {} {} stake delta updates available", e, reader.size());
-                        index::stake_delta::item d {};
-                        while (reader.read(d)) {
-                            if (std::holds_alternative<cardano::stake_ident>(d.stake_id))
-                                _state.update_stake(std::get<cardano::stake_ident>(d.stake_id), d.delta);
-                            else if (std::holds_alternative<cardano::stake_pointer>(d.stake_id))
-                                _state.update_pointer(std::get<cardano::stake_pointer>(d.stake_id), d.delta);
-                            else
-                                throw error("unsupported stake_ident_hybrid index: {}", d.stake_id.index());
-                        }
+                    timer td { fmt::format("validator epoch: {} process stake delta updates", e) };
+                    _apply_utxo_updates(e, last_offset, "utxo", dynamic_cast<index::utxo::indexer &>(*_cr.indexer().indexers().at("utxo")).chunks(slots));
+                    for (const auto &txo_id: collected_collateral) {
+                        const auto txo_data = _state.utxo_find(txo_id);
+                        if (!txo_data) [[unlikely]]
+                            throw error("epoch {}: cannot find data about a TXO used as a collateral input: {}", e, txo_id);
+                        logger::debug("fees from used collateral {}: {}", txo_id, txo_data->coin);
+                        _state.add_fees(txo_data->coin);
+                        if (const cardano::address addr { txo_data->address }; addr.has_stake_id_hybrid()) [[likely]]
+                            _state.update_stake_id_hybrid(addr.stake_id_hybrid(), -static_cast<int64_t>(txo_data->coin));
+                        _state.utxo_del(txo_id);
                     }
                 }
-                const auto vrf_chunks = dynamic_cast<index::vrf::indexer &>(*_cr.indexers().at("vrf")).epoch_chunks(e);
+
+                const auto vrf_chunks = dynamic_cast<index::vrf::indexer &>(*_cr.indexer().indexers().at("vrf")).chunks(slots);
                 if (!vrf_chunks.empty())
-                    _process_vrf_update_chunks(*min_epoch_offset, _vrf_state, vrf_chunks, fast);
-                if (!_state.reward_dist().empty() && _state.epoch() < _cr.max_slot().epoch()) {
-                    _state.finish_epoch();
-                    if (_on_the_go) {
-                        const auto einfo = _cr.epoch(_state.epoch());
-                        for (uint64_t off: snapshot_offsets) {
-                            if (einfo.end_offset() >= off && (_snapshots.empty() || _snapshots.rbegin()->end_offset < off)) {
-                                _save_state_snapshot();
-                                break;
-                            }
+                    _process_vrf_update_chunks(*min_epoch_offset, vrf_chunks, fast);
+                _state.compute_rewards_if_ready();
+                if (_cr.tx()->target && _state.params().protocol_ver.major >= 3) {
+                    if (const auto target_slot = _cr.make_slot(_cr.tx()->target->slot); target_slot.epoch() >= 2) {
+                        const auto target_epoch_start = cardano::slot::from_epoch(target_slot.epoch(), _cr.config());
+                        const bool prev_epoch_ok = (_cr.tx()->target->slot - target_epoch_start) >= _cr.config().shelley_randomness_stabilization_window;
+                        if (prev_epoch_ok) {
+                            if (_state.epoch() == target_slot.epoch() - 1)
+                                _save_reserve_snapshot();
+                        } else {
+                            if (_state.epoch() == target_slot.epoch() - 2)
+                                _save_reserve_snapshot();
                         }
                     }
                 }
@@ -827,21 +761,17 @@ namespace daedalus_turbo::validator {
             }
         }
 
-        void _apply_ledger_state_updates(uint64_t first_epoch, uint64_t last_epoch, const indexer::slice_list &slices, const bool fast)
+        void _apply_ledger_state_updates(const epoch_task_map &tasks, const indexer::slice_list &/*slices*/, const bool fast)
         {
+            const auto first_epoch = tasks.begin()->first;
+            const auto last_epoch = tasks.rbegin()->first;
             timer t { fmt::format("validator::_apply_ledger_state_updates first_epoch: {} last_epoch: {} fast: {}", first_epoch, last_epoch, fast), logger::level::debug };
             // add extra snapshots closer to the tip since rollbacks are more likely there
-            vector<uint64_t> snapshot_offsets {};
-            for (const auto &slice: slices) {
-                if ((_cr.tx()->target_offset - slice.end_offset()) < indexer::merger::part_size)
-                    snapshot_offsets.emplace_back(slice.end_offset());
-            }
-            index::reader_multi<index::txo::item> txo_reader { _cr.reader_paths("txo", slices) };
-            for (uint64_t e = first_epoch; e <= last_epoch; e++) {
+            for (const auto &[e, slots]: tasks) {
                 timer te { fmt::format("apply ledger updates for epoch: {}", e) };
                 try {
-                    _apply_ledger_state_updates_for_epoch(e, txo_reader, snapshot_offsets, fast);
-                    logger::info("applied ledger updates for epoch: {} end offset: {}", _state.epoch(), _state.end_offset());
+                    _apply_ledger_state_updates_for_epoch(e, slots, fast);
+                    logger::info("applied ledger updates for epoch: {} end offset: {} utxos: {}", _state.epoch(), _state.end_offset(), _state.utxos().size());
                 } catch (const std::exception &ex) {
                     logger::error("failed to process epoch {} updates: {}", e, ex.what());
                     throw error("failed to process epoch {} updates: {}", e, ex.what());
@@ -852,28 +782,28 @@ namespace daedalus_turbo::validator {
             }
         }
 
-        void _validate_epoch_leaders(uint64_t epoch, uint64_t epoch_min_offset, const std::shared_ptr<vector<index::vrf::item>> &vrf_updates_ptr,
+        void _validate_epoch_leaders(const uint64_t epoch, const uint64_t epoch_min_offset, const std::shared_ptr<vector<index::vrf::item>> &vrf_updates_ptr,
             const std::shared_ptr<pool_stake_distribution> &pool_dist_ptr,
             const cardano::vrf_nonce &nonce_epoch, const cardano::vrf_nonce &uc_nonce, const cardano::vrf_nonce &uc_leader,
-            size_t start_idx, size_t end_idx)
+            const size_t start_idx, const size_t end_idx)
         {
             timer t { fmt::format("validate_leaders for epoch {} block indices from {} to {}", epoch, start_idx, end_idx), logger::level::trace };
             for (size_t vi = start_idx; vi < end_idx; ++vi) {
                 const auto &item = vrf_updates_ptr->at(vi);
                 if (item.era < 6) {
-                    auto leader_input = vrf_make_seed(uc_leader, item.slot, nonce_epoch);
+                    const auto leader_input = vrf_make_seed(uc_leader, item.slot, nonce_epoch);
                     if (!vrf03_verify(item.leader_result, item.vkey, item.leader_proof, leader_input))
-                        throw error("leader VRF verification failed at slot {} epoch {} era {}", item.slot, item.slot.epoch(), (uint64_t)item.era);
+                        throw error("leader VRF verification failed: epoch: {} slot {} era {}", epoch, item.slot, item.era);
                     auto nonce_input = vrf_make_seed(uc_nonce, item.slot, nonce_epoch);
                     if (!vrf03_verify(item.nonce_result, item.vkey, item.nonce_proof, nonce_input))
-                        throw error("nonce VRF verification failed at slot {} epoch {} era {}", item.slot, item.slot.epoch(), (uint64_t)item.era);
+                        throw error("nonce VRF verification failed: epoch: {} slot {} era {}", epoch, item.slot, item.era);
                 } else {
-                    auto vrf_input = vrf_make_input(item.slot, nonce_epoch);
+                    const auto vrf_input = vrf_make_input(item.slot, nonce_epoch);
                     if (!vrf03_verify(item.leader_result, item.vkey, item.leader_proof, vrf_input))
-                        throw error("VRF verification failed at slot {} epoch {} era {}", item.slot, item.slot.epoch(), (uint64_t)item.era);
+                        throw error("VRF verification failed: epoch: {} slot {} era {}", epoch, item.slot, item.era);
                 }
-                if (!_pbft_pools.contains(item.pool_id)) {
-                    auto pool_it = pool_dist_ptr->find(item.pool_id);
+                if (!_state.pbft_pools().contains(item.pool_id)) {
+                    const auto pool_it = pool_dist_ptr->find(item.pool_id);
                     if (pool_it == pool_dist_ptr->end())
                         throw error("epoch {} pool-stake distribution misses block-issuing pool id {}!", epoch, item.pool_id);
                     rational rel_stake { pool_it->second, pool_dist_ptr->total_stake() };
@@ -888,31 +818,19 @@ namespace daedalus_turbo::validator {
                     }
                 }
             }
-            mutex::unique_lock sc_lk { _subchains_mutex };
-            auto sc_it = _subchains.find(epoch_min_offset);
-            sc_it->second.ok_eligibility += end_idx - start_idx;
-            if (sc_it->second) {
-                logger::debug("subchain became valid epoch: {} start_offset: {} end_offset: {}",
-                    epoch, sc_it->second.offset, sc_it->second.end_offset());
-                _subchains.merge_valid();
-                const auto valid = _subchains.valid_size();
-                sc_lk.unlock();
-                logger::debug("new valid chain size: {}", valid);
-                const auto tx = _cr.tx();
-                if (valid >= tx->start_offset)
-                    progress::get().update("validate", valid - tx->start_offset, tx->target_offset - tx->start_offset);
-            }
+            if (const auto valid = _state.mark_subchain_valid(epoch, epoch_min_offset, end_idx - start_idx); valid)
+                _cr.report_progress("validate", { valid->slot, valid->end_offset });
         }
 
-        void _process_vrf_update_chunks(uint64_t epoch_min_offset, cardano::state::vrf &vrf_state, const vector<uint64_t> &chunks, bool fast)
+        void _process_vrf_update_chunks(uint64_t epoch_min_offset, const vector<uint64_t> &chunks, const bool fast)
         {
-            auto epoch = _state.epoch();
+            const auto epoch = _state.epoch();
             timer t { fmt::format("processed VRF nonce updates for epoch {}", epoch) };
-            auto vrf_updates_ptr = std::make_shared<vector<index::vrf::item>>();
+            const auto vrf_updates_ptr = std::make_shared<vector<index::vrf::item>>();
             for (const uint64_t chunk_id: chunks) {
-                auto chunk_path = fmt::format("{}-{}.bin", _cr.indexers().at("vrf")->chunk_path("update", chunk_id), epoch);
+                const auto chunk_path = fmt::format("{}.bin", _cr.indexer().indexers().at("vrf")->chunk_path("update", chunk_id));
                 vector<index::vrf::item> chunk_updates {};
-                zpp::load(chunk_updates, chunk_path);
+                zpp::load_zstd(chunk_updates, chunk_path);
                 vrf_updates_ptr->reserve(vrf_updates_ptr->size() + chunk_updates.size());
                 for (const auto &u: chunk_updates)
                     vrf_updates_ptr->emplace_back(u);
@@ -921,9 +839,9 @@ namespace daedalus_turbo::validator {
                 std::sort(vrf_updates_ptr->begin(), vrf_updates_ptr->end());
                 if (!fast) {
                     auto pool_dist_ptr = std::make_shared<pool_stake_distribution>(_state.pool_dist_set());
-                    const auto &nonce_epoch = vrf_state.epoch_nonce();
-                    const auto &uc_nonce = vrf_state.uc_nonce();
-                    const auto &uc_leader = vrf_state.uc_leader();
+                    const auto &nonce_epoch = _state.vrf_state().nonce_epoch();
+                    const auto &uc_nonce = _state.vrf_state().uc_nonce();
+                    const auto &uc_leader = _state.vrf_state().uc_leader();
                     static constexpr size_t batch_size = 250;
                     static std::string task_name { validate_leaders_task };
                     for (size_t start = 0; start < vrf_updates_ptr->size(); start += batch_size) {
@@ -933,118 +851,44 @@ namespace daedalus_turbo::validator {
                         }, chunk_offset_t { epoch_min_offset });
                     }
                 }
-                vrf_state.process_updates(*vrf_updates_ptr);
+                _state.vrf_process_updates(*vrf_updates_ptr);
             }
         }
     };
 
-    incremental::incremental(const std::string &data_dir, const configs &cfg, bool on_the_go, bool strict, scheduler &sched, file_remover &fr)
-        : indexer::incremental { default_indexers(data_dir), data_dir, strict, sched, fr },
-            _impl { std::make_unique<impl>(*this, cfg, on_the_go) }
+    incremental::incremental(chunk_registry &cr): _impl { std::make_unique<impl>(cr) }
     {
     }
 
     incremental::~incremental() =default;
-
-    void incremental::_truncate_impl(uint64_t max_end_offset)
-    {
-        _impl->truncate_impl(max_end_offset);
-    }
-
-    uint64_t incremental::_max_end_offset_impl()
-    {
-        return _impl->max_end_offset_impl();
-    }
-
-    uint64_t incremental::_valid_end_offset_impl()
-    {
-        return _impl->valid_end_offset_impl();
-    }
-
-    void incremental::_start_tx_impl()
-    {
-        _impl->start_tx_impl();
-    }
-
-    void incremental::_prepare_tx_impl()
-    {
-        _impl->prepare_tx_impl();
-    }
-
-    void incremental::_rollback_tx_impl()
-    {
-        _impl->rollback_tx_impl();
-    }
-
-    void incremental::_commit_tx_impl()
-    {
-        _impl->commit_tx_impl();
-    }
 
     cardano::amount incremental::unspent_reward(const cardano::stake_ident &id) const
     {
         return _impl->unspent_reward(id);
     }
 
-    tail_relative_stake_map incremental::tail_relative_stake() const
+    cardano::tail_relative_stake_map incremental::tail_relative_stake() const
     {
         return _impl->tail_relative_stake();
     }
 
-    chunk_registry::chunk_info incremental::_parse(uint64_t offset, const std::string &rel_path,
-        const buffer &raw_data, size_t compressed_size, const block_processor &extra_proc) const
+    cardano::optional_slot incremental::can_export(const cardano::optional_point &immutable_tip) const
     {
-        return _impl->parse(offset, rel_path, raw_data, compressed_size, extra_proc);
+        return _impl->can_export(immutable_tip);
     }
 
-    void incremental::_on_slice_ready(uint64_t first_epoch, uint64_t last_epoch, const indexer::merger::slice &slice)
+    std::string incremental::node_export(const std::filesystem::path &ledger_dir, const cardano::optional_point &immutable_tip, const int prio_base) const
     {
-        _impl->on_slice_ready(first_epoch, last_epoch, slice);
+        return _impl->node_export(ledger_dir, immutable_tip, prio_base);
     }
 
-    chunk_registry::chunk_info incremental::_parent_parse(uint64_t offset, const std::string &rel_path,
-        const buffer &raw_data, size_t compressed_size, const block_processor &extra_proc) const
+    std::optional<cardano::point> incremental::tip() const
     {
-        return indexer::incremental::_parse(offset, rel_path, raw_data, compressed_size, extra_proc);
+        return _impl->tip();
     }
 
-    void incremental::_parent_on_slice_ready(uint64_t first_epoch, uint64_t last_epoch, const indexer::merger::slice &slice)
+    const state &incremental::state() const
     {
-        indexer::incremental::_on_slice_ready(first_epoch, last_epoch, slice);
-    }
-
-    void incremental::_parent_truncate_impl(uint64_t max_end_offset)
-    {
-        indexer::incremental::_truncate_impl(max_end_offset);
-    }
-
-    uint64_t incremental::_parent_max_end_offset_impl()
-    {
-        return indexer::incremental::_max_end_offset_impl();
-    }
-
-    uint64_t incremental::_parent_valid_end_offset_impl()
-    {
-        return indexer::incremental::_valid_end_offset_impl();
-    }
-
-    void incremental::_parent_start_tx_impl()
-    {
-        indexer::incremental::_start_tx_impl();
-    }
-
-    void incremental::_parent_prepare_tx_impl()
-    {
-        indexer::incremental::_prepare_tx_impl();
-    }
-
-    void incremental::_parent_rollback_tx_impl()
-    {
-        indexer::incremental::_rollback_tx_impl();
-    }
-
-    void incremental::_parent_commit_tx_impl()
-    {
-        indexer::incremental::_commit_tx_impl();
+        return _impl->state();
     }
 }

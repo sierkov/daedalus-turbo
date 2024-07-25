@@ -5,100 +5,76 @@
 
 #include <dt/cardano.hpp>
 #include <dt/test.hpp>
+#include <dt/zpp.hpp>
 
 using namespace daedalus_turbo;
+using namespace daedalus_turbo::cardano;
 
 suite cardano_common_suite = [] {
     "cardano::common"_test = [] {
-        "address pointer"_test = [] {
-            auto buf = uint8_vector::from_hex("4186880a8bb19ec8742db9076795c5107f7ffc65a889e7b0980ffeaca20c0c0c");
-            cardano::address addr { buf };
-            expect(addr.has_pay_id());
-            expect(addr.pay_id() == cardano::pay_ident { cardano::key_hash::from_hex("86880a8bb19ec8742db9076795c5107f7ffc65a889e7b0980ffeaca2") });
-            expect(addr.has_pointer());
-            auto ptr = addr.pointer();
-            expect(ptr.slot == 12_u);
-            expect(ptr.tx_idx == 12_u);
-            expect(ptr.cert_idx == 12_u);
-        };
-        "address pointer 2"_test = [] {
-            auto buf = uint8_vector::from_hex("41fbfce15acccb420982704c9e591f83ab3315c3314a18ecf65346e0858292b3380b00");
-            cardano::address addr { buf };
-            expect(addr.has_pay_id());
-            expect(addr.pay_id() == cardano::pay_ident { cardano::key_hash::from_hex("fbfce15acccb420982704c9e591f83ab3315c3314a18ecf65346e085") });
-            expect(addr.has_pointer());
-            auto ptr = addr.pointer();
-            expect(ptr.slot == 4495800_u);
-            expect(ptr.tx_idx == 11_u);
-            expect(ptr.cert_idx == 0_u);
-        };
         "amount"_test = [] {
             {
                 cardano::amount a { 1'010 };
-                std::string a_text { "0.001010 ADA" };
+                const std::string_view a_text { "0.001010 ADA" };
                 expect(format("{}", a) == a_text);
-                std::ostringstream ss;
-                ss << a;
-                expect(ss.str() == a_text);
             }
             {
                 cardano::amount a { 678'900'012'345 };
                 std::string a_text { "678900.012345 ADA" };
                 expect(format("{}", a) == a_text);
-                std::ostringstream ss;
-                ss << a;
-                expect(ss.str() == a_text);
             }
         };
-        "slot"_test = [] {
-            expect(cardano::slot {} == 0);
+        const auto &cfg = cardano::config::get();
+        cfg.shelley_start_slot(4492800ULL);
+        "slot"_test = [&] {
+            expect(cardano::slot { cfg } == 0);
 
-            cardano::slot byron_1 { 7 };
+            const cardano::slot byron_1 { 7, cfg };
             expect(byron_1 == 7);
             expect(byron_1.epoch() == 0);
             expect(byron_1.utc_month() == "2017-09") << byron_1.utc_month();
             expect(byron_1.unixtime() == 1506203231) << byron_1.unixtime(); // 1596051751
 
-            cardano::slot byron_2 { 2'158'515 };
+            const cardano::slot byron_2 { 2'158'515, cfg };
             expect(byron_2 == 2158515);
             expect(byron_2.epoch() == 99);
             expect(byron_2.utc_month() == "2019-02") << byron_2.utc_month();
             expect(byron_2.unixtime() == 1549373391) << byron_2.unixtime();
 
-            cardano::slot shelley_1 { 8'812'978 };
+            const cardano::slot shelley_1 { 8'812'978, cfg };
             expect(shelley_1 == 8'812'978);
-            expect(shelley_1.epoch() == 218);
+            test_same(shelley_1.epoch(), 218ULL);
             expect(shelley_1.utc_month() == "2020-09") << shelley_1.utc_month();
             expect(shelley_1.unixtime() == 1600379269) << shelley_1.unixtime();
 
-            cardano::slot babbage_1 { 101'142'576 };
+            const cardano::slot babbage_1 { 101'142'576, cfg };
             expect(babbage_1 == 101142576ULL);
             expect(babbage_1.epoch() == 431);
             expect(babbage_1.utc_month() == "2023-08") << babbage_1.utc_month();
             expect(babbage_1.unixtime() == 1692708867) << babbage_1.unixtime();
 
-            expect(cardano::slot { 21600 }.epoch() == 1);
-            expect(cardano::slot { 2981652 }.epoch() == 138);
-            expect(cardano::slot { 4449600 }.epoch() == 206);
-            expect(cardano::slot { 4492800 }.epoch() == 208);
-            expect(cardano::slot { 75745595 }.epoch() == 372);
-            expect(cardano::slot { 75772873 }.epoch() == 373);
+            expect(cardano::slot { 21600, cfg }.epoch() == 1);
+            expect(cardano::slot { 2981652, cfg }.epoch() == 138);
+            expect(cardano::slot { 4449600, cfg }.epoch() == 206);
+            expect(cardano::slot { 4492800, cfg }.epoch() == 208);
+            expect(cardano::slot { 75745595, cfg }.epoch() == 372);
+            expect(cardano::slot { 75772873, cfg }.epoch() == 373);
 
-            expect(cardano::slot::from_epoch(0) == 0);
-            expect(cardano::slot::from_epoch(208) == 208 * 21600);
-            expect(cardano::slot::from_epoch(213) == 6652800_u);
-            expect(cardano::slot::from_epoch(214) == 7084800_u);
-            expect(cardano::slot::from_epoch(215) == 7516800_u);
+            expect(cardano::slot::from_epoch(0, cfg) == 0);
+            expect(cardano::slot::from_epoch(208, cfg) == 208 * 21600);
+            expect(cardano::slot::from_epoch(213, cfg) == 6652800_u);
+            expect(cardano::slot::from_epoch(214, cfg) == 7084800_u);
+            expect(cardano::slot::from_epoch(215, cfg) == 7516800_u);
 
             // convert a timepoint on the 2024-03-22 in unix time to a cardano slot
-            auto st1 = cardano::slot::from_time(std::chrono::system_clock::time_point { std::chrono::seconds { 1'711'093'053 } });
+            const auto st1 = cardano::slot::from_time(std::chrono::system_clock::time_point { std::chrono::seconds { 1'711'093'053 } }, cfg);
             expect(st1 == 119526762_ull);
         };
-        "chunk_id"_test = [] {
-            expect(cardano::slot { 4363200 }.chunk_id() == 202_ull);
-            expect(cardano::slot { 4492840 }.chunk_id() == 208_ull);
-            expect(cardano::slot { 4514400 }.chunk_id() == 209_ull);
-            expect(cardano::slot { 4557600 }.chunk_id() == 211_ull);
+        "chunk_id"_test = [&] {
+            expect(cardano::slot { 4363200, cfg }.chunk_id() == 202_ull);
+            expect(cardano::slot { 4492840, cfg }.chunk_id() == 208_ull);
+            expect(cardano::slot { 4514400, cfg }.chunk_id() == 209_ull);
+            expect(cardano::slot { 4557600, cfg }.chunk_id() == 211_ull);
         };
         "tx_size"_test = [] {
             for (const auto &[sz, exp_sz]: {
@@ -143,10 +119,10 @@ suite cardano_common_suite = [] {
             size_t num_delegs = 0;
             while (!parser.eof()) {
                 parser.read(block_tuple);
-                auto blk = cardano::make_block(block_tuple, block_tuple.data - chunk.data());
+                const auto blk = cardano::make_block(block_tuple, block_tuple.data - chunk.data());
                 blk->foreach_tx([&](const auto &tx) {
                     tx.foreach_stake_deleg([&](const auto &) {
-                        num_delegs++;
+                        ++num_delegs;
                     });
                 });
             }
@@ -159,7 +135,7 @@ suite cardano_common_suite = [] {
             size_t num_regs = 0;
             while (!parser.eof()) {
                 parser.read(block_tuple);
-                auto blk = cardano::make_block(block_tuple, block_tuple.data - chunk.data());
+                const auto blk = cardano::make_block(block_tuple, block_tuple.data - chunk.data());
                 blk->foreach_tx([&](const auto &tx) {
                     tx.foreach_pool_reg([&](const auto &) {
                         num_regs++;
@@ -168,14 +144,63 @@ suite cardano_common_suite = [] {
             }
             expect(num_regs == 2_u);
         };
-        "extract_epoch"_test = [] {
-            expect(cardano::extract_epoch("./data/chunk-registry/compressed/chunk/526D236112DB8E38E66F37D330C85AFE0C268D81DF853DDDE4E88551EB9B0637.zstd") == 0_ull);
-            expect(cardano::extract_epoch("./data/chunk-registry/compressed/chunk/DF597E3FA352A7BD2F021733804C33729EBAA3DCAA9C0643BD263EFA09497B03.zstd") == 222_ull);
-            expect(cardano::extract_epoch("./data/chunk-registry/compressed/chunk/BA19B67C08713E930BF42C2CA5DE03EA7679C07198611062235F89B267B2E558.zstd") == 247_ull);
-            expect(cardano::extract_epoch("./data/chunk-registry/compressed/chunk/7C46426DDF73FFFAD5970B0F1C0983A3A98F5AC3EC080BDFB59DBF86AC1AE9A1.zstd") == 267_ull);
-            expect(cardano::extract_epoch("./data/chunk-registry/compressed/chunk/1A6CC809A5297CFC502B229B4CD31A9B00B71638CEAEDE45409D4F0EBC534356.zstd") == 297_ull);
-            expect(cardano::extract_epoch("./data/chunk-registry/compressed/chunk/47F62675C9B0161211B9261B7BB1CF801EDD4B9C0728D9A6C7A910A1581EED41.zstd") == 362_ull);
-            expect(cardano::extract_epoch("./data/chunk-registry/compressed/chunk/977E9BB3D15A5CFF5C5E48617288C5A731DB654C0B42D63627C690CEADC9E1F3.zstd") == 368_ull);
+        "stake_ident"_test = [] {
+            stake_ident i1 { cardano::key_hash::from_hex("41fbfce15acccb420982704c9e591f83ab3315c3314a18ecf65346e0") };
+            stake_ident i2 { cardano::key_hash::from_hex("41fbfce15acccb420982704c9e591f83ab3315c3314a18ecf65346e0"), true };
+            expect(i1 < i2);
+            expect(i1 == i1);
+            expect(i1 != i2);
+            const auto j2 = i2.to_json();
+            const auto j2_hash = to_lower(json::value_to<std::string>(j2.at("hash")));
+            expect(j2_hash == "41fbfce15acccb420982704c9e591f83ab3315c3314a18ecf65346e0") << j2_hash;
+            expect(j2.at("script").as_bool());
         };
-    };  
+        "pay_ident"_test = [] {
+            pay_ident i1 { cardano::key_hash::from_hex("41fbfce15acccb420982704c9e591f83ab3315c3314a18ecf65346e0") };
+            pay_ident i2 { cardano::key_hash::from_hex("41fbfce15acccb420982704c9e591f83ab3315c3314a18ecf65346e0"), pay_ident::ident_type::SHELLEY_SCRIPT };
+            pay_ident i3 { cardano::key_hash::from_hex("41fbfce15acccb420982704c9e591f83ab3315c3314a18ecf65346e0"), pay_ident::ident_type::BYRON_KEY };
+            expect(i1 < i2);
+            expect(i2 < i3);
+            expect(i1 == i1);
+            expect(i1 != i2);
+            expect(i1 != i3);
+            const auto j2 = i2.to_json();
+            const auto j2_hash = to_lower(json::value_to<std::string>(j2.at("hash")));
+            expect(j2_hash == "41fbfce15acccb420982704c9e591f83ab3315c3314a18ecf65346e0") << j2_hash;
+            expect(json::value_to<std::string>(j2.at("type")) == "shelley-script");
+            expect(json::value_to<std::string>(i1.to_json().at("type")) == "shelley-key");
+            expect(json::value_to<std::string>(i3.to_json().at("type")) == "byron-key");
+        };
+        "param_update"_test = [] {
+            param_update u1 {};
+            u1.min_fee_a = 200;
+            u1.min_fee_b = 1000;
+            u1.max_block_body_size = 16384;
+            u1.max_transaction_size = 8192;
+            u1.max_block_header_size = 2048;
+            u1.key_deposit = 500;
+            u1.pool_deposit = 500;
+            u1.e_max = 3000;
+            u1.n_opt = 150;
+            u1.pool_pledge_influence = rational_u64 { 5, 7 };
+            u1.expansion_rate = rational_u64 { 1, 1000 };
+            u1.treasury_growth_rate = rational_u64 { 2, 10 };
+            u1.decentralization = rational_u64 { 1, 10 };
+            u1.extra_entropy = cardano::nonce {};
+            u1.protocol_ver = protocol_version { 5, 2 };
+            u1.min_utxo_value = 1'000'000;
+            u1.rehash();
+            auto u2 = u1;
+            u2.rehash();
+            expect(u2 == u1);
+            expect(daedalus_turbo::zpp::serialize(u1) == daedalus_turbo::zpp::serialize(u2));
+            u2.min_utxo_value = 2'000'000;
+            u2.rehash();
+            expect(!(u2 == u1));
+            const auto s1 = fmt::format("{}", u1);
+            const auto s2 = fmt::format("{}", u2);
+            expect(s1 != s2);
+            expect(daedalus_turbo::zpp::serialize(u1) != daedalus_turbo::zpp::serialize(u2));
+        };
+    };
 };

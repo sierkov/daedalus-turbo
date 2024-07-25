@@ -29,7 +29,7 @@ namespace daedalus_turbo {
                 throw error("the number of worker threads must be greater than zero!");
             logger::info("scheduler started, worker count: {}", _num_workers);
             _worker_tasks.resize(_num_workers);
-            std::map<std::thread::id, size_t> ids {};
+            map<std::thread::id, size_t> ids {};
             // One worker is a special case handled by the process method itself
             if (_num_workers == 1) {
                 ids.emplace(std::this_thread::get_id(), 0);
@@ -47,10 +47,12 @@ namespace daedalus_turbo {
             _destroy = true;
             _tasks_cv.notify_all();
             _results_cv.notify_all();
-            for (auto &t: _workers)
-                t.join();
+            for (auto &w: _workers)
+                w.join();
+            _workers.clear();
 
-            logger::debug("cumulative cpu utilization statistics by task group:");
+            logger::debug("scheduler's peak RAM use: {} MB", memory::max_usage_mb());
+            logger::debug("scheduler's cumulative cpu utilization statistics by task group:");
             task_stats_map grouped_stats {};
             double total_cpu_time = 0;
             for (const auto &[task_name, stats]: _task_stats) {
@@ -213,14 +215,14 @@ namespace daedalus_turbo {
             _process_once(report_status, false, !_process_running);
         }
 
-        void wait_for_count(const std::string &task_group, size_t task_count,
-                            const std::function<void ()> &submit_tasks, const std::function<void (std::any &&)> &process_res=[](auto &&) {})
+        void wait_all_done(const std::string &task_group, const size_t task_count,
+                            const std::function<void ()> &submit_tasks, const std::function<void (std::any &&, size_t, size_t)> &process_res)
         {
             bool exp_false = false;
-            if (!_wait_for_count_running.compare_exchange_strong(exp_false, true))
-                throw error("concurrent wait_for_count calls are not allowed!");
+            if (!_wait_all_done_running.compare_exchange_strong(exp_false, true))
+                throw error("concurrent wait_all_done calls are not allowed!");
             if (_num_workers < 4)
-                throw error("wait_for_count relies on a high worker count but got {} worker threads!", _num_workers);
+                throw error("wait_all_done relies on a high worker count but got {} worker threads!", _num_workers);
             std::atomic_size_t errors = 0;
             try {
                 static constexpr std::chrono::milliseconds report_period{10000};
@@ -229,39 +231,39 @@ namespace daedalus_turbo {
                 std::atomic_size_t done_parts = 0;
                 on_result(task_group, [&done_parts, &errors, process_res](auto &&res) {
                     ++done_parts;
-                    if (res.type() == typeid(scheduled_task_error)) {
+                    if (res.type() != typeid(scheduled_task_error)) [[likely]] {
+                        process_res(std::move(res), done_parts.load(), errors.load());
+                    } else {
                         ++errors;
-                        return;
                     }
-                    process_res(std::move(res));
                 }, true);
                 submit_tasks();
                 const auto process_results = !_process_running.load();
-                timer t{fmt::format("wait_for_count task: {} count: {} process_results: {}", task_group,
-                                    task_count, process_results)};
+                timer t{fmt::format("wait_all_done task: {} count: {} process_results: {}", task_group,
+                                    task_count, process_results), logger::level::debug };
                 while (done_parts < task_count) {
                     const auto now = std::chrono::system_clock::now();
                     if (now >= next_warn) {
                         next_warn = now + report_period;
                         logger::warn(
-                                "wait_for_count takes longer than expected task: {} count: {} done: {} errors: {} process_results: {} waiting for: {} secs",
+                                "wait_all_done takes longer than expected task: {} count: {} done: {} errors: {} process_results: {} waiting for: {} secs",
                                 task_group, task_count, done_parts.load(), errors.load(), process_results,
                                 std::chrono::duration_cast<std::chrono::seconds>(now - wait_start).count());
                     }
                     _process_once(true, false, process_results);
                 }
-                _wait_for_count_running = false;
+                _wait_all_done_running = false;
             } catch (const std::exception &ex) {
-                logger::warn("wait_for_count failed with std::exception: {}", ex.what());
-                _wait_for_count_running = false;
+                logger::warn("wait_all_done failed with std::exception: {}", ex.what());
+                _wait_all_done_running = false;
                 throw;
             } catch (...) {
-                logger::warn("wait_for_count failed with an unknown exception");
-                _wait_for_count_running = false;
+                logger::warn("wait_all_done failed with an unknown exception");
+                _wait_all_done_running = false;
                 throw;
             }
             if (errors > 0)
-                throw scheduler_error("wait_for_count {} - there were failed tasks; cannot continue", task_group);
+                throw scheduler_error("wait_all_done {} - there were failed tasks; cannot continue", task_group);
         }
     private:
         struct completion_action {
@@ -305,7 +307,7 @@ namespace daedalus_turbo {
         std::atomic_bool _destroy { false };
         std::atomic_bool _success { true };
         std::atomic_bool _process_running { false };
-        std::atomic_bool _wait_for_count_running { false };
+        std::atomic_bool _wait_all_done_running { false };
         std::atomic<std::chrono::time_point<std::chrono::system_clock>> _report_next_time { std::chrono::system_clock::now() + default_update_interval };
 
         static size_t _find_num_workers(size_t user_num_workers)
@@ -428,10 +430,13 @@ namespace daedalus_turbo {
 
         bool _worker_try_execute(size_t worker_idx, const std::optional<std::chrono::milliseconds> wait_interval_ms)
         {
+            static std::string wait_task_name { "__WAIT_FOR_TASKS__" };
+            const auto sleep_start_time = std::chrono::system_clock::now();
             mutex::unique_lock lock { _tasks_mutex };
             _tasks_cv.wait_for(lock, *wait_interval_ms, [&] {
                 return !_tasks.empty() || _destroy;
             });
+            _task_stats[wait_task_name].cpu_time += std::chrono::duration<double> { std::chrono::system_clock::now() - sleep_start_time }.count();
             if (_destroy)
                 return false;
             if (!_tasks.empty()) {
@@ -611,9 +616,9 @@ namespace daedalus_turbo {
         _impl->process_once(report_status);
     }
 
-    void scheduler::wait_for_count(const std::string &task_group, const size_t task_count,
-        const std::function<void()> &submit_tasks, const std::function<void(std::any &&res)> &process_res)
+    void scheduler::wait_all_done(const std::string &task_group, const size_t task_count,
+        const std::function<void()> &submit_tasks, const std::function<void(std::any &&, size_t, size_t)> &process_res)
     {
-        return _impl->wait_for_count(task_group, task_count, submit_tasks, process_res);
+        return _impl->wait_all_done(task_group, task_count, submit_tasks, process_res);
     }
 }

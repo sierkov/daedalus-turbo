@@ -31,17 +31,26 @@ suite config_suite = [] {
         "required"_test = [] {
             const auto &cfg = configs_dir::get();
             expect(cfg.at("turbo").at("vkey").as_string() == std::string_view { "F961D8754397FA2C39D69C97D598566A5E03C34E40FF71DB792E103380E7C105" });
-            expect(cfg.at("cardano").at("networkMagic").as_int64() == 764824073_ll);
+            expect(cfg.at("topology").at("bootstrapPeers").at(0).at("address").as_string() == std::string_view { "relays-new.cardano-mainnet.iohk.io" });
         };
         "non-standard-location"_test = [] {
             expect(std::getenv("DT_ETC") == nullptr);
-            expect(configs_dir::default_path() == "./etc");
+            expect(configs_dir::default_path() == "./etc/mainnet");
             my_setenv("DT_ETC", "./etc-missing");
             expect(std::getenv("DT_ETC") != nullptr);
             expect(configs_dir::default_path() == "./etc-missing") << configs_dir::default_path();
             expect(throws([] { configs_dir cfg { configs_dir::default_path() }; }));
             my_setenv("DT_ETC", nullptr);
             expect(std::getenv("DT_ETC") == nullptr);
+        };
+        "non-standard-location override"_test = [] {
+            expect(std::getenv("DT_ETC") == nullptr);
+            expect(configs_dir::default_path() == "./etc/mainnet");
+            configs_dir::set_default_path("./new-path");
+            expect(configs_dir::default_path() == "./new-path") << configs_dir::default_path();
+            expect(throws([] { configs_dir cfg { configs_dir::default_path() }; }));
+            configs_dir::set_default_path({});
+            expect(configs_dir::default_path() == "./etc/mainnet");
         };
         "mock"_test = [] {
             configs_mock::map_type cfg_data {};

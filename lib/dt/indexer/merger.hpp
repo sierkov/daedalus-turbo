@@ -16,6 +16,7 @@ namespace daedalus_turbo::indexer::merger {
     struct slice {
         uint64_t offset = 0;
         uint64_t size = 0;
+        uint64_t max_slot = 0;
         std::string slice_id {};
 
         constexpr static auto serialize(auto &archive, auto &self)
@@ -26,15 +27,18 @@ namespace daedalus_turbo::indexer::merger {
         static slice from_json(const json::object &j)
         {
             auto prefix = static_cast<std::string_view>(j.at("prefix").as_string());
-            return slice { json::value_to<uint64_t>(j.at("offset")), json::value_to<uint64_t>(j.at("size")), prefix };
+            return slice {
+                json::value_to<uint64_t>(j.at("offset")), json::value_to<uint64_t>(j.at("size")),
+                json::value_to<uint64_t>(j.at("maxSlot")), prefix
+            };
         }
 
         slice()
         {
         }
 
-        slice(uint64_t offset_, uint64_t size_, const std::string_view &prefix="slice")
-            : offset { offset_ }, size { size_ }, slice_id { fmt::format("{}-{:013}-{:013}", prefix, offset, end_offset()) }
+        slice(const uint64_t offset_, const uint64_t size_, const uint64_t max_slot_, const std::string_view &prefix="slice")
+            : offset { offset_ }, size { size_ }, max_slot { max_slot_ }, slice_id { fmt::format("{}-{:013}-{:013}", prefix, offset, end_offset()) }
         {
         }
 
@@ -43,6 +47,7 @@ namespace daedalus_turbo::indexer::merger {
             return json::object {
                 { "offset", offset },
                 { "size", size },
+                { "maxSlot", max_slot },
                 { "prefix", slice_id.substr(0, slice_id.find('-')) }
             };
         }
@@ -76,6 +81,19 @@ namespace daedalus_turbo::indexer::merger {
                     size += info.size;
             }
             return size;
+        }
+
+        uint64_t continuous_max_slot() const
+        {
+            uint64_t slot = 0;
+            uint64_t size = 0;
+            for (const auto &[offset, info]: *this) {
+                if (offset == size) {
+                    slot = info.max_slot;
+                    size += info.size;
+                }
+            }
+            return slot;
         }
     };
 }

@@ -14,14 +14,31 @@ namespace daedalus_turbo {
 
     const json::value &config_file::_at_impl(const std::string_view &name) const
     {
-        return _parsed.at(name);
+        const auto it = _parsed.find(name);
+        if (it == _parsed.end())
+            throw error("configuration file does not have the element {}!", name);
+        return it->value();
+    }
+
+    static std::optional<std::string> &_configs_default_path()
+    {
+        static std::optional<std::string> p {};
+        return p;
+    }
+
+    void configs_dir::set_default_path(const std::optional<std::string> &p)
+    {
+        _configs_default_path() = p;
     }
 
     std::string configs_dir::default_path()
     {
-        static const char *default_path = "./etc";
-        const char *user_defined_path = std::getenv("DT_ETC");
-        return user_defined_path != nullptr ? user_defined_path : default_path;
+        std::optional<std::string> path = _configs_default_path();
+        if (const char *env_path = std::getenv("DT_ETC"); !path && env_path)
+            path.emplace(env_path);
+        if (!path)
+            path.emplace("./etc/mainnet");
+        return *path;
     }
 
     const configs &configs_dir::get()
@@ -41,6 +58,9 @@ namespace daedalus_turbo {
 
     const config &configs_dir::_at_impl(const std::string &name) const
     {
-        return _configs.at(name);
+        const auto it = _configs.find(name);
+        if (it == _configs.end())
+            throw error("there is no config named {}!", name);
+        return it->second;
     }
 }

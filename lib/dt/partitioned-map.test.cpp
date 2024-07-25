@@ -65,12 +65,12 @@ suite partitioned_map_suite = [] {
         };
         "erase"_test = [&] {
             {
-                auto it = pm.erase(stake_missing);
-                expect(it == pm.end());
+                expect(pm.erase(stake_missing) == 0);
                 expect(pm.size() == 3_ul);
             }
             {
-                auto it = pm.erase(stake3);
+                auto it = pm.find(stake3);
+                it = pm.erase(it);
                 expect(it != pm.end());
                 expect(it == pm.find(stake1));
                 expect(pm.size() == 2_ul);

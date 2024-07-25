@@ -12,32 +12,52 @@
 #include <dt/vrf.hpp>
 
 namespace daedalus_turbo::cardano {
+    // This class is intended to generate both valid invalid blocks as part of the testing process.
+    // For this reason, it does not enforce any invariants beyond the ones necessary to satisfy the CBOR format.
     struct block_producer {
+        struct tx_input {
+            cardano::tx_hash tx_hash {};
+            cardano::tx_out_idx txo_idx {};
+            ed25519::skey sk {};
+            ed25519::vkey vk {};
+        };
+        using tx_input_list = std::vector<tx_input>;
+
+        struct tx_output {
+            uint8_vector address {};
+            uint64_t coin = 0;
+        };
+        using tx_output_list = std::vector<tx_output>;
+
+        struct tx {
+            tx_input_list inputs {};
+            tx_output_list outputs {};
+        };
+        using tx_list = std::vector<tx>;
+
         uint64_t height {};
-        cardano::slot slot {};
+        uint64_t slot = 0;
         block_hash prev_hash {};
         uint64_t op_seq_no {};
+        tx_list txs {};
         cardano::vrf_nonce vrf_nonce = cardano::vrf_nonce::from_hex("1a3be38bcbb7911969283716ad7aa550250226b76a61fc51cc9a9a35d9276d81");
 
-        explicit block_producer(const write_buffer &cold_key, const write_buffer &kes_seed, const buffer &vrf_sk)
-            : _cold_sk { cold_key }, _kes_sk { kes_seed }, _vrf_sk { vrf_sk }
+        explicit block_producer(const buffer &cold_key, const buffer &kes_seed, const buffer &vrf_sk)
+            : _cold_sk { cold_key }, _cold_vk { ed25519::extract_vk(_cold_sk) }, _kes_sk { kes_seed },
+                _vrf_sk { vrf_sk }, _vrf_vk { vrf03_extract_vk(_vrf_sk) }
         {
-            ed25519::extract_vk(_cold_vk, _cold_sk);
-            vrf03_extract_vk(_vrf_vk, _vrf_sk);
         }
 
-        uint8_vector cbor()
-        {
-            const auto txs = _gen_transactions();
-            const auto wits = _gen_witnesses();
+        [[nodiscard]] uint8_vector cbor() const {
+            const auto [tx_bodies, tx_wits] = _gen_transactions();
             const auto data = _gen_data();
             const auto inval = _gen_invalid();
             cbor::encoder enc {};
             enc.array(2);
             enc.uint(6);
             enc.array(5);
-            _gen_header(enc, txs, wits, data, inval);
-            enc.cbor() << txs << wits << data << inval;
+            _gen_header(enc, tx_bodies, tx_wits, data, inval);
+            enc.cbor() << tx_bodies << tx_wits << data << inval;
             return enc.cbor();
         }
     private:
@@ -58,7 +78,7 @@ namespace daedalus_turbo::cardano {
             memcpy(ocert_data.data() + op_vkey.size() + sizeof(uint64_t), &kp, sizeof(uint64_t));
             ed25519::signature op_signature {};
             ed25519::sign(op_signature, ocert_data, _cold_sk);
-            const auto op_period = static_cast<uint64_t>(slot) / cardano::shelley::kes_period_slots;
+            const auto op_period = slot / cardano::shelley::kes_period_slots;
             enc.array(4);
             enc.bytes(op_vkey);
             enc.uint(op_seq_no);
@@ -125,28 +145,48 @@ namespace daedalus_turbo::cardano {
             _gen_kes_signature(enc, hb_enc.cbor());
         }
 
-        uint8_vector _gen_transactions() const
+        [[nodiscard]] std::pair<uint8_vector, uint8_vector> _gen_transactions() const
         {
             cbor::encoder enc {};
-            enc.array(0);
-            return enc.cbor();
+            cbor::encoder wit_enc {};
+            enc.array(txs.size());
+            wit_enc.array(txs.size());
+            for (const auto &tx: txs) {
+                std::map<ed25519::vkey, ed25519::skey> keys {};
+                cbor::encoder tx_enc {};
+                tx_enc.map(2);
+                tx_enc.uint(0).array(tx.inputs.size());
+                for (const auto &tx_in: tx.inputs) {
+                    tx_enc.array(2)
+                        .bytes(tx_in.tx_hash)
+                        .uint(tx_in.txo_idx);
+                    keys.try_emplace(tx_in.vk, tx_in.sk);
+                }
+                tx_enc.uint(1).array(tx.outputs.size());
+                for (const auto &tx_out: tx.outputs) {
+                    tx_enc.map(2)
+                        .uint(0).bytes(tx_out.address)
+                        .uint(1).uint(tx_out.coin);
+                }
+                const auto tx_hash = blake2b<cardano::tx_hash>(tx_enc.cbor());
+                wit_enc.map(1);
+                wit_enc.uint(0).array(keys.size());
+                for (const auto &[vk, sk]: keys) {
+                    wit_enc.array(2).bytes(vk).bytes(ed25519::sign(tx_hash, sk));
+                }
+                enc << tx_enc;
+            }
+            return std::make_pair(enc.cbor(), wit_enc.cbor());
         }
 
-        uint8_vector _gen_witnesses() const
-        {
-            cbor::encoder enc {};
-            enc.array(0);
-            return enc.cbor();
-        }
-
-        uint8_vector _gen_data() const
+        [[nodiscard]] uint8_vector _gen_data() const
         {
             cbor::encoder enc {};
             enc.map(0);
             return enc.cbor();
         }
 
-        uint8_vector _gen_invalid() const
+        [[nodiscard]] uint8_vector _gen_invalid() const
         {
             cbor::encoder enc {};
             enc.array(0);

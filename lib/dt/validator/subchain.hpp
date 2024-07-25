@@ -8,94 +8,45 @@
 #include <functional>
 #include <map>
 #include <dt/cardano/type.hpp>
+#include <dt/cardano/config.hpp>
 #include <dt/error.hpp>
 
 namespace daedalus_turbo::validator {
-    struct kes_interval {
-        size_t first_counter = 0;
-        size_t last_counter = 0;
-
-        constexpr static auto serialize(auto &archive, auto &self)
-        {
-            return archive(self.first_counter, self.last_counter);
-        }
-
-        kes_interval() =default;
-
-        kes_interval(size_t fc, size_t lc)
-            : first_counter { fc }, last_counter { lc }
-        {
-            if (first_counter > last_counter)
-                throw error("KES interval must be non decreasing but got first: {} last: {}",
-                    first_counter, last_counter);
-        }
-
-        bool can_merge(const kes_interval &right) const
-        {
-            return last_counter <= right.first_counter;
-        }
-
-        void can_merge(const kes_interval &right, const cardano::pool_hash &pool_id, const uint64_t chunk_offset) const
-        {
-            if (!can_merge(right))
-                throw error("KES intervals from chunk at offset: {} do not merge for pool: {}", chunk_offset, pool_id);
-        }
-
-        void merge(const kes_interval &right, const cardano::pool_hash &pool_id, const uint64_t chunk_offset)
-        {
-            can_merge(right, pool_id, chunk_offset);
-            last_counter = right.last_counter;
-        }
-
-        void merge_right(const kes_interval &left, const cardano::pool_hash &pool_id, const uint64_t chunk_offset)
-        {
-            left.can_merge(*this, pool_id, chunk_offset);
-            first_counter = left.first_counter;
-        }
-
-        bool operator==(const auto &b) const
-        {
-            return first_counter == b.first_counter && last_counter == b.last_counter;
-        }
-    };
-
-    struct kes_interval_map: std::map<cardano::pool_hash, kes_interval> {
-        using std::map<cardano::pool_hash, kes_interval>::map;
-
-        void merge(const kes_interval_map &right, const uint64_t chunk_offset)
-        {
-            for (const auto &[pool_id, right_interval]: right) {
-                auto [left_it, created] = try_emplace(pool_id, right_interval);
-                if (!created)
-                    left_it->second.merge(right_interval, pool_id, chunk_offset);
-            }
-        }
-    };
-
     struct subchain {
         size_t offset = 0;
         size_t num_bytes = 0;
         size_t num_blocks = 0;
-        size_t ok_eligibility = 0;
-        kes_interval_map kes_intervals {};
-        // these fields are carried only and managed externally
-        size_t epoch = 0;
-        bool snapshot = false;
+        size_t valid_blocks = 0;
+        size_t first_block_slot = 0;
+        cardano::block_hash first_block_hash {};
+        size_t last_block_slot = 0;
+        cardano::block_hash last_block_hash {};
 
         void merge(const subchain &right)
         {
             if (end_offset() != right.offset)
-                throw error("unmergeable subchains left end: {} right start: {}",
-                    end_offset(), right.offset);
+                throw error("unmergeable subchains left end: {} right start: {}", end_offset(), right.offset);
+            if (right.first_block_slot < first_block_slot)
+                throw error("unmergeable subchains left first_block_slot: {} right first_block_slot: {}", first_block_slot, right.first_block_slot);
+            if (right.last_block_slot < last_block_slot)
+                throw error("unmergeable subchains left last_block_slot: {} right last_block_slot: {}", last_block_slot, right.last_block_slot);
             num_bytes += right.num_bytes;
             num_blocks += right.num_blocks;
-            ok_eligibility += right.ok_eligibility;
-            kes_intervals.merge(right.kes_intervals, right.offset);
+            valid_blocks += right.valid_blocks;
+            last_block_slot = right.last_block_slot;
+            last_block_hash = right.last_block_hash;
         }
 
         size_t end_offset() const
         {
             return offset + num_bytes;
+        }
+
+        bool operator==(const auto &o) const
+        {
+            return offset == o.offset && num_bytes == o.num_bytes && num_blocks == o.num_blocks
+                && valid_blocks == o.valid_blocks && first_block_slot == o.first_block_slot && last_block_slot == o.last_block_slot
+                && first_block_hash == o.first_block_hash && last_block_hash == o.last_block_hash;
         }
 
         bool operator<(const auto &v) const
@@ -107,18 +58,15 @@ namespace daedalus_turbo::validator {
 
         explicit operator bool() const
         {
-            return num_bytes > 0 && num_blocks > 0 && num_blocks == ok_eligibility;
+            return num_bytes > 0 && num_blocks > 0 && num_blocks == valid_blocks;
         }
     };
 
     struct subchain_list: std::map<uint64_t, subchain> {
-        explicit subchain_list(const std::function<void(const subchain &)> &take_snapshot)
-            : _take_snapshot { take_snapshot }
-        {
-        }
-
         void add(subchain &&sc)
         {
+            if (sc.first_block_slot > sc.last_block_slot)
+                throw error("a subchain with an invalid slot range: [{}, {}]", sc.first_block_slot, sc.last_block_slot);
             auto [it, created] = emplace(sc.offset + sc.num_bytes - 1, std::move(sc));
             if (!created)
                 throw error("duplicate subchain starting a offset {} size {}", sc.offset, sc.num_bytes);
@@ -141,10 +89,16 @@ namespace daedalus_turbo::validator {
 
         uint64_t valid_size() const
         {
-            uint64_t offset = 0;
-            if (!empty() && begin()->second && begin()->second.offset == 0)
-                offset = begin()->second.num_bytes;
-            return offset;
+            if (!empty() && begin()->second && begin()->second.offset == 0) [[likely]]
+                return begin()->second.num_bytes;
+            return 0;
+        }
+
+        cardano::optional_point max_valid_point() const
+        {
+            if (const auto it = begin(); it != end() && it->second && it->second.offset == 0) [[likely]]
+                return cardano::point { it->second.last_block_hash, it->second.last_block_slot, 0, it->second.num_bytes };
+            return {};
         }
 
         void merge_valid()
@@ -156,19 +110,28 @@ namespace daedalus_turbo::validator {
                     next_it = erase(next_it))
                 {
                     it->second.merge(next_it->second);
-                    //if (next_it->second.snapshot)
-                    // experimental support for on-the-go checkpoints
-                    _take_snapshot(it->second);
                 }
                 _adjust_updated_subchain(it);
             }
         }
 
-        void merge_same_epoch()
+        void merge_same_epoch(const cardano::config &cfg)
         {
             for (auto it = begin(); it != end(); ) {
                 auto next_it = std::next(it);
-                while (next_it != end() && it->second.end_offset() == next_it->second.offset && it->second.epoch == next_it->second.epoch) {
+                while (next_it != end() && it->second.end_offset() == next_it->second.offset) {
+                    const auto first_block_slot = cardano::slot { it->second.first_block_slot, cfg };
+                    const auto last_block_slot = cardano::slot { it->second.last_block_slot, cfg };
+                    if (!it->second && first_block_slot.epoch() != last_block_slot.epoch())
+                        throw error("an unvalidated subchain at [{}:{}) has slots from different epochs: first slot: {} last_slot: {}",
+                            it->second.offset, it->second.end_offset(), first_block_slot, last_block_slot);
+                    const auto next_first_block_slot = cardano::slot { next_it->second.first_block_slot, cfg };
+                    const auto next_last_block_slot = cardano::slot { next_it->second.last_block_slot, cfg };
+                    if (!next_it->second && next_first_block_slot.epoch() != next_last_block_slot.epoch())
+                        throw error("an unvalidated subchain at [{}:{}) has slots from different epochs: first slot: {} last_slot: {}",
+                            next_it->second.offset, next_it->second.end_offset(), next_first_block_slot, next_last_block_slot);
+                    if (last_block_slot.epoch() != next_first_block_slot.epoch())
+                        break;
                     it->second.merge(next_it->second);
                     next_it = erase(next_it);
                 }

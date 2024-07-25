@@ -36,31 +36,34 @@ namespace daedalus_turbo::cardano::mary {
             }
             if (outputs == nullptr) return;
             for (size_t i = 0; i < outputs->size(); i++) {
-                if (outputs->at(i).type != CBOR_ARRAY) throw cardano_error("slot: {}, era: {}, unsupported tx output format!", _blk.slot(), _blk.era());
+                if (outputs->at(i).type != CBOR_ARRAY)
+                    throw cardano_error("slot: {}, era: {}, unsupported tx output format!", _blk.slot(), _blk.era());
                 const auto &out = outputs->at(i).array();
-                _extract_assets(out.at(0), out.at(1), i, observer);
+                observer(_extract_assets(out.at(0), out.at(1), i));
             }
         }
 
-        virtual void foreach_mint(const std::function<void(const cbor_buffer &, const cbor_map &)> &observer) const
+        virtual size_t foreach_mint(const std::function<void(const cbor_buffer &, const cbor_map &)> &observer) const
         {
             const cbor_map *mint = nullptr;
             for (const auto &[entry_type, entry]: _tx.map()) {
                 if (entry_type.uint() == 9) mint = &entry.map();
             }
-            if (mint == nullptr) return;
-            for (const auto &[policy_id, assets]: *mint) {
-                observer(policy_id.buf(), assets.map());
+            size_t num_mints = 0;
+            if (mint) {
+                for (const auto &[policy_id, assets]: *mint) {
+                    ++num_mints;
+                    observer(policy_id.buf(), assets.map());
+                }
             }
+            return num_mints;
         }
     protected:
-        static void _extract_assets(const cbor_value &address, const cbor_value &value, size_t idx, const std::function<void(const cardano::tx_output &)> &observer)
+        static tx_output _extract_assets(const cbor_value &address, const cbor_value &value, const size_t idx)
         {
-            if (value.type == CBOR_UINT) {
-                observer(tx_output { address.buf(), cardano::amount { value.uint() }, idx });
-            } else {
-                observer(tx_output { address.buf(), cardano::amount { value.array().at(0).uint() }, idx, &value.array().at(1).map() });
-            }
+            if (value.type == CBOR_UINT)
+                return { cardano::address { address.buf() }, cardano::amount { value.uint() }, idx };
+            return { cardano::address { address.buf() }, cardano::amount { value.array().at(0).uint() }, idx, &value.array().at(1) };
         }
     };
 

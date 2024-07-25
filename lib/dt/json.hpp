@@ -14,6 +14,30 @@
 namespace daedalus_turbo::json {
     using namespace boost::json;
 
+    inline json::object canonical(const json::object &obj)
+    {
+        std::vector<std::pair<std::string, json::value>> items {};
+        items.reserve(obj.size());
+        for (const auto &[k, v]: obj) {
+            if (v.is_object()) {
+                items.emplace_back(k, canonical(v.as_object()));
+            } else {
+                items.emplace_back(k, v);
+            }
+        }
+        std::sort(items.begin(), items.end(), [](const auto &l, const auto &r) { return l.first < r.first; } );
+        json::object res {};
+        for (auto &&[k, v]: items) {
+            res.emplace(std::move(k), std::move(v));
+        }
+        return res;
+    }
+
+    inline std::string serialize_canon(const json::object &obj)
+    {
+        return json::serialize(canonical(obj));
+    }
+
     inline json::value parse(const buffer &buf, json::storage_ptr sp={})
     {
         return boost::json::parse(buf.string_view(), sp);
@@ -104,11 +128,16 @@ namespace daedalus_turbo::json {
         }
     }
 
+    inline std::string serialize_pretty(const json::value &jv)
+    {
+        std::ostringstream ss {};
+        save_pretty(ss, jv);
+        return ss.str();
+    }
+
     inline void save_pretty(const std::string &path, const json::value &jv)
     {
-        std::ostringstream os {};
-        save_pretty(os, jv);
-        file::write(path, os.str());
+        file::write(path, serialize_pretty(jv));
     }
 
     inline void save_pretty_signed(const std::string &path, const json::object &jv, const buffer &sk)

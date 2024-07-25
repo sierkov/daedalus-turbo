@@ -17,7 +17,7 @@ suite cardano_sheley_suite = [] {
             cbor_value block_tuple {};
             while (!parser.eof()) {
                 parser.read(block_tuple);
-                auto blk = cardano::make_block(block_tuple, block_tuple.data - chunk.data());
+                const auto blk = cardano::make_block(block_tuple, block_tuple.data - chunk.data());
                 expect(blk->era() == 2_ull);
                 expect(blk->body_hash_ok());
             }

@@ -5,11 +5,12 @@
 #ifndef DAEDALUS_TURBO_INDEX_BLOCK_FEES_HPP
 #define DAEDALUS_TURBO_INDEX_BLOCK_FEES_HPP
 
-#include <dt/cardano.hpp>
+#include <dt/cardano/type.hpp>
 #include <dt/index/common.hpp>
 
 namespace daedalus_turbo::index::block_fees {
     struct item {
+        uint64_t slot = 0;
         cardano::pool_hash issuer_id {};
         uint64_t fees = 0;
         uint64_t end_offset = 0;
@@ -17,26 +18,25 @@ namespace daedalus_turbo::index::block_fees {
 
         bool operator<(const auto &b) const
         {
-            int cmp = memcmp(issuer_id.data(), b.issuer_id.data(), issuer_id.size());
-            if (cmp != 0)
-                return cmp < 0;
-            return fees < b.fees;
+            if (slot != b.slot)
+                return slot < b.slot;
+            return memcmp(issuer_id.data(), b.issuer_id.data(), issuer_id.size()) < 0;
         }
     };
 
     struct chunk_indexer: chunk_indexer_one_epoch<item> {
         using chunk_indexer_one_epoch::chunk_indexer_one_epoch;
     protected:
-        void _index_epoch(const cardano::block_base &blk, data_list &idx) override
+        void _index_epoch(const cardano::block_base &blk, data_type &idx) override
         {
             uint64_t fees = 0;
             blk.foreach_tx([&](const auto &tx) {
                 fees += tx.fee();
             });
-            idx.emplace_back(blk.issuer_hash(), fees, blk.offset() + blk.size(), static_cast<uint8_t>(blk.era()));
+            idx.emplace_back(blk.slot(), blk.issuer_hash(), fees, blk.offset() + blk.size(), static_cast<uint8_t>(blk.era()));
         }
     };
-    using indexer = indexer_one_epoch<item, chunk_indexer>;
+    using indexer = indexer_one_epoch<chunk_indexer>;
 }
 
 #endif //!DAEDALUS_TURBO_INDEX_BLOCK_FEES_HPP

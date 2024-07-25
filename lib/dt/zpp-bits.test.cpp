@@ -12,7 +12,7 @@ using namespace daedalus_turbo;
 suite zpp_bits_suite = [] {
     "zpp::bits"_test = [] {
         "init"_test = [] {
-            auto [data, in, out] = zpp::bits::data_in_out();
+            auto [data, in, out] = ::zpp::bits::data_in_out();
             out(cardano::amount { 114232482 }, cardano::amount { 54232482 }).or_throw();
             expect(data.size() == 16_u);
             cardano::amount s1 {}, s2 {};
@@ -22,7 +22,7 @@ suite zpp_bits_suite = [] {
         };
         "vector"_test = [] {
             using test_item = std::vector<cardano::amount>;
-            auto [data, in, out] = zpp::bits::data_in_out();
+            auto [data, in, out] = ::zpp::bits::data_in_out();
             test_item items {};
             items.emplace_back(cardano::amount { 114232482 });
             items.emplace_back(cardano::amount { 54232482 });
@@ -36,7 +36,7 @@ suite zpp_bits_suite = [] {
         };
         "map"_test = [] {
             using test_item = std::map<std::string, cardano::amount>;
-            auto [data, in, out] = zpp::bits::data_in_out();
+            auto [data, in, out] = ::zpp::bits::data_in_out();
             test_item items {};
             items.emplace("item1", cardano::amount { 114232482 });
             items.emplace("item2", cardano::amount { 54232482 });
@@ -50,7 +50,7 @@ suite zpp_bits_suite = [] {
         };
         "map of sets"_test = [] {
             using test_item = std::map<std::string, std::set<uint64_t>>;
-            auto [data, in, out] = zpp::bits::data_in_out();
+            auto [data, in, out] = ::zpp::bits::data_in_out();
             test_item items {};
             {
                 auto &set = items["item1"];

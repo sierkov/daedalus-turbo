@@ -44,23 +44,7 @@ namespace daedalus_turbo {
             return ps;
         }
 
-        explicit peer_selection_simple()
-        {
-            auto j_cardano_hosts = configs_dir::get().at("cardano").at("hosts").as_array();
-            for (const auto &j_host: j_cardano_hosts) {
-                _cardano_hosts.emplace(std::string { static_cast<std::string_view>(j_host.as_string()) }, "3001");
-            }
-            if (_cardano_hosts.empty())
-                throw error("The list of cardano hosts cannot be empty!");
-            auto j_turbo_hosts = configs_dir::get().at("turbo").at("hosts").as_array();
-            for (const auto &j_host: j_turbo_hosts) {
-                std::string host { static_cast<std::string_view>(j_host.as_string()) };
-                if (_update_peers_from(host))
-                    break;
-            }
-            if (_turbo_hosts.empty())
-                throw error("The list of turbo hosts cannot be empty!");
-        }
+        explicit peer_selection_simple() =default;
     private:
         turbo_peer_list _turbo_hosts {};
         cardano_peer_list _cardano_hosts {};
@@ -69,7 +53,7 @@ namespace daedalus_turbo {
         bool _update_peers_from(const std::string &host)
         {
             try {
-                auto j_peers = http::download_queue_async::get().fetch_json(fmt::format("http://{}/peers.json", host)).as_object();
+                const auto j_peers = http::download_queue_async::get().fetch_json(fmt::format("http://{}/peers.json", host)).as_object();
                 for (const auto &j_host: j_peers.at("hosts").as_array()) {
                     _turbo_hosts.emplace(std::string { static_cast<std::string_view>(j_host.as_string()) });
                 }
@@ -80,15 +64,22 @@ namespace daedalus_turbo {
             return false;
         }
 
-
         std::string _next_turbo_impl() override
         {
+            if (_turbo_hosts.empty()) {
+                const auto j_turbo_hosts = configs_dir::get().at("turbo").at("hosts").as_array();
+                for (const auto &j_host: j_turbo_hosts) {
+                    if (_update_peers_from(json::value_to<std::string>(j_host)))
+                        break;
+                }
+                if (_turbo_hosts.empty())
+                    throw error("The list of turbo hosts cannot be empty!");
+            }
             std::uniform_int_distribution<size_t> dist { 0, _turbo_hosts.size() - 1 };
             for (size_t retry = 0; retry < max_retries; ++retry) {
-                auto ri = dist(_rnd);
-                std::string host = *(_turbo_hosts.begin() + ri);
+                const auto ri = dist(_rnd);
                 // ensure that only live hosts are returned
-                if (_update_peers_from(host))
+                if (const std::string host = *(_turbo_hosts.begin() + ri); _update_peers_from(host))
                     return host;
             }
             throw error("failed to find a working turbo host after {} attempts", max_retries);
@@ -96,8 +87,19 @@ namespace daedalus_turbo {
 
         cardano::network::address _next_cardano_impl() override
         {
+            if (_cardano_hosts.empty()) {
+                const auto j_cardano_hosts = configs_dir::get().at("topology").at("bootstrapPeers").as_array();
+                for (const auto &j_host: j_cardano_hosts) {
+                    _cardano_hosts.emplace(
+                        json::value_to<std::string>(j_host.at("address")),
+                        std::to_string(json::value_to<uint64_t>(j_host.at("port")))
+                    );
+                }
+                if (_cardano_hosts.empty())
+                    throw error("The list of cardano hosts cannot be empty!");
+            }
             std::uniform_int_distribution<size_t> dist { 0, _cardano_hosts.size() - 1 };
-            auto ri = dist(_rnd);
+            const auto ri = dist(_rnd);
             return *(_cardano_hosts.begin() + ri);
         }
     };

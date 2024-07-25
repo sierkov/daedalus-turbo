@@ -12,18 +12,162 @@
 namespace daedalus_turbo::cardano::shelley {
     static constexpr uint64_t kes_period_slots = 129600;
 
+    inline void parse_shelley_param_update_common(param_update &res, uint64_t idx, const cbor_value &val)
+    {
+        switch (idx) {
+            case 0: res.min_fee_a.emplace(val.uint()); break;
+            case 1: res.min_fee_b.emplace(val.uint()); break;
+            case 2: res.max_block_body_size.emplace(val.uint()); break;
+            case 3: res.max_transaction_size.emplace(val.uint()); break;
+            case 4: res.max_block_header_size.emplace(val.uint()); break;
+            case 5: res.key_deposit.emplace(val.uint()); break;
+            case 6: res.pool_deposit.emplace(val.uint()); break;
+            case 7: res.e_max.emplace(val.uint()); break;
+            case 8: res.n_opt.emplace(val.uint()); break;
+            case 9:
+                res.pool_pledge_influence.emplace(
+                val.tag().second->array().at(0).uint(),
+                val.tag().second->array().at(1).uint()
+                );
+                break;
+            case 10:
+                res.expansion_rate.emplace(
+                    val.tag().second->array().at(0).uint(),
+                    val.tag().second->array().at(1).uint()
+                );
+                break;
+            case 11:
+                res.treasury_growth_rate.emplace(
+                    val.tag().second->array().at(0).uint(),
+                    val.tag().second->array().at(1).uint()
+                );
+                break;
+            case 12:
+                res.decentralization.emplace(
+                    val.tag().second->array().at(0).uint(),
+                    val.tag().second->array().at(1).uint()
+                );
+                break;
+            case 13:
+                if (val.array().at(0).uint() == 1)
+                    res.extra_entropy.emplace(val.array().at(1).buf());
+                else if (val.array().at(0).uint() == 0)
+                    res.extra_entropy.emplace();
+                else
+                    logger::warn("unsupported shelley extra_entropy update: {}", val.array().at(0).uint());
+                break;
+            case 14: res.protocol_ver.emplace(val.array().at(0).uint(), val.array().at(1).uint());
+                break;
+            default:
+                throw error("protocol parameter index is out of the expected range for common params: {}", idx);
+        }
+    }
+
+    inline param_update parse_shelley_param_update(const cbor::value &proposal)
+    {
+        param_update upd {};
+        for (const auto &[idx, val]: proposal.map()) {
+            switch (idx.uint()) {
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                case 8:
+                case 9:
+                case 10:
+                case 11:
+                case 12:
+                case 13:
+                case 14:
+                    parse_shelley_param_update_common(upd, idx.uint(), val);
+                    break;
+                case 15:
+                    upd.min_utxo_value.emplace(val.uint());
+                    break;
+                default:
+                    throw error("shelley unsupported protocol parameters update: {}", idx.uint());
+                    break;
+            }
+        }
+        return upd;
+    }
+
+    inline pool_reg pool_params_from_cbor(const cbor_array &cert, const size_t base_idx=1)
+    {
+        const address reward_addr { cert.at(base_idx + 5).buf() };
+        pool_reg params {
+            cert.at(base_idx + 0).buf(),
+            cert.at(base_idx + 1).buf(),
+            cert.at(base_idx + 2).uint(),
+            cert.at(base_idx + 3).uint(),
+            rational_u64 {
+                cert.at(base_idx + 4).tag().second->array().at(0).uint(),
+                cert.at(base_idx + 4).tag().second->array().at(1).uint(),
+            },
+            reward_addr.stake_id()
+        };
+        params.reward_network = reward_addr.network();
+        for (const auto &addr: cert.at(base_idx + 6).array())
+            params.owners.emplace(stake_ident { addr.buf(), false });
+        for (const auto &relay: cert.at(base_idx + 7).array()) {
+            const auto &r_items = relay.array();
+            switch (r_items.at(0).uint()) {
+                case 0: {
+                    relay_addr ra {};
+                    if (r_items.at(1).type != CBOR_SIMPLE_NULL)
+                        ra.port.emplace(static_cast<uint16_t>(r_items.at(1).uint()));
+                    if (r_items.at(2).type != CBOR_SIMPLE_NULL)
+                        ra.ipv4.emplace(r_items.at(2).buf());
+                    if (r_items.at(3).type != CBOR_SIMPLE_NULL)
+                        ra.ipv6.emplace(r_items.at(3).buf());
+                    params.relays.emplace_back(std::move(ra));
+                    break;
+                } case 1: {
+                    relay_host rh { .host=std::string { r_items.at(2).text() }};
+                    if (r_items.at(1).type != CBOR_SIMPLE_NULL)
+                        rh.port.emplace(static_cast<uint16_t>(r_items.at(1).uint()));
+                    params.relays.emplace_back(std::move(rh));
+                    break;
+                } case 2: {
+                    params.relays.emplace_back(relay_dns { std::string { r_items.at(1).text() } });
+                    break;
+                }
+                default:
+                    throw error("unsupported relay value: {}", relay);
+            }
+        }
+        if (cert.at(base_idx + 8).type != CBOR_SIMPLE_NULL)
+            params.metadata.emplace(std::string { cert.at(base_idx + 8).at(0).text() }, cert.at(base_idx + 8).at(1).buf());
+        return params;
+    }
+
     struct tx;
 
     struct block: block_base {
-        using block_base::block_base;
+        block(const cbor_value &block_tuple, const uint64_t offset, const uint64_t era, const cbor_value &block, const cardano::config &cfg)
+            : block_base { block_tuple, offset, era, block, cfg }
+        {
+            // cardano::network may call this to parse only the headers; in that case the block will contain just the header
+            if (_block.array().size() >= 3 && transactions().size() != witnesses().size())
+                throw error("slot: {} the number of transactions {} does not match the number of witnesses {}", slot(), transactions().size(), witnesses().size());
+        }
 
         cardano_hash_32 hash() const override
         {
-            return blake2b<cardano_hash_32>(header_cbor().raw_span());
+            if (!_cached_hash)
+                _cached_hash.emplace(blake2b<cardano_hash_32>(header_cbor().raw_span()));
+            return *_cached_hash;
         }
 
-        const cbor_buffer &prev_hash() const override
+        buffer prev_hash() const override
         {
+            const auto &val = header_body().at(2);
+            if (val.is_null())
+                return config().byron_genesis_hash;
             return header_body().at(2).buf();
         }
 
@@ -38,38 +182,39 @@ namespace daedalus_turbo::cardano::shelley {
         }
 
         void foreach_tx(const std::function<void(const cardano::tx &)> &observer) const override;
+        void foreach_update_proposal(const std::function<void(const param_update_proposal &)> &observer) const override;
 
-        inline const cardano::slot slot() const override
+        uint64_t slot() const override
         {
-            return cardano::slot { header_body().at(1).uint() };
+            return header_body().at(1).uint();
         }
 
-        inline const cbor_value &header_cbor() const
+        const cbor_value &header_cbor() const
         {
             return _block.array().at(0);
         }
 
-        inline const cbor_array &header() const
+        const cbor_array &header() const
         {
             return header_cbor().array();
         }
 
-        inline const buffer header_body_raw() const
+        const buffer header_body_raw() const
         {
             return header().at(0).raw_span();
         }
 
-        inline const cbor_array &header_body() const
+        const cbor_array &header_body() const
         {
             return header().at(0).array();
         }
 
-        inline const cbor_array &transactions() const
+        const cbor_array &transactions() const
         {
             return _block.array().at(1).array();
         }
 
-        inline const cbor_array &witnesses() const
+        const cbor_array &witnesses() const
         {
             return _block.array().at(2).array();
         }
@@ -129,9 +274,9 @@ namespace daedalus_turbo::cardano::shelley {
             return _validate_kes(kes_slot, kes_data, vkey);
         }
     protected:
-        static cardano_hash_32 _calc_body_hash(const cbor_array &block, size_t begin_idx, size_t end_idx)
+        static cardano_hash_32 _calc_body_hash(const cbor_array &block, const size_t begin_idx, const size_t end_idx)
         {
-            size_t num_hashes = end_idx - begin_idx;
+            const size_t num_hashes = end_idx - begin_idx;
             std::vector<cardano_hash_32> body_hash_in(num_hashes);
             for (size_t i = 0; i < num_hashes; ++i) {
                 blake2b(body_hash_in[i], block.at(begin_idx + i).raw_span());
@@ -152,13 +297,13 @@ namespace daedalus_turbo::cardano::shelley {
             return ed25519::verify(kes_.vkey_sig, issuer_vkey_, ocert_data);
         }
 
-        static bool _validate_kes(const cardano::slot &slot_, const cardano::kes_signature &kes_, const buffer &issuer_vkey_)
+        static bool _validate_kes(const uint64_t slot_, const cardano::kes_signature &kes_, const buffer &issuer_vkey_)
         {
             if (!_validate_op_cert(kes_, issuer_vkey_)) {
                 logger::error("the signature of the block's operational certificate is invalid!");
                 return false;
             }
-            uint64_t kp = static_cast<uint64_t>(slot_) / kes_period_slots;
+            uint64_t kp = slot_ / kes_period_slots;
             if (kes_.period > kp) {
                 logger::error("vkey kes period {} is greater than current kes_period {}", kes_.period, kp);
                 return false;
@@ -203,7 +348,7 @@ namespace daedalus_turbo::cardano::shelley {
                 if (outputs->at(i).type != CBOR_ARRAY) throw cardano_error("slot: {}, era: {}, unsupported tx output format!", _blk.slot(), _blk.era());
                 const auto &out = outputs->at(i).array();
                 if (i >= 0x10000) throw cardano_error("transaction output number is too high {}!", i);
-                observer(tx_output { out.at(0).buf(), cardano::amount { out.at(1).uint() }, (uint16_t)i });
+                observer(tx_output { cardano::address { out.at(0).buf() }, cardano::amount { out.at(1).uint() }, i });
             }
         }
 
@@ -217,7 +362,7 @@ namespace daedalus_turbo::cardano::shelley {
             for (size_t i = 0; i < withdrawals->size(); i++) {
                 const auto &[address, amount] = withdrawals->at(i);
                 if (i >= 0x10000) throw cardano_error("transaction withdrawal number is too high {}!", i);
-                observer(tx_withdrawal { address.buf(), cardano::amount { amount.uint() }, (uint16_t)i });
+                observer(tx_withdrawal { cardano::address { address.buf() }, cardano::amount { amount.uint() }, i });
             }
         }
 
@@ -254,73 +399,14 @@ namespace daedalus_turbo::cardano::shelley {
             });
         }
 
-        void foreach_param_update(const std::function<void(const param_update &)> &observer) const override
+        void foreach_param_update(const std::function<void(const param_update_proposal &)> &observer) const override
         {
             _if_item_present(6, [&](const auto &update) {
-                uint64_t epoch = update.array().at(1).uint();
-                for (const auto &[hash, proposal]: update.array().at(0).map()) {
-                    cardano::param_update params { hash.buf(), epoch };
-                    for (const auto &[idx, val]: proposal.map()) {
-                        switch (idx.uint()) {
-                            case 0:
-                                params.min_fee_a.emplace(val.uint());
-                                break;
-                            case 1:
-                                params.min_fee_b.emplace(val.uint());
-                                break;
-                            case 2:
-                                params.max_block_body_size.emplace(val.uint());
-                                break;
-                            case 3:
-                                params.max_transaction_size.emplace(val.uint());
-                                break;
-                            case 4:
-                                params.max_block_header_size.emplace(val.uint());
-                                break;
-                            case 5:
-                                params.key_deposit.emplace(val.uint());
-                                break;
-                            case 6:
-                                params.pool_deposit.emplace(val.uint());
-                                break;
-                            case 7:
-                                params.max_epoch.emplace(val.uint());
-                                break;
-                            case 8:
-                                params.n_opt.emplace(val.uint());
-                                break;
-                            case 9:
-                                params.pool_pledge_influence.emplace(val.tag().second->array().at(0).uint(), val.tag().second->array().at(1).uint());
-                                break;
-                            case 10:
-                                params.expansion_rate.emplace(val.tag().second->array().at(0).uint(), val.tag().second->array().at(1).uint());
-                                break;
-                            case 11:
-                                params.treasury_growth_rate.emplace(val.tag().second->array().at(0).uint(), val.tag().second->array().at(1).uint());
-                                break;
-                            case 12:
-                                params.decentralization.emplace(val.tag().second->array().at(0).uint(), val.tag().second->array().at(1).uint());
-                                break;
-                            case 13:
-                                if (val.array().at(0).uint() == 1)
-                                    params.extra_entropy.emplace(val.array().at(1).buf());
-                                else if (val.array().at(0).uint() == 0)
-                                    params.extra_entropy.emplace();
-                                else
-                                    logger::warn("slot: {}/{} unsupported extra_entropy update: {}", block().slot().epoch(), block().slot(), val.array().at(0).uint());
-                                break;
-                            case 14:
-                                params.protocol_ver.emplace(val.array().at(0).uint(), val.array().at(1).uint());
-                                break;
-                            case 15:
-                                params.min_utxo_value.emplace(val.uint());
-                                break;
-                            default:
-                                logger::debug("slot: {}/{} unsupported protocol parameters update: {}", block().slot().epoch(), block().slot(), idx.uint());
-                                break;
-                        }
-                    }
-                    observer(params);
+                const uint64_t epoch = update.array().at(1).uint();
+                for (const auto &[genesis_deleg_hash, proposal]: update.array().at(0).map()) {
+                    param_update_proposal prop { genesis_deleg_hash.buf(), epoch, parse_shelley_param_update(proposal) };
+                    prop.update.rehash();
+                    observer(prop);
                 }
             });
         }
@@ -328,18 +414,7 @@ namespace daedalus_turbo::cardano::shelley {
         void foreach_pool_reg(const std::function<void(const pool_reg &)> &observer) const override
         {
             _foreach_cert(3, [&observer](const auto &cert, size_t) {
-                pool_reg params {
-                    cert.at(1).buf(),
-                    cert.at(3).uint(),
-                    cert.at(4).uint(),
-                    cert.at(5).tag().second->array().at(0).uint(),
-                    cert.at(5).tag().second->array().at(1).uint(),
-                    cardano::address { cert.at(6).buf() }.stake_id()
-                };
-                const auto &owners = cert.at(7).array();
-                for (const auto &addr: owners)
-                    params.owners.emplace(stake_ident { addr.buf(), false });
-                observer(params);
+                observer(pool_params_from_cbor(cert));
             });
         }
 
@@ -347,6 +422,13 @@ namespace daedalus_turbo::cardano::shelley {
         {
             _foreach_cert(4, [&observer](const auto &cert, size_t) {
                 observer(pool_unreg { cert.at(1).buf(), cert.at(2).uint() });
+            });
+        }
+
+        void foreach_genesis_deleg(const std::function<void(const genesis_deleg &, size_t)> &observer) const override
+        {
+            _foreach_cert(5, [&observer](const auto &cert, const size_t cert_idx) {
+                observer(genesis_deleg { cert.at(1).buf(), cert.at(2).buf(), cert.at(3).buf() }, cert_idx);
             });
         }
 
@@ -400,17 +482,17 @@ namespace daedalus_turbo::cardano::shelley {
             if (!_wit)
                 throw cardano_error("vkey_witness_ok called on a transaction without witness data!");
             vkey_wit_ok ok {};
-            auto tx_hash = hash();
+            const auto &tx_hash = hash();
             for (const auto &[w_type, w_val]: _wit->map()) {
                 switch (w_type.uint()) {
                     // vkey witness
                     case 0: {
                         for (const auto &w: w_val.array()) {
-                            ok.total++;
+                            ++ok.total;
                             const auto &vkey = w.array().at(0).buf();
                             const auto &sig = w.array().at(1).buf();
                             if (ed25519::verify(sig, vkey, tx_hash))
-                                ok.ok++;
+                                ++ok.ok;
                         }
                         break;
                     }
@@ -464,11 +546,16 @@ namespace daedalus_turbo::cardano::shelley {
     {
         const auto &txs = transactions();
         const auto &wits = witnesses();
-        if (txs.size() != wits.size())
-            throw error("slot: {} the number of transactions {} does not match the number of witnesses {}", (uint64_t)slot(), txs.size(), wits.size());
         for (size_t i = 0; i < txs.size(); ++i) {
             observer(tx { txs.at(i), *this, &wits.at(i), i });
         }
+    }
+
+    inline void block::foreach_update_proposal(const std::function<void(const param_update_proposal &)> &observer) const
+    {
+        foreach_tx([&](const auto &tx) {
+            tx.foreach_param_update(observer);
+        });
     }
 }
 

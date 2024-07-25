@@ -145,5 +145,42 @@ suite rational_suite = [] {
             expect(v >= rational { 8, 10 });
             expect(!(v < rational { 8, 10 }));
         };
+        "from_double"_test = [] {
+            {
+                const auto r = rational_u64::from_double(0.003);
+                expect(r.numerator == 3) << r.numerator;
+                expect(r.denominator == 1000) << r.denominator;
+            }
+            {
+                const auto r = rational_u64::from_double(1.0);
+                expect(r.numerator == 1) << r.numerator;
+                expect(r.denominator == 1) << r.denominator;
+            }
+            {
+                const auto r = rational_u64::from_double(7.21e-5);
+                expect(r.numerator == 721) << r.numerator;
+                expect(r.denominator == 10'000'000) << r.denominator;
+            }
+        };
+        "r64 normalize"_test = [] {
+            {
+                rational_u64 r { 2ULL, 4ULL };
+                expect(r.numerator == 2);
+                expect(r.denominator == 4);
+                r.normalize();
+                expect(r.numerator == 1);
+                expect(r.denominator == 2);
+            }
+            {
+                rational_u64 r {};
+                expect(r.numerator == 0);
+                expect(r.denominator == 1);
+                r.numerator = 33;
+                r.denominator = 66;
+                r.normalize();
+                expect(r.numerator == 1);
+                expect(r.denominator == 2);
+            }
+        };
     };
 };

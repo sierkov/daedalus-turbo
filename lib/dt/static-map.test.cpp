@@ -10,7 +10,7 @@ using namespace daedalus_turbo;
 
 suite static_map_suite = [] {
     "static_map"_test = [] {
-        std::map<uint64_t, uint64_t> src {};
+        map<uint64_t, uint64_t> src {};
         src.emplace(0, 5);
         src.emplace(22, 4);
         src.emplace(21, 7);

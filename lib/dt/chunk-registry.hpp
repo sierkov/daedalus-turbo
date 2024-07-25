@@ -11,19 +11,170 @@
 #include <string>
 #include <dt/atomic.hpp>
 #include <dt/cardano.hpp>
+#include <dt/cardano/config.hpp>
 #include <dt/file.hpp>
 #include <dt/file-remover.hpp>
+#include <dt/indexer.hpp>
 #include <dt/json.hpp>
 #include <dt/progress.hpp>
 #include <dt/scheduler.hpp>
 #include <dt/storage/chunk_info.hpp>
 #include <dt/timer.hpp>
+#include <dt/validator.hpp>
 #include <dt/zpp.hpp>
 
 namespace daedalus_turbo {
+
+    namespace indexer {
+        struct incremental;
+    }
+
     typedef uint64_t chunk_offset_t;
 
+    struct epoch_info {
+        using chunk_list = std::vector<const storage::chunk_info *>;
+
+        epoch_info(chunk_list &&chunks): _chunks { std::move(chunks) }
+        {
+            if (_chunks.empty())
+                throw error("chunk list cannot be empty!");
+        }
+
+        const chunk_list &chunks() const
+        {
+            return _chunks;
+        }
+
+        const cardano::block_hash &prev_block_hash() const
+        {
+            return _chunks.front()->prev_block_hash;
+        }
+
+        [[nodiscard]] const cardano::block_hash &last_block_hash() const
+        {
+            return _chunks.back()->last_block_hash;
+        }
+
+        [[nodiscard]] uint64_t first_slot() const
+        {
+            return _chunks.front()->first_slot;
+        }
+
+        [[nodiscard]] uint64_t last_slot() const
+        {
+            return _chunks.back()->last_slot;
+        }
+
+        [[nodiscard]] uint64_t start_offset() const
+        {
+            return _chunks.front()->offset;
+        }
+
+        [[nodiscard]] uint64_t end_offset() const
+        {
+            return _chunks.back()->end_offset();
+        }
+
+        [[nodiscard]] uint64_t size() const
+        {
+            return end_offset() - start_offset();
+        }
+
+        [[nodiscard]] uint64_t era() const
+        {
+            const auto first_era = _chunks.front()->era();
+            const auto last_era = _chunks.back()->era();
+            if (first_era == last_era || (first_era == 0 && last_era == 1)) [[likely]]
+                return last_era;
+            throw error("epoch has blocks from multiple eras {} and {}", first_era, last_era);
+        }
+
+        [[nodiscard]] uint64_t compressed_size() const
+        {
+            uint64_t sz = 0;
+            for (const auto *chunk: _chunks)
+                sz += chunk->compressed_size;
+            return sz;
+        }
+    private:
+        chunk_list _chunks;
+    };
+    using epoch_map = map<size_t, epoch_info>;
+    using parsed_block_list = vector<std::unique_ptr<cardano::block_base>>;
+
+    struct progress_point {
+        uint64_t slot = 0; // required to be correct
+        uint64_t end_offset = 0; // can be zero; when non zero is used for more accurate process calculations
+
+        progress_point(const uint64_t slot_)
+            : slot { slot_ }
+        {
+        }
+
+        progress_point(const uint64_t slot_, const uint64_t end_offset_)
+            : slot { slot_ }, end_offset { end_offset_ }
+        {
+        }
+
+        progress_point(const cardano::point &p)
+            : slot { p.slot }, end_offset { p.end_offset }
+        {
+        }
+
+        progress_point() =delete;
+        progress_point(const progress_point &o) =default;
+        progress_point &operator=(const progress_point &o) =default;
+
+        bool operator<(const progress_point &o) const
+        {
+            return slot < o.slot;
+        }
+    };
+    using optional_progress_point = std::optional<progress_point>;
+
+    inline bool operator<(const optional_progress_point &a, const cardano::optional_point &b)
+    {
+        if (a.has_value() && b.has_value())
+            return a.value().slot < b.value().slot;
+        if (a.has_value() != b.has_value())
+            return a.has_value() < b.has_value();
+        return false;
+    }
+
+    inline bool operator<(const cardano::optional_point &a, const optional_progress_point &b)
+    {
+        if (a.has_value() && b.has_value())
+            return a.value().slot < b.value().slot;
+        if (a.has_value() != b.has_value())
+            return a.has_value() < b.has_value();
+        return false;
+    }
+
+    inline bool operator<(const cardano::optional_slot &a, const optional_progress_point &b)
+    {
+        if (a.has_value() && b.has_value())
+            return a.value() < b.value().slot;
+        if (a.has_value() != b.has_value())
+            return a.has_value() < b.has_value();
+        return false;
+    }
+
+    struct chunk_processor {
+        std::function<uint64_t()> end_offset {};
+        std::function<void()> start_tx {};
+        std::function<void()> prepare_tx {};
+        std::function<void()> rollback_tx {};
+        std::function<void()> commit_tx {};
+        std::function<void(const cardano::optional_point &, bool)> truncate {};
+        std::function<void(const cardano::block_base &)> on_block_validate {};
+        std::function<void(const storage::chunk_info &)> on_chunk_add {};
+        std::function<void(uint64_t, const epoch_info &)> on_epoch_update {};
+        std::function<void(std::string_view, uint64_t, uint64_t)> on_progress {};
+    };
+
     struct chunk_registry {
+        enum class mode { store, index, validate };
+
         // Shall be a multiple of an SSD's sector size and larger than Cardano's largest block (including Byron boundary ones too!)
         using chunk_info = storage::chunk_info;
         using chunk_map = std::map<uint64_t, chunk_info>;
@@ -31,66 +182,45 @@ namespace daedalus_turbo {
         using chunk_reverse_iterator = chunk_map::const_reverse_iterator;
 
         struct active_transaction {
-            uint64_t start_offset = 0;
-            uint64_t target_offset = 0;
+            cardano::optional_point start {};
+            std::optional<progress_point> target {};
             bool prepared = false;
+
+            uint64_t start_offset() const
+            {
+                if (start.has_value()) [[likely]] {
+                    if (start->end_offset) [[likely]]
+                        return start->end_offset;
+                    throw error("misconfigured transaction start point: no offset defined!");
+                }
+                return 0;
+            }
+
+            uint64_t start_slot() const
+            {
+                if (start.has_value()) [[likely]]
+                    return start->slot;
+                return 0;
+            }
+
+            uint64_t target_slot() const
+            {
+                if (target.has_value()) [[likely]]
+                    return target->slot;
+                return start_slot();
+            }
+
+            uint64_t target_offset() const
+            {
+                if (target.has_value()) [[likely]] {
+                    if (target->end_offset) [[likely]]
+                        return target->end_offset;
+                    throw error("request for a transaction's target offset when the transaction doesn't have it!");
+                }
+                return start_offset();
+            }
         };
 
-        struct epoch_info {
-            using chunk_list = std::vector<const chunk_info *>;
-
-            epoch_info(chunk_list &&chunks): _chunks { std::move(chunks) }
-            {
-                if (_chunks.empty())
-                    throw error("chunk list cannot be empty!");
-            }
-
-            const chunk_list &chunks() const
-            {
-                return _chunks;
-            }
-
-            const cardano::block_hash &prev_block_hash() const
-            {
-                return _chunks.front()->prev_block_hash;
-            }
-
-            [[nodiscard]] const cardano::block_hash &last_block_hash() const
-            {
-                return _chunks.back()->last_block_hash;
-            }
-
-            [[nodiscard]] cardano::slot last_slot() const
-            {
-                return _chunks.back()->last_slot;
-            }
-
-            [[nodiscard]] uint64_t start_offset() const
-            {
-                return _chunks.front()->offset;
-            }
-
-            [[nodiscard]] uint64_t end_offset() const
-            {
-                return _chunks.back()->end_offset();
-            }
-
-            [[nodiscard]] uint64_t size() const
-            {
-                return end_offset() - start_offset();
-            }
-
-            [[nodiscard]] uint64_t compressed_size() const
-            {
-                uint64_t sz = 0;
-                for (const auto *chunk: _chunks)
-                    sz += chunk->compressed_size;
-                return sz;
-            }
-        private:
-            chunk_list _chunks;
-        };
-        using epoch_map = std::map<size_t, epoch_info>;
         using file_set = std::set<std::string>;
         using block_processor = std::function<void(const cardano::block_base &)>;
 
@@ -100,43 +230,71 @@ namespace daedalus_turbo {
             return std::filesystem::canonical(db_dir);
         }
 
-        explicit chunk_registry(const std::string &data_dir, bool strict=true, scheduler &sched=scheduler::get(), file_remover &fr=file_remover::get())
-            : _data_dir { data_dir }, _db_dir { init_db_dir((_data_dir / "compressed").string()) },
-                _sched { sched }, _file_remover { fr }, _strict { strict },
-                _state_path { (_db_dir / "state.bin").string() },
-                _state_path_pre { (_db_dir / "state-pre.bin").string() }
+        explicit chunk_registry(const std::string &data_dir, mode mode=mode::validate,
+            const configs &cfg=configs_dir::get(), scheduler &sched=scheduler::get(), file_remover &fr=file_remover::get());
+        ~chunk_registry();
+
+        void register_processor(const chunk_processor &p)
         {
-            timer t { "chunk-registry construct" };
-            file_set known_chunks {}, deletable_chunks {};
-            chunk_map chunks {};
-            if (std::filesystem::exists(_state_path))
-                zpp::load(chunks, _state_path);
-            for (auto &&[last_byte_offset, chunk]: chunks) {
-                const auto path = full_path(chunk.rel_path());
-                std::error_code ec {};
-                uint64_t file_size = std::filesystem::file_size(path, ec);
-                if (ec) {
-                    logger::info("load_state: file access error for {}: {} - ignoring it and the following chunks!",
-                        chunk.rel_path(), ec.message());
-                    break;
-                }
-                if (file_size != chunk.compressed_size) {
-                    logger::info("load_state: file size mismatch for {}: recorded: {} vs actual: {}: ignoring it and the following chunks!",
-                        chunk.rel_path(), chunk.compressed_size, file_size);
-                    break;
-                }
-                _add(std::move(chunk), false);
-                known_chunks.emplace(std::move(path));
-            }
-            for (const auto &entry: std::filesystem::recursive_directory_iterator { _db_dir }) {
-                auto path = full_path(entry.path().string());
-                if (entry.is_regular_file() && entry.path().extension() == ".zstd" && !known_chunks.contains(path))
-                    _file_remover.mark(path);
-            }
-            logger::info("chunk_registry has data up to offset {}", num_bytes());
+            _processors.emplace(&p);
         }
 
-        virtual ~chunk_registry() =default;
+        void remove_processor(const chunk_processor &p)
+        {
+            _processors.erase(&p);
+        }
+
+        void maintenance()
+        {
+            if (valid_end_offset() != max_end_offset()) {
+                logger::warn("chain is not in a consistent state, performing maintenance ...");
+                truncate(tip());
+                remover().remove();
+            } else {
+                logger::info("chain is in a consistent state - nothing to do");
+            }
+        }
+
+        void report_progress(const std::string_view name, const progress_point &tip) const
+        {
+            if (_transaction) [[likely]] {
+                uint64_t rel_pos = 0;
+                uint64_t rel_target = 0;
+                // prefer to compute the progress using offsets, fallback to slots if not available
+                if (_transaction->target->end_offset) {
+                    rel_pos = tip.end_offset;
+                    rel_target = _transaction->target->end_offset;
+                    if (_transaction->start) {
+                        rel_pos -= _transaction->start->end_offset;
+                        rel_target -= _transaction->start->end_offset;
+                    }
+                } else {
+                    rel_pos = tip.slot;
+                    rel_target = _transaction->target->slot;
+                    if (_transaction->start) {
+                        rel_pos -= _transaction->start->slot;
+                        rel_target -= _transaction->start->slot;
+                    }
+                }
+                uint64_t prev_pos = 0;
+                {
+                    mutex::scoped_lock lk { _tx_progress_mutex };
+                    if (const auto [it, created] = _tx_progress_max.try_emplace(std::string { name }, rel_pos); !created) {
+                        prev_pos = it->second;
+                        if (it->second < rel_pos)
+                            it->second = rel_pos;
+                    }
+                }
+                if (prev_pos < rel_pos) {
+                    for (const auto *p: _processors) {
+                        if (p->on_progress)
+                            p->on_progress(name, rel_pos, rel_target);
+                    }
+                }
+            } else {
+                throw error("report_progress can be called only inside of a transaction");
+            }
+        }
 
         // data accessors
 
@@ -171,10 +329,11 @@ namespace daedalus_turbo {
             std::optional<uint64_t> last_epoch {};
             epoch_info::chunk_list chunks {};
             for (const auto &[last_byte_offset, chunk]: _chunks) {
-                if (!last_epoch || *last_epoch != chunk.epoch()) {
+                const auto chunk_epoch = make_slot(chunk.first_slot).epoch();
+                if (!last_epoch || *last_epoch != chunk_epoch) {
                     if (last_epoch && !chunks.empty())
                         eps.try_emplace(*last_epoch, std::move(chunks));
-                    last_epoch = chunk.epoch();
+                    last_epoch = chunk_epoch;
                     chunks.clear();
                 }
                 chunks.emplace_back(&chunk);
@@ -194,8 +353,8 @@ namespace daedalus_turbo {
         {
             epoch_info::chunk_list chunks {};
             auto chunk_it = std::lower_bound(_chunks.begin(), _chunks.end(), epoch,
-                [](const auto &el, const auto &epoch) { return el.second.epoch() < epoch; });
-            for (; chunk_it != _chunks.end() && chunk_it->second.epoch() == epoch; ++chunk_it) {
+                [this](const auto &el, const auto &epoch) { return make_slot(el.second.first_slot).epoch() < epoch; });
+            for (; chunk_it != _chunks.end() && make_slot(chunk_it->second.first_slot).epoch() == epoch; ++chunk_it) {
                 chunks.emplace_back(&chunk_it->second);
             }
             return { std::move(chunks) };
@@ -208,6 +367,21 @@ namespace daedalus_turbo {
             return {};
         }
 
+        std::optional<storage::block_info> last_valid_block() const
+        {
+            const auto end_offset = valid_end_offset();
+            if (end_offset) [[likely]] {
+                const auto chunk_it = _find_chunk_by_offset(end_offset - 1);
+                if (chunk_it == _chunks.end()) [[unlikely]]
+                    throw error("internal error: chunk_registry state is inconsistent!");
+                const auto block_it = _find_block_by_offset(chunk_it, end_offset - 1);
+                if (block_it == chunk_it->second.blocks.end()) [[unlikely]]
+                    throw error("internal error: chunk_registry state is inconsistent!");
+                return *block_it;
+            }
+            return {};
+        }
+
         std::optional<storage::block_info> last_block() const
         {
             if (!_chunks.empty()) [[likely]] {
@@ -216,7 +390,32 @@ namespace daedalus_turbo {
             return {};
         }
 
-        cardano::slot max_slot() const
+        uint64_t block_height(const uint64_t slot, const buffer hash) const
+        {
+            uint64_t h = 0;
+            for (const auto &[last_byte, chunk]: _chunks) {
+                if (chunk.first_slot > slot)
+                    break;
+                for (const auto &b: chunk.blocks) {
+                    if (b.slot <= slot) {
+                        if (b.era)
+                            ++h;
+                        if (b.slot == slot && b.hash == hash)
+                            return h;
+                    } else {
+                        break;
+                    };
+                }
+            }
+            throw error("unknown block slot: {} hash: {}", slot, hash);
+        }
+
+        cardano::slot make_slot(uint64_t slot_) const
+        {
+            return { slot_, _cardano_cfg };
+        }
+
+        uint64_t max_slot() const
         {
             if (!_chunks.empty()) [[likely]]
                 return _chunks.rbegin()->second.last_slot;
@@ -249,6 +448,16 @@ namespace daedalus_turbo {
                 [](auto sum, const auto &val) { return sum + val.second.blocks.size(); });
         }
 
+        const configs &configs() const
+        {
+            return _cfg;
+        }
+
+        const cardano::config &config() const
+        {
+            return _cardano_cfg;
+        }
+
         scheduler &sched() const
         {
             return _sched;
@@ -269,20 +478,33 @@ namespace daedalus_turbo {
             return _data_dir;
         }
 
-        const storage::block_info &find_block(uint64_t tx_offset) const
+        const storage::chunk_info *find_chunk_by_offset_no_throw(const uint64_t offset) const
         {
-            const auto chunk_it = _find_chunk_by_offset(tx_offset);
-            if (chunk_it == _chunks.end())
-                throw error("unknown offset: {}!", tx_offset);
-            const auto block_it = _find_block_by_offset(chunk_it, tx_offset);
-            if (block_it == chunk_it->second.blocks.end())
-                throw error("unknown offset: {}!", tx_offset);
-            if (!(tx_offset >= block_it->offset && tx_offset < block_it->offset + block_it->size))
-                throw error("internal error: block metadata does not match the transaction!");
-            return *block_it;
+            if (const auto chunk_it = _find_chunk_by_offset_no_throw(offset); chunk_it != _chunks.end()) [[likely]]
+                return &chunk_it->second;
+            return nullptr;
         }
 
-        const storage::block_info &find_block(const cardano::slot &slot) const
+        std::optional<storage::block_info> find_block_by_offset_no_throw(const uint64_t offset) const
+        {
+            if (const auto chunk_it = _find_chunk_by_offset(offset); chunk_it != _chunks.end()) {
+                if (const auto block_it = _find_block_by_offset(chunk_it, offset); block_it != chunk_it->second.blocks.end()) {
+                    if (offset >= block_it->offset && offset < block_it->offset + block_it->size)
+                        return *block_it;
+                    throw error("internal error: block metadata does not match the transaction!");
+                }
+            }
+            return {};
+        }
+
+        storage::block_info find_block_by_offset(const uint64_t offset) const
+        {
+            if (const auto block = find_block_by_offset_no_throw(offset))
+                return *block;
+            throw error("unknown offset: {}!", offset);
+        }
+
+        const storage::block_info &find_block_by_slot(const uint64_t slot) const
         {
             const auto chunk_it = _find_chunk_by_slot(slot);
             if (chunk_it == _chunks.end())
@@ -295,32 +517,39 @@ namespace daedalus_turbo {
             return *block_it;
         }
 
-        const storage::block_info &find_block(const cardano::slot &slot, const cardano::block_hash &hash) const
+        std::optional<storage::block_info> find_block_by_slot_no_throw(const uint64_t slot, const cardano::block_hash &hash) const
         {
-            auto chunk_it = _find_chunk_by_slot(slot);
-            if (chunk_it == _chunks.end())
-                throw error("internal error: no block registered at a slot: {}!", slot);
-            auto block_it = _find_block_by_slot(chunk_it, slot);
-            if (block_it == chunk_it->second.blocks.end())
-                throw error("internal error: no block registered at a slot: {}!", slot);
-            if (block_it->slot != slot)
-                throw error("internal error: no block registered at a slot: {}!", slot);
-            while (block_it->hash != hash && block_it->slot == slot) {
-                if (++block_it == chunk_it->second.blocks.end()) {
-                    if (++chunk_it == _chunks.end())
-                        throw error("internal error: no block registered at a slot {} with hash {}!", slot, hash);
-                    block_it = chunk_it->second.blocks.begin();
+            if (auto chunk_it = _find_chunk_by_slot(slot); chunk_it != _chunks.end()) [[likely]] {
+                if (auto block_it = _find_block_by_slot(chunk_it, slot); block_it != chunk_it->second.blocks.end()) [[likely]] {
+                    if (block_it->slot == slot) {
+                        for (;;) {
+                            if (block_it->hash == hash) [[likely]]
+                                return *block_it;
+                            if (++block_it == chunk_it->second.blocks.end()) [[unlikely]] {
+                                if (++chunk_it == _chunks.end()) [[unlikely]]
+                                    break;
+                                block_it = chunk_it->second.blocks.begin();
+                            }
+                            if (block_it->slot != slot)
+                                break;
+                        }
+                    }
                 }
             }
-            if (block_it->slot != slot || block_it->hash != hash)
-                throw error("internal error: no block registered at a slot {} with hash {}!", slot, hash);
-            return *block_it;
+            return {};
+        }
+
+        storage::block_info find_block_by_slot(const uint64_t slot, const cardano::block_hash &hash) const
+        {
+            if (const auto block = find_block_by_slot_no_throw(slot, hash); block) [[likely]]
+                return *block;
+            throw error("internal error: no such block: {} {}!", slot, hash);
         }
 
         uint64_t find_epoch(const uint64_t offset) const
         {
             mutex::scoped_lock lk { _update_mutex };
-            return find_offset(offset).epoch();
+            return make_slot(find_offset(offset).first_slot).epoch();
         }
 
         const chunk_info &find_offset(uint64_t offset) const
@@ -337,7 +566,7 @@ namespace daedalus_turbo {
             return it->second;
         }
 
-        chunk_map::const_iterator find_slot_it(const cardano::slot &slot) const
+        chunk_map::const_iterator find_slot_it(const uint64_t slot) const
         {
             const auto chunk_it = _find_chunk_by_slot(slot);
             if (chunk_it == _chunks.end())
@@ -356,7 +585,7 @@ namespace daedalus_turbo {
                 [&](const auto &el) { return el.second.data_hash == data_hash; });
         }
 
-        size_t count_blocks(const std::optional<cardano::point> &start_point, const cardano::slot &last_slot)
+        size_t count_blocks(const std::optional<cardano::point> &start_point, const uint64_t last_slot)
         {
             // cannot allow updates because that will invalidate the iterators
             mutex::scoped_lock lk { _update_mutex };
@@ -387,7 +616,10 @@ namespace daedalus_turbo {
 
         size_t count_blocks_in_window(const std::optional<cardano::point> &start_point={}, const uint64_t window_size=cardano::density_default_window)
         {
-            return count_blocks(start_point, start_point ? start_point->slot + window_size : window_size);
+            uint64_t last_slot = window_size;
+            if (start_point)
+                last_slot += static_cast<uint64_t>(start_point->slot);
+            return count_blocks(start_point, last_slot);
         }
 
         void read(uint64_t offset, cbor_value &value)
@@ -432,8 +664,12 @@ namespace daedalus_turbo {
                     cbor_value block_tuple {};
                     while (!block_parser.eof()) {
                         block_parser.read(block_tuple);
-                        const auto blk = cardano::make_block(block_tuple, chunk_offset + block_tuple.data - data.data());
-                        act(res, canon_path, *blk);
+                        const auto blk = cardano::make_block(block_tuple, chunk_offset + block_tuple.data - data.data(), config());
+                        try {
+                            act(res, canon_path, *blk);
+                        } catch (const std::exception &ex) {
+                            throw error("failed to parse block at slot: {} hash: {}: {}", blk->slot(), blk->hash(), ex.what());
+                        }
                     }
                     return parse_res { std::move(canon_path), std::move(res) };
                 });
@@ -446,142 +682,230 @@ namespace daedalus_turbo {
         void import(const chunk_registry &src_cr)
         {
             uint8_vector raw_data {}, compressed_data {};
-            start_tx(num_bytes(), src_cr.num_bytes());
+            _start_tx(tip(), src_cr.tip());
             for (const auto &[last_byte_offset, src_chunk]: src_cr.chunks()) {
-                file::read_raw(src_cr.full_path(src_chunk.rel_path()), compressed_data);
-                zstd::decompress(raw_data, compressed_data);
-                auto data_hash = blake2b<cardano::block_hash>(raw_data);
-                auto local_path = full_path(chunk_info::rel_path_from_hash(data_hash));
-                file::write(local_path, compressed_data);
-                add(src_chunk.offset, local_path, data_hash, src_chunk.orig_rel_path);
+                const auto src_path  = src_cr.full_path(src_chunk.rel_path());
+                const auto local_path = full_path(chunk_info::rel_path_from_hash(src_chunk.data_hash));
+                std::filesystem::copy_file(src_path, local_path);
+                add(src_chunk.offset, local_path);
             }
-            prepare_tx();
-            commit_tx();
+            _prepare_tx();
+            _commit_tx();
         }
 
-        std::string add(const uint64_t offset, const std::string &local_path, const cardano::block_hash &data_hash, const std::string &orig_rel_path)
+        std::string add(const uint64_t offset, const std::string &local_path)
         {
             if (!_transaction)
                 throw error("add can be executed only inside of a transaction!");
             const auto compressed = file::read_raw(local_path);
-            uint8_vector data {};
-            zstd::decompress(data, compressed);
-            static auto noop = [](const auto &){};
-            auto parsed_chunk = _parse(offset, orig_rel_path, data, compressed.size(), noop);
-            if (parsed_chunk.data_hash != data_hash)
-                throw error("data hash does not match for the chunk: {}", local_path);
+            const auto data = zstd::decompress(compressed);
+            auto [parsed_chunk, ex_ptr] = _parse(offset, data, compressed.size());
             const auto final_path = full_path(parsed_chunk.rel_path());
-            if (final_path != local_path)
-                std::filesystem::rename(local_path, final_path);
-            _add(std::move(parsed_chunk));
+            if (!parsed_chunk.blocks.empty()) {
+                if (!ex_ptr) {
+                    if (local_path != final_path)
+                        std::filesystem::rename(local_path, final_path);
+                } else {
+                    file::write_zstd(final_path, data.span().subbuf(0, parsed_chunk.block_data_size()));
+                }
+                _add(std::move(parsed_chunk));
+            }
+            if (ex_ptr)
+                std::rethrow_exception(ex_ptr);
             return final_path;
         }
 
-        uint64_t valid_end_offset()
+        uint64_t valid_end_offset() const
         {
-            return _valid_end_offset_impl();
-        }
-
-        uint64_t max_end_offset()
-        {
-            return _max_end_offset_impl();
-        }
-
-        std::exception_ptr transact(const uint64_t start_offset, const uint64_t target_offset, const std::function<void()> &action)
-        {
-            auto ex_ptr = logger::run_log_errors([&] {
-                start_tx(start_offset, target_offset);
-                action();
-                prepare_tx();
-                commit_tx();
-            });
-            if (ex_ptr) {
-                logger::run_log_errors([&] {
-                    rollback_tx();
-                });
+            uint64_t valid_end = _my_end_offset();
+            for (const auto *p: _processors) {
+                if (p->end_offset) {
+                    const auto proc_end = p->end_offset();
+                    if (proc_end < valid_end)
+                        valid_end = proc_end;
+                }
             }
-            return ex_ptr;
+            return valid_end;
         }
 
-        std::exception_ptr transact(const uint64_t start_offset, const std::function<void()> &action)
+        uint64_t max_end_offset() const
         {
-            return transact(start_offset, std::numeric_limits<uint64_t>::max(), action);
-        }
-
-        void truncate(const uint64_t max_end_offset)
-        {
-            transact(max_end_offset, max_end_offset, [] {});
-        }
-
-        void start_tx(const uint64_t start_offset, const uint64_t target_offset, const bool truncate=true)
-        {
-            timer t { "chunk_registry::start_tx", logger::level::debug };
-            if (_transaction)
-                throw error("nested transactions are not allowed!");
-            if (start_offset > num_bytes())
-                throw error("start offset cannot be greater than the maximum offset!");
-            if (start_offset > valid_end_offset())
-                throw error("start_offset: {} is greater than valid_end_offset: {}!", start_offset, valid_end_offset());
-            _transaction = active_transaction { start_offset, target_offset };
-            // must happen before a potential truncate below
-            if (!_truncated_chunks.empty()) {
-                logger::warn("truncated chunks weren't empty at the beginning of a tx - recovering from an error?");
-                _truncated_chunks.clear();
+            uint64_t max_end = _my_end_offset();
+            for (const auto *p: _processors) {
+                if (p->end_offset) {
+                    const auto proc_end = p->end_offset();
+                    if (proc_end > max_end)
+                        max_end = proc_end;
+                }
             }
-            if (truncate)
-                _do_truncate(start_offset);
-            _start_tx_impl();
+            return max_end;
         }
 
-        void prepare_tx()
+        [[nodiscard]] std::exception_ptr accept_progress(const cardano::optional_point &start, const std::optional<progress_point> &target, const std::function<void()> &action)
         {
-            timer t { "chunk_registry::prepare_tx", logger::level::debug };
-            if (!_transaction)
-                throw error("prepare_tx can be executed only inside of a transaction!");
-            _prepare_tx_impl();
-            _do_truncate(valid_end_offset());
-            _transaction->prepared = true;
+            return _accept_progress(start, target, true, action);
         }
 
-        void rollback_tx()
+        void accept_anything_or_throw(const cardano::optional_point &start, const std::optional<progress_point> &target, const std::function<void()> &action)
         {
-            if (!_transaction)
-                throw error("rollback_tx can be executed only inside of a transaction!");
-            _rollback_tx_impl();
-            _transaction.reset();
+            if (const auto ex_ptr = _accept_progress(start, target, false, action); ex_ptr)
+                std::rethrow_exception(ex_ptr);
         }
 
-        void commit_tx()
+        void accept_progress_or_throw(const cardano::optional_point &start, const std::optional<progress_point> &target, const std::function<void()> &action)
         {
-            timer t { "chunk_registry::commit_tx", logger::level::debug };
-            if (!_transaction)
-                throw error("commit_tx can be executed only inside of a transaction!");
-            if (!_transaction->prepared)
-                throw error("commit_tx can only be executed after a successful prepare_tx!");
-            _commit_tx_impl();
-            _transaction.reset();
+            if (const auto ex_ptr = accept_progress(start, target, action); ex_ptr)
+                std::rethrow_exception(ex_ptr);
         }
-    protected:
+
+        void truncate(const cardano::optional_point &new_tip)
+        {
+            if (const auto ex_ptr = _accept_progress(new_tip, new_tip, false, []{}); ex_ptr)
+                std::rethrow_exception(ex_ptr);
+        }
+
+        void validation_failure_handler(const std::function<void(uint64_t)> &);
+        const indexer::incremental &indexer() const;
+        const validator::incremental &validator() const;
+        cardano::amount unspent_reward(const cardano::stake_ident &id) const;
+        cardano::tail_relative_stake_map tail_relative_stake() const;
+        cardano::optional_point tip() const;
+        cardano::optional_point immutable_tip() const;
+        cardano::optional_slot can_export() const;
+        void node_export(const std::filesystem::path &node_dir, bool ledger_only=false) const;
+        std::string node_export_ledger(const std::filesystem::path &ledger_dir, const cardano::optional_point &imm_tip, int prio=1000) const;
+    private:
         const std::filesystem::path _data_dir;
         const std::filesystem::path _db_dir;
+        const daedalus_turbo::configs &_cfg;
+        const cardano::config _cardano_cfg { _cfg };
         scheduler &_sched;
         file_remover &_file_remover;
-        const bool _strict = true;
+        set<const chunk_processor *> _processors {}; // initialize before indexer and validator who call register_processor/remove_processor
+        std::unique_ptr<indexer::incremental> _indexer {};
+        std::unique_ptr<validator::incremental> _validator {};
         std::optional<active_transaction> _transaction {};
+        alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _tx_progress_mutex {};
+        mutable map<std::string, uint64_t> _tx_progress_max {};
+        const std::string _state_path;
+        const std::string _state_path_pre;
+        alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _update_mutex {};
+        chunk_map _chunks {};
+        // Active transaction data
+        chunk_map _unmerged_chunks {};
+        uint64_t _notify_end_offset = 0;
+        uint64_t _notify_next_epoch = 0;
+        vector<chunk_info> _truncated_chunks {};
+        static thread_local uint8_vector _read_buffer;
 
-        virtual void _truncate_impl(uint64_t max_end_offset)
+        void _node_export_chain(const std::filesystem::path &immutable_dir, const std::filesystem::path &volatile_dir, int prio_base=100) const;
+
+        std::pair<chunk_info, std::exception_ptr> _parse(const uint64_t offset, const buffer &raw_data, const size_t compressed_size) const
         {
-            if (num_bytes() > max_end_offset) {
-                timer t { fmt::format("chunk_registry::_truncate to size {}", max_end_offset), logger::level::info };
+            chunk_info chunk { .data_size=raw_data.size(), .compressed_size=compressed_size, .offset=offset };
+            std::exception_ptr ex_ptr {};
+            uint8_vector ok_data {};
+            uint64_t prev_slot = 0;
+            std::optional<indexer::chunk_indexer_list> chunk_indexers {};
+            if (_indexer)
+                chunk_indexers = _indexer->make_chunk_indexers(offset);
+            cbor_parser parser { raw_data };
+            cbor::value block_tuple {};
+            while (!parser.eof()) {
+                try {
+                    parser.read(block_tuple);
+                    auto blk_ptr = cardano::make_block(block_tuple, chunk.offset + block_tuple.data - raw_data.data(), _cardano_cfg);
+                    {
+                        const auto &blk = *blk_ptr;
+                        const auto slot = blk.slot();
+                        if (slot < prev_slot)
+                            throw error("chunk at {}: a block's slot {} is less than the slot of the prev block {}!", offset, slot, prev_slot);
+                        prev_slot = slot;
+                        static constexpr auto max_era = std::numeric_limits<uint8_t>::max();
+                        if (blk.era() > max_era)
+                            throw error("block at slot {} has era {} that is outside of the supported max limit of {}", slot, blk.era(), max_era);
+                        static constexpr auto max_size = std::numeric_limits<uint32_t>::max();
+                        if (blk.size() > max_size)
+                            throw error("block at slot {} has size {} that is outside of the supported max limit of {}", slot, blk.size(), max_size);
+                        if (!chunk.blocks.empty()) {
+                            if (_validator && blk.prev_hash() != chunk.last_block_hash)
+                                throw error("block at slot {} has an inconsistent prev_hash {}", blk.slot(), blk.prev_hash());
+                        } else {
+                            chunk.prev_block_hash = blk.prev_hash();
+                            chunk.first_slot = slot;
+                        }
+                        for (const auto *p: _processors) {
+                            if (p->on_block_validate)
+                                p->on_block_validate(blk);
+                        }
+                        chunk.last_block_hash = blk.hash();
+                        chunk.last_slot = slot;
+                        if (chunk_indexers) {
+                            for (auto &idxr: *chunk_indexers)
+                                idxr->index(blk);
+                            blk.foreach_tx([&](const auto &tx) {
+                                for (auto &idxr: *chunk_indexers)
+                                    idxr->index_tx(tx);
+                            });
+                            blk.foreach_invalid_tx([&](const auto &tx) {
+                                for (auto &idxr: *chunk_indexers)
+                                    idxr->index_invalid_tx(tx);
+                            });
+                        }
+                        chunk.blocks.emplace_back(
+                            storage::block_info {
+                                .hash=blk.hash(),
+                                .offset=blk.offset(),
+                                .size=blk.size(),
+                                .slot=static_cast<uint32_t>(blk.slot()),
+                                .height=static_cast<uint32_t>(blk.height()),
+                                .chk_sum=crc32::digest(blk.raw_data()),
+                                .header_offset=static_cast<uint16_t>(blk.header_raw_data().data() - blk.raw_data().data()),
+                                .header_size=static_cast<uint16_t>(blk.header_raw_data().size()),
+                                .era=static_cast<uint8_t>(blk.era())
+                            }
+                        );
+                        ok_data << blk.raw_data();
+                    }
+                } catch (...) {
+                    ex_ptr = std::current_exception();
+                    break;
+                }
+            }
+
+            // happens if some blocks are valid but others are invalid
+            blake2b(chunk.data_hash, ok_data);
+            chunk.num_blocks = chunk.blocks.size();
+            if (ok_data.size() != raw_data.size()) {
+                chunk.data_size = ok_data.size();
+                const auto compressed = zstd::compress(ok_data);
+                chunk.compressed_size = compressed.size();
+                file::write(chunk.rel_path(), compressed);
+            }
+            for (const auto *p: _processors) {
+                if (p->on_chunk_add)
+                    p->on_chunk_add(chunk);
+            }
+            report_progress("parse", { chunk.last_slot, chunk.end_offset() });
+            return std::make_pair(std::move(chunk), std::move(ex_ptr));
+        }
+
+        void _my_truncate(const cardano::optional_point &new_tip, const bool track_changes)
+        {
+            if (const auto max_end_offset = new_tip ? new_tip->end_offset : 0; max_end_offset < num_bytes()) {
+                timer t { fmt::format("chunk_registry::_truncate to {}", new_tip), logger::level::info };
                 auto chunk_it = _find_chunk_by_offset(max_end_offset);
                 if (chunk_it->second.offset < max_end_offset) {
                     auto block_it = _find_block_by_offset(chunk_it, max_end_offset);
                     if (block_it == chunk_it->second.blocks.end())
                         throw error("internal error: no block covers offset {}", max_end_offset);
                     // truncate chunk data and update its metadata
-                    auto &chunk = chunk_it->second;
-                    _truncated_chunks.emplace_back(chunk);
-                    chunk.blocks.resize(block_it - chunk_it->second.blocks.begin());
+                    if (track_changes)
+                        _truncated_chunks.emplace_back(chunk_it->second);
+                    auto next_chunk_it = std::next(chunk_it);
+                    auto node = _chunks.extract(chunk_it);
+                    auto &chunk = node.mapped();
+                    chunk.blocks.resize(block_it - chunk.blocks.begin());
                     chunk.num_blocks = chunk.blocks.size();
                     chunk.data_size = chunk.blocks.back().end_offset() - chunk.offset;
                     const auto old_path = full_path(chunk.rel_path());
@@ -593,40 +917,38 @@ namespace daedalus_turbo {
                     chunk.compressed_size = compressed.size();
                     chunk.last_slot = chunk.blocks.back().slot;
                     chunk.last_block_hash = chunk.blocks.back().hash;
+                    node.key() = chunk.end_offset() - 1;
+                    chunk_it = _chunks.insert(next_chunk_it, std::move(node));
                     ++chunk_it;
                 }
                 while (chunk_it != _chunks.end()) {
-                    _truncated_chunks.emplace_back(chunk_it->second);
+                    if (track_changes)
+                        _truncated_chunks.emplace_back(chunk_it->second);
                     chunk_it = _chunks.erase(chunk_it);
                 }
+                // reconfigure time if truncating back into Byron era
+                if (_chunks.empty() || _chunks.rbegin()->second.blocks.back().era < 2)
+                    _cardano_cfg.shelley_start_slot({});
             }
         }
 
-        virtual void _start_tx_impl()
+        void _my_start_tx()
         {
-            _parsed = 0;
-            _parsed_base = num_bytes() - _transaction->start_offset;
+            _tx_progress_max.clear();
             _notify_end_offset = num_bytes();
-            _notify_next_epoch = _chunks.empty() ? 0 : _chunks.rbegin()->second.epoch();
+            _notify_next_epoch = _chunks.empty() ? 0 : make_slot(_chunks.rbegin()->second.first_slot).epoch();
             if (!_unmerged_chunks.empty()) {
                 logger::warn("unmerged chunks weren't empty at the beginning of a tx - recovering from an error?");
                 _unmerged_chunks.clear();
             }
         }
 
-        virtual uint64_t _valid_end_offset_impl()
+        uint64_t _my_end_offset() const
         {
-            // chunks are updates only when they become mergeable
             return num_bytes();
         }
 
-        virtual uint64_t _max_end_offset_impl()
-        {
-            // chunks are updates only when they become mergeable
-            return num_bytes();
-        }
-
-        virtual void _prepare_tx_impl()
+        void _my_prepare_tx()
         {
             timer t { "chunk_registry::_prepare_tx" };
             if (!_unmerged_chunks.empty()) {
@@ -646,9 +968,9 @@ namespace daedalus_turbo {
             _save_state(_state_path_pre);
         }
 
-        virtual void _rollback_tx_impl()
+        void _my_rollback_tx()
         {
-            for (auto chunk_it = find_offset_it(_transaction->start_offset); chunk_it != _chunks.end(); ) {
+            for (auto chunk_it = _find_chunk_by_offset_no_throw(_transaction->start_offset()); chunk_it != _chunks.end(); ) {
                 _file_remover.mark(full_path(chunk_it->second.rel_path()));
                 chunk_it = _chunks.erase(chunk_it);
             }
@@ -663,7 +985,7 @@ namespace daedalus_turbo {
             _unmerged_chunks.clear();
         }
 
-        virtual void _commit_tx_impl()
+        void _my_commit_tx()
         {
             if (!std::filesystem::exists(_state_path_pre))
                 throw error("the prepared chunk_registry state file is missing: {}!", _state_path_pre);
@@ -675,71 +997,152 @@ namespace daedalus_turbo {
                 _file_remover.unmark(full_path(chunk.rel_path()));
         }
 
-        virtual void _on_epoch_merge(uint64_t epoch, const epoch_info &info)
+        void _require_better_candidate_chain()
         {
-            logger::trace("on_epoch_merge epoch: {} start_offset: {} end_offset: {}", epoch, info.start_offset(), info.end_offset());
+            const auto new_tip = tip();
+            if (!new_tip || !(_transaction->start < new_tip))
+                throw error("candidate chain is not better: proposed tip: {} intersection: {}", new_tip, _transaction->start);
+            if (!_truncated_chunks.empty()) {
+                // slot window for the chain density calculation
+                const auto win_size = cardano::density_default_window;
+                uint64_t win_last_slot = win_size;
+                std::optional<cardano::point> isect {};
+                size_t orig_num_blocks = 0;
+                if (_transaction->start_offset() > 0) {
+                    const auto last_common_block = find_block_by_offset(_transaction->start_offset() - 1);
+                    isect = cardano::point { last_common_block.hash, last_common_block.slot };
+                }
+                auto cand_chunk_it = _find_chunk_by_offset(_transaction->start_offset());
+                auto cand_block_it = cand_chunk_it->second.blocks.begin();
+                bool found = false;
+                for (const auto &orig_chunk: _truncated_chunks) {
+                    for (const auto &block: orig_chunk.blocks) {
+                        if (found) {
+                            if (block.slot <= win_last_slot)
+                                ++orig_num_blocks;
+                        } else if (block.slot != cand_block_it->slot || block.hash != cand_block_it->hash) {
+                            found = true;
+                            if (block.slot <= win_last_slot)
+                                orig_num_blocks = 2;
+                        } else {
+                            isect = cardano::point { block.hash, block.slot };
+                            orig_num_blocks = 1;
+                            win_last_slot = block.slot + win_size;
+                            if (++cand_block_it == cand_chunk_it->second.blocks.end()) {
+                                if (++cand_chunk_it != _chunks.end()) {
+                                    cand_block_it = cand_chunk_it->second.blocks.begin();
+                                } else {
+                                    found = true;
+                                }
+                            }
+                        }
+                    }
+                }
+                // some candidate blocks may have not passed the delayed steps of the validation
+                const auto last_valid_block = find_block_by_offset(new_tip->end_offset - 1);
+                const auto last_valid_slot = std::min(win_last_slot, static_cast<uint64_t>(last_valid_block.slot));
+                const auto cand_num_blocks = count_blocks(isect, last_valid_slot);
+                if (orig_num_blocks >= cand_num_blocks)
+                    throw error("candidate chain at byte {} and point {} is not better than the original: candidate block count {} vs {}",
+                        _transaction->start_offset(), isect, cand_num_blocks, orig_num_blocks);
+            }
         }
 
-       virtual chunk_info _parse(uint64_t offset, const std::string &rel_path,
-           const buffer &raw_data, size_t compressed_size, const block_processor &blk_proc) const
-       {
-            timer t { fmt::format("parsing chunk {} to add it to the registry", rel_path), logger::level::trace };
-            chunk_info chunk { rel_path, raw_data.size(), compressed_size };
-            chunk.offset = offset;
-            blake2b(chunk.data_hash, raw_data);
-            uint64_t prev_slot = 0;
-            // allow up to 5 seconds of time difference as Daedalus does currently
-            auto max_slot = cardano::slot::from_time(std::chrono::system_clock::now() + std::chrono::seconds { 5 });
-            cbor_parser parser { raw_data };
-            cbor_value block_tuple {};
-            while (!parser.eof()) {
-                parser.read(block_tuple);
-                const auto blk_ptr = cardano::make_block(block_tuple, chunk.offset + block_tuple.data - raw_data.data());
-                const auto &blk = *blk_ptr;
-                try {
-                    const auto slot = blk.slot();
-                    if (slot >= max_slot)
-                        throw error("a block with time slot from the future: {}!", slot);
-                    if (slot < prev_slot)
-                        throw error("chunk {} at {}: a block's slot {} is less than the slot of the prev block {}!", rel_path, offset, slot, prev_slot);
-                    prev_slot = slot;
-                    if (chunk.num_blocks == 0) {
-                        chunk.prev_block_hash = blk.prev_hash();
-                        chunk.first_slot = slot;
-                    }
-                    ++chunk.num_blocks;
-                    chunk.last_block_hash = blk.hash();
-                    chunk.last_slot = slot;
-                    static constexpr auto max_era = std::numeric_limits<uint8_t>::max();
-                    if (blk.era() > max_era)
-                        throw error("block at slot {} has era {} that is outside of the supported max limit of {}", slot, blk.era(), max_era);
-                    static constexpr auto max_size = std::numeric_limits<uint32_t>::max();
-                    if (blk.size() > max_size)
-                        throw error("block at slot {} has size {} that is outside of the supported max limit of {}", slot, blk.size(), max_size);
-                    chunk.blocks.emplace_back(slot, blk.offset(), chunk.last_block_hash, static_cast<uint32_t>(blk.size()), static_cast<uint8_t>(blk.era()));
-                    blk_proc(blk);
-                } catch (std::exception &ex) {
-                    throw error("failed parsing block at slot {}/{} and offset {}: {}", blk.slot().epoch(), blk.slot(), blk.offset(), ex.what());
-                }
+        // does not report an error if some progress is made
+        [[nodiscard]] std::exception_ptr _accept_progress(const cardano::optional_point &start, const std::optional<progress_point> &target,
+                const bool aim_progress, const std::function<void()> &action) {
+            _start_tx(start, target);
+            auto ex_ptr = logger::run_log_errors([&] {
+                action();
+            });
+            if (!ex_ptr || aim_progress) {
+                ex_ptr = logger::run_log_errors([&] {
+                    _prepare_tx();
+                    if (aim_progress)
+                        _require_better_candidate_chain();
+                    _commit_tx();
+                });
             }
-            auto new_parsed = atomic_add(_parsed, static_cast<uint64_t>(raw_data.size()));
-            progress::get().update("parse", _parsed_base + new_parsed, _transaction->target_offset - _transaction->start_offset);
-            return chunk;
-       }
-    private:
-        const std::string _state_path;
-        const std::string _state_path_pre;
-        alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _update_mutex {};
-        chunk_map _chunks {};
-        // Active transaction data
-        chunk_map _unmerged_chunks {};
-        uint64_t _parsed_base = 0;
-        mutable std::atomic_uint64_t _parsed = 0;
-        uint64_t _notify_end_offset = 0;
-        uint64_t _notify_next_epoch = 0;
-        std::vector<chunk_info> _truncated_chunks {};
+            if (ex_ptr) {
+                logger::run_log_errors([&] {
+                    _rollback_tx();
+                });
+                // ensure there are no run-away tasks
+                logger::run_log_errors([&] {
+                    _sched.process(true);
+                });
+            }
+            return ex_ptr;
+        }
 
-        static thread_local uint8_vector _read_buffer;
+        void _start_tx(cardano::optional_point start, const std::optional<progress_point> &target)
+        {
+            timer t { "chunk_registry::start_tx", logger::level::debug };
+            if (_transaction)
+                throw error("nested transactions are not allowed!");
+            if (target < start)
+                throw error("the target slot {} cannot be smaller than the start chain {}", target, start);
+            if (start) {
+                // checks that the requested start point is known
+                const auto &block = find_block_by_slot(start->slot, start->hash);
+                // ensure we use the internally verified data about the start point
+                start->height = block.height;
+                start->end_offset = block.end_offset();
+            }
+            _transaction = active_transaction { start, target };
+            // must happen before a potential truncate below
+            if (!_truncated_chunks.empty()) {
+                logger::warn("truncated chunks weren't empty at the beginning of a tx - recovering from an error?");
+                _truncated_chunks.clear();
+            }
+            _do_truncate(_transaction->start, true);
+            _my_start_tx();
+            for (const auto *p: _processors) {
+                if (p->start_tx)
+                    p->start_tx();
+            }
+        }
+
+        void _prepare_tx()
+        {
+            timer t { "chunk_registry::prepare_tx", logger::level::debug };
+            if (!_transaction)
+                throw error("prepare_tx can be executed only inside of a transaction!");
+            _my_prepare_tx();
+            for (const auto *p: _processors) {
+                if (p->prepare_tx)
+                    p->prepare_tx();
+            }
+            _do_truncate(tip(), false);
+            _transaction->prepared = true;
+        }
+
+        void _rollback_tx()
+        {
+            if (!_transaction)
+                throw error("rollback_tx can be executed only inside of a transaction!");
+            _my_rollback_tx();
+            for (const auto *p: _processors) {
+                if (p->rollback_tx)
+                    p->rollback_tx();
+            }
+            _transaction.reset();
+        }
+
+        void _commit_tx()
+        {
+            timer t { "chunk_registry::commit_tx", logger::level::debug };
+            if (!_transaction)
+                throw error("commit_tx can be executed only inside of a transaction!");
+            if (!_transaction->prepared)
+                throw error("commit_tx can only be executed after a successful prepare_tx!");
+            _my_commit_tx();
+            for (const auto *p: _processors) {
+                if (p->commit_tx)
+                    p->commit_tx();
+            }
+            _transaction.reset();
+        }
 
         void _save_state(const std::string &path)
         {
@@ -747,61 +1150,29 @@ namespace daedalus_turbo {
             zpp::save(path, _chunks);
         }
 
-        void _do_truncate(const size_t target_offset)
+        void _do_truncate(const cardano::optional_point &new_tip, const bool track_changes)
         {
             if (!_transaction)
                 throw error("truncate can be executed only inside of a transaction!");
-            if (max_end_offset() > target_offset)
-                _truncate_impl(target_offset);
+            if (new_tip < _transaction->start)
+                throw error("truncation must happen only within the target transaction slot range!");
+            logger::debug("truncate the local chain to {}", new_tip);
+            _my_truncate(new_tip, track_changes);
+            for (const auto *p: _processors) {
+                if (p->truncate)
+                    p->truncate(new_tip, track_changes);
+            }
         }
 
-        void _add(chunk_info &&chunk, const bool normal=true)
-        {
-            if (normal && _transaction->target_offset < chunk.offset + chunk.data_size)
-                throw error("chunk's data exceeds the target offset: {}", _transaction->target_offset);
-            if (chunk.data_size == 0 || chunk.num_blocks == 0)
-                throw error("empty chunks are not allowed: {}!", chunk.orig_rel_path);
-            if (chunk.first_slot.epoch() != chunk.last_slot.epoch())
-                throw error("chunks containing blocks from only one epoch are allowed: {}", chunk.orig_rel_path);
-            mutex::unique_lock update_lk { _update_mutex };
-            auto [um_it, um_created] = _unmerged_chunks.try_emplace(chunk.offset + chunk.data_size - 1, std::move(chunk));
-            // chunk variable should not be used after this point due to std::move(chunk) right above
-            if (!um_created)
-                throw error("internal error: duplicate chunk offset: {} size: {} from: {}", um_it->second.offset, um_it->second.data_size, um_it->second.orig_rel_path);
-            while (!_unmerged_chunks.empty() && _unmerged_chunks.begin()->second.offset == num_bytes()) {
-                const auto &tested_chunk = _unmerged_chunks.begin()->second;
-                if (_strict) {
-                    if (!_chunks.empty()) {
-                        const auto &last = _chunks.rbegin()->second;
-                        if (tested_chunk.first_slot < last.last_slot)
-                            throw error("{} the new chunk's first slot {} is less than the last slot in the registry {}",
-                                tested_chunk.orig_rel_path, tested_chunk.first_slot, last.last_slot);
-                        if (last.last_block_hash != tested_chunk.prev_block_hash)
-                            throw error("{} prev_block_hash {} does not match the prev chunk's ({}) last_block_hash of the last block {}",
-                                tested_chunk.orig_rel_path, tested_chunk.prev_block_hash, last.orig_rel_path, last.last_block_hash);
-                    } else {
-                        static auto genesis_hash = cardano::block_hash::from_hex("5F20DF933584822601F9E3F8C024EB5EB252FE8CEFB24D1317DC3D432E940EBB");
-                        if (tested_chunk.prev_block_hash != genesis_hash)
-                            throw error("{}'s prev_block_hash {} does not match the genesis hash {}",
-                                tested_chunk.orig_rel_path, tested_chunk.prev_block_hash, genesis_hash);
-                    }
-                }
-                auto [it, created, node] = _chunks.insert(_unmerged_chunks.extract(_unmerged_chunks.begin()));
-                auto &&inserted_chunk = it->second;
-                if (!created)
-                    throw error("internal error: duplicate chunk offset: {} size: {}", inserted_chunk.offset, inserted_chunk.data_size);
-            }
-            if (normal)
-                _notify_of_updates(update_lk);
-        }
+        void _add(chunk_info &&chunk, const bool normal=true);
 
         void _notify_of_updates(mutex::unique_lock &update_lk, bool force=false)
         {
             if (!update_lk)
                 throw error("update_mutex must be locked when _notify_of_updates is called!");
-            const auto max_epoch = max_slot().epoch();
+            const auto max_epoch = make_slot(max_slot()).epoch();
             const auto end_offset = num_bytes();
-            if (!force && _transaction->target_offset == end_offset)
+            if (!force && _transaction->target && _transaction->target->slot == max_slot())
                 force = true;
             while (end_offset > _notify_end_offset && (_notify_next_epoch < max_epoch || (force && _notify_next_epoch == max_epoch))) {
                 // in unit-tests chunks may have non-continuous epochs
@@ -813,8 +1184,13 @@ namespace daedalus_turbo {
                             filtered_chunks.emplace_back(chunk);
                     }
                     _notify_end_offset = einfo.end_offset();
-                    if (!filtered_chunks.empty())
-                        _on_epoch_merge(_notify_next_epoch, { std::move(filtered_chunks) });
+                    if (!filtered_chunks.empty()) {
+                        const epoch_info update_info { std::move(filtered_chunks) };
+                        for (const auto *p: _processors) {
+                            if (p->on_epoch_update)
+                                p->on_epoch_update(_notify_next_epoch, update_info);
+                        }
+                    }
                 }
                 ++_notify_next_epoch;
             }
@@ -828,9 +1204,14 @@ namespace daedalus_turbo {
             return it;
         }
 
+        chunk_map::const_iterator _find_chunk_by_offset_no_throw(const uint64_t offset) const
+        {
+            return _chunks.lower_bound(offset);
+        }
+
         chunk_map::const_iterator _find_chunk_by_offset(const uint64_t offset) const
         {
-            const auto it = _chunks.lower_bound(offset);
+            const auto it = _find_chunk_by_offset_no_throw(offset);
             if (it == _chunks.end())
                 throw error("no chunk matches offset: {}!", offset);
             return it;
@@ -847,7 +1228,7 @@ namespace daedalus_turbo {
         }
 
         // can return the closest succeeding chunk if no chunk includes the block
-        chunk_map::const_iterator _find_chunk_by_slot(const cardano::slot &slot) const
+        chunk_map::const_iterator _find_chunk_by_slot(const uint64_t slot) const
         {
             const auto chunk_it = std::lower_bound(_chunks.begin(), _chunks.end(), slot,
                 [](const auto &c, const auto &slot) { return c.second.last_slot < slot; });
@@ -855,7 +1236,7 @@ namespace daedalus_turbo {
         }
 
         // can return the closest succeeding block if there is no block at that slot
-        storage::block_list::const_iterator _find_block_by_slot(const chunk_map::const_iterator chunk_it, const cardano::slot &slot) const
+        storage::block_list::const_iterator _find_block_by_slot(const chunk_map::const_iterator chunk_it, const uint64_t slot) const
         {
             if (chunk_it == _chunks.end())
                 throw error("internal error: a non-empty chunk_iterator is expected!");
@@ -869,8 +1250,19 @@ namespace daedalus_turbo {
         {
             if (!update_lk)
                 throw error("internal error: update lock must be held at the call to _has_epoch");
-            const auto chunk_it = std::lower_bound(_chunks.begin(), _chunks.end(), epoch, [](const auto &el, const auto &epoch) { return el.second.epoch() < epoch; });
-            return chunk_it != _chunks.end() && chunk_it->second.epoch() == epoch;
+            const auto chunk_it = std::lower_bound(_chunks.begin(), _chunks.end(), epoch,
+                [this](const auto &el, const auto &epoch) { return make_slot(el.second.first_slot).epoch() < epoch; });
+            return chunk_it != _chunks.end() && make_slot(chunk_it->second.first_slot).epoch() == epoch;
+        }
+    };
+}
+
+namespace fmt {
+    template<>
+    struct formatter<daedalus_turbo::progress_point>: formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "(slot: {} end_offset: {})", v.slot, v.end_offset);
         }
     };
 }

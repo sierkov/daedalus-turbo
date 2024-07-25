@@ -9,10 +9,10 @@
 #include <dt/logger.hpp>
 
 namespace daedalus_turbo {
-    // in some multi-core configurations operator+= of std::atomic was failing
+    // in some configurations operator+= of std::atomic was failing
     // to update uint64_t values correctly
     template<typename T>
-    T atomic_add(std::atomic<T> &val, T addend)
+    T atomic_add(std::atomic<T> &val, const T addend)
     {
         for (;;) {
             auto old_val = val.load();

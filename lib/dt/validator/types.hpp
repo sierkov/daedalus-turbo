@@ -192,8 +192,13 @@ namespace daedalus_turbo::validator {
         uint64_t _total_stake = 0;
     };
 
-    struct reward_distribution: partitioned_map<stake_ident, uint64_t> {
-        using C = partitioned_map<stake_ident, uint64_t>;
+    struct reward_distribution: partitioned_map<cardano::stake_ident, uint64_t> {
+        using C = partitioned_map<cardano::stake_ident, uint64_t>;
+
+        bool operator==(const auto &o) const
+        {
+            return C::operator==(o);
+        }
 
         bool create(const C::key_type &id)
         {
@@ -233,68 +238,26 @@ namespace daedalus_turbo::validator {
     };
 
     using partitioned_reward_update_dist = partitioned_map<cardano::stake_ident, reward_update_list>;
-    using pool_stake_distribution = restricted_distribution<std::map<cardano::pool_hash, uint64_t>>;
+    using pool_stake_distribution = restricted_distribution<map<cardano::pool_hash, uint64_t>>;
     using pool_stake_distribution_copy = static_map<cardano::pool_hash, uint64_t>;
-    using pool_update_distribution = distribution<std::map<cardano::pool_hash, size_t>>;
-    using stake_distribution = distribution<std::map<cardano::stake_ident, uint64_t>>;
+    using pool_update_distribution = distribution<map<cardano::pool_hash, size_t>>;
+    using stake_distribution = distribution<map<cardano::stake_ident, uint64_t>>;
+    using stake_pointer_distribution = distribution<map<cardano::stake_pointer, uint64_t>>;
     using stake_distribution_copy = static_map<cardano::stake_ident, uint64_t>;
     //using reward_distribution = restricted_distribution<std::map<stake_ident, uint64_t>>;
-    using reward_distribution_copy = static_map<stake_ident, uint64_t>;
-    using delegation_map = std::map<cardano::stake_ident, cardano::pool_hash>;
+    using reward_distribution_copy = static_map<cardano::stake_ident, uint64_t>;
+    using delegation_map = map<cardano::stake_ident, cardano::pool_hash>;
     using delegation_map_copy = static_map<cardano::stake_ident, cardano::pool_hash>;
-    using inv_delegation_map = std::map<cardano::pool_hash, std::unordered_set<cardano::stake_ident>>;
+    using inv_delegation_map = map<cardano::pool_hash, std::unordered_set<cardano::stake_ident>>;
     using inv_delegation_map_copy = static_map<cardano::pool_hash, std::unordered_set<cardano::stake_ident>>;
+    using utxo_map = partitioned_map<cardano::tx_out_ref, cardano::tx_out_data>;
 
-    using ptr_to_stake_map = std::map<cardano::stake_pointer, cardano::stake_ident>;
-    using stake_to_ptr_map = std::map<cardano::stake_ident, cardano::stake_pointer>;
+    using ptr_to_stake_map = map<cardano::stake_pointer, cardano::stake_ident>;
+    using stake_to_ptr_map = map<cardano::stake_ident, cardano::stake_pointer>;
+}
 
-    struct protocol_params {
-        double f = 0.05;
-        uint64_t k = 2160;
-        uint64_t epoch_blocks = 21'600;
-        uint64_t max_lovelace_supply = 45'000'000'000'000'000;
-        uint64_t min_fee_a {};
-        uint64_t min_fee_b {};
-        uint64_t max_block_body_size {};
-        uint64_t max_transaction_size {};
-        uint64_t max_block_header_size {};
-        uint64_t key_deposit = 2'000'000;
-        uint64_t pool_deposit = 500'000'000;
-        uint64_t max_epoch {};
-        uint64_t n_opt = 150;
-        rational_u64 pool_pledge_influence { 3, 10 };
-        rational_u64 expansion_rate { 3, 1000 };
-        rational_u64 treasury_growth_rate { 1, 5 };
-        rational_u64 decentralization { 1, 1 };
-        rational_u64 decentralizationThreshold { 4, 5 };
-        cardano::nonce extra_entropy {};
-        cardano::protocol_version protocol_ver {};
-        uint64_t min_utxo_value {};
+namespace fmt {
 
-        constexpr static auto serialize(auto &archive, auto &self)
-        {
-            return archive(
-                self.f, self.k, self.epoch_blocks,
-                self.max_lovelace_supply, self.min_fee_a, self.min_fee_b,
-                self.max_block_body_size, self.max_transaction_size, self.max_block_header_size,
-                self.key_deposit, self.pool_deposit, self.max_epoch,
-                self.n_opt, self.n_opt, self.pool_pledge_influence,
-                self.expansion_rate, self.treasury_growth_rate, self.decentralization,
-                self.decentralizationThreshold, self.extra_entropy, self.protocol_ver,
-                self.min_utxo_value
-            );
-        }
-
-        uint64_t stability_window()
-        {
-            return std::ceil(3 * k / f);
-        }
-
-        uint64_t randomness_stabilization_window()
-        {
-            return std::ceil(4 * k / f);
-        }
-    };
 }
 
 #endif // !DAEDALUS_TURBO_VALIDATOR_STATE_TYPES_HPP

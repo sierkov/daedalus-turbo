@@ -14,19 +14,20 @@ suite publisher_suite = [] {
         const std::string dist_path { "./tmp/www" };
         if (std::filesystem::exists(dist_path))
             std::filesystem::remove_all(dist_path);
-        chunk_registry cr { dist_path, false };
+        chunk_registry cr { dist_path, chunk_registry::mode::store };
+        cr.config().shelley_start_slot(4'492'800);
         ed25519::skey sk {};
         ed25519::vkey vk {};
         ed25519::create(sk, vk);
         publisher p { cr, node_path, sk, 3 };
         p.publish();
-        expect(p.size() == 29_ull);
+        test_same(30, p.size());
         expect(std::filesystem::exists(dist_path + "/chain.json"));
         expect(std::filesystem::exists(dist_path + "/epoch-412-F2C09FD9B3D9A5D488924C8864284730236DBAD0D3F8140998210C6218852A5E.json"));
         expect(std::filesystem::exists(dist_path + "/epoch-413-69AB9C82E7C4EDF5DADD494054CEB3B340EC037699D9ED503C0DD0CA699C9467.json"));
-        auto meta = json::load_signed(dist_path + "/chain.json", vk);
-        expect(meta.at("api").at("version").as_int64() == 2_ll);
-        auto peers = json::load_signed(dist_path + "/peers.json", vk).as_object();
+        const auto meta = json::load_signed(dist_path + "/chain.json", vk);
+        test_same(meta.at("api").at("version").as_int64(), 3);
+        const auto peers = json::load_signed(dist_path + "/peers.json", vk).as_object();
         expect(peers.at("hosts").as_array().size() >= 2);
     };
 };

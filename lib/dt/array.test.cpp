@@ -129,5 +129,17 @@ suite array_suite = [] {
             auto data = array<uint8_t, 4>::from_hex("f0e1d2c3");
             expect(fmt::format("{}", data) == "F0E1D2C3");
         };
+
+        "secure_array"_test = [] {
+            const auto exp = array<uint8_t, 4>::from_hex("00000000");
+            buffer buf;
+            {
+                const auto test_data = array<uint8_t, 4>::from_hex("DEADBEAF");
+                const secure_array<uint8_t, 4> test { test_data };
+                buf = test;
+                expect(buf == test_data);
+            }
+            expect(buf == exp);
+        };
     };  
 };

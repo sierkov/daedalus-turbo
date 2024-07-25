@@ -12,8 +12,9 @@
 #include <dt/cbor.hpp>
 #include <dt/index/pay-ref.hpp>
 #include <dt/index/stake-ref.hpp>
-#include <dt/index/txo.hpp>
+#include <dt/index/tx.hpp>
 #include <dt/index/txo-use.hpp>
+#include <dt/chunk-registry.hpp>
 #include <dt/indexer.hpp>
 #include <dt/json.hpp>
 #include <dt/scheduler.hpp>
@@ -21,8 +22,8 @@
 
 namespace daedalus_turbo {
     struct history_mock_block: cardano::block_base {
-        history_mock_block(const storage::block_info &block_meta, const cbor_value &tx, uint64_t tx_offset)
-            : cardano::block_base { tx, block_meta.offset, block_meta.era, tx }, _block_meta { block_meta }, _tx { tx }, _tx_offset { tx_offset }
+        history_mock_block(const storage::block_info &block_meta, const cbor_value &tx, const uint64_t tx_offset, const cardano::config &cfg)
+            : cardano::block_base { tx, block_meta.offset, block_meta.era, tx, cfg }, _block_meta { block_meta }, _tx { tx }, _tx_offset { tx_offset }
         {
         }
 
@@ -31,7 +32,7 @@ namespace daedalus_turbo {
             throw cardano_error("internal error: hash() unsupported for failure blocks!");
         }
 
-        const cbor_buffer &prev_hash() const override
+        buffer prev_hash() const override
         {
             throw cardano_error("internal error: prev_hash() unsupported for failure blocks!");
         }
@@ -41,9 +42,9 @@ namespace daedalus_turbo {
             throw cardano_error("internal error: height() unsupported for failure blocks!");
         }
 
-        const cardano::slot slot() const override
+        uint64_t slot() const override
         {
-            return cardano::slot { _block_meta.slot };
+            return _block_meta.slot;
         }
 
         uint64_t value_offset(const cbor_value &v) const override
@@ -77,7 +78,7 @@ namespace daedalus_turbo {
         std::vector<transaction_input> inputs {};
         cardano::tx_size size {};
         cardano_hash_32 hash {};
-        cardano::slot slot {};
+        uint64_t slot = 0;
 
         bool operator<(const auto &b) const
         {
@@ -102,11 +103,11 @@ namespace daedalus_turbo {
             return changes;
         }
 
-        inline json::object to_json(const std::map<cardano::slot, double> &tail_relative_stake) const
+        json::object to_json(const cardano::tail_relative_stake_map &tail_relative_stake, const cardano::config &cfg) const
         {
             json::object j {
                 { "hash", fmt::format("{}", hash.span()) },
-                { "slot", slot.to_json() },
+                { "slot", cardano::slot { slot, cfg }.to_json() },
                 { "balanceChange", fmt::format("{}", balance_change()) },
                 { "spentInputs", inputs.size() },
                 { "newOutputs", outputs.size() },
@@ -119,7 +120,8 @@ namespace daedalus_turbo {
     struct transaction_map: std::map<uint64_t, transaction> {
         using std::map<uint64_t, transaction>::map;
 
-        inline json::array to_json(const std::map<cardano::slot, double> &tail_relative_stake, size_t offset=0, size_t max_items=1000) const
+        inline json::array to_json(const cardano::tail_relative_stake_map &tail_relative_stake, const cardano::config &cfg,
+                                   size_t offset=0, size_t max_items=1000) const
         {
             size_t end_offset = offset + max_items;
             if (end_offset > size())
@@ -129,7 +131,7 @@ namespace daedalus_turbo {
             size_t i = 0;
             for (const auto &[cr_offset, tx]: *this | std::views::reverse) {
                 if (i >= offset)
-                    txs.emplace_back(tx.to_json(tail_relative_stake));
+                    txs.emplace_back(tx.to_json(tail_relative_stake, cfg));
                 if (++i >= end_offset)
                     break;
             }
@@ -143,7 +145,7 @@ namespace daedalus_turbo {
     struct history {
         T id {};
         transaction_map transactions {};
-        cardano::slot last_slot {};
+        uint64_t last_slot = 0;
         uint64_t num_disk_reads = 0;
         uint64_t num_idx_reads = 0;
         uint64_t total_tx_outputs = 0;
@@ -231,7 +233,7 @@ namespace daedalus_turbo {
             return total_withdrawals;
         }
 
-        inline json::object to_json(const std::map<cardano::slot, double> &tail_relative_stake, size_t max_items=1000) const
+        inline json::object to_json(const cardano::tail_relative_stake_map &tail_relative_stake, const cardano::config &cfg, const size_t max_items=1000) const
         {
             return json::object {
                 { "id", id.to_json() },
@@ -240,7 +242,7 @@ namespace daedalus_turbo {
                 { "assetCount", balance_assets.size() },
                 { "assets", balance_assets.to_json(0, max_items) },
                 { "withdrawals", total_withdrawals },
-                { "transactions", transactions.to_json(tail_relative_stake, 0, max_items) }
+                { "transactions", transactions.to_json(tail_relative_stake, cfg, 0, max_items) }
             };
         }
 
@@ -331,6 +333,7 @@ namespace daedalus_turbo {
     struct reconstructor {
         struct find_tx_res {
             uint64_t offset = 0;
+            uint64_t invalid = 0;
             cbor_value tx_raw {};
             storage::block_info block_info {};
 
@@ -340,12 +343,12 @@ namespace daedalus_turbo {
             }
         };
 
-        reconstructor(indexer::incremental &cr, scheduler &sched=scheduler::get())
-            : _sched { sched }, _cr { cr }, _idx_dir { indexer::incremental::storage_dir(_cr.data_dir().string()) },
-                _stake_ref_idx { _cr.reader_paths("stake-ref") },
-                _pay_ref_idx { _cr.reader_paths("pay-ref") },
-                _txo_idx { _cr.reader_paths("txo") },
-                _txo_use_idx { _cr.reader_paths("txo-use") }
+        reconstructor(chunk_registry &cr)
+            : _cr { cr },
+                _stake_ref_idx { _cr.indexer().reader_paths("stake-ref") },
+                _pay_ref_idx { _cr.indexer().reader_paths("pay-ref") },
+                _tx_idx { _cr.indexer().reader_paths("tx") },
+                _txo_use_idx { _cr.indexer().reader_paths("txo-use") }
         {
         }
 
@@ -354,16 +357,15 @@ namespace daedalus_turbo {
             return _cr.max_slot();
         }
 
-
-
         find_tx_res find_tx(const buffer &tx_hash)
         {
             find_tx_res res {};
-            auto [ txo_count, txo_item ] = _txo_idx.find(index::txo::item { tx_hash, 0 });
-            if (txo_count > 0) {
-                res.offset = txo_item.offset;
-                res.block_info = _cr.find_block(txo_item.offset);
-                _cr.read(txo_item.offset, res.tx_raw);
+            auto [ tx_count, tx_item ] = _tx_idx.find(index::tx::item { tx_hash });
+            if (tx_count > 0) {
+                res.offset = tx_item.offset;
+                res.invalid = tx_item.invalid;
+                res.block_info = _cr.find_block_by_offset(tx_item.offset);
+                _cr.read(tx_item.offset, res.tx_raw);
             }
             return res;
         }
@@ -371,24 +373,22 @@ namespace daedalus_turbo {
         template<typename T>
         history<T> find_history(const T &id)
         {
-            if constexpr (std::is_same_v<T, stake_ident>)
+            if constexpr (std::is_same_v<T, cardano::stake_ident>)
                 return _history(_stake_ref_idx, id);
-            if constexpr (std::is_same_v<T, pay_ident>)
+            if constexpr (std::is_same_v<T, cardano::pay_ident>)
                return _history(_pay_ref_idx, id);;
             throw error("unsupported type for find_history: {}", typeid(T).name());
         }
 
-        const storage::block_info &find_block(uint64_t tx_offset) const
+        storage::block_info find_block(uint64_t tx_offset) const
         {
-            return _cr.find_block(tx_offset);
+            return _cr.find_block_by_offset(tx_offset);
         }
     private:
-        scheduler &_sched;
-        indexer::incremental &_cr;
-        const std::filesystem::path _idx_dir;
+        chunk_registry &_cr;
         index::reader_multi<index::stake_ref::item> _stake_ref_idx;
         index::reader_multi<index::pay_ref::item> _pay_ref_idx;
-        index::reader_multi<index::txo::item> _txo_idx;
+        index::reader_multi<index::tx::item> _tx_idx;
         index::reader_multi_mt<index::txo_use::item> _txo_use_idx;
 
         template<typename IDX, typename ID>
@@ -399,16 +399,15 @@ namespace daedalus_turbo {
             history<ID> hist { id };
             if (_cr.num_chunks() == 0)
                 return hist;
-            const auto last_block = *_cr.last_block();
-            hist.last_slot = last_block.slot;
+            hist.last_slot = _cr.max_slot();
             if (!hist.find_incoming_txos(ref_idx))
                 return hist;
-            hist.fill_raw_tx_data(_sched, _cr, *this);
+            hist.fill_raw_tx_data(_cr.sched(), _cr, *this);
             {
-                auto txo_tasks = hist.find_used_txos(_sched, _txo_use_idx);
+                auto txo_tasks = hist.find_used_txos(_cr.sched(), _txo_use_idx);
                 hist.add_spending_txs(txo_tasks);
             }
-            hist.fill_raw_tx_data(_sched, _cr, *this, true);
+            hist.fill_raw_tx_data(_cr.sched(), _cr, *this, true);
             hist.compute_balances();
             hist.full_history = true;
             return hist;
@@ -458,10 +457,10 @@ namespace daedalus_turbo {
                         try {
                             tx_parser.read(tx_raw);
                             const auto block_meta = r.find_block(tx_offset);
-                            history_mock_block mock_blk { block_meta, tx_raw, tx_offset };
+                            history_mock_block mock_blk { block_meta, tx_raw, tx_offset, cr.config() };
                             auto tx = cardano::make_tx(tx_raw, mock_blk);
                             tx_item.hash = tx->hash();
-                            tx_item.slot = block_meta.slot;
+                            tx_item.slot = cr.make_slot(block_meta.slot);
                             if (tx_item.outputs.size() > 0) {
                                 tx->foreach_output([&](const auto &out) {
                                     auto tx_out_it = std::lower_bound(tx_item.outputs.begin(), tx_item.outputs.end(), out.idx, [&](const auto &el, const auto &v) { return el.out_idx < v; });
@@ -469,7 +468,7 @@ namespace daedalus_turbo {
                                         return;
                                     tx_out_it->amount = out.amount;
                                     if (out.assets != nullptr) {
-                                        for (const auto &[policy_id, policy_assets]: *out.assets) {
+                                        for (const auto &[policy_id, policy_assets]: out.assets->map()) {
                                             for (const auto &[asset_name, amount]: policy_assets.map()) {
                                                 tx_out_it->assets[cardano::asset_name(policy_id.buf(), asset_name.buf())] = amount.uint();
                                             }
@@ -497,8 +496,7 @@ namespace fmt {
     struct formatter<daedalus_turbo::transaction>: formatter<size_t> {
         template<typename FormatContext>
         auto format(const auto &tx, FormatContext &ctx) const -> decltype(ctx.out()) {
-            return fmt::format_to(ctx.out(), "slot: {}/{} hash: {} balance change: {}\n",
-                tx.slot.epoch(), tx.slot, tx.hash.span(), tx.balance_change());
+            return fmt::format_to(ctx.out(), "slot: {} hash: {} balance change: {}\n", tx.slot, tx.hash.span(), tx.balance_change());
         }
     };
 
@@ -516,8 +514,8 @@ namespace fmt {
             out_it = fmt::format_to(out_it, "available balance without rewards: {}\n", daedalus_turbo::cardano::amount { h.utxo_balance() });
             if (h.balance_assets.size() > 0)
                 out_it = fmt::format_to(out_it, "asset balances: {}\n", h.balance_assets);
-            return fmt::format_to(out_it, "last indexed slot: {}, last epoch: {}, # random reads: {} of them from indices: {} ({:0.1f}%)\n",
-                h.last_slot, h.last_slot.epoch(), h.num_disk_reads, h.num_idx_reads,
+            return fmt::format_to(out_it, "last indexed slot: {}, # random reads: {} of them from indices: {} ({:0.1f}%)\n",
+                h.last_slot, h.num_disk_reads, h.num_idx_reads,
                 h.num_disk_reads > 0 ? 100 * (double)h.num_idx_reads / h.num_disk_reads: 0.0);
         }
     };

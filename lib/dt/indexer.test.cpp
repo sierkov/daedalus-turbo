@@ -3,6 +3,7 @@
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
+#include <dt/chunk-registry.hpp>
 #include <dt/index/txo-use.hpp>
 #include <dt/indexer.hpp>
 #include <dt/test.hpp>
@@ -18,17 +19,13 @@ suite indexer_suite = [] {
         "create"_test = [&] {
             std::filesystem::remove_all(data_dir);
             {
-                chunk_registry src_cr { src_dir, false };
-                indexer_map indexers {};
-                indexers.emplace(std::make_unique<index::txo_use::indexer>(idx_dir, "txo-use"));
-                incremental idxr { std::move(indexers), data_dir, false };
+                chunk_registry src_cr { src_dir, chunk_registry::mode::store };
+                chunk_registry idxr { data_dir, chunk_registry::mode::index };
                 idxr.import(src_cr);
             }
             {
-                indexer_map indexers {};
-                indexers.emplace(std::make_unique<index::txo_use::indexer>(idx_dir, "txo-use"));
-                incremental idxr { std::move(indexers), data_dir, false };
-                index::reader_multi<index::txo_use::item> reader { idxr.reader_paths("txo-use") };
+                chunk_registry idxr { data_dir, chunk_registry::mode::index };
+                index::reader_multi<index::txo_use::item> reader { idxr.indexer().reader_paths("txo-use") };
                 index::txo_use::item i {};
                 size_t read_count = 0;
                 while (reader.read(i)) {
@@ -40,21 +37,18 @@ suite indexer_suite = [] {
         };
         "rollback"_test = [&] {
             std::filesystem::remove_all(data_dir);
-            chunk_registry src_cr { src_dir, false };
-            indexer_map indexers {};
-            indexers.emplace(std::make_unique<index::txo_use::indexer>(idx_dir, "txo-use"));
-            incremental idxr { std::move(indexers), data_dir, false };
+            chunk_registry src_cr { src_dir, chunk_registry::mode::store };
+            chunk_registry idxr { data_dir, chunk_registry::mode::index };
             idxr.import(src_cr);
-            const auto before_size = idxr.valid_end_offset();
-            idxr.transact(before_size / 2, [] {
-                // rollback the initial truncation
+            const auto before_tip = idxr.tip();
+            const cardano::point mid_point = idxr.find_block_by_offset(idxr.num_bytes() / 2).point();
+            expect(!!idxr.accept_progress(mid_point, mid_point, [] {
                 throw error("something went wrong");
-            });
-            expect(idxr.valid_end_offset() == before_size) << idxr.valid_end_offset() << before_size;
-            idxr.transact(before_size / 2, [] {
-                // do nothing just truncate
-            });
-            expect(idxr.valid_end_offset() < before_size) << idxr.valid_end_offset() << before_size;
+            }));
+            expect(!idxr.tx());
+            test_same(idxr.tip(), before_tip);
+            idxr.truncate(mid_point);
+            test_same(idxr.tip(), mid_point);
         };
     };    
 };

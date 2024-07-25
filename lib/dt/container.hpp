@@ -13,7 +13,7 @@
 #endif
 
 namespace daedalus_turbo {
-    // Standard containers with the default allocator performs perform poorly in multi-threaded scenarios on Windows.
+    // Standard containers with the default allocator perform poorly in multi-threaded scenarios on Windows.
 #if DT_USE_MIMALLOC
     template<typename T>
     using container_allocator = mi_stl_allocator<T>;

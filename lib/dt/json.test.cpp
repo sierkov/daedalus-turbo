@@ -11,7 +11,7 @@ using namespace daedalus_turbo;
 suite json_suite = [] {
     "json"_test = [] {
         "load genesis"_test = [] {
-            auto genesis = json::load("./etc/genesis/mainnet-shelley-genesis.json");
+            auto genesis = json::load("./etc/mainnet/shelley-genesis.json");
             expect(genesis.at("genDelegs").as_object().size() == 7_u);
         };
         "save_pretty object"_test = [] {
@@ -53,7 +53,7 @@ suite json_suite = [] {
             expect(j_parsed == j_val) << json::serialize(j_parsed);
         };
         "array copy constructor"_test = [] {
-            auto meta = json::load("./etc/turbo.json").as_object();
+            auto meta = json::load("./etc/mainnet/turbo.json").as_object();
             expect(meta.contains("hosts"));
             const auto &exp_arr = meta.at("hosts").as_array();
             expect(exp_arr.size() >= 2);

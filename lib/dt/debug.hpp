@@ -8,7 +8,7 @@
 #include <cstdlib>
 
 namespace daedalus_turbo::debug {
-    extern bool tracing_enabled();
+    extern bool &tracing_enabled();
 }
 
 #endif // !DAEDALUS_TURBO_DEBUG_HPP

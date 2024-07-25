@@ -6,9 +6,9 @@
 #define DAEDALUS_TURBO_STATIC_MAP_HPP
 
 #include <algorithm>
-#include <map>
 #include <vector>
 #include <unordered_map>
+#include <dt/container.hpp>
 #include <dt/partitioned-map.hpp>
 
 namespace daedalus_turbo {
@@ -38,7 +38,18 @@ namespace daedalus_turbo {
         {
         }
 
-        static_map<K, V> &operator=(const std::map<K, V> &src)
+        bool operator==(const static_map &o) const
+        {
+            return _data == o._data;
+        }
+
+        static_map<K, V> &operator=(static_map<K, V> &&src)
+        {
+            _data = std::move(src._data);
+            return *this;
+        }
+
+        static_map<K, V> &operator=(const map<K, V> &src)
         {
             _data.clear();
             _data.reserve(src.size());
@@ -71,12 +82,6 @@ namespace daedalus_turbo {
             return *this;
         }
 
-        static_map<K, V> &operator=(static_map<K, V> &&src)
-        {
-            _data = std::move(src._data);
-            return *this;
-        }
-
         static_map<K, V> &operator=(const static_map<K, V> &src)
         {
             _data = src._data;
@@ -96,6 +101,21 @@ namespace daedalus_turbo {
         size_t size() const
         {
             return _data.size();
+        }
+
+        void reserve(const size_t exp_size)
+        {
+            _data.reserve(exp_size);
+        }
+
+        void emplace_back(const K &k, const V &v)
+        {
+            _data.emplace_back(k, v);
+        }
+
+        void sort()
+        {
+            std::sort(_data.begin(), _data.end());
         }
 
         bool contains(const K &k) const
@@ -137,8 +157,23 @@ namespace daedalus_turbo {
                 return it;
             return end();
         }
+
+        const storage_type &storage() const
+        {
+            return _data;
+        }
     private:
         storage_type _data {};
+    };
+}
+
+namespace fmt {
+    template<typename K, typename V>
+    struct formatter<daedalus_turbo::static_map<K, V>>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "{{ {} }}", v.storage());
+        }
     };
 }
 

@@ -48,16 +48,39 @@ namespace daedalus_turbo::cardano::byron {
         const cbor_array &_sig;
     };
 
+    struct byron_version {
+        uint16_t major = 0;
+        uint16_t minor = 0;
+        uint8_t patch = 0;
+    };
+
+    struct byron_param_update {
+        std::optional<uint16_t> script_version {};
+        std::optional<uint64_t> slot_duration {};
+        std::optional<uint64_t> max_block_size {};
+    };
+
+    struct byron_proposal {
+
+    };
+
+    struct byron_vote {
+        const buffer voter;
+        const buffer proposal_id;
+        bool vote;
+        const buffer signature;
+    };
+
     struct boundary_block: block_base {
         using block_base::block_base;
 
-        static cardano::block_hash padded_hash(uint8_t magic, const buffer &data)
+        static block_hash padded_hash(uint8_t magic, const buffer &data)
         {
             uint8_vector padded(data.size() + 2);
             padded[0] = 0x82;
             padded[1] = magic;
             memcpy(padded.data() + 2, data.data(), data.size());
-            return blake2b<cardano::block_hash>(padded);
+            return blake2b<block_hash>(padded);
         }
 
         uint64_t height() const override
@@ -65,38 +88,40 @@ namespace daedalus_turbo::cardano::byron {
             return slot();
         }
 
-        cardano_hash_32 hash() const override
+        block_hash hash() const override
         {
-            return padded_hash(0x00, _block.array().at(0).raw_span());
+            if (!_cached_hash)
+                _cached_hash.emplace(padded_hash(0x00, _block.array().at(0).raw_span()));
+            return *_cached_hash;
         }
 
         const buffer issuer_vkey() const override
         {
-            static auto dummy = cardano::vkey::from_hex("0000000000000000000000000000000000000000000000000000000000000000");
+            static auto dummy = vkey::from_hex("0000000000000000000000000000000000000000000000000000000000000000");
             return dummy.span();
         }
 
-        const cbor_buffer &prev_hash() const override
+        buffer prev_hash() const override
         {
             return header().at(1).buf();
         }
 
-        const cardano::slot slot() const override
+        uint64_t slot() const override
         {
-            return cardano::slot { epoch() * 21600 };
+            return epoch() * config().byron_epoch_length;
         }
 
-        inline const cbor_array &header() const
+        const cbor_array &header() const
         {
             return _block.array().at(0).array();
         }
 
-        inline const cbor_array &consensus() const
+        const cbor_array &consensus() const
         {
             return header().at(3).array();
         }
 
-        inline uint64_t epoch() const
+        uint64_t epoch() const
         {
             return consensus().at(0).uint();
         }
@@ -114,7 +139,9 @@ namespace daedalus_turbo::cardano::byron {
 
         cardano_hash_32 hash() const override
         {
-            return padded_hash(0x01, _block.array().at(0).raw_span());
+            if (!_cached_hash)
+                _cached_hash.emplace(padded_hash(0x01, _block.array().at(0).raw_span()));
+            return *_cached_hash;
         }
 
         size_t tx_count() const override
@@ -124,17 +151,45 @@ namespace daedalus_turbo::cardano::byron {
 
         inline void foreach_tx(const std::function<void(const cardano::tx &)> &observer) const override;
 
-        inline const cbor_array &header() const
+        const cbor_array &header() const
         {
             return _block.array().at(0).array();
         }
 
-        inline const cbor_array &body() const
+        const cbor_array &body() const
         {
             return _block.array().at(1).array();
         }
 
-        inline const cbor_array &update_proposals() const
+        void foreach_update_proposal(const std::function<void(const param_update_proposal &)> &observer) const override
+        {
+            const auto &updates = update_proposals();
+            for (const auto &r_prop: updates.at(0).array()) {
+                param_update_proposal prop { .pool_id=issuer_hash(),
+                    .update={
+                        .protocol_ver=protocol_version { r_prop.at(0).at(0).uint(), r_prop.at(0).at(1).uint() }
+                    }
+                };
+                prop.update.hash_from_cbor(r_prop);
+                observer(prop);
+            }
+        }
+
+        void foreach_update_vote(const std::function<void(const param_update_vote &)> &observer) const override
+        {
+            const auto &updates = update_proposals();
+            for (const auto &upd: updates.at(1).array()) {
+                if (upd.array().size() == 4) {
+                    observer({
+                        .pool_id=blake2b<pool_hash>(upd.at(0).buf().subbuf(0, 32)),
+                        .proposal_id=upd.at(1).buf(),
+                        .vote=upd.at(2).type == CBOR_SIMPLE_TRUE
+                    });
+                }
+            }
+        }
+
+        const cbor_array &update_proposals() const
         {
             return body().at(3).array();
         }
@@ -154,11 +209,11 @@ namespace daedalus_turbo::cardano::byron {
             return header().at(1);
         }
 
-        const cardano::slot slot() const override
+        uint64_t slot() const override
         {
-            auto epoch = header().at(3).array().at(0).array().at(0).uint();
-            auto epoch_slot = header().at(3).array().at(0).array().at(1).uint();
-            return cardano::slot { epoch * 21600 + epoch_slot };
+            const auto epoch = header().at(3).array().at(0).array().at(0).uint();
+            const auto epoch_slot = header().at(3).array().at(0).array().at(1).uint();
+            return epoch * config().byron_epoch_length + epoch_slot;
         }
 
         const cbor_buffer issuer_vkey_full() const
@@ -261,7 +316,7 @@ namespace daedalus_turbo::cardano::byron {
             const auto &outputs = _tx.array().at(1).array();
             for (size_t i = 0; i < outputs.size(); i++) {
                 const auto &out = outputs.at(i).array();
-                observer(tx_output { out.at(0).array().at(0).tag().second->buf(), cardano::amount { out.at(1).uint() }, i });
+                observer(tx_output { cardano::address { out.at(0).array().at(0).tag().second->buf() }, cardano::amount { out.at(1).uint() }, i });
             }
         }
 

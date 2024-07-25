@@ -4,6 +4,7 @@
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
 #include <dt/cardano/network.hpp>
+#include <dt/peer-selection.hpp>
 #include <dt/test.hpp>
 
 using namespace daedalus_turbo;
@@ -12,6 +13,8 @@ using namespace daedalus_turbo::cardano::network;
 
 suite cardano_network_suite = [] {
     "cardano::network"_test = [] {
+        const auto &cfg = cardano::config::get();
+        cfg.shelley_start_slot(208 * 21600);
         "segment_info"_test = [] {
             segment_info info { 0x0123ABCD, channel_mode::initiator, protocol::chain_sync, 12345 };
             auto exp = array<uint8_t, 8>::from_hex("0123ABCD00023039");
@@ -21,7 +24,7 @@ suite cardano_network_suite = [] {
             expect(info.protocol_id() == protocol::chain_sync) << static_cast<int>(info.protocol_id());
             expect(info.payload_size() == 12345);
         };
-        const network::address addr { "relays-new.cardano-mainnet.iohk.io", "3001" };
+        const network::address addr = peer_selection_simple::get().next_cardano();
         client_manager &ccm = client_manager_async::get();
         "find_tip"_test = [&] {
             auto c = ccm.connect(addr);
@@ -36,7 +39,7 @@ suite cardano_network_suite = [] {
             expect(std::holds_alternative<point>(resp.res));
             if (std::holds_alternative<point>(resp.res)) {
                 const auto &pnt = std::get<point>(resp.res);
-                auto min_slot = cardano::slot::from_time(std::chrono::system_clock::now() - std::chrono::seconds { 600 });
+                auto min_slot = cardano::slot::from_time(std::chrono::system_clock::now() - std::chrono::seconds { 600 }, cfg);
                 expect(pnt.slot >= min_slot) << pnt.slot;
                 expect(pnt.height >= 10'000'000) << pnt.height;
             }
@@ -60,7 +63,7 @@ suite cardano_network_suite = [] {
                 const auto &[point, tip] = std::get<point_pair>(resp.res);
                 expect(point.slot == points[0].slot);
                 expect(point.hash == points[0].hash);
-                auto min_slot = cardano::slot::from_time(std::chrono::system_clock::now() - std::chrono::seconds { 600 });
+                const auto min_slot = cardano::slot::from_time(std::chrono::system_clock::now() - std::chrono::seconds { 600 }, cfg);
                 expect(tip.slot >= min_slot) << point.slot;
                 expect(tip.height >= 10'000'000) << point.height;
             }
@@ -76,6 +79,7 @@ suite cardano_network_suite = [] {
             c->fetch_blocks(from, to, [&](client::block_response &&r) {
                 if (r.err) {
                     err = std::move(*r.err);
+                    logger::error("fetch_blocks error: {}", err);
                     return false;
                 }
                 logger::debug("received block {} {}", r.block->blk->hash(), r.block->blk->slot());
@@ -83,8 +87,8 @@ suite cardano_network_suite = [] {
                 return true;
             });
             c->process();
-            expect(!err) << *err;
-            expect(blocks.size() == 10_ull);
+            expect(!err);
+            test_same(blocks.size(), 10);
         };
 
         "fetch_headers"_test = [&] {

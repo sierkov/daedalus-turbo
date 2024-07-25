@@ -11,31 +11,40 @@
 
 namespace daedalus_turbo::storage {
     struct block_info {
-        cardano::slot slot {};
-        uint64_t offset = 0;
         cardano::block_hash hash {};
+        uint64_t offset = 0;
         uint32_t size = 0;
+        uint32_t slot = 0;
+        uint32_t height = 0;
+        uint32_t chk_sum = 0;
+        uint16_t header_offset = 0;
+        uint16_t header_size = 0;
         uint8_t era = 0; // necessary to exclude boundary blocks (era=0) during density estimation
 
         constexpr static auto serialize(auto &archive, auto &self)
         {
-            return archive(self.slot, self.offset, self.hash, self.size, self.era);
+            return archive(self.hash, self.offset, self.size, self.slot, self.height, self.chk_sum,
+                self.header_offset, self.header_size, self.era);
         }
 
         [[nodiscard]] uint64_t end_offset() const
         {
             return offset + size;
         }
+
+        [[nodiscard]] cardano::point point() const
+        {
+            return { hash, slot, height, end_offset() };
+        }
     };
     using block_list = std::vector<block_info>;
 
     struct chunk_info {
-        std::string orig_rel_path {};
         size_t data_size = 0;
         size_t compressed_size = 0;
-        size_t num_blocks = 0;
-        cardano::slot first_slot {};
-        cardano::slot last_slot {};
+        size_t num_blocks = 0; // needed when chunk info is serialized without the blocks fields
+        uint64_t first_slot = 0;
+        uint64_t last_slot {};
         cardano::block_hash data_hash {};
         cardano::block_hash prev_block_hash {};
         cardano::block_hash last_block_hash {};
@@ -46,7 +55,7 @@ namespace daedalus_turbo::storage {
         constexpr static auto serialize(auto &archive, auto &self)
         {
             return archive(
-                self.orig_rel_path, self.data_size, self.compressed_size,
+                self.data_size, self.compressed_size,
                 self.num_blocks, self.first_slot, self.last_slot,
                 self.data_hash, self.prev_block_hash, self.last_block_hash,
                 self.offset, self.blocks
@@ -63,11 +72,31 @@ namespace daedalus_turbo::storage {
             return rel_path_from_hash(data_hash);
         }
 
+        [[nodiscard]] uint64_t era() const
+        {
+            if (!blocks.empty()) [[likely]] {
+                const auto first_era = blocks.front().era;
+                const auto last_era = blocks.back().era;
+                if (first_era == last_era || (first_era == 0 && last_era == 1)) [[likely]]
+                    return last_era;
+                throw error("chunk {} has blocks from different eras {} and {}", rel_path(), first_era, last_era);
+            }
+            throw error("chunk cannot be empty!");
+        }
+
         [[nodiscard]] const cardano::block_hash &first_block_hash() const
         {
-            if (blocks.empty())
-                throw error("chunk cannot be empty!");
-            return blocks.front().hash;
+            if (!blocks.empty()) [[likely]]
+                return blocks.front().hash;
+            throw error("chunk cannot be empty!");
+        }
+
+        [[nodiscard]] uint64_t block_data_size() const
+        {
+            uint64_t sz = 0;
+            for (const auto &b: blocks)
+                sz += b.size;
+            return sz;
         }
 
         [[nodiscard]] uint64_t end_offset() const
@@ -75,15 +104,9 @@ namespace daedalus_turbo::storage {
             return offset + data_size;
         }
 
-        [[nodiscard]] uint64_t epoch() const
-        {
-            return first_slot.epoch();
-        }
-
         static chunk_info from_json(const json::object &j)
         {
             chunk_info chunk {};
-            chunk.orig_rel_path = json::value_to<std::string_view>(j.at("relPath"));
             if (j.contains("offset"))
                 chunk.offset = json::value_to<size_t>(j.at("offset"));
             chunk.data_size = json::value_to<size_t>(j.at("size"));
@@ -100,7 +123,6 @@ namespace daedalus_turbo::storage {
         [[nodiscard]] json::object to_json() const
         {
             return json::object {
-                { "relPath", orig_rel_path },
                 { "size", data_size },
                 { "compressedSize", compressed_size },
                 { "numBlocks", num_blocks },

@@ -19,10 +19,10 @@ extern "C" {
 
 namespace daedalus_turbo {
     using vrf_result = array<uint8_t, crypto_vrf_ietfdraft03_OUTPUTBYTES>;
-    using vrf_skey = array<uint8_t, crypto_vrf_ietfdraft03_SECRETKEYBYTES>;
+    using vrf_skey = secure_array<uint8_t, crypto_vrf_ietfdraft03_SECRETKEYBYTES>;
     using vrf_vkey = array<uint8_t, crypto_vrf_ietfdraft03_PUBLICKEYBYTES>;
     using vrf_proof = array<uint8_t, crypto_vrf_ietfdraft03_PROOFBYTES>;
-    using vrf_seed = array<uint8_t, crypto_vrf_ietfdraft03_SEEDBYTES>;
+    using vrf_seed = secure_array<uint8_t, crypto_vrf_ietfdraft03_SEEDBYTES>;
     using vrf_nonce = array<uint8_t, 32>;
 
     inline blake2b_256_hash vrf_make_input(uint64_t slot, const buffer &nonce)

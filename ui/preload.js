@@ -27,6 +27,8 @@ function multiRequest(name, ...params) {
 
 contextBridge.exposeInMainWorld('appAPI', {
   exit: () => ipcRenderer.send('exit'),
+  export: (path) => multiRequest('export', path),
+  selectDir: () => multiRequest('selectDir', Date.now()),
   status: (now) => multiRequest('status', now),
   txInfo: (hash) => multiRequest('txInfo', hash),
   stakeInfo: (hash) => multiRequest('stakeInfo', hash),

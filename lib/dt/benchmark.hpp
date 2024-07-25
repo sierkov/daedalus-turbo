@@ -20,33 +20,24 @@ namespace daedalus_turbo {
         { a() + 1 };
     };
 
-    inline std::string humanize_rate(double rate)
+    inline std::string humanize_rate(const double rate)
     {
-        std::string prefix { "" };
-        size_t rate_view = rate;
-        if (rate > 10'000'000'000'000) {
-            prefix = "P";
-            rate_view /= 1'000'000'000'000'000;
-        } else if (rate > 10'000'000'000'000) {
-            prefix = "T";
-            rate_view /= 1'000'000'000'000;
-        } else if (rate > 10'000'000'000) {
-            prefix = "G";
-            rate_view /= 1'000'000'000;
-        } else if (rate > 10'000'000) {
-            prefix = "M";
-            rate_view /= 1'000'000;
-        } else if (rate > 10'000) {
-            prefix = "K";
-            rate_view /= 1'000;
+        struct scale {
+            double norm;
+            const char *suffix;
+        };
+        static const vector<scale> scales { { 1e15, "P" }, { 1e12, "T" }, { 1e9, "G" }, { 1e6, "M" }, { 1e3, "K" } };
+        const auto abs_rate = std::fabs(rate);
+        for (const auto &[norm, suff]: scales) {
+            if (abs_rate >= norm)
+                return fmt::format("{:.3f}{}", rate / norm, suff);
         }
-        std::ostringstream ss;
-        ss << rate_view << " " << prefix;
-        return ss.str();
+        return fmt::format("{:.3f}", rate);
     }
 
     template<Countable T>
-    static double benchmark_rate(const string_view &name, size_t num_iter, T &&action) {
+    static double benchmark_rate(const string_view name, const size_t num_iter, const T &action)
+    {
         const auto start = std::chrono::high_resolution_clock::now();
         uint64_t total_iters = 0;
         for (size_t i = 0; i < num_iter; ++i) {
@@ -54,14 +45,15 @@ namespace daedalus_turbo {
         }
         const auto stop = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> sec = stop - start;
-        double rate = (double)total_iters / sec.count();
+        const double rate = (double)total_iters / sec.count();
         std::clog << "[" << name << "] " << humanize_rate(rate) << "iters/sec"
             << ", total iters: " << total_iters << '\n';
         return rate;
     };
 
     template<typename T>
-    static double benchmark_rate(const string_view &name, size_t num_iter, T &&action) {
+    static double benchmark_rate(const string_view name, const size_t num_iter, const T &action)
+    {
         return benchmark_rate(name, num_iter, [&] {
             action();
             return 1;
@@ -69,33 +61,34 @@ namespace daedalus_turbo {
     };
 
     template<Countable T>
-    static double benchmark_throughput(const string_view &name, size_t num_iter, T &&action) {
+    static double benchmark_throughput(const string_view name, const size_t num_iter, const T &action)
+    {
         const auto start = std::chrono::high_resolution_clock::now();
         uint64_t total_bytes = 0;
         for (size_t i = 0; i < num_iter; ++i) {
             total_bytes += action();
         }
-        const auto stop = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> sec = stop - start;
-        double rate = (double)total_bytes / sec.count();
-        std::clog << "[" << name << "] " << humanize_rate(rate) << "bytes/sec"
-            << ", total bytes: " << total_bytes
-            << endl;
+        const std::chrono::duration<double> duration = std::chrono::high_resolution_clock::now() - start;
+        const double sec = duration.count();
+        const double rate = static_cast<double>(total_bytes) / sec;
+        std::clog << fmt::format("[{}] {}bytes/sec, total bytes: {}\n", name, humanize_rate(rate), total_bytes);
         return rate;
     };
 
     template<Countable T>
-    static void benchmark(const string_view &name, double min_rate, size_t num_iter, T &&action, const std::source_location &src_loc=std::source_location::current()) {
+    static void benchmark(const string_view name, const double min_rate, const size_t num_iter, const T &action, const std::source_location &src_loc=std::source_location::current())
+    {
         boost::ut::test(name) = [=] {
-            double rate = benchmark_throughput(name, num_iter, action);
+            const double rate = benchmark_throughput(name, num_iter, action);
             boost::ut::expect(rate >= min_rate, src_loc) << rate << " < " << min_rate;
         };
     }
 
     template<typename T>
-    static void benchmark_r(const string_view &name, double min_rate, size_t num_iter, T &&action, const std::source_location &src_loc=std::source_location::current()) {
+    static void benchmark_r(const string_view name, const double min_rate, const size_t num_iter, const T &action, const std::source_location &src_loc=std::source_location::current())
+    {
         boost::ut::test(name) = [=] {
-            double rate = benchmark_rate(name, num_iter, action);
+            const double rate = benchmark_rate(name, num_iter, action);
             boost::ut::expect(rate >= min_rate, src_loc) << rate << " < " << min_rate;
         };
     }

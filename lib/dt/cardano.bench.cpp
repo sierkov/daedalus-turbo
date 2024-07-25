@@ -31,23 +31,11 @@ namespace {
         }
         return total_size;
     }
-
-    static uint64_t extract_epoch(const std::string_view &db_dir)
-    {
-        size_t total_size = 0;
-        for (const auto &entry : std::filesystem::directory_iterator(db_dir)) {
-            if (entry.path().extension() != ".chunk") continue;
-            cardano::extract_epoch(entry.path().string());
-            total_size += entry.file_size();
-        }
-        return total_size;
-    }
 }
 
 suite cardano_bench_suite = [] {
     "cardano"_test = [] {
         static const std::string DATA_DIR { "./data/immutable"s };
         benchmark("cardano/lazy parse tx count"sv, 100'000'000.0, 3, [] { return lazy_process_chunks(DATA_DIR, 50); } );
-        benchmark("cardano/extract-epoch-new"sv, 100'000'000.0, 3, [] { return extract_epoch(DATA_DIR); });
     };
 };

@@ -6,7 +6,8 @@
 #define DAEDALUS_TURBO_PARTITIONED_MAP_HPP
 
 #include <array>
-#include <map>
+#include <ranges>
+#include <dt/container.hpp>
 #include <dt/error.hpp>
 
 namespace daedalus_turbo {
@@ -15,20 +16,23 @@ namespace daedalus_turbo {
         static constexpr size_t num_parts = 256;
 
         using self_type = partitioned_map<K, V>;
-        using partition_type = std::map<K, V>;
+        using partition_type = map<K, V>;
         using key_type = partition_type::key_type;
         using value_type = partition_type::value_type;
         using mapped_type = partition_type::mapped_type;
         using storage_type = std::array<partition_type, num_parts>;
+        using size_type = partition_type::size_type;
 
         struct const_iterator {
+            using difference_type = std::ptrdiff_t;
+
             const_iterator(const self_type &ctr, size_t part_idx, partition_type::const_iterator part_it)
                 : _container { &ctr }, _part_idx { part_idx }, _part_it { part_it }
             {
                 _next_valid();
             }
 
-            bool operator==(const auto &b) const
+            bool operator==(const const_iterator &b) const
             {
                 if (_container != b._container)
                     return false;
@@ -40,14 +44,14 @@ namespace daedalus_turbo {
                 return _part_it == b._part_it;
             }
 
-            const value_type &operator*()
+            const value_type &operator*() const
             {
                 return *_part_it;
             }
 
-            const value_type *operator->()
+            const value_type *operator->() const
             {
-                return &operator*();
+                return &(*_part_it);
             }
 
             const_iterator &operator++() {
@@ -56,6 +60,13 @@ namespace daedalus_turbo {
                 ++_part_it;
                 _next_valid();
                 return *this;
+            }
+
+            const_iterator operator++(int)
+            {
+                auto copy = *this;
+                ++(*this);
+                return copy;
             }
         private:
             friend self_type;
@@ -84,7 +95,7 @@ namespace daedalus_turbo {
                 _next_valid();
             }
 
-            bool operator==(const auto &b) const
+            bool operator==(const iterator &b) const
             {
                 if (_container != b._container)
                     return false;
@@ -96,6 +107,16 @@ namespace daedalus_turbo {
                 return _part_it == b._part_it;
             }
 
+            const value_type &operator*() const
+            {
+                return *_part_it;
+            }
+
+            const value_type *operator->() const
+            {
+                return &(*_part_it);
+            }
+
             value_type &operator*()
             {
                 return *_part_it;
@@ -103,7 +124,7 @@ namespace daedalus_turbo {
 
             value_type *operator->()
             {
-                return &operator*();
+                return &(*_part_it);
             }
 
             iterator &operator++() {
@@ -148,6 +169,26 @@ namespace daedalus_turbo {
         {
         }
 
+        partitioned_map(const map<K, V> &m)
+        {
+            *this = m;
+        }
+
+        partitioned_map &operator=(const map<K, V> &m)
+        {
+            clear();
+            for (const auto &[k, v]: m) {
+                if (auto [it, created] = try_emplace(k, v); !created)
+                    throw error("duplicate key {}", k);;
+            }
+            return *this;
+        }
+
+        bool operator==(const auto &o) const
+        {
+            return _parts == o._parts;
+        }
+
         const const_iterator begin() const
         {
             return const_iterator { *this, 0, _parts[0].cbegin() };
@@ -176,6 +217,16 @@ namespace daedalus_turbo {
             return std::make_pair(iterator { *this, part_idx, std::move(part_it) }, created);
         }
 
+        const_iterator find(const K &k) const
+        {
+            auto part_idx = partition_idx(k);
+            auto &part = _parts[part_idx];
+            auto part_it = part.find(k);
+            if (part_it != part.end())
+                return const_iterator { *this, part_idx, part_it };
+            return end();
+        }
+
         iterator find(const K &k)
         {
             auto part_idx = partition_idx(k);
@@ -183,8 +234,7 @@ namespace daedalus_turbo {
             auto part_it = part.find(k);
             if (part_it != part.end())
                 return iterator { *this, part_idx, part_it };
-            else
-                return end();
+            return end();
         }
 
         iterator erase(const iterator it)
@@ -197,9 +247,14 @@ namespace daedalus_turbo {
             return end_it;
         }
 
-        iterator erase(const K &k)
+        size_type erase(const K &k)
         {
-            return erase(find(k));
+            auto it = find(k);
+            if (it != end()) {
+                erase(it);
+                return 1;
+            }
+            return 0;
         }
 
         void clear()
@@ -230,6 +285,15 @@ namespace daedalus_turbo {
         V &operator[](const K &k)
         {
             return _parts[partition_idx(k)][k];
+        }
+
+        V &at(const K &k)
+        {
+            auto &part = _parts[partition_idx(k)];
+            auto it = part.find(k);
+            if (it == part.end())
+                throw error("unknown key: {}", k);
+            return it->second;
         }
 
         const V &at(const K &k) const
@@ -267,6 +331,11 @@ namespace daedalus_turbo {
         {
             _check_part_idx(part_idx);
             return _parts[part_idx];
+        }
+
+        auto range() const
+        {
+            return std::ranges::subrange<partitioned_map<K,V>::const_iterator>(begin(), end());
         }
     private:
         static inline void _check_part_idx(size_t part_idx)

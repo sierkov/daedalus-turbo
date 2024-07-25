@@ -77,10 +77,10 @@ namespace daedalus_turbo::zstd {
         ZSTD_DCtx* _ctx;
     };
 
-    inline void compress(uint8_vector &compressed, const buffer &orig, int level=22)
+    inline void compress(uint8_vector &compressed, const buffer &orig, const int level=22, const size_t max_buffer=max_zstd_buffer)
     {
-        if (orig.size() > max_zstd_buffer)
-            throw error("data size {} is greater than the maximum allowed: {}!", orig.size(), max_zstd_buffer);
+        if (orig.size() > max_buffer)
+            throw error("data size {} is greater than the maximum allowed: {}!", orig.size(), max_buffer);
         compressed.resize(ZSTD_compressBound(orig.size()));
         thread_local compress_context ctx {};
         ctx.reset();

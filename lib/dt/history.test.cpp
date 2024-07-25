@@ -6,7 +6,6 @@
 #include <dt/cardano/type.hpp>
 #include <dt/history.hpp>
 #include <dt/indexer.hpp>
-#include <dt/scheduler.hpp>
 #include <dt/test.hpp>
 
 using namespace daedalus_turbo;
@@ -20,8 +19,8 @@ suite history_suite = [] {
                 std::filesystem::remove_all(e.path());
         }
         "simple reconstruction"_test = [] {
-            chunk_registry src_cr { src_dir, false };
-            indexer::incremental idxr { indexer::default_list(data_dir), data_dir, false };
+            chunk_registry src_cr { src_dir, chunk_registry::mode::store };
+            chunk_registry idxr { data_dir, chunk_registry::mode::index };
             idxr.import(src_cr);
             
             reconstructor r { idxr };
@@ -37,14 +36,16 @@ suite history_suite = [] {
 
             // known-item search
             {
-                history hist = r.find_history(cardano::address { cardano::address_buf { "stake1uxw70wgydj63u4faymujuunnu9w2976pfeh89lnqcw03pksulgcrg" } }.stake_id());
+                cardano::address_buf addr_buf { "stake1uxw70wgydj63u4faymujuunnu9w2976pfeh89lnqcw03pksulgcrg" };
+                cardano::address addr { addr_buf };
+                const history hist = r.find_history(addr.stake_id());
                 expect(hist.utxo_balance() == 32'476'258'673_ull) << hist.utxo_balance();
                 expect(hist.transactions.size() == 2_u) << hist.transactions.size();
             }
             
             // missing-item search
             {
-                history hist = r.find_history(cardano::address { cardano::address_buf { "0xE10001020304050607080910111213141516171819202122232425262728" } }.stake_id());
+                const history hist = r.find_history(cardano::address { cardano::address_buf { "0xE10001020304050607080910111213141516171819202122232425262728" } }.stake_id());
                 expect(hist.transactions.size() == 0_u) << hist.transactions.size();
             }
         };

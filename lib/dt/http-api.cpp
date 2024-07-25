@@ -30,6 +30,7 @@
 #include <boost/beast/http/string_body.hpp>
 #include <boost/beast/version.hpp>
 #include <boost/config.hpp>
+#include <boost/url.hpp>
 
 #include <dt/asio.hpp>
 #include <dt/chunk-registry.hpp>
@@ -42,10 +43,11 @@
 #include <dt/mutex.hpp>
 #include <dt/progress.hpp>
 #include <dt/requirements.hpp>
-#include <dt/sync/http.hpp>
+#include <dt/sync/hybrid.hpp>
 #include <dt/util.hpp>
-#include <dt/validator.hpp>
 #include <dt/zpp.hpp>
+
+#include "validator/state.hpp"
 
 namespace fmt {
     template<>
@@ -116,11 +118,11 @@ namespace daedalus_turbo::http_api {
         scheduler &_sched;
         std::filesystem::path _cache_dir;
         const bool _ignore_requirements;
-        std::unique_ptr<validator::incremental> _cr {};
+        std::unique_ptr<chunk_registry> _cr {};
         std::unique_ptr<reconstructor> _reconst {};
         std::chrono::time_point<std::chrono::system_clock> _sync_start {};
-        std::atomic<std::optional<cardano::slot>> _sync_start_slot {};
-        std::atomic<std::optional<cardano::slot>> _sync_target_slot {};
+        std::atomic<std::optional<uint64_t>> _sync_start_slot {};
+        std::atomic<std::optional<uint64_t>> _sync_target_slot {};
         double _sync_duration {};
         double _sync_data_mb = 0;
         std::optional<std::string> _sync_error {};
@@ -128,7 +130,7 @@ namespace daedalus_turbo::http_api {
         std::atomic<sync_status> _sync_status { sync_status::syncing };
         alignas(mutex::padding) mutex::unique_lock::mutex_type _requirements_mutex {};
         requirements::check_status _requirements_status {};
-        validator::tail_relative_stake_map _tail_relative_stake {};
+        cardano::tail_relative_stake_map _tail_relative_stake {};
         json::array _j_tail_relative_stake {};
 
         // request queue
@@ -226,6 +228,8 @@ namespace daedalus_turbo::http_api {
                     resp = _api_pay_txs(addr.pay_id(), offset, count);
                 } else if (req_id == "sync") {
                     resp = _api_sync();
+                } else if (req_id == "export" && params.size() == 1) {
+                    resp = _api_export(params.at(0));
                 } else {
                     throw error("unsupported endpoint '{}'", req_id);
                 }
@@ -353,22 +357,25 @@ namespace daedalus_turbo::http_api {
                     resp.emplace("syncDuration", fmt::format("{:0.1f}", _sync_duration / 60));
                     resp.emplace("syncDataMB", fmt::format("{:0.1f}", _sync_data_mb));
                     if (_sync_last_chunk) {
+                        const auto last_slot = _cr->make_slot(_sync_last_chunk->last_slot);
                         resp.emplace("lastBlock", json::object {
                             { "hash", fmt::format("{}", _sync_last_chunk->last_block_hash) },
                             { "slot", static_cast<uint64_t>(_sync_last_chunk->last_slot) },
-                            { "epoch", _sync_last_chunk->last_slot.epoch() },
-                            { "epochSlot", _sync_last_chunk->last_slot.epoch_slot() },
-                            { "timestamp", fmt::format("{} UTC", _sync_last_chunk->last_slot.timestamp()) }
+                            { "epoch", last_slot.epoch() },
+                            { "epochSlot", last_slot.epoch_slot() },
+                            { "timestamp", fmt::format("{} UTC", last_slot.timestamp()) }
                         });
                     }
+                    if (_cr->can_export())
+                        resp.emplace("exportable", true);
                     break;
                 case sync_status::syncing: {
                     const double in_progress = std::chrono::duration<double>(std::chrono::system_clock::now() - _sync_start).count();
                     resp.emplace("syncDuration", fmt::format("{:0.1f}", in_progress / 60));
                     if (const auto start_slot = _sync_start_slot.load())
-                        resp.emplace("syncStartSlot", fmt::format("from slot {} in epoch {}", static_cast<uint64_t>(*start_slot), start_slot->epoch()));
+                        resp.emplace("syncStartSlot", fmt::format("from slot {} in epoch {}", *start_slot, _cr->make_slot(*start_slot).epoch()));
                     if (const auto target_slot = _sync_target_slot.load())
-                        resp.emplace("syncTargetSlot", fmt::format("to slot {} in epoch {}", static_cast<uint64_t>(*target_slot), target_slot->epoch()));
+                        resp.emplace("syncTargetSlot", fmt::format("to slot {} in epoch {}", *target_slot, _cr->make_slot(*target_slot).epoch()));
                     if (!progress_copy.empty()) {
                         double mean_progress = 0.0;
                         for (const auto &[name, value]: progress_copy)
@@ -406,16 +413,13 @@ namespace daedalus_turbo::http_api {
                     if (!req_status)
                         throw error("requirements check failed - cannot begin the sync!");
                 }
-                _cr = std::make_unique<validator::incremental>(_data_dir.string());
+                _cr = std::make_unique<chunk_registry>(_data_dir.string());
                 {
-                    sync::http::syncer syncr { *_cr };
+                    sync::hybrid::syncer syncr { *_cr };
                     const uint64_t start_offset = _cr->valid_end_offset();
                     auto peer = syncr.find_peer();
-                    if (start_offset > 0)
-                        _sync_start_slot = _cr->find_offset(start_offset - 1).last_slot;
-                    else
-                        _sync_start_slot = 0;
-                    _sync_target_slot = peer.last_slot();
+                    _sync_start_slot = _cr->tip() ? _cr->tip()->slot : 0;
+                    _sync_target_slot = peer->tip() ? peer->tip()->slot : 0;
                     syncr.sync(std::move(peer));
                     _sync_data_mb = static_cast<double>(_cr->valid_end_offset() - start_offset) / 1000000;
                     // prepare JSON array with tail_relative_stake data
@@ -441,6 +445,18 @@ namespace daedalus_turbo::http_api {
             return json::value { "synchronization complete" };
         }
 
+        json::value _api_export(const boost::urls::pct_string_view export_dir_enc) const
+        {
+            std::string export_dir {};
+            export_dir.resize(export_dir_enc.decoded_size());
+            export_dir_enc.decode({}, boost::urls::string_token::assign_to(export_dir));
+            _cr->node_export(export_dir);
+            return json::object {
+                { "dataSizeGB", static_cast<double>(_cr->valid_end_offset()) / (1ULL << 30) },
+                { "numChunks", _cr->num_chunks() }
+            };
+        }
+
         json::value _api_tx_info(const buffer &tx_hash)
         {
             auto tx_info = _reconst->find_tx(tx_hash);
@@ -450,7 +466,7 @@ namespace daedalus_turbo::http_api {
                     { "error", "transaction data have not been found!" }
                 };
             }
-            history_mock_block block { tx_info.block_info, tx_info.tx_raw, tx_info.offset };
+            history_mock_block block { tx_info.block_info, tx_info.tx_raw, tx_info.offset, _cr->config() };
             auto tx_ptr = cardano::make_tx(tx_info.tx_raw, block);
             auto &tx = *tx_ptr; // eliminate a clash with CLang's -Wpotentially-evaluated-expression
             logger::info("tx: {} type: {} slot: {}", tx.hash().span(), typeid(tx).name(), tx_info.block_info.slot);
@@ -487,17 +503,17 @@ namespace daedalus_turbo::http_api {
             return hist;
         }
 
-        history<stake_ident> _find_stake_history(const stake_ident &id)
+        history<cardano::stake_ident> _find_stake_history(const cardano::stake_ident &id)
         {
             return _find_history(id, "stake");
         }
 
-        history<pay_ident> _find_pay_history(const pay_ident &id)
+        history<cardano::pay_ident> _find_pay_history(const cardano::pay_ident &id)
         {
             return _find_history(id, "pay");
         }
 
-        json::value _api_stake_id_info(const stake_ident &id)
+        json::value _api_stake_id_info(const cardano::stake_ident &id)
         {
             auto hist = _find_stake_history(id);
             if (hist.transactions.size() == 0) {
@@ -506,21 +522,21 @@ namespace daedalus_turbo::http_api {
                     { "error", "could't find any transactions referencing this stake key!" }
                 };
             }
-            return hist.to_json(_tail_relative_stake);
+            return hist.to_json(_tail_relative_stake, _cr->config());
         }
 
-        json::value _api_stake_txs(const stake_ident &id, const size_t offset, const size_t max_items)
+        json::value _api_stake_txs(const cardano::stake_ident &id, const size_t offset, const size_t max_items)
         {
             auto hist = _find_stake_history(id);
             return json::object {
                 { "id", hist.id.to_json() },
                 { "txCount", hist.transactions.size() },
                 { "txOffset", offset },
-                { "transactions", hist.transactions.to_json(_tail_relative_stake, offset, max_items) }
+                { "transactions", hist.transactions.to_json(_tail_relative_stake, _cr->config(), offset, max_items) }
             };
         }
 
-        json::object _api_stake_assets(const stake_ident &id, const size_t offset, const size_t max_items)
+        json::object _api_stake_assets(const cardano::stake_ident &id, const size_t offset, const size_t max_items)
         {
             auto hist = _find_stake_history(id);
             return json::object {
@@ -531,30 +547,30 @@ namespace daedalus_turbo::http_api {
             };
         }
 
-        json::value _api_pay_id_info(const pay_ident &pay_id)
+        json::value _api_pay_id_info(const cardano::pay_ident &pay_id)
         {
             auto hist = _find_pay_history(pay_id);
             if (hist.transactions.size() == 0) {
                 return json::object {
                     { "id", hist.id.to_json() },
-                    { "error", "could't find any transactions referencing this payment key!" }
+                    { "error", "couldn't find any transactions referencing this payment key!" }
                 };
             }
-            return hist.to_json(_tail_relative_stake);
+            return hist.to_json(_tail_relative_stake, _cr->config());
         }
 
-        json::value _api_pay_txs(const pay_ident &id, const size_t offset, const size_t max_items)
+        json::value _api_pay_txs(const cardano::pay_ident &id, const size_t offset, const size_t max_items)
         {
             auto hist = _find_pay_history(id);
             return json::object {
                 { "id", hist.id.to_json() },
                 { "txCount", hist.transactions.size() },
                 { "txOffset", offset },
-                { "transactions", hist.transactions.to_json(_tail_relative_stake, offset, max_items) }
+                { "transactions", hist.transactions.to_json(_tail_relative_stake, _cr->config(), offset, max_items) }
             };
         }
 
-        json::object _api_pay_assets(const pay_ident &id, const size_t offset, const size_t max_items)
+        json::object _api_pay_assets(const cardano::pay_ident &id, const size_t offset, const size_t max_items)
         {
             auto hist = _find_pay_history(id);
             return json::object {

@@ -164,7 +164,7 @@ suite scheduler_suite = [] {
         "wait_for_count"_test = [] {
             scheduler s {};
             s.submit_void("test", 100, [&] {
-                s.wait_for_count("wait", 2, [&] {
+                s.wait_all_done("wait", 2, [&] {
                     s.submit_void("wait", 200, [] {
                         std::this_thread::sleep_for(std::chrono::milliseconds { 500 });
                     });
@@ -181,7 +181,7 @@ suite scheduler_suite = [] {
             std::optional<size_t> num_before {};
             std::optional<size_t> num_after {};
             s.submit_void("wait", 100, [&] {
-                s.wait_for_count("ok", 2, [&] {
+                s.wait_all_done("ok", 2, [&] {
                     s.submit("ok", 100, []() { return true; });
                     s.submit("ok", 100, []() { return true; });
                 });

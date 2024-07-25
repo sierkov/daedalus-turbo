@@ -10,7 +10,7 @@
 
 namespace daedalus_turbo::index::pay_ref {
     struct item {
-        pay_ident id;
+        cardano::pay_ident id;
         uint64_t offset = 0;
         cardano::tx_size size {};
         cardano::tx_out_idx out_idx {};
@@ -37,15 +37,12 @@ namespace daedalus_turbo::index::pay_ref {
     struct chunk_indexer: chunk_indexer_multi_part<item> {
         using chunk_indexer_multi_part<item>::chunk_indexer_multi_part;
     protected:
-        void _index(const cardano::block_base &blk) override
+        void index_tx(const cardano::tx &tx) override
         {
-            blk.foreach_tx([&](const auto &tx) {
-                tx.foreach_output([&](const auto &tx_out) {
-                    cardano::address addr { tx_out.address };
-                    if (!addr.has_pay_id()) return;
-                    const auto id = addr.pay_id();
-                    _idx.emplace_part(id.hash.data()[0] / _part_range, std::move(id), tx.offset(), tx.size(), tx_out.idx);
-                });
+            tx.foreach_output([&](const auto &tx_out) {
+                if (!tx_out.address.has_pay_id()) return;
+                const auto id = tx_out.address.pay_id();
+                _idx.emplace_part(id.hash.data()[0] / _part_range, std::move(id), tx.offset(), tx.size(), tx_out.idx);
             });
         }
     };

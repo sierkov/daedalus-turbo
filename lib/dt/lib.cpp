@@ -12,5 +12,5 @@ namespace daedalus_turbo {
     std::atomic_size_t file::stream::_open_files = 0;
     std::atomic_size_t file::stream::_max_open_files = 0;
     thread_local uint8_vector chunk_registry::_read_buffer {};
-    const size_t index::two_step_merge_num_files = 2048 / (scheduler::default_worker_count() * 2);
+    const size_t index::two_step_merge_num_files = file::max_open_files / (scheduler::default_worker_count() * 2);
 }

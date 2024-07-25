@@ -5,6 +5,9 @@
 #ifndef DAEDALUS_TURBO_FILE_HPP
 #define DAEDALUS_TURBO_FILE_HPP
 
+#ifndef _WIN32
+#    include <sys/resource.h>
+#endif
 #include <cstdio>
 #include <atomic>
 #include <filesystem>
@@ -14,6 +17,35 @@
 #include <dt/zstd.hpp>
 
 namespace daedalus_turbo::file {
+    constexpr size_t max_open_files = 8192;
+
+    inline void set_max_open_files()
+    {
+        static size_t current_max_open_files = 0;
+        if (current_max_open_files != max_open_files) {
+#           ifdef _WIN32
+                if (_setmaxstdio(max_open_files) != max_open_files)
+                    throw error_sys("can't increase the max number of open files to {}!", max_open_files);
+#           else
+                struct rlimit lim;
+                if (getrlimit(RLIMIT_NOFILE, &lim) != 0)
+                    throw error_sys("getrlimit failed");
+                logger::trace("before RLIMIT_NOFILE to cur: {} max: {}", lim.rlim_cur, lim.rlim_max);
+                if (lim.rlim_cur < max_open_files || lim.rlim_max < max_open_files) {
+                    lim.rlim_cur = max_open_files;
+                    lim.rlim_max = max_open_files;
+                    logger::trace("setting RLIMIT_NOFILE to cur: {} max: {}", lim.rlim_cur, lim.rlim_max);
+                    if (setrlimit(RLIMIT_NOFILE, &lim) != 0)
+                        throw error_sys("failed to increase the max number of open files to {}", max_open_files);
+                    if (getrlimit(RLIMIT_NOFILE, &lim) != 0)
+                        throw error_sys("getrlimit failed");
+                    logger::trace("after RLIMIT_NOFILE to cur: {} max: {}", lim.rlim_cur, lim.rlim_max);
+                }
+#           endif
+            current_max_open_files = max_open_files;
+        }
+    }
+
     struct tmp {
         tmp(const std::string &name): _path { (std::filesystem::temp_directory_path() / name).string() }
         {
@@ -209,13 +241,13 @@ namespace daedalus_turbo::file {
             return pos;
         }
 
-        void write(const void *data, size_t num_bytes)
+        void write(const void *data, const size_t num_bytes)
         {
             if (num_bytes > 0 && std::fwrite(data, 1, num_bytes, _f) != num_bytes)
                 throw error_sys("failed to write {} bytes to {}", num_bytes, _path);
         }
 
-        void write(const buffer &data)
+        void write(const buffer data)
         {
             write(data.data(), data.size());
         }
@@ -238,13 +270,26 @@ namespace daedalus_turbo::file {
         return buf;
     }
 
-    inline void read(const std::string &path, uint8_vector &buffer) {
+    inline void read_zstd(const std::string &path, uint8_vector &buffer) {
         read_raw(path, buffer);
+        uint8_vector decompressed {};
+        zstd::decompress(decompressed, buffer);
+        buffer = std::move(decompressed);
+    }
+
+    inline uint8_vector read_zstd(const std::string &path)
+    {
+        uint8_vector buf {};
+        read_zstd(path, buf);
+        return buf;
+    }
+
+    inline void read(const std::string &path, uint8_vector &buffer) {
         thread_local std::string_view match { ".zstd" };
         if (path.size() > 5 && path.substr(path.size() - 5) == match) {
-            uint8_vector decompressed {};
-            zstd::decompress(decompressed, buffer);
-            buffer = std::move(decompressed);
+            read_zstd(path, buffer);
+        } else {
+            read_raw(path, buffer);
         }
     }
 
@@ -255,7 +300,7 @@ namespace daedalus_turbo::file {
         return buf;
     }
 
-    inline uint8_vector read_all(const std::span<std::string> &paths)
+    inline uint8_vector read_all(const std::span<const std::string> &paths)
     {
         uint8_vector data {};
         for (const auto &p: paths)
@@ -283,7 +328,7 @@ namespace daedalus_turbo::file {
         logger::trace("written {} bytes to {}", buffer.size(), path);
     }
 
-    inline void write_zstd(const std::string &path, const buffer &buffer, int level=3)
+    inline void write_zstd(const std::string &path, const buffer &buffer, const int level=3)
     {
         const auto compressed = zstd::compress(buffer, level);
         write(path, compressed);
