@@ -117,6 +117,28 @@ namespace fmt {
             return fmt::format_to(ctx.out(), "{}", ss.str());
         }
     };
+
+    template<>
+    struct formatter<std::chrono::time_point<std::chrono::system_clock>>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out())
+        {
+            std::ostringstream ss {};
+            ss << v;
+            return fmt::format_to(ctx.out(), "{}", ss.str());
+        }
+    };
+
+    template<>
+    struct formatter<std::chrono::seconds>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out())
+        {
+            std::ostringstream ss {};
+            ss << v;
+            return fmt::format_to(ctx.out(), "{}", ss.str());
+        }
+    };
 }
 
 #endif // !DAEDALUS_TURBO_FORMAT_HPP

@@ -44,6 +44,7 @@ namespace daedalus_turbo::sync::local {
                 _zstd_level_immutable { std::min(static_cast<size_t>(22), zstd_max_level) },
                 _zstd_level_volatile { std::min(static_cast<size_t>(3), zstd_max_level) }
         {
+            _parent.local_chain().remover().remove_delay(del_delay);
             logger::debug("sync::local::syncer zstd (level-immutable: {} level-volatile: {})", _zstd_level_immutable, _zstd_level_volatile);
         }
 

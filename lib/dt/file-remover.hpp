@@ -29,9 +29,11 @@ namespace daedalus_turbo {
             return _removable.size();
         }
 
-        void mark(const std::string &path, const std::chrono::time_point<std::chrono::system_clock> &when=std::chrono::system_clock::now())
+        void mark(const std::string &path, std::optional<std::chrono::seconds> delay={})
         {
-            //logger::debug("marked a file for future removal: {}", path);
+            if (!delay)
+                delay = _remove_delay;
+            const std::chrono::time_point<std::chrono::system_clock> &when=std::chrono::system_clock::now() + *delay;
             if (auto [it, created] = _removable.emplace(path, when); !created)
                 it->second = when;
         }
@@ -42,9 +44,20 @@ namespace daedalus_turbo {
             _removable.erase(path);
         }
 
-        void remove(const std::chrono::seconds &delay=std::chrono::seconds { 0 })
+        void remove_delay(const std::chrono::seconds &new_delay)
         {
-            const auto delete_point = std::chrono::system_clock::now() - delay;
+            _remove_delay = new_delay;
+            logger::debug("default file_remover::remove_delay set to {}", new_delay);
+        }
+
+        const std::chrono::seconds &remove_delay() const
+        {
+            return _remove_delay;
+        }
+
+        void remove()
+        {
+            const auto delete_point = std::chrono::system_clock::now();
             for (auto it = _removable.begin(); it != _removable.end(); ) {
                 if (it->second < delete_point) {
                     _remove(it->first, fmt::format("deref: when: {} delete_point: {}",
@@ -56,14 +69,15 @@ namespace daedalus_turbo {
             }
         }
 
-        void mark_old_files(const std::filesystem::path &dir_path, const std::chrono::seconds &lifespan=std::chrono::seconds { 86400 })
+        void mark_old_files(const std::filesystem::path &dir_path, const std::chrono::seconds &lifespan)
         {
-            const auto file_now = std::chrono::file_clock::now();
             if (std::filesystem::exists(dir_path)) {
+                const auto file_now = std::chrono::file_clock::now();
                 for (auto &entry: std::filesystem::directory_iterator(dir_path)) {
-                    const auto file_age = std::chrono::duration_cast<std::chrono::seconds>(file_now - entry.last_write_time());
-                    if (entry.is_regular_file() && file_age > lifespan)
-                        mark(entry.path().string());
+                    if (entry.is_regular_file()) [[likely]] {
+                        if (const auto file_age = std::chrono::duration_cast<std::chrono::seconds>(file_now - entry.last_write_time()); file_age > lifespan)
+                            mark(entry.path().string(), std::chrono::seconds { 0 });
+                    }
                 }
             }
         }
@@ -73,25 +87,13 @@ namespace daedalus_turbo {
             return _removable;
         }
     private:
+        std::chrono::seconds _remove_delay { 0 };
         remove_point_map _removable {};
 
         static void _remove(const std::string &path, const std::string &note)
         {
             logger::debug("removing obsolete file: {} note: {}", path, note);
             std::filesystem::remove(path);
-        }
-    };
-}
-
-namespace fmt {
-    template<>
-    struct formatter<daedalus_turbo::file_remover::time_point>: formatter<daedalus_turbo::buffer> {
-        template<typename FormatContext>
-        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out())
-        {
-            std::ostringstream ss {};
-            ss << v;
-            return fmt::format_to(ctx.out(), "{}", ss.str());
         }
     };
 }
