@@ -7,7 +7,6 @@
 
 #include <dt/config.hpp>
 #include <dt/cardano/type.hpp>
-#include <dt/plutus/builtins.hpp>
 
 namespace daedalus_turbo::cardano {
     struct config {
