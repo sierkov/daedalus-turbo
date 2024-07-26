@@ -3,6 +3,7 @@
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
+#include <dt/cardano/config.hpp>
 #include <dt/validator/subchain.hpp>
 #include <dt/test.hpp>
 

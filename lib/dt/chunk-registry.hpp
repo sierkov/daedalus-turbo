@@ -770,6 +770,7 @@ namespace daedalus_turbo {
         cardano::amount unspent_reward(const cardano::stake_ident &id) const;
         cardano::tail_relative_stake_map tail_relative_stake() const;
         cardano::optional_point tip() const;
+        cardano::optional_point core_tip() const;
         cardano::optional_point immutable_tip() const;
         cardano::optional_slot can_export() const;
         void node_export(const std::filesystem::path &node_dir, bool ledger_only=false) const;
@@ -799,96 +800,7 @@ namespace daedalus_turbo {
         static thread_local uint8_vector _read_buffer;
 
         void _node_export_chain(const std::filesystem::path &immutable_dir, const std::filesystem::path &volatile_dir, int prio_base=100) const;
-
-        std::pair<chunk_info, std::exception_ptr> _parse(const uint64_t offset, const buffer &raw_data, const size_t compressed_size) const
-        {
-            chunk_info chunk { .data_size=raw_data.size(), .compressed_size=compressed_size, .offset=offset };
-            std::exception_ptr ex_ptr {};
-            uint8_vector ok_data {};
-            uint64_t prev_slot = 0;
-            std::optional<indexer::chunk_indexer_list> chunk_indexers {};
-            if (_indexer)
-                chunk_indexers = _indexer->make_chunk_indexers(offset);
-            cbor_parser parser { raw_data };
-            cbor::value block_tuple {};
-            while (!parser.eof()) {
-                try {
-                    parser.read(block_tuple);
-                    auto blk_ptr = cardano::make_block(block_tuple, chunk.offset + block_tuple.data - raw_data.data(), _cardano_cfg);
-                    {
-                        const auto &blk = *blk_ptr;
-                        const auto slot = blk.slot();
-                        if (slot < prev_slot)
-                            throw error("chunk at {}: a block's slot {} is less than the slot of the prev block {}!", offset, slot, prev_slot);
-                        prev_slot = slot;
-                        static constexpr auto max_era = std::numeric_limits<uint8_t>::max();
-                        if (blk.era() > max_era)
-                            throw error("block at slot {} has era {} that is outside of the supported max limit of {}", slot, blk.era(), max_era);
-                        static constexpr auto max_size = std::numeric_limits<uint32_t>::max();
-                        if (blk.size() > max_size)
-                            throw error("block at slot {} has size {} that is outside of the supported max limit of {}", slot, blk.size(), max_size);
-                        if (!chunk.blocks.empty()) {
-                            if (_validator && blk.prev_hash() != chunk.last_block_hash)
-                                throw error("block at slot {} has an inconsistent prev_hash {}", blk.slot(), blk.prev_hash());
-                        } else {
-                            chunk.prev_block_hash = blk.prev_hash();
-                            chunk.first_slot = slot;
-                        }
-                        for (const auto *p: _processors) {
-                            if (p->on_block_validate)
-                                p->on_block_validate(blk);
-                        }
-                        chunk.last_block_hash = blk.hash();
-                        chunk.last_slot = slot;
-                        if (chunk_indexers) {
-                            for (auto &idxr: *chunk_indexers)
-                                idxr->index(blk);
-                            blk.foreach_tx([&](const auto &tx) {
-                                for (auto &idxr: *chunk_indexers)
-                                    idxr->index_tx(tx);
-                            });
-                            blk.foreach_invalid_tx([&](const auto &tx) {
-                                for (auto &idxr: *chunk_indexers)
-                                    idxr->index_invalid_tx(tx);
-                            });
-                        }
-                        chunk.blocks.emplace_back(
-                            storage::block_info {
-                                .hash=blk.hash(),
-                                .offset=blk.offset(),
-                                .size=blk.size(),
-                                .slot=static_cast<uint32_t>(blk.slot()),
-                                .height=static_cast<uint32_t>(blk.height()),
-                                .chk_sum=crc32::digest(blk.raw_data()),
-                                .header_offset=static_cast<uint16_t>(blk.header_raw_data().data() - blk.raw_data().data()),
-                                .header_size=static_cast<uint16_t>(blk.header_raw_data().size()),
-                                .era=static_cast<uint8_t>(blk.era())
-                            }
-                        );
-                        ok_data << blk.raw_data();
-                    }
-                } catch (...) {
-                    ex_ptr = std::current_exception();
-                    break;
-                }
-            }
-
-            // happens if some blocks are valid but others are invalid
-            blake2b(chunk.data_hash, ok_data);
-            chunk.num_blocks = chunk.blocks.size();
-            if (ok_data.size() != raw_data.size()) {
-                chunk.data_size = ok_data.size();
-                const auto compressed = zstd::compress(ok_data);
-                chunk.compressed_size = compressed.size();
-                file::write(chunk.rel_path(), compressed);
-            }
-            for (const auto *p: _processors) {
-                if (p->on_chunk_add)
-                    p->on_chunk_add(chunk);
-            }
-            report_progress("parse", { chunk.last_slot, chunk.end_offset() });
-            return std::make_pair(std::move(chunk), std::move(ex_ptr));
-        }
+        std::pair<chunk_info, std::exception_ptr> _parse(const uint64_t offset, const buffer &raw_data, const size_t compressed_size) const;
 
         void _my_truncate(const cardano::optional_point &new_tip, const bool track_changes)
         {

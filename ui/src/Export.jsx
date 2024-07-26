@@ -36,7 +36,7 @@ export default function Export() {
     if (error)
         return <Error issues={[ { 'description': error } ]} onContinue={doHome} />
     if (!ready)
-        return <Transition progressWeights={ { 'chunk-export': 0.9, 'ledger-export': 0.01 } } />;
+        return <Transition progressWeights={ { 'chunk-export': 0.95, 'ledger-export': 0.05 } } />;
     return <div className="export">
         <div>
             <img className="logo-large" src="static/logo.svg"/>

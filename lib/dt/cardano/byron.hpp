@@ -257,9 +257,14 @@ namespace daedalus_turbo::cardano::byron {
             return header().at(4);
         }
 
+        const cbor_value &transactions_raw() const
+        {
+            return body().at(0);
+        }
+
         const cbor_array &transactions() const
         {
-            return body().at(0).array();
+            return transactions_raw().array();
         }
 
         block_signature signature() const
@@ -294,6 +299,8 @@ namespace daedalus_turbo::cardano::byron {
             const auto s = signature();
             return ed25519::verify(s.signature(), s.delegate_vkey(), make_signed_data());
         }
+
+        bool body_hash_ok() const override;
     };
 
     struct tx: cardano::tx {
@@ -302,7 +309,7 @@ namespace daedalus_turbo::cardano::byron {
         void foreach_input(const std::function<void(const tx_input &)> &observer) const override
         {
             const auto &inputs = _tx.array().at(0).array();
-            for (size_t i = 0; i < inputs.size(); i++) {
+            for (size_t i = 0; i < inputs.size(); ++i) {
                 const auto &in = inputs.at(i).array();
                 if (in.at(0).uint() != 0) throw cardano_error("unsupported byron tx input encoding {}!", in.at(0).uint());
                 cbor_value in_data;
@@ -314,7 +321,7 @@ namespace daedalus_turbo::cardano::byron {
         void foreach_output(const std::function<void(const tx_output &)> &observer) const override
         {
             const auto &outputs = _tx.array().at(1).array();
-            for (size_t i = 0; i < outputs.size(); i++) {
+            for (size_t i = 0; i < outputs.size(); ++i) {
                 const auto &out = outputs.at(i).array();
                 observer(tx_output { cardano::address { out.at(0).array().at(0).tag().second->buf() }, cardano::amount { out.at(1).uint() }, i });
             }
@@ -338,7 +345,7 @@ namespace daedalus_turbo::cardano::byron {
                 switch (w_type) {
                 case 0:
                 case 2: {
-                    ok.total++;
+                    ++ok.total;
                     cbor_value w_data;
                     _parse_cbor_tag(w_data, w_items.at(1).tag());
                     const auto &vkey = w_data.array().at(0).buf();
@@ -347,7 +354,8 @@ namespace daedalus_turbo::cardano::byron {
                     msg[0] = 0x82;
                     msg[1] = 0x01;
                     span_memcpy(std::span(msg.data() + 2, 32), tx_hash);
-                    if (ed25519::verify(sig, vkey.subspan(0, 32), msg)) ok.ok++;
+                    if (ed25519::verify(sig, vkey.subspan(0, 32), msg))
+                        ++ok.ok;
                     break;
                 }
 

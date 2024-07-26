@@ -155,7 +155,11 @@ namespace daedalus_turbo::sync::turbo {
                 updated_chunks.emplace(std::any_cast<std::string>(res));
             };
             auto saved_proc = [&](saved_chunk &&chunk) {
-                progress.update("download", chunk.info.last_slot - - _parent.local_chain().tx()->start_slot(), _parent.local_chain().tx()->target_slot() - _parent.local_chain().tx()->start_slot());
+                const auto & tx = _parent.local_chain().tx();
+                if (tx->target->end_offset)
+                    progress.update("download", chunk.info.end_offset() - tx->start_offset(), tx->target_offset() - tx->start_offset());
+                else
+                    progress.update("download", chunk.info.last_slot - tx->start_slot(), tx->target_slot() - tx->start_slot());
                 _parent.local_chain().sched().submit(parse_task, 100 * (max_offset - chunk.info.offset) / max_offset, [this, chunk]() {
                     return _parse_local_chunk(chunk.info, chunk.path);
                 }, chunk_offset_t { chunk.info.offset });

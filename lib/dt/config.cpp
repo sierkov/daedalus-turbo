@@ -38,6 +38,7 @@ namespace daedalus_turbo {
             path.emplace(env_path);
         if (!path)
             path.emplace("./etc/mainnet");
+        logger::debug("Configuration directory: {}", *path);
         return *path;
     }
 

@@ -17,12 +17,13 @@ namespace daedalus_turbo::validator {
     struct incremental {
         incremental(chunk_registry &cr);
         ~incremental();
-        cardano::amount unspent_reward(const cardano::stake_ident &id) const;
-        cardano::tail_relative_stake_map tail_relative_stake() const;
-        std::optional<cardano::point> tip() const;
-        cardano::optional_slot can_export(const cardano::optional_point &immutable_tip) const;
+        [[nodiscard]] cardano::amount unspent_reward(const cardano::stake_ident &id) const;
+        [[nodiscard]] cardano::tail_relative_stake_map tail_relative_stake() const;
+        [[nodiscard]] cardano::optional_point core_tip() const;
+        [[nodiscard]] cardano::optional_point tip() const;
+        [[nodiscard]] cardano::optional_slot can_export(const cardano::optional_point &immutable_tip) const;
         std::string node_export(const std::filesystem::path &ledger_dir, const cardano::optional_point &immutable_tip, int prio=1000) const;
-        const state &state() const;
+        [[nodiscard]] const state &state() const;
     private:
         struct impl;
         std::unique_ptr<impl> _impl;

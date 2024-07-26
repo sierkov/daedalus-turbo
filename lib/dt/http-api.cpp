@@ -425,9 +425,9 @@ namespace daedalus_turbo::http_api {
                     // prepare JSON array with tail_relative_stake data
                     _tail_relative_stake = _cr->tail_relative_stake();
                     _j_tail_relative_stake.clear();
-                    for (const auto &[slot, rel_stake]: _tail_relative_stake) {
+                    for (const auto &[point, rel_stake]: _tail_relative_stake) {
                         _j_tail_relative_stake.emplace_back(json::object {
-                            { "slot", static_cast<uint64_t>(slot) },
+                            { "slot", point.slot },
                             { "relativeStake", rel_stake }
                         });
                     }

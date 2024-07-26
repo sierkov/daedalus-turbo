@@ -29,7 +29,7 @@ namespace daedalus_turbo::sync {
                 logger::info("user override of the target: up to {}", *max_slot);
                 target = max_slot;
             }
-            if (peer.intersection() < target) {
+            if (peer.intersection() < target && peer.intersection() < peer.tip()) {
                 for (size_t num_retries = max_retries; num_retries; --num_retries) {
                     logger::info("syncing from {} to {}", start_point, target);
                     const auto ex_ptr = _cr.accept_progress(start_point, target, [&] {

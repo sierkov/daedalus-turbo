@@ -17,6 +17,7 @@ namespace daedalus_turbo::cardano {
         const uint64_t byron_epoch_length;
         const uint64_t byron_slot_duration;
         const txo_map byron_utxos;
+        const set<vkey> byron_issuers;
         const uint64_t byron_slots_per_chunk = 21600;
         const config_json shelley_genesis;
         const block_hash shelley_genesis_hash;
@@ -75,6 +76,7 @@ namespace daedalus_turbo::cardano {
         static plutus_cost_model _prep_plutus_v2_cost_model(const plutus_cost_model &v1_costs);
         static shelley_delegate_map _shelley_prep_delegates(const daedalus_turbo::config &genesis);
         static txo_map _byron_prep_utxos(const daedalus_turbo::config &genesis);
+        static set<vkey> _byron_prep_issuers(const daedalus_turbo::config &genesis);
         static block_hash _verify_hash_byron(const std::string_view &hash_hex, const daedalus_turbo::config &genesis);
         static block_hash _verify_hash(const std::string_view &hash_hex, const daedalus_turbo::config &genesis);
     };

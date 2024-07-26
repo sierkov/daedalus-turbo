@@ -103,5 +103,18 @@ suite cardano_byron_suite = [] {
             expect(blk->prev_hash() == genesis_hash);
             expect(blk->hash() == hash);
         };
+
+        "block body hashes verification"_test = [] {
+            const auto chunk = file::read("./data/chunk-registry/compressed/chunk/526D236112DB8E38E66F37D330C85AFE0C268D81DF853DDDE4E88551EB9B0637.zstd");
+            cbor_parser parser { chunk };
+            cbor_value block_tuple {};
+            while (!parser.eof()) {
+                parser.read(block_tuple);
+                if (block_tuple.at(0).uint() == 1) [[likely]] {
+                    const auto blk = cardano::make_block(block_tuple, block_tuple.data - chunk.data());
+                    expect(blk->body_hash_ok()) << blk->slot();
+                }
+            }
+        };
     };  
 };

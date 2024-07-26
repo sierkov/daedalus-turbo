@@ -68,7 +68,7 @@ export default function Dashboard() {
                         <Button className="search-button" startIcon={<SaveAltIcon />}
                             variant="contained" color="secondary" size="large" onClick={doExport}
                             disabled={!status?.exportable}>Export State to Daedalus
-                        </Button>)
+                        </Button>
                     </div>
                 </div>
             </div>

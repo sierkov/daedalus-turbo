@@ -3,6 +3,7 @@
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
+#include <dt/base64.hpp>
 #include <dt/cardano/config.hpp>
 #include <dt/test.hpp>
 
@@ -28,6 +29,20 @@ suite cardano_config_suite = [] {
         };
         "plutus cost models"_test = [&] {
             expect(cfg.plutus_v1_cost_model.size() == 166);
+        };
+        "byron issuers"_test = [&] {
+            static std::set<vkey> orig_issuers {
+                vkey::from_hex("0BDB1F5EF3D994037593F2266255F134A564658BB2DF814B3B9CEFB96DA34FA9"),
+                vkey::from_hex("1BC97A2FE02C297880CE8ECFD997FE4C1EC09EE10FEEEE9F686760166B05281D"),
+                vkey::from_hex("26566E86FC6B9B177C8480E275B2B112B573F6D073F9DEEA53B8D99C4ED976B3"),
+                vkey::from_hex("50733161FDAFB6C8CB6FAE0E25BDF9555105B3678EFB08F1775B9E90DE4F5C77"),
+                vkey::from_hex("993A8F056D2D3E50B0AC60139F10DF8F8123D5F7C4817B40DAC2B5DD8AA94A82"),
+                vkey::from_hex("9A6FA343C8C6C36DE1A3556FEB411BFDF8708D5AF88DE8626D0FC6BFA4EEBB6D"),
+                vkey::from_hex("D2965C869901231798C5D02D39FCA2A79AA47C3E854921B5855C82FD14708915"),
+            };
+            test_same(orig_issuers.size(), cfg.byron_issuers.size());
+            for (const auto &vk: orig_issuers)
+                expect(cfg.byron_issuers.contains(vk));
         };
     };
 };

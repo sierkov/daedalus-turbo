@@ -416,7 +416,7 @@ namespace daedalus_turbo::cardano {
         mutable std::optional<block_hash> _cached_hash {};
     };
 
-    using tail_relative_stake_map = std::map<uint64_t, double>;
+    using tail_relative_stake_map = map<point, double>;
 
     struct genesis_deleg {
         buffer hash;
@@ -449,7 +449,7 @@ namespace daedalus_turbo::cardano {
         {
             if (tail_relative_stake.empty())
                 return 0.0;
-            auto it = tail_relative_stake.lower_bound(slot);
+            auto it = tail_relative_stake.lower_bound(cardano::point { .slot=slot });
             if (it != tail_relative_stake.end())
                 return it->second;
             return 1.0;

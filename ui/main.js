@@ -43,7 +43,7 @@ const api = {
   dataDir: path.resolve(roamingDataDir, 'data'),
   logPath: path.resolve(roamingDataDir, 'log/dt-api.log'),
   uiDataPath: path.resolve(roamingDataDir, 'ui'),
-  etcPath: path.resolve(installDir, 'etc'),
+  etcPath: path.resolve(installDir, 'etc/mainnet'),
   ip: '127.0.0.1',
   port: 55556,
   os: osEnv
@@ -202,7 +202,15 @@ function setupIdRequest(name, baseURI, reqURI) {
 ipcMain.on("exit", () => app.quit());
 ipcMain.on('selectDir', async (event, reqId, params) => {
   try {
-    const result = await dialog.showOpenDialog({ properties: ['openDirectory'] });
+    let defaultPath;
+    if (api.os === "darwin" && !!process?.env?.HOME)
+      defaultPath = process?.env?.HOME + "/Library/Application Support/Daedalus Mainnet/chain";
+    else if (api.os === "win32" && !!process?.env?.APPDATA)
+      defaultPath = process?.env?.APPDATA + "\\Daedalus Mainnet\\chain";
+    const result = await dialog.showOpenDialog({
+      defaultPath,
+      properties: ['openDirectory', 'showHiddenFiles']
+    });
     console.log('selectDir OK:', result);
     event.reply('selectDir', reqId, undefined, result);
   } catch (e) {

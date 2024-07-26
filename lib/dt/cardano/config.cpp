@@ -37,6 +37,15 @@ namespace daedalus_turbo::cardano {
         return txos;
     }
 
+    set<vkey> config::_byron_prep_issuers(const daedalus_turbo::config &genesis)
+    {
+        set<vkey> issuers {};
+        for (const auto &[deleg_id, deleg_info]: genesis.at("heavyDelegation").as_object()) {
+            issuers.emplace(base64::decode(json::value_to<std::string_view>(deleg_info.at("issuerPk"))).span().subbuf(0, 32));
+        }
+        return issuers;
+    }
+
     block_hash config::_verify_hash_byron(const std::string_view &hash_hex, const daedalus_turbo::config &genesis)
     {
         const auto cfg_hash = block_hash::from_hex(hash_hex);
@@ -263,6 +272,7 @@ namespace daedalus_turbo::cardano {
         byron_epoch_length { 21600 },
         byron_slot_duration { std::stoull(json::value_to<std::string>(byron_genesis.at("blockVersionData").as_object().at("slotDuration"))) / 1000 },
         byron_utxos { _byron_prep_utxos(byron_genesis) },
+        byron_issuers { _byron_prep_issuers(byron_genesis) },
         shelley_genesis { cfg.at(std::filesystem::path { json::value_to<std::string>(cfg.at("config").at("ShelleyGenesisFile")) }.stem().string()) },
         shelley_genesis_hash { _verify_hash(cfg.at("config").at("ShelleyGenesisHash").as_string(), shelley_genesis) },
         shelley_epoch_length { json::value_to<uint64_t>(shelley_genesis.at("epochLength")) },

@@ -1560,6 +1560,17 @@ namespace daedalus_turbo::validator {
                 _sched.submit_void(task_group, bufs.at(i).size() * 100 / data.size(), [&, i] { decoders[i](bufs.at(i)); } );
             }
         });
+        // Reserve snapshots can be saved to disk before the validation is fully finished.
+        // However, they will be renamed into their proper names only when they become valid.
+        // Thus, if we load a snapshot we need to merge the subchains.
+        for (auto &[offset, sc]: _subchains) {
+            if (!sc)
+                sc.valid_blocks = sc.num_blocks;
+        }
+        _subchains.merge_valid();
+        if (end_offset() != valid_end_offset())
+            throw error("validator state from {} is in inconsistent state valid_end_offset: {} vs end_offset: {}",
+                path, valid_end_offset(), end_offset());
         _recompute_caches();
     }
 

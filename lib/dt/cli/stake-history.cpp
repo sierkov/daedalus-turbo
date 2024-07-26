@@ -23,7 +23,7 @@ namespace daedalus_turbo::cli::stake_history {
             cardano::address_buf addr_raw { args.at(1) };
             if (addr_raw.size() == 28)
                 addr_raw.insert(addr_raw.begin(), 0xE1);
-            chunk_registry cr { data_dir };
+            chunk_registry cr { data_dir, chunk_registry::mode::index };
             reconstructor r { cr };
             cardano::address addr { addr_raw.span() };
             const auto id = addr.stake_id();

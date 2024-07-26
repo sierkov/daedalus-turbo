@@ -18,10 +18,9 @@ namespace daedalus_turbo::cli::tip {
         {
             const auto &data_dir = args.at(0);
             chunk_registry cr { data_dir };
-            if (const auto last_block = cr.last_block(); last_block)
-                logger::info("the local tip: {} {}", cr.make_slot(last_block->slot), last_block->hash);
-            else
-                logger::info("the local chain is empty");
+            logger::info("the local tip: {}", cr.tip());
+            logger::info("the local core tip: {}", cr.core_tip());
+            logger::info("the local immutable tip: {}", cr.immutable_tip());
         }
     };
     static auto instance = command::reg(std::make_shared<cmd>());

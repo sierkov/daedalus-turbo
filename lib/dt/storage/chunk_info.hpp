@@ -6,6 +6,7 @@
 #define DAEDALUS_TURBO_STORAGE_CHUNK_INFO_HPP
 
 #include <string>
+#include <boost/container/flat_set.hpp>
 #include <dt/cardano/common.hpp>
 #include <dt/format.hpp>
 
@@ -19,12 +20,13 @@ namespace daedalus_turbo::storage {
         uint32_t chk_sum = 0;
         uint16_t header_offset = 0;
         uint16_t header_size = 0;
-        uint8_t era = 0; // necessary to exclude boundary blocks (era=0) during density estimation
+        cardano::pool_hash pool_id {};
+        uint8_t era = 0; // necessary to exclude boundary blocks (era=0) during density estimation, etc.
 
         constexpr static auto serialize(auto &archive, auto &self)
         {
             return archive(self.hash, self.offset, self.size, self.slot, self.height, self.chk_sum,
-                self.header_offset, self.header_size, self.era);
+                self.header_offset, self.header_size, self.pool_id, self.era);
         }
 
         [[nodiscard]] uint64_t end_offset() const
@@ -49,8 +51,8 @@ namespace daedalus_turbo::storage {
         cardano::block_hash prev_block_hash {};
         cardano::block_hash last_block_hash {};
         uint64_t offset = 0;
-        // A field that is not serialized to json
-        std::vector<block_info> blocks {};
+        // fields that are not serialized to json:
+        vector<block_info> blocks {};
 
         constexpr static auto serialize(auto &archive, auto &self)
         {

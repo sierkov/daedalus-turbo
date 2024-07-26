@@ -165,50 +165,45 @@ namespace daedalus_turbo::validator {
 
         cardano::tail_relative_stake_map tail_relative_stake() const
         {
-            timer t { "tail_relative_stake", logger::level::info };
-            struct stake_info {
-                cardano::pool_hash pool_hash {};
-                double rel_stake = 0;
-            };
-            std::map<uint64_t, stake_info> slot_rel_stake {};
-            uint64_t min_epoch = _state.epoch() > 1 ? _state.epoch() - 1 : 0;
-            for (auto rit = _cr.chunks().rbegin(), rend = _cr.chunks().rend(); rit != rend && _cr.make_slot(rit->second.first_slot).epoch() >= min_epoch; ++rit) {
-                const auto chunk_epoch = _cr.make_slot(rit->second.first_slot).epoch();
-                const auto &chunk = rit->second;
-                auto chunk_path = _cr.full_path(chunk.rel_path());
-                logger::debug("tail_relative_stake analyzing chunk {} from epoch {}", chunk_path, chunk_epoch);
-                auto chunk_data = file::read(chunk_path);
-                const auto &stake_dist = chunk_epoch == _state.epoch() ? _state.pool_dist_set() : _state.pool_dist_go();
-                cbor_parser parser { chunk_data };
-                cbor_value block_tuple {};
-                while (!parser.eof()) {
-                    parser.read(block_tuple);
-                    const auto blk = cardano::make_block(block_tuple, chunk.offset + block_tuple.data - chunk_data.data(), _cr.config());
-                    const auto pool_hash = blk->issuer_hash();
-                    slot_rel_stake[blk->slot()] = stake_info { pool_hash, static_cast<double>(stake_dist.get(pool_hash)) / stake_dist.total_stake() };
+            const auto &stake_dist = _state.pool_stake_dist();
+            const auto &genesis_pools = _state.pbft_pools();
+            cardano::tail_relative_stake_map tail_stake {};
+            set<cardano::pool_hash> seen_pools {};
+            double signing_stake = 0.0;
+            for (const auto &[last_byte_offset, chunk]: _cr.chunks() | std::ranges::views::reverse) {
+                for (const auto &block: chunk.blocks | std::ranges::views::reverse) {
+                    if (block.era >= 2) [[likely]] {
+                        if (const auto pool_it = stake_dist.find(block.pool_id); pool_it != stake_dist.end()) [[likely]] {
+                            if (const auto [it, added] = seen_pools.emplace(block.pool_id); added) {
+                                signing_stake += static_cast<double>(pool_it->second.rel_stake);
+                            }
+                        } else if (!genesis_pools.contains(block.pool_id)) [[unlikely]] {
+                            throw error("block {} issued by an unknown pool: {}", block.point(), block.pool_id);
+                        }
+                        tail_stake.try_emplace(block.point(), signing_stake);
+                        if (signing_stake > 0.5)
+                            return tail_stake;
+                    }
                 }
-                if (slot_rel_stake.size() >= 21600)
-                    break;
             }
-            double rel_stake = 0.0;
-            std::set<cardano::pool_hash> seen_pools {};
-            cardano::tail_relative_stake_map slot_cum_rel_stake {};
-            for (auto rit = slot_rel_stake.rbegin(), rend = slot_rel_stake.rend(); rit != rend; ++rit) {
-                if (!seen_pools.contains(rit->second.pool_hash)) {
-                    rel_stake += rit->second.rel_stake;
-                    seen_pools.emplace(rit->second.pool_hash);
-                }
-                slot_cum_rel_stake[rit->first] = rel_stake;
+            return tail_stake;
+        }
+
+        cardano::optional_point core_tip() const
+        {
+            for (const auto &[point, rel_stake]: tail_relative_stake()) {
+                if (rel_stake > 0.5)
+                    return point;
             }
-            return slot_cum_rel_stake;
+            return {};
         }
 
         void my_on_block_validate(const cardano::block_base &blk) const
         {
             auto slot = blk.slot();
-            if (!blk.signature_ok())
+            if (!blk.signature_ok()) [[unlikely]]
                 throw error("validation of the block signature at slot {} failed!", slot);
-            if (blk.era() >= 2 && !blk.body_hash_ok())
+            if (blk.era() > 0 && !blk.body_hash_ok()) [[unlikely]]
                 throw error("validation of the block body hash at slot {} failed!", slot);
             switch (blk.era()) {
                 case 0: {
@@ -218,16 +213,7 @@ namespace daedalus_turbo::validator {
                     break;
                 }
                 case 1: {
-                    static std::set<cardano::vkey> byron_issuers {
-                        cardano::vkey::from_hex("0BDB1F5EF3D994037593F2266255F134A564658BB2DF814B3B9CEFB96DA34FA9"),
-                        cardano::vkey::from_hex("1BC97A2FE02C297880CE8ECFD997FE4C1EC09EE10FEEEE9F686760166B05281D"),
-                        cardano::vkey::from_hex("26566E86FC6B9B177C8480E275B2B112B573F6D073F9DEEA53B8D99C4ED976B3"),
-                        cardano::vkey::from_hex("50733161FDAFB6C8CB6FAE0E25BDF9555105B3678EFB08F1775B9E90DE4F5C77"),
-                        cardano::vkey::from_hex("993A8F056D2D3E50B0AC60139F10DF8F8123D5F7C4817B40DAC2B5DD8AA94A82"),
-                        cardano::vkey::from_hex("9A6FA343C8C6C36DE1A3556FEB411BFDF8708D5AF88DE8626D0FC6BFA4EEBB6D"),
-                        cardano::vkey::from_hex("D2965C869901231798C5D02D39FCA2A79AA47C3E854921B5855C82FD14708915"),
-                    };
-                    if (!byron_issuers.contains(blk.issuer_vkey()))
+                    if (!_cr.config().byron_issuers.contains(blk.issuer_vkey())) [[unlikely]]
                         throw error("unexpected Byron issuer_vkey: {}", blk.issuer_vkey());
                     break;
                 }
@@ -260,7 +246,7 @@ namespace daedalus_turbo::validator {
             _parse_register_subchain(std::move(sc));
         }
 
-        std::optional<cardano::point> tip() const
+        cardano::optional_point tip() const
         {
             if (const auto last_block = _cr.last_valid_block(); last_block)
                 return cardano::point { last_block->hash, last_block->slot, last_block->height };
@@ -882,7 +868,12 @@ namespace daedalus_turbo::validator {
         return _impl->node_export(ledger_dir, immutable_tip, prio_base);
     }
 
-    std::optional<cardano::point> incremental::tip() const
+    cardano::optional_point incremental::core_tip() const
+    {
+        return _impl->core_tip();
+    }
+
+    cardano::optional_point incremental::tip() const
     {
         return _impl->tip();
     }
