@@ -27,6 +27,7 @@
     "@testing-library/react": "^14.2.1",
     "babel-loader": "^9.1.3",
     "bech32": "^2.0.0",
+    "braces": ">=3.0.3",
     "cross-env": "^7.0.3",
     "css-loader": "^6.8.1",
     "electron": "^25.5.0",
@@ -40,7 +41,8 @@
     "shx": "^0.3.4",
     "style-loader": "^3.3.3",
     "webpack": "^5.88.2",
-    "webpack-cli": "^5.1.4"
+    "webpack-cli": "^5.1.4",
+    "ws": ">=8.17.1"
   },
   "dependencies": {
     "@aws-crypto/crc32": "^5.2.0",
