@@ -26,16 +26,16 @@ namespace daedalus_turbo::sync::hybrid {
                 logger::info("turbo sync stage from {}", turbo_peer->intersection());
                 _progress_stage = stage::turbo;
                 turbo_progress = _turbo.sync(turbo_peer, max_slot);
-            } else {
-                for (const auto &name: pg.names()) {
-                    if (name != "verify")
-                        progress::get().update(name, 1, 1);
-                }
             }
+            /*for (const auto &name: pg.names()) {
+                if (name != "verify")
+                    progress::get().update(name, 1, 1);
+            }*/
             const auto p2p_peer = _p2p.find_peer({});
             logger::info("P2P sync stage continues from {}", p2p_peer->intersection());
             _progress_stage = stage::p2p;
             const auto p2p_progress = _p2p.sync(p2p_peer, max_slot);
+            //progress::get().update("verify", 1, 1);
             return turbo_progress || p2p_progress;
         }
 

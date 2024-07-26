@@ -30,6 +30,7 @@ namespace daedalus_turbo::cli::sync_turbo {
             timer tc { fmt::format("sync-turbo into {}", data_dir) };
             chunk_registry cr { data_dir };
             sync::turbo::syncer syncr { cr };
+            progress_guard pg { "download", "parse", "merge", "validate" };
             const auto peer = syncr.find_peer(host);
             syncr.sync(peer, max_slot);
         }

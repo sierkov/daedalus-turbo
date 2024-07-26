@@ -111,7 +111,6 @@ namespace daedalus_turbo::sync::local {
             if (max_slot) [[unlikely]]
                 throw error("max_slot parameter is not supported!");
             timer t { "sync::local::sync" };
-            progress_guard pg { "parse", "merge", "validate" };
             std::vector<std::string> errors {};
             std::vector<std::string> updated {};
             _refresh_chunks(peer, updated, errors);

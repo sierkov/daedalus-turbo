@@ -39,7 +39,6 @@ namespace daedalus_turbo::sync::turbo {
         void sync_attempt(peer_info &peer, const cardano::optional_slot max_slot)
         {
             timer t { "http synchronization" };
-            progress_guard pg { "download", "parse", "merge", "validate" };
             _cancel_min_offset.reset();
             if (const auto &j_epochs = peer.chain().at("epochs").as_array(); j_epochs.empty())
                 throw error("Remote turbo node reports and empty chain!");

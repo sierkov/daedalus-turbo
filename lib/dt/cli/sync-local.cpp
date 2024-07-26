@@ -29,6 +29,7 @@ namespace daedalus_turbo::cli::sync_local {
             if (const auto opt_it = opts.find("zstd-max-level"); opt_it != opts.end() && opt_it->second)
                 zstd_max_level = std::stoull(*opt_it->second);
             chunk_registry cr { data_dir, mode };
+            progress_guard pg { "download", "parse", "merge", "validate" };
             sync::local::syncer syncr { cr, zstd_max_level, std::chrono::seconds { 0 } };
             syncr.sync(syncr.find_peer(node_dir));
         }
