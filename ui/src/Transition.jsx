@@ -14,15 +14,9 @@ export default function Transition({ message, progressWeights }) {
             try {
                 const s = await appAPI.status(now);
                 const p = s?.progress ?? {};
-                if (Object.keys(p).length === 0) {
-                    clearInterval(updateInterval);
-                    updateInterval = undefined;
-                }
                 setProgress(p);
             } catch (err) {
                 console.error('API error:', err);
-                clearInterval(updateInterval);
-                updateInterval = undefined;
                 setProgress({});
             }
         }
