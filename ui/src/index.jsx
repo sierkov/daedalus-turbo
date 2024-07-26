@@ -14,6 +14,7 @@ const router = createHashRouter([
         element: <App />,
         children: [
             { path: '/', element: <Home /> },
+            { path: '/home', element: <Home confirmed={true} /> },
             { path: '/bech32/:bech32', element: <Bech32 /> },
             { path: '/export/:path', element: <Export /> },
             { path: '/pay/:hash', element: <Pay /> },

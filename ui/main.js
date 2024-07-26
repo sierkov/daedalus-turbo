@@ -5,6 +5,8 @@ const { spawn } = require('child_process');
 const os = require('os');
 const fs = require('fs');
 const log4js = require('log4js');
+const diskusage = require('diskusage');
+const fastFolderSizeSync = require('fast-folder-size/sync');
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const processIsAlive = (pid) => {
@@ -216,6 +218,19 @@ ipcMain.on('selectDir', async (event, reqId, params) => {
   } catch (e) {
     console.log('selectDir ERROR:', e);
     event.reply('selectDir', reqId, e, undefined);
+  }
+});
+ipcMain.on('freeSpace', async (event, reqId, params) => {
+  try {
+    if (!Array.isArray(params) || params?.length === 0)
+      throw Error("freeSpace requires a directory as an argument");
+    const path = params[0];
+    const { free } = await diskusage.check(path);
+    const size = fastFolderSizeSync(path);
+    event.reply('freeSpace', reqId, undefined, Math.round(10 * (free + size) / 1_000_000_000) / 10);
+  } catch (e) {
+    console.log('freeSpace ERROR:', e);
+    event.reply('freeSpace', reqId, e, undefined);
   }
 });
 setupIdRequest('export', api.uri, '/export/');

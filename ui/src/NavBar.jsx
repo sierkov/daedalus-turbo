@@ -6,7 +6,7 @@ export default function NavBar() {
     return <div className="nav-bar-container">
         <div className="nav-bar">
             <div className="logo">
-                <a className="logo-link" href="#/"><img src="static/logo.svg" height="32" /></a>
+                <a className="logo-link" href="#/home"><img src="static/logo.svg" height="32" /></a>
             </div>
             <div className="search">
                 <SearchBox noPadding />

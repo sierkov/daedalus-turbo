@@ -16,22 +16,32 @@ export default function Export() {
         if (exportPath !== path) {
             exportPath = path;
             setReady(false);
-            console.log('export started');
-            appAPI.export(path).then((res) => {
-                console.log('export finished OK:', res);
-                if (res?.error)
-                    setError(res.error);
-                else
-                    setReady(true);
+            console.log('checking free space');
+            appAPI.freeSpace(path).then((free) => {
+                console.log('freeSpace finished OK:', free);
+                if (free >= 200) {
+                    appAPI.export(path).then((res) => {
+                        console.log('export finished OK:', res);
+                        if (res?.error)
+                            setError(res.error);
+                        else
+                            setReady(true);
+                    }).catch((e) => {
+                        console.log('export finished with an error:', e);
+                        setError(e);
+                    });
+                } else {
+                    setError(`200 GB of free space are required but '${path}' has only ${free} GB`);
+                }
             }).catch((e) => {
-                console.log('export finished with an error:', e);
+                console.log('freeSpace finished with an error:', e);
                 setError(e);
-            })
+            });
         }
         return () => {};
     }, [exportPath]);
     const doHome = (ev) => {
-        navigate('/');
+        navigate('/home');
     };
     if (error)
         return <Error issues={[ { 'description': error } ]} onContinue={doHome} />

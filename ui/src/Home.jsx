@@ -5,7 +5,7 @@ import Sync from './Sync.jsx';
 import SyncReady from './SyncReady.jsx';
 import Transition from './Transition.jsx';
 
-export default function Home() {
+export default function Home({ confirmed }) {
     const [statusInfo, setStatusInfo] = useState({ ready: false, progress: {} });
     let updateInterval, cachedNow;
     const updateStatus = async (now) => {
@@ -37,7 +37,7 @@ export default function Home() {
             }
         }
     }, []);
-    const [readyConfirmed, setReadyConfirmed] = useState(false);
+    const [readyConfirmed, setReadyConfirmed] = useState(confirmed);
     let homeComponent;
     if (statusInfo?.apiError?.length > 0) {
         const issues = [
