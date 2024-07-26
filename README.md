@@ -65,7 +65,7 @@ Windows builds have been tested with Windows 11 (earlier versions may work but h
 - Open the image. This is a development (unsigned) image, so Mac OS will ask you if you trust the developer: [See Apple's explanation and instructions](https://support.apple.com/en-is/guide/mac-help/mh40616/mac).
 - Copy dt-explorer app to your Applications folder.
 - Both program and blockchain data will be stored in that folder, so when deleted all used space will be recovered.
-- Launch the app from the Applications folder. If Mac OS says that the app is damaged, open a terminal and run ```sudo xattr -rc <path-to-build>``` command, where ```<path-to-build>``` is the path to the downloaded mac build.
+- Launch the app from the Applications folder. If Mac OS says that the app is damaged, open a terminal and run ```sudo xattr -rc /Applications/dt-explorer.app```.
 
 Mac builds have been tested with Mac OS Sonoma (earlier versions may work but have yet to be be tested).
 
