@@ -29,7 +29,7 @@ Currently supported:
 - Blockchain Explorer Desktop User Interface
 
 In active development:
-- Validation of Plutus and other scripts
+- Validation of Plutus scripts to enable the full tail validation, as explained in [On the Security of Wallet Nodes in the Cardano Blockchain](./doc/2024-sierkov-on-wallet-security.pdf)
 - Support for Cardano Chang hard fork
 
 As the project matures and moves through its [roadmap](#roadmap), the list of supported features will grow.
