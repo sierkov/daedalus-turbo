@@ -1,0 +1,1 @@
+(program 1.0.0 [(lam v0 v0) (con integer 42)])

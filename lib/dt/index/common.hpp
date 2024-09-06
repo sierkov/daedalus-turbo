@@ -260,9 +260,9 @@ namespace daedalus_turbo::index {
     struct indexer_merging: indexer_chunked<ChunkIndexer> {
         using indexer_chunked<ChunkIndexer>::indexer_chunked;
 
-        index::reader<T> make_reader(const std::string &slice_id="") const
+        reader<T> make_reader(const std::string &slice_id="") const
         {
-            return index::reader<T> { indexer_base::reader_path(slice_id) };
+            return { indexer_base::reader_path(slice_id) };
         }
 
         void merge(const std::string &task_group, size_t task_prio, const std::vector<std::string> &chunks, const std::string &final_path,

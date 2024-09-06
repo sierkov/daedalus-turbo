@@ -11,7 +11,8 @@
 namespace daedalus_turbo::index::tx {
     struct item {
         cardano::tx_hash hash {};
-        uint64_t offset: 63 = 0;
+        uint64_t offset: 43 = 0; // assumes max chain size is 8 TB
+        uint64_t wit_rel_offset: 20 = 0; // assumes max block size is under 1 MB
         uint64_t invalid: 1 = 0;
 
         bool operator<(const auto &b) const
@@ -38,12 +39,12 @@ namespace daedalus_turbo::index::tx {
     protected:
         void index_tx(const cardano::tx &tx) override
         {
-            _idx.emplace_part(tx.hash().data()[0] / _part_range, tx.hash(), tx.offset(), 0);
+            _idx.emplace_part(tx.hash().data()[0] / _part_range, tx.hash(), tx.offset(), tx.raw_witness().data - tx.raw_cbor().data, 0);
         }
 
         void index_invalid_tx(const cardano::tx &tx) override
         {
-            _idx.emplace_part(tx.hash().data()[0] / _part_range, tx.hash(), tx.offset(), 1);
+            _idx.emplace_part(tx.hash().data()[0] / _part_range, tx.hash(), tx.offset(), tx.raw_witness().data - tx.raw_cbor().data, 1);
         }
     };
 

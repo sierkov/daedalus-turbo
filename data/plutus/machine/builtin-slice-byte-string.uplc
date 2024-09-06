@@ -1,0 +1,1 @@
+(program 1.0.0 [[[(builtin sliceByteString) (con integer 5)] (con integer 2)] (con bytestring #000102030405060708090A)])

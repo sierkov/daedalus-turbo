@@ -8,26 +8,28 @@
 #include <cstdint>
 #include <dt/blake2b.hpp>
 #include <dt/cbor.hpp>
-#include <dt/ed25519.hpp>
-#include <dt/cardano/alonzo.hpp>
 #include <dt/cardano/byron.hpp>
 #include <dt/cardano/shelley.hpp>
+#include <dt/cardano/alonzo.hpp>
 #include <dt/cardano/babbage.hpp>
+#include <dt/cardano/conway.hpp>
 
 namespace daedalus_turbo::cardano {
-    inline std::unique_ptr<tx> make_tx(const cbor_value &tx, const cardano::block_base &blk)
+    inline std::unique_ptr<tx> make_tx(const cbor_value &tx, const block_base &blk, const cbor::value *wit=nullptr, const size_t idx=0)
     {
         switch (blk.era()) {
         case 1:
-            return std::make_unique<byron::tx>(tx, blk);
+            return std::make_unique<byron::tx>(tx, blk, wit, idx);
         case 2:
         case 3:
-            return std::make_unique<shelley::tx>(tx, blk);
+            return std::make_unique<shelley::tx>(tx, blk, wit, idx);
         case 4:
         case 5:
-            return std::make_unique<alonzo::tx>(tx, blk);
+            return std::make_unique<alonzo::tx>(tx, blk, wit, idx);
         case 6:
-            return std::make_unique<babbage::tx>(tx, blk);
+            return std::make_unique<babbage::tx>(tx, blk, wit, idx);
+        case 7:
+            return std::make_unique<conway::tx>(tx, blk, wit, idx);
         default:
             throw cardano_error("unsupported era {}!", blk.era());
         }
@@ -50,6 +52,8 @@ namespace daedalus_turbo::cardano {
             return std::make_unique<alonzo::block>(block_tuple, offset, era, block, cfg);
         case 6:
             return std::make_unique<babbage::block>(block_tuple, offset, era, block, cfg);
+        case 7:
+            return std::make_unique<conway::block>(block_tuple, offset, era, block, cfg);
         default:
             throw cardano_error("unsupported era {}!", era);
         }

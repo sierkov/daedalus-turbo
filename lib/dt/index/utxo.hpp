@@ -20,13 +20,9 @@ namespace daedalus_turbo::index::utxo {
             tx.foreach_output([&](const auto &tx_out) {
                 _add_utxo(_data, tx, tx_out);
             });
-            // the set is necessary since some transactions contain duplicate inputs and Cardano Node allows it!
-            std::set<cardano::tx_out_ref> inputs {};
             tx.foreach_input([&](const auto &tx_in) {
-                inputs.emplace(tx_in.tx_hash, tx_in.txo_idx);
+                _del_utxo(_data, cardano::tx_out_ref { tx_in.tx_hash, tx_in.txo_idx });
             });
-            for (const auto &txo_id: inputs)
-                _del_utxo(_data, txo_id);
         }
 
         void index_invalid_tx(const cardano::tx &tx) override
@@ -53,78 +49,10 @@ namespace daedalus_turbo::index::utxo {
             }
         }
 
-        static std::optional<uint8_vector> _normalize_assets(const buffer policies_buf)
-        {
-            std::optional<uint8_vector> res {};
-            const cbor::zero::value policies = cbor::zero::parse(policies_buf);
-            if (policies.size()) [[likely]] {
-                map<buffer, uint8_vector> ok_policies {};
-                auto p_it = policies.map();
-                while (!p_it.done()) [[likely]] {
-                    const auto [policy_id, assets] = p_it.next();
-                    if (assets.size()) [[likely]] {
-                        // create a map to sort the assets
-                        map<buffer, cbor::zero::value> ok_assets {};
-                        auto a_it = assets.map();
-                        while (!a_it.done()) [[likely]] {
-                            const auto [asset_id, coin] = a_it.next();
-                            if (coin.uint())
-                                ok_assets.emplace(asset_id.bytes(), coin);
-                        }
-                        if (!ok_assets.empty()) [[likely]] {
-                            cbor::encoder p_enc {};
-                            p_enc.map_compact(ok_assets.size(), [&] {
-                                for (const auto &[asset_id, coin]: ok_assets)
-                                    p_enc.bytes(asset_id).raw_cbor(coin.raw_span());
-                            });
-                            ok_policies.emplace(policy_id.bytes(), std::move(p_enc.cbor()));
-                        }
-                    }
-                }
-                if (!ok_policies.empty()) [[likely]] {
-                    cbor::encoder final_enc {};
-                    final_enc.map_compact(ok_policies.size(), [&] {
-                        for (const auto &[policy_id, assets]: ok_policies)
-                            final_enc.bytes(policy_id).raw_cbor(assets);
-                    });
-                    res.emplace(std::move(final_enc.cbor()));
-                }
-            }
-            return res;
-        }
-
         static void _add_utxo(data_type &idx, const cardano::tx &tx, const cardano::tx_output &tx_out)
         {
-            auto [it, created] = idx.try_emplace(cardano::tx_out_ref { tx.hash(), tx_out.idx }, tx_out.amount);
-            if (!created) [[unlikely]]
+            if (const auto [it, created] = idx.try_emplace(cardano::tx_out_ref { tx.hash(), tx_out.idx }, cardano::tx_out_data::from_output(tx_out) ); !created) [[unlikely]]
                 throw error("found a non-unique TXO {}#{}", tx.hash(), tx_out.idx);
-            it->second.address = tx_out.address.bytes();
-            if (tx_out.assets)
-                it->second.assets = _normalize_assets(tx_out.assets->raw_span());
-            if (tx_out.datum) {
-                switch (tx_out.datum->type) {
-                    case CBOR_BYTES:
-                        it->second.datum.emplace(cardano::datum_hash { tx_out.datum->buf() });
-                        break;
-                    case CBOR_ARRAY: {
-                        switch (tx_out.datum->at(0).uint()) {
-                            case 0:
-                                it->second.datum.emplace(cardano::datum_hash { tx_out.datum->at(1).buf() });
-                                break;
-                            case 1:
-                                it->second.datum.emplace(uint8_vector { tx_out.datum->at(1).tag().second->buf() });
-                                break;
-                            default:
-                                throw error("unexpected datum value: {} in TXO {}#{}", *tx_out.datum, tx.hash(), tx_out.idx);
-                        }
-                        break;
-                    }
-                    default:
-                        throw error("unexpected datum value: {} in TXO {}#{}", *tx_out.datum, tx.hash(), tx_out.idx);
-                }
-            }
-            if (tx_out.script_ref)
-                it->second.script_ref.emplace(tx_out.script_ref->tag().second->buf());
         }
     };
     using indexer = indexer_one_epoch<chunk_indexer>;

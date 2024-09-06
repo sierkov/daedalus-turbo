@@ -23,7 +23,7 @@ namespace daedalus_turbo::cli::validate {
             cardano::optional_point max_block {};
             chunk_list chunks {};
             {
-                chunk_registry cr { data_dir };
+                chunk_registry cr { data_dir, chunk_registry::mode::store };
                 if (const auto &last_block = cr.last_block(); last_block) {
                     max_block = { last_block->hash, last_block->slot, last_block->height, last_block->end_offset() };
                     for (const auto &[offset, chunk]: cr.chunks()) {

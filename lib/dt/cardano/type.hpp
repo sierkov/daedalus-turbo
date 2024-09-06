@@ -346,6 +346,37 @@ namespace daedalus_turbo {
         extern uint8_vector byron_avvm_addr(std::string_view redeem_vk);
         extern tx_hash byron_avvm_tx_hash(std::string_view redeem_vk_base64u);
 
+        enum class script_type: uint8_t {
+            native = 0,
+            plutus_v1 = 1,
+            plutus_v2 = 2,
+            plutus_v3 = 3
+        };
+
+        struct script_info: uint8_vector {
+            script_info(const script_type type, const buffer script): uint8_vector {}
+            {
+                reserve(script.size() + 1);
+                *this << static_cast<uint8_t>(type) << script;
+            }
+
+            [[nodiscard]] script_hash hash() const
+            {
+                return blake2b<script_hash>(*this);
+            }
+
+            [[nodiscard]] script_type type() const
+            {
+                return static_cast<script_type>(at(0));
+            }
+
+            [[nodiscard]] buffer script() const
+            {
+                return span().subbuf(1);
+            }
+        };
+        using script_info_map = map<script_hash, script_info>;
+
         struct address {
             explicit address(const buffer bytes): _bytes { bytes }
             {
@@ -709,13 +740,15 @@ namespace daedalus_turbo {
 
             tx_out_idx(size_t out_idx)
             {
-                if (out_idx >= (1U << 16)) throw error("tx out idx is too big: {}!", out_idx);
+                if (out_idx >= (1U << 16)) [[unlikely]]
+                    throw error("tx out idx is too big: {}!", out_idx);
                 _out_idx = out_idx;
             }
 
             tx_out_idx &operator=(size_t out_idx)
             {
-                if (out_idx >= (1U << 16)) throw error("tx out idx is too big: {}!", out_idx);
+                if (out_idx >= (1U << 16)) [[unlikely]]
+                    throw error("tx out idx is too big: {}!", out_idx);
                 _out_idx = out_idx;
                 return *this;
             }
@@ -728,9 +761,28 @@ namespace daedalus_turbo {
             uint16_t _out_idx;
         };
 
+        struct tx_input {
+            const buffer tx_hash;
+            const tx_out_idx txo_idx;
+            const tx_out_idx idx;
+
+            json::object to_json() const
+            {
+                return json::object {
+                    { "hash", fmt::format("{}", tx_hash) },
+                    { "outIdx", static_cast<size_t>(txo_idx) }
+                };
+            }
+        };
+
         struct tx_out_ref {
             tx_hash hash {};
             tx_out_idx idx {};
+
+            static tx_out_ref from_input(const tx_input &txin)
+            {
+                return { txin.tx_hash, txin.txo_idx };;
+            }
 
             std::strong_ordering operator<=>(const auto &o) const
             {
@@ -744,6 +796,23 @@ namespace daedalus_turbo {
             bool operator==(const tx_out_ref &) const =default;
             bool operator<(const tx_out_ref &) const =default;
         };
+        using tx_out_ref_list = vector<tx_out_ref>;
+
+        struct tx_mint {
+            const buffer policy_id;
+            const cbor::map *assets = nullptr;
+        };
+
+        struct tx_output {
+            const address address;
+            const amount amount;
+            const tx_out_idx idx;
+            const cbor_value *assets = nullptr;
+            const cbor_value *datum = nullptr;
+            const cbor_value *script_ref = nullptr;
+
+            inline json::object to_json() const;
+        };
 
         struct tx_out_data {
             using datum_option_type = std::variant<datum_hash, uint8_vector>;
@@ -752,6 +821,8 @@ namespace daedalus_turbo {
             {
                 return archive(self.coin, self.address, self.assets, self.datum, self.script_ref);
             }
+
+            static tx_out_data from_output(const tx_output &txo);
 
             uint64_t coin = 0;
             uint8_vector address {};
@@ -769,6 +840,7 @@ namespace daedalus_turbo {
                 return coin == o.coin && address == o.address && assets == o.assets && datum == o.datum && script_ref == o.script_ref;
             }
         };
+        using tx_out_data_list = vector<tx_out_data>;
 
         using txo_map = map<tx_out_ref, tx_out_data>;
 

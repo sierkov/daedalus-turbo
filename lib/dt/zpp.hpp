@@ -26,6 +26,16 @@ namespace daedalus_turbo::zpp {
     }
 
     template<typename T>
+    T load(const std::string &path)
+    {
+        T v;
+        const auto zpp_data = file::read_raw(path);
+        ::zpp::bits::in in { zpp_data };
+        in(v).or_throw();
+        return v;
+    }
+
+    template<typename T>
     void load_zstd(T &v, const std::string &path)
     {
         const auto zpp_data = file::read_zstd(path);

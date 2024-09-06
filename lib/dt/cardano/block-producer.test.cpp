@@ -71,9 +71,9 @@ suite cardano_block_producer_suite = [] {
 
             const auto [acc1_sk, acc1_vk] = ed25519::create_from_seed(blake2b<ed25519::seed>(std::string_view { "acc-1" }));
             const auto [acc2_sk, acc2_vk] = ed25519::create_from_seed(blake2b<ed25519::seed>(std::string_view { "acc-2" }));
-            block_producer::tx_input in1 { blake2b<tx_hash>(std::string_view { "tx-1" }), 1, acc1_sk, acc1_vk };
-            block_producer::tx_input in2 { blake2b<tx_hash>(std::string_view { "tx-2" }), 2, acc1_sk, acc1_vk };
-            block_producer::tx_input in3 { blake2b<tx_hash>(std::string_view { "tx-3" }), 0, acc2_sk, acc2_vk };
+            block_producer::tx_input in1 { tx_hash::from_hex("0000000000000000000000000000000000000000000000000000000000000000"), 1, acc1_sk, acc1_vk };
+            block_producer::tx_input in2 { tx_hash::from_hex("1111111111111111111111111111111111111111111111111111111111111111"), 2, acc1_sk, acc1_vk };
+            block_producer::tx_input in3 { tx_hash::from_hex("2222222222222222222222222222222222222222222222222222222222222222"), 0, acc2_sk, acc2_vk };
             block_producer::tx_output out1 { uint8_vector::from_hex("010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"), 1234567 };
             block_producer::tx_output out2 { uint8_vector::from_hex("011111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111"), 987654321 };
             bp.txs.emplace_back(
@@ -90,17 +90,16 @@ suite cardano_block_producer_suite = [] {
             expect(blk->slot() == 0_ull);
             expect(blk->tx_count() == 1_ull);
             blk->foreach_tx([&](const auto &tx) {
-                const auto wit_ok = tx.vkey_witness_ok();
-                expect(wit_ok.total == 2);
+                expect(!!tx.witnesses_ok());
                 tx.foreach_input([&](const auto &tx_in) {
                     const auto &exp_tx_in = bp.txs.at(tx.index()).inputs.at(tx_in.idx);
-                    expect(tx_in.tx_hash == exp_tx_in.tx_hash);
-                    expect(tx_in.txo_idx == exp_tx_in.txo_idx);
+                    test_same(exp_tx_in.tx_hash, tx_in.tx_hash);
+                    test_same(exp_tx_in.txo_idx, tx_in.txo_idx);
                 });
                 tx.foreach_output([&](const auto &tx_out) {
                     const auto &exp_tx_out = bp.txs.at(tx.index()).outputs.at(tx_out.idx);
-                    expect(tx_out.address.bytes() == exp_tx_out.address);
-                    expect(tx_out.amount == exp_tx_out.coin);
+                    test_same(exp_tx_out.address, tx_out.address.bytes());
+                    test_same(exp_tx_out.coin, tx_out.amount);
                 });
             });
             expect(blk->signature_ok());

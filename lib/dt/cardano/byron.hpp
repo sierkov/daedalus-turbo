@@ -327,44 +327,7 @@ namespace daedalus_turbo::cardano::byron {
             }
         }
 
-        vkey_wit_cnt witness_count() const override
-        {
-            if (!_wit)
-                throw cardano_error("vkey_witness_ok called on a transaction without witness data!");
-            return vkey_wit_cnt { _wit->array().size() };
-        }
-
-        vkey_wit_ok vkey_witness_ok() const override
-        {
-            if (!_wit) throw cardano_error("vkey_witness_ok called on a transaction without witness data!");
-            vkey_wit_ok ok {};
-            auto tx_hash = hash();
-            for (const auto &w_raw: _wit->array()) {
-                const auto &w_items = w_raw.array();
-                auto w_type = w_items.at(0).uint();
-                switch (w_type) {
-                case 0:
-                case 2: {
-                    ++ok.total;
-                    cbor_value w_data;
-                    _parse_cbor_tag(w_data, w_items.at(1).tag());
-                    const auto &vkey = w_data.array().at(0).buf();
-                    const auto &sig = w_data.array().at(1).buf();
-                    array<uint8_t, 34> msg;
-                    msg[0] = 0x82;
-                    msg[1] = 0x01;
-                    span_memcpy(std::span(msg.data() + 2, 32), tx_hash);
-                    if (ed25519::verify(sig, vkey.subspan(0, 32), msg))
-                        ++ok.ok;
-                    break;
-                }
-
-                default:
-                    throw cardano_error("slot: {}, tx: {} - unsupported witness type: {}", (uint64_t)_blk.slot(), hash().span(), w_type);
-                }
-            }
-            return ok;
-        }
+        wit_ok witnesses_ok(const tx_out_data_list *input_data=nullptr) const override;
     private:
         void _parse_cbor_tag(cbor_value &val, const cbor_tag &tag) const
         {

@@ -12,7 +12,7 @@
 namespace daedalus_turbo::cardano::shelley {
     static constexpr uint64_t kes_period_slots = 129600;
 
-    inline void parse_shelley_param_update_common(param_update &res, uint64_t idx, const cbor_value &val)
+    inline void parse_shelley_param_update_common(param_update &res, const uint64_t idx, const cbor_value &val)
     {
         switch (idx) {
             case 0: res.min_fee_a.emplace(val.uint()); break;
@@ -284,7 +284,7 @@ namespace daedalus_turbo::cardano::shelley {
             return blake2b<cardano_hash_32>(buffer { body_hash_in.data(), body_hash_in.size() * sizeof(body_hash_in[0]) });
         }
     private:
-        static bool _validate_op_cert(const cardano::kes_signature &kes_, const buffer &issuer_vkey_)
+        static bool _validate_op_cert(const kes_signature &kes_, const buffer &issuer_vkey_)
         {
             std::array<uint8_t, sizeof(cardano_vkey) + 2 * sizeof(uint64_t)> ocert_data {};
             if (kes_.vkey.size() != sizeof(cardano::vkey))
@@ -297,7 +297,7 @@ namespace daedalus_turbo::cardano::shelley {
             return ed25519::verify(kes_.vkey_sig, issuer_vkey_, ocert_data);
         }
 
-        static bool _validate_kes(const uint64_t slot_, const cardano::kes_signature &kes_, const buffer &issuer_vkey_)
+        static bool _validate_kes(const uint64_t slot_, const kes_signature &kes_, const buffer &issuer_vkey_)
         {
             if (!_validate_op_cert(kes_, issuer_vkey_)) {
                 logger::error("the signature of the block's operational certificate is invalid!");
@@ -321,21 +321,7 @@ namespace daedalus_turbo::cardano::shelley {
     struct tx: cardano::tx {
         using cardano::tx::tx;
 
-        void foreach_input(const std::function<void(const tx_input &)> &observer) const override
-        {
-            const cbor_array *inputs = nullptr;
-            for (const auto &[entry_type, entry]: _tx.map()) {
-                if (entry_type.uint() == 0) inputs = &entry.array();
-            }
-            if (inputs == nullptr) return;
-            for (size_t i = 0; i < inputs->size(); i++) {
-                const auto &in = inputs->at(i).array();
-                auto in_idx = in.at(1).uint();
-                if (i >= 0x10000) throw cardano_error("transaction input number is too high {}!", i);
-                if (in_idx >= 0x10000) throw cardano_error("referenced transaction output number is too high {}!", in_idx);
-                observer(tx_input { in.at(0).buf(), (uint16_t)in_idx, (uint16_t)i });
-            }
-        }
+        void foreach_input(const std::function<void(const tx_input &)> &observer) const override;
 
         void foreach_output(const std::function<void(const tx_output &)> &observer) const override
         {
@@ -366,11 +352,11 @@ namespace daedalus_turbo::cardano::shelley {
             }
         }
 
-        const cardano::amount fee() const override
+        const amount fee() const override
         {
             for (const auto &[entry_type, entry]: _tx.map()) {
                 if (entry_type.uint() == 2)
-                    return cardano::amount { entry.uint() };
+                    return { entry.uint() };
             }
             throw error("a shelley+ transaction has no fee information: {} at offset {}!", hash(), offset());
         }
@@ -448,72 +434,13 @@ namespace daedalus_turbo::cardano::shelley {
             });
         }
 
-        vkey_wit_cnt witness_count() const override
-        {
-            vkey_wit_cnt cnt {};
-            if (!_wit)
-                throw cardano_error("vkey_witness_ok called on a transaction without witness data!");
-            for (const auto &[w_type, w_val]: _wit->map()) {
-                switch (w_type.uint()) {
-                    // vkey witness
-                    case 0:
-                        cnt.vkey += w_val.array().size();
-                        break;
-                    case 1: // native_script
-                    case 3: // plutus_v1_script
-                    case 6: // plutus_v2_script
-                    case 7: // plutus_v3_script
-                        cnt.script += w_val.array().size();;
-                        break;
-                    case 2: // bootstrap witness
-                    case 4: // plutus_data
-                    case 5: // redeemer
-                        cnt.other += w_val.array().size();;
-                        break;
-                    default:
-                        throw cardano_error("unsupported witness type: {}!", w_type.uint());
-                }
-            }
-            return cnt;
-        }
-
-        vkey_wit_ok vkey_witness_ok() const override
-        {
-            if (!_wit)
-                throw cardano_error("vkey_witness_ok called on a transaction without witness data!");
-            vkey_wit_ok ok {};
-            const auto &tx_hash = hash();
-            for (const auto &[w_type, w_val]: _wit->map()) {
-                switch (w_type.uint()) {
-                    // vkey witness
-                    case 0: {
-                        for (const auto &w: w_val.array()) {
-                            ++ok.total;
-                            const auto &vkey = w.array().at(0).buf();
-                            const auto &sig = w.array().at(1).buf();
-                            if (ed25519::verify(sig, vkey, tx_hash))
-                                ++ok.ok;
-                        }
-                        break;
-                    }
-
-                    case 1: // native_script
-                    case 2: // bootstrap witness
-                    case 3: // plutus_v1_script
-                    case 6: // plutus_v2_script
-                    case 7: // plutus_v3_script
-                    case 4: // plutus_data
-                    case 5: // redeemer
-                        break;
-
-                    default:
-                        throw cardano_error("unsupported witness type: {}!", w_type.uint());
-                }
-            }
-            return ok;
-        }
+        wit_ok witnesses_ok(const tx_out_data_list *input_data=nullptr) const override;
     protected:
-        void _if_item_present(uint64_t idx, const std::function<void(const cbor_value &)> &observer) const
+        void _validate_witness_vkey(wit_ok &ok, set<key_hash> &vkeys, const cbor::value &w_val) const;
+        void _validate_witness_bootstrap(wit_ok &ok, const cbor::value &w_val) const;
+        void _validate_witness_native_script(wit_ok &ok, const cbor::value &w_val, const set<key_hash> &vkeys) const;
+
+        void _if_item_present(const uint64_t idx, const std::function<void(const cbor_value &)> &observer) const
         {
             const cbor_value *item = nullptr;
             for (const auto &[entry_type, entry]: _tx.map()) {
@@ -525,7 +452,7 @@ namespace daedalus_turbo::cardano::shelley {
             observer(*item);
         }
 
-        void _foreach_cert(uint64_t cert_type, const std::function<void(const cbor_array &, size_t cert_idx)> &observer) const
+        void _foreach_cert(const uint64_t cert_type, const std::function<void(const cbor_array &, size_t cert_idx)> &observer) const
         {
             const cbor_array *certs = nullptr;
             for (const auto &[entry_type, entry]: _tx.map()) {

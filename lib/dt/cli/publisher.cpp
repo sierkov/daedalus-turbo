@@ -13,7 +13,7 @@ namespace daedalus_turbo::cli::publisher {
             cmd.desc = "run continuous import and publishing of Cardano blockchain data";
             cmd.args.expect({ "<node-path>", "<www-path>" });
             cmd.opts.try_emplace("once", "run the publishing cycle only once");
-            cmd.opts.try_emplace("zstd-max-level", "do not validate or index data", "3");
+            cmd.opts.try_emplace("zstd-max-level", "compression level for immutable chunks", "22");
         }
 
         void run(const arguments &args, const options &opts) const override
@@ -23,9 +23,7 @@ namespace daedalus_turbo::cli::publisher {
             bool repeat = true;
             if (const auto opt_it = opts.find("once"); opt_it != opts.end())
                 repeat = false;
-            size_t zstd_max_level = 3;
-            if (const auto opt_it = opts.find("zstd-max-level"); opt_it != opts.end() && opt_it->second)
-                zstd_max_level = std::stoull(*opt_it->second);
+            const size_t zstd_max_level = std::stoull(opts.at("zstd-max-level").value());
             chunk_registry cr { www_path, chunk_registry::mode::store };
             const auto sk = ed25519::skey::from_hex(file::read("etc/publisher-secret.txt").span().string_view());
             daedalus_turbo::publisher p { cr, node_path, sk, zstd_max_level };

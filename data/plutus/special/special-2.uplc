@@ -1,0 +1,1 @@
+(program 1.0.0 [(lam v0 [(lam v1 [(lam v2 [(lam v3 [(lam v4 [(lam v5 [(lam v6 v6) (con integer 23)]) (con integer 23)]) (con integer 23)]) (con integer 23)]) (con integer 23)]) (con integer 23)]) (con integer 23)])

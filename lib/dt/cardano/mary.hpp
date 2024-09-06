@@ -43,11 +43,12 @@ namespace daedalus_turbo::cardano::mary {
             }
         }
 
-        virtual size_t foreach_mint(const std::function<void(const cbor_buffer &, const cbor_map &)> &observer) const
+        size_t foreach_mint(const std::function<void(const buffer &, const cbor::map &)> &observer) const override
         {
             const cbor_map *mint = nullptr;
             for (const auto &[entry_type, entry]: _tx.map()) {
-                if (entry_type.uint() == 9) mint = &entry.map();
+                if (entry_type.uint() == 9)
+                    mint = &entry.map();
             }
             size_t num_mints = 0;
             if (mint) {

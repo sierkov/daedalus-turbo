@@ -15,6 +15,8 @@ namespace daedalus_turbo::cli::sync_turbo {
             cmd.args.expect({ "<data-dir>" });
             cmd.opts.emplace("host", "the turbo peer to synchronize with");
             cmd.opts.emplace("max-slot", "do not synchronize beyond the end of this epoch");
+            cmd.opts.emplace("max-epoch", "synchronize up to the last block of the given epoch; needs --shelley-start-epoch for post-shelley epochs");
+            cmd.opts.emplace("shelley-start-epoch", "defines the first shelley epoch");
         }
 
         void run(const arguments &args, const options &opts) const override
@@ -23,12 +25,26 @@ namespace daedalus_turbo::cli::sync_turbo {
             requirements::check(data_dir);
             std::optional<std::string> host {};
             cardano::optional_slot max_slot {};
+            chunk_registry cr { data_dir };
             if (const auto opt_it = opts.find("host"); opt_it != opts.end() && opt_it->second)
                 host = *opt_it->second;
-            if (const auto opt_it = opts.find("max-slot"); opt_it != opts.end() && opt_it->second)
-                max_slot = std::stoull(*opt_it->second);
-            timer tc { fmt::format("sync-turbo into {}", data_dir) };
-            chunk_registry cr { data_dir };
+            if (const auto opt_it = opts.find("shelley-start-epoch"); opt_it != opts.end() && opt_it->second)
+                cr.config().shelley_start_slot(std::stoull(*opt_it->second) * cr.config().byron_epoch_length);
+            if (const auto opt_it = opts.find("max-epoch"); opt_it != opts.end() && opt_it->second)
+                max_slot = cardano::slot::from_epoch(std::stoull(*opt_it->second) + 1ULL, cr.config()) - 1;
+            if (const auto opt_it = opts.find("max-slot"); opt_it != opts.end() && opt_it->second) {
+                if (!max_slot) [[likely]]
+                    max_slot = std::stoull(*opt_it->second);
+                else
+                    throw error("max_slot has already been set!");
+            }
+            if (const auto opt_it = opts.find("max-slot"); opt_it != opts.end() && opt_it->second) {
+                if (!max_slot) [[likely]]
+                    max_slot = std::stoull(*opt_it->second);
+                else
+                    throw error("max_slot has already been set!");
+            }
+
             sync::turbo::syncer syncr { cr };
             progress_guard pg { "download", "parse", "merge", "validate" };
             const auto peer = syncr.find_peer(host);

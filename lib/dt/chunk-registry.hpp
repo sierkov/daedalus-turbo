@@ -622,21 +622,43 @@ namespace daedalus_turbo {
             return count_blocks(start_point, last_slot);
         }
 
-        void read(uint64_t offset, cbor_value &value)
+        uint64_t read_holding_chunk(uint8_vector &chunk_data, const uint64_t offset) const
         {
             if (offset >= num_bytes())
                 throw error("the requested offset {} is larger than the maximum one: {}", offset, num_bytes());
             const auto &chunk = find_offset(offset);
             if (offset >= chunk.offset + chunk.data_size)
                 throw error("the requested chunk segment is too small to parse it");
-            file::read(full_path(chunk.rel_path()), _read_buffer);
-            size_t read_offset = offset - chunk.offset;
-            size_t read_size = _read_buffer.size() - read_offset;
-            cbor_parser parser(buffer { _read_buffer.data() + read_offset, read_size });
+            file::read(full_path(chunk.rel_path()), chunk_data);
+            return chunk.offset;
+        }
+
+        void read_from_chunk_buffer(cbor_value &value, const uint64_t value_offset, const buffer &chunk_data, const uint64_t chunk_offset) const
+        {
+            if (value_offset < chunk_offset) [[unlikely]]
+                throw error("the requested value offset is outside of the chunk's data range!");
+            if (value_offset >= chunk_offset + chunk_data.size()) [[unlikely]]
+                throw error("the requested chunk segment is too small to parse it");
+            const size_t read_offset = value_offset - chunk_offset;
+            const size_t read_size = chunk_data.size() - read_offset;
+            cbor_parser parser(chunk_data.subbuf(read_offset, read_size));
             parser.read(value);
         }
 
-        // assumes no concurent modifications to chunk_refistry data
+        void read(const uint64_t offset, cbor_value &value) const
+        {
+            const auto chunk_offset = read_holding_chunk(_read_buffer, offset);;
+            read_from_chunk_buffer(value, offset, _read_buffer, chunk_offset);
+        }
+
+        cbor::value read(const uint64_t offset) const
+        {
+            cbor::value item;
+            read(offset, item);
+            return item;
+        }
+
+        // assumes no concurrent modifications to chunk_registry data
         template<typename T>
         bool parse_parallel(
             const std::function<void(T &res, const std::string &chunk_path, cardano::block_base &blk)> &act,
@@ -656,7 +678,7 @@ namespace daedalus_turbo {
             });
             for (const auto &[chunk_offset, chunk_info]: _chunks) {
                 ++num_tasks;
-                _sched.submit("parse-chunk", 100, [this, chunk_offset, chunk_info, &act]() {
+                _sched.submit("parse-chunk", -static_cast<int64_t>(chunk_offset), [this, chunk_offset, chunk_info, &act]() {
                     T res {};
                     auto canon_path = full_path(chunk_info.rel_path());
                     const auto data = file::read(canon_path);

@@ -45,7 +45,7 @@ namespace daedalus_turbo::logger {
             logger.set_level(spdlog::level::trace);
         else
             logger.set_level(spdlog::level::debug);
-        logger.flush_on(spdlog::level::trace);
+        logger.flush_on(spdlog::level::debug);
         return logger;
     }
 

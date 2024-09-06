@@ -131,31 +131,6 @@ namespace daedalus_turbo::cardano {
         uint16_t _epoch = 0;
     };
 
-    struct tx_input {
-        const buffer tx_hash;
-        const tx_out_idx txo_idx;
-        const tx_out_idx idx;
-
-        json::object to_json() const
-        {
-            return json::object {
-                { "hash", fmt::format("{}", tx_hash) },
-                { "outIdx", (size_t)txo_idx }
-            };
-        }
-    };
-
-    struct tx_output {
-        const address address;
-        const amount amount;
-        const tx_out_idx idx;
-        const cbor_value *assets = nullptr;
-        const cbor_value *datum = nullptr;
-        const cbor_value *script_ref = nullptr;
-
-        inline json::object to_json() const;
-    };
-
     struct tx_withdrawal {
         const address address;
         const amount amount;
@@ -425,46 +400,37 @@ namespace daedalus_turbo::cardano {
     };
 
     struct tx {
-        struct vkey_wit_ok {
-            size_t total = 0;
-            size_t ok = 0;
+        struct wit_ok {
+            size_t vkey_total = 0;
+            size_t vkey_ok = 0;
+            size_t script_total = 0;
+            size_t script_ok = 0;
 
-            bool operator()() const noexcept
+            operator bool() const
             {
-                return total == ok;
+                return vkey_total == vkey_ok && script_total == script_ok;
             }
-        };
-
-        struct vkey_wit_cnt {
-            size_t vkey = 0;
-            size_t script = 0;
-            size_t other = 0;
-            size_t total() const
-            {
-                return vkey + script + other;
-            };
         };
 
         static double slot_relative_stake(const tail_relative_stake_map &tail_relative_stake, const uint64_t slot)
         {
             if (tail_relative_stake.empty())
                 return 0.0;
-            auto it = tail_relative_stake.lower_bound(cardano::point { .slot=slot });
-            if (it != tail_relative_stake.end())
+            if (const auto it = tail_relative_stake.lower_bound(point { .slot=slot }); it != tail_relative_stake.end())
                 return it->second;
             return 1.0;
         }
 
-        tx(const cbor_value &tx, const block_base &blk, const cbor_value *wit=nullptr, size_t idx=0)
+        tx(const cbor_value &tx, const block_base &blk, const cbor::value *wit=nullptr, const size_t idx=0)
             : _tx { tx }, _blk { blk }, _wit { wit }, _idx { idx }
         {
         }
 
         virtual ~tx() {}
-        virtual vkey_wit_ok vkey_witness_ok() const =0;
-        virtual vkey_wit_cnt witness_count() const =0;
+        virtual wit_ok witnesses_ok(const tx_out_data_list *input_data=nullptr) const =0;
         virtual void foreach_input(const std::function<void(const tx_input &)> &) const {}
         virtual void foreach_output(const std::function<void(const tx_output &)> &) const {}
+        virtual size_t foreach_mint(const std::function<void(const buffer &, const cbor::map &)> &) const { return 0; }
         virtual void foreach_withdrawal(const std::function<void(const tx_withdrawal &)> &) const {}
         virtual void foreach_stake_reg(const std::function<void(const stake_ident &, size_t)> &) const {}
         virtual void foreach_stake_unreg(const std::function<void(const stake_ident &, size_t)> &) const {}
@@ -477,17 +443,16 @@ namespace daedalus_turbo::cardano {
         virtual void foreach_collateral(const std::function<void(const tx_input &)> &) const {}
         virtual void foreach_collateral_return(const std::function<void(const tx_output &)> &) const {}
 
-        virtual const cardano::amount fee() const
+        virtual const amount fee() const
         {
-            return cardano::amount {};
+            return {};
         }
 
         virtual const cardano_hash_32 &hash() const
         {
-            if (!_cached_hash.has_value()) {
+            if (!_cached_hash)
                 _cached_hash.emplace(blake2b<cardano_hash_32>(_tx.data_buf()));
-            }
-            return _cached_hash.value();
+            return *_cached_hash;
         }
 
         virtual size_t offset() const
@@ -525,7 +490,7 @@ namespace daedalus_turbo::cardano {
         const cbor_value &raw_witness() const
         {
             if (!_wit)
-                throw error("transaction wtiness has not beed supplied for this transaction!");
+                throw error("a transaction witness has not been supplied for this transaction!");
             return *_wit;
         }
     protected:

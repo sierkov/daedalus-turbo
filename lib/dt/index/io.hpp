@@ -12,7 +12,6 @@
 #include <dt/container.hpp>
 #include <dt/file.hpp>
 #include <dt/mutex.hpp>
-#include <dt/scheduler.hpp>
 #include <dt/util.hpp>
 
 namespace daedalus_turbo::index {
@@ -662,7 +661,7 @@ namespace daedalus_turbo::index {
 
         reader_multi_mt(const std::span<const std::string> &paths): _readers {}
         {
-            if (paths.size() == 0)
+            if (paths.empty()) [[unlikely]]
                 throw error("multi-part index with no slices! Is the data_dir correct?");
             _readers.reserve(paths.size());
             for (const auto &p: paths)

@@ -7,12 +7,13 @@
 
 #include <dt/index/io.hpp>
 #include <dt/logger.hpp>
+#include <dt/scheduler.hpp>
 
 namespace daedalus_turbo::index {
     template<typename T>
-    inline uint64_t merge_index_part(index::writer<T> &out_idx, size_t part_idx, const std::vector<std::shared_ptr<index::reader_mt<T>>> &readers)
+    uint64_t merge_index_part(writer<T> &out_idx, size_t part_idx, const std::vector<std::shared_ptr<reader_mt<T>>> &readers)
     {
-        std::vector<typename index::reader_mt<T>::thread_data> reader_data {};
+        std::vector<typename reader_mt<T>::thread_data> reader_data {};
         merge_queue<T> items_to_consider {};
         uint64_t max_offset = 0;
         for (size_t i = 0; i < readers.size(); ++i) {
@@ -51,10 +52,10 @@ namespace daedalus_turbo::index {
             on_complete();
             return;
         }
-        std::vector<std::shared_ptr<index::reader_mt<T>>> readers {};
+        std::vector<std::shared_ptr<reader_mt<T>>> readers {};
         size_t num_parts = 0;
         for (size_t i = 0; i < chunks.size(); ++i) {
-            auto &reader = readers.emplace_back(std::make_shared<index::reader_mt<T>>(chunks[i]));
+            auto &reader = readers.emplace_back(std::make_shared<reader_mt<T>>(chunks[i]));
             if (num_parts == 0)
                 num_parts = reader->num_parts();
             if (num_parts != reader->num_parts())

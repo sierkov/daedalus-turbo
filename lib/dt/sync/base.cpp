@@ -50,6 +50,7 @@ namespace daedalus_turbo::sync {
                     logger::info("retrying after a failure, number of planned attempts: {}", num_retries);
                 }
             }
+            logger::info("the new tip: {}", _cr.tip());
             // the new chain's tip can be smaller but have a better chain, so compare for equality here
             return start_tip != _cr.tip();
         }
