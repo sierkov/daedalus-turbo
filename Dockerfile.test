@@ -10,6 +10,7 @@ RUN cp /etc/sudoers /etc/sudoers.orig
 RUN awk '{ if (/^%sudo/) { print "%sudo\tALL=(ALL:ALL) NOPASSWD:ALL" } else { print } }' /etc/sudoers.orig > /etc/sudoers
 RUN useradd -m -s /bin/bash -G sudo dev
 RUN apt-get install -y build-essential cmake pkg-config gdb libboost1.83-all-dev libboost-url1.83-dev libsecp256k1-dev libsodium-dev libzstd-dev libssl-dev libfmt-dev libspdlog-dev
+RUN apt-get install -y ninja-build
 RUN mkdir /home/dev/dt
 COPY 3rdparty /home/dev/dt/3rdparty
 COPY src /home/dev/dt/src
@@ -24,8 +25,8 @@ RUN chown -R dev:dev /home/dev
 
 USER dev
 WORKDIR /home/dev/dt
-RUN cmake -B cmake-build-release
-RUN cmake --build cmake-build-release -j8 -t dt
+RUN cmake -B cmake-build-release -GNinja
+RUN cmake --build cmake-build-release -j -t dt
 RUN mkdir log
 WORKDIR /home/dev/dt/cmake-build-release
 ENV DT_LOG=/home/dev/dt/log/dt.log
