@@ -14,6 +14,7 @@
 #ifndef DAEDALUS_TURBO_CBOR_TURBO_HPP
 #define DAEDALUS_TURBO_CBOR_TURBO_HPP
 
+#include <dt/big_int.hpp>
 #include <dt/cbor/types.hpp>
 #include <dt/util.hpp>
 
@@ -134,9 +135,26 @@ namespace daedalus_turbo::cbor::zero {
             uint32_t _size;
         };
 
+        cpp_int big_int() const
+        {
+            switch (type()) {
+                case major_type::uint: return cpp_int { uint() };
+                case major_type::nint: return (cpp_int { uint() } + 1) * -1;
+                case major_type::tag: {
+                    const auto t = tag();
+                    switch (t.first) {
+                        case 2: return big_int_from_bytes(t.second.bytes());
+                        case 3: return (big_int_from_bytes(t.second.bytes()) + 1) * -1;
+                        default: throw error("unsupported tag type for a bigint: {}!", t.first);
+                    }
+                }
+                default: throw error("cannot interpret cbor value as a bigint: {}", *this);
+            }
+        }
+
         uint64_t uint() const
         {
-            if (type() == major_type::uint) [[likely]]
+            if (type() == major_type::uint || type() == major_type::nint) [[likely]]
                 return special_uint();
             throw error("expected uint but have {}", type());
         }

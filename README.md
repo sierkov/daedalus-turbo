@@ -169,6 +169,7 @@ The below notes may be helpful if you decide to build the software outside of Do
 - [boost](https://www.boost.org/) == 1.83, a collection of C++ libraries
 - [fmt](https://github.com/fmtlib/fmt) >= 8.1.1, a string formatting library
 - [libsodium](https://github.com/jedisct1/libsodium) >= 1.0.18, a cryptographic library
+- [secp256k1](https://github.com/bitcoin-core/secp256k1) >= 0.2.0, a cryptographic library
 - [spdlog](https://github.com/gabime/spdlog) >= 1.9.2, a logging library
 - [zstd](https://github.com/facebook/zstd) >= 1.4.8, a compression library
 

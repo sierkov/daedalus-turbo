@@ -6,7 +6,7 @@
 #define DAEDALUS_TURBO_CARDANO_CONFIG_HPP
 
 #include <dt/config.hpp>
-#include <dt/cardano/type.hpp>
+#include <dt/cardano/types.hpp>
 
 namespace daedalus_turbo::cardano {
     struct config {
@@ -37,8 +37,7 @@ namespace daedalus_turbo::cardano {
         const block_hash alonzo_genesis_hash;
         const config_json conway_genesis;
         const block_hash conway_genesis_hash;
-        const plutus_cost_model plutus_v1_cost_model;
-        const plutus_cost_model plutus_v2_cost_model;
+        const plutus_cost_models plutus_all_cost_models;
 
         static const config &get();
         explicit config(const configs &cfg=configs_dir::get());
@@ -72,8 +71,7 @@ namespace daedalus_turbo::cardano {
     private:
         mutable std::optional<uint64_t> _shelley_start_slot {};
 
-        static plutus_cost_model _prep_plutus_v1_cost_model(const daedalus_turbo::config &genesis);
-        static plutus_cost_model _prep_plutus_v2_cost_model(const plutus_cost_model &v1_costs);
+        static plutus_cost_models _prep_plutus_cost_models(const daedalus_turbo::config &genesis);
         static shelley_delegate_map _shelley_prep_delegates(const daedalus_turbo::config &genesis);
         static txo_map _byron_prep_utxos(const daedalus_turbo::config &genesis);
         static set<vkey> _byron_prep_issuers(const daedalus_turbo::config &genesis);

@@ -14,20 +14,26 @@
 #include <thread>
 #include <vector>
 #ifndef _MSC_VER
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpragmas"
-#ifndef __clang__
-#   pragma GCC diagnostic ignored "-Wdangling-reference"
-#endif
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wpragmas"
+#   ifndef __clang__
+#       pragma GCC diagnostic ignored "-Wdangling-reference"
+#       pragma GCC diagnostic ignored "-Warray-bounds"
+#       pragma GCC diagnostic ignored "-Wstringop-overflow"
+#   endif
 #endif
 #include <fmt/core.h>
 #include <fmt/format.h>
 #ifndef _MSC_VER
-#pragma GCC diagnostic pop
+#   pragma GCC diagnostic pop
 #endif
 
 namespace daedalus_turbo {
     using fmt::format;
+
+    struct buffer_lowercase: std::span<const uint8_t> {
+        using std::span<const uint8_t>::span;
+    };
 }
 
 namespace fmt {
@@ -38,6 +44,18 @@ namespace fmt {
             auto out_it = ctx.out();
             for (uint8_t v: data) {
                 out_it = fmt::format_to(out_it, "{:02X}", v);
+            }
+            return out_it;
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::buffer_lowercase>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const std::span<const uint8_t> &data, FormatContext &ctx) const -> decltype(ctx.out()) {
+            auto out_it = ctx.out();
+            for (uint8_t v: data) {
+                out_it = fmt::format_to(out_it, "{:02x}", v);
             }
             return out_it;
         }

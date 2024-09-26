@@ -5,12 +5,9 @@
 //
 
 #include "keccak.h"
-
-// big endian architectures need #define __BYTE_ORDER __BIG_ENDIAN
-#ifndef _MSC_VER
-#include <endian.h>
-#endif
-
+#include <algorithm>
+#include <cstring>
+#include <stdexcept>
 
 /// same as reset()
 Keccak::Keccak(Bits bits)
@@ -54,27 +51,6 @@ namespace
     return (x << numBits) | (x >> (64 - numBits));
   }
 
-  /// convert litte vs big endian
-  inline uint64_t swap(uint64_t x)
-  {
-#if defined(__GNUC__) || defined(__clang__)
-    return __builtin_bswap64(x);
-#endif
-#ifdef _MSC_VER
-    return _byteswap_uint64(x);
-#endif
-
-    return  (x >> 56) |
-           ((x >> 40) & 0x000000000000FF00ULL) |
-           ((x >> 24) & 0x0000000000FF0000ULL) |
-           ((x >>  8) & 0x00000000FF000000ULL) |
-           ((x <<  8) & 0x000000FF00000000ULL) |
-           ((x << 24) & 0x0000FF0000000000ULL) |
-           ((x << 40) & 0x00FF000000000000ULL) |
-            (x << 56);
-  }
-
-
   /// return x % 5 for 0 <= x <= 9
   unsigned int mod5(unsigned int x)
   {
@@ -85,20 +61,27 @@ namespace
   }
 }
 
+inline uint64_t little_endian(const uint64_t val) noexcept
+{
+    const int x = 1;
+    if (*reinterpret_cast<const char *>(&x) != 1) {
+        auto new_val = val;
+        char *ptr = reinterpret_cast<char *>(&new_val);
+        std::reverse(ptr, ptr + sizeof(uint64_t));
+        return new_val;
+    }
+    return val;
+}
 
 /// process a full block
 void Keccak::processBlock(const void* data)
 {
-#if defined(__BYTE_ORDER) && (__BYTE_ORDER != 0) && (__BYTE_ORDER == __BIG_ENDIAN)
-#define LITTLEENDIAN(x) swap(x)
-#else
-#define LITTLEENDIAN(x) (x)
-#endif
 
   const uint64_t* data64 = (const uint64_t*) data;
   // mix data into state
-  for (unsigned int i = 0; i < m_blockSize / 8; i++)
-    m_hash[i] ^= LITTLEENDIAN(data64[i]);
+  for (unsigned int i = 0; i < m_blockSize / 8; i++) {
+    m_hash[i] ^= little_endian(data64[i]);
+  }
 
   // re-compute state
   for (unsigned int round = 0; round < KeccakRounds; round++)
@@ -231,6 +214,14 @@ void Keccak::processBuffer()
   processBlock(m_buffer);
 }
 
+// does not save and restore state!!!
+void Keccak::getHashBin(const std::span<uint8_t> &hash)
+{
+  processBuffer();
+  if (hash.size() != static_cast<size_t>(m_bits) / 8)
+    throw std::runtime_error("hash buffer is too small for a keccak hash!");
+  std::memcpy(hash.data(), m_hash, hash.size());
+}
 
 /// return latest hash as 16 hex characters
 std::string Keccak::getHash()

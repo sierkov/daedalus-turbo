@@ -10,10 +10,14 @@
 
 namespace daedalus_turbo::index::timed_update {
     struct stake_reg {
+        using serialize = ::zpp::bits::members<2>;
         cardano::stake_ident stake_id {};
+        std::optional<uint64_t> deposit {};
     };
     struct stake_del {
+        using serialize = ::zpp::bits::members<2>;
         cardano::stake_ident stake_id {};
+        std::optional<uint64_t> deposit {};
     };
     struct stake_deleg {
         cardano::stake_ident stake_id  {};
@@ -78,8 +82,8 @@ namespace daedalus_turbo::index::timed_update {
         void index_tx(const cardano::tx &tx) override
         {
             const auto slot = tx.block().slot();
-            tx.foreach_stake_reg([&](const auto &stake_id, size_t cert_idx) {
-                _data.emplace_back(slot, tx.index(), cert_idx, stake_reg { stake_id });
+            tx.foreach_stake_reg([&](const auto &stake_id, size_t cert_idx, std::optional<uint64_t> deposit) {
+                _data.emplace_back(slot, tx.index(), cert_idx, stake_reg { stake_id, deposit });
             });
             tx.foreach_pool_reg([&](const auto &reg) {
                 _data.emplace_back(slot, tx.index(), 0, reg);
@@ -94,8 +98,8 @@ namespace daedalus_turbo::index::timed_update {
             tx.foreach_withdrawal([&](const auto &with) {
                 _data.emplace_back(slot, tx.index(), 0, stake_withdraw { with.address.stake_id(), with.amount });
             });
-            tx.foreach_stake_unreg([&](const auto &stake_id, size_t cert_idx) {
-                _data.emplace_back(slot, tx.index(), cert_idx, stake_del { stake_id });
+            tx.foreach_stake_unreg([&](const auto &stake_id, size_t cert_idx, std::optional<uint64_t> deposit) {
+                _data.emplace_back(slot, tx.index(), cert_idx, stake_del { stake_id, deposit });
             });
             tx.foreach_pool_unreg([&](const auto &unreg) {
                 _data.emplace_back(slot, tx.index(), 0, unreg);

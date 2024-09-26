@@ -26,7 +26,7 @@ namespace daedalus_turbo::cli::truncate {
                 if (cr.make_slot(chunk.last_slot).epoch() <= epoch) {
                     const cardano::point last_block { chunk.last_block_hash, chunk.last_slot,
                         chunk.blocks.back().height, chunk.blocks.back().end_offset() };
-                    if (!max_block || max_block < last_block)
+                    if (!max_block || *max_block < last_block)
                         max_block = last_block;
                 }
             }

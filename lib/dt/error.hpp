@@ -7,36 +7,22 @@
 
 #include <cerrno>
 #include <cstring>
-#ifdef __APPLE__
-#   define _GNU_SOURCE 1
-#endif
-#include <boost/stacktrace.hpp>
 #include <dt/format.hpp>
 #include <dt/logger.hpp>
 
 namespace daedalus_turbo {
+    extern std::string error_stacktrace();
+    extern const std::string &error_trace(const std::string &msg, const std::string &stack);
+
     struct error: std::runtime_error {
-        static std::string my_stacktrace()
-        {
-            std::ostringstream ss {};
-            ss << boost::stacktrace::stacktrace();
-            return ss.str();
-        }
-
-        static const std::string &trace_error(const std::string &msg, const std::string &stack)
-        {
-            logger::debug("error created: {}, stacktrace: {}", msg, stack);
-            return msg;
-        }
-
         template<typename... Args>
         explicit error(const char *fmt, Args&&... a)
-            : error { format(fmt::runtime(fmt), std::forward<Args>(a)...), my_stacktrace() }
+            : error { format(fmt::runtime(fmt), std::forward<Args>(a)...), error_stacktrace() }
         {
         }
 
-        explicit error(const std::string &msg, const std::string &stack=my_stacktrace())
-            : std::runtime_error { trace_error(msg, stack) }
+        explicit error(const std::string &msg, const std::string &stack=error_stacktrace())
+            : std::runtime_error { error_trace(msg, stack) }
         {
         }
     };
@@ -44,7 +30,7 @@ namespace daedalus_turbo {
     struct error_sys: error {
         template<typename... Args>
         explicit error_sys(const char *fmt, Args&&... a)
-            : error { fmt::format("{}, errno: {}, strerror: {}", format(fmt::runtime(fmt), std::forward<Args>(a)...), errno, std::strerror(errno)), my_stacktrace() }
+            : error { fmt::format("{}, errno: {}, strerror: {}", format(fmt::runtime(fmt), std::forward<Args>(a)...), errno, std::strerror(errno)), error_stacktrace() }
         {
         }
     };

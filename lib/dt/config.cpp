@@ -7,6 +7,30 @@
 #include <dt/config.hpp>
 
 namespace daedalus_turbo {
+    static std::filesystem::path &install_dir()
+    {
+        static std::optional<std::filesystem::path> dir {};
+        if (!dir) [[unlikely]]
+            dir = std::filesystem::absolute(std::filesystem::current_path());
+        return *dir;
+    }
+
+    // The dt binary is expected to be located:
+    // 1) in prod: in a bin subdirectory of the installation directory
+    // 2) in dev: in a build subdirectory of the source-code directory
+    void set_install_dir(const std::string_view &bin_path)
+    {
+        std::filesystem::path dir { std::filesystem::canonical(std::filesystem::absolute(bin_path).parent_path().parent_path()) };
+        if (!std::filesystem::exists(dir / "etc" / "mainnet" / "config.json")) [[unlikely]]
+            throw error("an unexpectedly placed dt binary: {}", bin_path);
+        install_dir() = std::move(dir);
+    }
+
+    std::string install_path(const std::string_view &rel_path)
+    {
+        return std::filesystem::weakly_canonical(std::filesystem::absolute(install_dir() / rel_path)).string();
+    }
+
     config_file::config_file(const std::string &path)
             : _raw { file::read(path) }, _parsed { json::parse(_raw).as_object() }
     {

@@ -242,13 +242,7 @@ namespace daedalus_turbo::cardano {
         return costs;
     }
 
-    plutus_cost_model config::_prep_plutus_v1_cost_model(const daedalus_turbo::config &genesis)
-    {
-        static plutus_cost_model v1_default_costs = _make_plutus_v1_default_cost_model();
-        return plutus_cost_model::from_json(v1_default_costs, genesis.at("costModels").at("PlutusV1"));
-    }
-
-    plutus_cost_model config::_prep_plutus_v2_cost_model(const plutus_cost_model &v1_costs)
+    static plutus_cost_model _make_plutus_v2_default_cost_model(const plutus_cost_model &v1_costs)
     {
         plutus_cost_model costs = v1_costs;
         costs.emplace_back("serialiseData-cpu-arguments-intercept", 1159724);
@@ -262,6 +256,31 @@ namespace daedalus_turbo::cardano {
         costs.emplace_back("verifySchnorrSecp256k1Signature-memory-arguments", 10);
         costs.sort();
         return costs;
+    }
+
+    static plutus_cost_model _make_plutus_v3_default_cost_model(const plutus_cost_model &v2_costs)
+    {
+        plutus_cost_model costs = v2_costs;
+        // todo: add the defaults
+        costs.sort();
+        return costs;
+    }
+
+    plutus_cost_models config::_prep_plutus_cost_models(const daedalus_turbo::config &genesis)
+    {
+        static plutus_cost_model v1_defaults = _make_plutus_v1_default_cost_model();
+        static plutus_cost_model v2_defaults = _make_plutus_v2_default_cost_model(v1_defaults);
+        static plutus_cost_model v3_defaults = _make_plutus_v3_default_cost_model(v2_defaults);
+        plutus_cost_models res {};
+        const auto &cfg_models = genesis.at("costModels").as_object();
+        const auto import = [&](const std::string &param, const plutus_cost_model &defaults) {
+            const auto it = cfg_models.find(param);
+            return it != cfg_models.end() ? plutus_cost_model::from_json(defaults, it->value()) : defaults;
+        };
+        res.v1.emplace(import("PlutusV1", v1_defaults));
+        res.v2.emplace(import("PlutusV2", v2_defaults));
+        res.v3.emplace(import("PlutusV3", v3_defaults));
+        return res;
     }
 
     config::config(const configs &cfg)
@@ -290,8 +309,7 @@ namespace daedalus_turbo::cardano {
         alonzo_genesis_hash { _verify_hash(cfg.at("config").at("AlonzoGenesisHash").as_string(), alonzo_genesis) },
         conway_genesis { cfg.at(std::filesystem::path { json::value_to<std::string>(cfg.at("config").at("ConwayGenesisFile")) }.stem().string()) },
         conway_genesis_hash { _verify_hash(cfg.at("config").at("ConwayGenesisHash").as_string(), conway_genesis) },
-        plutus_v1_cost_model { _prep_plutus_v1_cost_model(alonzo_genesis) },
-        plutus_v2_cost_model { _prep_plutus_v2_cost_model(plutus_v1_cost_model) }
+        plutus_all_cost_models { _prep_plutus_cost_models(alonzo_genesis) }
     {
     }
 }

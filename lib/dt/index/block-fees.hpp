@@ -5,7 +5,7 @@
 #ifndef DAEDALUS_TURBO_INDEX_BLOCK_FEES_HPP
 #define DAEDALUS_TURBO_INDEX_BLOCK_FEES_HPP
 
-#include <dt/cardano/type.hpp>
+#include <dt/cardano/types.hpp>
 #include <dt/index/common.hpp>
 
 namespace daedalus_turbo::index::block_fees {

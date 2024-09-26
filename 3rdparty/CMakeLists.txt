@@ -1,7 +1,14 @@
-add_library(3rdparty OBJECT vrf03/convert.c vrf03/verify.c vrf03/keypair.c vrf03/prove.c vrf03/ed25519_ref10.c)
+add_library(3rdparty OBJECT vrf03/convert.c vrf03/verify.c vrf03/keypair.c vrf03/prove.c vrf03/ed25519_ref10.c blst/src/server.c)
+if (WIN32)
+    file(GLOB_RECURSE BLST_ASM_SRCS blst/build/win64/*-x86_64.asm)
+    target_sources(3rdparty PRIVATE ${BLST_ASM_SRCS})
+else()
+    target_sources(3rdparty PRIVATE blst/build/assembly.S)
+endif()
+
 target_include_directories(3rdparty PUBLIC .)
 set_target_properties(3rdparty PROPERTIES LINKER_LANGUAGE C)
 
-add_library(3rdparty-cpp OBJECT hash-library/sha3.cpp hash-library/crc32.cpp)
+add_library(3rdparty-cpp OBJECT hash-library/sha3.cpp hash-library/crc32.cpp hash-library/keccak.cpp)
 target_include_directories(3rdparty-cpp PUBLIC .)
 set_target_properties(3rdparty-cpp PROPERTIES LINKER_LANGUAGE CXX)

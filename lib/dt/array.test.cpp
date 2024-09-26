@@ -131,15 +131,16 @@ suite array_suite = [] {
         };
 
         "secure_array"_test = [] {
-            const auto exp = array<uint8_t, 4>::from_hex("00000000");
-            buffer buf;
+            const auto empty = array<uint8_t, 4>::from_hex("00000000");
+            const auto filled = array<uint8_t, 4>::from_hex("DEADBEAF");
+            array<uint8_t, 4> data {};
             {
-                const auto test_data = array<uint8_t, 4>::from_hex("DEADBEAF");
-                const secure_array<uint8_t, 4> test { test_data };
-                buf = test;
-                expect(buf == test_data);
+                const secure_store sec { data };
+                data = filled;
+                test_same(true, memcmp(data.data(), filled.data(), filled.size()) == 0);
             }
-            expect(buf == exp);
+            test_same(false, memcmp(data.data(), filled.data(), filled.size()) == 0);
+            test_same(true, memcmp(data.data(), empty.data(), empty.size()) == 0);
         };
     };  
 };

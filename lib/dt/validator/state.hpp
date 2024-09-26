@@ -399,41 +399,47 @@ namespace daedalus_turbo::validator {
                 _active_pool_dist.sub(*acc.deleg, amount);
         }
 
-        void register_stake(const uint64_t slot, const cardano::stake_ident &stake_id, size_t tx_idx=0, size_t cert_idx=0)
+        void register_stake(const uint64_t slot, const cardano::stake_ident &stake_id, const std::optional<uint64_t> deposit, size_t tx_idx=0, size_t cert_idx=0)
         {
             _tick(slot);
+            const auto deposit_size = deposit ? *deposit : _params.key_deposit;
             auto [acc_it, acc_created] = _accounts.try_emplace(stake_id);
             if (acc_created || !acc_it->second.ptr) {
-                _deposited += _params.key_deposit;
-                acc_it->second.deposit += _params.key_deposit;
+                _deposited += deposit_size;
+                acc_it->second.deposit += deposit_size;
             }
             cardano::stake_pointer ptr { slot, tx_idx, cert_idx };
             _ptr_to_stake[ptr] = stake_id;
             acc_it->second.ptr = ptr;
         }
 
-        void retire_stake(const uint64_t slot, const cardano::stake_ident &stake_id)
+        void retire_stake(const uint64_t slot, const cardano::stake_ident &stake_id, const std::optional<uint64_t> deposit)
         {
             _tick(slot);
+            const auto deposit_size = deposit ? *deposit : _params.key_deposit;
             auto &acc = _accounts.at(stake_id);
+            if (acc.ptr) {
+                if (acc.deposit >= deposit_size) [[likely]]
+                    acc.deposit -= deposit_size;
+                else
+                    throw error("expected stake deposit: {} is more than the actual one: {}", deposit_size, acc.deposit);
+                if (_deposited >= deposit_size) [[likely]]
+                    _deposited -= deposit_size;
+                else
+                    throw error("trying to remove a deposit while having insufficient deposits");
+                _ptr_to_stake.erase(*acc.ptr);
+                acc.ptr.reset();
+            } else {
+                logger::trace("slot: {}/{} can't find the retiring stake's pointer", _epoch, slot);
+            }
             if (acc.deleg) {
                 const auto stake = acc.stake + acc.reward;
                 //logger::trace("epoch: {} retirement of {} - removing {} from pool {}", _epoch, stake_id, cardano::amount { stake }, deleg_it->second);
                 _active_pool_dist.sub(*acc.deleg, stake);
                 _active_inv_delegs.at(*acc.deleg).erase(stake_id);
             }
-            if (acc.ptr) {
-                _ptr_to_stake.erase(*acc.ptr);
-                acc.ptr.reset();
-            } else {
-                logger::trace("slot: {}/{} can't find the retiring stake's pointer");
-            }
-            if (_deposited < acc.deposit)
-                throw error("trying to remove a deposit while having insufficient deposits");
-            _deposited -= acc.deposit;
             _treasury += acc.reward;
             acc.reward = 0;
-            acc.deposit = 0;
             acc.deleg.reset();
         }
 
@@ -1248,7 +1254,7 @@ namespace daedalus_turbo::validator {
             p.max_value_size = json::value_to<uint64_t>(al_cfg.at("maxValueSize"));
             p.max_collateral_pct = json::value_to<uint64_t>(al_cfg.at("collateralPercentage"));
             p.max_collateral_inputs = json::value_to<uint64_t>(al_cfg.at("maxCollateralInputs"));
-            p.plutus_cost_models.v1.emplace(cardano::plutus_cost_model::from_json(cfg.plutus_v1_cost_model, al_cfg.at("costModels").at("PlutusV1")));
+            p.plutus_cost_models.v1.emplace(cardano::plutus_cost_model::from_json(cfg.plutus_all_cost_models.v1.value(), al_cfg.at("costModels").at("PlutusV1")));
         }
 
         static void _apply_babbage_params(cardano::protocol_params &p, const cardano::config &/*cfg*/)
@@ -1603,9 +1609,12 @@ namespace daedalus_turbo::validator {
                         _apply_alonzo_params(_params, _cfg);
                         _apply_alonzo_params(_params_prev, _cfg);
                     }
-                    if (update->protocol_ver->major >= 7 &&  _params.protocol_ver.major < 7) {
+                    if (update->protocol_ver->major >= 7 && _params.protocol_ver.major < 7) {
                         _apply_babbage_params(_params, _cfg);
                         _apply_babbage_params(_params_prev, _cfg);
+                    }
+                    if (update->protocol_ver->major >= 9 && _params.protocol_ver.major < 9) {
+                        // conway transition
                     }
                 }
                 _apply_one_param_update(_params.protocol_ver, update_desc, update->protocol_ver, "protocol_ver");

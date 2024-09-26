@@ -5,6 +5,7 @@
     "libsodium",
     "mimalloc",
     "pkgconf",
+    "secp256k1",
     "spdlog",
     "zstd"
   ]

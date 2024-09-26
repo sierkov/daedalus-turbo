@@ -104,7 +104,7 @@ namespace daedalus_turbo {
 
     struct progress_point {
         uint64_t slot = 0; // required to be correct
-        uint64_t end_offset = 0; // can be zero; when non zero is used for more accurate process calculations
+        uint64_t end_offset = 0; // can be zero; a non-zero value is used for more accurate process calculations
 
         progress_point(const uint64_t slot_)
             : slot { slot_ }

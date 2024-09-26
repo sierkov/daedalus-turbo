@@ -111,8 +111,12 @@ namespace daedalus_turbo::cardano::shelley {
             reward_addr.stake_id()
         };
         params.reward_network = reward_addr.network();
-        for (const auto &addr: cert.at(base_idx + 6).array())
-            params.owners.emplace(stake_ident { addr.buf(), false });
+        {
+            const auto &owners_raw = cert.at(base_idx + 6);
+            const auto &owners = (owners_raw.type == CBOR_TAG ? *owners_raw.tag().second : owners_raw).array();
+            for (const auto &addr: owners)
+                params.owners.emplace(stake_ident { addr.buf(), false });
+        }
         for (const auto &relay: cert.at(base_idx + 7).array()) {
             const auto &r_items = relay.array();
             switch (r_items.at(0).uint()) {
@@ -361,19 +365,19 @@ namespace daedalus_turbo::cardano::shelley {
             throw error("a shelley+ transaction has no fee information: {} at offset {}!", hash(), offset());
         }
 
-        void foreach_stake_reg(const std::function<void(const stake_ident &, size_t)> &observer) const override
+        void foreach_stake_reg(const stake_reg_observer &observer) const override
         {
             _foreach_cert(0, [&observer](const auto &cert, size_t cert_idx) {
                 const auto &stake_cred = cert.at(1).array();
-                observer(stake_ident { stake_cred.at(1).buf(), stake_cred.at(0).uint() == 1 }, cert_idx);
+                observer(stake_ident { stake_cred.at(1).buf(), stake_cred.at(0).uint() == 1 }, cert_idx, {});
             });
         }
 
-        void foreach_stake_unreg(const std::function<void(const stake_ident &, size_t)> &observer) const override
+        void foreach_stake_unreg(const stake_unreg_observer &observer) const override
         {
             _foreach_cert(1, [&observer](const auto &cert, size_t cert_idx) {
                 const auto &stake_cred = cert.at(1).array();
-                observer(stake_ident { stake_cred.at(1).buf(), stake_cred.at(0).uint() == 1 }, cert_idx);
+                observer(stake_ident { stake_cred.at(1).buf(), stake_cred.at(0).uint() == 1 }, cert_idx, {});
             });
         }
 
@@ -439,6 +443,7 @@ namespace daedalus_turbo::cardano::shelley {
         void _validate_witness_vkey(wit_ok &ok, set<key_hash> &vkeys, const cbor::value &w_val) const;
         void _validate_witness_bootstrap(wit_ok &ok, const cbor::value &w_val) const;
         void _validate_witness_native_script(wit_ok &ok, const cbor::value &w_val, const set<key_hash> &vkeys) const;
+        virtual void _foreach_set(const cbor_value &, const std::function<void(const cbor_value &, size_t)> &) const;
 
         void _if_item_present(const uint64_t idx, const std::function<void(const cbor_value &)> &observer) const
         {
@@ -454,16 +459,13 @@ namespace daedalus_turbo::cardano::shelley {
 
         void _foreach_cert(const uint64_t cert_type, const std::function<void(const cbor_array &, size_t cert_idx)> &observer) const
         {
-            const cbor_array *certs = nullptr;
             for (const auto &[entry_type, entry]: _tx.map()) {
-                if (entry_type.uint() == 4)
-                    certs = &entry.array();
-            }
-            if (certs != nullptr) {
-                for (size_t i = 0; i < certs->size(); ++i) {
-                    const auto &cert = certs->at(i).array();
-                    if (cert.at(0).uint() == cert_type)
-                        observer(cert, i);
+                if (entry_type.uint() == 4) {
+                    _foreach_set(entry, [&](const auto &cert_raw, const size_t cert_idx) {
+                        const auto &cert = cert_raw.array();
+                        if (cert.at(0).uint() == cert_type)
+                            observer(cert, cert_idx);
+                    });
                 }
             }
         }

@@ -22,12 +22,29 @@ namespace {
 
 suite chunk_registry_suite = [] {
     "chunk_registry"_test = [] {
-        static std::string data_dir { "./data/chunk-registry"s };
-        static std::string tmp_data_dir { "./tmp/chunk-registry"s };
+        static std::string data_dir = install_path("./data/chunk-registry");
+        static std::string tmp_data_dir = install_path("./tmp/chunk-registry");
 
-        const auto recreate_tmp_data_dir = [&] {
+        const auto clear_tmp_data_dir = [&] {
             std::filesystem::remove_all(tmp_data_dir);
             std::filesystem::create_directories(tmp_data_dir);
+        };
+
+        "chang"_test = [&] {
+            clear_tmp_data_dir();
+            std::filesystem::create_directories(tmp_data_dir + "/chang");
+            std::filesystem::copy(install_path("./data/chunk-registry/chang"), tmp_data_dir + "/chang");
+            chunk_registry cr { tmp_data_dir, chunk_registry::mode::index };
+            const std::string local_path = install_path(tmp_data_dir + "/chang/9326B83719AEAB06A671EA653EE297F1DA601A4FC279A759503D79F55DA6EEC7.zstd");
+            const progress_point target_tip { 133703981, 10746832 };
+            const auto ex_ptr = cr.accept_progress({}, target_tip, [&] {
+                cr.add(0, local_path);
+            });
+            test_same(target_tip.end_offset, cr.num_bytes());
+        };
+
+        const auto recreate_tmp_data_dir = [&] {
+            clear_tmp_data_dir();
             std::filesystem::copy(data_dir, tmp_data_dir, std::filesystem::copy_options::recursive | std::filesystem::copy_options::overwrite_existing);
         };
 

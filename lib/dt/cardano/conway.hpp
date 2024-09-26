@@ -10,36 +10,19 @@
 namespace daedalus_turbo::cardano::conway {
     struct block: babbage::block {
         using babbage::block::block;
-
-        void foreach_tx(const std::function<void(const cardano::tx &)> &observer) const override;
-        void foreach_invalid_tx(const std::function<void(const cardano::tx &)> &observer) const override;
+        void foreach_tx(const std::function<void(const tx &)> &observer) const override;
+        void foreach_invalid_tx(const std::function<void(const tx &)> &observer) const override;
     };
 
     struct tx: babbage::tx {
         using babbage::tx::tx;
+        void foreach_genesis_deleg(const std::function<void(const genesis_deleg &, size_t)> &) const override;
+        void foreach_instant_reward(const std::function<void(const instant_reward &)> &) const override;
+        void foreach_stake_reg(const stake_reg_observer &observer) const override;
+        void foreach_stake_unreg(const stake_unreg_observer &observer) const override;
+    protected:
+        void _foreach_set(const cbor_value &set_raw, const std::function<void(const cbor_value &, size_t)> &observer) const override;
     };
-
-    inline void block::foreach_tx(const std::function<void(const cardano::tx &)> &observer) const
-    {
-        const auto &txs = transactions();
-        const auto &wits = witnesses();
-        std::set<size_t> invalid_tx_idxs {};
-        for (const auto &tx_idx: invalid_transactions())
-            invalid_tx_idxs.emplace(tx_idx.uint());
-        for (size_t i = 0; i < txs.size(); ++i)
-            if (!invalid_tx_idxs.contains(i))
-                observer(tx { txs.at(i), *this, &wits.at(i), i });
-    }
-
-    inline void block::foreach_invalid_tx(const std::function<void(const cardano::tx &)> &observer) const
-    {
-        const auto &txs = transactions();
-        const auto &wits = witnesses();
-        if (const auto &inv_txs = invalid_transactions(); !inv_txs.empty()) [[unlikely]] {
-            for (const auto &tx_idx: inv_txs)
-                observer(tx { txs.at(tx_idx.uint()), *this, &wits.at(tx_idx.uint()), tx_idx.uint() });
-        }
-    }
 }
 
 #endif // !DAEDALUS_TURBO_CARDANO_CONWAY_HPP

@@ -355,6 +355,19 @@ namespace daedalus_turbo::file {
         auto storage = std::filesystem::space(path);
         return storage.available;
     }
+
+    using path_list = vector<std::filesystem::path>;
+    extern path_list files_with_ext(const std::string_view &dir, const std::string_view &ext);
+}
+
+namespace fmt {
+    template<>
+    struct formatter<std::filesystem::path>: formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const std::filesystem::path &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "{}", v.string());
+        }
+    };
 }
 
 #endif // !DAEDALUS_TURBO_FILE_HPP

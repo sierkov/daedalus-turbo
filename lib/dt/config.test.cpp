@@ -31,7 +31,7 @@ suite config_suite = [] {
         "required"_test = [] {
             const auto &cfg = configs_dir::get();
             expect(cfg.at("turbo").at("vkey").as_string() == std::string_view { "F961D8754397FA2C39D69C97D598566A5E03C34E40FF71DB792E103380E7C105" });
-            expect(cfg.at("topology").at("bootstrapPeers").at(0).at("address").as_string() == std::string_view { "relays-new.cardano-mainnet.iohk.io" });
+            expect(cfg.at("topology").at("bootstrapPeers").at(0).at("address").as_string() == std::string_view { "backbone.cardano.iog.io" });
         };
         "non-standard-location"_test = [] {
             expect(std::getenv("DT_ETC") == nullptr);

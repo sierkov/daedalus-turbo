@@ -3,9 +3,8 @@
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
-#include <dt/cardano/type.hpp>
+#include <dt/cardano/types.hpp>
 #include <dt/history.hpp>
-#include <dt/indexer.hpp>
 #include <dt/test.hpp>
 
 using namespace daedalus_turbo;

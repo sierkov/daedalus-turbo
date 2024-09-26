@@ -12,6 +12,21 @@
 #include <dt/format.hpp>
 
 namespace daedalus_turbo {
+    inline uint8_t uint_from_oct(char k)
+    {
+        switch (std::tolower(k)) {
+            case '0': return 0;
+            case '1': return 1;
+            case '2': return 2;
+            case '3': return 3;
+            case '4': return 4;
+            case '5': return 5;
+            case '6': return 6;
+            case '7': return 7;
+            default: throw error("unexpected character in an octal number: {}!", k);
+        }
+    }
+
     inline uint8_t uint_from_hex(char k)
     {
         switch (std::tolower(k)) {
@@ -31,7 +46,7 @@ namespace daedalus_turbo {
             case 'd': return 13;
             case 'e': return 14;
             case 'f': return 15;
-            default: throw error("unexpected character in a hex string: {}!", k);
+            default: throw error("unexpected character in a hex number: {}!", k);
         }
     }
 
@@ -103,8 +118,24 @@ namespace daedalus_turbo {
         }
     };
 
+    extern void secure_clear(std::span<uint8_t> store);
+
+    struct secure_store {
+        secure_store(const std::span<uint8_t> store): _store { store }
+        {
+        }
+
+        ~secure_store()
+        {
+            secure_clear(_store);
+        }
+    private:
+        std::span<uint8_t> _store;
+    };
+
     template<typename T, size_t SZ>
-    struct secure_array: array<T, SZ> {
+    struct secure_array: array<T, SZ>
+    {
         using array<T, SZ>::array;
 
         static secure_array<T, SZ> from_hex(const std::string_view &hex)
@@ -119,7 +150,7 @@ namespace daedalus_turbo {
 
         ~secure_array()
         {
-            memset(this->data(), 0, this->size() * sizeof(T));
+            secure_clear(*this);
         }
     };
 }

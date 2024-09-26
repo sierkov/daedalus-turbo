@@ -222,6 +222,7 @@ namespace daedalus_turbo::validator {
                 case 4:
                 case 5:
                 case 6:
+                case 7:
                     // do nothing here, the block signer's eligibility is tested later process_vrf_chunks
                     break;
                 default:
@@ -638,71 +639,42 @@ namespace daedalus_turbo::validator {
                     _gather_updates<index::timed_update::indexer>(timed_updates, "timed-update", slots, last_offset);
                     std::sort(timed_updates.begin(), timed_updates.end());
                     for (const auto &upd: timed_updates) {
-                        switch (upd.update.index()) {
-                            case 0: {
-                                const auto &u = std::get<index::timed_update::stake_reg>(upd.update);
-                                _state.register_stake(upd.slot, u.stake_id, upd.tx_idx, upd.cert_idx);
-                                break;
-                            }
-                            case 1:
-                                _state.register_pool(std::get<cardano::pool_reg>(upd.update));
-                                break;
-                            case 2: {
-                                const auto &ir = std::get<index::timed_update::instant_reward_single>(upd.update);
-                                if (ir.source == cardano::reward_source::reserves)
-                                    _state.instant_reward_reserves(upd.slot, ir.stake_id, ir.amount);
-                                else if (ir.source == cardano::reward_source::treasury)
-                                    _state.instant_reward_treasury(upd.slot, ir.stake_id, ir.amount);
-                                break;
-                            }
-                            case 3: {
-                                const auto &u = std::get<index::timed_update::stake_deleg>(upd.update);
+                        std::visit([&](const auto &u) {
+                            using T = std::decay_t<decltype(u)>;
+                            if constexpr (std::is_same_v<T, index::timed_update::stake_reg>) {
+                                _state.register_stake(upd.slot, u.stake_id, u.deposit, upd.tx_idx, upd.cert_idx);
+                            } else if constexpr (std::is_same_v<T, index::timed_update::stake_del>) {
+                                _state.retire_stake(upd.slot, u.stake_id, u.deposit);
+                            } else if constexpr (std::is_same_v<T, cardano::pool_reg>) {
+                                _state.register_pool(u);
+                            } else if constexpr (std::is_same_v<T, index::timed_update::instant_reward_single>) {
+                                if (u.source == cardano::reward_source::reserves)
+                                    _state.instant_reward_reserves(upd.slot, u.stake_id, u.amount);
+                                else if (u.source == cardano::reward_source::treasury)
+                                    _state.instant_reward_treasury(upd.slot, u.stake_id, u.amount);
+                                else
+                                    throw error("unsupported reward source: {}", static_cast<int>(u.source));
+                            } else if constexpr (std::is_same_v<T, index::timed_update::stake_deleg>) {
                                 _state.delegate_stake(u.stake_id, u.pool_id);
-                                break;
-                            }
-                            case 4: {
-                                const auto &u = std::get<index::timed_update::stake_withdraw>(upd.update);
+                            } else if constexpr (std::is_same_v<T, index::timed_update::stake_withdraw>) {
                                 _state.withdraw_reward(upd.slot, u.stake_id, u.amount);
-                                break;
+                            } else if constexpr (std::is_same_v<T, cardano::pool_unreg>) {
+                                _state.retire_pool(u.pool_id, u.epoch);
+                            } else if constexpr (std::is_same_v<T, cardano::param_update_proposal>) {
+                                _state.propose_update(upd.slot, u);
+                            } else if constexpr (std::is_same_v<T, cardano::param_update_vote>) {
+                                _state.proposal_vote(upd.slot, u);
+                            } else if constexpr (std::is_same_v<T, index::timed_update::collected_collateral_input>) {
+                                collected_collateral.emplace_back(u.tx_hash, u.txo_idx);
+                            } else if constexpr (std::is_same_v<T, index::timed_update::collected_collateral_refund>) {
+                                logger::debug("refunded fees from refunded collateral {}", u.refund);
+                                _state.sub_fees(u.refund);
+                            } else if constexpr (std::is_same_v<T, index::timed_update::gen_deleg>) {
+                                _state.genesis_deleg_update(u.hash, u.pool_id, u.vrf_vkey);
+                            } else {
+                                throw error("unsupported update: {}", typeid(T).name());
                             }
-                            case 5: {
-                                const auto &u = std::get<index::timed_update::stake_del>(upd.update);
-                                _state.retire_stake(upd.slot, u.stake_id);
-                                break;
-                            }
-                            case 6: {
-                                const auto &pd = std::get<cardano::pool_unreg>(upd.update);
-                                _state.retire_pool(pd.pool_id, pd.epoch);
-                                break;
-                            }
-                            case 7: {
-                                const auto &prop = std::get<cardano::param_update_proposal>(upd.update);
-                                _state.propose_update(upd.slot, prop);
-                                break;
-                            }
-                            case 8: {
-                                _state.proposal_vote(upd.slot, std::get<cardano::param_update_vote>(upd.update));
-                                break;
-                            }
-                            case 9: {
-                                const auto &cc = std::get<index::timed_update::collected_collateral_input>(upd.update);
-                                collected_collateral.emplace_back(cc.tx_hash, cc.txo_idx);
-                                break;
-                            }
-                            case 10: {
-                                const auto &cca = std::get<index::timed_update::collected_collateral_refund>(upd.update);
-                                logger::debug("refunded fees from refunded collateral {}", cca.refund);
-                                _state.sub_fees(cca.refund);
-                                break;
-                            }
-                            case 11: {
-                                const auto &deleg = std::get<index::timed_update::gen_deleg>(upd.update);
-                                _state.genesis_deleg_update(deleg.hash, deleg.pool_id, deleg.vrf_vkey);
-                                break;
-                            }
-                            default:
-                                throw error("internal error: unexpected pool update variant: {}", upd.update.index());
-                        }
+                        }, upd.update);
                     }
                 }
 

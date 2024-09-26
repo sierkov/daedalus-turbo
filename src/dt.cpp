@@ -7,5 +7,7 @@
 
 int main(const int argc, const char **argv)
 {
-    return daedalus_turbo::cli::run(argc, argv);
+    using namespace daedalus_turbo;
+    set_install_dir(argv[0]);
+    return cli::run(argc, argv);
 }

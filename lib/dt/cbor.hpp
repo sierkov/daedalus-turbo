@@ -22,11 +22,11 @@ namespace daedalus_turbo {
         typedef daedalus_turbo::error error;
         struct collection_too_big_error: error {
             explicit collection_too_big_error(const size_t size):
-                error { fmt::format("Trying to create an array or map larger than {} items", size), my_stacktrace() }
+                error { fmt::format("Trying to create an array or map larger than {} items", size), error_stacktrace() }
             {
             }
         };
-        // inherit directly from std::runtime_error to save on the expensive stackstrace creation
+        // inherit directly from std::runtime_error to save on the expensive stacktrace creation
         struct incomplete_error: std::runtime_error {
             explicit incomplete_error(): std::runtime_error { "CBOR value extends beyond the end of stream" }
             {

@@ -1,1 +1,0 @@
-(program 1.0.0 [(lam v0 v0) [[(builtin addInteger) (con integer 42)] (con integer 8)]])

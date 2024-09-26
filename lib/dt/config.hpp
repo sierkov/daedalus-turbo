@@ -9,6 +9,9 @@
 #include <dt/json.hpp>
 
 namespace daedalus_turbo {
+    extern void set_install_dir(const std::string_view &bin_path);
+    extern std::string install_path(const std::string_view &rel_path);
+
     struct config {
         virtual ~config() =default;
 

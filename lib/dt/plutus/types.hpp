@@ -5,24 +5,38 @@
 #ifndef DAEDALUS_TURBO_PLUTUS_TYPES_HPP
 #define DAEDALUS_TURBO_PLUTUS_TYPES_HPP
 
+#include <variant>
 #include <dt/big_int.hpp>
-#include <dt/cbor.hpp>
+#include <dt/crypto/blst.hpp>
+#include <dt/cbor/zero.hpp>
+#include <dt/cbor-encoder.hpp>
 #include <dt/error.hpp>
 #include <dt/format.hpp>
 #include <dt/util.hpp>
 
 namespace daedalus_turbo::plutus {
+    struct version {
+        uint64_t major = 1;
+        uint64_t minor = 1;
+        uint64_t patch = 0;
+
+        operator std::string() const
+        {
+            return fmt::format("{}.{}.{}", major, minor, patch);
+        }
+    };
+
     enum class term_tag: uint8_t {
-        variable  = 0,
-        delay     = 1,
-        lambda    = 2,
-        apply     = 3,
-        constant  = 4,
-        force     = 5,
-        error     = 6,
-        builtin   = 7,
-        construct = 8,
-        acase     = 9
+        variable = 0,
+        delay    = 1,
+        lambda   = 2,
+        apply    = 3,
+        constant = 4,
+        force    = 5,
+        error    = 6,
+        builtin  = 7,
+        constr   = 8,
+        acase    = 9
     };
 
     enum class type_tag: uint8_t {
@@ -37,7 +51,7 @@ namespace daedalus_turbo::plutus {
         data                 = 8,
         bls12_381_g1_element = 9,
         bls12_381_g2_element = 10,
-        bls12_381_m1_result   = 11
+        bls12_381_ml_result   = 11
     };
 
     enum class builtin_tag: uint8_t {
@@ -94,9 +108,9 @@ namespace daedalus_turbo::plutus {
         mk_nil_pair_data = 50,
         // Plutus v2
         serialise_data = 51,
-        verify_ecdsa_secp256k1_signature = 52,
-        verify_schnorr_secp256k1_signature = 53,
-        // Future
+        verify_ecdsa_secp_256k1_signature = 52,
+        verify_schnorr_secp_256k1_signature = 53,
+        // Plutus v3
         bls12_381_g1_add = 54,
         bls12_381_g1_neg = 55,
         bls12_381_g1_scalar_mul = 56,
@@ -115,7 +129,23 @@ namespace daedalus_turbo::plutus {
         bls12_381_mul_ml_result = 69,
         bls12_381_final_verify = 70,
         keccak_256 = 71,
-        blake2b_224 = 72
+        blake2b_224 = 72,
+        integer_to_byte_string = 73,
+        byte_string_to_integer = 74,
+        // Future
+        and_byte_string = 75,
+        or_byte_string = 76,
+        xor_byte_string = 77,
+        complement_byte_string = 78,
+        read_bit = 79,
+        write_bits = 80,
+        replicate_byte = 81,
+        shift_byte_string = 82,
+        rotate_byte_string = 83,
+        count_set_bits = 84,
+        find_first_set_bit = 85,
+        ripemd_160 = 86,
+        exp_mod_integer = 87
     };
 }
 
@@ -134,7 +164,7 @@ namespace fmt {
                 case term::force: return fmt::format_to(ctx.out(), "term::force");
                 case term::error: return fmt::format_to(ctx.out(), "term::error");
                 case term::builtin: return fmt::format_to(ctx.out(), "term::builtin");
-                case term::construct: return fmt::format_to(ctx.out(), "term::construct");
+                case term::constr: return fmt::format_to(ctx.out(), "term::constr");
                 case term::acase: return fmt::format_to(ctx.out(), "term::case");
                 default: return fmt::format_to(ctx.out(), "term::unknown({})", static_cast<int>(v));
             }
@@ -158,94 +188,8 @@ namespace fmt {
                 case type::data: return fmt::format_to(ctx.out(), "data");
                 case type::bls12_381_g1_element: return fmt::format_to(ctx.out(), "bls12_381_g1_element");
                 case type::bls12_381_g2_element: return fmt::format_to(ctx.out(), "bls12_381_g2_element");
-                case type::bls12_381_m1_result: return fmt::format_to(ctx.out(), "bls12_381_m1_result");
+                case type::bls12_381_ml_result: return fmt::format_to(ctx.out(), "bls12_381_ml_result");
                 default: throw daedalus_turbo::error("unknown type: {}", static_cast<int>(v));
-            }
-        }
-    };
-
-    template<>
-    struct formatter<daedalus_turbo::plutus::builtin_tag>: formatter<int> {
-        template<typename FormatContext>
-        auto format(const daedalus_turbo::plutus::builtin_tag &v, FormatContext &ctx) const -> decltype(ctx.out()) {
-            using builtin = daedalus_turbo::plutus::builtin_tag;
-            switch (v) {
-                case builtin::add_integer: return fmt::format_to(ctx.out(), "addInteger");
-                case builtin::subtract_integer: return fmt::format_to(ctx.out(), "subtractInteger");
-                case builtin::multiply_integer: return fmt::format_to(ctx.out(), "multiplyInteger");
-                case builtin::divide_integer: return fmt::format_to(ctx.out(), "divideInteger");
-                case builtin::quotient_integer: return fmt::format_to(ctx.out(), "quotientInteger");
-                case builtin::remainder_integer: return fmt::format_to(ctx.out(), "remainderInteger");
-                case builtin::mod_integer: return fmt::format_to(ctx.out(), "modInteger");
-                case builtin::equals_integer: return fmt::format_to(ctx.out(), "equalsInteger");
-                case builtin::less_than_integer: return fmt::format_to(ctx.out(), "lessThanInteger");
-                case builtin::less_than_equals_integer: return fmt::format_to(ctx.out(), "lessThanEqualsInteger");
-                case builtin::append_byte_string: return fmt::format_to(ctx.out(), "appendByteString");
-                case builtin::cons_byte_string: return fmt::format_to(ctx.out(), "consByteString");
-                case builtin::slice_byte_string: return fmt::format_to(ctx.out(), "sliceByteString");
-                case builtin::length_of_byte_string: return fmt::format_to(ctx.out(), "lengthOfByteString");
-                case builtin::index_byte_string: return fmt::format_to(ctx.out(), "indexByteString");
-                case builtin::equals_byte_string: return fmt::format_to(ctx.out(), "equalsByteString");
-                case builtin::less_than_byte_string: return fmt::format_to(ctx.out(), "lessThanByteString");
-                case builtin::less_than_equals_byte_string: return fmt::format_to(ctx.out(), "lessThanEqualsByteString");
-                case builtin::sha2_256: return fmt::format_to(ctx.out(), "sha2_256");
-                case builtin::sha3_256: return fmt::format_to(ctx.out(), "sha3_256");
-                case builtin::blake2b_256: return fmt::format_to(ctx.out(), "blake2b_256");
-                case builtin::verify_ed25519_signature: return fmt::format_to(ctx.out(), "verifyEd25519Signature");
-                case builtin::append_string: return fmt::format_to(ctx.out(), "appendString");
-                case builtin::equals_string: return fmt::format_to(ctx.out(), "equalsString");
-                case builtin::encode_utf8: return fmt::format_to(ctx.out(), "encodeUTF8");
-                case builtin::decode_utf8: return fmt::format_to(ctx.out(), "decodeUTF8");
-                case builtin::if_then_else: return fmt::format_to(ctx.out(), "ifThenElse");
-                case builtin::choose_unit: return fmt::format_to(ctx.out(), "chooseUnit");
-                case builtin::trace: return fmt::format_to(ctx.out(), "trace");
-                case builtin::fst_pair: return fmt::format_to(ctx.out(), "fstPair");
-                case builtin::snd_pair: return fmt::format_to(ctx.out(), "sndPair");
-                case builtin::choose_list: return fmt::format_to(ctx.out(), "chooseList");
-                case builtin::mk_cons: return fmt::format_to(ctx.out(), "mkCons");
-                case builtin::head_list: return fmt::format_to(ctx.out(), "headList");
-                case builtin::tail_list: return fmt::format_to(ctx.out(), "tailList");
-                case builtin::null_list: return fmt::format_to(ctx.out(), "nullList");
-                case builtin::choose_data: return fmt::format_to(ctx.out(), "chooseData");
-                case builtin::constr_data: return fmt::format_to(ctx.out(), "constrData");
-                case builtin::map_data: return fmt::format_to(ctx.out(), "mapData");
-                case builtin::list_data: return fmt::format_to(ctx.out(), "listData");
-                case builtin::i_data: return fmt::format_to(ctx.out(), "IData");
-                case builtin::b_data: return fmt::format_to(ctx.out(), "BData");
-                case builtin::un_constr_data: return fmt::format_to(ctx.out(), "unConstrData");
-                case builtin::un_map_data: return fmt::format_to(ctx.out(), "unMapData");
-                case builtin::un_list_data: return fmt::format_to(ctx.out(), "unListData");
-                case builtin::un_i_data: return fmt::format_to(ctx.out(), "unIData");
-                case builtin::un_b_data: return fmt::format_to(ctx.out(), "unBData");
-                case builtin::equals_data: return fmt::format_to(ctx.out(), "equalsData");
-                case builtin::mk_pair_data: return fmt::format_to(ctx.out(), "mkPairData");
-                case builtin::mk_nil_data: return fmt::format_to(ctx.out(), "mkNilData");
-                case builtin::mk_nil_pair_data: return fmt::format_to(ctx.out(), "mkNilPairData");
-                    // Plutus v2
-                case builtin::serialise_data: return fmt::format_to(ctx.out(), "serialiseData");
-                case builtin::verify_ecdsa_secp256k1_signature: return fmt::format_to(ctx.out(), "verify_ecdsa_secp256k1_signature");
-                case builtin::verify_schnorr_secp256k1_signature: return fmt::format_to(ctx.out(), "verify_schnorr_secp256k1_signature");
-                    // Future
-                case builtin::bls12_381_g1_add: return fmt::format_to(ctx.out(), "bls12_381_g1_add");
-                case builtin::bls12_381_g1_neg: return fmt::format_to(ctx.out(), "bls12_381_g1_neg");
-                case builtin::bls12_381_g1_scalar_mul: return fmt::format_to(ctx.out(), "bls12_381_g1_scalar_mul");
-                case builtin::bls12_381_g1_equal: return fmt::format_to(ctx.out(), "bls12_381_g1_equal");
-                case builtin::bls12_381_g1_hash_to_group: return fmt::format_to(ctx.out(), "bls12_381_g1_hash_to_group");
-                case builtin::bls12_381_g1_compress: return fmt::format_to(ctx.out(), "bls12_381_g1_compress");
-                case builtin::bls12_381_g1_uncompress: return fmt::format_to(ctx.out(), "bls12_381_g1_uncompress");
-                case builtin::bls12_381_g2_add: return fmt::format_to(ctx.out(), "bls12_381_g2_add");
-                case builtin::bls12_381_g2_neg: return fmt::format_to(ctx.out(), "bls12_381_g2_neg");
-                case builtin::bls12_381_g2_scalar_mul: return fmt::format_to(ctx.out(), "bls12_381_g2_scalar_mul");
-                case builtin::bls12_381_g2_equal: return fmt::format_to(ctx.out(), "bls12_381_g2_equal");
-                case builtin::bls12_381_g2_hash_to_group: return fmt::format_to(ctx.out(), "bls12_381_g2_hash_to_group");
-                case builtin::bls12_381_g2_compress: return fmt::format_to(ctx.out(), "bls12_381_g2_compress");
-                case builtin::bls12_381_g2_uncompress: return fmt::format_to(ctx.out(), "bls12_381_g2_uncompress");
-                case builtin::bls12_381_miller_loop: return fmt::format_to(ctx.out(), "bls12_381_miller_loop");
-                case builtin::bls12_381_mul_ml_result: return fmt::format_to(ctx.out(), "bls12_381_mul_ml_result");
-                case builtin::bls12_381_final_verify: return fmt::format_to(ctx.out(), "bls12_381_final_verify");
-                case builtin::keccak_256: return fmt::format_to(ctx.out(), "keccak_256");
-                case builtin::blake2b_224: return fmt::format_to(ctx.out(), "blake2b_224");
-                default: throw daedalus_turbo::error("unknown builtin: {}", static_cast<int>(v));
             }
         }
     };
@@ -254,61 +198,58 @@ namespace fmt {
 namespace daedalus_turbo::plutus {
     typedef daedalus_turbo::error error;
 
-    struct variable {
-        size_t idx = 0;
-        //size_t rel_idx = 0;
-
-        bool operator==(const auto &o) const
-        {
-            return idx == o.idx;
-        }
-    };
-
     struct term;
-    // shared_ptr is used to make terms copyable
-    using term_ptr = std::shared_ptr<const term>;
+    // shared_ptr is used to make terms copyable while allowing for a recursive definition of "term"
+    using term_ptr = std::shared_ptr<term>;
+    using term_list = vector<term_ptr>;
 
-    struct delay {
-        term_ptr expr {};
+    struct variable {
+        std::string name {};
 
-        bool operator==(const auto &o) const
+        bool operator==(const variable &o) const
         {
-            return expr && o.expr && *expr == *o.expr;
+            return name == o.name;
         }
     };
 
     struct force {
         term_ptr expr {};
 
-        bool operator==(const auto &o) const
-        {
-            return expr && o.expr && *expr == *o.expr;
-        }
-    };
-
-    struct lambda {
-        size_t var_idx = 0;
-        term_ptr expr {};
-
-        bool operator==(const auto &o) const
-        {
-            return expr && o.expr && *expr == *o.expr && var_idx == o.var_idx;
-        }
+        bool operator==(const force &o) const;
     };
 
     struct apply {
         term_ptr func {};
         term_ptr arg {};
 
-        bool operator==(const auto &o) const
+        bool operator==(const apply &o) const;
+    };
+
+    struct failure {
+        bool operator==(const failure &) const
         {
-            return func && o.func && *func == *o.func && arg && o.arg && *arg == *o.arg;
+            return true;
         }
     };
 
+    struct t_delay {
+        term_ptr expr {};
+
+        bool operator==(const t_delay &o) const;
+    };
+
+    struct t_lambda {
+        std::string name {};
+        term_ptr expr {};
+
+        bool operator==(const t_lambda &o) const;
+    };
+
+    struct constant;
+
     struct constant_type {
         type_tag typ {};
-        std::vector<constant_type> nested {};
+        vector<constant_type> nested {};
 
         static constant_type make_pair(constant_type &&fst, constant_type &&snd)
         {
@@ -318,84 +259,111 @@ namespace daedalus_turbo::plutus {
             return t;
         }
 
-        bool operator==(const auto &o) const
+        static constant_type from_val(const constant &);
+
+        bool operator==(const constant_type &o) const
         {
             return typ == o.typ && nested == o.nested;
         }
     };
-    using constant_type_list = std::vector<constant_type>;
+    using constant_type_list = vector<constant_type>;
+
+    struct bls12_381_g1_element {
+        blst_p1 val {};
+
+        bool operator==(const bls12_381_g1_element &o) const
+        {
+            return blst_p1_is_equal(&val, &o.val);
+        }
+    };
+
+    struct bls12_381_g2_element {
+        blst_p2 val {};
+
+        bool operator==(const bls12_381_g2_element &o) const
+        {
+            return blst_p2_is_equal(&val, &o.val);
+        }
+    };
+
+    struct bls12_381_ml_result {
+        blst_fp12 val {};
+
+        bool operator==(const bls12_381_ml_result &o) const
+        {
+            return memcmp(&val, &o.val, sizeof(val)) == 0;
+        }
+    };
+
+    struct data;
+
+    struct data_pair {
+        using value_type = std::pair<data, data>;
+        data_pair(data &&, data &&);
+        bool operator==(const data_pair &o) const;
+        const value_type &operator*() const;
+        const value_type *operator->() const;
+    private:
+        std::shared_ptr<value_type> _val;
+    };
+
+    struct data_constr {
+        using value_type = std::pair<uint64_t, vector<data>>;
+        data_constr(uint64_t, vector<data> &&);
+        data_constr(const cpp_int &, vector<data> &&);
+        bool operator==(const data_constr &o) const;
+        const value_type &operator*() const;
+        const value_type *operator->() const;
+    private:
+        std::shared_ptr<value_type> _val;
+    };
+
+    struct data {
+        using int_type = cpp_int;
+        using bstr_type = uint8_vector;
+        using list_type = vector<data>;
+        using map_type = vector<data_pair>;
+        using value_type = std::variant<data_constr, map_type, list_type, int_type, bstr_type>;
+        value_type val;
+
+        static data from_cbor(buffer);
+        static data bstr(buffer);
+        static data bint(cpp_int &&);
+        static data bint(const cpp_int &);
+        static data constr(cpp_int &&, list_type &&);
+        static data list(list_type &&);
+        static data map(map_type &&);
+        bool operator==(const data &o) const;
+        uint8_vector as_cbor() const;
+    };
+
+    struct constant_pair {
+        using value_type = std::pair<constant, constant>;
+
+        constant_pair(constant &&, constant &&);
+        bool operator==(const constant_pair &o) const;
+        const value_type &operator*() const;
+        const value_type *operator->() const;
+    private:
+        std::shared_ptr<value_type> _vals {}; // shared to make the struct copiable
+    };
+
+    struct constant_list {
+        constant_type typ {};
+        vector<constant> vals {};
+
+        static constant_list make_one(constant &&);
+        bool operator==(const constant_list &o) const;
+    };
 
     struct constant {
-        using value_type = std::variant<cpp_int, uint8_vector, std::string, bool, std::vector<constant>>;
-        constant_type typ {};
-        value_type val {};
+        using value_type = std::variant<cpp_int, uint8_vector, std::string, bool, constant_list, constant_pair,
+            data, bls12_381_g1_element, bls12_381_g2_element, bls12_381_ml_result, std::monostate>;
+        value_type val;
 
-        static constant make_data(const buffer &data)
+        bool operator==(const constant &o) const
         {
-            return { constant_type { type_tag::data }, uint8_vector { data } };
-        }
-
-        static constant make_int(const cpp_int &val)
-        {
-            return { constant_type { type_tag::integer }, val };
-        }
-
-        static constant make_bstr(const buffer &bytes)
-        {
-            return { constant_type { type_tag::bytestring }, bytes };
-        }
-
-        static constant make_bstr(uint8_vector &&bytes)
-        {
-            return { constant_type { type_tag::bytestring }, std::move(bytes) };
-        }
-
-        static constant make_str(const std::string_view &s)
-        {
-            return { constant_type { type_tag::string }, std::string { s } };
-        }
-
-        static constant make_list(constant_type &&nested_type, std::vector<constant> &&vals)
-        {
-            for (const auto &val: vals) {
-                if (val.typ != nested_type)
-                    throw plutus::error("all values in a list must be of the same type");
-            }
-            constant_type_list nested {};
-            nested.emplace_back(std::move(nested_type));
-            return { constant_type { type_tag::list, std::move(nested) }, std::move(vals) };
-        }
-
-        static constant make_list(constant_type &&nested_type)
-        {
-            std::vector<constant> vals {};
-            return make_list(std::move(nested_type), std::move(vals));
-        }
-
-        static constant make_list(std::vector<constant> &&vals)
-        {
-            if (vals.empty())
-                throw plutus::error("either non empty list or a nested data type must be specified!");
-            const auto &head = vals.at(0).typ;
-            constant_type nested_type { head.typ };
-            std::copy(head.nested.begin(), head.nested.end(), std::back_inserter(nested_type.nested));
-            return make_list(std::move(nested_type), std::move(vals));
-        }
-
-        static constant make_pair(constant &&fst, constant &&snd)
-        {
-            constant_type typ { type_tag::pair };
-            typ.nested.emplace_back(fst.typ);
-            typ.nested.emplace_back(snd.typ);
-            std::vector<constant> vals {};
-            vals.emplace_back(std::move(fst));
-            vals.emplace_back(std::move(snd));
-            return { std::move(typ), std::move(vals) };
-        }
-
-        bool operator==(const auto &o) const
-        {
-            return typ == o.typ && val == o.val;
+            return val == o.val;
         }
 
         const cpp_int &as_int() const
@@ -403,26 +371,40 @@ namespace daedalus_turbo::plutus {
             return std::get<cpp_int>(val);
         }
 
-        const uint8_vector &as_data() const
+        bool as_bool() const
+        {
+            return std::get<bool>(val);
+        }
+
+        const uint8_vector &as_bstr() const
         {
             return std::get<uint8_vector>(val);
         }
+
+        const std::string &as_str() const
+        {
+            return std::get<std::string>(val);
+        }
+
+        const data &as_data() const
+        {
+            return std::get<data>(val);
+        }
+
+        const constant_pair::value_type &as_pair() const
+        {
+            return *std::get<constant_pair>(val);
+        }
+
+        const constant_list &as_list() const
+        {
+            return std::get<constant_list>(val);
+        }
     };
-    using constant_list = std::vector<constant>;
 
     // this type is needed only for a prettier formatting; see the formatter definitions below
     struct constant_list_values_only {
-        const constant_list &list;
-    };
-    struct constant_list_types_only {
-        const constant_list &list;
-    };
-
-    struct failure {
-        bool operator==(const auto &) const
-        {
-            return true;
-        }
+        const vector<constant> &vals;
     };
 
     struct builtin_one_arg;
@@ -431,190 +413,178 @@ namespace daedalus_turbo::plutus {
     struct builtin_six_arg;
     using builtin_any = std::variant<builtin_one_arg, builtin_two_arg, builtin_three_arg, builtin_six_arg>;
 
-    struct builtin {
-        struct info {
-            const size_t num_args;
-            const builtin_any &func;
-        };
-
+    struct t_builtin {
         builtin_tag tag {};
 
-        bool operator==(const auto &o) const
+        static t_builtin from_name(const std::string &);
+
+        bool operator==(const t_builtin &o) const
         {
             return tag == o.tag;
         }
 
-        const info &meta() const;
+        size_t num_args() const;
+        builtin_any func() const;
+        const std::string &name() const;
+        size_t polymorphic_args() const;
     };
 
-    struct term {
-        using expr_type = std::variant<variable, delay, force, lambda, apply, constant_list, failure, builtin>;
-        term_tag tag {};
-        expr_type expr {};
+    struct t_constr {
+        uint64_t tag;
+        term_list args {};
 
-        static term_ptr make_ptr(term &&t)
-        {
-            return std::make_shared<const term>(std::move(t));
-        }
+        bool operator==(const t_constr &o) const;
+    };
 
-        static term make_constant(constant &&c)
-        {
-            constant_list cl {};
-            cl.emplace_back(std::move(c));
-            return term { term_tag::constant, std::move(cl) };
-        }
-
-        static term make_pair(constant &&fst, constant &&snd)
-        {
-            return term::make_constant(constant::make_pair(std::move(fst), std::move(snd)));
-        }
-
-        static term make_list(constant_type &&nested_type)
-        {
-            return term::make_constant(constant::make_list(std::move(nested_type)));
-        }
-
-        static term make_list(constant_list &&vals)
-        {
-            return term::make_constant(constant::make_list(std::move(vals)));
-        }
-
-        static term make_list(constant_type &&nested_type, constant_list &&vals)
-        {
-            return term::make_constant(constant::make_list(std::move(nested_type), std::move(vals)));
-        }
-
-        static term make_list(constant &&fst)
-        {
-            constant_list vals {};
-            vals.emplace_back(std::move(fst));
-            return make_list(std::move(vals));
-        }
-
-        static term make_list(constant &&fst, constant &&snd)
-        {
-            constant_list vals {};
-            vals.emplace_back(std::move(fst));
-            vals.emplace_back(std::move(snd));
-            return make_list(std::move(vals));
-        }
-
-        static term make_unit()
-        {
-            return term::make_constant(plutus::constant { constant_type { type_tag::unit } });
-        }
-
-        static term make_bool(const bool val)
-        {
-            return term::make_constant(plutus::constant { constant_type { type_tag::boolean }, val });
-        }
-
-        static term make_int(const cpp_int &val)
-        {
-            return term::make_constant(constant::make_int(val));
-        }
-
-        static term make_str(const std::string_view &val)
-        {
-            return term::make_constant(constant::make_str(val));
-        }
-
-        static term make_bstr(const buffer &val)
-        {
-            return term::make_constant(constant::make_bstr(val));
-        }
-
-        static term make_bstr(uint8_vector &&val)
-        {
-            return term::make_constant(constant::make_bstr(std::move(val)));
-        }
-
-        static term make_data(const buffer &val)
-        {
-            return term::make_constant(constant::make_data(val));
-        }
+    struct acase {
+        term_ptr arg;
+        term_list cases {};
 
         bool operator==(const auto &o) const
         {
-            return tag == o.tag && expr == o.expr;
-        }
-
-        const constant &as_constant() const
-        {
-            const auto &c_list = std::get<constant_list>(expr);
-            if (c_list.size() != 1)
-                throw plutus::error("the computation didn't result in a single constant!");
-            return c_list.at(0);
-        }
-
-        const constant &must_be(const type_tag &typ) const
-        {
-            const auto &c = as_constant();
-            const auto act_typ = c.typ.typ;
-            if (act_typ != typ)
-                throw plutus::error("expected type {} but got {}", typ, act_typ);
-            return c;
-        }
-
-        bool as_bool() const
-        {
-            const auto &c = must_be(type_tag::boolean);
-            return std::get<bool>(c.val);
-        }
-
-        const cpp_int &as_int() const
-        {
-            const auto &c = must_be(type_tag::integer);
-            return std::get<cpp_int>(c.val);
-        }
-
-        const std::vector<constant> &as_pair() const
-        {
-            const auto &c = must_be(type_tag::pair);
-            return std::get<std::vector<constant>>(c.val);
-        }
-
-        const std::vector<constant> &as_list() const
-        {
-            const auto &c = must_be(type_tag::list);
-            return std::get<std::vector<constant>>(c.val);
-        }
-
-        const std::string &as_str() const
-        {
-            const auto &c = must_be(type_tag::string);
-            return std::get<std::string>(c.val);
-        }
-
-        const uint8_vector &as_bstr() const
-        {
-            const auto &c = must_be(type_tag::bytestring);
-            return std::get<uint8_vector>(c.val);
-        }
-
-        const uint8_vector &as_data() const
-        {
-            const auto &c = must_be(type_tag::data);
-            return std::get<uint8_vector>(c.val);
+            if (arg != o.arg || cases.size() != o.cases.size())
+                return false;
+            for (size_t i = 0; i < cases.size(); i++) {
+                if (*cases[i] != *o.cases[i])
+                    return false;
+            }
+            return true;
         }
     };
-    using term_list = vector<term>;
+
+    struct term {
+        using expr_type = std::variant<variable, t_delay, force, t_lambda, apply, constant, failure, t_builtin, t_constr, acase>;
+        expr_type expr {};
+
+        template<typename T>
+        static term_ptr make_ptr(T &&v)
+        {
+            return std::make_shared<term>(std::move(v));
+        }
+
+        bool operator==(const term &o) const
+        {
+            return expr == o.expr;
+        }
+    };
+
+    struct value;
+    using value_list = vector<value>;
+
+    extern bool builtin_tag_known_name(const std::string &name);
+    extern builtin_tag builtin_tag_from_name(const std::string &name);
+    extern uint8_vector bls_g1_compress(const bls12_381_g1_element &val);
+    extern uint8_vector bls_g2_compress(const bls12_381_g2_element &val);
+    extern bls12_381_g1_element bls_g1_decompress(const buffer &bytes);
+    extern bls12_381_g2_element bls_g2_decompress(const buffer &bytes);
+    extern std::string escape_utf8_string(const std::string &);
 }
 
 namespace fmt {
     template<>
+    struct formatter<daedalus_turbo::plutus::builtin_tag>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::builtin_tag &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "{}", daedalus_turbo::plutus::t_builtin { v }.name());
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::plutus::bls12_381_g1_element>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::bls12_381_g1_element &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            daedalus_turbo::array<uint8_t, 48> comp {};
+            blst_p1_compress(reinterpret_cast<byte *>(comp.data()), &v.val);
+            return fmt::format_to(ctx.out(), "0x{}", comp);
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::plutus::bls12_381_g2_element>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::bls12_381_g2_element &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            daedalus_turbo::array<uint8_t, 96> comp {};
+            blst_p2_compress(reinterpret_cast<byte *>(comp.data()), &v.val);
+            return fmt::format_to(ctx.out(), "0x{}", comp);
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::plutus::bls12_381_ml_result>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::bls12_381_ml_result &, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "opaque");
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::plutus::data::list_type>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::data::list_type &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            using namespace daedalus_turbo::plutus;
+            auto out_it = fmt::format_to(ctx.out(), "[");
+            for (auto it = v.begin(); it != v.end(); ++it) {
+                const std::string_view sep { std::next(it) == v.end() ? "" : ", " };
+                out_it = fmt::format_to(out_it, "{}{}", *it, sep);
+            }
+            return fmt::format_to(out_it, "]");
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::plutus::data>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const auto &vv, FormatContext &ctx) const -> decltype(ctx.out()) {
+            using namespace daedalus_turbo::plutus;
+            return std::visit([&ctx](const auto &v) {
+                using T = std::decay_t<decltype(v)>;
+                if constexpr (std::is_same_v<T, data_constr>)
+                    return fmt::format_to(ctx.out(), "Constr {} {}", v->first, v->second);
+                if constexpr (std::is_same_v<T, data::list_type>)
+                    return fmt::format_to(ctx.out(), "List {}", v);
+                if constexpr (std::is_same_v<T, data::map_type>) {
+                    auto out_it = fmt::format_to(ctx.out(), "Map [");
+                    for (auto it = v.begin(); it != v.end(); ++it) {
+                        const std::string_view sep { std::next(it) == v.end() ? "" : ", " };
+                        out_it = fmt::format_to(out_it, "({}, {}){}", (*it)->first, (*it)->second, sep);
+                    }
+                    return fmt::format_to(out_it, "]");
+                }
+                if constexpr (std::is_same_v<T, data::int_type>)
+                    return fmt::format_to(ctx.out(), "I {}", v);
+                if constexpr (std::is_same_v<T, data::bstr_type>)
+                    return fmt::format_to(ctx.out(), "B #{}", v);
+                throw error("unsupported data type: {}", typeid(T).name());
+            }, vv.val);
+        }
+    };
+
+    template<>
     struct formatter<daedalus_turbo::plutus::constant::value_type>: formatter<int> {
         template<typename FormatContext>
-        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+        auto format(const auto &vv, FormatContext &ctx) const -> decltype(ctx.out()) {
+            using namespace daedalus_turbo;
             using namespace daedalus_turbo::plutus;
-            switch (v.index()) {
-                case 0: return fmt::format_to(ctx.out(), "{}", std::get<daedalus_turbo::cpp_int>(v));
-                case 1: return fmt::format_to(ctx.out(), "{}", std::get<daedalus_turbo::uint8_vector>(v));
-                case 2: return fmt::format_to(ctx.out(), "{}", std::get<std::string>(v));
-                case 3: return fmt::format_to(ctx.out(), "{}", std::get<bool>(v) ? "True" : "False");
-                case 4: return fmt::format_to(ctx.out(), "{}", constant_list_values_only { std::get<constant_list>(v) });
-                default: return fmt::format_to(ctx.out(), "(unknown value type {})", v.index());
-            }
+            return std::visit([&ctx](const auto &v) {
+                using T = std::decay_t<decltype(v)>;
+                if constexpr (std::is_same_v<T, std::monostate>) {
+                    return fmt::format_to(ctx.out(), "()");
+                } else if constexpr (std::is_same_v<T, bool>) {
+                    return fmt::format_to(ctx.out(), "{}", v ? "True" : "False");
+                } else if constexpr (std::is_same_v<T, uint8_vector>) {
+                    return fmt::format_to(ctx.out(), "#{}", buffer_lowercase { v.span() });
+                } else if constexpr (std::is_same_v<T, data>) {
+                    return fmt::format_to(ctx.out(), "({})", v);
+                } else if constexpr (std::is_same_v<T, std::string>) {
+                    return fmt::format_to(ctx.out(), "\"{}\"", escape_utf8_string(v));
+                } else if constexpr (std::is_same_v<T, constant_pair>) {
+                    return fmt::format_to(ctx.out(), "({}, {})", v->first.val, v->second.val);
+                } else if constexpr (std::is_same_v<T, constant_list>) {
+                    return fmt::format_to(ctx.out(), "{}", constant_list_values_only { v.vals });
+                } else {
+                    return fmt::format_to(ctx.out(), "{}", v);
+                }
+            }, vv);
         }
     };
 
@@ -623,25 +593,9 @@ namespace fmt {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
             auto out_it = fmt::format_to(ctx.out(), "(");
-            for (auto it = v.list.begin(); it != v.list.end(); it++) {
-                const std::string_view sep { std::next(it) == v.list.end() ? "" : ", " };
-                if (it->typ.typ == daedalus_turbo::plutus::type_tag::unit)
-                    out_it = fmt::format_to(out_it, "(){}", sep);
-                else
-                    out_it = fmt::format_to(out_it, "{}{}", it->val, sep);
-            }
-            return fmt::format_to(out_it, ")");
-        }
-    };
-
-    template<>
-    struct formatter<daedalus_turbo::plutus::constant_list_types_only>: formatter<int> {
-        template<typename FormatContext>
-        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
-            auto out_it = fmt::format_to(ctx.out(), "(");
-            for (auto it = v.list.begin(); it != v.list.end(); it++) {
-                const std::string_view sep { std::next(it) == v.list.end() ? "" : ", " };
-                out_it = fmt::format_to(out_it, "{}{}", it->typ, sep);
+            for (auto it = v.vals.begin(); it != v.vals.end(); ++it) {
+                const std::string_view sep { std::next(it) == v.vals.end() ? "" : ", " };
+                out_it = fmt::format_to(out_it, "{}{}", it->val, sep);
             }
             return fmt::format_to(out_it, ")");
         }
@@ -665,52 +619,114 @@ namespace fmt {
     template<>
     struct formatter<daedalus_turbo::plutus::constant>: formatter<int> {
         template<typename FormatContext>
-        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
-            using namespace daedalus_turbo::plutus;
-            switch (v.typ.typ) {
-                case type_tag::unit: return fmt::format_to(ctx.out(), "(con {} ())", v.typ.typ);
-                case type_tag::bytestring: return fmt::format_to(ctx.out(), "(con {} #{})", v.typ.typ, v.val);
-                case type_tag::data:
-                    return fmt::format_to(ctx.out(), "(con {} ({}))", v.typ.typ,
-                                          daedalus_turbo::cbor::parse(std::get<daedalus_turbo::uint8_vector>(v.val)));
-                case type_tag::pair: {
-                    const auto &vals = std::get<constant_list>(v.val);
-                    return fmt::format_to(ctx.out(), "(con (pair {} {}) ({}, {}))",
-                                          v.typ.nested.at(0), v.typ.nested.at(1), vals.at(0).val, vals.at(1).val);
-                }
-                case type_tag::list: {
-                    const auto &vals = std::get<constant_list>(v.val);
-                    return fmt::format_to(ctx.out(), "(con (list {}) ({}))",
-                                          v.typ.nested.at(0), constant_list_values_only { vals });
-                }
-                default: return fmt::format_to(ctx.out(), "(con {} {})", v.typ.typ, v.val);
-            }
+        auto format(const daedalus_turbo::plutus::constant &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "(con {} {})", daedalus_turbo::plutus::constant_type::from_val(v), v.val);
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::plutus::variable>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::variable &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "{}", v.name);
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::plutus::t_delay>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::t_delay &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "(delay {})", *v.expr);
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::plutus::t_lambda>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::t_lambda &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "(lam {} {})", v.name, *v.expr);
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::plutus::apply>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::apply &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "[{} {}]", *v.func, *v.arg);
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::plutus::force>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::force &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "(force {})", *v.expr);
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::plutus::failure>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::failure &, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "error");
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::plutus::t_builtin>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::t_builtin &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "(builtin {})", v.name());
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::plutus::t_constr>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::t_constr &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "(constr {} {})", v.tag, v.args);
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::plutus::acase>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::acase &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "(case {} {})", v.arg, v.cases);
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::plutus::term::expr_type>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::term::expr_type &vv, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return std::visit([&ctx](const auto &v) {
+                return fmt::format_to(ctx.out(), "{}", v);
+            }, vv);
         }
     };
 
     template<>
     struct formatter<daedalus_turbo::plutus::term>: formatter<int> {
         template<typename FormatContext>
-        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
-            using namespace daedalus_turbo::plutus;
-            switch (v.tag) {
-                case term_tag::variable: return fmt::format_to(ctx.out(), "v{}", std::get<variable>(v.expr).idx);
-                case term_tag::delay: return fmt::format_to(ctx.out(), "(delay {})", *std::get<delay>(v.expr).expr);
-                case term_tag::lambda: return fmt::format_to(ctx.out(), "(lam v{} {})", std::get<lambda>(v.expr).var_idx, *std::get<lambda>(v.expr).expr);
-                case term_tag::apply: return fmt::format_to(ctx.out(), "[{} {}]", *std::get<apply>(v.expr).func, *std::get<apply>(v.expr).arg);
-                case term_tag::constant: {
-                    const auto consts = std::get<constant_list>(v.expr);
-                    if (consts.size() == 1) [[likely]]
-                        return fmt::format_to(ctx.out(), "{}", consts.at(0));
-                    return fmt::format_to(ctx.out(), "{}", consts);
-                }
-                case term_tag::force: return fmt::format_to(ctx.out(), "(force {})", *std::get<force>(v.expr).expr);
-                case term_tag::error: return fmt::format_to(ctx.out(), "error");
-                case term_tag::builtin: return fmt::format_to(ctx.out(), "(builtin {})", std::get<builtin>(v.expr).tag);
-                //case term_tag::construct: return fmt::format_to(ctx.out(), "term::construct");
-                //case term_tag::acase: return fmt::format_to(ctx.out(), "term::case");
-                default: return fmt::format_to(ctx.out(), "(unknown {})", static_cast<int>(v.tag));
-            }
+        auto format(const daedalus_turbo::plutus::term &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "{}", v.expr);
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::plutus::term_ptr>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::term_ptr &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "{}", *v);
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::plutus::version>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::version &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "{}", static_cast<std::string>(v));
         }
     };
 }

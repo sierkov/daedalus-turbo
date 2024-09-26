@@ -6,7 +6,6 @@
 #define DAEDALUS_TURBO_CARDANO_HPP
 
 #include <cstdint>
-#include <dt/blake2b.hpp>
 #include <dt/cbor.hpp>
 #include <dt/cardano/byron.hpp>
 #include <dt/cardano/shelley.hpp>

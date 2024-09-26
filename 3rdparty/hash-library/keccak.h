@@ -8,6 +8,7 @@
 
 //#include "hash.h"
 #include <string>
+#include <span>
 
 // define fixed size integer types
 #ifdef _MSC_VER
@@ -52,6 +53,7 @@ public:
 
   /// return latest hash as hex characters
   std::string getHash();
+  void getHashBin(const std::span<uint8_t> &hash);
 
   /// restart
   void reset();

@@ -483,7 +483,7 @@ namespace daedalus_turbo::validator {
         for (const auto &[model_id, values]: val.at(18).map()) {
             switch (model_id.uint()) {
                 case 0:
-                    params.plutus_cost_models.v1 = cardano::plutus_cost_model::from_cbor(cfg.plutus_v1_cost_model, values.array());
+                    params.plutus_cost_models.v1 = cardano::plutus_cost_model::from_cbor(cfg.plutus_all_cost_models.v1.value(), values.array());
                     break;
                 break;
                 default:
@@ -528,10 +528,10 @@ namespace daedalus_turbo::validator {
         for (const auto &[model_id, values]: val.at(16).map()) {
             switch (model_id.uint()) {
                 case 0:
-                    params.plutus_cost_models.v1 = cardano::plutus_cost_model::from_cbor(cfg.plutus_v1_cost_model, values.array());
+                    params.plutus_cost_models.v1 = cardano::plutus_cost_model::from_cbor(cfg.plutus_all_cost_models.v1.value(), values.array());
                     break;
                 case 1:
-                    params.plutus_cost_models.v2 = cardano::plutus_cost_model::from_cbor(cfg.plutus_v2_cost_model, values.array());
+                    params.plutus_cost_models.v2 = cardano::plutus_cost_model::from_cbor(cfg.plutus_all_cost_models.v1.value(), values.array());
                 break;
                 default:
                     throw error("unsupported cost model id: {}", model_id);

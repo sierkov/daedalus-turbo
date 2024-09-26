@@ -1,1 +1,0 @@
-(program 1.0.0 [[(builtin consByteString) (con integer 10)] (con bytestring #04050607)])

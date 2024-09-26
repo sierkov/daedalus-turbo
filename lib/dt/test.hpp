@@ -8,6 +8,7 @@
 #define BOOST_UT_DISABLE_MODULE 1
 #include <boost/ut.hpp>
 #include <dt/array.hpp>
+#include <dt/config.hpp>
 #include <dt/error.hpp>
 #include <dt/file.hpp>
 #include <dt/logger.hpp>
@@ -47,9 +48,19 @@ namespace daedalus_turbo {
     }
 
     template<typename T, typename Y>
-    void test_same(const T &x, const Y &y, const std::source_location &loc=std::source_location::current())
+    bool test_same(const T &x, const Y &y, const std::source_location &loc=std::source_location::current())
     {
-        expect(x == static_cast<T>(y), loc) << fmt::format("{} != {}", x, y);
+        const auto res = x == static_cast<T>(y);
+        expect(res, loc) << fmt::format("{} != {}", x, y);
+        return res;
+    }
+
+    template<typename T, typename Y>
+    bool test_same(const std::string &name, const T &x, const Y &y, const std::source_location &loc=std::source_location::current())
+    {
+        const auto res = x == static_cast<T>(y);
+        expect(res, loc) << fmt::format("{}: {} != {}", name, x, y);
+        return res;
     }
 }
 

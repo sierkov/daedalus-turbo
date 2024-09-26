@@ -123,22 +123,25 @@ namespace daedalus_turbo::cardano::shelley {
 
     void tx::foreach_input(const std::function<void(const tx_input &)> &observer) const
     {
-        const cbor_array *inputs = nullptr;
         for (const auto &[entry_type, entry]: _tx.map()) {
-            if (entry_type.uint() == 0)
-                inputs = &entry.array();
-        }
-        if (inputs) {
-            // the set is necessary since some transactions contain duplicate inputs and Cardano Node allows it!
-            std::set<tx_out_ref> unique_inputs {};
-            for (const auto &txin: *inputs) {
-                const auto in_idx = txin.at(1).uint();
-                unique_inputs.emplace(tx_out_ref { txin.at(0).buf(), in_idx });
-            }
-            size_t unique_idx = 0;
-            for (const auto &unique_txin: unique_inputs) {
-                observer(tx_input { unique_txin.hash, unique_txin.idx, unique_idx++ });
+            if (entry_type.uint() == 0) {
+                set<tx_out_ref> unique_inputs {};
+                _foreach_set(entry, [&](const auto &txin, size_t) {
+                    const auto in_idx = txin.at(1).uint();
+                    unique_inputs.emplace(tx_out_ref { txin.at(0).buf(), in_idx });
+                });
+                size_t unique_idx = 0;
+                for (const auto &unique_txin: unique_inputs) {
+                    observer(tx_input { unique_txin.hash, unique_txin.idx, unique_idx++ });
+                }
             }
         }
+    }
+
+    void tx::_foreach_set(const cbor_value &set_raw, const std::function<void(const cbor_value &, size_t)> &observer) const
+    {
+        const auto &set = set_raw.array();
+        for (size_t i = 0; i < set.size(); ++i)
+            observer(set[i], i);
     }
 }

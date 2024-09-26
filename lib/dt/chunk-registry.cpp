@@ -392,7 +392,7 @@ namespace daedalus_turbo {
                             .size=blk.size(),
                             .slot=static_cast<uint32_t>(blk.slot()),
                             .height=static_cast<uint32_t>(blk.height()),
-                            .chk_sum=crc32::digest(blk.raw_data()),
+                            .chk_sum=crypto::crc32::digest(blk.raw_data()),
                             .header_offset=static_cast<uint16_t>(blk.header_raw_data().data() - blk.raw_data().data()),
                             .header_size=static_cast<uint16_t>(blk.header_raw_data().size()),
                             .pool_id=blk.issuer_hash(),

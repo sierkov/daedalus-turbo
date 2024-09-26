@@ -4,53 +4,31 @@
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
 #include <dt/cardano/alonzo.hpp>
-#include <dt/plutus/parser.hpp>
+#include <dt/plutus/builtins.hpp>
+#include <dt/plutus/flat.hpp>
 #include <dt/plutus/machine.hpp>
+#include <dt/plutus/context.hpp>
 
 namespace daedalus_turbo::cardano::alonzo {
-    static plutus::term _make_tx_context(const tx &/*tx*/)
+    using namespace daedalus_turbo::plutus;
+
+    static void _evaluate_plutus(const script_info &script, const cbor::value &datum, const cbor::value &redeemer, const term_ptr &t_ctx)
     {
-        /*plutus::constant_list ctx {};
-        {
-            plutus::constant_list inputs {};
-            tx.foreach_input([&](const auto &txin) {
-                inputs.emplace_back(plutus::constant::make_constant(
-                    ))
-            });
-            ctx.emplace_back(plutus::constant::make_list(std::move(inputs)));
-        }
-        return plutus::term::make_list(std::move(ctx));*/
-        return plutus::term::make_unit();
+        using namespace plutus;
+        flat::script s { script.script() };
+        auto t_datum = term::make_ptr(constant { data { datum.buf() } });
+        auto t_redeemer = term::make_ptr(constant { data { buffer { redeemer.raw_span() } } });
+        // Todo: force maximum evaluation budget
+        machine m {};
+        const auto [expr, cost] = m.evaluate(s.program(), { t_datum, t_redeemer, t_ctx });
     }
 
-    static void _evaluate_script(const script_info &script, const cbor::value &datum, const cbor::value &redeemer, const plutus::term &context)
-    {
-        plutus::script s { script.script() };
-        logger::info("script hash: {}", s.hash());
-        logger::info("datum: {}", datum);
-        logger::info("redeemer: {}", redeemer);
-        logger::info("program: {}", s.program());
-        plutus::term_list args {};
-        if (datum.type == CBOR_BYTES)
-            args.emplace_back(plutus::term::make_constant(plutus::constant::make_bstr(datum.buf())));
-        else
-            args.emplace_back(plutus::term::make_unit());
-        args.emplace_back(plutus::builtins::un_constr_data(plutus::term::make_data(redeemer.raw_span())));
-        args.emplace_back(context);
-        plutus::machine m {};
-        m.evaluate(s, args);
-        // - returns a true value
-        // - new datum matches the transaction output's datum
-        // - script evaluation resources are within the budget
-        // - script evaluation costs and match the fee
-    }
-
-    void tx::_validate_witness_plutus_v1(wit_ok &ok, const cbor::array &redeemers, const script_info_map &scripts, const cbor::array *data,
-        const vector<tx_out_data> &input_data, const vector<script_hash> &policies) const
+    static void _validate_plutus(tx::wit_ok &ok, const tx &tx, const cbor::array &redeemers, const script_info_map &scripts, const cbor::array *data,
+        const resolved_input_list &inputs, const mint_info_list &mints, const set<key_hash> &signatories)
     {
         if (!data || data->size() != redeemers.size())
             throw error("invalid number of scripts, data and redeemer items!");
-        const auto context = _make_tx_context(*this);
+        context ctx { tx, inputs, mints, signatories };
         for (size_t ri = 0; ri < redeemers.size(); ++ri) {
             ++ok.script_total;
             const auto &r = redeemers[ri];
@@ -58,21 +36,24 @@ namespace daedalus_turbo::cardano::alonzo {
             const auto r_idx = r.at(1).uint();
             switch (r_type) {
                 case 0: {
-                    const address addr { input_data.at(r_idx).address };
+                    const auto &in = inputs.at(r_idx);
+                    const address addr { in.data.address };
                     if (const auto pay_id = addr.pay_id(); pay_id.type == pay_ident::ident_type::SHELLEY_SCRIPT) [[likely]]
-                        _evaluate_script(scripts.at(pay_id.hash), data->at(ri), r.at(2), context);
+                        _evaluate_plutus(scripts.at(pay_id.hash), data->at(ri), r.at(2), ctx.v1(purpose { in }));
                     else
-                        throw error("txin txo address references from tx {} redeemer #{} is not a payment script!", hash(), ri);
+                        throw error("txin txo address references from tx {} redeemer #{} is not a payment script!", tx.hash(), ri);
                     break;
                 }
                 case 1:
-                    if (r_idx < policies.size()) [[likely]]
-                        _evaluate_script(scripts.at(policies[r_idx]), data->at(ri), r.at(2), context);
-                    else
-                        throw error("tx: {} mint redeemer references a too big mint policy index: {}", hash(), r_idx);
+                    if (r_idx < mints.size()) [[likely]] {
+                        const auto &m = mints[r_idx];
+                        _evaluate_plutus(scripts.at(m.policy_id), data->at(ri), r.at(2), ctx.v1(purpose { m }));
+                    } else {
+                        throw error("tx: {} mint redeemer references a too big mint policy index: {}", tx.hash(), r_idx);
+                    }
                     break;
                 default:
-                    throw error("tx: {} unsupported redeemer_tag: {}", hash(), r_type);
+                    throw error("tx: {} unsupported redeemer_tag: {}", tx.hash(), r_type);
             }
             ++ok.script_ok;
         }
@@ -102,18 +83,7 @@ namespace daedalus_turbo::cardano::alonzo {
                 default: break;
             }
         }
-        if (!scripts.empty() && !input_data) [[unlikely]]
-            throw error("input_data must be prepared for witness validation of Alonzo+ transaction witnesses");
-        // prepare data structures to resolve redeemers
-        vector<tx_out_ref> inputs {};
-        foreach_input([&](const auto &txin) {
-            inputs.emplace_back(txin.tx_hash, txin.txo_idx);
-        });
-        vector<script_hash> mint_policies {};
-        foreach_mint([&](const auto &policy_id, const auto &) {
-            mint_policies.emplace_back(policy_id);
-        });
-        // validate native scripts and bootstrap witnesses
+
         for (const auto &[w_type, w_val]: _wit->map()) {
             switch (w_type.uint()) {
                 case 0:
@@ -122,8 +92,37 @@ namespace daedalus_turbo::cardano::alonzo {
                     break; // ignore - has been processed above
                 case 1: _validate_witness_native_script(ok, w_val, vkeys); break;
                 case 2: _validate_witness_bootstrap(ok, w_val); break;
-                case 5: _validate_witness_plutus_v1(ok, w_val.array(), scripts, plutus_data, *input_data, mint_policies); break;
+                case 5: break; // validated later
                 default: throw cardano_error("unsupported witness type {} at tx {}: {}", w_type.uint(), hash(), w_val);
+            }
+        }
+
+        if (!scripts.empty()) {
+            if (!input_data) [[unlikely]]
+                throw error("input_data must be prepared for witness validation of Alonzo+ transaction witnesses");
+
+            // prepare resolved inputs
+            tx_out_ref_list input_refs {};
+            resolved_input_list inputs {};
+            foreach_input([&input_refs](const tx_input &txin) {
+                input_refs.emplace_back(tx_out_ref::from_input(txin));
+            });
+            if (input_refs.size() != input_data->size())
+                throw error("invalid number of resolved tx inputs: {} while expected: {}", input_data->size(), input_refs.size());
+            for (size_t ri = 0; ri < input_refs.size(); ++ri)
+                inputs.emplace_back(input_refs[ri], (*input_data)[ri]);
+
+            // prepare mints
+            vector<mint_info> mints {};
+            foreach_mint([&mints](const auto &policy_id, const auto &assets) {
+                mints.emplace_back(policy_id, assets);
+            });
+
+            for (const auto &[w_type, w_val]: _wit->map()) {
+                switch (w_type.uint()) {
+                    case 5: _validate_plutus(ok, *this, w_val.array(), scripts, plutus_data, inputs, mints, vkeys); break;
+                    default: break;
+                }
             }
         }
         return ok;

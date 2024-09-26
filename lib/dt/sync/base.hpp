@@ -5,7 +5,7 @@
 #ifndef DAEDALUS_TURBO_SYNC_BASE_HPP
 #define DAEDALUS_TURBO_SYNC_BASE_HPP
 
-#include <dt/cardano/type.hpp>
+#include <dt/cardano/types.hpp>
 #include <dt/chunk-registry.hpp>
 #include <dt/peer-selection.hpp>
 

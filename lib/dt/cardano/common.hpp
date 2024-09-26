@@ -14,7 +14,7 @@
 #include <variant>
 #include <dt/array.hpp>
 #include <dt/cardano/config.hpp>
-#include <dt/cardano/type.hpp>
+#include <dt/cardano/types.hpp>
 #include <dt/cbor.hpp>
 #include <dt/file.hpp>
 #include <dt/format.hpp>
@@ -399,6 +399,9 @@ namespace daedalus_turbo::cardano {
         buffer vrf_vkey;
     };
 
+    using stake_reg_observer = std::function<void(const stake_ident &, size_t, std::optional<uint64_t>)>;
+    using stake_unreg_observer = std::function<void(const stake_ident &, size_t, std::optional<uint64_t>)>;
+
     struct tx {
         struct wit_ok {
             size_t vkey_total = 0;
@@ -432,8 +435,8 @@ namespace daedalus_turbo::cardano {
         virtual void foreach_output(const std::function<void(const tx_output &)> &) const {}
         virtual size_t foreach_mint(const std::function<void(const buffer &, const cbor::map &)> &) const { return 0; }
         virtual void foreach_withdrawal(const std::function<void(const tx_withdrawal &)> &) const {}
-        virtual void foreach_stake_reg(const std::function<void(const stake_ident &, size_t)> &) const {}
-        virtual void foreach_stake_unreg(const std::function<void(const stake_ident &, size_t)> &) const {}
+        virtual void foreach_stake_reg(const stake_reg_observer &) const {}
+        virtual void foreach_stake_unreg(const stake_unreg_observer &) const {}
         virtual void foreach_stake_deleg(const std::function<void(const stake_deleg &)> &) const {}
         virtual void foreach_pool_reg(const std::function<void(const pool_reg &)> &) const {}
         virtual void foreach_param_update(const std::function<void(const param_update_proposal &)> &) const {}

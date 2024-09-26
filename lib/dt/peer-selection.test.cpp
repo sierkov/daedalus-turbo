@@ -9,6 +9,7 @@
 using namespace daedalus_turbo;
 
 suite peer_selection_suite = [] {
+    using namespace std::literals::string_literals;
     "peer_selection"_test = [] {
         auto &ps = peer_selection_simple::get();
         {
@@ -23,6 +24,6 @@ suite peer_selection_suite = [] {
             for (const auto &[host, freq]: host_dist)
                 expect(static_cast<double>(freq) / num_rolls >= 0.25 * static_cast<double>(host_dist.size()) / num_rolls) << host << freq << num_rolls;
         }
-        expect(ps.next_cardano().host.starts_with("relays-new"));
+        test_same("backbone.cardano.iog.io"s, ps.next_cardano().host);
     };
 };

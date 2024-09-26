@@ -42,11 +42,15 @@ namespace daedalus_turbo::cardano::alonzo {
                         switch (model_id.uint()) {
                             case 0:
                                 cost_mdls.v1.emplace(
-                                    plutus_cost_model::from_cbor(cfg.plutus_v1_cost_model, values.array()));
+                                    plutus_cost_model::from_cbor(cfg.plutus_all_cost_models.v1.value(), values.array()));
                                 break;
                             case 1:
                                 cost_mdls.v2.emplace(
-                                    plutus_cost_model::from_cbor(cfg.plutus_v2_cost_model, values.array()));
+                                    plutus_cost_model::from_cbor(cfg.plutus_all_cost_models.v2.value(), values.array()));
+                                break;
+                            case 2:
+                                cost_mdls.v3.emplace(
+                                    plutus_cost_model::from_cbor(cfg.plutus_all_cost_models.v3.value(), values.array()));
                                 break;
                             default:
                                 throw error("unsupported cost model id: {}", model_id);
@@ -153,16 +157,12 @@ namespace daedalus_turbo::cardano::alonzo {
         void foreach_collateral(const std::function<void(const tx_input &)> &observer) const override
         {
             _if_item_present(13, [&](const auto &collateral_raw) {
-                const auto &collaterals = collateral_raw.array();
-                for (size_t i = 0; i < collaterals.size(); ++i) {
-                    const auto &txin = collaterals.at(i).array();
+                _foreach_set(collateral_raw, [&](const auto &txin_raw, const size_t i) {
+                    const auto &txin = txin_raw.array();
                     observer(tx_input { txin.at(0).buf(), txin.at(1).uint(), i });
-                }
+                });
             });
         }
-    protected:
-        void _validate_witness_plutus_v1(wit_ok &ok, const cbor::array &redeemers, const script_info_map &scripts,
-            const cbor::array *data, const tx_out_data_list &input_data, const vector<script_hash> &policies) const;
     };
 
     inline void block::foreach_tx(const std::function<void(const cardano::tx &)> &observer) const
