@@ -16,7 +16,7 @@ suite cardano_alonzo_suite = [] {
     "cardano::alonzo"_test = [] {
         configs_dir cfg { configs_dir::default_path() };
         cardano::config ccfg { cfg };
-        ccfg.shelley_start_slot(208 * ccfg.byron_epoch_length);
+        ccfg.shelley_start_epoch(208);
         "validate plutus v1"_test = [&] {
             // a95d16e891e51f98a3b1d3fe862ed355ebc8abffb7a7269d86f775553d9e653f
             for (const char *tx_hex: { "C8EE18A7965CC8BEA4986F7F2573CF094BE20F4E58137EC46356BB73BBC6774F" }) {

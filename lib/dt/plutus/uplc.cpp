@@ -475,7 +475,7 @@ namespace daedalus_turbo::plutus::uplc {
         constant_list _decode_list_value(constant_type &&typ)
         {
             _eat_lbr();
-            constant_list cl { std::move(typ.nested.at(0)) };
+            auto cl = constant_list::make_empty(std::move(typ.nested.at(0)));
             while (!_next_is(']')) {
                 cl.vals.emplace_back(_decode_constant_value(constant_type { cl.typ }));
                 _eat_space();

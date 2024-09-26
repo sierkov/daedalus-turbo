@@ -349,9 +349,11 @@ namespace daedalus_turbo::plutus {
     };
 
     struct constant_list {
-        constant_type typ {};
-        vector<constant> vals {};
+        constant_type typ;
+        vector<constant> vals;
 
+        static constant_list make_empty(constant_type &&);
+        static constant_list make_empty(const constant_type &);
         static constant_list make_one(constant &&);
         bool operator==(const constant_list &o) const;
     };
@@ -360,11 +362,6 @@ namespace daedalus_turbo::plutus {
         using value_type = std::variant<cpp_int, uint8_vector, std::string, bool, constant_list, constant_pair,
             data, bls12_381_g1_element, bls12_381_g2_element, bls12_381_ml_result, std::monostate>;
         value_type val;
-
-        bool operator==(const constant &o) const
-        {
-            return val == o.val;
-        }
 
         const cpp_int &as_int() const
         {
@@ -394,6 +391,11 @@ namespace daedalus_turbo::plutus {
         const constant_pair::value_type &as_pair() const
         {
             return *std::get<constant_pair>(val);
+        }
+
+        bool operator==(const constant &o) const
+        {
+            return val == o.val;
         }
 
         const constant_list &as_list() const

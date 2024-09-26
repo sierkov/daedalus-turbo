@@ -14,7 +14,7 @@ using namespace daedalus_turbo::cardano::network;
 suite cardano_network_suite = [] {
     "cardano::network"_test = [] {
         const auto &cfg = cardano::config::get();
-        cfg.shelley_start_slot(208 * 21600);
+        cfg.shelley_start_epoch(208);
         "segment_info"_test = [] {
             segment_info info { 0x0123ABCD, channel_mode::initiator, protocol::chain_sync, 12345 };
             auto exp = array<uint8_t, 8>::from_hex("0123ABCD00023039");

@@ -34,7 +34,7 @@ suite validator_state_suite = [] {
             test_same(st.reserves(), 0);
             st.start_epoch();
             st.process_block(20000, 2, 0, 0);
-            cardano::config::get().shelley_start_slot(0);
+            cardano::config::get().shelley_start_epoch(0);
             test_same(st.treasury(), 0);
             test_same(st.reserves(), 13887515255000000ULL);
             test_same(st.params().protocol_ver.major, 2);

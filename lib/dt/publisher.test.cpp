@@ -15,7 +15,7 @@ suite publisher_suite = [] {
         if (std::filesystem::exists(dist_path))
             std::filesystem::remove_all(dist_path);
         chunk_registry cr { dist_path, chunk_registry::mode::store };
-        cr.config().shelley_start_slot(4'492'800);
+        cr.config().shelley_start_epoch(208);
         ed25519::skey sk {};
         ed25519::vkey vk {};
         ed25519::create(sk, vk);

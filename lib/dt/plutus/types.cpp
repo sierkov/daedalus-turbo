@@ -271,13 +271,20 @@ namespace daedalus_turbo::plutus {
         }, c.val);
     }
 
+    constant_list constant_list::make_empty(constant_type &&typ)
+    {
+        return { std::move(typ), {} };
+    }
+
+    constant_list constant_list::make_empty(const constant_type &typ)
+    {
+        return { constant_type { typ }, {} };
+    }
 
     constant_list constant_list::make_one(constant &&c)
     {
         auto typ = constant_type::from_val(c);
-        constant_list cl { std::move(typ) };
-        cl.vals.emplace_back(std::move(c));
-        return cl;
+        return { std::move(typ), { std::move(c) } };
     }
 
     data_pair::data_pair(data &&fst, data &&snd):

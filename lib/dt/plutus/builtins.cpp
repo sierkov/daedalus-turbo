@@ -271,7 +271,7 @@ namespace daedalus_turbo::plutus::builtins {
         const auto &cl = l.as_list();
         if (cl.vals.empty()) [[unlikely]]
             throw error("calling tail_list on an empty list!");
-        constant_list tail { cl.typ };
+        auto tail = constant_list::make_empty(cl.typ);
         std::copy(cl.vals.begin() + 1, cl.vals.end(), std::back_inserter(tail.vals));
         return { std::move(tail) };
     }
@@ -347,7 +347,7 @@ namespace daedalus_turbo::plutus::builtins {
     {
         if (const auto &d = t.as_data(); std::holds_alternative<data_constr>(d.val)) {
             const auto &c = std::get<data_constr>(d.val);
-            constant_list cl { constant_type { type_tag::data } };
+            auto cl = constant_list::make_empty(constant_type { type_tag::data });
             for (const auto &d: c->second)
                 cl.vals.emplace_back(d);
             return { constant { constant_pair { constant { c->first }, constant { std::move(cl) } } } };
@@ -359,7 +359,7 @@ namespace daedalus_turbo::plutus::builtins {
     {
         if (const auto &d = t.as_data(); std::holds_alternative<data::map_type>(d.val)) {
             const auto &m = std::get<data::map_type>(d.val);
-            constant_list cl { constant_type { type_tag::pair, { constant_type { type_tag::data }, constant_type { type_tag::data } } } };
+            auto cl = constant_list::make_empty(constant_type { type_tag::pair, { constant_type { type_tag::data }, constant_type { type_tag::data } } });
             for (const auto &p: m)
                 cl.vals.emplace_back(constant_pair { constant { p->first }, constant { p->second } });
             return { std::move(cl) };
@@ -370,7 +370,7 @@ namespace daedalus_turbo::plutus::builtins {
     value un_list_data(const value &t) {
         if (const auto &d = t.as_data(); std::holds_alternative<data::list_type>(d.val)) {
             const auto &l = std::get<data::list_type>(d.val);
-            constant_list cl { constant_type { type_tag::data } };
+            auto cl = constant_list::make_empty(constant_type { type_tag::data });
             for (const auto &d: l)
                 cl.vals.emplace_back(d);
             return { std::move(cl) };

@@ -235,7 +235,7 @@ namespace daedalus_turbo::plutus::flat {
                 case type_tag::boolean: return { _decode_boolean() };
                 case type_tag::data: return { _decode_data() };
                 case type_tag::list: {
-                    constant_list cl { typ.nested.at(0) };
+                    auto cl = constant_list::make_empty(typ.nested.at(0));
                     _decode_list([&] {
                         cl.vals.emplace_back(_decode_constant_val(typ.nested.at(0)));
                     });

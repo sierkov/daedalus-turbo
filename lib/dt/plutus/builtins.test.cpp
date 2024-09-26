@@ -258,7 +258,7 @@ suite plutus_builtins_suite = [] {
                     expect(choose_list(value::make_list(constant_type { type_tag::integer }), { 11 }, { 22 }).as_int() == 11);
                 }
                 {
-                    constant_list cl { constant_type { type_tag::integer } };
+                    auto cl = constant_list::make_empty(constant_type { type_tag::integer });
                     cl.vals.emplace_back(cpp_int(0));
                     expect(choose_list({ std::move(cl) }, { 11 }, { 22 }).as_int() == 22);
                 }
@@ -268,7 +268,7 @@ suite plutus_builtins_suite = [] {
                     expect(mk_cons({ 22 }, value::make_list(constant_type { type_tag::integer })).as_list().vals.size() == 1_u);
                 }
                 {
-                    constant_list cl { constant_type { type_tag::integer } };
+                    auto cl = constant_list::make_empty(constant_type { type_tag::integer });
                     cl.vals.emplace_back(cpp_int(0));
                     const auto res = mk_cons({ 22 }, value { constant { std::move(cl) } }).as_list();
                     expect(res.vals.size() == 2_u);
@@ -281,12 +281,12 @@ suite plutus_builtins_suite = [] {
                     expect(throws([&] { head_list(value::make_list(constant_type { type_tag::integer })); }));
                 }
                 {
-                    constant_list cl { constant_type { type_tag::integer } };
+                    auto cl = constant_list::make_empty(constant_type { type_tag::integer });
                     cl.vals.emplace_back(cpp_int(22));
                     expect(head_list(value { constant { std::move(cl) } }).as_int() == 22);
                 }
                 {
-                    constant_list cl { constant_type { type_tag::integer } };
+                    auto cl = constant_list::make_empty(constant_type { type_tag::integer });
                     cl.vals.emplace_back(cpp_int(22));
                     cl.vals.emplace_back(cpp_int(33));
                     cl.vals.emplace_back(cpp_int(44));
@@ -299,12 +299,12 @@ suite plutus_builtins_suite = [] {
                     expect(throws([&] { tail_list(value::make_list(constant_type { type_tag::integer })); }));
                 }
                 {
-                    constant_list cl { constant_type { type_tag::integer } };
+                    auto cl = constant_list::make_empty(constant_type { type_tag::integer });
                     cl.vals.emplace_back(cpp_int(22));
                     expect(tail_list(value { constant { std::move(cl) } }).as_list().vals.empty());
                 }
                 {
-                    constant_list cl { constant_type { type_tag::integer } };
+                    auto cl = constant_list::make_empty(constant_type { type_tag::integer });
                     cl.vals.emplace_back(cpp_int(22));
                     cl.vals.emplace_back(cpp_int(33));
                     cl.vals.emplace_back(cpp_int(44));
@@ -320,12 +320,12 @@ suite plutus_builtins_suite = [] {
                     expect(null_list(value::make_list(constant_type { type_tag::integer })).as_bool());
                 }
                 {
-                    constant_list cl { constant_type { type_tag::integer } };
+                    auto cl = constant_list::make_empty(constant_type { type_tag::integer });
                     cl.vals.emplace_back(cpp_int(22));
                     expect(!null_list(value { constant { std::move(cl) } }).as_bool());
                 }
                 {
-                    constant_list cl { constant_type { type_tag::integer } };
+                    auto cl = constant_list::make_empty(constant_type { type_tag::integer });
                     cl.vals.emplace_back(cpp_int(22));
                     cl.vals.emplace_back(cpp_int(33));
                     cl.vals.emplace_back(cpp_int(44));
