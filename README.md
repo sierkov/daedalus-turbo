@@ -113,6 +113,11 @@ Show information about a transaction:
 ./dt tx-info /data/cardano 357D47E9916B7FE949265F23120AEED873B35B97FB76B9410C323DDAB5B96D1A
 ```
 
+Evaluate a Plutus script and show its result and costs:
+```
+./dt plutus-eval ../data/plutus/conformance/example/factorial/factorial.uplc
+```
+
 ## Pre-built binaries for Windows and Mac (ARM64)
 
 The latest builds of the DT Explorer application can be found in the Assets section of [the latest GitHub release](https://github.com/sierkov/daedalus-turbo/releases/latest) page.
