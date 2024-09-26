@@ -20,16 +20,17 @@ Currently supported:
 - Incremental synchronization of compressed blockchain data over the Internet (the Turbo protocol)
 - Incremental synchronization using the normal Cardano Network protocol (no compression)
 - Incremental synchronization from a local Cardano Node instance
-- Parallelized Ouroboros Praos data validation (full concensus validation)
+- Parallelized Ouroboros Praos data validation (full consensus validation)
 - Ouroboros Genesis chain selection rule when synchronizing with a Cardano Network peer
 - Interactive reconstruction of balances and transaction histories of stake and payment addresses
 - Compressed local storage of blockchain data (compression ratio ~4.5x)
 - Interactive search for transaction data
 - ADA and non-ADA assets
 - Blockchain Explorer Desktop User Interface
+- Evaluation of Plutus programs
 
 In active development:
-- Validation of Plutus scripts to enable the full tail validation, as explained in [On the Security of Wallet Nodes in the Cardano Blockchain](./doc/2024-sierkov-on-wallet-security.pdf)
+- Validation of Plutus script witnesses to enable the full tail validation, as explained in [On the Security of Wallet Nodes in the Cardano Blockchain](./doc/2024-sierkov-on-wallet-security.pdf)
 - Support for Cardano Chang hard fork
 
 As the project matures and moves through its [roadmap](#roadmap), the list of supported features will grow.
@@ -43,37 +44,17 @@ As the project matures and moves through its [roadmap](#roadmap), the list of su
 - a fast Internet connection (250 Mbps or better)
 
 # Test it yourself
+
 One can test the software using two methods:
-- Downloading and installing a prebuilt binary
 - Building the software from the source code using Docker
+- Downloading and installing a prebuilt binary
 
 Each is described in more detail below.
 
-## Pre-built binaries for Windows and Mac (ARM64)
-
-The latest builds of the DT Explorer application can be found in the Assets section of [the latest GitHub release](https://github.com/sierkov/daedalus-turbo/releases/latest) page.
-It shows the new synchronization and history-reconstruction algorithms in a safe and easy-to-test way by working without private keys and directly reconstructing history of any payment and stake address.
-
-### How to install on Windows
-- Download and launch the installer from the Assets section of [the latest release](https://github.com/sierkov/daedalus-turbo/releases/latest) page.
-- Choose locations for the program files and blockchain data (each will be asked individually). For optimal performance, it's important to select your fastest SSD drive if you have multiple storage devices. 
-
-Windows builds have been tested with Windows 11 (earlier versions may work but have yet to be be tested).
-
-### How to install on Mac
-- Download the Mac image from the Assets section of [the latest release](https://github.com/sierkov/daedalus-turbo/releases/latest) page.
-- Open the image. This is a development (unsigned) image, so Mac OS will ask you if you trust the developer: [See Apple's explanation and instructions](https://support.apple.com/en-is/guide/mac-help/mh40616/mac).
-- Copy dt-explorer app to your Applications folder.
-- Both program and blockchain data will be stored in that folder, so when deleted all used space will be recovered.
-- Launch the app from the Applications folder. If Mac OS says that the app is damaged, open a terminal and run ```sudo xattr -rc /Applications/dt-explorer.app```.
-
-Mac builds have been tested with Mac OS Sonoma (earlier versions may work but have yet to be be tested).
-
-### How to use
-- Synchronization (full or partial) always happens at the app's launch; to catch up, simply restart the app. If you restart before the synchronization is finished, the app will reuse already downloaded data but may reprocess and revalidate some of them.
-- History reconstruction happens through a simple search for a transaction, stake, or payment address, either entered explicitly or when clicked as part of blockchain exploration. The easiest starting point for most users would be to search for their own stake address (e.g.: stake1uxw70wgydj63u4faymujuunnu9w2976pfeh89lnqcw03pksulgcrg), as its history will be the most representative of their wallet's history.
-- When searching for Cardano addresses starting with "addr1" prefix, the app may ask you if want to explore the payment or stake history. The reason for that is that many cardano addresses contain two keys. If in doubt, select stake history as it will normally discover more transactions. This is necessary so that the app can work without private keys. However, when integrated into Daedalus, the same aglorithms can reconstruct the full wallet history by finding all payment and stake keys generated from a wallet private key.
-- Once synchronized, users can turn off their Internet connection and test history reconstruction with new transaction or stake addresses to prove that the app reconstructs all histories interactively and uses only the downloaded blockchain data.
+## Cardano Chang fork support
+On September 1, 2024 Cardano has introduced a number of new features with its Chang hard fork.
+The support for them is being actively developed. However, for the time being, the previous builds of DT Explorer likely won't work.
+On the other hand, the command line demo described below should work but limit the data to the last epoch of Cardano's Babbage era.
 
 ## Command line interface
 
@@ -131,6 +112,32 @@ Show information about a transaction:
 ```
 ./dt tx-info /data/cardano 357D47E9916B7FE949265F23120AEED873B35B97FB76B9410C323DDAB5B96D1A
 ```
+
+## Pre-built binaries for Windows and Mac (ARM64)
+
+The latest builds of the DT Explorer application can be found in the Assets section of [the latest GitHub release](https://github.com/sierkov/daedalus-turbo/releases/latest) page.
+It shows the new synchronization and history-reconstruction algorithms in a safe and easy-to-test way by working without private keys and directly reconstructing history of any payment and stake address.
+
+### How to install on Windows
+- Download and launch the installer from the Assets section of [the latest release](https://github.com/sierkov/daedalus-turbo/releases/latest) page.
+- Choose locations for the program files and blockchain data (each will be asked individually). For optimal performance, it's important to select your fastest SSD drive if you have multiple storage devices. 
+
+Windows builds have been tested with Windows 11 (earlier versions may work but have yet to be be tested).
+
+### How to install on Mac
+- Download the Mac image from the Assets section of [the latest release](https://github.com/sierkov/daedalus-turbo/releases/latest) page.
+- Open the image. This is a development (unsigned) image, so Mac OS will ask you if you trust the developer: [See Apple's explanation and instructions](https://support.apple.com/en-is/guide/mac-help/mh40616/mac).
+- Copy dt-explorer app to your Applications folder.
+- Both program and blockchain data will be stored in that folder, so when deleted all used space will be recovered.
+- Launch the app from the Applications folder. If Mac OS says that the app is damaged, open a terminal and run ```sudo xattr -rc /Applications/dt-explorer.app```.
+
+Mac builds have been tested with Mac OS Sonoma (earlier versions may work but have yet to be be tested).
+
+### How to use
+- Synchronization (full or partial) always happens at the app's launch; to catch up, simply restart the app. If you restart before the synchronization is finished, the app will reuse already downloaded data but may reprocess and revalidate some of them.
+- History reconstruction happens through a simple search for a transaction, stake, or payment address, either entered explicitly or when clicked as part of blockchain exploration. The easiest starting point for most users would be to search for their own stake address (e.g.: stake1uxw70wgydj63u4faymujuunnu9w2976pfeh89lnqcw03pksulgcrg), as its history will be the most representative of their wallet's history.
+- When searching for Cardano addresses starting with "addr1" prefix, the app may ask you if want to explore the payment or stake history. The reason for that is that many cardano addresses contain two keys. If in doubt, select stake history as it will normally discover more transactions. This is necessary so that the app can work without private keys. However, when integrated into Daedalus, the same aglorithms can reconstruct the full wallet history by finding all payment and stake keys generated from a wallet private key.
+- Once synchronized, users can turn off their Internet connection and test history reconstruction with new transaction or stake addresses to prove that the app reconstructs all histories interactively and uses only the downloaded blockchain data.
 
 # Spread the word
 Many in the Cardano community, including some developers of Daedalus, don't believe that it's possible to make it noticeably faster. This leads to a situation in which the development is not focused on its performance. If you're persuaded by the evidence presented here, share it on social media with those around you. Changing the beliefs of people can be harder than building top-notch technology. So, every single tweet and Facebook post makes a difference. Thank you!
