@@ -862,7 +862,7 @@ namespace daedalus_turbo {
                 }
                 // reconfigure time if truncating back into Byron era
                 if (_chunks.empty() || _chunks.rbegin()->second.blocks.back().era < 2)
-                    _cardano_cfg.shelley_start_slot({});
+                    _cardano_cfg.shelley_start_epoch({});
             }
         }
 

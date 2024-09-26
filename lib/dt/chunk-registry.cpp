@@ -299,7 +299,7 @@ namespace daedalus_turbo {
             const auto &tested_chunk = _unmerged_chunks.begin()->second;
             if (const auto &first_block = tested_chunk.blocks.at(0); first_block.era >= 2 && !_cardano_cfg.shelley_started()) {
                 // If there were no blocks before this one, then count from the slot 0
-                _cardano_cfg.shelley_start_slot(_chunks.empty() ? 0 : first_block.slot);
+                _cardano_cfg.shelley_start_epoch(_chunks.empty() ? 0 : first_block.slot / _cardano_cfg.byron_epoch_length);
             }
             if (_validator) {
                 if (const auto future_slot = cardano::slot::from_future(_cardano_cfg); tested_chunk.last_slot >= future_slot)

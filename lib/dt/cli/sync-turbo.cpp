@@ -29,7 +29,7 @@ namespace daedalus_turbo::cli::sync_turbo {
             if (const auto opt_it = opts.find("host"); opt_it != opts.end() && opt_it->second)
                 host = *opt_it->second;
             if (const auto opt_it = opts.find("shelley-start-epoch"); opt_it != opts.end() && opt_it->second)
-                cr.config().shelley_start_slot(std::stoull(*opt_it->second) * cr.config().byron_epoch_length);
+                cr.config().shelley_start_epoch(std::stoull(*opt_it->second));
             if (const auto opt_it = opts.find("max-epoch"); opt_it != opts.end() && opt_it->second)
                 max_slot = cardano::slot::from_epoch(std::stoull(*opt_it->second) + 1ULL, cr.config()) - 1;
             if (const auto opt_it = opts.find("max-slot"); opt_it != opts.end() && opt_it->second) {

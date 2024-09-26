@@ -36,7 +36,7 @@ namespace daedalus_turbo::sync::turbo {
             return _peer_find_intersection(*host, std::move(chain));
         }
 
-        void sync_attempt(peer_info &peer, const cardano::optional_slot max_slot)
+        void sync_attempt(peer_info &peer, cardano::optional_slot max_slot)
         {
             timer t { "http synchronization" };
             _cancel_min_offset.reset();
