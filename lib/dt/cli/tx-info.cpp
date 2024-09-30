@@ -23,7 +23,7 @@ namespace daedalus_turbo::cli::tx_info {
             auto tx_info = r.find_tx(tx_hash);
             if (!tx_info)
                 throw error("unknown transaction hash {}", tx_hash.span());
-            history_mock_block block { tx_info.block_info, tx_info.tx_raw, tx_info.offset, cardano::config::get() };
+            cardano::mocks::block block { tx_info.block_info, tx_info.tx_raw, tx_info.offset, cardano::config::get() };
             const auto tx = cardano::make_tx(tx_info.tx_raw, block);
             std::cout << fmt::format("{}\n", *tx);
         }

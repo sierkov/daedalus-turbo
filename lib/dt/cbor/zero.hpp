@@ -277,7 +277,7 @@ namespace daedalus_turbo::cbor::zero {
     protected:
         friend decoder;
 
-        explicit value(const buffer data): _data { data.data() }
+        explicit value(const buffer data): _data { _check_data(data) }
         {
             switch (const auto sv = special(); sv) {
                 case special_val::one_byte:
@@ -319,6 +319,13 @@ namespace daedalus_turbo::cbor::zero {
         uint64_t _spec_bytes: 4;
         uint64_t _spec_uint;
 
+        static const uint8_t *_check_data(const buffer data)
+        {
+            if (!data.empty()) [[likely]]
+                return data.data();
+            throw error("value data must contain at least on byte!");
+        }
+
     };
     static_assert(sizeof(value) == 24);
 
@@ -352,9 +359,12 @@ namespace daedalus_turbo::cbor::zero {
 
     inline void decoder::_advance(const size_t num_bytes)
     {
-        _ptr += num_bytes;
-        if (_ptr > _end) [[unlikely]]
+        const auto new_ptr = _ptr + num_bytes;
+        if (new_ptr < _ptr) [[unlikely]]
+            throw error("a cbor item size is too large and leads to an overflow in pointer arithmetic!");
+        if (new_ptr > _end) [[unlikely]]
             throw error("insufficient data to parse a CBOR value");
+        _ptr = new_ptr;
     }
 
     inline void decoder::_read_bytes(value &v)
@@ -417,7 +427,7 @@ namespace daedalus_turbo::cbor::zero {
         v._size += read()._size;
     }
 
-    inline bool is_ascii(const buffer &b)
+    inline bool is_ascii(const buffer b)
     {
         for (const uint8_t *p = b.data(), *end = p + b.size(); p < end; ++p) {
             if (*p < 32 || *p > 127) [[unlikely]]
@@ -498,13 +508,13 @@ namespace daedalus_turbo::cbor::zero {
         return v;
     }
 
-    inline value parse(const buffer &data)
+    inline value parse(const buffer data)
     {
         decoder dec { data };
         return dec.read();
     }
 
-    inline vector<value> parse_all(const buffer &data)
+    inline vector<value> parse_all(const buffer data)
     {
         decoder dec { data };
         vector<value> vals {};

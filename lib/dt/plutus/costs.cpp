@@ -458,6 +458,8 @@ namespace daedalus_turbo::plutus::costs {
                     logger::debug("found cost model for an unsupported builtin: {}", op_name);
             }
         }
+        if (!tmp.contains(term_tag::error))
+            tmp.try_emplace(term_tag::error, arg_map { { "exBudgetCPU", "0" }, { "exBudgetMemory", "0" } });
         parsed_model m {};
         for (const auto &[t, args]: tmp) {
             const auto [it, created] = m.try_emplace(t, op_model_from_args(args));

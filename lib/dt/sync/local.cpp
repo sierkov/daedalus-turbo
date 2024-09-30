@@ -108,12 +108,10 @@ namespace daedalus_turbo::sync::local {
 
         void sync_attempt(peer_info &peer, const cardano::optional_slot max_slot)
         {
-            if (max_slot) [[unlikely]]
-                throw error("max_slot parameter is not supported!");
             timer t { "sync::local::sync" };
             std::vector<std::string> errors {};
             std::vector<std::string> updated {};
-            _refresh_chunks(peer, updated, errors);
+            _refresh_chunks(peer, updated, errors, max_slot);
             sync_res res { std::move(updated), std::move(errors), _parent.local_chain().max_slot() };
             std::ranges::sort(res.updated);
             std::ranges::sort(res.errors);
@@ -176,7 +174,7 @@ namespace daedalus_turbo::sync::local {
             return analyze_res { std::move(update.path), std::move(rel_path), true };
         }
 
-        void _refresh_chunks(peer_info &peer, std::vector<std::string> &updated, std::vector<std::string> &errors)
+        void _refresh_chunks(peer_info &peer, std::vector<std::string> &updated, std::vector<std::string> &errors, const cardano::optional_slot &max_slot)
         {
             timer t { "check chunks for updates", logger::level::debug };
             if (!peer.updated_chunks().empty()) {
@@ -192,13 +190,15 @@ namespace daedalus_turbo::sync::local {
                         errors.emplace_back(std::any_cast<scheduled_task_error>(res).what());
                         return;
                     }
-                    if (auto &&a_res = std::any_cast<analyze_res>(res); a_res.updated)
-                        updated.emplace_back(a_res.rel_path);
+                    if (auto &&a_res = std::any_cast<std::optional<analyze_res>>(res); a_res && a_res->updated)
+                        updated.emplace_back(a_res->rel_path);
                 });
                 const auto max_offset = _parent.local_chain().tx()->target_offset();
                 for (const auto &update: peer.updated_chunks())
                     _parent.local_chain().sched().submit(task_name, 100 * static_cast<int>((max_offset - update.offset) / max_offset), [&] {
-                        return _analyze_local_chunk(peer.node_dir(), update);
+                        if (!max_slot || update.last_point(_parent.local_chain().config()).slot <= *max_slot)
+                            return std::optional<analyze_res> { _analyze_local_chunk(peer.node_dir(), update) };
+                        return std::optional<analyze_res> { };
                     });
                 _parent.local_chain().sched().process(true);
             }

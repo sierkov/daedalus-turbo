@@ -21,6 +21,10 @@
 #include <dt/rational.hpp>
 #include <dt/util.hpp>
 
+namespace daedalus_turbo::plutus {
+    struct context;
+}
+
 namespace daedalus_turbo::cardano {
     static constexpr uint64_t density_default_window = 9600; // slots
 
@@ -430,7 +434,7 @@ namespace daedalus_turbo::cardano {
         }
 
         virtual ~tx() {}
-        virtual wit_ok witnesses_ok(const tx_out_data_list *input_data=nullptr) const =0;
+        virtual wit_ok witnesses_ok(const plutus::context *ctx=nullptr) const =0;
         virtual void foreach_input(const std::function<void(const tx_input &)> &) const {}
         virtual void foreach_output(const std::function<void(const tx_output &)> &) const {}
         virtual size_t foreach_mint(const std::function<void(const buffer &, const cbor::map &)> &) const { return 0; }
@@ -445,6 +449,17 @@ namespace daedalus_turbo::cardano {
         virtual void foreach_instant_reward(const std::function<void(const instant_reward &)> &) const {}
         virtual void foreach_collateral(const std::function<void(const tx_input &)> &) const {}
         virtual void foreach_collateral_return(const std::function<void(const tx_output &)> &) const {}
+        virtual void foreach_cert(const std::function<void(const cbor::array &cert, size_t cert_idx)> &) const {}
+
+        virtual std::optional<uint64_t> validity_end() const
+        {
+            return {};
+        }
+
+        virtual std::optional<uint64_t> validity_start() const
+        {
+            return {};
+        }
 
         virtual const amount fee() const
         {

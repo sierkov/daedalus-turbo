@@ -335,6 +335,7 @@ namespace daedalus_turbo::plutus {
         static data map(map_type &&);
         bool operator==(const data &o) const;
         uint8_vector as_cbor() const;
+        std::string as_string(const size_t shift=0) const;
     };
 
     struct constant_pair {
@@ -520,44 +521,15 @@ namespace fmt {
     };
 
     template<>
-    struct formatter<daedalus_turbo::plutus::data::list_type>: formatter<int> {
-        template<typename FormatContext>
-        auto format(const daedalus_turbo::plutus::data::list_type &v, FormatContext &ctx) const -> decltype(ctx.out()) {
-            using namespace daedalus_turbo::plutus;
-            auto out_it = fmt::format_to(ctx.out(), "[");
-            for (auto it = v.begin(); it != v.end(); ++it) {
-                const std::string_view sep { std::next(it) == v.end() ? "" : ", " };
-                out_it = fmt::format_to(out_it, "{}{}", *it, sep);
-            }
-            return fmt::format_to(out_it, "]");
-        }
-    };
-
-    template<>
     struct formatter<daedalus_turbo::plutus::data>: formatter<int> {
         template<typename FormatContext>
         auto format(const auto &vv, FormatContext &ctx) const -> decltype(ctx.out()) {
             using namespace daedalus_turbo::plutus;
-            return std::visit([&ctx](const auto &v) {
-                using T = std::decay_t<decltype(v)>;
-                if constexpr (std::is_same_v<T, data_constr>)
-                    return fmt::format_to(ctx.out(), "Constr {} {}", v->first, v->second);
-                if constexpr (std::is_same_v<T, data::list_type>)
-                    return fmt::format_to(ctx.out(), "List {}", v);
-                if constexpr (std::is_same_v<T, data::map_type>) {
-                    auto out_it = fmt::format_to(ctx.out(), "Map [");
-                    for (auto it = v.begin(); it != v.end(); ++it) {
-                        const std::string_view sep { std::next(it) == v.end() ? "" : ", " };
-                        out_it = fmt::format_to(out_it, "({}, {}){}", (*it)->first, (*it)->second, sep);
-                    }
-                    return fmt::format_to(out_it, "]");
-                }
-                if constexpr (std::is_same_v<T, data::int_type>)
-                    return fmt::format_to(ctx.out(), "I {}", v);
-                if constexpr (std::is_same_v<T, data::bstr_type>)
-                    return fmt::format_to(ctx.out(), "B #{}", v);
-                throw error("unsupported data type: {}", typeid(T).name());
-            }, vv.val);
+#ifdef NDEBUG
+            return fmt::format_to(ctx.out(), "{}", vv.as_string(0));
+#else
+            return fmt::format_to(ctx.out(), "{}", vv.as_string(4));
+#endif
         }
     };
 

@@ -32,14 +32,13 @@ namespace daedalus_turbo::cardano::mary {
         {
             const cbor_array *outputs = nullptr;
             for (const auto &[entry_type, entry]: _tx.map()) {
-                if (entry_type.uint() == 1) outputs = &entry.array();
+                if (entry_type.uint() == 1)
+                    outputs = &entry.array();
             }
-            if (outputs == nullptr) return;
+            if (outputs == nullptr) [[unlikely]]
+                return;
             for (size_t i = 0; i < outputs->size(); i++) {
-                if (outputs->at(i).type != CBOR_ARRAY)
-                    throw cardano_error("slot: {}, era: {}, unsupported tx output format!", _blk.slot(), _blk.era());
-                const auto &out = outputs->at(i).array();
-                observer(_extract_assets(out.at(0), out.at(1), i));
+                observer(tx_output::from_cbor(_blk.era(), i, outputs->at(i)));
             }
         }
 
@@ -59,13 +58,8 @@ namespace daedalus_turbo::cardano::mary {
             }
             return num_mints;
         }
-    protected:
-        static tx_output _extract_assets(const cbor_value &address, const cbor_value &value, const size_t idx)
-        {
-            if (value.type == CBOR_UINT)
-                return { cardano::address { address.buf() }, cardano::amount { value.uint() }, idx };
-            return { cardano::address { address.buf() }, cardano::amount { value.array().at(0).uint() }, idx, &value.array().at(1) };
-        }
+
+        std::optional<uint64_t> validity_start() const override;
     };
 
     inline void block::foreach_tx(const std::function<void(const cardano::tx &)> &observer) const

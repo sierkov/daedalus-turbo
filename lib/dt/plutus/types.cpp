@@ -399,7 +399,7 @@ namespace daedalus_turbo::plutus {
                         } else if (id >= 1280 && id < 1280 + 128) {
                             id -= 1280 - 7;
                         } else if (id == 102) {
-                            auto it = v.array();
+                            auto it = val.array();
                             id = it.next().uint();
                             val = it.next();
                         } else {
@@ -479,8 +479,9 @@ namespace daedalus_turbo::plutus {
                         enc.array(2);
                     }
                     _to_cbor(enc, v->second, level + 1);
+                } else {
+                    throw error("constr id is too big: {}", v->first);
                 }
-                throw error("constr id is too big: {}", v->first);
             } else {
                 _to_cbor(enc, v, level);
             }
@@ -492,6 +493,74 @@ namespace daedalus_turbo::plutus {
         cbor::encoder enc {};
         _to_cbor(enc, *this);
         return { std::move(enc.cbor()) };
+    }
+
+    static std::back_insert_iterator<std::string> to_string(std::back_insert_iterator<std::string> out_it, const data &v, const size_t depth, const size_t shift=4);
+
+    static std::back_insert_iterator<std::string> to_string(std::back_insert_iterator<std::string> out_it, const data::list_type &v, const size_t depth, const size_t shift=4)
+    {
+        out_it = fmt::format_to(out_it, "[");
+        if (!v.empty()) {
+            if (shift)
+                out_it = fmt::format_to(out_it, "\n");
+            for (auto it = v.begin(); it != v.end(); ++it) {
+                out_it = fmt::format_to(out_it, "{:{}}", "", depth * shift);
+                out_it = to_string(out_it, *it, depth, shift);
+                if (std::next(it) != v.end())
+                    out_it = fmt::format_to(out_it, ", ");
+                if (shift)
+                    out_it = fmt::format_to(out_it, "\n");
+            }
+            if (shift)
+                out_it = fmt::format_to(out_it, "{:{}}", "", (depth - 1) * shift);
+        }
+        return fmt::format_to(out_it, "]");
+    }
+
+    static std::back_insert_iterator<std::string> to_string(std::back_insert_iterator<std::string> out_it, const data &vv, const size_t depth, const size_t shift)
+    {
+        return std::visit([&](const auto &v) {
+            using T = std::decay_t<decltype(v)>;
+            if constexpr (std::is_same_v<T, data_constr>) {
+                out_it = fmt::format_to(out_it, "Constr {} ", v->first);
+                return to_string(out_it, v->second, depth + 1, shift);
+            }
+            if constexpr (std::is_same_v<T, data::list_type>) {
+                out_it = fmt::format_to(out_it, "List ");
+                return to_string(out_it, v, depth + 1, shift);
+            }
+            if constexpr (std::is_same_v<T, data::map_type>) {
+                out_it = fmt::format_to(out_it, "Map [");
+                if (!v.empty()) {
+                    if (shift)
+                        out_it = fmt::format_to(out_it, "\n");
+                    for (auto it = v.begin(); it != v.end(); ++it) {
+                        out_it = fmt::format_to(out_it, "{:{}}(", "", (depth + 1) * shift);
+                        out_it = to_string(out_it, (*it)->first, depth + 1, shift);
+                        out_it = fmt::format_to(out_it, ", ");
+                        out_it = to_string(out_it, (*it)->second, depth + 1, shift);
+                        if (std::next(it) != v.end())
+                            out_it = fmt::format_to(out_it, "), ");
+                        if (shift)
+                            out_it = fmt::format_to(out_it, "\n");
+                    }
+                    out_it = fmt::format_to(out_it, "{:{}}", "", depth * shift);
+                }
+                return fmt::format_to(out_it, "]");
+            }
+            if constexpr (std::is_same_v<T, data::int_type>)
+                return fmt::format_to(out_it, "I {}", v);
+            if constexpr (std::is_same_v<T, data::bstr_type>)
+                return fmt::format_to(out_it, "B #{}", v);
+            throw error("unsupported data type: {}", typeid(T).name());
+        }, vv.val);
+    }
+
+    std::string data::as_string(const size_t shift) const
+    {
+        std::string res {};
+        to_string(std::back_inserter(res), *this, 0, shift);
+        return res;
     }
 
     uint8_vector bls_g1_compress(const bls12_381_g1_element &v)

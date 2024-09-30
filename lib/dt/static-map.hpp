@@ -78,7 +78,7 @@ namespace daedalus_turbo {
             for (const auto &[k, v]: src)
                 _data.emplace_back(k, v);
             // must sort since unordered_map does not guarantee the order
-            std::sort(_data.begin(), _data.end());
+            sort();
             return *this;
         }
 
@@ -113,9 +113,14 @@ namespace daedalus_turbo {
             _data.emplace_back(k, v);
         }
 
+        void schrink_to_fit()
+        {
+            _data.shrink_to_fit();
+        }
+
         void sort()
         {
-            std::sort(_data.begin(), _data.end());
+            std::sort(_data.begin(), _data.end(), [](const auto &a, const auto &b) { return a.first < b.first; });
         }
 
         bool contains(const K &k) const

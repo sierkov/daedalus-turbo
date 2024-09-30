@@ -10,8 +10,8 @@ using namespace daedalus_turbo;
 using namespace daedalus_turbo::cbor;
 using namespace daedalus_turbo::cbor::zero;
 
-suite cbor_turbo_test = [] {
-    "cbor::turbo"_test = [] {
+suite cbor_zero_test = [] {
+    "cbor::zero"_test = [] {
         "uint"_test = [] {
             {
                 const auto data = uint8_vector::from_hex("18FF");

@@ -6,7 +6,6 @@
 #define DAEDALUS_TURBO_STORAGE_CHUNK_INFO_HPP
 
 #include <string>
-#include <boost/container/flat_set.hpp>
 #include <dt/cardano/common.hpp>
 #include <dt/format.hpp>
 
@@ -18,9 +17,9 @@ namespace daedalus_turbo::storage {
         uint32_t slot = 0;
         uint32_t height = 0;
         uint32_t chk_sum = 0;
-        uint16_t header_offset = 0;
-        uint16_t header_size = 0;
         cardano::pool_hash pool_id {};
+        uint16_t header_size = 0;
+        uint8_t header_offset = 0;
         uint8_t era = 0; // necessary to exclude boundary blocks (era=0) during density estimation, etc.
 
         constexpr static auto serialize(auto &archive, auto &self)
@@ -40,6 +39,7 @@ namespace daedalus_turbo::storage {
         }
     };
     using block_list = std::vector<block_info>;
+    static_assert(sizeof(block_info) == 88);
 
     struct chunk_info {
         size_t data_size = 0;

@@ -3,7 +3,7 @@
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
-#include <dt/storage/chunk_info.hpp>
+#include <dt/storage/chunk-info.hpp>
 #include <dt/test.hpp>
 
 using namespace daedalus_turbo;

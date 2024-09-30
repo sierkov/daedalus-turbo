@@ -378,6 +378,18 @@ namespace daedalus_turbo {
         using script_info_map = map<script_hash, script_info>;
 
         struct address {
+            address(const address &o):
+                _storage { o._storage ? std::make_unique<uint8_vector>(*o._storage) : nullptr },
+                _bytes { _storage ? _storage->span() : o._bytes }
+            {
+            }
+
+            address(address &&o):
+                _storage { std::move(o._storage) },
+                _bytes { _storage ? _storage->span() : o._bytes }
+            {
+            }
+
             explicit address(const buffer bytes): _bytes { bytes }
             {
                 if (_bytes.size() < 2)
@@ -388,20 +400,20 @@ namespace daedalus_turbo {
                     case 0b0110: // enterprise key
                     case 0b0111: // enterprise script
                         // there are cases when mainnet addresses contain extra data which is ignored by Cardano Node
-                        if (_bytes.size() < 29)
-                            throw cardano_error("cardano reward addresses must have at least 29 bytes: {}!", _bytes);
-                        if (_bytes.size() > 29)
+                        if (_bytes.size() > 29) [[unlikely]]
                             _bytes = _bytes.subbuf(0, 29);
+                        if (_bytes.size() < 29) [[unlikely]]
+                            throw cardano_error("cardano reward addresses must have at least 29 bytes: {}!", _bytes);
                         break;
 
                     case 0b0000: // base address: keyhash28,keyhash28
                     case 0b0001: // base address: scripthash28,keyhash28
                     case 0b0010: // base address: keyhash28,scripthash28
                     case 0b0011: // base address: scripthash28,scripthash28
-                        if (_bytes.size() < 57)
-                            throw cardano_error("shelley base address must have at least 57 bytes: {}!", _bytes);
-                        if (_bytes.size() > 57)
+                        if (_bytes.size() > 57) [[unlikely]]
                             _bytes = _bytes.subbuf(0, 57);
+                        if (_bytes.size() < 57) [[unlikely]]
+                            throw cardano_error("shelley base address must have at least 57 bytes: {}!", _bytes);
                         break;
 
                     case 0b1000: // byron
@@ -422,10 +434,12 @@ namespace daedalus_turbo {
                         if (ptr_enc == ptr_buf) [[likely]] {
                             _bytes = _bytes.subbuf(0, 29 + ptr_buf.size());
                         } else {
-                            _normal.emplace(_bytes.subbuf(0, 29));
-                            *_normal << ptr_enc;
-                            _bytes = _normal->span();
-                        };
+                            _storage = std::make_unique<uint8_vector>();
+                            _storage->reserve(29 + ptr_enc.size());
+                            *_storage = _bytes.subbuf(0, 29);
+                            *_storage << ptr_enc;
+                            _bytes = _storage->span();
+                        }
                         break;
                     }
 
@@ -638,8 +652,8 @@ namespace daedalus_turbo {
                 return _bytes == o._bytes;
             }
         private:
+            std::unique_ptr<uint8_vector> _storage {};
             buffer _bytes;
-            std::optional<uint8_vector> _normal {};
 
             static size_t _read_var_uint_be(uint64_t &x, const buffer &buf)
             {
@@ -807,10 +821,12 @@ namespace daedalus_turbo {
             const address address;
             const amount amount;
             const tx_out_idx idx;
+            const cbor_value &raw_data;
             const cbor_value *assets = nullptr;
             const cbor_value *datum = nullptr;
             const cbor_value *script_ref = nullptr;
 
+            static tx_output from_cbor(uint64_t era, uint64_t idx, const cbor::value &out_raw);
             inline json::object to_json() const;
         };
 
@@ -1422,6 +1438,14 @@ namespace fmt {
 }
 
 namespace std {
+    template<>
+    struct hash<daedalus_turbo::cardano::tx_out_ref> {
+        size_t operator()(const auto &o) const noexcept
+        {
+            return *reinterpret_cast<const size_t *>(o.hash.data());
+        }
+    };
+
     template<>
     struct hash<daedalus_turbo::cardano::stake_pointer> {
         size_t operator()(const auto &stake_ptr) const noexcept

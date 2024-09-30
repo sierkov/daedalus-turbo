@@ -13,8 +13,9 @@
 
 namespace daedalus_turbo::plutus::flat {
     struct script::impl {
-        impl(const buffer &bytes, const bool cbor):
-            _bytes { cbor ? _extract_cbor_data(bytes) : uint8_vector { bytes } }
+        impl(uint8_vector &&bytes, const bool cbor):
+            _bytes_raw { std::move(bytes) },
+            _bytes { cbor ? _extract_cbor_data(_bytes_raw) : _bytes_raw.span() }
         {
             _decode_program();
             if (!_term || !_ver) [[unlikely]]
@@ -33,16 +34,17 @@ namespace daedalus_turbo::plutus::flat {
     private:
         static constexpr size_t max_script_size = 1 << 16;
 
-        uint8_vector _bytes {};
+        uint8_vector _bytes_raw;
+        buffer _bytes { _bytes_raw };
         size_t _pos = 0;
         size_t _num_vars = 0;
         std::optional<plutus::version> _ver;
         term_ptr _term;
 
-        static uint8_vector _extract_cbor_data(const buffer &bytes)
+        static buffer _extract_cbor_data(const buffer bytes)
         {
-            auto cbor_item = cbor::zero::parse(bytes);
-            const auto &buf = cbor_item.bytes();
+            const auto cbor_item = cbor::zero::parse(bytes);
+            const auto buf = cbor_item.bytes();
             if (buf.size() <= max_script_size) [[likely]]
                 return buf;
             throw error("script size of {} bytes exceeds the maximum allowed size of {}", buf.size(), max_script_size);
@@ -173,7 +175,8 @@ namespace daedalus_turbo::plutus::flat {
 
         data _decode_data()
         {
-            return data::from_cbor(_decode_bytestring());
+            const auto bytes = _decode_bytestring();
+            return data::from_cbor(bytes);
         }
 
         constant_type _decode_type_application(std::vector<type_tag>::iterator it, const std::vector<type_tag>::iterator end)
@@ -272,9 +275,9 @@ namespace daedalus_turbo::plutus::flat {
         variable _decode_variable()
         {
             const auto rel_idx = static_cast<size_t>(_decode_varlen_uint());
-            if (rel_idx > _num_vars)
-                throw daedalus_turbo::error("De Bruin index is out of range: {} num_vars: {}", rel_idx, _num_vars);
-            return { fmt::format("v{}", _num_vars - rel_idx) };
+            if (rel_idx <= _num_vars) [[likely]]
+                return { fmt::format("v{}", _num_vars - rel_idx) };
+            throw daedalus_turbo::error("De Bruijn index is out of range: {} num_vars: {}", rel_idx, _num_vars);
         }
 
         t_delay _decode_delay()
@@ -352,8 +355,13 @@ namespace daedalus_turbo::plutus::flat {
         }
     };
 
-    script::script(const buffer &bytes, const bool cbor):
-        _impl { std::make_unique<impl>(std::move(bytes), cbor) }
+    script::script(uint8_vector &&bytes, const bool cbor):
+            _impl { std::make_unique<impl>(std::move(bytes), cbor) }
+    {
+    }
+
+    script::script(const buffer bytes, const bool cbor):
+        script { uint8_vector { bytes }, cbor }
     {
     }
 

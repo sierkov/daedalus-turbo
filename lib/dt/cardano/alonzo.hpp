@@ -96,7 +96,7 @@ namespace daedalus_turbo::cardano::alonzo {
     struct tx: mary::tx {
         using mary::tx::tx;
 
-        wit_ok witnesses_ok(const tx_out_data_list *input_data=nullptr) const override;
+        wit_ok witnesses_ok(const plutus::context *ctx=nullptr) const override;
 
         void foreach_param_update(const std::function<void(const param_update_proposal &)> &observer) const override {
             _if_item_present(6, [&](const auto &update) {
@@ -117,40 +117,8 @@ namespace daedalus_turbo::cardano::alonzo {
                     outputs = &entry.array();
             }
             if (outputs) {
-                for (size_t i = 0; i < outputs->size(); ++i) {
-                    const cbor_value *address = nullptr;
-                    const cbor_value *amount = nullptr;
-                    const cbor_value *datum = nullptr;
-                    switch (outputs->at(i).type) {
-                        case CBOR_ARRAY: {
-                            const auto &out = outputs->at(i).array();
-                            address = &out.at(0);
-                            amount = &out.at(1);
-                            if (out.size() > 2)
-                                datum = &out.at(2);
-                            break;
-                        }
-                        case CBOR_MAP:
-                            for (const auto &[o_type, o_entry]: outputs->at(i).map()) {
-                                switch (o_type.uint()) {
-                                case 0: address = &o_entry; break;
-                                case 1: amount = &o_entry; break;
-                                case 2: datum = &o_entry; break;
-                                default: break;
-                                }
-                            }
-                            break;
-                        default:
-                            throw cardano_error("unsupported transaction output format era: {}, slot: {}!", _blk.era(), (uint64_t)_blk.slot());
-                    }
-                    if (address == nullptr)
-                        throw cardano_error("transaction output misses address field!");
-                    if (amount == nullptr)
-                        throw cardano_error("transaction output misses amount field!");
-                    auto tx_out = _extract_assets(*address, *amount, i);
-                    tx_out.datum = datum;
-                    observer(tx_out);
-                }
+                for (size_t i = 0; i < outputs->size(); ++i)
+                    observer(tx_output::from_cbor(_blk.era(), i, outputs->at(i)));
             }
         }
 

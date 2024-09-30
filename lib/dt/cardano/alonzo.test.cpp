@@ -4,11 +4,8 @@
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
 #include <dt/cardano.hpp>
-#include <dt/history.hpp>
-#include <dt/file.hpp>
-#include <dt/storage/chunk_info.hpp>
+#include <dt/plutus/context.hpp>
 #include <dt/test.hpp>
-#include <dt/zpp.hpp>
 
 using namespace daedalus_turbo;
 
@@ -18,19 +15,19 @@ suite cardano_alonzo_suite = [] {
         cardano::config ccfg { cfg };
         ccfg.shelley_start_epoch(208);
         "validate plutus v1"_test = [&] {
-            // a95d16e891e51f98a3b1d3fe862ed355ebc8abffb7a7269d86f775553d9e653f
-            for (const char *tx_hex: { "C8EE18A7965CC8BEA4986F7F2573CF094BE20F4E58137EC46356BB73BBC6774F" }) {
-                const auto tx_data = file::read(fmt::format("./data/alonzo/tx-{}.bin", tx_hex));
-                const auto tx_wit_data = file::read(fmt::format("./data/alonzo/tx-{}-wit.bin", tx_hex));
-                const auto block_info = daedalus_turbo::zpp::load<storage::block_info>(fmt::format("./data/alonzo/tx-{}-block.bin", tx_hex));
-                const auto input_data = daedalus_turbo::zpp::load<cardano::tx_out_data_list>(fmt::format("./data/alonzo/tx-{}-inputs.bin", tx_hex));
-                const auto tx_raw = cbor::parse(tx_data);
-                const auto tx_wit_raw = cbor::parse(tx_wit_data);
-                history_mock_block block { block_info, tx_raw, block_info.offset, ccfg };
-                const auto tx = make_tx(tx_raw, block, &tx_wit_raw);
-                const auto wit_ok = tx->witnesses_ok(&input_data);
-                expect(!!wit_ok);
-                expect(wit_ok.script_total > 0) << wit_ok.script_total;
+            for (const auto &entry: std::filesystem::directory_iterator { install_path("data/alonzo") }) {
+                if (entry.is_regular_file() && entry.path().extension() == ".ctx") {
+                    const auto path = entry.path().string();
+                    const auto ctx = plutus::context::load(path);
+                    try {
+                        const auto wit_ok = ctx.tx().witnesses_ok(&ctx);
+                        expect(wit_ok.script_total > 0);
+                        test_same(path, true, static_cast<bool>(wit_ok));
+                    } catch (const error &ex) {
+                        logger::warn("context {} failed with {}", path, ex.what());
+                        test_same(path, true, false);
+                    }
+                }
             }
         };
         "body_hash_ok"_test = [] {

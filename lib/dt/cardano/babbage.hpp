@@ -69,7 +69,7 @@ namespace daedalus_turbo::cardano::babbage {
                 if (entry_type.uint() == 1) {
                     const auto &outputs = entry.array();
                     for (size_t i = 0; i < outputs.size(); i++)
-                        observer(_parse_tx_output(outputs.at(i), i));
+                        observer(tx_output::from_cbor(_blk.era(), i, outputs.at(i)));
                 }
             }
         }
@@ -80,7 +80,7 @@ namespace daedalus_turbo::cardano::babbage {
             foreach_output([&](const auto &){ ++num_outputs; });
             std::optional<tx_output> c_out {};
             _if_item_present(16, [&](const auto &c_out_raw) {
-                c_out.emplace(_parse_tx_output(c_out_raw, num_outputs));
+                c_out.emplace(tx_output::from_cbor(_blk.era(), num_outputs, c_out_raw));
             });
             return c_out;
         }
@@ -92,46 +92,6 @@ namespace daedalus_turbo::cardano::babbage {
                 coin = tot_collateral_raw.uint();
             });
             return coin;
-        }
-    private:
-        tx_output _parse_tx_output(const cbor_value &tx_out, const size_t idx) const {
-            const cbor_value *address = nullptr;
-            const cbor_value *amount = nullptr;
-            const cbor_value *datum = nullptr;
-            const cbor_value *script_ref = nullptr;
-            switch (tx_out.type) {
-                case CBOR_ARRAY: {
-                    const auto &out = tx_out.array();
-                    address = &out.at(0);
-                    amount = &out.at(1);
-                    if (out.size() > 2)
-                        datum = &out.at(2);
-                    break;
-                }
-
-                case CBOR_MAP:
-                    for (const auto &[o_type, o_entry]: tx_out.map()) {
-                        switch (o_type.uint()) {
-                            case 0: address = &o_entry; break;
-                            case 1: amount = &o_entry; break;
-                            case 2: datum = &o_entry; break;
-                            case 3: script_ref = &o_entry; break;
-                            default: break;
-                        }
-                    }
-                break;
-
-                default:
-                    throw cardano_error("unsupported transaction output format era: {}, slot: {}!", _blk.era(), (uint64_t)_blk.slot());
-            }
-            if (address == nullptr)
-                throw cardano_error("transaction output misses address field!");
-            if (amount == nullptr)
-                throw cardano_error("transaction output misses amount field!");
-            auto res = _extract_assets(*address, *amount, idx);
-            res.datum = datum;
-            res.script_ref = script_ref;
-            return res;
         }
     };
 

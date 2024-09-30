@@ -5,10 +5,10 @@
 #ifndef DAEDALUS_TURBO_HISTORY_HPP
 #define DAEDALUS_TURBO_HISTORY_HPP
 
-#include <filesystem>
 #include <string>
 #include <utility>
 #include <dt/cardano.hpp>
+#include <dt/cardano/mocks.hpp>
 #include <dt/cbor.hpp>
 #include <dt/index/pay-ref.hpp>
 #include <dt/index/stake-ref.hpp>
@@ -21,44 +21,6 @@
 #include <dt/util.hpp>
 
 namespace daedalus_turbo {
-    struct history_mock_block: cardano::block_base {
-        history_mock_block(const storage::block_info &block_meta, const cbor_value &tx, const uint64_t tx_offset, const cardano::config &cfg)
-            : cardano::block_base { tx, block_meta.offset, block_meta.era, tx, cfg }, _block_meta { block_meta }, _tx { tx }, _tx_offset { tx_offset }
-        {
-        }
-
-        cardano_hash_32 hash() const override
-        {
-            throw cardano_error("internal error: hash() unsupported for failure blocks!");
-        }
-
-        buffer prev_hash() const override
-        {
-            throw cardano_error("internal error: prev_hash() unsupported for failure blocks!");
-        }
-
-        uint64_t height() const override
-        {
-            throw cardano_error("internal error: height() unsupported for failure blocks!");
-        }
-
-        uint64_t slot() const override
-        {
-            return _block_meta.slot;
-        }
-
-        uint64_t value_offset(const cbor_value &v) const override
-        {
-            if (&v != &_tx)
-                throw cardano_error("internal error: value_offset can be computed only for the referenced tx value!");
-            return _tx_offset;
-        }
-    private:
-        const storage::block_info &_block_meta;
-        const cbor_value &_tx;
-        uint64_t _tx_offset;
-    };
-
     struct transaction_output {
         uint64_t use_offset = 0;
         uint16_t out_idx = 0;
@@ -457,7 +419,7 @@ namespace daedalus_turbo {
                         try {
                             tx_parser.read(tx_raw);
                             const auto block_meta = r.find_block(tx_offset);
-                            history_mock_block mock_blk { block_meta, tx_raw, tx_offset, cr.config() };
+                            cardano::mocks::block mock_blk { block_meta, tx_raw, tx_offset, cr.config() };
                             auto tx = cardano::make_tx(tx_raw, mock_blk);
                             tx_item.hash = tx->hash();
                             tx_item.slot = cr.make_slot(block_meta.slot);

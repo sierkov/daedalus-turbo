@@ -321,13 +321,11 @@ namespace daedalus_turbo::cardano::byron {
         void foreach_output(const std::function<void(const tx_output &)> &observer) const override
         {
             const auto &outputs = _tx.array().at(1).array();
-            for (size_t i = 0; i < outputs.size(); ++i) {
-                const auto &out = outputs.at(i).array();
-                observer(tx_output { cardano::address { out.at(0).array().at(0).tag().second->buf() }, cardano::amount { out.at(1).uint() }, i });
-            }
+            for (size_t i = 0; i < outputs.size(); ++i)
+                observer(tx_output::from_cbor(_blk.era(), i, outputs.at(i)));
         }
 
-        wit_ok witnesses_ok(const tx_out_data_list *input_data=nullptr) const override;
+        wit_ok witnesses_ok(const plutus::context *ctx=nullptr) const override;
     private:
         void _parse_cbor_tag(cbor_value &val, const cbor_tag &tag) const
         {

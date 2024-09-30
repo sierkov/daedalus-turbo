@@ -466,7 +466,7 @@ namespace daedalus_turbo::http_api {
                     { "error", "transaction data have not been found!" }
                 };
             }
-            history_mock_block block { tx_info.block_info, tx_info.tx_raw, tx_info.offset, _cr->config() };
+            cardano::mocks::block block { tx_info.block_info, tx_info.tx_raw, tx_info.offset, _cr->config() };
             auto tx_ptr = cardano::make_tx(tx_info.tx_raw, block);
             auto &tx = *tx_ptr; // eliminate a clash with CLang's -Wpotentially-evaluated-expression
             logger::info("tx: {} type: {} slot: {}", tx.hash().span(), typeid(tx).name(), tx_info.block_info.slot);

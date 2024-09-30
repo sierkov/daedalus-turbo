@@ -18,7 +18,7 @@
 #include <dt/json.hpp>
 #include <dt/progress.hpp>
 #include <dt/scheduler.hpp>
-#include <dt/storage/chunk_info.hpp>
+#include <dt/storage/chunk-info.hpp>
 #include <dt/timer.hpp>
 #include <dt/validator.hpp>
 #include <dt/zpp.hpp>
@@ -662,22 +662,24 @@ namespace daedalus_turbo {
         template<typename T>
         bool parse_parallel(
             const std::function<void(T &res, const std::string &chunk_path, cardano::block_base &blk)> &act,
-            const std::function<void(std::string &&chunk_path, T &&res)> &agg,
-            const bool progress=true)
+            const std::optional<std::function<void(std::string &&chunk_path, T &&res)>> &agg={},
+            const bool progress=true) const
         {
             using parse_res = std::pair<std::string, T>;
             progress_guard pg { "parse" };
-            std::atomic_size_t num_tasks = 0;
+            size_t num_tasks = _chunks.size();
             std::atomic_size_t num_parsed = 0;
             _sched.on_result("parse-chunk", [&](auto &&res) {
-                if (res.type() == typeid(scheduled_task_error))
+                const auto done = num_parsed.fetch_add(1, std::memory_order::relaxed) + 1;
+                progress::get().update("parse", done, num_tasks);
+                if (res.type() == typeid(scheduled_task_error)) [[unlikely]]
                     return;
-                auto &&[chunk_path, chunk_res] = std::any_cast<parse_res>(res);
-                agg(std::move(chunk_path), std::move(chunk_res));
-                progress::get().update("parse", ++num_parsed, num_tasks.load());
+                if (agg) {
+                    auto &&[chunk_path, chunk_res] = std::any_cast<parse_res>(res);
+                    (*agg)(std::move(chunk_path), std::move(chunk_res));
+                }
             });
             for (const auto &[chunk_offset, chunk_info]: _chunks) {
-                ++num_tasks;
                 _sched.submit("parse-chunk", -static_cast<int64_t>(chunk_offset), [this, chunk_offset, chunk_info, &act]() {
                     T res {};
                     auto canon_path = full_path(chunk_info.rel_path());

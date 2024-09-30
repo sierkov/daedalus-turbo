@@ -10,7 +10,8 @@
 
 namespace daedalus_turbo::plutus::flat {
     struct script {
-        explicit script(const buffer &bytes, bool cbor=true);
+        explicit script(const buffer bytes, bool cbor=true);
+        explicit script(uint8_vector &&bytes, bool cbor=true);
         ~script();
         version version() const;
         term_ptr program() const;

@@ -91,7 +91,7 @@ namespace daedalus_turbo::cardano::shelley {
         }
     }
 
-    cardano::tx::wit_ok tx::witnesses_ok(const tx_out_data_list */*input_data*/) const
+    cardano::tx::wit_ok tx::witnesses_ok(const plutus::context *) const
     {
         if (!_wit)
             throw cardano_error("vkey_witness_ok called on a transaction without witness data!");
@@ -143,5 +143,14 @@ namespace daedalus_turbo::cardano::shelley {
         const auto &set = set_raw.array();
         for (size_t i = 0; i < set.size(); ++i)
             observer(set[i], i);
+    }
+
+    std::optional<uint64_t> tx::validity_end() const
+    {
+        for (const auto &[entry_type, entry]: _tx.map()) {
+            if (entry_type.uint() == 3)
+                return entry.uint();
+        }
+        return {};
     }
 }

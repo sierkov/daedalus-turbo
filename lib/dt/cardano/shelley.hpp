@@ -331,15 +331,13 @@ namespace daedalus_turbo::cardano::shelley {
         {
             const cbor_array *outputs = nullptr;
             for (const auto &[entry_type, entry]: _tx.map()) {
-                if (entry_type.uint() == 1) outputs = &entry.array();
+                if (entry_type.uint() == 1)
+                    outputs = &entry.array();
             }
-            if (outputs == nullptr) return;
-            for (size_t i = 0; i < outputs->size(); i++) {
-                if (outputs->at(i).type != CBOR_ARRAY) throw cardano_error("slot: {}, era: {}, unsupported tx output format!", _blk.slot(), _blk.era());
-                const auto &out = outputs->at(i).array();
-                if (i >= 0x10000) throw cardano_error("transaction output number is too high {}!", i);
-                observer(tx_output { cardano::address { out.at(0).buf() }, cardano::amount { out.at(1).uint() }, i });
-            }
+            if (outputs == nullptr) [[unlikely]]
+                return;
+            for (size_t i = 0; i < outputs->size(); i++)
+                observer(tx_output::from_cbor(_blk.era(), i, outputs->at(i)));
         }
 
         void foreach_withdrawal(const std::function<void(const tx_withdrawal &)> &observer) const override
@@ -438,7 +436,8 @@ namespace daedalus_turbo::cardano::shelley {
             });
         }
 
-        wit_ok witnesses_ok(const tx_out_data_list *input_data=nullptr) const override;
+        std::optional<uint64_t> validity_end() const override;
+        wit_ok witnesses_ok(const plutus::context *ctx=nullptr) const override;
     protected:
         void _validate_witness_vkey(wit_ok &ok, set<key_hash> &vkeys, const cbor::value &w_val) const;
         void _validate_witness_bootstrap(wit_ok &ok, const cbor::value &w_val) const;
@@ -459,12 +458,18 @@ namespace daedalus_turbo::cardano::shelley {
 
         void _foreach_cert(const uint64_t cert_type, const std::function<void(const cbor_array &, size_t cert_idx)> &observer) const
         {
+            foreach_cert([cert_type, &observer](const auto &cert, const size_t cert_idx) {
+                if (cert.at(0).uint() == cert_type)
+                    observer(cert, cert_idx);
+            });
+        }
+
+        void foreach_cert(const std::function<void(const cbor::array &cert, size_t cert_idx)> &observer) const override
+        {
             for (const auto &[entry_type, entry]: _tx.map()) {
                 if (entry_type.uint() == 4) {
                     _foreach_set(entry, [&](const auto &cert_raw, const size_t cert_idx) {
-                        const auto &cert = cert_raw.array();
-                        if (cert.at(0).uint() == cert_type)
-                            observer(cert, cert_idx);
+                        observer(cert_raw.array(), cert_idx);
                     });
                 }
             }

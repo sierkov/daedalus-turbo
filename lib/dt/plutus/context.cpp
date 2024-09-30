@@ -3,6 +3,7 @@
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
+#include <dt/history.hpp>
 #include <dt/plutus/context.hpp>
 
 namespace daedalus_turbo::plutus {
@@ -16,22 +17,41 @@ namespace daedalus_turbo::plutus {
         });
     }
 
+    static data to_data(const pay_ident &pay_id)
+    {
+        switch (pay_id.type) {
+            case pay_ident::ident_type::SHELLEY_KEY: return data::constr(0, { data::bstr(pay_id.hash) });
+            case pay_ident::ident_type::SHELLEY_SCRIPT: return data::constr(1, { data::bstr(pay_id.hash) });
+            default: throw error("an unsupported pay_id type within a script context: {}", static_cast<int>(pay_id.type));
+        }
+    }
+
+    static data to_data(const stake_ident &stake_id)
+    {
+        if (stake_id.script)
+            return data::constr(1, { data::bstr(stake_id.hash) });
+        return data::constr(0, { data::bstr(stake_id.hash) });
+    }
+
+    static data to_data(const stake_ident_hybrid &stake_id)
+    {
+        return std::visit([](const auto &id) {
+            using T = std::decay_t<decltype(id)>;
+            if constexpr (std::is_same_v<T, stake_ident>)
+                return data::constr(0, { to_data(id) });
+            if constexpr (std::is_same_v<T, stake_pointer>)
+                return data::constr(1, { data::bint(id.slot), data::bint(id.tx_idx), data::bint(id.cert_idx) });
+            throw error("unsupported stake_id type: {}", typeid(T).name());
+            // A noop, to make Visual C++ happy
+            return data::bint(0);
+        }, stake_id);
+    }
+
     static data to_data(const address &addr)
     {
-        data::list_type l {};
-        if (addr.has_pay_id()) {
-            const auto pay_id = addr.pay_id();
-            l.emplace_back(data::constr(pay_id.type == pay_ident::ident_type::SHELLEY_SCRIPT ? 1 : 0, { data::bstr(pay_id.hash) }));
-        } else {
-            l.emplace_back(data::constr(1, {}));
-        }
-        if (addr.has_stake_id()) {
-            const auto stake_id = addr.stake_id();
-            l.emplace_back(data::constr(stake_id.script ? 1 : 0, { data::bstr(stake_id.hash) }));
-        } else {
-            l.emplace_back(data::constr(1, {}));
-        }
-        return data::constr(0, std::move(l));
+        auto pay_cred = to_data(addr.pay_id());
+        auto stake_cred = addr.has_stake_id_hybrid() ? data::constr(0, { to_data(addr.stake_id_hybrid()) }) : data::constr(1, {});
+        return data::constr(0, { std::move(pay_cred), std::move(stake_cred) });
     }
 
     static data to_data(const uint64_t coin, const std::optional<uint8_vector> &assets)
@@ -73,23 +93,16 @@ namespace daedalus_turbo::plutus {
         });
     }
 
-    static data to_data(const resolved_input &in)
-    {
-        return data::constr(0, {
-            to_data(in.ref),
-            to_data(in.data)
-        });
-    }
-
     static data datums_to_data(const tx &tx)
     {
         data::list_type l {};
         for (const auto &[w_type, w_val]: tx.raw_witness().map()) {
             if (w_type.uint() == 4) {
-                for (const auto &d: w_val.array()) {
+                for (const auto &d_raw: w_val.array()) {
+                    auto d = data::from_cbor(d_raw.raw_span());
                     l.emplace_back(data::constr(0, {
-                        data::bstr(blake2b<blake2b_256_hash>(data::bstr(d.buf()).as_cbor())),
-                        data::bstr(d.buf())
+                        data::bstr(blake2b<blake2b_256_hash>(d.as_cbor())),
+                        data::bstr(d_raw.raw_span())
                     }));
                 }
             }
@@ -97,11 +110,11 @@ namespace daedalus_turbo::plutus {
         return data::list(std::move(l));
     }
 
-    static data inputs_to_data(const resolved_input_list &inputs)
+    static data inputs_to_data(const stored_txo_list &inputs)
     {
         data::list_type l {};
         for (const auto &in: inputs) {
-            auto d_ref = to_data(in.ref);
+            auto d_ref = to_data(in.id);
             auto d_data = to_data(in.data);
             l.emplace_back(data::constr(0, { std::move(d_ref), std::move(d_data) }));
         }
@@ -144,69 +157,179 @@ namespace daedalus_turbo::plutus {
         return data::map(std::move(m));
     }
 
-    context::context(const tx &tx, const resolved_input_list &i, const mint_info_list &m, const set<key_hash> &s):
-        _tx { tx }, _inputs { i }, _mints { m }, _signatories { s }
+    static data certs_to_data(const tx &tx)
     {
+        data::list_type l {};
+        tx.foreach_cert([&](const auto &cert, const auto) {
+            switch (const auto typ = cert.at(0).uint(); typ) {
+                case 0: {
+                    const auto &cred = cert.at(1).array();
+                    return data::constr(0, { to_data(stake_ident { cred.at(1).buf(), cred.at(0).uint() == 1 }) });
+                }
+                case 1: {
+                    const auto &cred = cert.at(1).array();
+                    return data::constr(1, { to_data(stake_ident { cred.at(1).buf(), cred.at(0).uint() == 1 }) });
+                }
+                case 2: {
+                    const auto &cred = cert.at(1).array();
+                    return data::constr(1, {
+                        to_data(stake_ident { cred.at(1).buf(), cred.at(0).uint() == 1 }),
+                        data::bstr(cert.at(2).buf())
+                    });
+                }
+                case 4: {
+                    return data::constr(1, {
+                        data::bstr(cert.at(1).buf()),
+                        data::bint(cert.at(2).uint()),
+                    });
+                }
+                default: throw error("unsupported certificate type: {}", typ);
+            }
+        });
+        return data::list(std::move(l));
     }
 
-    term_ptr context::v1(const purpose &p) const
+    static data withdrawals_to_data(const tx &tx)
     {
-        // DCerts: stake_reg, stake_unreg, stake_deleg, pool_reg, pool_retire, genesis_deleg, mir
-        vector<data> dcerts {};
-
-        // Withdrawals: List (stake_cred, coin)
         vector<data> withdrawals {};
-        _tx.foreach_withdrawal([&](const tx_withdrawal &w) {
+        tx.foreach_withdrawal([&](const tx_withdrawal &w) {
             withdrawals.emplace_back(data::list({
                 data::bstr(uint8_vector { w.address.stake_id().hash }),
                 data::bint(static_cast<uint64_t>(w.amount))
             }));
         });
+        return data::list(std::move(withdrawals));
+    }
 
-        data valid_range = data::constr(0, {
-            data::constr(0, {
-                data::constr(0, {}), data::constr(1, {})
-            }),
-            data::constr(0, {
-                data::constr(2, {}), data::constr(1, {})
-            })
+    static data validity_start_to_data(const context &ctx, const std::optional<uint64_t> start)
+    {
+        if (start)
+            return data::constr(1, { data::bint(slot { *start, ctx.config() }.unixtime()) });
+        return data::constr(0, {});
+    }
+
+    static data validity_end_to_data(const context &ctx, const std::optional<uint64_t> end)
+    {
+        if (end)
+            return data::constr(1, { data::bint(slot { *end, ctx.config() }.unixtime()) });
+        return data::constr(2, {});
+    }
+
+    static data validity_range_to_data(const context &ctx)
+    {
+        const auto end = ctx.tx().validity_end();
+        const auto start = ctx.tx().validity_start();
+        return data::constr(0, {
+            data::constr(0, { validity_start_to_data(ctx, start), data::constr(1, {}) }),
+            data::constr(0, { validity_end_to_data(ctx, end), data::constr(1, {}) })
         });
+    }
 
+    static data signatories_to_data(const tx &tx)
+    {
         vector<data> signatories {};
-        for (const auto &s: _signatories)
-            signatories.emplace_back(data::bstr(s));
+        for (const auto &[w_type, w_val]: tx.raw_witness().map()) {
+            if (w_type.uint() == 0) {
+                for (const auto &w: w_val.array()) {
+                    signatories.emplace_back(data::bstr(blake2b<key_hash>(w.array().at(0).buf())));
+                }
+            }
+        }
+        return data::list(std::move(signatories));
+    }
 
-        // Valid range: posix_time_range - validity interval start + ttl tx fields?
-        // Signatories: List (pub key hash) - hashes of from tx vkey witnesses like in native script?
-        // Datums: List (datum hash => datum) - plutus data from tx data witnesses?
-        auto d_purpose = std::visit([&](const auto &v) {
-            using T = std::decay_t<decltype(v)>;
-            if constexpr (std::is_same_v<T, purpose::spend>)
-                return data::constr(0, { to_data(v.ref) });
-            if constexpr (std::is_same_v<T, purpose::mint>)
-                return data::constr(1, { data::bstr(v.policy_id) });
-            throw error("unsupported purpose: {}", typeid(T).name());
-            // A noop to make Visual C++ happy
-            return data::bint(0);
-        }, p.val);
+    static data purpose_to_data(const context &ctx, const purpose &p)
+    {
+        switch (p.typ) {
+            case purpose::type::mint:
+                return data::constr(0, { data::bstr(ctx.mint_at(p.idx)) });
+            case purpose::type::spend:
+                return data::constr(1, { to_data(ctx.input_at(p.idx).ref) });
+            /*case purpose::type::reward:
+                return data::constr(1, { to_data(ctx.reward_at(p.idx).stake_id) });
+            case purpose::type::certify:
+                return data::constr(1, { to_data(ctx.cert_at(p.idx).ref) });*/
+            default: throw error("unsupported purpose: {}", static_cast<int>(p.typ));
+        }
+    }
 
-        auto d_info = data::constr(0, {
-            inputs_to_data(_inputs),
-            outputs_to_data(_tx),
-            fee_to_data(_tx),
-            mints_to_data(_tx),
-            data::list(std::move(dcerts)),
-            data::list(std::move(withdrawals)),
-            std::move(valid_range),
-            data::list(std::move(signatories)),
-            datums_to_data(_tx),
-            data::bstr(_tx.hash())
+    context context::load(const std::string &path, const cardano::config &c_cfg)
+    {
+        return deserialize(file::read(path), c_cfg);
+    }
+
+    context context::deserialize(const buffer bytes, const cardano::config &c_cfg)
+    {
+        const auto decompressed = zstd::decompress(bytes);
+        auto ctx = zpp::deserialize<stored_tx_context>(decompressed);
+        return { std::move(ctx.body), std::move(ctx.wits), std::move(ctx.block), std::move(ctx.inputs), c_cfg };
+    }
+
+    context::context(uint8_vector &&tx_body_data, uint8_vector &&tx_wits_data, storage::block_info &&block,
+        stored_txo_list &&inputs, const cardano::config &c_cfg):
+            _cfg { c_cfg },
+            _tx_body_bytes { std::move(tx_body_data) },
+            _tx_body_cbor { cbor::parse(_tx_body_bytes) },
+            _tx_wits_bytes { std::move(tx_wits_data) },
+            _tx_wits_cbor { cbor::parse(_tx_wits_bytes) },
+            _block_info { std::move(block) },
+            _block { _block_info, _tx_body_cbor, _block_info.offset, _cfg },
+            _tx { make_tx(_tx_body_cbor, _block, &_tx_wits_cbor) },
+            _inputs(std::move(inputs))
+    {
+    }
+
+    const tx &context::tx() const
+    {
+        return *_tx;
+    }
+
+    buffer context::mint_at(const uint64_t r_idx) const
+    {
+        size_t mi = 0;
+        std::optional<buffer> policy_id {};
+        _tx->foreach_mint([&](const buffer &p_id, const cbor_map &) {
+            if (mi++ == r_idx)
+                policy_id.emplace(p_id);
         });
+        if (policy_id) [[likely]]
+            return *policy_id;
+        throw error("a redeemer referenced an unknown mint instruction: {}", r_idx);
+    }
 
+    resolved_input context::input_at(const uint64_t r_idx) const
+    {
+        const auto &in = _inputs.at(r_idx);
+        return { in.id, in.data };
+    }
+
+    term_ptr context::v1(const purpose &p) const
+    {
         auto context = data::constr(0, {
-            std::move(d_info),
-            std::move(d_purpose)
+            data::constr(0, {
+                inputs_to_data(_inputs),
+                outputs_to_data(*_tx),
+                fee_to_data(*_tx),
+                mints_to_data(*_tx),
+                certs_to_data(*_tx),
+                withdrawals_to_data(*_tx),
+                validity_range_to_data(*this),
+                signatories_to_data(*_tx),
+                datums_to_data(*_tx),
+                data::constr(0, { data::bstr(_tx->hash()) })
+            }),
+            purpose_to_data(*this, p)
         });
         return term::make_ptr(constant { std::move(context) });
+    }
+
+    term_ptr context::v2(const purpose &) const
+    {
+        throw error("not implemented");
+    }
+
+    term_ptr context::v3(const purpose &) const
+    {
+        throw error("not implemented");
     }
 }

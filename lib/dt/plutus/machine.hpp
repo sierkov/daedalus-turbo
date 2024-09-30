@@ -64,7 +64,45 @@ namespace daedalus_turbo::plutus {
     private:
         std::shared_ptr<value_type> _ptr;
     };
-    using environment = vector<std::pair<std::string, value>>;
+
+    struct environment {
+        struct node {
+            const std::shared_ptr<node> parent {};
+            std::string name {};
+            value val;
+
+            bool operator==(const node &o) const
+            {
+                return name == o.name && val == o.val
+                    && ((!parent && !o.parent) || (parent && o.parent && *parent == *o.parent));
+            }
+        };
+
+        environment() =default;
+        ~environment() =default;
+
+        environment(const environment &parent, const std::string &name, const value &val):
+            _tail { std::make_shared<node>(parent._tail, name, val) }
+        {
+        }
+
+        environment(const environment &o):
+            _tail { o._tail }
+        {
+        }
+
+        const node *get() const
+        {
+            return _tail.get();
+        }
+
+        bool operator==(const environment &o) const
+        {
+            return (!_tail && !o._tail) || (_tail && o._tail && *_tail == *o._tail);
+        }
+    private:
+        std::shared_ptr<node> _tail {};
+    };
 
     struct v_builtin {
         t_builtin b;
@@ -120,6 +158,29 @@ namespace daedalus_turbo::plutus {
 }
 
 namespace fmt {
+    template<>
+    struct formatter<daedalus_turbo::plutus::environment::node>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::environment::node &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            using namespace daedalus_turbo::plutus;
+            auto out_it = fmt::format_to(ctx.out(), "{}={}", v.name, v.val);
+            if (v.parent)
+                out_it = fmt::format_to(out_it, ", {}", *v.parent);
+            return out_it;
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::plutus::environment>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::environment &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            using namespace daedalus_turbo::plutus;
+            if (const auto *node = v.get(); node)
+                fmt::format_to(ctx.out(), "env [{}]", *node);
+            return fmt::format_to(ctx.out(), "env []");
+        }
+    };
+
     template<>
     struct formatter<daedalus_turbo::plutus::value>: formatter<int> {
         template<typename FormatContext>

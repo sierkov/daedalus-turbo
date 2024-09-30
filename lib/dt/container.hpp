@@ -7,6 +7,8 @@
 
 #include <map>
 #include <set>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 #if DT_USE_MIMALLOC
 #   include <mimalloc.h>
@@ -32,6 +34,12 @@ namespace daedalus_turbo {
 
     template<typename T>
     using set = std::set<T, std::less<T>, container_allocator<T>>;
+
+    template<typename K, typename V>
+    using unordered_map = std::unordered_map<K, V, std::hash<K>, std::equal_to<K>, container_allocator<std::pair<const K, V>>>;
+
+    template<typename T>
+    using unordered_set = std::unordered_set<T, std::hash<T>, std::equal_to<T>, container_allocator<T>>;
 }
 
 #endif //!DAEDALUS_TURBO_CONTAINER_HPP

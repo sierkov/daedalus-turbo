@@ -26,7 +26,7 @@ namespace daedalus_turbo::plutus::costs {
         cost_fun_ptr mem {};
     };
 
-    using parsed_model = map<op_tag, op_model>;
+    using parsed_model = unordered_map<op_tag, op_model>;
     struct parsed_models {
         std::optional<parsed_model> v1 {};
         std::optional<parsed_model> v2 {};

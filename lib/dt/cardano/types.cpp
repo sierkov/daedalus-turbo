@@ -134,6 +134,80 @@ namespace daedalus_turbo::cardano {
         return res;
     }
 
+    static tx_output _extract_assets(const cbor_value &addr, const cbor_value &value, const size_t idx, const cbor::value &out_raw)
+    {
+        if (value.type == CBOR_UINT)
+            return { address { addr.buf() }, amount { value.uint() }, idx, out_raw };
+        const auto &multi_val = value.array();
+        return { address { addr.buf() }, amount { multi_val.at(0).uint() }, idx, out_raw, &multi_val.at(1) };
+    }
+
+    tx_output tx_output::from_cbor(const uint64_t era, const uint64_t idx, const cbor::value &out_raw)
+    {
+        if (idx >= 0x10000) [[unlikely]]
+            throw cardano_error("transaction output number is too high {}!", idx);
+        switch (era) {
+            case 1: {
+                const auto &out = out_raw.array();
+                return { cardano::address { out.at(0).array().at(0).tag().second->buf() }, cardano::amount { out.at(1).uint() }, idx, out_raw };
+            }
+            case 2: {
+                if (out_raw.type != CBOR_ARRAY) [[unlikely]]
+                    throw cardano_error("era: {} unsupported tx output format: {}!", era, out_raw);
+                const auto &out = out_raw.array();
+                return { cardano::address { out.at(0).buf() }, cardano::amount { out.at(1).uint() }, idx, out_raw };
+            }
+            case 3: {
+                if (out_raw.type != CBOR_ARRAY)
+                    throw cardano_error("era: {} unsupported tx output format: {}!", era, out_raw);
+                const auto &out = out_raw.array();
+                return _extract_assets(out.at(0), out.at(1), idx, out_raw);
+            }
+            case 4:
+            case 5:
+            case 6:
+            case 7:  {
+                const cbor_value *address = nullptr;
+                const cbor_value *amount = nullptr;
+                const cbor_value *datum = nullptr;
+                const cbor_value *script_ref = nullptr;
+                switch (out_raw.type) {
+                    case CBOR_ARRAY: {
+                        const auto &out = out_raw.array();
+                        address = &out.at(0);
+                        amount = &out.at(1);
+                        if (out.size() > 2)
+                            datum = &out.at(2);
+                        break;
+                    }
+                    case CBOR_MAP:
+                        if (era < 6) [[unlikely]]
+                            throw error("map-based transaction outputs are not supported in eras below 6");
+                        for (const auto &[o_type, o_entry]: out_raw.map()) {
+                            switch (const auto typ = o_type.uint(); typ) {
+                                case 0: address = &o_entry; break;
+                                case 1: amount = &o_entry; break;
+                                case 2: datum = &o_entry; break;
+                                case 3: script_ref = &o_entry; break;
+                                default: throw error("unsupported output_type: {}", typ);
+                            }
+                        }
+                        break;
+                    default: throw cardano_error("era: {} unsupported tx output format: {}!", era, out_raw);
+                }
+                if (address == nullptr)
+                    throw cardano_error("transaction output misses address field!");
+                if (amount == nullptr)
+                    throw cardano_error("transaction output misses amount field!");
+                auto res = _extract_assets(*address, *amount, idx, out_raw);
+                res.datum = datum;
+                res.script_ref = script_ref;
+                return res;
+            }
+            default: throw error("tx_output::from_cbor: unsupported era: {}", era);
+        }
+    }
+
     tx_out_data tx_out_data::from_output(const tx_output &txo)
     {
         tx_out_data res { txo.amount, txo.address.bytes() };

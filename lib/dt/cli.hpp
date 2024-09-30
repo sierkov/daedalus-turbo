@@ -189,6 +189,10 @@ namespace daedalus_turbo::cli {
 
     inline int run(const int argc, const char **argv, const command::command_list &command_list)
     {
+        std::set_terminate([]() {
+            std::cerr << "std::terminate called; terminating\n";
+            std::abort();
+        });
         std::ios_base::sync_with_stdio(false);
         std::map<std::string, command_meta> commands {};
         for (const auto &cmd: command_list) {

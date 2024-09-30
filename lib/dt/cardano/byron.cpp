@@ -74,7 +74,7 @@ namespace daedalus_turbo::cardano::byron {
         return tx_ok && dlg_ok && upd_ok;
     }
 
-    tx::wit_ok tx::witnesses_ok(const tx_out_data_list */*input_data*/) const
+    tx::wit_ok tx::witnesses_ok(const plutus::context */*input_data*/) const
     {
         if (!_wit) throw cardano_error("vkey_witness_ok called on a transaction without witness data!");
         wit_ok ok {};

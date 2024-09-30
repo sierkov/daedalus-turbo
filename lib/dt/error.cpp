@@ -12,6 +12,10 @@
 namespace daedalus_turbo {
     std::string error_stacktrace()
     {
+        //Boost's stacktrace generation is _VERY_ slow, so it's enabled only for rare debugging sessions
+        //std::stringstream ss {};
+        //ss << boost::stacktrace::stacktrace();
+        //return ss.str();
         static std::string s { "none" };
         return s;
     }

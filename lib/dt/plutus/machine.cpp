@@ -147,10 +147,9 @@ namespace daedalus_turbo::plutus {
 
         std::optional<value> _lookup_opt(const environment &env, const std::string &name) const
         {
-            const auto renv = env | std::views::reverse;
-            if (const auto it = std::ranges::find_if(renv,
-                    [&name](const auto &p) { return p.first == name; }); it != renv.end()) [[likely]] {
-                return { it->second };
+            for (const auto *node = env.get(); node != nullptr; node = node->parent.get()) {
+                if (node->name == name)
+                    return node->val;
             }
             return {};
         }
@@ -162,7 +161,7 @@ namespace daedalus_turbo::plutus {
             throw error("reference to free variable: {}", name);
         }
 
-        term_ptr _discharge_go(const environment &env, const size_t level, const term_ptr &t) const
+        term_ptr _discharge_term(const environment &env, const term_ptr &t, const size_t level=0) const
         {
             return std::visit([&](const auto &v) {
                 using T = std::decay_t<decltype(v)>;
@@ -171,22 +170,17 @@ namespace daedalus_turbo::plutus {
                         return _discharge(**ptr_opt);
                     return t;
                 } else if constexpr (std::is_same_v<T, t_lambda>) {
-                    return term::make_ptr(t_lambda { v.name, _discharge_go(env, level + 1, v.expr) });
+                    return term::make_ptr(t_lambda { v.name, _discharge_term(env, v.expr, level + 1) });
                 } else if constexpr (std::is_same_v<T, apply>) {
-                    return term::make_ptr(apply { _discharge_go(env, level, v.func), _discharge_go(env, level, v.arg) });
+                    return term::make_ptr(apply { _discharge_term(env, v.func, level), _discharge_term(env, v.arg, level) });
                 } else if constexpr (std::is_same_v<T, force>) {
-                    return term::make_ptr(force { _discharge_go(env, level, v.expr) });
+                    return term::make_ptr(force { _discharge_term(env, v.expr, level) });
                 } else if constexpr (std::is_same_v<T, t_delay>) {
-                    return term::make_ptr(t_delay { _discharge_go(env, level, v.expr) });
+                    return term::make_ptr(t_delay { _discharge_term(env, v.expr, level) });
                 } else {
                     return t;
                 }
             }, t->expr);
-        }
-
-        term_ptr _discharge_term(const environment &env, const term_ptr &t) const
-        {
-            return _discharge_go(env, 0, t);
         }
 
         term_ptr _discharge(const value::value_type &val) const
@@ -240,8 +234,7 @@ namespace daedalus_turbo::plutus {
             return std::visit([&arg, this](const auto &f) {
                 using T = std::decay_t<decltype(f)>;
                 if constexpr (std::is_same_v<T, v_lambda>) {
-                    environment new_env { f.env };
-                    new_env.emplace_back(f.name, arg);
+                    const environment new_env { f.env, f.name, arg };
                     return _compute(new_env, *f.body);
                 }
                 if constexpr (std::is_same_v<T, v_builtin>) {
@@ -281,59 +274,82 @@ namespace daedalus_turbo::plutus {
             }, *val);
         }
 
+        value _compute(const environment &env, const variable &e)
+        {
+            _spend(term_tag::variable);
+            return _lookup(env, e.name);
+        }
+
+        value _compute(const environment &, const constant &e)
+        {
+            _spend(term_tag::constant);
+            return { e };
+        }
+
+        value _compute(const environment &env, const t_lambda &e)
+        {
+            _spend(term_tag::lambda);
+            return { v_lambda { env, e.name, e.expr } };
+        }
+
+        value _compute(const environment &env, const t_delay &e)
+        {
+            _spend(term_tag::delay);
+            return { v_delay { env, e.expr } };
+        }
+
+        value _compute(const environment &, const t_builtin &e)
+        {
+            _spend(term_tag::builtin);
+            return { v_builtin { e } };
+        }
+
+        value _compute(const environment &env, const force &e)
+        {
+            _spend(term_tag::force);
+            return _force(_compute(env, *e.expr));
+        }
+
+        value _compute(const environment &env, const apply &e)
+        {
+            _spend(term_tag::apply);
+            const auto arg = _compute(env, *e.arg);
+            const auto fun = _compute(env, *e.func);
+            return _apply(*fun, arg);
+        }
+
+        value _compute(const environment &env, const t_constr &e)
+        {
+            _spend(term_tag::constr);
+            value_list v_args {};
+            for (const auto &arg: e.args)
+                v_args.emplace_back(_compute(env, *arg));
+            return value { v_constr { e.tag, std::move(v_args) } };
+        }
+
+        value _compute(const environment &env, const acase &e)
+        {
+            _spend(term_tag::acase);
+            const auto v_arg = _compute(env, *e.arg);
+            const auto &cc = v_arg.as_constr();
+            if (cc.tag >= e.cases.size())
+                throw error("a case argument must have been less than {} but got {}!", e.cases.size(), cc.tag);
+            auto res = _compute(env, *e.cases.at(cc.tag));
+            for (size_t i = 0; i < cc.args.size(); ++i)
+                res = _apply(*res, cc.args.at(i));
+            return res;
+        }
+
+        value _compute(const environment &, const failure &)
+        {
+            _spend(term_tag::error);
+            throw error("the plutus script reported an error!");
+        }
+
         value _compute(const environment &env, const term &t)
         {
             return std::visit([&](const auto &e) {
-                using T = std::decay_t<decltype(e)>;
-                if constexpr (std::is_same_v<T, variable>) {
-                    _spend(term_tag::variable);
-                    return _lookup(env, e.name);
-                } else if constexpr (std::is_same_v<T, constant>) {
-                    _spend(term_tag::constant);
-                    return value { e };
-                } else if constexpr (std::is_same_v<T, t_lambda>) {
-                    _spend(term_tag::lambda);
-                    return value { v_lambda { env, e.name, e.expr } };
-                } else if constexpr (std::is_same_v<T, t_delay>) {
-                    _spend(term_tag::delay);
-                    return value { v_delay { env, e.expr } };
-                } else if constexpr (std::is_same_v<T, t_builtin>) {
-                    _spend(term_tag::builtin);
-                    return value { v_builtin { e } };
-                } else if constexpr (std::is_same_v<T, force>) {
-                    _spend(term_tag::force);
-                    return _force(_compute(env, *e.expr));
-                } else if constexpr (std::is_same_v<T, apply>) {
-                    _spend(term_tag::apply);
-                    const auto arg = _compute(env, *e.arg);
-                    const auto fun = _compute(env, *e.func);
-                    return _apply(*fun, arg);
-                } else if constexpr (std::is_same_v<T, t_constr>) {
-                    _spend(term_tag::constr);
-                    value_list v_args {};
-                    for (const auto &arg: e.args)
-                        v_args.emplace_back(_compute(env, *arg));
-                    return value { v_constr { e.tag, std::move(v_args) } };
-                } else if constexpr (std::is_same_v<T, acase>) {
-                    _spend(term_tag::acase);
-                    const auto v_arg = _compute(env, *e.arg);
-                    const auto &cc = v_arg.as_constr();
-                    if (cc.tag >= e.cases.size())
-                        throw error("a case argument must have been less than {} but got {}!", e.cases.size(), cc.tag);
-                    auto res = _compute(env, *e.cases.at(cc.tag));
-                    for (size_t i = 0; i < cc.args.size(); ++i)
-                        res = _apply(*res, cc.args.at(i));
-                    return res;
-                } else if constexpr (std::is_same_v<T, failure>) {
-                    _spend(term_tag::error);
-                    throw error("the plutus script reported an error!");
-                    // never reached but makes Visual C++ happy
-                    return value { constant { false } };
-                } else {
-                    throw error("unsupported compute frame: {}", e.tag);
-                    // never reached but makes Visual C++ happy
-                    return value { constant { false } };
-                }
+                return _compute(env, e);
             }, t.expr);
         }
     };

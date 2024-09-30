@@ -1,5 +1,4 @@
 set(Boost_NO_WARN_NEW_VERSIONS 1)
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
 find_package(Boost 1.83 REQUIRED COMPONENTS json url coroutine)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(FMT REQUIRED fmt>=8.1.1)

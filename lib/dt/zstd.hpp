@@ -121,10 +121,17 @@ namespace daedalus_turbo::zstd {
             throw error("target buffer must have {} bytes but has {}!", new_size, out.size());
     }
 
-    inline uint64_t decompressed_size(const buffer &compressed)
+    inline uint64_t frame_size(const buffer compressed)
     {
-        auto sz = ZSTD_getFrameContentSize(compressed.data(), compressed.size());
-        switch (sz) {
+        const auto sz = ZSTD_findFrameCompressedSize(compressed.data(), compressed.size());
+        if (ZSTD_isError(sz))
+            throw error("ZSTD failed to find the compressed frame size!");
+        return sz;
+    }
+
+    inline uint64_t decompressed_size(const buffer compressed)
+    {
+        switch (const auto sz = ZSTD_getFrameContentSize(compressed.data(), compressed.size()); sz) {
             case ZSTD_CONTENTSIZE_UNKNOWN:
                 throw error("ZSTD content size is unknown!");
             case ZSTD_CONTENTSIZE_ERROR:

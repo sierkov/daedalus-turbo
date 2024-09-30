@@ -11,10 +11,20 @@
 
 namespace daedalus_turbo::zpp {
     template<typename T>
-    void deserialize(T &v, const buffer zpp_data)
+    size_t deserialize(T &v, const buffer zpp_data)
     {
         ::zpp::bits::in in { zpp_data };
         in(v).or_throw();
+        return in.position();
+    }
+
+    template<typename T>
+    T deserialize(const buffer zpp_data)
+    {
+        ::zpp::bits::in in { zpp_data };
+        T v;
+        in(v).or_throw();
+        return v;
     }
 
     template<typename T>
