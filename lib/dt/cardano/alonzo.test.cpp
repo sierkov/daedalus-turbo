@@ -16,17 +16,18 @@ suite cardano_alonzo_suite = [] {
         ccfg.shelley_start_epoch(208);
         "validate plutus v1"_test = [&] {
             for (const auto &entry: std::filesystem::directory_iterator { install_path("data/alonzo") }) {
-                if (entry.is_regular_file() && entry.path().extension() == ".ctx") {
+                if (entry.is_regular_file() && entry.path().extension() == ".zpp") {
                     const auto path = entry.path().string();
-                    const auto ctx = plutus::context::load(path);
-                    try {
-                        const auto wit_ok = ctx.tx().witnesses_ok(&ctx);
-                        expect(wit_ok.script_total > 0);
-                        test_same(path, true, static_cast<bool>(wit_ok));
-                    } catch (const error &ex) {
-                        logger::warn("context {} failed with {}", path, ex.what());
-                        test_same(path, true, false);
-                    }
+                    logger::debug("testing script context: {}", path);
+                    const plutus::context ctx { path, ccfg };
+                    expect(nothrow([&] {
+                        try {
+                            ctx.tx().witnesses_ok(&ctx);
+                        } catch (const error &ex) {
+                            logger::warn("context {} failed with {}", path, ex.what());
+                            throw;
+                        }
+                    })) << path;
                 }
             }
         };

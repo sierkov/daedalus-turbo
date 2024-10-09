@@ -54,71 +54,85 @@ namespace daedalus_turbo::cardano::shelley {
         return {};
     }
 
-    void tx::_validate_witness_vkey(wit_ok &ok, set<key_hash> &vkeys, const cbor::value &w_val) const
+    set<key_hash> tx::_witnesses_ok_vkey(const cbor::value &w_val) const
     {
+        set<key_hash> vkeys {};
         for (const auto &w: w_val.array()) {
-            ++ok.vkey_total;
             const auto &vkey = w.array().at(0).buf();
             const auto &sig = w.array().at(1).buf();
-            if (ed25519::verify(sig, vkey, hash())) [[likely]] {
-                ++ok.vkey_ok;
-                vkeys.emplace(blake2b<key_hash>(vkey));
-            } else
-                logger::warn("tx vkey witness failed at slot {}: vkey: {}, sig: {} tx_hash: {}", block().slot(), vkey, sig, hash());
+            if (!ed25519::verify(sig, vkey, hash())) [[unlikely]]
+                throw error("tx vkey witness failed at slot {}: vkey: {}, sig: {} tx_hash: {}", block().slot(), vkey, sig, hash());
+            vkeys.emplace(blake2b<key_hash>(vkey));
         }
+        return vkeys;
     }
 
-    void tx::_validate_witness_native_script(wit_ok &ok, const cbor::value &w_val, const set<key_hash> &vkeys) const
+    size_t tx::_witnesses_ok_native_script(const cbor::value &w_val, const set<key_hash> &vkeys) const
     {
+        size_t cnt = 0;
         for (const auto &w: w_val.array()) {
-            ++ok.script_total;
             if (const auto err = _validate_native_script_single(w, *this, vkeys); err) [[unlikely]]
-                logger::warn("native script for tx {} failed: {} script: {}", hash(), *err, w_val);
-            else
-                ++ok.script_ok;
+                throw cardano_error("native script for tx {} failed: {} script: {}", hash(), *err, w_val);
+            ++cnt;
         }
+        return cnt;
     }
 
-    void tx::_validate_witness_bootstrap(wit_ok &ok, const cbor::value &w_val) const
+    size_t tx::_witnesses_ok_bootstrap(const cbor::value &w_val) const
     {
+        size_t cnt = 0;
         for (const auto &w: w_val.array()) {
             const auto &vkey = w.at(0).buf();
             const auto &sig = w.at(1).buf();
-            if (ed25519::verify(sig, vkey, hash())) [[likely]]
-                ++ok.vkey_ok;
-            else
-                logger::warn("tx bootstrap witness failed at slot {}: vkey: {}, sig: {} tx_hash: {}", block().slot(), vkey, sig, hash());
+            if (!ed25519::verify(sig, vkey, hash())) [[unlikely]]
+                throw cardano_error("tx bootstrap witness failed at slot {}: vkey: {}, sig: {} tx_hash: {}", block().slot(), vkey, sig, hash());
+            ++cnt;
         }
+        return cnt;
     }
 
-    cardano::tx::wit_ok tx::witnesses_ok(const plutus::context *) const
+    tx::wit_cnt tx::_witnesses_ok_other(uint64_t typ, const cbor::value &w_val, const plutus::context *) const
     {
-        if (!_wit)
+        throw cardano_error("unsupported witness type {} at tx {}: {}", typ, hash(), w_val);
+    }
+
+    cardano::tx::wit_cnt tx::witnesses_ok_other(const plutus::context *ctx) const
+    {
+        wit_cnt cnt {};
+        foreach_witness([&](const auto typ, const auto &w_val) {
+            if (typ > 2)
+                cnt += _witnesses_ok_other(typ, w_val, ctx);
+        });
+        return cnt;
+    }
+
+    cardano::tx::wit_cnt tx::witnesses_ok(const plutus::context *ctx) const
+    {
+        if (!_wit)[[unlikely]]
             throw cardano_error("vkey_witness_ok called on a transaction without witness data!");
-        wit_ok ok {};
+        wit_cnt cnt {};
         // validate vkey witnesses and create a vkeys set for the potential native script validation
         set<key_hash> vkeys {};
-        for (const auto &[w_type, w_val]: _wit->map()) {
-            if (w_type.uint() == 0)
-                _validate_witness_vkey(ok, vkeys, w_val);
-        }
-        // validate native scripts and bootstrap witnesses
-        for (const auto &[w_type, w_val]: _wit->map()) {
-            switch (w_type.uint()) {
+        foreach_witness([&](const auto typ, const auto &w_val) {
+            switch (typ) {
                 case 0:
-                    // ignore - has been validated above
-                    break;
-                case 1:
-                    _validate_witness_native_script(ok, w_val, vkeys);
+                    vkeys = _witnesses_ok_vkey(w_val);
+                    cnt.vkey += vkeys.size();
                     break;
                 case 2:
-                    _validate_witness_bootstrap(ok, w_val);
+                    cnt.vkey += _witnesses_ok_bootstrap(w_val);
                     break;
                 default:
-                    throw cardano_error("unsupported witness type {} at tx {}: {}", w_type.uint(), hash(), w_val);
+                    // ignore, will be processed later
+                    break;
             }
-        }
-        return ok;
+        });
+        foreach_witness([&](const auto typ, const auto &w_val) {
+            if (typ == 1)
+                cnt.native_script += _witnesses_ok_native_script(w_val, vkeys);
+        });
+        cnt += witnesses_ok_other(ctx);
+        return cnt;
     }
 
     void tx::foreach_input(const std::function<void(const tx_input &)> &observer) const
@@ -126,7 +140,7 @@ namespace daedalus_turbo::cardano::shelley {
         for (const auto &[entry_type, entry]: _tx.map()) {
             if (entry_type.uint() == 0) {
                 set<tx_out_ref> unique_inputs {};
-                _foreach_set(entry, [&](const auto &txin, size_t) {
+                foreach_set(entry, [&](const auto &txin, size_t) {
                     const auto in_idx = txin.at(1).uint();
                     unique_inputs.emplace(tx_out_ref { txin.at(0).buf(), in_idx });
                 });
@@ -138,11 +152,11 @@ namespace daedalus_turbo::cardano::shelley {
         }
     }
 
-    void tx::_foreach_set(const cbor_value &set_raw, const std::function<void(const cbor_value &, size_t)> &observer) const
+    void tx::foreach_witness(const std::function<void(uint64_t, const cbor::value &)> &observer) const
     {
-        const auto &set = set_raw.array();
-        for (size_t i = 0; i < set.size(); ++i)
-            observer(set[i], i);
+        for (const auto &[w_type, w_val]: _wit->map()) {
+            observer(w_type.uint(), w_val);
+        }
     }
 
     std::optional<uint64_t> tx::validity_end() const

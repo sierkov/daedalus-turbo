@@ -790,6 +790,14 @@ namespace daedalus_turbo::index {
             return false;
         }
 
+        size_t size_part(const size_t part_no) const
+        {
+            size_t tot_size = 0;
+            for (size_t i = 0; i < _readers.size(); ++i)
+                tot_size += _readers.at(i)->size_part(part_no);
+            return tot_size;
+        }
+
         size_t size() const
         {
             size_t tot_size = 0;

@@ -144,16 +144,16 @@ namespace daedalus_turbo {
 
         buffer subbuf(const size_t offset, const size_t sz) const
         {
-            if (offset + sz > size())
-                throw error("requested offset: {} and size: {} end over the end of buffer's size: {}!", offset, sz, size());
-            return buffer { data() + offset, sz };
+            if (offset + sz <= size()) [[likely]]
+                return buffer { data() + offset, sz };
+            throw error("requested offset: {} and size: {} end over the end of buffer's size: {}!", offset, sz, size());
         }
 
         buffer subbuf(const size_t offset) const
         {
-            if (offset > size())
-                throw error("a buffer's offset {} is greater than its size {}", offset, size());
-            return subbuf(offset, size() - offset);
+            if (offset <= size()) [[likely]]
+                return subbuf(offset, size() - offset);
+            throw error("a buffer's offset {} is greater than its size {}", offset, size());
         }
 
         buffer subspan(size_t offset, size_t sz) const

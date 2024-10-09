@@ -5,6 +5,7 @@
 
 #include <dt/history.hpp>
 #include <dt/plutus/context.hpp>
+#include <dt/zpp-stream.hpp>
 
 namespace daedalus_turbo::plutus {
     using namespace cardano;
@@ -69,9 +70,9 @@ namespace daedalus_turbo::plutus {
                 auto p_it = p_assets.map();
                 while (!p_it.done()) {
                     const auto [name, value] = p_it.next();
-                    pm.emplace_back(data::bstr(name.bytes()), data::bint(value.big_int()));
+                    pm.emplace_back(data::bstr(name.bytes_alloc()), data::bint(value.big_int()));
                 }
-                m.emplace_back(data::bstr(policy_id.bytes()), data::map(std::move(pm)));
+                m.emplace_back(data::bstr(policy_id.bytes_alloc()), data::map(std::move(pm)));
             }
         }
         return data::map(std::move(m));
@@ -79,8 +80,19 @@ namespace daedalus_turbo::plutus {
 
     static data to_data(const std::optional<tx_out_data::datum_option_type> &datum)
     {
-        if (datum)
-            return data::constr(0, { data::bstr(std::get<datum_hash>(*datum)) });
+        if (datum) {
+            return std::visit([](const auto &d) {
+                using T = std::decay_t<decltype(d)>;
+                if constexpr (std::is_same_v<T, datum_hash>) {
+                    return data::constr(0, { data::bstr(d) });
+                } else if constexpr (std::is_same_v<T, uint8_vector>) {
+                    return data::constr(2, { data::bstr(d) });
+                } else {
+                    throw error("unsupported datum type: {}", typeid(T).name());
+                    //return data::unit();
+                }
+            }, *datum);
+        }
         return data::constr(1, {});
     }
 
@@ -93,21 +105,18 @@ namespace daedalus_turbo::plutus {
         });
     }
 
-    static data datums_to_data(const tx &tx)
+    static data datums_to_data(const context::datum_map &datums)
     {
         data::list_type l {};
-        for (const auto &[w_type, w_val]: tx.raw_witness().map()) {
-            if (w_type.uint() == 4) {
-                for (const auto &d_raw: w_val.array()) {
-                    auto d = data::from_cbor(d_raw.raw_span());
-                    l.emplace_back(data::constr(0, {
-                        data::bstr(blake2b<blake2b_256_hash>(d.as_cbor())),
-                        data::bstr(d_raw.raw_span())
-                    }));
-                }
-            }
+        for (const auto &[hash, d]: datums) {
+            l.emplace_back(data::constr(0, { data::bstr(hash), d }));
         }
         return data::list(std::move(l));
+    }
+
+    static data redeemers_to_data(const tx &)
+    {
+        return data::list({});
     }
 
     static data inputs_to_data(const stored_txo_list &inputs)
@@ -150,7 +159,7 @@ namespace daedalus_turbo::plutus {
         tx.foreach_mint([&](const buffer &policy_id, const cbor_map &assets) {
             data::map_type a_m {};
             for (const auto &[name, value]: assets) {
-                a_m.emplace_back(data::bstr(name.buf()), data::bint(value.uint()));
+                a_m.emplace_back(data::bstr(name.buf()), data::bint(value.bigint()));
             }
             m.emplace_back(data::bstr(policy_id), data::map(std::move(a_m)));
         });
@@ -201,17 +210,22 @@ namespace daedalus_turbo::plutus {
         return data::list(std::move(withdrawals));
     }
 
+    static data slot_to_data(const context &ctx, uint64_t slot)
+    {
+        return data::bint(cardano::slot { slot, ctx.config() }.unixtime() * 1000);
+    }
+
     static data validity_start_to_data(const context &ctx, const std::optional<uint64_t> start)
     {
         if (start)
-            return data::constr(1, { data::bint(slot { *start, ctx.config() }.unixtime()) });
+            return data::constr(1, { slot_to_data(ctx, *start) });
         return data::constr(0, {});
     }
 
     static data validity_end_to_data(const context &ctx, const std::optional<uint64_t> end)
     {
         if (end)
-            return data::constr(1, { data::bint(slot { *end, ctx.config() }.unixtime()) });
+            return data::constr(1, { slot_to_data(ctx, *end) });
         return data::constr(2, {});
     }
 
@@ -228,13 +242,16 @@ namespace daedalus_turbo::plutus {
     static data signatories_to_data(const tx &tx)
     {
         vector<data> signatories {};
-        for (const auto &[w_type, w_val]: tx.raw_witness().map()) {
+        tx.foreach_required_signer([&](const buffer vkey_hash) {
+            signatories.emplace_back(data::bstr(vkey_hash));
+        });
+        /*for (const auto &[w_type, w_val]: tx.raw_witness().map()) {
             if (w_type.uint() == 0) {
                 for (const auto &w: w_val.array()) {
                     signatories.emplace_back(data::bstr(blake2b<key_hash>(w.array().at(0).buf())));
                 }
             }
-        }
+        }*/
         return data::list(std::move(signatories));
     }
 
@@ -244,7 +261,7 @@ namespace daedalus_turbo::plutus {
             case purpose::type::mint:
                 return data::constr(0, { data::bstr(ctx.mint_at(p.idx)) });
             case purpose::type::spend:
-                return data::constr(1, { to_data(ctx.input_at(p.idx).ref) });
+                return data::constr(1, { to_data(ctx.input_at(p.idx).id) });
             /*case purpose::type::reward:
                 return data::constr(1, { to_data(ctx.reward_at(p.idx).stake_id) });
             case purpose::type::certify:
@@ -253,20 +270,8 @@ namespace daedalus_turbo::plutus {
         }
     }
 
-    context context::load(const std::string &path, const cardano::config &c_cfg)
-    {
-        return deserialize(file::read(path), c_cfg);
-    }
-
-    context context::deserialize(const buffer bytes, const cardano::config &c_cfg)
-    {
-        const auto decompressed = zstd::decompress(bytes);
-        auto ctx = zpp::deserialize<stored_tx_context>(decompressed);
-        return { std::move(ctx.body), std::move(ctx.wits), std::move(ctx.block), std::move(ctx.inputs), c_cfg };
-    }
-
     context::context(uint8_vector &&tx_body_data, uint8_vector &&tx_wits_data, storage::block_info &&block,
-        stored_txo_list &&inputs, const cardano::config &c_cfg):
+        stored_txo_list &&inputs, stored_txo_list &&ref_inputs, const cardano::config &c_cfg):
             _cfg { c_cfg },
             _tx_body_bytes { std::move(tx_body_data) },
             _tx_body_cbor { cbor::parse(_tx_body_bytes) },
@@ -275,7 +280,35 @@ namespace daedalus_turbo::plutus {
             _block_info { std::move(block) },
             _block { _block_info, _tx_body_cbor, _block_info.offset, _cfg },
             _tx { make_tx(_tx_body_cbor, _block, &_tx_wits_cbor) },
-            _inputs(std::move(inputs))
+            _inputs { std::move(inputs) },
+            _ref_inputs { std::move(ref_inputs) }
+    {
+        _tx->foreach_witness([this](const auto typ, const auto &val) {
+            switch (typ) {
+                case 4: {
+                    for (const auto &d_raw: val.array()) {
+                        _datums.try_emplace(blake2b<datum_hash>(d_raw.raw_span()), data::from_cbor(d_raw.raw_span()));
+                    }
+                }
+                default: break;
+            }
+        });
+    }
+
+    context::context(stored_tx_context &&ctx, const cardano::config &c_cfg):
+        context { std::move(ctx.body), std::move(ctx.wits), std::move(ctx.block),
+                  std::move(ctx.inputs), std::move(ctx.ref_inputs), c_cfg }
+    {
+    }
+
+    static stored_tx_context context_load(const std::string &path)
+    {
+        zpp_stream::read_stream s { path };
+        return s.read<stored_tx_context>();
+    }
+
+    context::context(const std::string &path, const cardano::config &c_cfg):
+        context { context_load(path), c_cfg }
     {
     }
 
@@ -297,39 +330,53 @@ namespace daedalus_turbo::plutus {
         throw error("a redeemer referenced an unknown mint instruction: {}", r_idx);
     }
 
-    resolved_input context::input_at(const uint64_t r_idx) const
+    const stored_txo &context::input_at(const uint64_t r_idx) const
     {
-        const auto &in = _inputs.at(r_idx);
-        return { in.id, in.data };
+        return _inputs.at(r_idx);
     }
 
-    term_ptr context::v1(const purpose &p) const
+    term_ptr context::data(allocator &alloc, const script_type typ, const purpose &p) const
     {
-        auto context = data::constr(0, {
-            data::constr(0, {
-                inputs_to_data(_inputs),
-                outputs_to_data(*_tx),
-                fee_to_data(*_tx),
-                mints_to_data(*_tx),
-                certs_to_data(*_tx),
-                withdrawals_to_data(*_tx),
-                validity_range_to_data(*this),
-                signatories_to_data(*_tx),
-                datums_to_data(*_tx),
-                data::constr(0, { data::bstr(_tx->hash()) })
-            }),
-            purpose_to_data(*this, p)
-        });
-        return term::make_ptr(constant { std::move(context) });
-    }
-
-    term_ptr context::v2(const purpose &) const
-    {
-        throw error("not implemented");
-    }
-
-    term_ptr context::v3(const purpose &) const
-    {
-        throw error("not implemented");
+        switch (typ) {
+            case script_type::plutus_v1: {
+                auto context = data::constr(0, {
+                    data::constr(0, {
+                        inputs_to_data(_inputs),
+                        outputs_to_data(*_tx),
+                        fee_to_data(*_tx),
+                        mints_to_data(*_tx),
+                        certs_to_data(*_tx),
+                        withdrawals_to_data(*_tx),
+                        validity_range_to_data(*this),
+                        signatories_to_data(*_tx),
+                        datums_to_data(_datums),
+                        data::constr(0, { data::bstr(_tx->hash()) })
+                    }),
+                    purpose_to_data(*this, p)
+                });
+                return term::make_ptr(alloc, constant { alloc, std::move(context) });
+            }
+            case script_type::plutus_v2: {
+                auto context = data::constr(0, {
+                    data::constr(0, {
+                        inputs_to_data(_inputs),
+                        inputs_to_data(_ref_inputs),
+                        outputs_to_data(*_tx),
+                        fee_to_data(*_tx),
+                        mints_to_data(*_tx),
+                        certs_to_data(*_tx),
+                        withdrawals_to_data(*_tx),
+                        validity_range_to_data(*this),
+                        signatories_to_data(*_tx),
+                        redeemers_to_data(*_tx),
+                        datums_to_data(_datums),
+                        data::constr(0, { data::bstr(_tx->hash()) })
+                    }),
+                    purpose_to_data(*this, p)
+                });
+                return term::make_ptr(alloc, constant { alloc, std::move(context) });
+            }
+            default: throw error("unsupported script_type: {}", static_cast<int>(typ));
+        }
     }
 }

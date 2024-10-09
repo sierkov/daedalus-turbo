@@ -6,7 +6,7 @@
 #include <dt/cardano/conway.hpp>
 
 namespace daedalus_turbo::cardano::conway {
-    void tx::_foreach_set(const cbor_value &set_raw, const std::function<void(const cbor_value &, size_t)> &observer) const
+    void tx::foreach_set(const cbor_value &set_raw, const std::function<void(const cbor_value &, size_t)> &observer) const
     {
         const auto &set = (set_raw.type == CBOR_TAG ? *set_raw.tag().second : set_raw).array();
         for (size_t i = 0; i < set.size(); ++i)

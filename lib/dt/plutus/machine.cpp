@@ -9,16 +9,27 @@
 
 namespace daedalus_turbo::plutus {
     struct machine::impl {
-        impl(const version &ver, const optional_budget &budget, const costs::parsed_models &models):
-            _cost_model { _cost_model_for_ver(models, ver) }, _budget { budget }
+        impl(allocator &alloc, const version &ver, const optional_budget &budget, const costs::parsed_models &models):
+            _alloc { alloc }, _cost_model { _cost_model_for_ver(models, ver) }, _budget { budget }
         {
+        }
+
+        result evaluate(const term_ptr &expr, const term_list &args)
+        {
+            term_ptr t = expr;
+            for (const auto &arg: args)
+                t = term::make_ptr(_alloc, apply { t, arg });
+            return evaluate(t);
         }
 
         result evaluate(const term_ptr &expr)
         {
             _cost = {};
-            _spend(costs::other_tag::startup);
-            return { _discharge(*_compute({}, *expr)), _cost };
+            _spend(_cost_model.startup_op);
+            const environment empty_env {};
+            const auto res_v = _compute(empty_env, *expr);
+            auto res_t = _discharge(*res_v);
+            return { std::move(res_t), _cost };
         }
 
         uint64_t mem_usage(const constant &val)
@@ -26,10 +37,10 @@ namespace daedalus_turbo::plutus {
             return _mem_usage(val);
         }
     private:
+        allocator &_alloc;
         const costs::parsed_model &_cost_model;
         optional_budget _budget;
         cardano::ex_units _cost {};
-
 
         static const costs::parsed_model &_cost_model_for_ver(const costs::parsed_models &models, const version &ver)
         {
@@ -109,7 +120,7 @@ namespace daedalus_turbo::plutus {
                     return static_cast<uint64_t>(sizeof(bls12_381_ml_result) / 8);
                 } else if constexpr (std::is_same_v<T, constant_list>) {
                     uint64_t sum = 0;
-                    for (const auto &ci: v.vals)
+                    for (const auto &ci: v->vals)
                         sum += _mem_usage(ci);
                     return sum;
                 } else if constexpr (std::is_same_v<T, constant_pair>) {
@@ -117,7 +128,7 @@ namespace daedalus_turbo::plutus {
                 } else {
                     return _mem_usage(v);
                 }
-            }, c.val);
+            }, *c);
         }
 
         static uint64_t _mem_usage(const value::value_type &val)
@@ -127,16 +138,8 @@ namespace daedalus_turbo::plutus {
             return 1;
         }
 
-        void _spend(const costs::op_tag tag, const value_list &args={})
+        void _check_budget() const
         {
-            costs::arg_sizes sizes {};
-            for (const auto &arg: args)
-                sizes.emplace_back(_mem_usage(*arg));
-            const auto &op_model = _cost_model.at(tag);
-            const auto cpu_cost = op_model.cpu->cost(sizes, args);
-            _cost.steps += cpu_cost;
-            const auto mem_cost = op_model.mem->cost(sizes, args);
-            _cost.mem += mem_cost;
             if (_budget) {
                 if (_cost.steps > _budget->steps) [[unlikely]]
                     throw error("plutus program CPU cost: {} has exceeded it's budget: {}", _cost.steps, _budget->steps);
@@ -145,7 +148,27 @@ namespace daedalus_turbo::plutus {
             }
         }
 
-        std::optional<value> _lookup_opt(const environment &env, const std::string &name) const
+        void _spend(const cardano::ex_units &c)
+        {
+            _cost.steps += c.steps;
+            _cost.mem += c.mem;
+            _check_budget();
+        }
+
+        void _spend(const builtin_tag tag, const value_list &args={})
+        {
+            costs::arg_sizes sizes {};
+            for (const auto &arg: args)
+                sizes.emplace_back(_mem_usage(*arg));
+            const auto &op_model = _cost_model.builtin_fun.at(tag);
+            const auto cpu_cost = op_model.cpu->cost(sizes, args);
+            _cost.steps += cpu_cost;
+            const auto mem_cost = op_model.mem->cost(sizes, args);
+            _cost.mem += mem_cost;
+            _check_budget();
+        }
+
+        std::optional<value> _lookup_opt(const environment &env, const std::string_view &name) const
         {
             for (const auto *node = env.get(); node != nullptr; node = node->parent.get()) {
                 if (node->name == name)
@@ -154,7 +177,7 @@ namespace daedalus_turbo::plutus {
             return {};
         }
 
-        value _lookup(const environment &env, const std::string &name) const
+        value _lookup(const environment &env, const std::pmr::string &name) const
         {
             if (auto ptr_opt = _lookup_opt(env, name); ptr_opt)
                 return std::move(*ptr_opt);
@@ -170,13 +193,13 @@ namespace daedalus_turbo::plutus {
                         return _discharge(**ptr_opt);
                     return t;
                 } else if constexpr (std::is_same_v<T, t_lambda>) {
-                    return term::make_ptr(t_lambda { v.name, _discharge_term(env, v.expr, level + 1) });
+                    return term::make_ptr(_alloc, t_lambda { _alloc, v.name, _discharge_term(env, v.expr, level + 1) });
                 } else if constexpr (std::is_same_v<T, apply>) {
-                    return term::make_ptr(apply { _discharge_term(env, v.func, level), _discharge_term(env, v.arg, level) });
+                    return term::make_ptr(_alloc, apply { _discharge_term(env, v.func, level), _discharge_term(env, v.arg, level) });
                 } else if constexpr (std::is_same_v<T, force>) {
-                    return term::make_ptr(force { _discharge_term(env, v.expr, level) });
+                    return term::make_ptr(_alloc, force { _discharge_term(env, v.expr, level) });
                 } else if constexpr (std::is_same_v<T, t_delay>) {
-                    return term::make_ptr(t_delay { _discharge_term(env, v.expr, level) });
+                    return term::make_ptr(_alloc, t_delay { _discharge_term(env, v.expr, level) });
                 } else {
                     return t;
                 }
@@ -188,27 +211,28 @@ namespace daedalus_turbo::plutus {
             return std::visit([this](const auto &v) {
                 using T = std::decay_t<decltype(v)>;
                 if constexpr (std::is_same_v<T, constant>) {
-                    return term::make_ptr(v);
+                    return term::make_ptr(_alloc, v);
                 } else if constexpr (std::is_same_v<T, v_delay>) {
-                    return _discharge_term(v.env, term::make_ptr(t_delay { v.expr }));
+                    return _discharge_term(v.env, term::make_ptr(_alloc, t_delay { v.expr }));
                 } else if constexpr (std::is_same_v<T, v_lambda>) {
-                    return _discharge_term(v.env, term::make_ptr(t_lambda { v.name, v.body }));
+                    return _discharge_term(v.env, term::make_ptr(_alloc, t_lambda { _alloc, v.name, v.body }));
                 } else if constexpr (std::is_same_v<T, v_builtin>) {
-                    auto t = term::make_ptr(v.b);
+                    auto t = term::make_ptr(_alloc, v.b);
                     for (size_t i = 0; i < v.forces; ++i)
-                        t = term::make_ptr(force { std::move(t) });
+                        t = term::make_ptr(_alloc, force { std::move(t) });
                     for (const auto &arg: v.args)
-                        t = term::make_ptr(apply { std::move(t), _discharge(*arg) });
+                        t = term::make_ptr(_alloc, apply { std::move(t), _discharge(*arg) });
                     return t;
                 } else if constexpr (std::is_same_v<T, v_constr>) {
-                    t_constr pc { v.tag };
+                    term_list args { _alloc.resource() };
                     for (const auto &arg: v.args)
-                        pc.args.emplace_back(_discharge(*arg));
-                    return term::make_ptr(std::move(pc));
+                        args.emplace_back(_discharge(*arg));
+                    t_constr pc { v.tag, std::move(args) };
+                    return term::make_ptr(_alloc, std::move(pc));
                 } else {
                     throw error("an unsupported value type to discharge: {}", typeid(v).name());
                     // never reached but makes Visual C++ happy
-                    return term::make_ptr(false);
+                    return term::make_ptr(_alloc, false);
                 }
             }, val);
         }
@@ -221,10 +245,10 @@ namespace daedalus_turbo::plutus {
             _spend(b.b.tag, b.args);
             const auto func = b.b.func();
             switch (num_args) {
-                case 1: return std::get<builtin_one_arg>(func)(b.args.at(0));
-                case 2: return std::get<builtin_two_arg>(func)(b.args.at(0), b.args.at(1));
-                case 3: return std::get<builtin_three_arg>(func)(b.args.at(0), b.args.at(1), b.args.at(2));
-                case 6: return std::get<builtin_six_arg>(func)(b.args.at(0), b.args.at(1), b.args.at(2), b.args.at(3), b.args.at(4), b.args.at(5));
+                case 1: return std::get<builtin_one_arg>(func)(_alloc, b.args.at(0));
+                case 2: return std::get<builtin_two_arg>(func)(_alloc, b.args.at(0), b.args.at(1));
+                case 3: return std::get<builtin_three_arg>(func)(_alloc, b.args.at(0), b.args.at(1), b.args.at(2));
+                case 6: return std::get<builtin_six_arg>(func)(_alloc, b.args.at(0), b.args.at(1), b.args.at(2), b.args.at(3), b.args.at(4), b.args.at(5));
                 default: throw error("unsupported number of arguments: {}!", num_args);
             }
         }
@@ -234,7 +258,7 @@ namespace daedalus_turbo::plutus {
             return std::visit([&arg, this](const auto &f) {
                 using T = std::decay_t<decltype(f)>;
                 if constexpr (std::is_same_v<T, v_lambda>) {
-                    const environment new_env { f.env, f.name, arg };
+                    const environment new_env { _alloc, f.env, f.name, arg };
                     return _compute(new_env, *f.body);
                 }
                 if constexpr (std::is_same_v<T, v_builtin>) {
@@ -243,13 +267,13 @@ namespace daedalus_turbo::plutus {
                         throw error("an application of an polymorphic builtin with an incorrect number of forces: {}", new_b.b.tag);
                     new_b.args.emplace_back(arg);
                     if (new_b.args.size() < new_b.b.num_args()) [[likely]]
-                        return value { std::move(new_b) };
+                        return value { _alloc, std::move(new_b) };
                     auto res = _apply_builtin(new_b);
                     //logger::info("{}({}) => {}", new_b.b.name(), new_b.args, *res);
                     return res;
                 }
                 throw error("only lambdas and builtins can be applied but got: {}", typeid(T).name());
-                return value { constant { std::monostate {} } };
+                return value { _alloc, constant { _alloc, std::monostate {} } };
             }, func);
         }
 
@@ -265,54 +289,54 @@ namespace daedalus_turbo::plutus {
                     if (v.forces < v.b.polymorphic_args()) {
                         auto new_b = v;
                         ++new_b.forces;
-                        return value { std::move(new_b) };
+                        return value { _alloc, std::move(new_b) };
                     }
                     throw error("an unexpected force of a builtin: {} polymorhpic_args: {} num_forces: {}", v.b.tag, v.b.polymorphic_args(), v.forces);
                 }
                 throw error("unsupported value for force: {}", typeid(T).name());
-                return value { constant { std::monostate {} } };
+                return value { _alloc, constant { _alloc, std::monostate {} } };
             }, *val);
         }
 
         value _compute(const environment &env, const variable &e)
         {
-            _spend(term_tag::variable);
+            _spend(_cost_model.variable_op);
             return _lookup(env, e.name);
         }
 
         value _compute(const environment &, const constant &e)
         {
-            _spend(term_tag::constant);
-            return { e };
+            _spend(_cost_model.constant_op);
+            return { _alloc, e };
         }
 
         value _compute(const environment &env, const t_lambda &e)
         {
-            _spend(term_tag::lambda);
-            return { v_lambda { env, e.name, e.expr } };
+            _spend(_cost_model.lambda_op);
+            return { _alloc, v_lambda { _alloc, env, e.name, e.expr } };
         }
 
         value _compute(const environment &env, const t_delay &e)
         {
-            _spend(term_tag::delay);
-            return { v_delay { env, e.expr } };
+            _spend(_cost_model.delay_op);
+            return { _alloc, v_delay { env, e.expr } };
         }
 
         value _compute(const environment &, const t_builtin &e)
         {
-            _spend(term_tag::builtin);
-            return { v_builtin { e } };
+            _spend(_cost_model.builtin_op);
+            return { _alloc, v_builtin { e } };
         }
 
         value _compute(const environment &env, const force &e)
         {
-            _spend(term_tag::force);
+            _spend(_cost_model.force_op);
             return _force(_compute(env, *e.expr));
         }
 
         value _compute(const environment &env, const apply &e)
         {
-            _spend(term_tag::apply);
+            _spend(_cost_model.apply_op);
             const auto arg = _compute(env, *e.arg);
             const auto fun = _compute(env, *e.func);
             return _apply(*fun, arg);
@@ -320,16 +344,16 @@ namespace daedalus_turbo::plutus {
 
         value _compute(const environment &env, const t_constr &e)
         {
-            _spend(term_tag::constr);
+            _spend(_cost_model.constr_op);
             value_list v_args {};
             for (const auto &arg: e.args)
                 v_args.emplace_back(_compute(env, *arg));
-            return value { v_constr { e.tag, std::move(v_args) } };
+            return value { _alloc, v_constr { e.tag, std::move(v_args) } };
         }
 
-        value _compute(const environment &env, const acase &e)
+        value _compute(const environment &env, const t_case &e)
         {
-            _spend(term_tag::acase);
+            _spend(_cost_model.case_op);
             const auto v_arg = _compute(env, *e.arg);
             const auto &cc = v_arg.as_constr();
             if (cc.tag >= e.cases.size())
@@ -342,20 +366,19 @@ namespace daedalus_turbo::plutus {
 
         value _compute(const environment &, const failure &)
         {
-            _spend(term_tag::error);
             throw error("the plutus script reported an error!");
         }
 
         value _compute(const environment &env, const term &t)
         {
-            return std::visit([&](const auto &e) {
+            return std::visit([&env, this](const auto &e) {
                 return _compute(env, e);
             }, t.expr);
         }
     };
 
-    machine::machine(const version &ver, const optional_budget &budget, const costs::parsed_models &models):
-        _impl { std::make_unique<impl>(ver, budget, models) }
+    machine::machine(allocator &alloc, const version &ver, const optional_budget &budget, const costs::parsed_models &models):
+        _impl { std::make_unique<impl>(alloc, ver, budget, models) }
     {
     }
 
@@ -368,73 +391,78 @@ namespace daedalus_turbo::plutus {
 
     machine::result machine::evaluate(const term_ptr &expr, const term_list &args)
     {
-        term_ptr t = expr;
-        for (const auto &arg: args)
-            t = term::make_ptr(apply { t, arg });
-        return _impl->evaluate(t);
+        return _impl->evaluate(expr, args);
     }
 
-    value::value(const blst_p1 &b): value { value_type { constant { bls12_381_g1_element { b } } } }
+    value::value(value &&v): _ptr { std::move(v._ptr) }
     {
     }
 
-    value::value(const blst_p2 &b): value { value_type { constant { bls12_381_g2_element { b } } } }
+    value::value(const value &v): _ptr { v._ptr }
     {
     }
 
-    value::value(const blst_fp12 &b): value { value_type { constant { bls12_381_ml_result { b } } } }
+    value::value(allocator &alloc, const blst_p1 &b): value { alloc, value_type { constant { alloc, bls12_381_g1_element { b } } } }
     {
     }
 
-    value::value(data &&d): value { value_type { constant { std::move(d) } } }
+    value::value(allocator &alloc, const blst_p2 &b): value { alloc, value_type { constant { alloc, bls12_381_g2_element { b } } } }
     {
     }
 
-    value::value(cpp_int &&i): value { constant { std::move(i) } }
+    value::value(allocator &alloc, const blst_fp12 &b): value { alloc, value_type { constant { alloc, bls12_381_ml_result { b } } } }
     {
     }
 
-    value::value(const cpp_int &i): value { constant { i } }
+    value::value(allocator &alloc, data &&d): value { alloc, value_type { constant { alloc, std::move(d) } } }
     {
     }
 
-    value::value(const int64_t i): value { cpp_int { i } }
+    value::value(allocator &alloc, cpp_int &&i): value { alloc, constant { alloc, std::move(i) } }
     {
     }
 
-    value::value(std::string &&s): value { constant { std::move(s) } }
+    value::value(allocator &alloc, const cpp_int &i): value { alloc, constant { alloc, i } }
     {
     }
 
-    value::value(const std::string_view &s): value { std::string { s } }
+    value::value(allocator &alloc, const int64_t i): value { alloc, cpp_int { i } }
     {
     }
 
-    value::value(uint8_vector &&b): value { constant { std::move(b) } }
+    value::value(allocator &alloc, std::string &&s): value { alloc, constant { alloc, std::move(s) } }
     {
     }
 
-    value::value(const buffer &b): value { uint8_vector { b } }
+    value::value(allocator &alloc, const std::string_view &s): value { alloc, std::string { s } }
     {
     }
 
-    value::value(value_type &&v): _ptr { std::make_shared<value_type>(std::move(v)) }
+    value::value(allocator &alloc, uint8_vector &&b): value { alloc, constant { alloc, std::move(b) } }
     {
     }
 
-    value::value(const value_type &v): _ptr { std::make_shared<value_type>(v) }
+    value::value(allocator &alloc, const buffer &b): value { alloc, uint8_vector { b } }
     {
     }
 
-    value::value(constant &&v): value { value_type { std::move(v) }  }
+    value::value(allocator &alloc, value_type &&v): _ptr { alloc.make<value_type>(std::move(v)) }
     {
     }
 
-    value::value(const constant &v): value { value_type { v }  }
+    value::value(allocator &alloc, const value_type &v): value { alloc, value_type { v } }
     {
     }
 
-    value::value(constant_list &&v): value { constant { std::move(v) } }
+    value::value(allocator &alloc, constant &&v): value { alloc, value_type { std::move(v) }  }
+    {
+    }
+
+    value::value(allocator &alloc, const constant &v): value { alloc, value_type { v }  }
+    {
+    }
+
+    value::value(allocator &alloc, constant_list &&v): value { alloc, constant { alloc, std::move(v) } }
     {
     }
 
@@ -467,7 +495,7 @@ namespace daedalus_turbo::plutus {
     void value::as_unit() const
     {
         const auto &c = as_const();
-        if (!std::holds_alternative<std::monostate>(c.val))
+        if (!std::holds_alternative<std::monostate>(*c))
             throw error("expected a unit but got: {}", c);
     }
 
@@ -493,17 +521,17 @@ namespace daedalus_turbo::plutus {
 
     const bls12_381_g1_element &value::as_bls_g1() const
     {
-        return std::get<bls12_381_g1_element>(as_const().val);
+        return std::get<bls12_381_g1_element>(*as_const());
     }
 
     const bls12_381_g2_element &value::as_bls_g2() const
     {
-        return std::get<bls12_381_g2_element>(as_const().val);
+        return std::get<bls12_381_g2_element>(*as_const());
     }
 
     const bls12_381_ml_result &value::as_bls_ml_res() const
     {
-        return std::get<bls12_381_ml_result>(as_const().val);
+        return std::get<bls12_381_ml_result>(*as_const());
     }
 
     const data &value::as_data() const
@@ -521,32 +549,31 @@ namespace daedalus_turbo::plutus {
         return as_const().as_list();
     }
 
-    value value::boolean(const bool b)
+    value value::boolean(allocator &alloc, const bool b)
     {
-        return { value_type { constant { b } } };
+        return { alloc, value_type { constant { alloc, b } } };
     }
 
-    const value &value::unit()
+    value value::unit(allocator &alloc)
     {
-        static value v { constant { std::monostate {} } };
-        return v;
+        return { alloc, constant { alloc, std::monostate {} } };
     }
 
-    value value::make_list(constant_type &&typ, vector<constant> &&cl)
+    value value::make_list(allocator &alloc, constant_type &&typ, constant_list::list_type &&cl)
     {
-        return { constant { constant_list { std::move(typ), std::move(cl) } } };
+        return { alloc, constant { alloc, constant_list { alloc, std::move(typ), std::move(cl) } } };
     }
 
-    value value::make_list(vector<constant> &&vals)
+    value value::make_list(allocator &alloc, constant_list::list_type &&vals)
     {
         if (vals.empty())
             throw error("value must not be empty!");
-        return { constant { constant_list { constant_type::from_val(vals.at(0)), std::move(vals) } } };
+        return { alloc, constant { alloc, constant_list { alloc, constant_type::from_val(alloc, vals.at(0)), std::move(vals) } } };
     }
 
-    value value::make_pair(constant &&fst, constant &&snd)
+    value value::make_pair(allocator &alloc, constant &&fst, constant &&snd)
     {
-        return { constant { constant_pair { std::move(fst), std::move(snd) } } };
+        return { alloc, constant { alloc, constant_pair { alloc, std::move(fst), std::move(snd) } } };
     }
 
     bool value::operator==(const value &o) const

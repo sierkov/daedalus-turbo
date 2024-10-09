@@ -20,8 +20,7 @@ namespace daedalus_turbo::cardano::conway {
         void foreach_instant_reward(const std::function<void(const instant_reward &)> &) const override;
         void foreach_stake_reg(const stake_reg_observer &observer) const override;
         void foreach_stake_unreg(const stake_unreg_observer &observer) const override;
-    protected:
-        void _foreach_set(const cbor_value &set_raw, const std::function<void(const cbor_value &, size_t)> &observer) const override;
+        void foreach_set(const cbor_value &set_raw, const std::function<void(const cbor_value &, size_t)> &observer) const override;
     };
 }
 

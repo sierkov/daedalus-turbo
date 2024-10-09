@@ -311,5 +311,8 @@ namespace daedalus_turbo::cardano {
         conway_genesis_hash { _verify_hash(cfg.at("config").at("ConwayGenesisHash").as_string(), conway_genesis) },
         plutus_all_cost_models { _prep_plutus_cost_models(alonzo_genesis) }
     {
+        static const auto mainnet_hash = uint8_vector::from_hex("15a199f895e461ec0ffc6dd4e4028af28a492ab4e806d39cb674c88f7643ef62");
+        if (conway_genesis_hash == mainnet_hash)
+            shelley_start_epoch(208);
     }
 }

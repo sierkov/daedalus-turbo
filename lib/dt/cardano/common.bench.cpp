@@ -10,6 +10,57 @@
 
 using namespace daedalus_turbo;
 
+namespace {
+    struct static_a {
+        uint64_t m1() const
+        {
+            return 213;
+        }
+    };
+
+    struct static_b {
+        uint64_t m1() const
+        {
+            return 222;
+        }
+    };
+
+    struct static_c {
+        uint64_t m1() const
+        {
+            return 999;
+        }
+    };
+
+    using static_any = std::variant<static_a, static_b, static_c>;
+
+    struct dynamic_base {
+        virtual ~dynamic_base() =default;
+        virtual uint64_t m1() const =0;
+    };
+
+    struct dynamic_a: dynamic_base {
+        uint64_t m1() const override
+        {
+            return 213;
+        }
+    };
+
+    struct dynamic_b: dynamic_base {
+        uint64_t m1() const override
+        {
+            return 222;
+        }
+    };
+
+    struct dynamic_c: dynamic_base {
+        uint64_t m1() const override
+        {
+            return 999;
+        }
+    };
+}
+
 suite cardano_common_bench_suite = [] {
     "cardano::common"_test = [] {
         "block method vs direct CBOR access"_test = [] {
@@ -37,6 +88,37 @@ suite cardano_common_bench_suite = [] {
             });
             expect(struct_r >= 10e6);
             expect(raw_r >= 10e6);
+        };
+        "static vs dynamic polymorphism"_test = [] {
+            static constexpr size_t num_iter = 10e7;
+            daedalus_turbo::vector<static_any> s_objs { static_a {}, static_b {}, static_c {} };
+            const auto stat = benchmark_rate("static polymorphism", 3, [&s_objs] {
+                uint64_t sum = 0;
+                for (size_t i = 0; i < num_iter; ++i) {
+                    for (const auto &obj : s_objs)
+                        std::visit([&sum](const auto &obj) {
+                            sum += obj.m1();
+                        }, obj);
+                }
+                if (sum == 1434 * num_iter) [[likely]]
+                    return num_iter * s_objs.size();
+                throw error("invalid sum: {}", sum);
+            });
+            daedalus_turbo::vector<std::unique_ptr<dynamic_base>> d_objs {};
+            d_objs.emplace_back(std::make_unique<dynamic_a>());
+            d_objs.emplace_back(std::make_unique<dynamic_b>());
+            d_objs.emplace_back(std::make_unique<dynamic_c>());
+            const auto dyn = benchmark_rate("dynamic polymorphism", 3, [&d_objs] {
+                uint64_t sum = 0;
+                for (size_t i = 0; i < num_iter; ++i) {
+                    for (const auto &obj : d_objs)
+                        sum += obj->m1();
+                }
+                if (sum == 1434 * num_iter) [[likely]]
+                    return num_iter * d_objs.size();
+                throw error("invalid sum: {}", sum);
+            });
+            expect(stat > dyn) << stat << dyn;
         };
     };    
 };

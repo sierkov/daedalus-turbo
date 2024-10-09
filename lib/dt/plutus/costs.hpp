@@ -9,10 +9,8 @@
 #include <dt/plutus/types.hpp>
 
 namespace daedalus_turbo::plutus::costs {
-    enum class other_tag {
-        startup
-    };
-    using op_tag = std::variant<term_tag, builtin_tag, other_tag>;
+    using startup_tag = std::monostate;
+    using op_tag = std::variant<term_tag, builtin_tag, startup_tag>;
 
     using arg_sizes = vector<uint64_t>;
     struct cost_fun {
@@ -26,7 +24,20 @@ namespace daedalus_turbo::plutus::costs {
         cost_fun_ptr mem {};
     };
 
-    using parsed_model = unordered_map<op_tag, op_model>;
+    struct parsed_model {
+        cardano::ex_units startup_op;
+        cardano::ex_units apply_op;
+        cardano::ex_units builtin_op;
+        cardano::ex_units case_op;
+        cardano::ex_units constant_op;
+        cardano::ex_units constr_op;
+        cardano::ex_units delay_op;
+        cardano::ex_units force_op;
+        cardano::ex_units lambda_op;
+        cardano::ex_units variable_op;
+        unordered_map<builtin_tag, op_model> builtin_fun {};
+    };
+
     struct parsed_models {
         std::optional<parsed_model> v1 {};
         std::optional<parsed_model> v2 {};
@@ -45,7 +56,7 @@ namespace fmt {
             using namespace daedalus_turbo::plutus::costs;
             return std::visit([&ctx](const auto &vv) {
                 using T = std::decay_t<decltype(vv)>;
-                if constexpr (std::is_same_v<T, other_tag>)
+                if constexpr (std::is_same_v<T, startup_tag>)
                     return fmt::format_to(ctx.out(), "startup");
                 else
                     return fmt::format_to(ctx.out(), "{}", vv);

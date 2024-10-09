@@ -437,23 +437,21 @@ namespace daedalus_turbo::cardano::shelley {
         }
 
         std::optional<uint64_t> validity_end() const override;
-        wit_ok witnesses_ok(const plutus::context *ctx=nullptr) const override;
+        wit_cnt witnesses_ok(const plutus::context *ctx=nullptr) const override;
+        virtual wit_cnt witnesses_ok_other(const plutus::context *ctx=nullptr) const;
+        void foreach_witness(const std::function<void(uint64_t, const cbor::value &)> &observer) const override;
     protected:
-        void _validate_witness_vkey(wit_ok &ok, set<key_hash> &vkeys, const cbor::value &w_val) const;
-        void _validate_witness_bootstrap(wit_ok &ok, const cbor::value &w_val) const;
-        void _validate_witness_native_script(wit_ok &ok, const cbor::value &w_val, const set<key_hash> &vkeys) const;
-        virtual void _foreach_set(const cbor_value &, const std::function<void(const cbor_value &, size_t)> &) const;
+        set<key_hash> _witnesses_ok_vkey(const cbor::value &w_val) const;
+        size_t _witnesses_ok_bootstrap(const cbor::value &w_val) const;
+        size_t _witnesses_ok_native_script(const cbor::value &w_val, const set<key_hash> &vkeys) const;
+        virtual wit_cnt _witnesses_ok_other(uint64_t typ, const cbor::value &w_val, const plutus::context *ctx=nullptr) const;
 
         void _if_item_present(const uint64_t idx, const std::function<void(const cbor_value &)> &observer) const
         {
-            const cbor_value *item = nullptr;
             for (const auto &[entry_type, entry]: _tx.map()) {
                 if (entry_type.uint() == idx)
-                    item = &entry;
+                    observer(entry);
             }
-            if (!item)
-                return;
-            observer(*item);
         }
 
         void _foreach_cert(const uint64_t cert_type, const std::function<void(const cbor_array &, size_t cert_idx)> &observer) const
@@ -468,7 +466,7 @@ namespace daedalus_turbo::cardano::shelley {
         {
             for (const auto &[entry_type, entry]: _tx.map()) {
                 if (entry_type.uint() == 4) {
-                    _foreach_set(entry, [&](const auto &cert_raw, const size_t cert_idx) {
+                    foreach_set(entry, [&](const auto &cert_raw, const size_t cert_idx) {
                         observer(cert_raw.array(), cert_idx);
                     });
                 }

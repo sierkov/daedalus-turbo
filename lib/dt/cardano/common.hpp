@@ -136,8 +136,8 @@ namespace daedalus_turbo::cardano {
     };
 
     struct tx_withdrawal {
-        const address address;
-        const amount amount;
+        const cardano::address address;
+        const cardano::amount amount;
         const tx_out_idx idx;
     };
 
@@ -204,7 +204,7 @@ namespace daedalus_turbo::cardano {
 
     struct pool_reg {
         cardano_hash_28 pool_id {};
-        vrf_vkey vrf_vkey {};
+	cardano::vrf_vkey vrf_vkey {};
         uint64_t pledge = 0;
         uint64_t cost = 0;
         rational_u64 margin {};
@@ -383,7 +383,7 @@ namespace daedalus_turbo::cardano {
             return _block_tuple.raw_span();
         }
 
-        const config &config() const
+        const cardano::config &config() const
         {
             return _cfg;
         }
@@ -407,15 +407,33 @@ namespace daedalus_turbo::cardano {
     using stake_unreg_observer = std::function<void(const stake_ident &, size_t, std::optional<uint64_t>)>;
 
     struct tx {
-        struct wit_ok {
-            size_t vkey_total = 0;
-            size_t vkey_ok = 0;
-            size_t script_total = 0;
-            size_t script_ok = 0;
+        struct wit_cnt {
+            size_t vkey = 0;
+            size_t native_script = 0;
+            size_t plutus_v1_script = 0;
+            size_t plutus_v2_script = 0;
+            size_t plutus_v3_script = 0;
 
-            operator bool() const
+            wit_cnt &operator+=(const script_info &s)
             {
-                return vkey_total == vkey_ok && script_total == script_ok;
+                switch (s.type()) {
+                    case script_type::native: ++native_script; break;
+                    case script_type::plutus_v1: ++plutus_v1_script; break;
+                    case script_type::plutus_v2: ++plutus_v2_script; break;
+                    case script_type::plutus_v3: ++plutus_v3_script; break;
+                    default: throw error("unsupported script type: {}", static_cast<int>(s.type()));
+                }
+                return *this;
+            }
+
+            wit_cnt &operator+=(const wit_cnt &o)
+            {
+                vkey += o.vkey;
+                native_script += o.native_script;
+                plutus_v1_script += o.plutus_v1_script;
+                plutus_v2_script += o.plutus_v2_script;
+                plutus_v3_script += o.plutus_v3_script;
+                return *this;
             }
         };
 
@@ -434,8 +452,9 @@ namespace daedalus_turbo::cardano {
         }
 
         virtual ~tx() {}
-        virtual wit_ok witnesses_ok(const plutus::context *ctx=nullptr) const =0;
+        virtual wit_cnt witnesses_ok(const plutus::context *ctx=nullptr) const =0;
         virtual void foreach_input(const std::function<void(const tx_input &)> &) const {}
+        virtual void foreach_referenced_input(const std::function<void(const tx_input &)> &) const {}
         virtual void foreach_output(const std::function<void(const tx_output &)> &) const {}
         virtual size_t foreach_mint(const std::function<void(const buffer &, const cbor::map &)> &) const { return 0; }
         virtual void foreach_withdrawal(const std::function<void(const tx_withdrawal &)> &) const {}
@@ -450,6 +469,19 @@ namespace daedalus_turbo::cardano {
         virtual void foreach_collateral(const std::function<void(const tx_input &)> &) const {}
         virtual void foreach_collateral_return(const std::function<void(const tx_output &)> &) const {}
         virtual void foreach_cert(const std::function<void(const cbor::array &cert, size_t cert_idx)> &) const {}
+        virtual void foreach_required_signer(const std::function<void(buffer)> &) const {}
+
+        virtual void foreach_set(const cbor_value &set_raw, const std::function<void(const cbor_value &, size_t)> &observer) const
+        {
+            const auto &set = set_raw.array();
+            for (size_t i = 0; i < set.size(); ++i)
+                observer(set[i], i);
+        }
+
+        virtual void foreach_witness(const std::function<void(uint64_t, const cbor::value &)> &) const
+        {
+            throw error("not implemented");
+        }
 
         virtual std::optional<uint64_t> validity_end() const
         {
@@ -683,6 +715,15 @@ namespace fmt {
                 v.pool_id, v.vrf_vkey, v.pledge, v.cost, v.margin, v.reward_id, v.owners, v.relays, v.metadata);
         }
     };
+
+    template<>
+    struct formatter<daedalus_turbo::cardano::tx::wit_cnt>: formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "vkey: {} native: {} plutus_v1: {} plutus_v2: {} plutus_v3: {}",
+                v.vkey, v.native_script, v.plutus_v1_script, v.plutus_v2_script, v.plutus_v3_script);
+        }
+    };
 }
 
 namespace daedalus_turbo::cardano {
@@ -745,16 +786,6 @@ namespace daedalus_turbo::cardano {
             { "relativeStake", slot_relative_stake(tail_relative_stake, block().slot()) }
         };
     }
-}
-
-namespace std {
-    template<>
-    struct hash<daedalus_turbo::cardano::pool_hash> {
-        size_t operator()(const auto &h) const noexcept
-        {
-            return daedalus_turbo::buffer { h.data(), 8 }.to<size_t>();
-        }
-    };
 }
 
 #endif // !DAEDALUS_TURBO_CARDANO_COMMON_HPP

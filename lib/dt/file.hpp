@@ -134,26 +134,39 @@ namespace daedalus_turbo::file {
     // C-style IO is used since on Mac OS the standard C++ library has very slow I/O performance.
     // At the same time C-style IO works well on Mac, Linux, and Windows.
     struct read_stream: protected stream {
-        explicit read_stream(const std::string &path): _path { path }
+        explicit read_stream(const std::string &path, const size_t buf_size=0):
+            _path { path }, _buf(buf_size)
         {
             _f = std::fopen(_path.c_str(), "rb");
-            if (_f == NULL)
+            if (_f == NULL) [[unlikely]]
                 throw error_sys("failed to open a file for reading {}", _path);
-            if (std::setvbuf(_f, NULL, _IONBF, 0) != 0)
+            if (std::setvbuf(_f, reinterpret_cast<char *>(_buf.data()), _buf.empty() ? _IONBF : _IOFBF, _buf.size()) != 0) [[unlikely]]
                 throw error_sys("failed to disable read buffering for {}", _path);
             _report_open_file();
         }
+
+        read_stream(read_stream &&o): _f { o._f }, _path { std::move(o._path) }, _buf { std::move(o._buf) }
+        {
+            o._f = NULL;
+        }
+
+        read_stream(const read_stream &) =delete;
 
         ~read_stream()
         {
             close();
         }
 
+        bool eof() const
+        {
+            return std::feof(_f) != 0;
+        }
+
         void close()
         {
             if (_f != NULL) {
                 if (std::fclose(_f) != 0)
-                    throw error("failed to close file {}!", _path);
+                    throw error_sys("failed to close file {}!", _path);
                 _f = NULL;
                 --_open_files;
             }
@@ -171,42 +184,51 @@ namespace daedalus_turbo::file {
 
         void read(void *data, size_t num_bytes)
         {
-            if (num_bytes > 0 && std::fread(data, 1, num_bytes, _f) != num_bytes)
-                throw error_sys("failed to read {} bytes from {}", num_bytes, _path);
+            if (const auto num_read = std::fread(data, 1, num_bytes, _f); num_read != num_bytes)
+                throw error_sys("could read only {} bytes instead of {} from {} ferror: {} feof: {}",
+                    num_read, num_bytes, _path, std::ferror(_f), std::feof(_f));
         }
-
     protected:
         std::FILE *_f = NULL;
         std::string _path {};
+        uint8_vector _buf;
     };
 
     // C-style IO is used since on Mac OS the standard C++ library has very slow I/O performance.
     // At the same time C-style IO works well on Mac, Linux, and Windows.
     struct write_stream: protected stream {
-        explicit write_stream(const std::string &path, std::ios_base::openmode mode=std::ios::binary): _path { path }
+        explicit write_stream(const std::string &path, const size_t buf_size=0):
+            _path { path }, _buf(buf_size)
         {
             auto dir_path = std::filesystem::path { _path }.parent_path();
             if (!dir_path.empty())
                 std::filesystem::create_directories(dir_path);
-            if (mode != std::ios::binary)
-                throw error("unsupported write_stream mode: {}!", (int)mode);
             _f = std::fopen(_path.c_str(), "wb");
             if (_f == NULL)
                 throw error_sys("failed to open a file for writing {}", _path);
-            if (std::setvbuf(_f, NULL, _IONBF, 0) != 0)
+            if (std::setvbuf(_f, reinterpret_cast<char *>(_buf.data()), _buf.empty() ? _IONBF : _IOFBF, _buf.size()) != 0)
                 throw error_sys("failed to disable write buffering for {}", _path);
             _report_open_file();
         }
 
         write_stream(write_stream &&ws)
-            : _f { ws._f }, _path { std::move(ws._path) }
+            : _f { ws._f }, _path { std::move(ws._path) }, _buf { std::move(ws._buf) }
         {
             ws._f = NULL;
         }
 
         ~write_stream()
         {
-                close();
+            close();
+        }
+
+        write_stream &operator=(write_stream &&ws)
+        {
+            _f = ws._f;
+            _path = std::move(ws._path);
+            _buf = std::move(ws._buf);
+            ws._f = NULL;
+            return *this;
         }
 
         void close()
@@ -215,7 +237,9 @@ namespace daedalus_turbo::file {
                 if (std::fclose(_f) != 0)
                     throw error("failed to close file {}!", _path);
                 _f = NULL;
-                _open_files--;
+                _buf.clear();
+                _buf.shrink_to_fit();
+                --_open_files;
             }
         }
 
@@ -254,6 +278,7 @@ namespace daedalus_turbo::file {
     protected:
         FILE *_f = NULL;
         std::string _path {};
+        uint8_vector _buf;
     };
 
     inline void read_raw(const std::string &path, uint8_vector &buffer) {

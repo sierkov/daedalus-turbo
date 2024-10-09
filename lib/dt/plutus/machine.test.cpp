@@ -67,37 +67,38 @@ namespace {
         return budget;
     }
 
-    parse_res parse_script(const std::string &path, const std::function<std::string(const std::string &)> &on_error)
+    parse_res parse_script(allocator &alloc, const std::string &path, const std::function<std::string(const std::string &)> &on_error)
     {
         try {
-            uplc::script s { file::read(path) };
+            uplc::script s { alloc, file::read(path) };
             return script_info { s.version(), s.program() };
         } catch (...) {
             return on_error(path);
         }
     }
 
-    machine::result run_script(const std::string &path, const optional_budget &budget={})
+    machine::result run_script(allocator &alloc, const std::string &path, const optional_budget &budget={})
     {
-        const uplc::script s { file::read(path) };
-        machine m { s.version(), budget };
+        const uplc::script s { alloc, file::read(path) };
+        machine m { alloc, s.version(), budget };
         return m.evaluate(s.program());
     }
 
     void test_script(const std::filesystem::path &path, const optional_budget &budget={}, const std::source_location &loc=std::source_location::current())
     {
+        allocator alloc {};
         const auto exp_path = fmt::format("{}.uplc.expected", (path.parent_path() / path.stem()).string());
-        auto exp_res = parse_script(exp_path, [](const auto &p) { return std::string { file::read(p).str() }; });
+        auto exp_res = parse_script(alloc, exp_path, [](const auto &p) { return std::string { file::read(p).str() }; });
         if (std::holds_alternative<script_info>(exp_res)) {
             auto &si = std::get<script_info>(exp_res);
             si.cost = parse_budget(fmt::format("{}.uplc.budget.expected", (path.parent_path() / path.stem()).string()));
         }
-        auto res = parse_script(path.string(), [](const auto &) { return "parse error"; });
+        auto res = parse_script(alloc, path.string(), [](const auto &) { return "parse error"; });
         std::optional<std::string> eval_err {};
         if (std::holds_alternative<script_info>(res)) {
             try {
                 auto &si = std::get<script_info>(res);
-                machine m { {}, budget };
+                machine m { alloc, {}, budget };
                 auto [res, cost] = m.evaluate(si.expr);
                 si.expr = std::move(res);
                 si.cost = std::move(cost);
@@ -128,15 +129,16 @@ namespace {
 suite plutus_machine_suite = [] {
     "plutus::machine"_test = [] {
         "budget"_test = [] {
-            const auto [res, cost] = run_script("./data/plutus/conformance/example/factorial/factorial.uplc");
+            allocator alloc {};
+            const auto [res, cost] = run_script(alloc, "./data/plutus/conformance/example/factorial/factorial.uplc");
             test_same(50026, cost.mem);
             test_same(14104357, cost.steps);
             // fails with a low cpu budget
-            expect(throws([] { run_script("./data/plutus/conformance/example/factorial/factorial.uplc", cardano::ex_units { 50026, 14104356 }); }));
+            expect(throws([&] { run_script(alloc, "./data/plutus/conformance/example/factorial/factorial.uplc", cardano::ex_units { 50026, 14104356 }); }));
             // fails with a low mem budget
-            expect(throws([] { run_script("./data/plutus/conformance/example/factorial/factorial.uplc", cardano::ex_units { 50025, 14104357 }); }));
+            expect(throws([&] { run_script(alloc, "./data/plutus/conformance/example/factorial/factorial.uplc", cardano::ex_units { 50025, 14104357 }); }));
             // succeeds with a high-enough budget
-            expect(nothrow([] { run_script("./data/plutus/conformance/example/factorial/factorial.uplc", cardano::ex_units { 50026, 14104357 }); }));
+            expect(nothrow([&] { run_script(alloc, "./data/plutus/conformance/example/factorial/factorial.uplc", cardano::ex_units { 50026, 14104357 }); }));
         };
         "conformance"_test = [] {
             test_script_dir("./data/plutus/conformance/term");

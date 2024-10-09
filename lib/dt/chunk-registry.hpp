@@ -448,7 +448,7 @@ namespace daedalus_turbo {
                 [](auto sum, const auto &val) { return sum + val.second.blocks.size(); });
         }
 
-        const configs &configs() const
+        const daedalus_turbo::configs &configs() const
         {
             return _cfg;
         }
@@ -662,40 +662,44 @@ namespace daedalus_turbo {
         template<typename T>
         bool parse_parallel(
             const std::function<void(T &res, const std::string &chunk_path, cardano::block_base &blk)> &act,
-            const std::optional<std::function<void(std::string &&chunk_path, T &&res)>> &agg={},
+            const std::optional<std::function<void(std::string &&chunk_path, T &&res)>> &aggregate={},
+            const std::optional<std::function<void(const std::string &chunk_path, T &res)>> &finalize={},
             const bool progress=true) const
         {
-            using parse_res = std::pair<std::string, T>;
             progress_guard pg { "parse" };
-            size_t num_tasks = _chunks.size();
-            std::atomic_size_t num_parsed = 0;
-            _sched.on_result("parse-chunk", [&](auto &&res) {
-                const auto done = num_parsed.fetch_add(1, std::memory_order::relaxed) + 1;
-                progress::get().update("parse", done, num_tasks);
-                if (res.type() == typeid(scheduled_task_error)) [[unlikely]]
-                    return;
-                if (agg) {
-                    auto &&[chunk_path, chunk_res] = std::any_cast<parse_res>(res);
-                    (*agg)(std::move(chunk_path), std::move(chunk_res));
-                }
-            });
-            for (const auto &[chunk_offset, chunk_info]: _chunks) {
-                _sched.submit("parse-chunk", -static_cast<int64_t>(chunk_offset), [this, chunk_offset, chunk_info, &act]() {
+            uint64_t total_size = num_bytes();
+            std::atomic_size_t parsed_size { 0 };
+            alignas(mutex::padding) mutex::unique_lock::mutex_type agg_mutex {};
+            for (const auto &[chunk_last_byte, chunk_info]: _chunks) {
+                const auto chunk_offset = chunk_info.offset;
+                const auto chunk_size = chunk_info.data_size;
+                const auto chunk_rel_path = chunk_info.rel_path();
+                _sched.submit_void("parse-chunk", -static_cast<int64_t>(chunk_last_byte), [&, chunk_offset, chunk_size, chunk_rel_path]() {
                     T res {};
-                    auto canon_path = full_path(chunk_info.rel_path());
+                    auto canon_path = full_path(chunk_rel_path);
                     const auto data = file::read(canon_path);
                     cbor_parser block_parser { data };
                     cbor_value block_tuple {};
                     while (!block_parser.eof()) {
                         block_parser.read(block_tuple);
-                        const auto blk = cardano::make_block(block_tuple, chunk_offset + block_tuple.data - data.data(), config());
-                        try {
-                            act(res, canon_path, *blk);
-                        } catch (const std::exception &ex) {
-                            throw error("failed to parse block at slot: {} hash: {}: {}", blk->slot(), blk->hash(), ex.what());
+                        if (block_tuple.at(0).uint()) [[likely]] {
+                            const auto blk = cardano::make_block(block_tuple, chunk_offset + block_tuple.data - data.data(), config());
+                            //logger::debug("block slot: {} chunk.offset: {} block_data_offset: {}", blk->slot(), chunk_offset, block_tuple.data - data.data());
+                            try {
+                                act(res, canon_path, *blk);
+                            } catch (const std::exception &ex) {
+                                throw error("failed to parse block at slot: {} hash: {}: {}", blk->slot(), blk->hash(), ex.what());
+                            }
                         }
                     }
-                    return parse_res { std::move(canon_path), std::move(res) };
+                    if (finalize)
+                        (*finalize)(canon_path, res);
+                    if (aggregate) {
+                        mutex::scoped_lock lk { agg_mutex };
+                        (*aggregate)(std::move(canon_path), std::move(res));
+                    }
+                    const auto done = parsed_size.fetch_add(chunk_size, std::memory_order::relaxed) + chunk_size;
+                    progress::get().update("parse", done, total_size);
                 });
             }
             return _sched.process_ok(progress);

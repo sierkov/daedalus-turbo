@@ -18,7 +18,7 @@ suite plutus_costs_suite = [] {
             // the plutus conformance test is run and the evaluation costs are compared.
             // This file is just a simple test the mimimum API works to not introduce redundancies
             const auto &defs = defaults().v3.value();
-            const auto &div = defs.at(builtin_tag::divide_integer);
+            const auto &div = defs.builtin_fun.at(builtin_tag::divide_integer);
             test_same(131930, div.cpu->cost(arg_sizes { 1, 1 }, {}));
             test_same(1, div.mem->cost(arg_sizes { 1, 1 }, {}));
         };

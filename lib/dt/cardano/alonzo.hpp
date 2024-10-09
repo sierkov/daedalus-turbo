@@ -96,8 +96,6 @@ namespace daedalus_turbo::cardano::alonzo {
     struct tx: mary::tx {
         using mary::tx::tx;
 
-        wit_ok witnesses_ok(const plutus::context *ctx=nullptr) const override;
-
         void foreach_param_update(const std::function<void(const param_update_proposal &)> &observer) const override {
             _if_item_present(6, [&](const auto &update) {
                 const uint64_t epoch = update.array().at(1).uint();
@@ -125,12 +123,23 @@ namespace daedalus_turbo::cardano::alonzo {
         void foreach_collateral(const std::function<void(const tx_input &)> &observer) const override
         {
             _if_item_present(13, [&](const auto &collateral_raw) {
-                _foreach_set(collateral_raw, [&](const auto &txin_raw, const size_t i) {
+                foreach_set(collateral_raw, [&](const auto &txin_raw, const size_t i) {
                     const auto &txin = txin_raw.array();
                     observer(tx_input { txin.at(0).buf(), txin.at(1).uint(), i });
                 });
             });
         }
+
+        void foreach_required_signer(const std::function<void(buffer)> &observer) const override
+        {
+            _if_item_present(14, [&](const auto &signers_raw) {
+                foreach_set(signers_raw, [&](const auto &vkey_hash, const size_t) {
+                    observer(vkey_hash.buf());
+                });
+            });
+        }
+
+        wit_cnt witnesses_ok_other(const plutus::context *ctx=nullptr) const override;
     };
 
     inline void block::foreach_tx(const std::function<void(const cardano::tx &)> &observer) const

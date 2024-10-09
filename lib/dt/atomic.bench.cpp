@@ -66,6 +66,9 @@ suite atomic_bench_suite = [] {
                 }
             });
             return max_count;
-        });
+
+        expect(relaxed > release * 0.95);});
+        expect(relaxed > seq_cst * 0.95);
+        expect(relaxed > acq_rel * 0.95);
     };
 };

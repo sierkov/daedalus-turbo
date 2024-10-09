@@ -28,6 +28,23 @@ namespace {
 
 suite config_suite = [] {
     "config"_test = [] {
+        "path_absolute"_test = [] {
+#ifdef _WIN32
+            test_same(true, std::filesystem::path { "D:/home/dev/some-dir/logs" }.is_absolute());
+            test_same(false, std::filesystem::path { "D:/home/dev/some-dir/logs" }.is_relative());
+            test_same(true, std::filesystem::path { "D:home/dev/some-dir/logs" }.is_relative());
+            test_same(true, std::filesystem::path { "/dev/some-dir/logs" }.is_relative());
+            test_same(true, std::filesystem::path { "dev/some-dir/logs" }.is_relative());
+            test_same(true, std::filesystem::path { "D:\\home\\dev\\some-dir\\logs" }.is_absolute());
+            test_same(false, std::filesystem::path { "D:\\home\\dev\\some-dir\\logs" }.is_relative());
+            test_same(true, std::filesystem::path { "D:home\\dev\\some-dir\\logs" }.is_relative());
+            test_same(true, std::filesystem::path { "\\dev\\some-dir\\logs" }.is_relative());
+            test_same(true, std::filesystem::path { "dev\\some-dir\\logs" }.is_relative());
+#else
+            test_same(true, std::filesystem::path { "/home/dev/some-dir/logs" }.is_absolute());
+            test_same(false, std::filesystem::path { "/home/dev/some-dir/logs" }.is_relative());
+#endif
+        };
         "required"_test = [] {
             const auto &cfg = configs_dir::get();
             expect(cfg.at("turbo").at("vkey").as_string() == std::string_view { "F961D8754397FA2C39D69C97D598566A5E03C34E40FF71DB792E103380E7C105" });

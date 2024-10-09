@@ -18,7 +18,7 @@ namespace daedalus_turbo {
     // The dt binary is expected to be located:
     // 1) in prod: in a bin subdirectory of the installation directory
     // 2) in dev: in a build subdirectory of the source-code directory
-    void set_install_dir(const std::string_view &bin_path)
+    void set_install_dir(const std::string_view bin_path)
     {
         std::filesystem::path dir { std::filesystem::canonical(std::filesystem::absolute(bin_path).parent_path().parent_path()) };
         if (!std::filesystem::exists(dir / "etc" / "mainnet" / "config.json")) [[unlikely]]
@@ -26,9 +26,12 @@ namespace daedalus_turbo {
         install_dir() = std::move(dir);
     }
 
-    std::string install_path(const std::string_view &rel_path)
+    std::string install_path(const std::string_view rel_path)
     {
-        return std::filesystem::weakly_canonical(std::filesystem::absolute(install_dir() / rel_path)).string();
+        std::filesystem::path path { rel_path };
+        if (path.is_relative())
+            path = std::filesystem::absolute(install_dir() / path);
+        return std::filesystem::weakly_canonical(path).string();
     }
 
     config_file::config_file(const std::string &path)

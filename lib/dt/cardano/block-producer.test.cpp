@@ -90,7 +90,7 @@ suite cardano_block_producer_suite = [] {
             expect(blk->slot() == 0_ull);
             expect(blk->tx_count() == 1_ull);
             blk->foreach_tx([&](const auto &tx) {
-                expect(!!tx.witnesses_ok());
+                expect(nothrow([&]{ tx.witnesses_ok(); }));
                 tx.foreach_input([&](const auto &tx_in) {
                     const auto &exp_tx_in = bp.txs.at(tx.index()).inputs.at(tx_in.idx);
                     test_same(exp_tx_in.tx_hash, tx_in.tx_hash);

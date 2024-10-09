@@ -7,7 +7,6 @@
 
 #include <chrono>
 #include <ctime>
-#include <zpp_bits.h>
 #include <dt/blake2b.hpp>
 #include <dt/bech32.hpp>
 #include <dt/cbor.hpp>
@@ -818,8 +817,8 @@ namespace daedalus_turbo {
         };
 
         struct tx_output {
-            const address address;
-            const amount amount;
+            const cardano::address address;
+            const cardano::amount amount;
             const tx_out_idx idx;
             const cbor_value &raw_data;
             const cbor_value *assets = nullptr;
@@ -991,13 +990,13 @@ namespace daedalus_turbo {
             uint64_t min_utxo_value = 0;
             uint64_t min_pool_cost = 0;
             uint64_t lovelace_per_utxo_byte = 0;
-            ex_unit_prices ex_unit_prices {};
+	    cardano::ex_unit_prices ex_unit_prices {};
             ex_units max_tx_ex_units {};
             ex_units max_block_ex_units {};
             uint64_t max_value_size = 0;
             uint64_t max_collateral_pct = 0;
             uint64_t max_collateral_inputs = 0;
-            plutus_cost_models plutus_cost_models {};
+	    cardano::plutus_cost_models plutus_cost_models {};
 
             constexpr static auto serialize(auto &archive, auto &self)
             {
@@ -1063,13 +1062,13 @@ namespace daedalus_turbo {
             std::optional<uint64_t> min_utxo_value {};
             std::optional<uint64_t> min_pool_cost {};
             std::optional<uint64_t> lovelace_per_utxo_byte {};
-            std::optional<ex_unit_prices> ex_unit_prices {};
+            std::optional<cardano::ex_unit_prices> ex_unit_prices {};
             std::optional<ex_units> max_tx_ex_units {};
             std::optional<ex_units> max_block_ex_units {};
             std::optional<uint64_t> max_value_size {};
             std::optional<uint64_t> max_collateral_pct {};
             std::optional<uint64_t> max_collateral_inputs {};
-            std::optional<plutus_cost_models> plutus_cost_models {};
+            std::optional<cardano::plutus_cost_models> plutus_cost_models {};
 
             constexpr static auto serialize(auto &archive, auto &self)
             {

@@ -12,7 +12,7 @@
 namespace daedalus_turbo {
     using boost::multiprecision::cpp_int;
 
-    inline cpp_int big_int_from_bytes(const buffer &data)
+    inline cpp_int big_int_from_bytes(const buffer data)
     {
         if (data.size() > 64)
             throw error("big ints larger than 64 bytes are not supported but got: {}!", data.size());

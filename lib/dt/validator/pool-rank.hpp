@@ -7,7 +7,6 @@
 
 #include <cmath>
 #include <vector>
-#include <zpp_bits.h>
 #include <dt/error.hpp>
 #include <dt/rational.hpp>
 

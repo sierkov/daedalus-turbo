@@ -325,7 +325,7 @@ namespace daedalus_turbo::cardano::byron {
                 observer(tx_output::from_cbor(_blk.era(), i, outputs.at(i)));
         }
 
-        wit_ok witnesses_ok(const plutus::context *ctx=nullptr) const override;
+        wit_cnt witnesses_ok(const plutus::context *ctx=nullptr) const override;
     private:
         void _parse_cbor_tag(cbor_value &val, const cbor_tag &tag) const
         {

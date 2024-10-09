@@ -135,6 +135,14 @@ namespace daedalus_turbo::cbor::zero {
             uint32_t _size;
         };
 
+        static cpp_int _raw_big_int_from_value(value v)
+        {
+            if (!v.indefinite()) [[likely]]
+                return big_int_from_bytes(v.bytes());
+            auto bytes = v.bytes_alloc();
+            return big_int_from_bytes(bytes);
+        }
+
         cpp_int big_int() const
         {
             switch (type()) {
@@ -143,8 +151,8 @@ namespace daedalus_turbo::cbor::zero {
                 case major_type::tag: {
                     const auto t = tag();
                     switch (t.first) {
-                        case 2: return big_int_from_bytes(t.second.bytes());
-                        case 3: return (big_int_from_bytes(t.second.bytes()) + 1) * -1;
+                        case 2: return _raw_big_int_from_value(t.second);
+                        case 3: return (_raw_big_int_from_value(t.second) + 1) * -1;
                         default: throw error("unsupported tag type for a bigint: {}!", t.first);
                     }
                 }
@@ -164,7 +172,25 @@ namespace daedalus_turbo::cbor::zero {
             if (type() == major_type::bytes) [[likely]] {
                 if (special() != special_val::s_break) [[likely]]
                     return _subbuf(special_bytes());
-                throw error("indefinite byte strings are not supported!");
+                throw error("bytes method does not support indefinite byte strings, use bytes_alloc instead!");
+            }
+            throw error("expected a byte string but got {}", type());
+        }
+
+        uint8_vector bytes_alloc() const
+        {
+            if (type() == major_type::bytes) [[likely]] {
+                if (special() != special_val::s_break) [[likely]]
+                    return _subbuf(special_bytes());
+                uint8_vector res {};
+                decoder dec { raw_span().subbuf(1) };
+                for (size_t i = 0; i < 1024; ++i) {
+                    const auto chunk = dec.read();
+                    if (chunk.type() == major_type::simple && chunk.special() == special_val::s_break)
+                        return res;
+                    res << chunk.bytes();
+                }
+                throw error("indefinite byte strings of more than 1024 chunks are not supported!");
             }
             throw error("expected a byte string but got {}", type());
         }
@@ -174,7 +200,7 @@ namespace daedalus_turbo::cbor::zero {
             if (type() == major_type::text) [[likely]] {
                 if (special() != special_val::s_break) [[likely]]
                     return _subbuf(special_bytes()).string_view();
-                throw error("undefinite byte strings are not supported!");
+                throw error("text method does not support indefinite byte strings use text_alloc instead!");
             }
             throw error("expected a text string but got {}", type());
         }
@@ -323,7 +349,7 @@ namespace daedalus_turbo::cbor::zero {
         {
             if (!data.empty()) [[likely]]
                 return data.data();
-            throw error("value data must contain at least on byte!");
+            throw error("value data must contain at least one byte!");
         }
 
     };
@@ -442,7 +468,14 @@ namespace daedalus_turbo::cbor::zero {
             case major_type::uint: return fmt::format_to(out_it, "I {}", v.uint());
             case major_type::nint: return fmt::format_to(out_it, "I -{}", v.uint() + 1);
             case major_type::bytes: {
-                const auto b = v.bytes();
+                std::optional<uint8_vector> storage {};
+                buffer b;
+                if (!v.indefinite()) [[likely]] {
+                    b = v.bytes();
+                } else {
+                    storage.emplace(v.bytes_alloc());
+                    b = *storage;
+                }
                 if (cbor::zero::is_ascii(b))
                     return fmt::format_to(out_it, "B {}#{} ('{}')", v.indefinite() ? "indefinite " : "", b, b.string_view());
                 return fmt::format_to(out_it, "B {}#{}", v.indefinite() ? "indefinite " : "", b);

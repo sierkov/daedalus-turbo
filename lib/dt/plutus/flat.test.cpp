@@ -19,7 +19,8 @@ suite plutus_flat_suite = [] {
                 if (entry.is_regular_file() && entry.path().extension().string() == ".hex") {
                     const auto cbor = uint8_vector::from_hex(file::read(script_path).str());
                     const std::string exp_uplc { file::read(fmt::format("{}.uplc", (entry.path().parent_path() / entry.path().stem()).string())).str() };
-                    script s { cbor };
+                    allocator alloc {};
+                    script s { alloc, cbor };
                     const auto act_uplc = fmt::format("{}", s);
                     test_same(script_path, exp_uplc, act_uplc);
                 }
@@ -28,7 +29,8 @@ suite plutus_flat_suite = [] {
         "raw"_test = [] {
             auto bytes = uint8_vector::from_hex("0500023371C911071A5F783625EE8C004838B40181");
             expect(nothrow([&] {
-                script s { bytes, false };
+                allocator alloc {};
+                script s { alloc, bytes, false };
             }));
             // encoded program from the Plutus core spec
             for (const auto &raw_cbor: {
@@ -43,7 +45,8 @@ suite plutus_flat_suite = [] {
                                            "33357346AE8C00892811999AB9A30023574200649448CCC014014D5D1002001A4C93124C4C9311AAB9E3754003")
             }) {
                 expect(nothrow([&] {
-                    script s { raw_cbor };
+                    allocator alloc {};
+                    script s { alloc, raw_cbor };
                 })) << fmt::format("{}", raw_cbor);
             }
         };
@@ -68,7 +71,10 @@ suite plutus_flat_suite = [] {
                       }
             );
             for (const auto &[path, cbor]: scripts) {
-                expect(nothrow([&] { script s { cbor }; }));
+                expect(nothrow([&] {
+                    allocator alloc {};
+                    script s { alloc, cbor };
+                }));
             }
         };
     };

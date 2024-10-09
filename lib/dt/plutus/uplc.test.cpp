@@ -17,7 +17,8 @@ suite plutus_uplc_suite = [] {
             size_t ok = 0;
             for (const auto &path: paths) {
                 try {
-                    script s { file::read(path.string()) };
+                    allocator alloc {};
+                    script s { alloc, file::read(path.string()) };
                     ++ok;
                 } catch (...) {
                     const auto exp_path = (path.parent_path() / (path.stem().string() + ".uplc.expected")).string();

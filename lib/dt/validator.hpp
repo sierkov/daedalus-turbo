@@ -23,7 +23,7 @@ namespace daedalus_turbo::validator {
         [[nodiscard]] cardano::optional_point tip() const;
         [[nodiscard]] cardano::optional_slot can_export(const cardano::optional_point &immutable_tip) const;
         std::string node_export(const std::filesystem::path &ledger_dir, const cardano::optional_point &immutable_tip, int prio=1000) const;
-        [[nodiscard]] const state &state() const;
+        [[nodiscard]] const validator::state &state() const;
     private:
         struct impl;
         std::unique_ptr<impl> _impl;

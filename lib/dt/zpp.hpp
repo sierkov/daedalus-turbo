@@ -5,7 +5,14 @@
 #ifndef DAEDALUS_TURBO_ZPP_HPP
 #define DAEDALUS_TURBO_ZPP_HPP
 
+#if defined(__clang_major__) && (__clang_major__ >= 19)
+#    pragma clang diagnostic push
+#    pragma clang diagnostic ignored "-Wmissing-template-arg-list-after-template-kw"
+#endif
 #include <zpp_bits.h>
+#if defined(__clang_major__) && (__clang_major__ >= 19)
+#    pragma clang diagnostic pop
+#endif
 #include <dt/file.hpp>
 #include <dt/util.hpp>
 
@@ -54,11 +61,17 @@ namespace daedalus_turbo::zpp {
     }
 
     template<typename T>
+    void serialize(uint8_vector &zpp_data, const T &v)
+    {
+        ::zpp::bits::out out { zpp_data };
+        out(v).or_throw();
+    }
+
+    template<typename T>
     uint8_vector serialize(const T &v)
     {
         uint8_vector zpp_data {};
-        ::zpp::bits::out out { zpp_data };
-        out(v).or_throw();
+        serialize(zpp_data, v);
         return zpp_data;
     }
 

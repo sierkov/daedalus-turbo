@@ -108,6 +108,11 @@ namespace daedalus_turbo {
             _data.reserve(exp_size);
         }
 
+        void resize(const size_t new_size)
+        {
+            _data.resize(new_size);
+        }
+
         void emplace_back(const K &k, const V &v)
         {
             _data.emplace_back(k, v);
@@ -128,12 +133,16 @@ namespace daedalus_turbo {
             return find(k) != end();
         }
 
+        value_type &at_idx(size_t idx)
+        {
+            return _data.at(idx);
+        }
+
         const V &at(const K &k) const
         {
-            auto it = find(k);
-            if (it == end())
-                throw error("unknown key: {}", k);
-            return it->second;
+            if (auto it = find(k); it != end())
+                return it->second;
+            throw error("unknown key: {}", k);
         }
 
         const V get(const K &k) const

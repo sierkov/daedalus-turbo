@@ -13,8 +13,8 @@
 
 namespace daedalus_turbo::plutus::flat {
     struct script::impl {
-        impl(uint8_vector &&bytes, const bool cbor):
-            _bytes_raw { std::move(bytes) },
+        impl(allocator &alloc, uint8_vector &&bytes, const bool cbor):
+            _alloc { alloc }, _bytes_raw { std::move(bytes) },
             _bytes { cbor ? _extract_cbor_data(_bytes_raw) : _bytes_raw.span() }
         {
             _decode_program();
@@ -34,9 +34,11 @@ namespace daedalus_turbo::plutus::flat {
     private:
         static constexpr size_t max_script_size = 1 << 16;
 
+        allocator &_alloc;
         uint8_vector _bytes_raw;
         buffer _bytes { _bytes_raw };
-        size_t _pos = 0;
+        size_t _byte_pos = 0;
+        size_t _bit_pos = 0;
         size_t _num_vars = 0;
         std::optional<plutus::version> _ver;
         term_ptr _term;
@@ -50,18 +52,18 @@ namespace daedalus_turbo::plutus::flat {
             throw error("script size of {} bytes exceeds the maximum allowed size of {}", buf.size(), max_script_size);
         }
 
-        bool _bit_at(size_t pos)
-        {
-            size_t byte_idx = pos >> 3;
-            size_t bit_idx = pos & 0x7;
-            if (byte_idx >= _bytes.size())
-                throw error("out of data at bit {}", pos);
-            return _bytes[byte_idx] & (1 << (7 - bit_idx));
-        }
-
         bool _next_bit()
         {
-            return _bit_at(_pos++);
+            if (_byte_pos >= _bytes.size()) [[unlikely]]
+                throw error("out of data at byte {}", _byte_pos);
+            const bool res = _bytes[_byte_pos] & (1 << (7 - _bit_pos));
+            if (_bit_pos < 7) {
+                ++_bit_pos;
+            } else {
+                _bit_pos = 0;
+                ++_byte_pos;
+            }
+            return res;
         }
 
         template<std::unsigned_integral N>
@@ -77,39 +79,35 @@ namespace daedalus_turbo::plutus::flat {
             return val;
         }
 
-        static const vector<cpp_int> &_powers_of_two(const size_t max_pow)
+        uint8_t _next_byte()
         {
-            static vector<cpp_int> powers {};
-            if (powers.size() <= max_pow) [[unlikely]] {
-                powers.reserve(max_pow + 1);
-                while (powers.size() <= max_pow)
-                    powers.emplace_back(boost::multiprecision::pow(cpp_int { 2 }, powers.size()));
-            }
-            return powers;
+            uint8_t res = 0;
+            res += _next_bit() * 0x80;
+            res += _next_bit() * 0x40;
+            res += _next_bit() * 0x20;
+            res += _next_bit() * 0x10;
+            res += _next_bit() * 0x08;
+            res += _next_bit() * 0x04;
+            res += _next_bit() * 0x02;
+            res += _next_bit() * 0x01;
+            return res;
         }
 
         cpp_int _decode_varlen_uint()
         {
-            static constexpr size_t max_bits = 64 * 7;
-            static constexpr size_t bits_per_block = 7;
-            static const auto &pow2 = _powers_of_two(max_bits);
-            cpp_int val {};
-            size_t base_idx = 0;
+            static constexpr size_t max_bytes = 64;
+            uint8_t bytes[max_bytes];
+            size_t sz = 0;
             for (;;) {
-                bool last_block = !_next_bit();
-                size_t max_idx = base_idx + bits_per_block - 1;
-                for (size_t i = 0, bit_pos = max_idx; i < bits_per_block; ++i, --bit_pos) {
-                    if (const auto bit = _next_bit(); bit) {
-                        if (bit_pos >= max_bits) [[unlikely]]
-                            throw error("integers larger than {} bits are not allowed", max_bits);
-                        val |= pow2[bit_pos];
-                    }
-                }
-                if (last_block)
+                const auto b = _next_byte();
+                bytes[sz++] = b;
+                if (!(b & 0x80))
                     break;
-                base_idx += 7;
+                if (sz >= max_bytes) [[unlikely]]
+                    throw error("a variable length uint that has more than 64 bytes at byte: {}", _byte_pos);
             }
-            return val;
+            cpp_int v;
+            return boost::multiprecision::import_bits(v, bytes, bytes + sz, 7, false);
         }
 
         cpp_int _decode_integer()
@@ -138,14 +136,11 @@ namespace daedalus_turbo::plutus::flat {
 
         void _consume_padding()
         {
-            const auto start_pos = _pos;
             while (!_next_bit()) {
                 // do nothing
             }
-            if (_pos % 8)
-                throw error("consume_padding: didn't finish on a byte boundary at bit {}!", start_pos);
-            if (_pos - start_pos > 8)
-                throw error("consume_padding: took more than 8 bits of data at bit {}!", start_pos);
+            if (_bit_pos != 0) [[unlikely]]
+                throw error("consume_padding: didn't finish on a byte boundary at bit {}!", _byte_pos);
         }
 
         uint8_vector _decode_bytestring()
@@ -156,13 +151,12 @@ namespace daedalus_turbo::plutus::flat {
                 const size_t chunk_size = _decode_fixed_uint<uint8_t>();
                 if (!chunk_size)
                     break;
-                size_t data_idx = data.size();
+                const size_t data_idx = data.size();
                 data.resize(data.size() + chunk_size);
-                size_t byte_idx = _pos >> 3;
-                if (byte_idx + chunk_size > _bytes.size())
-                    throw error("insufficient data for a bytestring of size {} at bit position: {}", chunk_size, _pos);
-                memcpy(data.data() + data_idx, _bytes.data() + byte_idx, chunk_size);
-                _pos += chunk_size * 8;
+                if (_byte_pos + chunk_size > _bytes.size())
+                    throw error("insufficient data for a bytestring of size {} at byte: {}", chunk_size, _byte_pos);
+                memcpy(data.data() + data_idx, _bytes.data() + _byte_pos, chunk_size);
+                _byte_pos += chunk_size;
             }
             return data;
         }
@@ -187,19 +181,19 @@ namespace daedalus_turbo::plutus::flat {
                 case type_tag::list: {
                     if (++it == end)
                         throw error("type list too short!");
-                    constant_type_list nested {};
+                    constant_type::list_type nested { _alloc.resource() };
                     nested.emplace_back(_decode_constant_type(it, end));
-                    return { type_tag::list, { std::move(nested) } };
+                    return { _alloc, type_tag::list, { std::move(nested) } };
                 }
                 case type_tag::pair: {
                     if (++it == end)
                         throw error("type list too short!");
-                    constant_type_list nested {};
+                    constant_type::list_type nested { _alloc.resource() };
                     nested.emplace_back(_decode_constant_type(it, end));
                     if (++it == end)
                         throw error("type list too short!");
                     nested.emplace_back(_decode_constant_type(it, end));
-                    return { type_tag::pair, { std::move(nested) } };
+                    return { _alloc, type_tag::pair, { std::move(nested) } };
                 }
                 case type_tag::application:
                     return _decode_type_application(it, end);
@@ -218,7 +212,7 @@ namespace daedalus_turbo::plutus::flat {
                 case type_tag::unit:
                 case type_tag::boolean:
                 case type_tag::data:
-                    return { typ };
+                    return { _alloc, typ };
                 case type_tag::list:
                 case type_tag::pair:
                     throw error("list and pair types are supported only within a type application");
@@ -230,26 +224,26 @@ namespace daedalus_turbo::plutus::flat {
 
         constant _decode_constant_val(const constant_type &typ)
         {
-            switch (typ.typ) {
-                case type_tag::integer: return { _decode_integer() };
-                case type_tag::bytestring: return { _decode_bytestring() };
-                case type_tag::string: return { _decode_string() };
-                case type_tag::unit: return { std::monostate{} };
-                case type_tag::boolean: return { _decode_boolean() };
-                case type_tag::data: return { _decode_data() };
+            switch (typ->typ) {
+                case type_tag::integer: return { _alloc, _decode_integer() };
+                case type_tag::bytestring: return { _alloc, _decode_bytestring() };
+                case type_tag::string: return { _alloc, _decode_string() };
+                case type_tag::unit: return { _alloc, std::monostate{} };
+                case type_tag::boolean: return { _alloc, _decode_boolean() };
+                case type_tag::data: return { _alloc, _decode_data() };
                 case type_tag::list: {
-                    auto cl = constant_list::make_empty(typ.nested.at(0));
+                    constant_list::list_type cl {};
                     _decode_list([&] {
-                        cl.vals.emplace_back(_decode_constant_val(typ.nested.at(0)));
+                        cl.emplace_back(_decode_constant_val(typ->nested.at(0)));
                     });
-                    return { cl };
+                    return { _alloc, constant_list { _alloc, constant_type { typ->nested.at(0) }, std::move(cl) } };
                 }
                 case type_tag::pair: {
-                    auto fst = _decode_constant_val(typ.nested.at(0));
-                    auto snd = _decode_constant_val(typ.nested.at(1));
-                    return { constant_pair { std::move(fst), std::move(snd) } };
+                    auto fst = _decode_constant_val(typ->nested.at(0));
+                    auto snd = _decode_constant_val(typ->nested.at(1));
+                    return { _alloc, constant_pair { _alloc, std::move(fst), std::move(snd) } };
                 }
-                default: throw error("unsupported constant type: {}", static_cast<int>(typ.typ));
+                default: throw error("unsupported constant type: {}", static_cast<int>(typ->typ));
             }
         }
 
@@ -262,7 +256,7 @@ namespace daedalus_turbo::plutus::flat {
                 types.emplace_back(static_cast<type_tag>(_decode_fixed_uint<uint8_t>(4)));
             }
             if (types.empty())
-                throw error("no type is defined at pos: {}!", _pos);
+                throw error("no type is defined at byte: {}!", _byte_pos);
             auto typ = _decode_constant_type(types.begin(), types.end());
             return _decode_constant_val(std::move(typ));
         }
@@ -276,31 +270,31 @@ namespace daedalus_turbo::plutus::flat {
         {
             const auto rel_idx = static_cast<size_t>(_decode_varlen_uint());
             if (rel_idx <= _num_vars) [[likely]]
-                return { fmt::format("v{}", _num_vars - rel_idx) };
+                return { _alloc, fmt::format("v{}", _num_vars - rel_idx) };
             throw daedalus_turbo::error("De Bruijn index is out of range: {} num_vars: {}", rel_idx, _num_vars);
         }
 
         t_delay _decode_delay()
         {
-            return { term::make_ptr(_decode_term()) };
+            return { term::make_ptr(_alloc, _decode_term()) };
         }
 
         t_lambda _decode_lambda()
         {
             auto name = fmt::format("v{}", _num_vars++);
-            auto body = term::make_ptr(_decode_term());
+            auto body = term::make_ptr(_alloc, _decode_term());
             --_num_vars;
-            return { std::move(name), std::move(body) };
+            return { _alloc, name, std::move(body) };
         }
 
         apply _decode_apply()
         {
-            return { term::make_ptr(_decode_term()), term::make_ptr(_decode_term()) };
+            return { term::make_ptr(_alloc, _decode_term()), term::make_ptr(_alloc, _decode_term()) };
         }
 
         force _decode_force()
         {
-            return { term::make_ptr(_decode_term()) };
+            return { term::make_ptr(_alloc, _decode_term()) };
         }
 
         failure _decode_error()
@@ -330,7 +324,7 @@ namespace daedalus_turbo::plutus::flat {
             const auto minor = static_cast<uint64_t>(_decode_varlen_uint());
             const auto patch = static_cast<uint64_t>(_decode_varlen_uint());
             _ver.emplace(major, minor, patch);
-            _term = term::make_ptr(_decode_term());
+            _term = term::make_ptr(_alloc, _decode_term());
         }
 
         static void _pad(vector<bool> &bits)
@@ -355,13 +349,13 @@ namespace daedalus_turbo::plutus::flat {
         }
     };
 
-    script::script(uint8_vector &&bytes, const bool cbor):
-            _impl { std::make_unique<impl>(std::move(bytes), cbor) }
+    script::script(allocator &alloc, uint8_vector &&bytes, const bool cbor):
+            _impl { std::make_unique<impl>(alloc, std::move(bytes), cbor) }
     {
     }
 
-    script::script(const buffer bytes, const bool cbor):
-        script { uint8_vector { bytes }, cbor }
+    script::script(allocator &alloc, const buffer bytes, const bool cbor):
+        script { alloc, uint8_vector { bytes }, cbor }
     {
     }
 

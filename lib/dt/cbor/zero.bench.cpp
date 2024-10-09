@@ -4,6 +4,7 @@
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
 #include <dt/benchmark.hpp>
+#include <dt/cbor/zero.hpp>
 #include <dt/file.hpp>
 
 using namespace daedalus_turbo;
@@ -46,6 +47,15 @@ suite cbor_zero_bench_suite = [] {
     "cbor::zero"_test = [&] {
         static const std::string test_path { "./data/chunk-registry/compressed/chunk/977E9BB3D15A5CFF5C5E48617288C5A731DB654C0B42D63627C690CEADC9E1F3.zstd" };
         const auto chunk_data = file::read(test_path);
+        benchmark("decoder", 1e9, 3, [&chunk_data] {
+            cbor::zero::decoder dec { chunk_data };
+            size_t parsed = 0;
+            while (!dec.done()) {
+                const auto val = dec.read();
+                parsed += val.raw_span().size();
+            }
+            return parsed;
+        });
         uint8_vector data {};
         static constexpr size_t max_batch = 64;
         data.reserve((1ULL << 30) + chunk_data.size() + max_batch);

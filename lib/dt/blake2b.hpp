@@ -41,4 +41,22 @@ namespace daedalus_turbo
     }
 }
 
+namespace std {
+    template<>
+    struct hash<daedalus_turbo::blake2b_256_hash> {
+        size_t operator()(const daedalus_turbo::blake2b_256_hash &o) const noexcept
+        {
+            return *reinterpret_cast<const size_t *>(o.data());
+        }
+    };
+
+    template<>
+    struct hash<daedalus_turbo::blake2b_224_hash> {
+        size_t operator()(const daedalus_turbo::blake2b_224_hash &o) const noexcept
+        {
+            return *reinterpret_cast<const size_t *>(o.data());
+        }
+    };
+}
+
 #endif // !DAEDALUS_TURBO_BLAKE2B_HPP

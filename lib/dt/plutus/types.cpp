@@ -184,6 +184,17 @@ namespace daedalus_turbo::plutus {
         return expr && o.expr && *expr == *o.expr;
     }
 
+    bool t_case::operator==(const t_case &o) const
+    {
+        if (arg != o.arg || cases.size() != o.cases.size())
+            return false;
+        for (size_t i = 0; i < cases.size(); i++) {
+            if (*cases[i] != *o.cases[i])
+                return false;
+        }
+        return true;
+    }
+
     bool t_constr::operator==(const t_constr &o) const
     {
         if (tag != o.tag || args.size() != o.args.size())
@@ -210,81 +221,73 @@ namespace daedalus_turbo::plutus {
         return func && o.func && *func == *o.func && arg && o.arg && *arg == *o.arg;
     }
 
-    constant_pair::constant_pair(constant &&fst, constant &&snd):
-        _vals { std::make_shared<value_type>(std::move(fst), std::move(snd)) }
+    constant_pair::constant_pair(allocator &alloc, const constant &fst, const constant &snd): constant_pair { alloc, constant { fst }, constant { snd } }
     {
-        if (!_vals) [[unlikely]]
-            throw error("values must be defined!");
-    }
-
-    const constant_pair::value_type &constant_pair::operator*() const
-    {
-        return *_vals;
-    }
-
-    const constant_pair::value_type *constant_pair::operator->() const
-    {
-        return _vals.get();
     }
 
     bool constant_pair::operator==(const constant_pair &o) const
     {
-        return _vals && o._vals && *_vals == *o._vals;
+        return _ptr->first == o._ptr->first && _ptr->second == o._ptr->second;
+    }
+
+    const constant_pair::value_type &constant_pair::operator*() const
+    {
+        return *_ptr;
+    }
+
+    constant_list::constant_list(allocator &alloc, constant_type &&t, list_type &&l):
+        constant_list { alloc, value_type { std::move(t), std::move(l) } }
+    {
+    }
+
+    const constant_list::value_type *constant_list::operator->() const
+    {
+        return _ptr.get();
     }
 
     bool constant_list::operator==(const constant_list &o) const
     {
-        return typ == o.typ && vals == o.vals;
+        return _ptr->typ == o._ptr->typ && _ptr->vals == o._ptr->vals;
     }
 
-    constant_type constant_type::from_val(const constant &c)
+    constant_type constant_type::from_val(allocator &alloc, const constant &c)
     {
-        return std::visit([](const auto &v) {
+        return std::visit([&](const auto &v) {
             using T = std::decay_t<decltype(v)>;
             if constexpr (std::is_same_v<T, std::monostate>) {
-                return constant_type { type_tag::unit };
+                return constant_type { alloc, type_tag::unit };
             } else if constexpr (std::is_same_v<T, bool>) {
-                return constant_type { type_tag::boolean };
+                return constant_type { alloc, type_tag::boolean };
             } else if constexpr (std::is_same_v<T, cpp_int>) {
-                return constant_type { type_tag::integer };
+                return constant_type { alloc, type_tag::integer };
             } else if constexpr (std::is_same_v<T, std::string>) {
-                return constant_type { type_tag::string };
+                return constant_type { alloc, type_tag::string };
             } else if constexpr (std::is_same_v<T, uint8_vector>) {
-                return constant_type { type_tag::bytestring };
+                return constant_type { alloc, type_tag::bytestring };
             } else if constexpr (std::is_same_v<T, data>) {
-                return constant_type { type_tag::data };
+                return constant_type { alloc, type_tag::data };
             } else if constexpr (std::is_same_v<T, bls12_381_g1_element>) {
-                return constant_type { type_tag::bls12_381_g1_element };
+                return constant_type { alloc, type_tag::bls12_381_g1_element };
             } else if constexpr (std::is_same_v<T, bls12_381_g2_element>) {
-                return constant_type { type_tag::bls12_381_g2_element };
+                return constant_type { alloc, type_tag::bls12_381_g2_element };
             } else if constexpr (std::is_same_v<T, bls12_381_ml_result>) {
-                return constant_type { type_tag::bls12_381_ml_result };
+                return constant_type { alloc, type_tag::bls12_381_ml_result };
             } else if constexpr (std::is_same_v<T, constant_list>) {
-                return constant_type { type_tag::list, { v.typ } };
+                return constant_type { alloc, type_tag::list, { { v->typ }, alloc.resource() } };
             } else if constexpr (std::is_same_v<T, constant_pair>) {
-                return constant_type { type_tag::pair, { from_val(v->first), from_val(v->second) } };
+                return constant_type { alloc, type_tag::pair, { { from_val(alloc, v->first), from_val(alloc, v->second) }, alloc.resource() } };
             } else {
                 throw error("unsupported constant value: {}!", typeid(T).name());
                 // Noop to make Visual C++ happy
-                return constant_type { type_tag::unit };
+                return constant_type { alloc, type_tag::unit };
             }
-        }, c.val);
+        }, *c);
     }
 
-    constant_list constant_list::make_empty(constant_type &&typ)
+    constant_list constant_list::make_one(allocator &alloc, constant &&c)
     {
-        return { std::move(typ), {} };
-    }
-
-    constant_list constant_list::make_empty(const constant_type &typ)
-    {
-        return { constant_type { typ }, {} };
-    }
-
-    constant_list constant_list::make_one(constant &&c)
-    {
-        auto typ = constant_type::from_val(c);
-        return { std::move(typ), { std::move(c) } };
+        auto typ = constant_type::from_val(alloc, c);
+        return { alloc, std::move(typ), { std::move(c) } };
     }
 
     data_pair::data_pair(data &&fst, data &&snd):
@@ -421,7 +424,7 @@ namespace daedalus_turbo::plutus {
                 }
                 return { std::move(m) };
             }
-            case cbor::major_type::bytes: return { uint8_vector { v.bytes() } };
+            case cbor::major_type::bytes: return { v.bytes_alloc() };
             case cbor::major_type::uint: return { v.big_int() };
             case cbor::major_type::nint: return { v.big_int() };
             default: throw error("unsupported CBOR type {}!", typ);
@@ -478,7 +481,10 @@ namespace daedalus_turbo::plutus {
                         enc.tag(102);
                         enc.array(2);
                     }
-                    _to_cbor(enc, v->second, level + 1);
+                    if (!v->second.empty())
+                        _to_cbor(enc, v->second, level + 1);
+                    else
+                        enc.array(0);
                 } else {
                     throw error("constr id is too big: {}", v->first);
                 }
@@ -539,8 +545,9 @@ namespace daedalus_turbo::plutus {
                         out_it = to_string(out_it, (*it)->first, depth + 1, shift);
                         out_it = fmt::format_to(out_it, ", ");
                         out_it = to_string(out_it, (*it)->second, depth + 1, shift);
+                        out_it = fmt::format_to(out_it, ")");
                         if (std::next(it) != v.end())
-                            out_it = fmt::format_to(out_it, "), ");
+                            out_it = fmt::format_to(out_it, ", ");
                         if (shift)
                             out_it = fmt::format_to(out_it, "\n");
                     }

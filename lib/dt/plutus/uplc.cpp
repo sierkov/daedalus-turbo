@@ -9,7 +9,7 @@
 
 namespace daedalus_turbo::plutus::uplc {
     struct script::impl {
-        impl(uint8_vector &&bytes): _bytes { std::move(bytes) }
+        impl(allocator &alloc, uint8_vector &&bytes): _alloc { alloc }, _bytes { std::move(bytes) }
         {
             _decode_program();
             if (!_term || !_version) [[unlikely]]
@@ -26,10 +26,11 @@ namespace daedalus_turbo::plutus::uplc {
             return _term;
         }
     private:
+        allocator &_alloc;
         uint8_vector _bytes;
         size_t _pos = 0;
         std::optional<plutus::version> _version {};
-        std::shared_ptr<term> _term {};
+        term_ptr _term;
         vector<std::string> _vars {};
 
         bool _next_is(const std::function<bool(char)> &pred, const size_t off=0)
@@ -398,33 +399,35 @@ namespace daedalus_turbo::plutus::uplc {
         constant_type _decode_list_type()
         {
             _eat_space();
-            constant_type t { type_tag::list };
-            t.nested.emplace_back(_decode_constant_type());
-            return t;
+            constant_type::list_type n { { _decode_constant_type() }, _alloc.resource() };
+            return { _alloc, type_tag::list, std::move(n) };
         }
 
         constant_type _decode_pair_type()
         {
             _eat_space();
-            constant_type t { type_tag::pair };
-            t.nested.emplace_back(_decode_constant_type());
+            constant_type::list_type n { _alloc.resource() };
+            n.emplace_back(_decode_constant_type());
             _eat_space();
-            t.nested.emplace_back(_decode_constant_type());
-            return t;
+            n.emplace_back(_decode_constant_type());
+            return { _alloc, type_tag::pair, std::move(n) };
+        }
+
+        constant_type _decode_constant_type_inner()
+        {
+            const auto typ = _eat_name();
+            if (typ == "list")
+                return _decode_list_type();
+            if (typ == "pair")
+                return _decode_pair_type();
+            throw error("unexpected token '{}' at pos: {}", typ, _pos);
         }
 
         constant_type _decode_constant_type()
         {
             if (_next_is('(')) {
-                constant_type t;
                 _eat_lpar();
-                const auto typ = _eat_name();
-                if (typ == "list")
-                    t = _decode_list_type();
-                else if (typ == "pair")
-                    t = _decode_pair_type();
-                else
-                    throw error("unexpected token '{}' at pos: {}", typ, _pos);
+                auto t = _decode_constant_type_inner();
                 _eat_rpar();
                 return t;
             }
@@ -432,30 +435,30 @@ namespace daedalus_turbo::plutus::uplc {
             switch (typ[0]) {
                 case 'b':
                     if (typ == "bytestring") [[likely]]
-                        return { type_tag::bytestring };
+                        return { _alloc, type_tag::bytestring };
                     if (typ == "bool") [[likely]]
-                        return { type_tag::boolean };
+                        return { _alloc, type_tag::boolean };
                     if (typ == "bls12_381_G1_element")
-                        return { type_tag::bls12_381_g1_element };
+                        return { _alloc, type_tag::bls12_381_g1_element };
                     if (typ == "bls12_381_G2_element")
-                        return { type_tag::bls12_381_g2_element };
+                        return { _alloc, type_tag::bls12_381_g2_element };
                     throw error("unexpected token '{}' at pos: {}", typ, _pos);
                 case 'd':
                     if (typ != "data") [[unlikely]]
                         throw error("unexpected token '{}' at pos: {}", typ, _pos);
-                    return { type_tag::data };
+                    return { _alloc, type_tag::data };
                 case 'i':
                     if (typ != "integer") [[unlikely]]
                         throw error("unexpected token '{}' at pos: {}", typ, _pos);
-                    return { type_tag::integer };
+                    return { _alloc, type_tag::integer };
                 case 's':
                     if (typ != "string") [[unlikely]]
                         throw error("unexpected token '{}' at pos: {}", typ, _pos);
-                    return { type_tag::string };
+                    return { _alloc, type_tag::string };
                 case 'u':
                     if (typ != "unit") [[unlikely]]
                         throw error("unexpected token '{}' at pos: {}", typ, _pos);
-                    return { type_tag::unit };
+                    return { _alloc, type_tag::unit };
                 default: throw error("unexpected token '{}' at pos: {}", typ, _pos);
             }
         }
@@ -463,21 +466,22 @@ namespace daedalus_turbo::plutus::uplc {
         constant_pair _decode_pair_value(constant_type &&typ)
         {
             _eat_lpar();
-            auto fst = _decode_constant_value(std::move(typ.nested.at(0)));
+            auto fst = _decode_constant_value(constant_type { typ->nested.at(0) });
             _eat_space();
             _eat(',');
             _eat_space();
-            auto snd = _decode_constant_value(std::move(typ.nested.at(1)));
+            auto snd = _decode_constant_value(constant_type { typ->nested.at(1) });
             _eat_rpar();
-            return { std::move(fst), std::move(snd) };
+            return { _alloc, std::move(fst), std::move(snd) };
         }
 
-        constant_list _decode_list_value(constant_type &&typ)
+        constant_list _decode_list_value(constant_type &&list_typ)
         {
             _eat_lbr();
-            auto cl = constant_list::make_empty(std::move(typ.nested.at(0)));
+            auto typ = list_typ->nested.at(0);
+            constant_list::list_type vals { _alloc.resource() };
             while (!_next_is(']')) {
-                cl.vals.emplace_back(_decode_constant_value(constant_type { cl.typ }));
+                vals.emplace_back(_decode_constant_value(constant_type { typ }));
                 _eat_space();
                 if (_next_is(',')) {
                     _eat(',');
@@ -485,7 +489,7 @@ namespace daedalus_turbo::plutus::uplc {
                 }
             }
             _eat_rbr();
-            return cl;
+            return { _alloc, { std::move(typ), std::move(vals) } };
         }
 
         std::monostate _decode_unit()
@@ -497,17 +501,17 @@ namespace daedalus_turbo::plutus::uplc {
 
         constant _decode_constant_value(constant_type &&typ)
         {
-            switch (const auto tag = typ.typ; tag) {
-                case type_tag::bls12_381_g1_element: return { _decode_bls12_381_g1() };
-                case type_tag::bls12_381_g2_element: return { _decode_bls12_381_g2() };
-                case type_tag::bytestring: return { _decode_bytestring() };
-                case type_tag::boolean: return { _decode_boolean() };
-                case type_tag::data: return { _decode_data() };
-                case type_tag::integer: return { _decode_integer() };
-                case type_tag::string: return { _decode_string() };
-                case type_tag::unit: return { _decode_unit() };
-                case type_tag::list: return { _decode_list_value(std::move(typ)) };
-                case type_tag::pair: return { _decode_pair_value(std::move(typ)) };
+            switch (const auto tag = typ->typ; tag) {
+                case type_tag::bls12_381_g1_element: return { _alloc, _decode_bls12_381_g1() };
+                case type_tag::bls12_381_g2_element: return { _alloc, _decode_bls12_381_g2() };
+                case type_tag::bytestring: return { _alloc, _decode_bytestring() };
+                case type_tag::boolean: return { _alloc, _decode_boolean() };
+                case type_tag::data: return { _alloc, _decode_data() };
+                case type_tag::integer: return { _alloc, _decode_integer() };
+                case type_tag::string: return { _alloc, _decode_string() };
+                case type_tag::unit: return { _alloc, _decode_unit() };
+                case type_tag::list: return { _alloc, _decode_list_value(std::move(typ)) };
+                case type_tag::pair: return { _alloc, _decode_pair_value(std::move(typ)) };
                 default: throw error("unexpected type: {}", tag);
             }
         }
@@ -523,15 +527,15 @@ namespace daedalus_turbo::plutus::uplc {
         term _decode_constr()
         {
             if (_version && (_version->major > 1 || (_version->major == 1 && _version->minor >= 1))) {
-                t_constr c {};
                 _eat_space();
                 _eat_space();
-                c.tag = static_cast<uint64_t>(_decode_integer());
+                auto tag = static_cast<uint64_t>(_decode_integer());
                 _eat_space();
+                term_list args { _alloc.resource() };
                 while (!_next_is(')')) {
-                    c.args.emplace_back(std::make_shared<term>(_decode_term()));
+                    args.emplace_back(_alloc.make<term>(_decode_term()));
                 }
-                return { std::move(c) };
+                return { t_constr { tag, std::move(args) } };
             }
             throw error("constr term is allowed only for programs of versions 1.1.0 and higher");
         }
@@ -539,14 +543,14 @@ namespace daedalus_turbo::plutus::uplc {
         term _decode_case()
         {
             if (_version && (_version->major > 1 || (_version->major == 1 && _version->minor >= 1))) {
-                acase c {};
                 _eat_space();
-                c.arg = term::make_ptr(_decode_term());
+                auto arg = term::make_ptr(_alloc, _decode_term());
                 _eat_space();
+                term_list cases { _alloc.resource() };
                 while (!_next_is(')')) {
-                    c.cases.emplace_back(std::make_shared<term>(_decode_term()));
+                    cases.emplace_back(_alloc.make<term>(_decode_term()));
                 }
-                return { std::move(c) };
+                return { t_case { std::move(arg), std::move(cases) } };
             }
             throw error("case term is allowed only for programs of versions 1.1.0 and higher");
         }
@@ -565,17 +569,17 @@ namespace daedalus_turbo::plutus::uplc {
             if (_vars.empty() || _vars.back() != name) [[unlikely]]
                 throw error("internal error: expected variable {} is missing!", name);
             _vars.pop_back();
-            return { t_lambda { std::move(name), term::make_ptr(std::move(body)) } };
+            return { t_lambda { _alloc, std::move(name), term::make_ptr(_alloc, std::move(body)) } };
         }
 
         term _decode_force()
         {
-            return { force { term::make_ptr(_decode_term()) } };
+            return { force { term::make_ptr(_alloc, _decode_term()) } };
         }
 
         term _decode_delay()
         {
-            return { t_delay { term::make_ptr(_decode_term()) } };
+            return { t_delay { term::make_ptr(_alloc, _decode_term()) } };
         }
 
         term _decode_error()
@@ -583,52 +587,48 @@ namespace daedalus_turbo::plutus::uplc {
             return { failure {} };
         }
 
-        term _decode_term_par()
+        term _decode_term_tag(const std::string &tag)
         {
-            term t;
-            _eat_lpar();
-            const auto tag = _eat_all([](char k) { return std::isalnum(k); });
-            _eat_space();
             switch (tag[0]) {
                 case 'b':
                     if (tag != "builtin") [[unlikely]]
                         throw error("unexpected token '{}' at pos: {}", tag, _pos);
-                    t = _decode_builtin();
-                    break;
+                    return _decode_builtin();
                 case 'c':
-                    if (tag == "con") [[likely]] {
-                        t = _decode_constant();
-                    } else if (tag == "constr") {
-                        t = _decode_constr();
-                    } else if (tag == "case") {
-                        t = _decode_case();
-                    } else {
-                        throw error("unexpected token '{}' at pos: {}", tag, _pos);
-                    }
-                    break;
+                    if (tag == "con") [[likely]]
+                        return _decode_constant();
+                    if (tag == "constr")
+                        return _decode_constr();
+                    if (tag == "case")
+                        return _decode_case();
+                    throw error("unexpected token '{}' at pos: {}", tag, _pos);
                 case 'd':
                     if (tag != "delay") [[unlikely]]
                         throw error("unexpected token '{}' at pos: {}", tag, _pos);
-                    t = _decode_delay();
-                    break;
+                    return _decode_delay();
                 case 'e':
                     if (tag != "error") [[unlikely]]
                         throw error("unexpected token '{}' at pos: {}", tag, _pos);
-                    t = _decode_error();
-                    break;
+                    return _decode_error();
                 case 'f':
                     if (tag != "force") [[unlikely]]
                         throw error("unexpected token '{}' at pos: {}", tag, _pos);
-                    t = _decode_force();
-                    break;
+                    return _decode_force();
                 case 'l':
                     if (tag != "lam") [[unlikely]]
                         throw error("unexpected token '{}' at pos: {}", tag, _pos);
-                    t = _decode_lambda();
-                    break;
+                    return _decode_lambda();
                 default:
                     throw error("unexpected token '{}' at pos: {}", tag, _pos);
             }
+        }
+
+        term _decode_term_par()
+        {
+            _eat_lpar();
+            const auto tag = _eat_all([](char k) { return std::isalnum(k); });
+            _eat_space();
+            term t = _decode_term_tag(tag);
             _eat_rpar();
             return t;
         }
@@ -636,32 +636,31 @@ namespace daedalus_turbo::plutus::uplc {
         term _decode_term_apply()
         {
             _eat_lbr();
-            term appl;
-            {
-                auto func = _decode_term();
-                auto arg = _decode_term();
-                appl = { apply { term::make_ptr(std::move(func)), term::make_ptr(std::move(arg)) } };
-            }
+            auto func = _decode_term();
+            auto arg = _decode_term();
+            term appl { apply { term::make_ptr(_alloc, std::move(func)), term::make_ptr(_alloc, std::move(arg)) } };
             _eat_space();
             while (!_next_is(']')) {
-                auto arg = _decode_term();
-                appl = { apply { term::make_ptr(std::move(appl)), term::make_ptr(std::move(arg)) } };
+                arg = _decode_term();
+                appl = { apply { term::make_ptr(_alloc, std::move(appl)), term::make_ptr(_alloc, std::move(arg)) } };
             }
             _eat_rbr();
             return appl;
         }
 
+        term _decode_term_inner()
+        {
+            if (_next_is('('))
+                return _decode_term_par();
+            if (_next_is('['))
+                return _decode_term_apply();
+            return { variable { _alloc,_eat_name() } };
+        }
+
         term _decode_term()
         {
-            term t;
             _eat_space();
-            if (_next_is('(')) {
-                t = _decode_term_par();
-            } else if (_next_is('[')) {
-                t = _decode_term_apply();
-            } else {
-                t = { variable { _eat_name() } };
-            }
+            term t = _decode_term_inner();
             _eat_space();
             return t;
         }
@@ -672,12 +671,12 @@ namespace daedalus_turbo::plutus::uplc {
             _eat("program");
             _eat_space();
             _decode_version();
-            _term = term::make_ptr(_decode_term());
+            _term = term::make_ptr(_alloc, _decode_term());
             _eat_rpar();
         }
     };
 
-    script::script(uint8_vector &&bytes): _impl { std::make_unique<impl>(std::move(bytes)) }
+    script::script(allocator &alloc, uint8_vector &&bytes): _impl { std::make_unique<impl>(alloc, std::move(bytes)) }
     {
     }
 

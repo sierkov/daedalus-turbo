@@ -5,6 +5,8 @@
 #ifndef DAEDALUS_TURBO_PLUTUS_MACHINE_HPP
 #define DAEDALUS_TURBO_PLUTUS_MACHINE_HPP
 
+#include <memory_resource>
+#include <dt/memory.hpp>
 #include <dt/plutus/costs.hpp>
 #include <dt/plutus/types.hpp>
 
@@ -16,32 +18,33 @@ namespace daedalus_turbo::plutus {
 
     struct value {
         using value_type = std::variant<constant, v_delay, v_lambda, v_builtin, v_constr>;
+        using ptr_type = allocator::ptr_type<value_type>;
 
-        static value make_list(vector<constant> &&);
-        static value make_list(constant_type &&, vector<constant> &&={});
-        static value make_pair(constant &&, constant &&);
-        static const value &unit();
-        static value boolean(bool); // a factory method to disambiguate with value(int64_t) which is more frequent
+        static value make_list(allocator &, constant_list::list_type &&);
+        static value make_list(allocator &, constant_type &&, constant_list::list_type &&={});
+        static value make_pair(allocator &, constant &&, constant &&);
+        static value unit(allocator &);
+        static value boolean(allocator &, bool); // a factory method to disambiguate with value(int64_t) which is more frequent
 
         value() =delete;
-        value(value &&) =default;
-        value(const value &) =default;
-        value(value_type &&);
-        value(const value_type &);
-        value(constant &&);
-        value(const constant &);
-        value(constant_list &&);
-        value(cpp_int &&);
-        value(const cpp_int &);
-        value(int64_t);
-        value(data &&);
-        value(std::string &&);
-        value(const std::string_view &);
-        value(uint8_vector &&);
-        value(const buffer &);
-        value(const blst_p1 &);
-        value(const blst_p2 &);
-        value(const blst_fp12 &);
+        value(const value &);
+        value(value &&);
+        value(allocator &, value_type &&);
+        value(allocator &, const value_type &);
+        value(allocator &, constant &&);
+        value(allocator &, const constant &);
+        value(allocator &, constant_list &&);
+        value(allocator &, cpp_int &&);
+        value(allocator &, const cpp_int &);
+        value(allocator &, int64_t);
+        value(allocator &, data &&);
+        value(allocator &, std::string &&);
+        value(allocator &, const std::string_view &);
+        value(allocator &, uint8_vector &&);
+        value(allocator &, const buffer &);
+        value(allocator &, const blst_p1 &);
+        value(allocator &, const blst_p2 &);
+        value(allocator &, const blst_fp12 &);
 
         value &operator=(const value &);
 
@@ -62,14 +65,23 @@ namespace daedalus_turbo::plutus {
         const value_type &operator*() const;
         const value_type *operator->() const;
     private:
-        std::shared_ptr<value_type> _ptr;
+        ptr_type _ptr;
     };
 
     struct environment {
         struct node {
-            const std::shared_ptr<node> parent {};
-            std::string name {};
-            value val;
+            using ptr_type = allocator::ptr_type<node>;
+            const ptr_type parent;
+            const std::string name;
+            const value val;
+
+            node(const ptr_type &parent, const std::string_view &name, const value &val):
+                parent { parent }, name { name }, val { val }
+            {
+            }
+
+            node(const node &) =default;
+            node(node &&) =default;
 
             bool operator==(const node &o) const
             {
@@ -80,16 +92,9 @@ namespace daedalus_turbo::plutus {
 
         environment() =default;
         ~environment() =default;
-
-        environment(const environment &parent, const std::string &name, const value &val):
-            _tail { std::make_shared<node>(parent._tail, name, val) }
-        {
-        }
-
-        environment(const environment &o):
-            _tail { o._tail }
-        {
-        }
+        environment(allocator &alloc, const environment &parent, const std::string_view &name, const value &val);
+        environment(environment &&);
+        environment(const environment &);
 
         const node *get() const
         {
@@ -101,11 +106,24 @@ namespace daedalus_turbo::plutus {
             return (!_tail && !o._tail) || (_tail && o._tail && *_tail == *o._tail);
         }
     private:
-        std::shared_ptr<node> _tail {};
+        const node::ptr_type _tail;
     };
 
+    inline environment::environment(allocator &alloc, const environment &parent, const std::string_view &name, const value &val):
+            _tail { alloc.make<node>(parent._tail, name, val) }
+    {
+    }
+
+    inline environment::environment(environment &&o): _tail { std::move(o._tail) }
+    {
+    }
+
+    inline environment::environment(const environment &o): _tail { o._tail }
+    {
+    }
+
     struct v_builtin {
-        t_builtin b;
+        const t_builtin b;
         value_list args {};
         size_t forces = 0;
 
@@ -113,23 +131,31 @@ namespace daedalus_turbo::plutus {
     };
 
     struct v_constr {
-        size_t tag;
-        value_list args;
+        const size_t tag;
+        const value_list args;
 
         bool operator==(const v_constr &o) const;
     };
 
     struct v_delay {
-        environment env;
-        term_ptr expr;
+        const environment env;
+        const term_ptr expr;
 
         bool operator==(const v_delay &o) const;
     };
 
     struct v_lambda {
-        environment env;
-        std::string name;
-        term_ptr body;
+        const environment env;
+        const std::pmr::string name;
+        const term_ptr body;
+
+        v_lambda() =delete;
+        v_lambda(const v_lambda &o)=default;
+
+        v_lambda(allocator &alloc, const environment &e, const std::pmr::string &n, const term_ptr &b):
+            env { e }, name { n, alloc.resource() }, body { b }
+        {
+        }
 
         bool operator==(const v_lambda &o) const;
     };
@@ -147,7 +173,7 @@ namespace daedalus_turbo::plutus {
             }
         };
 
-        machine(const version &ver={}, const optional_budget &budget={}, const costs::parsed_models &models=costs::defaults());
+        machine(allocator &alloc, const version &ver={}, const optional_budget &budget={}, const costs::parsed_models &models=costs::defaults());
         ~machine();
         result evaluate(const term_ptr &expr);
         result evaluate(const term_ptr &expr, const term_list &args);

@@ -280,7 +280,7 @@ namespace daedalus_turbo::plutus::costs {
         if (name == "cekLamCost")
             return term_tag::lambda;
         if (name == "cekStartupCost")
-            return other_tag::startup;
+            return startup_tag {};
         if (name == "cekVarCost")
             return term_tag::variable;
         throw error("unsupported CEK cost item: {}", name);
@@ -339,6 +339,28 @@ namespace daedalus_turbo::plutus::costs {
             }
         }
         return cost_fun_from_args(args);
+    }
+
+    static cardano::ex_units ex_units_from_args(const arg_map &args)
+    {
+        cardano::ex_units c {};
+        for (const auto &[k, v]: args) {
+            const auto pos = k.find('-');
+            if (pos == k.npos) {
+                if (k == "exBudgetCPU") {
+                    c.steps = std::stoull(v);
+                } else if (k == "exBudgetMemory") {
+                    c.mem = std::stoull(v);
+                } else {
+                    throw error("unsupported cost argument name: {}", k);
+                }
+            } else {
+                throw error("unsupported cost argument category: {}", k);
+            }
+        }
+        if (!c.steps || !c.mem) [[unlikely]]
+            throw error("partially initialized constant cost {}", args);
+        return c;
     }
 
     static op_model op_model_from_args(const arg_map &args)
@@ -458,13 +480,33 @@ namespace daedalus_turbo::plutus::costs {
                     logger::debug("found cost model for an unsupported builtin: {}", op_name);
             }
         }
-        if (!tmp.contains(term_tag::error))
-            tmp.try_emplace(term_tag::error, arg_map { { "exBudgetCPU", "0" }, { "exBudgetMemory", "0" } });
         parsed_model m {};
         for (const auto &[t, args]: tmp) {
-            const auto [it, created] = m.try_emplace(t, op_model_from_args(args));
-            if (!created) [[unlikely]]
-                throw error("internal error: duplicate tag in the parsed cost model!");
+            std::visit([&](const auto &tag) {
+                using T = std::decay_t<decltype(tag)>;
+                if constexpr (std::is_same_v<T, startup_tag>) {
+                    m.startup_op = ex_units_from_args(args);
+                } else if constexpr (std::is_same_v<T, term_tag>) {
+                    switch (tag) {
+                        case term_tag::apply: m.apply_op = ex_units_from_args(args); break;
+                        case term_tag::builtin: m.builtin_op = ex_units_from_args(args); break;
+                        case term_tag::acase: m.case_op = ex_units_from_args(args); break;
+                        case term_tag::constant: m.constant_op = ex_units_from_args(args); break;
+                        case term_tag::constr: m.constr_op = ex_units_from_args(args); break;
+                        case term_tag::delay: m.delay_op = ex_units_from_args(args); break;
+                        case term_tag::force: m.force_op = ex_units_from_args(args); break;
+                        case term_tag::lambda: m.lambda_op = ex_units_from_args(args); break;
+                        case term_tag::variable: m.variable_op = ex_units_from_args(args); break;
+                        default: throw error("unsupported tag: {}", tag);
+                    }
+                } else if constexpr (std::is_same_v<T, builtin_tag>) {
+                    const auto [it, created] = m.builtin_fun.try_emplace(tag, op_model_from_args(args));
+                    if (!created) [[unlikely]]
+                        throw error("internal error: duplicate tag in the parsed cost model!");
+                } else {
+                    throw error("unsupported tag type: {}", typeid(T).name());
+                }
+            }, t);
         }
         return m;
     }

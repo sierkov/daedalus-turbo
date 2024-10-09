@@ -17,7 +17,8 @@ suite plutus_uplc_suite = [] {
               try {
                   auto bytes = file::read(path.string());
                   total_size += bytes.size();
-                  plutus::uplc::script s { std::move(bytes) };
+                  plutus::allocator alloc {};
+                  plutus::uplc::script s { alloc, std::move(bytes) };
               } catch (...) {
                   const auto exp_path = (path.parent_path() / (path.stem().string() + ".uplc.expected")).string();
                   if (std::filesystem::exists(exp_path)) {

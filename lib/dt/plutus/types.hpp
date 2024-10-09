@@ -5,6 +5,8 @@
 #ifndef DAEDALUS_TURBO_PLUTUS_TYPES_HPP
 #define DAEDALUS_TURBO_PLUTUS_TYPES_HPP
 
+#include <any>
+#include <memory_resource>
 #include <variant>
 #include <dt/big_int.hpp>
 #include <dt/crypto/blst.hpp>
@@ -198,13 +200,128 @@ namespace fmt {
 namespace daedalus_turbo::plutus {
     typedef daedalus_turbo::error error;
 
+    // The idea behind the faster allocation is to release all objects at once
+    // and save on the incremental deallocation and calls to destructors.
+    // For that to work all internal objects must also be allocated using the same allocator,
+    // so that there are no memory leaks
+    struct allocator {
+        template<typename T>
+        struct ptr_type {
+            ptr_type() =default;
+
+            ptr_type(const T *ptr): _ptr { ptr }
+            {
+            }
+
+            /*ptr_type(const ptr_type &o): _ptr { o._ptr }
+            {
+            }*/
+
+            const T *get() const
+            {
+                return _ptr;
+            }
+
+            const T *operator->() const
+            {
+                return _ptr;
+            }
+
+            const T &operator*() const
+            {
+                return *_ptr;
+            }
+
+            operator bool() const
+            {
+                return _ptr;
+            }
+        private:
+            const T *_ptr = nullptr;
+        };
+
+        ~allocator()
+        {
+            for (const auto &[p, dtr]: _ptrs) {
+                dtr(p);
+            }
+        }
+
+#if defined(__GNUC__) && !defined(__clang__)
+        // GCC 13 reacts oddly to the libc++ implementation of std::pmr::string
+#       pragma GCC diagnostic push
+#       pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
+        // For types that either:
+        // 1. Do not contain nested data structures
+        // 2. Contains nested data structures that are recursively allocated with this allocator only
+        template<typename T, typename... Args>
+        ptr_type<T> make_no_destroy(Args&&... a)
+        {
+            return new (_mr.allocate(sizeof(T))) T { std::forward<Args>(a)... };
+        }
+
+        // For types that require their destructor to be called before deallocation
+        template<typename T, typename... Args>
+        ptr_type<T> make(Args&&... a)
+        {
+            T *p = new (_mr.allocate(sizeof(T))) T { std::forward<Args>(a)... };
+            try {
+                _ptrs.emplace_back(p, [](const void* x) { static_cast<const T*>(x)->~T(); });
+            } catch (...) {
+                // Call the destructor to release the memory allocated with alternative allocators.
+                // There is no need to deallocate in _mr since all its buffers will be released at the end of its lifetime.
+                p->~T();
+                throw;
+            }
+            return p;
+        }
+#if defined(__GNUC__) && !defined(__clang__)
+#       pragma GCC diagnostic pop
+#endif
+
+        std::pmr::memory_resource *resource()
+        {
+            return &_mr;
+        }
+    private:
+        struct any_ptr {
+            void *ptr = nullptr;
+            void(*dtr)(const void*);
+        };
+
+        std::pmr::monotonic_buffer_resource _mr {};
+        std::pmr::vector<any_ptr> _ptrs { &_mr };
+    };
+
     struct term;
     // shared_ptr is used to make terms copyable while allowing for a recursive definition of "term"
-    using term_ptr = std::shared_ptr<term>;
-    using term_list = vector<term_ptr>;
+    using term_ptr = allocator::ptr_type<term>;
+    using term_list = std::pmr::vector<term_ptr>;
 
     struct variable {
-        std::string name {};
+        std::pmr::string name;
+
+        variable() =delete;
+        variable(const variable &) =delete;
+
+        variable(variable &&o): name { std::move(o.name) }
+        {
+        }
+
+        variable(allocator &alloc, std::string_view n): name { n, alloc.resource() }
+        {
+        }
+
+        variable(allocator &alloc, const variable &other): name { other.name, alloc.resource() }
+        {
+        }
+
+        variable &operator=(variable &&o)
+        {
+            name = std::move(o.name);
+            return *this;
+        }
 
         bool operator==(const variable &o) const
         {
@@ -213,14 +330,14 @@ namespace daedalus_turbo::plutus {
     };
 
     struct force {
-        term_ptr expr {};
+        term_ptr expr;
 
         bool operator==(const force &o) const;
     };
 
     struct apply {
-        term_ptr func {};
-        term_ptr arg {};
+        term_ptr func;
+        term_ptr arg;
 
         bool operator==(const apply &o) const;
     };
@@ -233,14 +350,35 @@ namespace daedalus_turbo::plutus {
     };
 
     struct t_delay {
-        term_ptr expr {};
+        term_ptr expr;
 
         bool operator==(const t_delay &o) const;
     };
 
     struct t_lambda {
-        std::string name {};
-        term_ptr expr {};
+        std::pmr::string name;
+        term_ptr expr;
+
+        t_lambda() =delete;
+
+        t_lambda(t_lambda &&o): name { std::move(o.name) }, expr { std::move(o.expr) }
+        {
+        }
+
+        t_lambda(allocator &alloc, const std::string_view n, const term_ptr &e): name { n, alloc.resource() }, expr { e }
+        {
+        }
+
+        t_lambda(allocator &alloc, const t_lambda &o): name { o.name, alloc.resource() }, expr { o.expr }
+        {
+        }
+
+        t_lambda &operator=(t_lambda &&o)
+        {
+            name = std::move(o.name);
+            expr = std::move(o.expr);
+            return *this;
+        }
 
         bool operator==(const t_lambda &o) const;
     };
@@ -248,25 +386,69 @@ namespace daedalus_turbo::plutus {
     struct constant;
 
     struct constant_type {
-        type_tag typ {};
-        vector<constant_type> nested {};
+        using list_type = std::pmr::vector<constant_type>;
+        struct value_type {
+            type_tag typ;
+            list_type nested;
+        };
 
-        static constant_type make_pair(constant_type &&fst, constant_type &&snd)
+        static constant_type make_pair(allocator &alloc, constant_type &&fst, constant_type &&snd)
         {
-            constant_type t { type_tag::pair };
-            t.nested.emplace_back(std::move(fst));
-            t.nested.emplace_back(std::move(snd));
-            return t;
+            list_type n {};
+            n.emplace_back(std::move(fst));
+            n.emplace_back(std::move(snd));
+            return { alloc, type_tag::pair, std::move(n) };
         }
 
-        static constant_type from_val(const constant &);
+        static constant_type from_val(allocator &alloc, const constant &);
+
+        constant_type() =delete;
+
+        constant_type(const constant_type &o): _ptr { o._ptr }
+        {
+        }
+
+        constant_type(constant_type &&o): _ptr { std::move(o._ptr) }
+        {
+        }
+
+        constant_type(allocator &alloc, value_type &&v): _ptr { alloc.make_no_destroy<value_type>(std::move(v) ) }
+        {
+        }
+
+        constant_type(allocator &alloc, const type_tag t): constant_type { alloc, value_type { t, list_type { alloc.resource() } } }
+        {
+        }
+
+        constant_type(allocator &alloc, const type_tag t, std::pmr::vector<constant_type> &&n):
+            constant_type { alloc, value_type { t, std::move(n) } }
+        {
+        }
+
+        constant_type &operator=(constant_type &&o)
+        {
+            _ptr = std::move(o._ptr);
+            return *this;
+        }
+
+        constant_type &operator=(const constant_type &o)
+        {
+            _ptr = o._ptr;
+            return *this;
+        }
 
         bool operator==(const constant_type &o) const
         {
-            return typ == o.typ && nested == o.nested;
+            return _ptr->typ == o._ptr->typ && _ptr->nested == o._ptr->nested;
         }
+
+        const value_type *operator->() const
+        {
+            return _ptr.get();
+        }
+    private:
+        allocator::ptr_type<value_type> _ptr;
     };
-    using constant_type_list = vector<constant_type>;
 
     struct bls12_381_g1_element {
         blst_p1 val {};
@@ -341,73 +523,165 @@ namespace daedalus_turbo::plutus {
     struct constant_pair {
         using value_type = std::pair<constant, constant>;
 
-        constant_pair(constant &&, constant &&);
+        constant_pair() =delete;
+
+        constant_pair(const constant_pair &o): _ptr { o._ptr }
+        {
+        }
+
+        constant_pair(constant_pair &&o): _ptr { std::move(o._ptr) }
+        {
+        }
+
+        constant_pair(allocator &alloc, constant &&fst, constant &&snd): _ptr { alloc.make<value_type>(std::move(fst), std::move(snd)) }
+        {
+        }
+
+        constant_pair(allocator &alloc, const constant &fst, const constant &snd);
+
+        constant_pair &operator=(const constant_pair &o)
+        {
+            _ptr = o._ptr;
+            return *this;
+        }
+
         bool operator==(const constant_pair &o) const;
+
         const value_type &operator*() const;
-        const value_type *operator->() const;
+
+        const value_type *operator->() const
+        {
+            return _ptr.get();
+        }
     private:
-        std::shared_ptr<value_type> _vals {}; // shared to make the struct copiable
+         allocator::ptr_type<value_type> _ptr;
     };
 
     struct constant_list {
-        constant_type typ;
-        vector<constant> vals;
+        using list_type = std::pmr::vector<constant>;
+        struct value_type {
+            constant_type typ;
+            list_type vals;
+        };
 
-        static constant_list make_empty(constant_type &&);
-        static constant_list make_empty(const constant_type &);
-        static constant_list make_one(constant &&);
+        static constant_list make_one(allocator &alloc, constant &&);
+
+        constant_list() =delete;
+
+        constant_list(allocator &alloc, value_type &&v): _ptr { alloc.make<value_type>(std::move(v)) }
+        {
+        }
+
+        constant_list(allocator &alloc, constant_type &&t, list_type &&l);
+
+        constant_list(constant_list &&o): _ptr { std::move(o._ptr) }
+        {
+        }
+
+        constant_list(const constant_list &o): _ptr { o._ptr }
+        {
+        }
+
+        constant_list &operator=(constant_list &&o)
+        {
+            _ptr = std::move(o._ptr);
+            return *this;
+        }
+
+        constant_list &operator=(const constant_list &o)
+        {
+            _ptr = o._ptr;
+            return *this;
+        }
+
         bool operator==(const constant_list &o) const;
+        const value_type *operator->() const;
+    private:
+        allocator::ptr_type<value_type> _ptr;
     };
 
     struct constant {
         using value_type = std::variant<cpp_int, uint8_vector, std::string, bool, constant_list, constant_pair,
             data, bls12_381_g1_element, bls12_381_g2_element, bls12_381_ml_result, std::monostate>;
-        value_type val;
+
+        constant() =delete;
+
+        constant(allocator &alloc, value_type &&v)
+            : _ptr { alloc.make<value_type>(std::move(v)) }
+        {
+        }
+
+        constant(const constant &o): _ptr { o._ptr }
+        {
+        }
+
+        constant(constant &&o): _ptr { std::move(o._ptr) }
+        {
+        }
+
+        constant &operator=(constant &&o)
+        {
+            _ptr = std::move(o._ptr);
+            return *this;
+        }
+
+        constant &operator=(const constant &o)
+        {
+            _ptr = o._ptr;
+            return *this;
+        }
 
         const cpp_int &as_int() const
         {
-            return std::get<cpp_int>(val);
+            return std::get<cpp_int>(*_ptr);
         }
 
         bool as_bool() const
         {
-            return std::get<bool>(val);
+            return std::get<bool>(*_ptr);
         }
 
         const uint8_vector &as_bstr() const
         {
-            return std::get<uint8_vector>(val);
+            return std::get<uint8_vector>(*_ptr);
         }
 
         const std::string &as_str() const
         {
-            return std::get<std::string>(val);
+            return std::get<std::string>(*_ptr);
         }
 
         const data &as_data() const
         {
-            return std::get<data>(val);
+            return std::get<data>(*_ptr);
         }
 
         const constant_pair::value_type &as_pair() const
         {
-            return *std::get<constant_pair>(val);
+            return *std::get<constant_pair>(*_ptr);
         }
 
         bool operator==(const constant &o) const
         {
-            return val == o.val;
+            return *_ptr == *o._ptr;
         }
 
         const constant_list &as_list() const
         {
-            return std::get<constant_list>(val);
+            return std::get<constant_list>(*_ptr);
         }
+
+        const value_type &operator*() const
+        {
+            return *_ptr;
+        }
+    private:
+        allocator::ptr_type<value_type> _ptr;
     };
 
     // this type is needed only for a prettier formatting; see the formatter definitions below
     struct constant_list_values_only {
-        const vector<constant> &vals;
+        const constant_list::list_type &vals;
     };
 
     struct builtin_one_arg;
@@ -434,35 +708,77 @@ namespace daedalus_turbo::plutus {
 
     struct t_constr {
         uint64_t tag;
-        term_list args {};
+        term_list args;
+
+        t_constr() =delete;
+
+        t_constr(const uint64_t t, term_list &&a): tag { t }, args { std::move(a) }
+        {
+        }
+
+        t_constr(t_constr &&o): tag { o.tag }, args { std::move(o.args) }
+        {
+        }
+
+        t_constr &operator=(t_constr &&o)
+        {
+            tag = o.tag;
+            args = std::move(o.args);
+            return *this;
+        }
 
         bool operator==(const t_constr &o) const;
     };
 
-    struct acase {
+    struct t_case {
         term_ptr arg;
-        term_list cases {};
+        term_list cases;
 
-        bool operator==(const auto &o) const
+        t_case() =delete;
+
+        t_case(const term_ptr &arg_, term_list &&cases_): arg { arg_ }, cases { std::move(cases_) }
         {
-            if (arg != o.arg || cases.size() != o.cases.size())
-                return false;
-            for (size_t i = 0; i < cases.size(); i++) {
-                if (*cases[i] != *o.cases[i])
-                    return false;
-            }
-            return true;
         }
+
+        t_case(t_case &&o): arg { std::move(o.arg) }, cases { std::move(o.cases) }
+        {
+        }
+
+        t_case &operator=(t_case &&o)
+        {
+            arg = std::move(o.arg);
+            cases = std::move(o.cases);
+            return *this;
+        }
+
+        bool operator==(const t_case &o) const;
     };
 
     struct term {
-        using expr_type = std::variant<variable, t_delay, force, t_lambda, apply, constant, failure, t_builtin, t_constr, acase>;
-        expr_type expr {};
+        using expr_type = std::variant<variable, t_delay, force, t_lambda, apply, constant, failure, t_builtin, t_constr, t_case>;
+        expr_type expr;
 
         template<typename T>
-        static term_ptr make_ptr(T &&v)
+        static term_ptr make_ptr(allocator &alloc, T &&v)
         {
-            return std::make_shared<term>(std::move(v));
+            return alloc.make<term>(std::move(v));
+        }
+
+        term() =delete;
+        term(const term &) =delete;
+
+        term(expr_type &&e): expr { std::move(e) }
+        {
+        }
+
+        term(term &&o): expr { std::move(o.expr) }
+        {
+        }
+
+        term &operator=(term &&o)
+        {
+            expr = std::move(o.expr);
+            return *this;
         }
 
         bool operator==(const term &o) const
@@ -552,9 +868,9 @@ namespace fmt {
                 } else if constexpr (std::is_same_v<T, std::string>) {
                     return fmt::format_to(ctx.out(), "\"{}\"", escape_utf8_string(v));
                 } else if constexpr (std::is_same_v<T, constant_pair>) {
-                    return fmt::format_to(ctx.out(), "({}, {})", v->first.val, v->second.val);
+                    return fmt::format_to(ctx.out(), "({}, {})", *v->first, *v->second);
                 } else if constexpr (std::is_same_v<T, constant_list>) {
-                    return fmt::format_to(ctx.out(), "{}", constant_list_values_only { v.vals });
+                    return fmt::format_to(ctx.out(), "{}", constant_list_values_only { v->vals });
                 } else {
                     return fmt::format_to(ctx.out(), "{}", v);
                 }
@@ -569,7 +885,7 @@ namespace fmt {
             auto out_it = fmt::format_to(ctx.out(), "(");
             for (auto it = v.vals.begin(); it != v.vals.end(); ++it) {
                 const std::string_view sep { std::next(it) == v.vals.end() ? "" : ", " };
-                out_it = fmt::format_to(out_it, "{}{}", it->val, sep);
+                out_it = fmt::format_to(out_it, "{}{}", **it, sep);
             }
             return fmt::format_to(out_it, ")");
         }
@@ -580,13 +896,13 @@ namespace fmt {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
             using namespace daedalus_turbo::plutus;
-            if (v.nested.empty())
-                return fmt::format_to(ctx.out(), "{}", v.typ);
-            if (v.typ == type_tag::list)
-                return fmt::format_to(ctx.out(), "({} {})", v.typ, v.nested.at(0));
-            if (v.typ == type_tag::pair)
-                return fmt::format_to(ctx.out(), "({} {} {})", v.typ, v.nested.at(0), v.nested.at(1));
-            throw daedalus_turbo::error("unsupported constant_type: {}!", v.typ);
+            if (v->nested.empty())
+                return fmt::format_to(ctx.out(), "{}", v->typ);
+            if (v->typ == type_tag::list)
+                return fmt::format_to(ctx.out(), "({} {})", v->typ, v->nested.at(0));
+            if (v->typ == type_tag::pair)
+                return fmt::format_to(ctx.out(), "({} {} {})", v->typ, v->nested.at(0), v->nested.at(1));
+            throw daedalus_turbo::error("unsupported constant_type: {}!", v->typ);
         }
     };
 
@@ -594,7 +910,8 @@ namespace fmt {
     struct formatter<daedalus_turbo::plutus::constant>: formatter<int> {
         template<typename FormatContext>
         auto format(const daedalus_turbo::plutus::constant &v, FormatContext &ctx) const -> decltype(ctx.out()) {
-            return fmt::format_to(ctx.out(), "(con {} {})", daedalus_turbo::plutus::constant_type::from_val(v), v.val);
+            daedalus_turbo::plutus::allocator alloc {};
+            return fmt::format_to(ctx.out(), "(con {} {})", daedalus_turbo::plutus::constant_type::from_val(alloc, v), *v);
         }
     };
 
@@ -663,9 +980,9 @@ namespace fmt {
     };
 
     template<>
-    struct formatter<daedalus_turbo::plutus::acase>: formatter<int> {
+    struct formatter<daedalus_turbo::plutus::t_case>: formatter<int> {
         template<typename FormatContext>
-        auto format(const daedalus_turbo::plutus::acase &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+        auto format(const daedalus_turbo::plutus::t_case &v, FormatContext &ctx) const -> decltype(ctx.out()) {
             return fmt::format_to(ctx.out(), "(case {} {})", v.arg, v.cases);
         }
     };

@@ -34,8 +34,9 @@ namespace daedalus_turbo::cli::plutus_eval {
         template<typename S>
         static void _eval(const std::string &path)
         {
-            S script { file::read(path) };
-            machine m { script.version() };
+            allocator alloc {};
+            S script { alloc, file::read(path) };
+            machine m { alloc, script.version() };
             const auto [res, costs] = m.evaluate(script.program());
             std::cout << fmt::format("res: {} costs: {}\n", res, costs);
         }

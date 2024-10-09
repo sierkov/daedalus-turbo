@@ -93,6 +93,21 @@ namespace daedalus_turbo::cardano::babbage {
             });
             return coin;
         }
+
+        void foreach_referenced_input(const std::function<void(const tx_input &)> &observer) const override
+        {
+            _if_item_present(18, [&](const auto &rinputs_raw) {
+                set<tx_out_ref> unique_inputs {};
+                foreach_set(rinputs_raw, [&](const auto &txin, size_t) {
+                    const auto in_idx = txin.at(1).uint();
+                    unique_inputs.emplace(tx_out_ref { txin.at(0).buf(), in_idx });
+                });
+                size_t unique_idx = 0;
+                for (const auto &unique_txin: unique_inputs) {
+                    observer(tx_input { unique_txin.hash, unique_txin.idx, unique_idx++ });
+                }
+            });
+        }
     };
 
     inline void block::foreach_tx(const std::function<void(const cardano::tx &)> &observer) const

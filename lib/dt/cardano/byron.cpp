@@ -74,17 +74,17 @@ namespace daedalus_turbo::cardano::byron {
         return tx_ok && dlg_ok && upd_ok;
     }
 
-    tx::wit_ok tx::witnesses_ok(const plutus::context */*input_data*/) const
+    tx::wit_cnt tx::witnesses_ok(const plutus::context */*input_data*/) const
     {
-        if (!_wit) throw cardano_error("vkey_witness_ok called on a transaction without witness data!");
-        wit_ok ok {};
+        if (!_wit) [[unlikely]]
+            throw cardano_error("vkey_witness_ok called on a transaction without witness data!");
+        wit_cnt cnt {};
         const auto &tx_hash = hash();
         for (const auto &w_raw: _wit->array()) {
             const auto &w_items = w_raw.array();
             switch (const auto w_type = w_items.at(0).uint(); w_type) {
                 // Normal VKWitness
                 case 0: {
-                    ++ok.vkey_total;
                     cbor_value w_data;
                     _parse_cbor_tag(w_data, w_items.at(1).tag());
                     const auto &vkey = w_data.array().at(0).buf();
@@ -94,11 +94,9 @@ namespace daedalus_turbo::cardano::byron {
                     msg[0] = 0x82;
                     msg[1] = 0x01;
                     span_memcpy(std::span(msg.data() + 2, 32), tx_hash);
-                    if (ed25519::verify(sig, vkey.subspan(0, 32), msg)) [[likely]]
-                        ++ok.vkey_ok;
-                    else
-                        logger::warn("byron tx witness type 0 failed for tx {}: {}", tx_hash, w_data);
-
+                    if (!ed25519::verify(sig, vkey.subspan(0, 32), msg)) [[unlikely]]
+                        throw error("byron tx witness type 0 failed for tx {}: {}", tx_hash, w_data);
+                    ++cnt.vkey;
                     break;
                 }
                 // RedeemWitness
@@ -120,6 +118,6 @@ namespace daedalus_turbo::cardano::byron {
                     throw cardano_error("slot: {}, tx: {} - unsupported witness type: {}", (uint64_t)_blk.slot(), hash().span(), w_type);
             }
         }
-        return ok;
+        return cnt;
     }
 }

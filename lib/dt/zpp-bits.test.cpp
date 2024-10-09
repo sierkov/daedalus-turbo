@@ -3,9 +3,9 @@
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
-#include <zpp_bits.h>
 #include <dt/cardano/common.hpp>
 #include <dt/test.hpp>
+#include <dt/zpp.hpp>
 
 using namespace daedalus_turbo;
 

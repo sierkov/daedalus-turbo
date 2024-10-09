@@ -21,7 +21,6 @@ namespace daedalus_turbo::indexer {
                 _mergeable { _mergeable_indexers(_indexers) }
         {
             file::set_max_open_files();
-
             for (auto &[name, idxr_ptr]: _indexers) {
                 idxr_ptr->clean_up();
             }

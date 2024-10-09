@@ -4,7 +4,7 @@
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #include <map>
 #include <set>
-#include <zpp_bits.h>
+#include <dt/zpp.hpp>
 #include <dt/benchmark.hpp>
 
 using namespace boost::ut;
@@ -26,7 +26,7 @@ suite zpp_bits_bench_suite = [] {
             }
             test_item out_items {};
             size_t num_iters = 1'000;
-            auto [data, in, out] = zpp::bits::data_in_out();
+            auto [data, in, out] = ::zpp::bits::data_in_out();
             benchmark("serialize map of sets", 1e8, 5, [&] {
                 for (size_t i = 0; i < num_iters; ++i)
                     out(items).or_throw();

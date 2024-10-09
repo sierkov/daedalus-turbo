@@ -3,23 +3,23 @@
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
-#include <format>
 #ifndef SPDLOG_FMT_EXTERNAL
 #   define SPDLOG_FMT_EXTERNAL 1
 #endif
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
+#include <dt/config.hpp>
 #include <dt/debug.hpp>
 #include <dt/file.hpp>
 #include <dt/logger.hpp>
 #include <dt/mutex.hpp>
 
 namespace daedalus_turbo::logger {
-    static const char *log_path()
+    static std::string log_path()
     {
         const char *env_log_path = std::getenv("DT_LOG");
-        return env_log_path ? env_log_path : "./log/dt.log";
+        return install_path(env_log_path ? env_log_path : "./log/dt.log");
     }
 
     static bool console_enabled()

@@ -10,10 +10,10 @@
 
 namespace daedalus_turbo::plutus::uplc {
     struct script {
-        explicit script(uint8_vector &&bytes);
+        explicit script(allocator &alloc, uint8_vector &&bytes);
         script(script &&);
         ~script();
-        version version() const;
+	    plutus::version version() const;
         term_ptr program() const;
     private:
         struct impl;

@@ -4,106 +4,116 @@
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
 #include <dt/cardano/alonzo.hpp>
-#include <dt/plutus/builtins.hpp>
 #include <dt/plutus/flat.hpp>
 #include <dt/plutus/machine.hpp>
 #include <dt/plutus/context.hpp>
+#include <dt/timer.hpp>
 
 namespace daedalus_turbo::cardano::alonzo {
     using namespace daedalus_turbo::plutus;
 
-    static void _evaluate_plutus(const script_info &script, const cbor::value &datum, const cbor::value &redeemer, const term_ptr &t_ctx)
+    static void _evaluate_plutus(allocator &alloc, const script_info &script, const term_list &args)
     {
-        using namespace plutus;
-        flat::script s { script.script() };
-        auto t_datum = term::make_ptr(constant { data::from_cbor(datum.raw_span()) });
-        auto t_redeemer = term::make_ptr(constant { data::from_cbor(redeemer.raw_span()) });
-        term_list args { t_datum, t_redeemer, t_ctx };
-        //logger::info("script args: {}", args);
-        // Todo: force maximum evaluation budget
-        machine m {};
-        const auto [expr, cost] = m.evaluate(s.program(), args);
+        //timer ts { "plutus script parsing", logger::level::debug };
+        flat::script s { alloc, script.script() };
+        //ts.stop_and_print();
+        //try {
+        //timer tm { "a plutus::machine creation and the script execution", logger::level::debug };
+            // Todo: force maximum evaluation budget
+            machine m { alloc, s.version() };
+            m.evaluate(s.program(), args);
+        //} catch (const std::exception &ex) {
+        //    throw error("script {} failed with error: {} when called with args: {}", script.hash(), ex.what(), args);
+        //}
     }
 
-    static void _validate_plutus(tx::wit_ok &ok, const tx &tx, const cbor::array &redeemers, const script_info_map &scripts,
-        const cbor::array &data, const context &ctx)
+    static term_ptr term_from_datum(allocator &alloc, const context &ctx, const datum_hash &hash)
     {
+        return term::make_ptr(alloc, constant { alloc, ctx.datums().at(hash) });
+    }
+
+    static term_ptr term_from_datum(allocator &alloc, const context &, const uint8_vector &datum)
+    {
+        return term::make_ptr(alloc, constant { alloc, datum });
+    }
+
+    static tx::wit_cnt _validate_plutus(const tx &tx, const cbor::array &redeemers, const script_info_map &scripts, const context &ctx)
+    {
+        allocator alloc {};
+        tx::wit_cnt cnt {};
         for (size_t ri = 0; ri < redeemers.size(); ++ri) {
-            ++ok.script_total;
             const auto &r = redeemers[ri];
             const auto r_type = r.at(0).uint();
             const auto r_idx = r.at(1).uint();
             switch (r_type) {
                 case 0: {
-                    const address addr { ctx.input_at(r_idx).data.address };
-                    if (const auto pay_id = addr.pay_id(); pay_id.type == pay_ident::ident_type::SHELLEY_SCRIPT) [[likely]]
-                        _evaluate_plutus(scripts.at(pay_id.hash), data.at(ri), r.at(2), ctx.v1(purpose { purpose::type::spend, r_idx }));
-                    else
-                        throw error("txin txo address references from tx {} redeemer #{} is not a payment script!", tx.hash(), ri);
+                    const auto &in = ctx.input_at(r_idx);
+                    const address addr { in.data.address };
+                    if (const auto pay_id = addr.pay_id(); pay_id.type == pay_ident::ident_type::SHELLEY_SCRIPT) [[likely]] {
+                        auto t_datum = std::visit([&](const auto &v) { return term_from_datum(alloc, ctx, v); }, in.data.datum.value());
+                        auto t_redeemer = term::make_ptr(alloc, constant { alloc, data::from_cbor(r.at(2).raw_span()) });
+                        const auto &script = scripts.at(pay_id.hash);
+                        _evaluate_plutus(alloc, script, { std::move(t_datum), std::move(t_redeemer), ctx.data(alloc, script.type(), purpose { purpose::type::spend, r_idx }) });
+                        cnt += script;
+                    } else
+                        throw error("tx {} redeemer #{} (spend) input #{}: the output address is not a payment script: {}!", tx.hash(), ri, r_idx, in);
                     break;
                 }
                 case 1: {
-                    _evaluate_plutus(scripts.at(ctx.mint_at(r_idx)), data.at(ri), r.at(2), ctx.v1(purpose { purpose::type::mint, r_idx }));
+                    auto t_redeemer = term::make_ptr(alloc, constant { alloc, data::from_cbor(r.at(2).raw_span()) });
+                    const auto &script = scripts.at(ctx.mint_at(r_idx));
+                    _evaluate_plutus(alloc, script, { std::move(t_redeemer), ctx.data(alloc, script.type(), purpose { purpose::type::mint, r_idx }) });
+                    cnt += script;
                     break;
                 }
                 default:
                     throw error("tx: {} unsupported redeemer_tag: {}", tx.hash(), r_type);
-            }
-            ++ok.script_ok;
+            };
         }
+        return cnt;
     }
 
-    tx::wit_ok tx::witnesses_ok(const plutus::context *ctx) const
+    tx::wit_cnt tx::witnesses_ok_other(const context *ctx) const
     {
-        if (!_wit) [[unlikely]]
-            throw cardano_error("vkey_witness_ok called on a transaction without witness data!");
-        const cbor::array *plutus_data = nullptr;
-        wit_ok ok {};
-        // validate vkey witnesses and create a vkeys set for the potential native script validation
-        set<key_hash> vkeys {};
+        wit_cnt cnt {};
         script_info_map scripts {};
-        for (const auto &[w_type, w_val]: _wit->map()) {
-            switch (w_type.uint()) {
-                case 0: _validate_witness_vkey(ok, vkeys, w_val); break;
+        foreach_witness([&](const auto typ, const auto &w_val) {
+            switch (typ) {
                 case 3: {
-                    for (const auto &script_raw: w_val.array()) {
+                    foreach_set(w_val, [&](const auto &script_raw, const auto) {
                         script_info si { script_type::plutus_v1, script_raw.buf() };
                         const auto script_hash = si.hash();
                         scripts.try_emplace(script_hash, std::move(si));
-                    }
+                    });
                     break;
                 }
-                case 4: plutus_data = &w_val.array(); break;
+                case 6: {
+                    foreach_set(w_val, [&](const auto &script_raw, const auto) {
+                        script_info si { script_type::plutus_v2, script_raw.buf() };
+                        const auto script_hash = si.hash();
+                        scripts.try_emplace(script_hash, std::move(si));
+                    });
+                    break;
+                }
+                case 7: {
+                    foreach_set(w_val, [&](const auto &script_raw, const auto) {
+                        script_info si { script_type::plutus_v3, script_raw.buf() };
+                        const auto script_hash = si.hash();
+                        scripts.try_emplace(script_hash, std::move(si));
+                    });
+                    break;
+                }
                 default: break;
             }
-        }
+        });
 
-        for (const auto &[w_type, w_val]: _wit->map()) {
-            switch (w_type.uint()) {
-                case 0:
-                case 3:
-                case 4:
-                    break; // ignore - has been processed above
-                case 1: _validate_witness_native_script(ok, w_val, vkeys); break;
-                case 2: _validate_witness_bootstrap(ok, w_val); break;
-                case 5: break; // validated later
-                default: throw cardano_error("unsupported witness type {} at tx {}: {}", w_type.uint(), hash(), w_val);
+        foreach_witness([&](const auto typ, const auto &w_val) {
+            if (typ == 5) {
+                if (!ctx) [[unlikely]]
+                    throw error("a prepared plutus::context is required for witness validation of Alonzo+ transactions");
+                cnt += _validate_plutus(*this, w_val.array(), scripts, *ctx);
             }
-        }
-
-        if (!scripts.empty()) {
-            if (!ctx) [[unlikely]]
-                throw error("plutus::context is required for witness validation of Alonzo+ transactions");
-            if (!plutus_data) [[unlikely]]
-                throw error("plutus_data must be available for evaluation of script witnesses");
-
-            for (const auto &[w_type, w_val]: _wit->map()) {
-                switch (w_type.uint()) {
-                    case 5: _validate_plutus(ok, *this, w_val.array(), scripts, *plutus_data, *ctx); break;
-                    default: break;
-                }
-            }
-        }
-        return ok;
+        });
+        return cnt;
     }
 }
