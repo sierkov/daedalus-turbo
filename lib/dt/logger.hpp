@@ -15,6 +15,7 @@ namespace daedalus_turbo::logger {
         trace, debug, info, warn, error
     };
 
+    extern bool &tracing_enabled();
     extern void log(level lev, const std::string &msg);
 
     template<typename... Args>

@@ -49,7 +49,7 @@ namespace daedalus_turbo::http {
     using tcp = boost::asio::ip::tcp;
 
     struct download_queue_async::impl {
-        static constexpr size_t max_connections = 8;
+        static constexpr size_t max_connections = 6;
 
         impl(asio::worker &asio_worker=asio::worker::get())
             : _asio_worker { asio_worker }, _asio_name { fmt::format("download-queue-{:p}", static_cast<void*>(this)) }

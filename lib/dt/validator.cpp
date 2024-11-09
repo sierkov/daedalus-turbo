@@ -2,8 +2,10 @@
  * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
+
 #include <dt/cardano/common.hpp>
-#include <dt/cardano/state/vrf.hpp>
+#include <dt/cardano/ledger/state.hpp>
+#include <dt/cardano/ledger/updates.hpp>
 #include <dt/chunk-registry.hpp>
 #include <dt/container.hpp>
 #include <dt/index/block-fees.hpp>
@@ -12,10 +14,11 @@
 #include <dt/index/vrf.hpp>
 #include <dt/mutex.hpp>
 #include <dt/validator.hpp>
-#include <dt/validator/state.hpp>
 #include <dt/zpp.hpp>
 
 namespace daedalus_turbo::validator {
+    using namespace cardano::ledger;
+
     indexer::indexer_map default_indexers(const std::string &data_dir, scheduler &sched)
     {
         const auto idx_dir = indexer::incremental::storage_dir(data_dir);
@@ -267,8 +270,8 @@ namespace daedalus_turbo::validator {
             if (const auto best_snap = _best_exportable_snapshot(immutable_tip); best_snap && best_snap->end_offset) {
                 logger::info("selected the ledger snapshot with end_offset {} last_slot {} for export",
                     best_snap->end_offset, cardano::slot { best_snap->last_slot, _cr.config() });
-                validator::state snap_state { _cr.config(), _cr.sched() };
-                snap_state.load(_storage_path("ledger", best_snap->end_offset));
+                cardano::ledger::state snap_state { _cr.config(), _cr.sched() };
+                snap_state.load_zpp(_storage_path("ledger", best_snap->end_offset));
                 const auto snap_tip = _cr.find_block_by_offset(best_snap->end_offset - 1).point();
                 const auto path = (ledger_dir / fmt::format("{}_dt", best_snap->last_slot)).string();
                 snap_state.save_node(path, snap_tip, prio_base);
@@ -277,7 +280,7 @@ namespace daedalus_turbo::validator {
             throw error("do not have an exportable snapshot");
         }
 
-        const validator::state &state() const
+        const cardano::ledger::state &state() const
         {
             return _state;
         }
@@ -293,7 +296,7 @@ namespace daedalus_turbo::validator {
             uint64_t last_slot;
             bool exportable;
 
-            snapshot(const validator::state &st)
+            snapshot(const cardano::ledger::state &st)
                 : epoch { st.epoch() }, end_offset { st.end_offset() }, last_slot { st.last_slot() }, exportable { st.exportable() }
             {
             }
@@ -340,7 +343,7 @@ namespace daedalus_turbo::validator {
         const std::filesystem::path _validate_dir;
         const std::string _state_path;
         const std::string _state_pre_path;
-        validator::state _state;
+        cardano::ledger::state _state;
         std::atomic_bool _validation_running { false };
         alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _next_task_mutex {};
         uint64_t _next_end_offset = 0;
@@ -407,7 +410,7 @@ namespace daedalus_turbo::validator {
 
         uint64_t _load_state_snapshot(const uint64_t end_offset)
         {
-            _state.load(_storage_path("ledger", end_offset));
+            _state.load_zpp(_storage_path("ledger", end_offset));
             if (_state.end_offset() != end_offset)
                 throw error("loaded state does not match the recorded end offset: {} != {}", _state.end_offset(), end_offset);
             if (_state.end_offset() != _state.valid_end_offset())
@@ -422,7 +425,7 @@ namespace daedalus_turbo::validator {
 
         void _save_reserve_snapshot()
         {
-            _state.save(_storage_path("ledger-reserve", _state.end_offset()));
+            _state.save_zpp(_storage_path("ledger-reserve", _state.end_offset()));
             _reserve_snapshot.emplace(_state);
         }
 
@@ -434,7 +437,7 @@ namespace daedalus_turbo::validator {
                     logger::level::info };
             logger::debug("saving VRF state");
             logger::debug("saving the validator state");
-            _state.save(_storage_path("ledger", _state.end_offset()));
+            _state.save_zpp(_storage_path("ledger", _state.end_offset()));
             logger::debug("recording the new snapshot");
             snapshot latest { _state };
             _snapshots.emplace(std::move(latest));
@@ -580,11 +583,12 @@ namespace daedalus_turbo::validator {
                             updates.emplace_back(std::move(u));
                     }
                 }
+                std::sort(updates.begin(), updates.end());
             }
             return min_chunk_id;
         }
 
-        void _apply_utxo_updates(const uint64_t epoch, const uint64_t min_offset, const std::string &name, const index::chunk_list &updated_chunks)
+        void _load_utxo_updates(updates_t &updates, const uint64_t epoch, const uint64_t min_offset, const std::string &name, const index::chunk_list &updated_chunks)
         {
             index::chunk_list relevant_chunks {};
             for (const uint64_t c_id: updated_chunks) {
@@ -593,17 +597,16 @@ namespace daedalus_turbo::validator {
             }
             if (!relevant_chunks.empty()) {
                 const std::string task_group = fmt::format("ledger-state:load-utxo-updates:epoch-{}", epoch);
-                vector<index::utxo::chunk_indexer::data_type> chunk_updates(relevant_chunks.size());
+                updates.utxos.resize(relevant_chunks.size());
                 _cr.sched().wait_all_done(task_group, relevant_chunks.size(), [&] {
                     for (size_t ci = 0; ci < relevant_chunks.size(); ++ci) {
                         const auto chunk_path = fmt::format("{}.bin", _cr.indexer().indexers().at(name)->chunk_path("update", relevant_chunks[ci]));
-                        _cr.sched().submit_void(task_group, 1000, [ci, chunk_path, &chunk_updates] {
-                            zpp::load_zstd(chunk_updates[ci], chunk_path);
+                        _cr.sched().submit_void(task_group, 1000, [ci, chunk_path, &updates] {
+                            zpp::load_zstd(updates.utxos[ci], chunk_path);
                             std::filesystem::remove(chunk_path);
                         });
                     }
                 });
-                _state.utxo_apply_updates(chunk_updates);
             }
         }
 
@@ -616,87 +619,21 @@ namespace daedalus_turbo::validator {
                 if (!last_offset || last_epoch < e)
                     _state.start_epoch(e);
 
-                vector<index::block_fees::item> fee_updates {};
-                const auto min_epoch_offset = _gather_updates<index::block_fees::indexer>(fee_updates, "block-fees", slots, last_offset);
-                if (!min_epoch_offset)
-                    return;
-                std::sort(fee_updates.begin(), fee_updates.end());
+                std::optional<uint64_t> min_epoch_offset;
                 {
-                    std::map<cardano::pool_hash, size_t> pool_blocks {};
-                    for (const auto &[slot, issuer_id, fees, end_offset, era]: fee_updates) {
-                        _state.process_block(end_offset, era, slot, fees);
-                        if (era > 1)
-                            ++pool_blocks[issuer_id];
-                    }
-                    for (const auto &[pool_id, num_blocks]: pool_blocks)
-                        _state.add_pool_blocks(pool_id, num_blocks);
-                }
-
-                vector<cardano::tx_out_ref> collected_collateral {};
-                {
-                    timed_update_list timed_updates {};
-                    timer tp { fmt::format("validator epoch: {} process {} timed updates", e, timed_updates.size()) };
-                    _gather_updates<index::timed_update::indexer>(timed_updates, "timed-update", slots, last_offset);
-                    std::sort(timed_updates.begin(), timed_updates.end());
-                    for (const auto &upd: timed_updates) {
-                        std::visit([&](const auto &u) {
-                            using T = std::decay_t<decltype(u)>;
-                            if constexpr (std::is_same_v<T, index::timed_update::stake_reg>) {
-                                _state.register_stake(upd.slot, u.stake_id, u.deposit, upd.tx_idx, upd.cert_idx);
-                            } else if constexpr (std::is_same_v<T, index::timed_update::stake_del>) {
-                                _state.retire_stake(upd.slot, u.stake_id, u.deposit);
-                            } else if constexpr (std::is_same_v<T, cardano::pool_reg>) {
-                                _state.register_pool(u);
-                            } else if constexpr (std::is_same_v<T, index::timed_update::instant_reward_single>) {
-                                if (u.source == cardano::reward_source::reserves)
-                                    _state.instant_reward_reserves(upd.slot, u.stake_id, u.amount);
-                                else if (u.source == cardano::reward_source::treasury)
-                                    _state.instant_reward_treasury(upd.slot, u.stake_id, u.amount);
-                                else
-                                    throw error("unsupported reward source: {}", static_cast<int>(u.source));
-                            } else if constexpr (std::is_same_v<T, index::timed_update::stake_deleg>) {
-                                _state.delegate_stake(u.stake_id, u.pool_id);
-                            } else if constexpr (std::is_same_v<T, index::timed_update::stake_withdraw>) {
-                                _state.withdraw_reward(upd.slot, u.stake_id, u.amount);
-                            } else if constexpr (std::is_same_v<T, cardano::pool_unreg>) {
-                                _state.retire_pool(u.pool_id, u.epoch);
-                            } else if constexpr (std::is_same_v<T, cardano::param_update_proposal>) {
-                                _state.propose_update(upd.slot, u);
-                            } else if constexpr (std::is_same_v<T, cardano::param_update_vote>) {
-                                _state.proposal_vote(upd.slot, u);
-                            } else if constexpr (std::is_same_v<T, index::timed_update::collected_collateral_input>) {
-                                collected_collateral.emplace_back(u.tx_hash, u.txo_idx);
-                            } else if constexpr (std::is_same_v<T, index::timed_update::collected_collateral_refund>) {
-                                logger::debug("refunded fees from refunded collateral {}", u.refund);
-                                _state.sub_fees(u.refund);
-                            } else if constexpr (std::is_same_v<T, index::timed_update::gen_deleg>) {
-                                _state.genesis_deleg_update(u.hash, u.pool_id, u.vrf_vkey);
-                            } else {
-                                throw error("unsupported update: {}", typeid(T).name());
-                            }
-                        }, upd.update);
-                    }
-                }
-
-                {
-                    timer td { fmt::format("validator epoch: {} process stake delta updates", e) };
-                    _apply_utxo_updates(e, last_offset, "utxo", dynamic_cast<index::utxo::indexer &>(*_cr.indexer().indexers().at("utxo")).chunks(slots));
-                    for (const auto &txo_id: collected_collateral) {
-                        const auto txo_data = _state.utxo_find(txo_id);
-                        if (!txo_data) [[unlikely]]
-                            throw error("epoch {}: cannot find data about a TXO used as a collateral input: {}", e, txo_id);
-                        logger::debug("fees from used collateral {}: {}", txo_id, txo_data->coin);
-                        _state.add_fees(txo_data->coin);
-                        if (const cardano::address addr { txo_data->address }; addr.has_stake_id_hybrid()) [[likely]]
-                            _state.update_stake_id_hybrid(addr.stake_id_hybrid(), -static_cast<int64_t>(txo_data->coin));
-                        _state.utxo_del(txo_id);
-                    }
+                    updates_t updates {};
+                    min_epoch_offset = _gather_updates<index::block_fees::indexer>(updates.blocks, "block-fees", slots, last_offset);
+                    if (!min_epoch_offset)
+                        return;
+                    _gather_updates<index::timed_update::indexer>(updates.timed, "timed-update", slots, last_offset);
+                    _load_utxo_updates(updates, e, last_offset, "utxo", dynamic_cast<index::utxo::indexer &>(*_cr.indexer().indexers().at("utxo")).chunks(slots));
+                    _state.process_updates(std::move(updates));
                 }
 
                 const auto vrf_chunks = dynamic_cast<index::vrf::indexer &>(*_cr.indexer().indexers().at("vrf")).chunks(slots);
                 if (!vrf_chunks.empty())
                     _process_vrf_update_chunks(*min_epoch_offset, vrf_chunks, fast);
-                _state.compute_rewards_if_ready();
+
                 if (_cr.tx()->target && _state.params().protocol_ver.major >= 3) {
                     if (const auto target_slot = _cr.make_slot(_cr.tx()->target->slot); target_slot.epoch() >= 2) {
                         const auto target_epoch_start = cardano::slot::from_epoch(target_slot.epoch(), _cr.config());
@@ -850,7 +787,7 @@ namespace daedalus_turbo::validator {
         return _impl->tip();
     }
 
-    const state &incremental::state() const
+    const cardano::ledger::state &incremental::state() const
     {
         return _impl->state();
     }

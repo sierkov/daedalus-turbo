@@ -14,21 +14,21 @@
 #include <dt/cardano/conway.hpp>
 
 namespace daedalus_turbo::cardano {
-    inline std::unique_ptr<tx> make_tx(const cbor_value &tx, const block_base &blk, const cbor::value *wit=nullptr, const size_t idx=0)
+    inline std::unique_ptr<tx> make_tx(const cbor_value &tx, const block_base &blk, const size_t idx=0, const cbor::value *wit=nullptr, const cbor::value *aux=nullptr)
     {
         switch (blk.era()) {
         case 1:
-            return std::make_unique<byron::tx>(tx, blk, wit, idx);
+            return std::make_unique<byron::tx>(tx, blk, idx, wit, aux);
         case 2:
         case 3:
-            return std::make_unique<shelley::tx>(tx, blk, wit, idx);
+            return std::make_unique<shelley::tx>(tx, blk, idx, wit, aux);
         case 4:
         case 5:
-            return std::make_unique<alonzo::tx>(tx, blk, wit, idx);
+            return std::make_unique<alonzo::tx>(tx, blk, idx, wit, aux);
         case 6:
-            return std::make_unique<babbage::tx>(tx, blk, wit, idx);
+            return std::make_unique<babbage::tx>(tx, blk, idx, wit, aux);
         case 7:
-            return std::make_unique<conway::tx>(tx, blk, wit, idx);
+            return std::make_unique<conway::tx>(tx, blk, idx, wit, aux);
         default:
             throw cardano_error("unsupported era {}!", blk.era());
         }

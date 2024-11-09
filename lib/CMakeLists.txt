@@ -1,5 +1,5 @@
 set(Boost_NO_WARN_NEW_VERSIONS 1)
-find_package(Boost 1.83 REQUIRED COMPONENTS json url coroutine)
+find_package(Boost 1.83 REQUIRED COMPONENTS json url coroutine thread)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(FMT REQUIRED fmt>=8.1.1)
 pkg_check_modules(SODIUM REQUIRED libsodium>=1.0.18)
@@ -12,7 +12,7 @@ list(FILTER LIB_SRCS EXCLUDE REGEX "\\.bench\\.cpp$")
 list(FILTER LIB_SRCS EXCLUDE REGEX "\\.fuzz\\.cpp$")
 add_library(lib OBJECT ${LIB_SRCS})
 target_include_directories(lib PUBLIC .)
-target_link_libraries(lib PUBLIC Boost::json Boost::coroutine Boost::url
+target_link_libraries(lib PUBLIC Boost::json Boost::coroutine Boost::url Boost::thread
         ${Boost_LIBRARIES}
         ${FMT_LIBRARIES}
         ${SECP256K1_LIBRARY_PATH}

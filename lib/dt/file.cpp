@@ -11,6 +11,17 @@ namespace daedalus_turbo::file {
         path_list paths {};
         for (auto &entry: std::filesystem::recursive_directory_iterator(dir)) {
             if (entry.is_regular_file() && entry.path().extension().string() == ext)
+                paths.emplace_back(entry.path());
+        }
+        std::sort(paths.begin(), paths.end());
+        return paths;
+    }
+
+    path_list_str files_with_ext_str(const std::string_view &dir, const std::string_view &ext)
+    {
+        path_list_str paths {};
+        for (auto &entry: std::filesystem::recursive_directory_iterator(dir)) {
+            if (entry.is_regular_file() && entry.path().extension().string() == ext)
                 paths.emplace_back(entry.path().string());
         }
         std::sort(paths.begin(), paths.end());

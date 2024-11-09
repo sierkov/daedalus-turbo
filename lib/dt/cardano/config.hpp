@@ -38,6 +38,8 @@ namespace daedalus_turbo::cardano {
         const config_json conway_genesis;
         const block_hash conway_genesis_hash;
         const plutus_cost_models plutus_all_cost_models;
+        const pool_voting_thresholds_t conway_pool_voting_thresholds;
+        const drep_voting_thresholds_t conway_drep_voting_thresholds;
 
         static const config &get();
         explicit config(const configs &cfg=configs_dir::get());

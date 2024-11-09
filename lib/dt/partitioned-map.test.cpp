@@ -5,23 +5,24 @@
 
 #include <dt/partitioned-map.hpp>
 #include <dt/test.hpp>
-#include <dt/validator/types.hpp>
+#include <dt/cardano/ledger/types.hpp>
 
 using namespace daedalus_turbo;
+using namespace cardano::ledger;
 
 suite partitioned_map_suite = [] {
     "partitioned_map"_test = [] {
-        using my_pmap = partitioned_map<cardano::stake_ident, validator::reward_update_list>;
+        using my_pmap = partitioned_map<cardano::stake_ident, reward_update_list>;
         my_pmap pm {};
         expect(pm.empty());
         my_pmap::partition_type part {};
-        cardano::stake_ident stake1 { cardano::key_hash::from_hex("42FBE3C7DE5853FC74DA3C27DC583E7A660CCFF4042FBF12F223E53A") };
-        cardano::stake_ident stake2 { cardano::key_hash::from_hex("00000000000000000000000000000000000000000000000000000000") };
-        cardano::stake_ident stake3 { cardano::key_hash::from_hex("22222222222222222222222222222222222222222222222222222222") };
-        cardano::stake_ident stake_missing { cardano::key_hash::from_hex("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA") };
+        cardano::stake_ident stake1 { cardano::key_hash::from_hex("42FBE3C7DE5853FC74DA3C27DC583E7A660CCFF4042FBF12F223E53A"), false };
+        cardano::stake_ident stake2 { cardano::key_hash::from_hex("00000000000000000000000000000000000000000000000000000000"), false };
+        cardano::stake_ident stake3 { cardano::key_hash::from_hex("22222222222222222222222222222222222222222222222222222222"), false };
+        cardano::stake_ident stake_missing { cardano::key_hash::from_hex("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"), false };
         auto pool1 = cardano::pool_hash::from_hex("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         auto &rl = part[stake1];
-        rl.emplace(validator::reward_type::member, pool1, 12345);
+        rl.emplace(reward_type::member, pool1, 12345);
         pm.partition(pm.partition_idx(stake1), std::move(part));
         expect(!pm.empty());
         expect(pm.size() == 1_ul);

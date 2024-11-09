@@ -2,8 +2,10 @@
 * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
+
 #include <dt/base64.hpp>
 #include <dt/cardano/config.hpp>
+#include <dt/plutus/costs.hpp>
 
 namespace daedalus_turbo::cardano {
     const config &config::get()
@@ -67,201 +69,39 @@ namespace daedalus_turbo::cardano {
 
     static plutus_cost_model _make_plutus_v1_default_cost_model()
     {
+        const auto &names = plutus::costs::cost_arg_names_v1();
+        const auto &d_args = plutus::costs::default_cost_args_v1();
         plutus_cost_model costs {};
-        static vector<std::string> names {
-            "addInteger-cpu-arguments-intercept",
-            "addInteger-cpu-arguments-slope",
-            "addInteger-memory-arguments-intercept",
-            "addInteger-memory-arguments-slope",
-            "appendByteString-cpu-arguments-intercept",
-            "appendByteString-cpu-arguments-slope",
-            "appendByteString-memory-arguments-intercept",
-            "appendByteString-memory-arguments-slope",
-            "appendString-cpu-arguments-intercept",
-            "appendString-cpu-arguments-slope",
-            "appendString-memory-arguments-intercept",
-            "appendString-memory-arguments-slope",
-            "bData-cpu-arguments",
-            "bData-memory-arguments",
-            "blake2b-cpu-arguments-intercept",
-            "blake2b-cpu-arguments-slope",
-            "blake2b-memory-arguments",
-            "cekApplyCost-exBudgetCPU",
-            "cekApplyCost-exBudgetMemory",
-            "cekBuiltinCost-exBudgetCPU",
-            "cekBuiltinCost-exBudgetMemory",
-            "cekConstCost-exBudgetCPU",
-            "cekConstCost-exBudgetMemory",
-            "cekDelayCost-exBudgetCPU",
-            "cekDelayCost-exBudgetMemory",
-            "cekForceCost-exBudgetCPU",
-            "cekForceCost-exBudgetMemory",
-            "cekLamCost-exBudgetCPU",
-            "cekLamCost-exBudgetMemory",
-            "cekStartupCost-exBudgetCPU",
-            "cekStartupCost-exBudgetMemory",
-            "cekVarCost-exBudgetCPU",
-            "cekVarCost-exBudgetMemory",
-            "chooseData-cpu-arguments",
-            "chooseData-memory-arguments",
-            "chooseList-cpu-arguments",
-            "chooseList-memory-arguments",
-            "chooseUnit-cpu-arguments",
-            "chooseUnit-memory-arguments",
-            "consByteString-cpu-arguments-intercept",
-            "consByteString-cpu-arguments-slope",
-            "consByteString-memory-arguments-intercept",
-            "consByteString-memory-arguments-slope",
-            "constrData-cpu-arguments",
-            "constrData-memory-arguments",
-            "decodeUtf8-cpu-arguments-intercept",
-            "decodeUtf8-cpu-arguments-slope",
-            "decodeUtf8-memory-arguments-intercept",
-            "decodeUtf8-memory-arguments-slope",
-            "divideInteger-cpu-arguments-constant",
-            "divideInteger-cpu-arguments-model-arguments-intercept",
-            "divideInteger-cpu-arguments-model-arguments-slope",
-            "divideInteger-memory-arguments-intercept",
-            "divideInteger-memory-arguments-minimum",
-            "divideInteger-memory-arguments-slope",
-            "encodeUtf8-cpu-arguments-intercept",
-            "encodeUtf8-cpu-arguments-slope",
-            "encodeUtf8-memory-arguments-intercept",
-            "encodeUtf8-memory-arguments-slope",
-            "equalsByteString-cpu-arguments-constant",
-            "equalsByteString-cpu-arguments-intercept",
-            "equalsByteString-cpu-arguments-slope",
-            "equalsByteString-memory-arguments",
-            "equalsData-cpu-arguments-intercept",
-            "equalsData-cpu-arguments-slope",
-            "equalsData-memory-arguments",
-            "equalsInteger-cpu-arguments-intercept",
-            "equalsInteger-cpu-arguments-slope",
-            "equalsInteger-memory-arguments",
-            "equalsString-cpu-arguments-constant",
-            "equalsString-cpu-arguments-intercept",
-            "equalsString-cpu-arguments-slope",
-            "equalsString-memory-arguments",
-            "fstPair-cpu-arguments",
-            "fstPair-memory-arguments",
-            "headList-cpu-arguments",
-            "headList-memory-arguments",
-            "iData-cpu-arguments",
-            "iData-memory-arguments",
-            "ifThenElse-cpu-arguments",
-            "ifThenElse-memory-arguments",
-            "indexByteString-cpu-arguments",
-            "indexByteString-memory-arguments",
-            "lengthOfByteString-cpu-arguments",
-            "lengthOfByteString-memory-arguments",
-            "lessThanByteString-cpu-arguments-intercept",
-            "lessThanByteString-cpu-arguments-slope",
-            "lessThanByteString-memory-arguments",
-            "lessThanEqualsByteString-cpu-arguments-intercept",
-            "lessThanEqualsByteString-cpu-arguments-slope",
-            "lessThanEqualsByteString-memory-arguments",
-            "lessThanEqualsInteger-cpu-arguments-intercept",
-            "lessThanEqualsInteger-cpu-arguments-slope",
-            "lessThanEqualsInteger-memory-arguments",
-            "lessThanInteger-cpu-arguments-intercept",
-            "lessThanInteger-cpu-arguments-slope",
-            "lessThanInteger-memory-arguments",
-            "listData-cpu-arguments",
-            "listData-memory-arguments",
-            "mapData-cpu-arguments",
-            "mapData-memory-arguments",
-            "mkCons-cpu-arguments",
-            "mkCons-memory-arguments",
-            "mkNilData-cpu-arguments",
-            "mkNilData-memory-arguments",
-            "mkNilPairData-cpu-arguments",
-            "mkNilPairData-memory-arguments",
-            "mkPairData-cpu-arguments",
-            "mkPairData-memory-arguments",
-            "modInteger-cpu-arguments-constant",
-            "modInteger-cpu-arguments-model-arguments-intercept",
-            "modInteger-cpu-arguments-model-arguments-slope",
-            "modInteger-memory-arguments-intercept",
-            "modInteger-memory-arguments-minimum",
-            "modInteger-memory-arguments-slope",
-            "multiplyInteger-cpu-arguments-intercept",
-            "multiplyInteger-cpu-arguments-slope",
-            "multiplyInteger-memory-arguments-intercept",
-            "multiplyInteger-memory-arguments-slope",
-            "nullList-cpu-arguments",
-            "nullList-memory-arguments",
-            "quotientInteger-cpu-arguments-constant",
-            "quotientInteger-cpu-arguments-model-arguments-intercept",
-            "quotientInteger-cpu-arguments-model-arguments-slope",
-            "quotientInteger-memory-arguments-intercept",
-            "quotientInteger-memory-arguments-minimum",
-            "quotientInteger-memory-arguments-slope",
-            "remainderInteger-cpu-arguments-constant",
-            "remainderInteger-cpu-arguments-model-arguments-intercept",
-            "remainderInteger-cpu-arguments-model-arguments-slope",
-            "remainderInteger-memory-arguments-intercept",
-            "remainderInteger-memory-arguments-minimum",
-            "remainderInteger-memory-arguments-slope",
-            "sha2_256-cpu-arguments-intercept",
-            "sha2_256-cpu-arguments-slope",
-            "sha2_256-memory-arguments",
-            "sha3_256-cpu-arguments-intercept",
-            "sha3_256-cpu-arguments-slope",
-            "sha3_256-memory-arguments",
-            "sliceByteString-cpu-arguments-intercept",
-            "sliceByteString-cpu-arguments-slope",
-            "sliceByteString-memory-arguments-intercept",
-            "sliceByteString-memory-arguments-slope",
-            "sndPair-cpu-arguments",
-            "sndPair-memory-arguments",
-            "subtractInteger-cpu-arguments-intercept",
-            "subtractInteger-cpu-arguments-slope",
-            "subtractInteger-memory-arguments-intercept",
-            "subtractInteger-memory-arguments-slope",
-            "tailList-cpu-arguments",
-            "tailList-memory-arguments",
-            "trace-cpu-arguments",
-            "trace-memory-arguments",
-            "unBData-cpu-arguments",
-            "unBData-memory-arguments",
-            "unConstrData-cpu-arguments",
-            "unConstrData-memory-arguments",
-            "unIData-cpu-arguments",
-            "unIData-memory-arguments",
-            "unListData-cpu-arguments",
-            "unListData-memory-arguments",
-            "unMapData-cpu-arguments",
-            "unMapData-memory-arguments",
-            "verifySignature-cpu-arguments-intercept",
-            "verifySignature-cpu-arguments-slope",
-            "verifySignature-memory-arguments"
-        };
         for (const auto &name: names)
-            costs.emplace_back(name, 0);
+            costs.emplace_back(name, std::stoll(d_args.at(plutus::costs::canonical_arg_name(name))));
+        if (costs.size() != 166) [[unlikely]]
+            throw error("internal error: plutus v1 default costs are invalid!");
         costs.sort();
         return costs;
     }
 
-    static plutus_cost_model _make_plutus_v2_default_cost_model(const plutus_cost_model &v1_costs)
+    static plutus_cost_model _make_plutus_v2_default_cost_model()
     {
-        plutus_cost_model costs = v1_costs;
-        costs.emplace_back("serialiseData-cpu-arguments-intercept", 1159724);
-        costs.emplace_back("serialiseData-cpu-arguments-slope", 392670);
-        costs.emplace_back("serialiseData-memory-arguments-intercept", 0);
-        costs.emplace_back("serialiseData-memory-arguments-slope", 2);
-        costs.emplace_back("verifyEcdsaSecp256k1Signature-cpu-arguments", 35892428);
-        costs.emplace_back("verifyEcdsaSecp256k1Signature-memory-arguments", 10);
-        costs.emplace_back("verifySchnorrSecp256k1Signature-cpu-arguments-intercept", 38887044);
-        costs.emplace_back("verifySchnorrSecp256k1Signature-cpu-arguments-slope", 32947);
-        costs.emplace_back("verifySchnorrSecp256k1Signature-memory-arguments", 10);
+        const auto &names = plutus::costs::cost_arg_names_v2();
+        const auto &d_args = plutus::costs::default_cost_args_v2();
+        plutus_cost_model costs {};
+        for (const auto &name: names)
+            costs.emplace_back(name, std::stoll(d_args.at(plutus::costs::canonical_arg_name(name))));
+        if (costs.size() != 175) [[unlikely]]
+            throw error("internal error: plutus v2 default costs are invalid!");
         costs.sort();
         return costs;
     }
 
-    static plutus_cost_model _make_plutus_v3_default_cost_model(const plutus_cost_model &v2_costs)
+    static plutus_cost_model _make_plutus_v3_default_cost_model()
     {
-        plutus_cost_model costs = v2_costs;
-        // todo: add the defaults
+        const auto &names = plutus::costs::cost_arg_names_v3();
+        const auto &d_args = plutus::costs::default_cost_args_v3();
+        plutus_cost_model costs {};
+        for (const auto &name: names)
+            costs.emplace_back(name, std::stoll(d_args.at(plutus::costs::canonical_arg_name(name))));
+        if (costs.size() != 251) [[unlikely]]
+            throw error("internal error: plutus v3 default costs are invalid!");
         costs.sort();
         return costs;
     }
@@ -269,8 +109,8 @@ namespace daedalus_turbo::cardano {
     plutus_cost_models config::_prep_plutus_cost_models(const daedalus_turbo::config &genesis)
     {
         static plutus_cost_model v1_defaults = _make_plutus_v1_default_cost_model();
-        static plutus_cost_model v2_defaults = _make_plutus_v2_default_cost_model(v1_defaults);
-        static plutus_cost_model v3_defaults = _make_plutus_v3_default_cost_model(v2_defaults);
+        static plutus_cost_model v2_defaults = _make_plutus_v2_default_cost_model();
+        static plutus_cost_model v3_defaults = _make_plutus_v3_default_cost_model();
         plutus_cost_models res {};
         const auto &cfg_models = genesis.at("costModels").as_object();
         const auto import = [&](const std::string &param, const plutus_cost_model &defaults) {
@@ -309,7 +149,9 @@ namespace daedalus_turbo::cardano {
         alonzo_genesis_hash { _verify_hash(cfg.at("config").at("AlonzoGenesisHash").as_string(), alonzo_genesis) },
         conway_genesis { cfg.at(std::filesystem::path { json::value_to<std::string>(cfg.at("config").at("ConwayGenesisFile")) }.stem().string()) },
         conway_genesis_hash { _verify_hash(cfg.at("config").at("ConwayGenesisHash").as_string(), conway_genesis) },
-        plutus_all_cost_models { _prep_plutus_cost_models(alonzo_genesis) }
+        plutus_all_cost_models { _prep_plutus_cost_models(alonzo_genesis) },
+        conway_pool_voting_thresholds { conway_genesis.at("poolVotingThresholds").as_object() },
+        conway_drep_voting_thresholds { conway_genesis.at("dRepVotingThresholds").as_object() }
     {
         static const auto mainnet_hash = uint8_vector::from_hex("15a199f895e461ec0ffc6dd4e4028af28a492ab4e806d39cb674c88f7643ef62");
         if (conway_genesis_hash == mainnet_hash)

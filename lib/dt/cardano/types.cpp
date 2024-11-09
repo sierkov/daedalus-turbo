@@ -6,10 +6,287 @@
 #include <dt/base64.hpp>
 #include <dt/cardano/types.hpp>
 #include <dt/cardano/config.hpp>
+#include <dt/crypto/crc32.hpp>
+#include <dt/crypto/sha3.hpp>
 #include <dt/cbor/zero.hpp>
+#include <dt/mutex.hpp>
+#include <dt/plutus/costs.hpp>
 
 namespace daedalus_turbo::cardano {
     using namespace crypto;
+
+    void address::to_cbor(cbor::encoder &enc) const
+    {
+        if (is_byron() && _bytes[0] == 0x83) {
+            enc.bytes(byron_crc_protected(bytes()));
+        } else {
+            enc.bytes(bytes());
+        }
+    }
+
+    cert_loc_t::cert_loc_t(const uint64_t s, const uint64_t t, const uint64_t c):
+        slot { s }, tx_idx { narrow_cast<uint32_t>(t) }, cert_idx { narrow_cast<uint32_t>(c) }
+    {
+    }
+
+    stake_pointer::stake_pointer(const cbor::value &v):
+        cert_loc_t { v.at(0).uint(), v.at(1).uint(), v.at(2).uint() }
+    {
+    }
+
+    void stake_pointer::to_cbor(cbor::encoder &enc) const
+    {
+        enc.array(3).uint(slot).uint(tx_idx).uint(cert_idx);
+    }
+
+    credential_t::credential_t(const key_hash &hash_, const bool script_):
+        hash { hash_ }, script { script_ }
+    {
+    }
+
+    credential_t::credential_t(const cbor::value &v):
+        hash { v.at(1).buf() }, script { v.at(0).uint() == 1 }
+    {
+    }
+
+    credential_t::credential_t(const std::string_view s)
+    {
+        const auto pos = s.find('-');
+        if (pos == std::string::npos) [[unlikely]]
+            throw error("invalid credential format: {}", s);
+        const auto typ = s.substr(0, pos);
+        const auto hex = s.substr(pos + 1);
+        if (typ == "keyHash") {
+            script = false;
+        } else if (typ == "scriptHash") {
+            script = true;
+        } else {
+            throw error("invalid credential format: {}", s);
+        }
+        hash = key_hash::from_hex(hex);
+    }
+
+    void credential_t::to_cbor(cbor::encoder &enc) const
+    {
+        enc.array(2).uint(script ? 1 : 0).bytes(hash);
+    }
+
+    pool_voting_thresholds_t::pool_voting_thresholds_t(const json::value &j):
+        comittee_normal { j.at("committeeNormal") },
+        comittee_no_confidence { j.at("committeeNoConfidence") },
+        hard_fork_initiation { j.at("hardForkInitiation") },
+        motion_no_confidence { j.at("motionNoConfidence") },
+        pp_secirity_group { j.at("ppSecurityGroup") }
+    {
+    }
+
+    void pool_voting_thresholds_t::to_cbor(cbor::encoder &enc) const
+    {
+        enc.array(5)
+            .rational(comittee_normal)
+            .rational(comittee_no_confidence)
+            .rational(hard_fork_initiation)
+            .rational(motion_no_confidence)
+            .rational(pp_secirity_group);
+    }
+
+    drep_voting_thresholds_t::drep_voting_thresholds_t(const json::value &j):
+        motion_no_confidence { j.at("motionNoConfidence") },
+        committee_normal { j.at("committeeNormal") },
+        committee_no_confidence { j.at("committeeNoConfidence") },
+        update_to_constitution { j.at("updateToConstitution") },
+        hard_fork_initiation { j.at("hardForkInitiation") },
+        pp_network_group { j.at("ppNetworkGroup") },
+        pp_economic_group { j.at("ppEconomicGroup") },
+        pp_technical_group { j.at("ppTechnicalGroup") },
+        pp_gov_group { j.at("ppGovGroup") },
+        treasury_withdrawal { j.at("treasuryWithdrawal") }
+    {
+    }
+
+    void drep_voting_thresholds_t::to_cbor(cbor::encoder &enc) const
+    {
+        enc.array(10)
+            .rational(motion_no_confidence)
+            .rational(committee_normal)
+            .rational(committee_no_confidence)
+            .rational(update_to_constitution)
+            .rational(hard_fork_initiation)
+            .rational(pp_network_group)
+            .rational(pp_economic_group)
+            .rational(pp_technical_group)
+            .rational(pp_gov_group)
+            .rational(treasury_withdrawal);
+    }
+
+    void plutus_cost_models::to_cbor(cbor::encoder &enc) const
+    {
+        size_t cnt = 1;
+        if (!v1) [[unlikely]]
+            throw error("v1 plutus cost model must be defined!");
+        if (v2)
+            ++cnt;
+        if (v3)
+            ++cnt;
+        enc.map(cnt);
+        enc.uint(0);
+        enc.array_compact(v1->size(), [&] {
+            for (const auto &[name, cost]: *v1)
+                enc.uint(cost);
+        });
+        if (v2) {
+            enc.uint(1);
+            enc.array_compact(v2->size(), [&] {
+                for (const auto &[name, cost]: *v2)
+                    enc.uint(cost);
+            });
+        }
+        if (v3) {
+            enc.uint(2);
+            enc.array_compact(v3->size(), [&] {
+                for (const auto &[name, cost]: *v3) {
+                    if (cost >= 0)
+                        enc.uint(cost);
+                    else
+                        enc.nint(-(cost + 1));
+                }
+            });
+        }
+    }
+
+    void slot::to_cbor(cbor::encoder &enc) const
+    {
+        enc.array(3)
+            .bigint(cpp_int { unixtime() - _cfg.byron_start_time } * 1'000'000'000'000)
+            .uint(_slot)
+            .uint(epoch());
+    }
+
+    static void assets_to_cbor(cbor::encoder &enc, const tx_out_data &data)
+    {
+        if (data.assets) {
+            enc.array(2);
+            enc.uint(data.coin);
+            enc.raw_cbor(*data.assets);
+        } else {
+            enc.uint(data.coin);
+        }
+    }
+
+    void tx_out_data::to_cbor(cbor::encoder &enc) const
+    {
+        if (script_ref || (datum && datum->index() != 0)) {
+            enc.map(2 + (datum ? 1 : 0) + (script_ref ? 1 : 0));
+            enc.uint(0);
+            cardano::address { address }.to_cbor(enc);
+            enc.uint(1);
+            assets_to_cbor(enc, *this);
+            if (datum) {
+                enc.uint(2);
+                enc.array(2);
+                switch (datum->index()) {
+                    case 0: {
+                        enc.uint(0);
+                        enc.bytes(std::get<datum_hash>(*datum));
+                        break;
+                    }
+                    case 1: {
+                        enc.uint(1);
+                        enc.tag(24);
+                        enc.bytes(std::get<uint8_vector>(*datum));
+                        break;
+                    }
+                    default:
+                        throw error("unsupported tx_out_data::datum_option_type index: {}", datum->index());
+                }
+            }
+            if (script_ref) {
+                enc.uint(3);
+                enc.tag(24);
+                enc.bytes(*script_ref);
+            }
+        } else {
+            enc.array(2 + (datum ? 1 : 0));
+            cardano::address { address }.to_cbor(enc);
+            assets_to_cbor(enc, *this);
+            if (datum)
+                enc.bytes(std::get<datum_hash>(*datum));
+        }
+    }
+
+    plutus_cost_model plutus_cost_model::from_cbor(const plutus_cost_model &orig, const cbor_array &data)
+    {
+        if (orig.size() != data.size())
+            throw error("was expecting an array with {} elements but got {}", orig.size(), data.size());
+        plutus_cost_model res {};
+        res.reserve(orig.size());
+        for (size_t i = 0; i < orig.size(); ++i) {
+            const auto &v = data.at(i);
+            if (v.type == CBOR_UINT)
+                res.emplace_back(orig.storage().at(i).first, narrow_cast<int64_t>(v.uint()));
+            else
+                res.emplace_back(orig.storage().at(i).first, -narrow_cast<int64_t>(v.nint()));
+        }
+        return res;
+    }
+
+    plutus_cost_model plutus_cost_model::from_json(const plutus_cost_model &orig, const json::value &data)
+    {
+        plutus_cost_model res {};
+        res.reserve(orig.size());
+        if (data.is_object()) {
+            const auto &data_obj = data.as_object();
+            if (orig.size() != data_obj.size())
+                throw error("was expecting an array with {} elements but got {}", orig.size(), data_obj.size());
+            for (size_t i = 0; i < orig.size(); ++i) {
+                const auto &key = orig.storage().at(i).first;
+                auto it = data_obj.find(key);
+                if (it == data_obj.end())
+                    it = data_obj.find(plutus::costs::v1_arg_name(key));
+                if (it == data_obj.end())
+                    throw error("missing required cost model key: {}", key);
+                res.emplace_back(key, json::value_to<int64_t>(it->value()));
+            }
+        } else if (data.is_array()) {
+            const auto &data_arr = data.as_array();
+            if (orig.size() != data_arr.size())
+                throw error("was expecting an array with {} elements but got {}", orig.size(), data_arr.size());
+            for (size_t i = 0; i < orig.size(); ++i) {
+                const auto &key = orig.storage().at(i).first;
+                res.emplace_back(key, json::value_to<int64_t>(data_arr[i]));
+            }
+        } else {
+            throw error("an unsupported json value representing a cost model: {}", json::serialize_pretty(data));
+        }
+        return res;
+    }
+
+    void plutus_cost_model::update(const plutus_cost_model &src)
+    {
+        for (auto &item: _data) {
+            if (const auto it = src.find(item.first); it != src.end())
+                item.second = it->second;
+        }
+    }
+
+    plutus_cost_model::diff_type plutus_cost_model::diff(const plutus_cost_model &o) const
+    {
+        diff_type m {};
+        for (const auto &[k, v]: *this) {
+            const auto it = o.find(k);
+            if (it == o.end()) {
+                m.try_emplace(k, v, std::optional<int64_t> {});
+            } else if (it->second != v) {
+                m.try_emplace(k, v, it->second);
+            }
+        }
+        for (const auto &[k, v]: o) {
+            const auto it = find(k);
+            if (it == o.end())
+                m.try_emplace(k, std::optional<int64_t> {}, v);
+        }
+        return m;
+    }
 
     slot slot::from_time(const std::chrono::time_point<std::chrono::system_clock> &tp, const cardano::config &cfg)
     {
@@ -238,6 +515,68 @@ namespace daedalus_turbo::cardano {
         if (txo.script_ref)
             res.script_ref.emplace(txo.script_ref->tag().second->buf());
         return res;
+    }
+
+    script_info script_info::from_cbor(const buffer bytes)
+    {
+        auto it = cbor::zero::parse(bytes).array();
+        const auto id = it.next();
+        const auto data = it.next();
+        switch (const auto s_typ = id.uint(); s_typ) {
+            case 0: return { script_type::native, data.raw_span() };
+            case 1: return { script_type::plutus_v1, data.bytes() };
+            case 2: return { script_type::plutus_v2, data.bytes() };
+            case 3: return { script_type::plutus_v3, data.bytes() };
+            default: throw error("unsupported script_type in script_ref: {}", s_typ);
+        }
+    }
+
+    ex_units ex_units::from_cbor(const cbor::value &v)
+    {
+        const auto &items = v.array();
+        return { items.at(0).uint(), items.at(1).uint() };
+    }
+
+    drep_t::drep_t(const type_t &t): typ { t }
+    {
+        if (typ == credential) [[unlikely]]
+            throw error("credential-based drep must be initialized only with a defined credential!");
+    }
+
+    drep_t::drep_t(const credential_t &c): typ { credential }, cred { c }
+    {
+    }
+
+    drep_t::drep_t(const cbor::value &v)
+    {
+        switch (const auto dtyp = v.at(0).uint(); dtyp) {
+            case 0:
+                typ = credential;
+                cred.emplace(v.at(1).buf(), false);
+                break;
+            case 1:
+                typ = credential;
+                cred.emplace(v.at(1).buf(), true);
+                break;
+            case 2: typ = abstain; break;
+            case 3: typ = no_confidence; break;
+            default: throw error("unsupported drep type: {}", dtyp);
+        }
+    }
+
+    void drep_t::to_cbor(cbor::encoder &enc) const
+    {
+        switch (typ) {
+            case abstain: enc.array(1).uint(2); break;
+            case no_confidence: enc.array(1).uint(3); break;
+            case credential: {
+                const auto &c = cred.value();
+                enc.array(2).uint(c.script ? 1 : 0);
+                enc.bytes(c.hash);
+                break;
+            }
+            default: throw error("unsupported drep type: {}", static_cast<int>(typ));
+        }
     }
 
     std::tuple<uint8_t, size_t> from_haskell_char(const std::string_view sv)

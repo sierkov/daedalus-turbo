@@ -111,11 +111,6 @@ namespace daedalus_turbo {
             return type_name(type);
         }
 
-        const cbor_buffer data_buf() const
-        {
-            return cbor_buffer(data, size);
-        }
-
         inline bool operator<(const cbor_value &aVal) const
         {
             size_t minSize = size;
@@ -220,11 +215,10 @@ namespace daedalus_turbo {
             content = std::move(val);
         }
 
-        inline const std::span<const uint8_t> raw_span() const
+        inline buffer raw_span() const
         {
-            return std::span<const uint8_t>(data, size);
+            return { data, size };
         }
-
     private:
 
         template<typename T>

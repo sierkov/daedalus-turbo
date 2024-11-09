@@ -8,103 +8,12 @@
 #include <dt/plutus/builtins.hpp>
 
 namespace daedalus_turbo::plutus {
-    struct builtin_info {
-        size_t num_args;
-        builtin_any func;
-        std::string name;
-        size_t polymorphic_args = 0;
-    };
-    using builtin_map = map<builtin_tag, const builtin_info>;
-
-    const builtin_map &known_builtins()
-    {
-        static builtin_map info_map {};
-        if (info_map.empty()) [[unlikely]] {
-            info_map.try_emplace(builtin_tag::add_integer, 2, builtins::add_integer, "addInteger");
-            info_map.try_emplace(builtin_tag::subtract_integer, 2, builtins::subtract_integer, "subtractInteger");
-            info_map.try_emplace(builtin_tag::multiply_integer, 2, builtins::multiply_integer, "multiplyInteger");
-            info_map.try_emplace(builtin_tag::divide_integer, 2, builtins::divide_integer, "divideInteger");
-            info_map.try_emplace(builtin_tag::quotient_integer, 2, builtins::quotient_integer, "quotientInteger");
-            info_map.try_emplace(builtin_tag::remainder_integer, 2, builtins::remainder_integer, "remainderInteger");
-            info_map.try_emplace(builtin_tag::mod_integer, 2, builtins::mod_integer, "modInteger");
-            info_map.try_emplace(builtin_tag::equals_integer, 2, builtins::equals_integer, "equalsInteger");
-            info_map.try_emplace(builtin_tag::less_than_integer, 2, builtins::less_than_integer, "lessThanInteger");
-            info_map.try_emplace(builtin_tag::less_than_equals_integer, 2, builtins::less_than_equals_integer, "lessThanEqualsInteger");
-            info_map.try_emplace(builtin_tag::append_byte_string, 2, builtins::append_byte_string,  "appendByteString");
-            info_map.try_emplace(builtin_tag::cons_byte_string, 2, builtins::cons_byte_string,  "consByteString");
-            info_map.try_emplace(builtin_tag::slice_byte_string, 3, builtins::slice_byte_string,  "sliceByteString");
-            info_map.try_emplace(builtin_tag::length_of_byte_string, 1, builtins::length_of_byte_string,  "lengthOfByteString");
-            info_map.try_emplace(builtin_tag::index_byte_string, 2, builtins::index_byte_string, "indexByteString");
-            info_map.try_emplace(builtin_tag::equals_byte_string, 2, builtins::equals_byte_string, "equalsByteString");
-            info_map.try_emplace(builtin_tag::less_than_byte_string, 2, builtins::less_than_byte_string, "lessThanByteString");
-            info_map.try_emplace(builtin_tag::less_than_equals_byte_string, 2, builtins::less_than_equals_byte_string, "lessThanEqualsByteString");
-            info_map.try_emplace(builtin_tag::sha2_256, 1, builtins::sha2_256, "sha2_256");
-            info_map.try_emplace(builtin_tag::sha3_256, 1, builtins::sha3_256, "sha3_256");
-            info_map.try_emplace(builtin_tag::blake2b_256, 1, builtins::blake2b_256, "blake2b_256");
-            info_map.try_emplace(builtin_tag::verify_ed25519_signature, 3, builtins::verify_ed25519_signature, "verifyEd25519Signature");
-            info_map.try_emplace(builtin_tag::append_string, 2, builtins::append_string, "appendString");
-            info_map.try_emplace(builtin_tag::equals_string, 2, builtins::equals_string, "equalsString");
-            info_map.try_emplace(builtin_tag::encode_utf8, 1, builtins::encode_utf8, "encodeUtf8");
-            info_map.try_emplace(builtin_tag::decode_utf8, 1, builtins::decode_utf8, "decodeUtf8");
-            info_map.try_emplace(builtin_tag::if_then_else, 3, builtins::if_then_else, "ifThenElse", 1);
-            info_map.try_emplace(builtin_tag::choose_unit, 2, builtins::choose_unit, "chooseUnit", 1);
-            info_map.try_emplace(builtin_tag::trace, 2, builtins::trace, "trace", 1);
-            info_map.try_emplace(builtin_tag::fst_pair, 1, builtins::fst_pair, "fstPair", 2);
-            info_map.try_emplace(builtin_tag::snd_pair, 1, builtins::snd_pair, "sndPair", 2);
-            info_map.try_emplace(builtin_tag::choose_list, 3, builtins::choose_list, "chooseList", 2);
-            info_map.try_emplace(builtin_tag::mk_cons, 2, builtins::mk_cons, "mkCons", 1);
-            info_map.try_emplace(builtin_tag::head_list, 1, builtins::head_list, "headList", 1);
-            info_map.try_emplace(builtin_tag::tail_list, 1, builtins::tail_list, "tailList", 1);
-            info_map.try_emplace(builtin_tag::null_list, 1, builtins::null_list, "nullList", 1);
-            info_map.try_emplace(builtin_tag::choose_data, 6, builtins::choose_data, "chooseData", 1);
-            info_map.try_emplace(builtin_tag::constr_data, 2, builtins::constr_data, "constrData");
-            info_map.try_emplace(builtin_tag::map_data, 1, builtins::map_data, "mapData");
-            info_map.try_emplace(builtin_tag::list_data, 1, builtins::list_data, "listData");
-            info_map.try_emplace(builtin_tag::i_data, 1, builtins::i_data, "iData");
-            info_map.try_emplace(builtin_tag::b_data, 1, builtins::b_data, "bData");
-            info_map.try_emplace(builtin_tag::un_constr_data, 1, builtins::un_constr_data, "unConstrData");
-            info_map.try_emplace(builtin_tag::un_map_data, 1, builtins::un_map_data, "unMapData");
-            info_map.try_emplace(builtin_tag::un_list_data, 1, builtins::un_list_data, "unListData");
-            info_map.try_emplace(builtin_tag::un_i_data, 1, builtins::un_i_data, "unIData");
-            info_map.try_emplace(builtin_tag::un_b_data, 1, builtins::un_b_data, "unBData");
-            info_map.try_emplace(builtin_tag::equals_data, 2, builtins::equals_data, "equalsData");
-            info_map.try_emplace(builtin_tag::mk_pair_data, 2, builtins::mk_pair_data, "mkPairData");
-            info_map.try_emplace(builtin_tag::mk_nil_data, 1, builtins::mk_nil_data, "mkNilData");
-            info_map.try_emplace(builtin_tag::mk_nil_pair_data, 1, builtins::mk_nil_pair_data, "mkNilPairData");
-            info_map.try_emplace(builtin_tag::serialise_data, 1, builtins::serialize_data, "serialiseData");
-            info_map.try_emplace(builtin_tag::verify_ecdsa_secp_256k1_signature, 3, builtins::verify_ecdsa_secp_256k1_signature, "verifyEcdsaSecp256k1Signature");
-            info_map.try_emplace(builtin_tag::verify_schnorr_secp_256k1_signature, 3, builtins::verify_schnorr_secp_256k1_signature, "verifySchnorrSecp256k1Signature");
-            info_map.try_emplace(builtin_tag::blake2b_224, 1, builtins::blake2b_224, "blake2b_224");
-            info_map.try_emplace(builtin_tag::keccak_256, 1, builtins::keccak_256, "keccak_256");
-            info_map.try_emplace(builtin_tag::integer_to_byte_string, 3, builtins::integer_to_byte_string, "integerToByteString");
-            info_map.try_emplace(builtin_tag::byte_string_to_integer, 2, builtins::byte_string_to_integer, "byteStringToInteger");
-            info_map.try_emplace(builtin_tag::bls12_381_g1_add, 2, builtins::bls12_381_g1_add, "bls12_381_G1_add");
-            info_map.try_emplace(builtin_tag::bls12_381_g1_neg, 1, builtins::bls12_381_g1_neg, "bls12_381_G1_neg");
-            info_map.try_emplace(builtin_tag::bls12_381_g1_scalar_mul, 2, builtins::bls12_381_g1_scalar_mul, "bls12_381_G1_scalarMul");
-            info_map.try_emplace(builtin_tag::bls12_381_g1_equal, 2, builtins::bls12_381_g1_equal, "bls12_381_G1_equal");
-            info_map.try_emplace(builtin_tag::bls12_381_g1_hash_to_group, 2, builtins::bls12_381_g1_hash_to_group, "bls12_381_G1_hashToGroup");
-            info_map.try_emplace(builtin_tag::bls12_381_g1_compress, 1, builtins::bls12_381_g1_compress, "bls12_381_G1_compress");
-            info_map.try_emplace(builtin_tag::bls12_381_g1_uncompress, 1, builtins::bls12_381_g1_uncompress, "bls12_381_G1_uncompress");
-            info_map.try_emplace(builtin_tag::bls12_381_g2_add, 2, builtins::bls12_381_g2_add, "bls12_381_G2_add");
-            info_map.try_emplace(builtin_tag::bls12_381_g2_neg, 1, builtins::bls12_381_g2_neg, "bls12_381_G2_neg");
-            info_map.try_emplace(builtin_tag::bls12_381_g2_scalar_mul, 2, builtins::bls12_381_g2_scalar_mul, "bls12_381_G2_scalarMul");
-            info_map.try_emplace(builtin_tag::bls12_381_g2_equal, 2, builtins::bls12_381_g2_equal, "bls12_381_G2_equal");
-            info_map.try_emplace(builtin_tag::bls12_381_g2_hash_to_group, 2, builtins::bls12_381_g2_hash_to_group, "bls12_381_G2_hashToGroup");
-            info_map.try_emplace(builtin_tag::bls12_381_g2_compress, 1, builtins::bls12_381_g2_compress, "bls12_381_G2_compress");
-            info_map.try_emplace(builtin_tag::bls12_381_g2_uncompress, 1, builtins::bls12_381_g2_uncompress, "bls12_381_G2_uncompress");
-            info_map.try_emplace(builtin_tag::bls12_381_miller_loop, 2, builtins::bls12_381_miller_loop, "bls12_381_millerLoop");
-            info_map.try_emplace(builtin_tag::bls12_381_mul_ml_result, 2, builtins::bls12_381_mul_ml_result, "bls12_381_mulMlResult");
-            info_map.try_emplace(builtin_tag::bls12_381_final_verify, 2, builtins::bls12_381_final_verify, "bls12_381_finalVerify");
-        }
-        return info_map;
-    }
-
-    using builtin_name_map = map<std::string, builtin_tag>;
+    using builtin_name_map = unordered_map<std::string_view, builtin_tag>;
     static const builtin_name_map &builtin_names()
     {
         static builtin_name_map name_map {};
         if (name_map.empty()) [[unlikely]] {
-            const auto &info_map = known_builtins();
+            const auto &info_map = builtins::semantics_v1();
             for (const auto &[tag, info]: info_map) {
                 name_map.try_emplace(info.name, tag);
             }
@@ -112,12 +21,12 @@ namespace daedalus_turbo::plutus {
         return name_map;
     }
 
-    bool builtin_tag_known_name(const std::string &name)
+    bool builtin_tag_known_name(const std::string_view name)
     {
         return builtin_names().contains(name);
     }
 
-    builtin_tag builtin_tag_from_name(const std::string &name)
+    builtin_tag builtin_tag_from_name(const std::string_view name)
     {
         const auto &name_map = builtin_names();
         if (const auto it = name_map.find(name); it != name_map.end()) [[likely]]
@@ -125,9 +34,9 @@ namespace daedalus_turbo::plutus {
         throw error("unknown builtin: {}", name);
     }
 
-    static const builtin_info &_builtin_info(const builtin_tag &tag)
+    static const builtin_info &_builtin_info(const builtin_tag tag)
     {
-        const auto &info_map = known_builtins();
+        const auto &info_map = builtins::semantics_v1();
         if (const auto it = info_map.find(tag); it != info_map.end()) [[likely]] {
             switch (it->second.num_args) {
                 case 1:
@@ -159,12 +68,7 @@ namespace daedalus_turbo::plutus {
         return _builtin_info(tag).num_args;
     }
 
-    builtin_any t_builtin::func() const
-    {
-        return _builtin_info(tag).func;
-    }
-
-    const std::string &t_builtin::name() const
+    std::string_view t_builtin::name() const
     {
         return _builtin_info(tag).name;
     }
@@ -174,51 +78,39 @@ namespace daedalus_turbo::plutus {
         return _builtin_info(tag).polymorphic_args;
     }
 
-    t_builtin t_builtin::from_name(const std::string &name)
+    t_builtin t_builtin::from_name(const std::string_view name)
     {
         return { builtin_tag_from_name(name) };
     }
 
     bool t_delay::operator==(const t_delay &o) const
     {
-        return expr && o.expr && *expr == *o.expr;
+        return *expr == *o.expr;
     }
 
     bool t_case::operator==(const t_case &o) const
     {
-        if (arg != o.arg || cases.size() != o.cases.size())
-            return false;
-        for (size_t i = 0; i < cases.size(); i++) {
-            if (*cases[i] != *o.cases[i])
-                return false;
-        }
-        return true;
+        return arg == o.arg && cases == o.cases;
     }
 
     bool t_constr::operator==(const t_constr &o) const
     {
-        if (tag != o.tag || args.size() != o.args.size())
-            return false;
-        for (size_t i = 0; i < args.size(); i++) {
-            if (*args[i] != *o.args[i])
-                return false;
-        }
-        return true;
+        return tag == o.tag && args == o.args;
     }
 
     bool force::operator==(const force &o) const
     {
-        return expr && o.expr && *expr == *o.expr;
+        return *expr == *o.expr;
     }
 
     bool t_lambda::operator==(const t_lambda &o) const
     {
-        return expr && o.expr && *expr == *o.expr && name == o.name;
+        return *expr == *o.expr && var_idx == o.var_idx;
     }
 
     bool apply::operator==(const apply &o) const
     {
-        return func && o.func && *func == *o.func && arg && o.arg && *arg == *o.arg;
+        return *func == *o.func && *arg == *o.arg;
     }
 
     constant_pair::constant_pair(allocator &alloc, const constant &fst, const constant &snd): constant_pair { alloc, constant { fst }, constant { snd } }
@@ -235,8 +127,23 @@ namespace daedalus_turbo::plutus {
         return *_ptr;
     }
 
-    constant_list::constant_list(allocator &alloc, constant_type &&t, list_type &&l):
-        constant_list { alloc, value_type { std::move(t), std::move(l) } }
+    constant_list::constant_list(allocator &alloc, const constant_type &t):
+        constant_list { alloc, value_type { t, { alloc } } }
+    {
+    }
+
+    constant_list::constant_list(allocator &alloc, const constant_type &t, list_type &&l):
+        constant_list { alloc, value_type { t, std::move(l) } }
+    {
+    }
+
+    constant_list::constant_list(allocator &alloc, list_type &&l):
+        constant_list { alloc, constant_type::from_val(alloc, l.at(0)), std::move(l) }
+    {
+    }
+
+    constant_list::constant_list(allocator &alloc, const constant_type &t, std::initializer_list<constant> il):
+        constant_list { alloc, value_type { t, { alloc, il } } }
     {
     }
 
@@ -258,11 +165,11 @@ namespace daedalus_turbo::plutus {
                 return constant_type { alloc, type_tag::unit };
             } else if constexpr (std::is_same_v<T, bool>) {
                 return constant_type { alloc, type_tag::boolean };
-            } else if constexpr (std::is_same_v<T, cpp_int>) {
+            } else if constexpr (std::is_same_v<T, bint_type>) {
                 return constant_type { alloc, type_tag::integer };
-            } else if constexpr (std::is_same_v<T, std::string>) {
+            } else if constexpr (std::is_same_v<T, str_type>) {
                 return constant_type { alloc, type_tag::string };
-            } else if constexpr (std::is_same_v<T, uint8_vector>) {
+            } else if constexpr (std::is_same_v<T, bstr_type>) {
                 return constant_type { alloc, type_tag::bytestring };
             } else if constexpr (std::is_same_v<T, data>) {
                 return constant_type { alloc, type_tag::data };
@@ -273,9 +180,9 @@ namespace daedalus_turbo::plutus {
             } else if constexpr (std::is_same_v<T, bls12_381_ml_result>) {
                 return constant_type { alloc, type_tag::bls12_381_ml_result };
             } else if constexpr (std::is_same_v<T, constant_list>) {
-                return constant_type { alloc, type_tag::list, { { v->typ }, alloc.resource() } };
+                return constant_type { alloc, type_tag::list, { alloc, { v->typ } } };
             } else if constexpr (std::is_same_v<T, constant_pair>) {
-                return constant_type { alloc, type_tag::pair, { { from_val(alloc, v->first), from_val(alloc, v->second) }, alloc.resource() } };
+                return constant_type { alloc, type_tag::pair, { alloc, { from_val(alloc, v->first), from_val(alloc, v->second) } } };
             } else {
                 throw error("unsupported constant value: {}!", typeid(T).name());
                 // Noop to make Visual C++ happy
@@ -290,104 +197,122 @@ namespace daedalus_turbo::plutus {
         return { alloc, std::move(typ), { std::move(c) } };
     }
 
-    data_pair::data_pair(data &&fst, data &&snd):
-        _val { std::make_unique<value_type>(std::move(fst), std::move(snd)) }
-    {
-    }
-
     bool data_pair::operator==(const data_pair &o) const
     {
-        return *_val == *o._val;
+        return *_ptr == *o._ptr;
     }
 
     const data_pair::value_type &data_pair::operator*() const
     {
-        return *_val;
+        return *_ptr;
     }
     const data_pair::value_type *data_pair::operator->() const
     {
-        return _val.get();
+        return _ptr.get();
     }
 
-    static uint64_t _cast_to_uint64(const cpp_int &i)
-    {
-        if (i >= 0 && i <= std::numeric_limits<uint64_t>::max()) [[likely]]
-            return static_cast<uint64_t>(i);
-        throw error("integer to big to be casted into a 64-bit uint: {}", i);
-    }
-
-    data_constr::data_constr(const uint64_t id, vector<data> &&l)
-        : _val { std::make_shared<value_type>(id, std::move(l)) }
+    data_constr::data_constr(allocator &alloc, uint64_t t, std::initializer_list<data> il):
+        _ptr { alloc.make<value_type>(t, list_type { alloc, std::move(il) })}
     {
     }
 
-    data_constr::data_constr(const cpp_int &id, vector<data> &&l)
-        : data_constr(_cast_to_uint64(id), std::move(l))
+    data_constr::data_constr(allocator &alloc, uint64_t t, list_type &&l):
+        _ptr { alloc.make<value_type>(t, list_type { alloc, std::move(l) })}
     {
     }
 
     bool data_constr::operator==(const data_constr &o) const
     {
-        return *_val == *o._val;
+        return *_ptr == *o._ptr;
     }
 
     const data_constr::value_type &data_constr::operator*() const
     {
-        return *_val;
+        return *_ptr;
     }
 
     const data_constr::value_type *data_constr::operator->() const
     {
-        return _val.get();
+        return _ptr.get();
     }
 
-    data data::bstr(const buffer b)
+    data data::bstr(allocator &alloc, const bstr_type &b)
     {
-        return { uint8_vector { b } };
+        return { alloc, b };
     }
 
-    data data::bint(cpp_int &&i)
+    data data::bstr(allocator &alloc, const buffer b)
     {
-        return { std::move(i) };
+        return { alloc, bstr_type { alloc, b } };
     }
 
-    data data::bint(const cpp_int &i)
+    data data::bint(allocator &alloc, uint64_t i)
     {
-        return bint(cpp_int { i });
+        return { alloc, bint_type { alloc, i } };
     }
 
-    data data::constr(cpp_int &&i, list_type &&d)
+    data data::bint(allocator &alloc, const bint_type &i)
     {
-        return { data_constr { std::move(i), std::move(d) } };
+        return {alloc, bint_type { i } };
     }
 
-    data data::list(list_type &&l)
+    data data::bint(allocator &alloc, const cpp_int &i)
     {
-        return { std::move(l) };
+        return bint(alloc, bint_type { alloc, i });
     }
 
-    data data::map(map_type &&m)
+    data data::constr(allocator &alloc, const uint64_t i, std::initializer_list<data> il)
     {
-        return { std::move(m) };
+        return { alloc, data_constr { alloc, i, il } };
     }
 
-    bool data::operator==(const data &o) const
+    data data::constr(allocator &alloc, const uint64_t i, list_type &&d)
     {
-        return val == o.val;
+        return { alloc, data_constr { alloc, i, std::move(d) } };
     }
 
-    static data _from_cbor(cbor::zero::value item);
-
-    static data::list_type _from_cbor(cbor::zero::value::array_iterator it)
+    data data::constr(allocator &alloc, const bint_type &i, std::initializer_list<data> il)
     {
-        data::list_type dl {};
+        return { alloc, data_constr { alloc, i, il } };
+    }
+
+    data data::constr(allocator &alloc, const bint_type &i, list_type &&d)
+    {
+        return { alloc, data_constr { alloc, i, std::move(d) } };
+    }
+
+    data data::list(allocator &alloc, list_type &&l)
+    {
+        return { alloc, list_type { alloc, std::move(l) } };
+    }
+
+    data data::list(allocator &alloc, std::initializer_list<data> il)
+    {
+        return { alloc, list_type { alloc, il } };
+    }
+
+    data data::map(allocator &alloc, std::initializer_list<data_pair> il)
+    {
+        return { alloc, map_type { alloc, il } };
+    }
+
+    data data::map(allocator &alloc, map_type &&m)
+    {
+        return { alloc, map_type { alloc, std::move(m) } };
+    }
+
+    static data _from_cbor(allocator &alloc, cbor::zero::value item);
+
+    static data::list_type _from_cbor(allocator &alloc, cbor::zero::value::array_iterator it)
+    {
+        data::list_type dl { alloc };
         while (!it.done()) {
-            dl.emplace_back(_from_cbor(it.next()));
+            dl.emplace_back(_from_cbor(alloc, it.next()));
         }
         return dl;
     }
 
-    static data _from_cbor(const cbor::zero::value v)
+    static data _from_cbor(allocator &alloc, const cbor::zero::value v)
     {
         switch (const auto typ = v.type(); typ) {
             case cbor::major_type::tag: {
@@ -395,7 +320,7 @@ namespace daedalus_turbo::plutus {
                 switch (id) {
                     case 2:
                     case 3:
-                        return { v.big_int() };
+                        return { alloc, bint_type { alloc, v.big_int() } };
                     default: {
                         if (id >= 121 && id < 128) {
                             id -= 121;
@@ -408,44 +333,48 @@ namespace daedalus_turbo::plutus {
                         } else {
                             throw error("unsupported tag id: {}", id);
                         }
-                        return { data_constr { cpp_int { id }, _from_cbor(val.array()) } };
+                        return { alloc, data_constr { alloc, bint_type { alloc, id }, _from_cbor(alloc, val.array()) } };
                     }
                 }
             }
-            case cbor::major_type::array: return { _from_cbor(v.array()) };
+            case cbor::major_type::array: return { alloc, _from_cbor(alloc, v.array()) };
             case cbor::major_type::map: {
-                data::map_type m {};
+                data::map_type m { alloc };
                 auto it = v.map();
                 while (!it.done()) {
                     auto [k, v] = it.next();
-                    auto kd = _from_cbor(k);
-                    auto vd = _from_cbor(v);
-                    m.emplace_back(std::move(kd), std::move(vd));
+                    auto kd = _from_cbor(alloc, k);
+                    auto vd = _from_cbor(alloc, v);
+                    m.emplace_back(alloc, std::move(kd), std::move(vd));
                 }
-                return { std::move(m) };
+                return { alloc, std::move(m) };
             }
-            case cbor::major_type::bytes: return { v.bytes_alloc() };
-            case cbor::major_type::uint: return { v.big_int() };
-            case cbor::major_type::nint: return { v.big_int() };
+            case cbor::major_type::bytes: {
+                bstr_type::value_type buf { alloc };
+                v.bytes_alloc(buf);
+                return { alloc, bstr_type { alloc, std::move(buf) } };
+            }
+            case cbor::major_type::uint: return { alloc, bint_type { alloc, v.big_int() } };
+            case cbor::major_type::nint: return { alloc, bint_type { alloc, v.big_int() } };
             default: throw error("unsupported CBOR type {}!", typ);
         }
     }
 
-    data data::from_cbor(const buffer bytes)
+    data data::from_cbor(allocator &alloc, const buffer bytes)
     {
-        return _from_cbor(cbor::zero::parse(bytes));
+        return _from_cbor(alloc, cbor::zero::parse(bytes));
     }
 
     static void _to_cbor(cbor::encoder &enc, const data &c, size_t level=0);
 
-    static void _to_cbor(cbor::encoder &enc, const cpp_int &i, const size_t)
+    static void _to_cbor(cbor::encoder &enc, const bint_type &i, const size_t)
     {
-        enc.bigint(i);
+        enc.bigint(*i);
     }
 
-    static void _to_cbor(cbor::encoder &enc, const uint8_vector &b, const size_t)
+    static void _to_cbor(cbor::encoder &enc, const bstr_type &b, const size_t)
     {
-        enc.bytes(b);
+        enc.bytes(*b);
     }
 
     static void _to_cbor(cbor::encoder &enc, const data::list_type &l, const size_t level)
@@ -491,14 +420,19 @@ namespace daedalus_turbo::plutus {
             } else {
                 _to_cbor(enc, v, level);
             }
-        }, c.val);
+        }, *c);
     }
 
-    uint8_vector data::as_cbor() const
+    bstr_type data::as_cbor(allocator &alloc) const
     {
         cbor::encoder enc {};
         _to_cbor(enc, *this);
-        return { std::move(enc.cbor()) };
+        return { alloc, std::move(enc.cbor()) };
+    }
+
+    void data::to_cbor(cbor::encoder &enc) const
+    {
+        _to_cbor(enc, *this);
     }
 
     static std::back_insert_iterator<std::string> to_string(std::back_insert_iterator<std::string> out_it, const data &v, const size_t depth, const size_t shift=4);
@@ -513,7 +447,7 @@ namespace daedalus_turbo::plutus {
                 out_it = fmt::format_to(out_it, "{:{}}", "", depth * shift);
                 out_it = to_string(out_it, *it, depth, shift);
                 if (std::next(it) != v.end())
-                    out_it = fmt::format_to(out_it, ", ");
+                    out_it = fmt::format_to(out_it, "{}", shift ? "," : ", ");
                 if (shift)
                     out_it = fmt::format_to(out_it, "\n");
             }
@@ -547,7 +481,7 @@ namespace daedalus_turbo::plutus {
                         out_it = to_string(out_it, (*it)->second, depth + 1, shift);
                         out_it = fmt::format_to(out_it, ")");
                         if (std::next(it) != v.end())
-                            out_it = fmt::format_to(out_it, ", ");
+                            out_it = fmt::format_to(out_it, "{}", shift ? "," : ", ");
                         if (shift)
                             out_it = fmt::format_to(out_it, "\n");
                     }
@@ -560,7 +494,7 @@ namespace daedalus_turbo::plutus {
             if constexpr (std::is_same_v<T, data::bstr_type>)
                 return fmt::format_to(out_it, "B #{}", v);
             throw error("unsupported data type: {}", typeid(T).name());
-        }, vv.val);
+        }, *vv);
     }
 
     std::string data::as_string(const size_t shift) const
@@ -570,21 +504,304 @@ namespace daedalus_turbo::plutus {
         return res;
     }
 
-    uint8_vector bls_g1_compress(const bls12_381_g1_element &v)
+    bool term::operator==(const term &o) const
     {
-        uint8_vector comp(48);
-        blst_p1_compress(comp.data(), &v.val);
-        return comp;
+        return *_ptr == *o._ptr;
     }
 
-    uint8_vector bls_g2_compress(const bls12_381_g2_element &v)
+    value::value(const value &v): _ptr { v._ptr }
     {
-        uint8_vector comp(96);
-        blst_p2_compress(comp.data(), &v.val);
-        return comp;
     }
 
-    bls12_381_g1_element bls_g1_decompress(const buffer &bytes)
+    value::value(allocator &alloc, const blst_p1 &b): value { alloc, value_type { constant { alloc, bls12_381_g1_element { b } } } }
+    {
+    }
+
+    value::value(allocator &alloc, const blst_p2 &b): value { alloc, value_type { constant { alloc, bls12_381_g2_element { b } } } }
+    {
+    }
+
+    value::value(allocator &alloc, const blst_fp12 &b): value { alloc, value_type { constant { alloc, bls12_381_ml_result { b } } } }
+    {
+    }
+
+    value::value(allocator &alloc, data &&d): value { alloc, value_type { constant { alloc, std::move(d) } } }
+    {
+    }
+
+    value::value(allocator &alloc, const bint_type &i): value { alloc, constant { alloc, i } }
+    {
+    }
+
+    value::value(allocator &alloc, const cpp_int &i): value { alloc, constant { alloc, bint_type { alloc, i } } }
+    {
+    }
+
+    value::value(allocator &alloc, const int64_t i): value { alloc, bint_type { alloc, i } }
+    {
+    }
+
+    value::value(allocator &alloc, str_type &&s): value { alloc, constant { alloc, std::move(s) } }
+    {
+    }
+
+    value::value(allocator &alloc, const std::string_view s): value { alloc, str_type { alloc, s } }
+    {
+    }
+
+    value::value(allocator &alloc, const bstr_type &b): value { alloc, constant { alloc, b } }
+    {
+    }
+
+    value::value(allocator &alloc, const buffer b): value { alloc, bstr_type { alloc, b } }
+    {
+    }
+
+    value::value(allocator &alloc, value_type &&v): _ptr { alloc.make<value_type>(std::move(v)) }
+    {
+    }
+
+    value::value(allocator &alloc, const constant &v): value { alloc, value_type { v } }
+    {
+    }
+
+    value &value::operator=(const value &o)
+    {
+        _ptr = o._ptr;
+        return *this;
+    }
+
+    const value::value_type &value::operator*() const
+    {
+        return *_ptr;
+    }
+
+    const value::value_type *value::operator->() const
+    {
+        return _ptr.get();
+    }
+
+    const constant &value::as_const() const
+    {
+        return std::get<constant>(*_ptr);
+    }
+
+    const v_constr &value::as_constr() const
+    {
+        return std::get<v_constr>(*_ptr);
+    }
+
+    void value::as_unit() const
+    {
+        const auto &c = as_const();
+        if (!std::holds_alternative<std::monostate>(*c))
+            throw error("expected a unit but got: {}", c);
+    }
+
+    bool value::as_bool() const
+    {
+        return as_const().as_bool();
+    }
+
+    const bint_type &value::as_int() const
+    {
+        return as_const().as_int();
+    }
+
+    const str_type &value::as_str() const
+    {
+        return as_const().as_str();
+    }
+
+    const bstr_type &value::as_bstr() const
+    {
+        return as_const().as_bstr();
+    }
+
+    const bls12_381_g1_element &value::as_bls_g1() const
+    {
+        return std::get<bls12_381_g1_element>(*as_const());
+    }
+
+    const bls12_381_g2_element &value::as_bls_g2() const
+    {
+        return std::get<bls12_381_g2_element>(*as_const());
+    }
+
+    const bls12_381_ml_result &value::as_bls_ml_res() const
+    {
+        return std::get<bls12_381_ml_result>(*as_const());
+    }
+
+    const data &value::as_data() const
+    {
+        return as_const().as_data();
+    }
+
+    const constant_pair::value_type &value::as_pair() const
+    {
+        return as_const().as_pair();
+    }
+
+    const constant_list &value::as_list() const
+    {
+        return as_const().as_list();
+    }
+
+    value value::boolean(allocator &alloc, const bool b)
+    {
+        return { alloc, value_type { constant { alloc, b } } };
+    }
+
+    value value::unit(allocator &alloc)
+    {
+        return { alloc, constant { alloc, std::monostate {} } };
+    }
+
+    value value::make_list(allocator &alloc, const constant_type &typ)
+    {
+        return { alloc, constant { alloc, constant_list { alloc, typ, {} } } };
+    }
+
+    value value::make_list(allocator &alloc, const constant_type &typ, constant_list::list_type &&l)
+    {
+        return { alloc, constant { alloc, constant_list { alloc, typ, std::move(l) } } };
+    }
+
+    value value::make_list(allocator &alloc, const constant_type &typ, std::initializer_list<constant> il)
+    {
+        return { alloc, constant { alloc, constant_list { alloc, typ, il } } };
+    }
+
+    value value::make_list(allocator &alloc, std::initializer_list<constant> il)
+    {
+        if (std::empty(il)) [[unlikely]]
+            throw error("make_list without an explicit type requires a non-empty initializer list!");
+        return { alloc, constant { alloc, constant_list { alloc, constant_type::from_val(alloc, *il.begin()), il } } };
+    }
+
+    value value::make_list(allocator &alloc, constant_list::list_type &&vals)
+    {
+        if (vals.empty())
+            throw error("value must not be empty!");
+        return { alloc, constant { alloc, constant_list { alloc, constant_type::from_val(alloc, vals.at(0)), std::move(vals) } } };
+    }
+
+    value value::make_pair(allocator &alloc, constant &&fst, constant &&snd)
+    {
+        return { alloc, constant { alloc, constant_pair { alloc, std::move(fst), std::move(snd) } } };
+    }
+
+    bool value::operator==(const value &o) const
+    {
+        return _ptr && o._ptr && *_ptr == *o._ptr;
+    }
+
+    bool v_builtin::operator==(const v_builtin &o) const
+    {
+        return b == o.b && args == o.args && forces == o.forces;
+    }
+
+    bool v_constr::operator==(const v_constr &o) const
+    {
+        return tag == o.tag && args == o.args;
+    }
+
+    bool v_delay::operator==(const v_delay &o) const
+    {
+        return env == o.env && *expr == *o.expr;
+    }
+
+    bool v_lambda::operator==(const v_lambda &o) const
+    {
+        return env == o.env && var_idx == o.var_idx && *body == *o.body;
+    }
+
+    value_list::value_list(allocator &alloc): _ptr { alloc.make<value_type>(alloc) }
+    {
+    }
+
+    value_list::value_list(allocator &alloc, std::initializer_list<value> il): _ptr { alloc.make<value_type>(alloc, il) }
+    {
+    }
+
+    value_list::value_list(allocator &alloc, value_type &&v): _ptr { alloc.make<value_type>(alloc, std::move(v)) }
+    {
+    }
+
+    bool value_list::operator==(const value_list &o) const
+    {
+        return *_ptr == *o._ptr;
+    }
+    const value_list::value_type &value_list::operator*() const
+    {
+        return *_ptr;
+    }
+
+    const value_list::value_type *value_list::operator->() const
+    {
+        return _ptr.get();
+    }
+
+    static uint64_t uint_from_string_strict(const std::string &s)
+    {
+        if (s.empty() || !std::isdigit(s[0])) [[unlikely]]
+            throw error("invalid unsigned integer: '{}'", s);
+        std::size_t consumed = 0;
+        const auto u = std::stoull(s, &consumed);
+        if (consumed != s.size()) [[unlikely]]
+            throw error("invalid unsigned integer: '{}'", s);
+        return u;
+    }
+
+    static version from_string(const std::string &s)
+    {
+        try {
+            const auto p1 = s.find('.');
+            if (p1 == s.npos) [[unlikely]]
+                throw error("must have major.minor.patch format");
+            const auto major = uint_from_string_strict(s.substr(0, p1));
+            const auto p2 = s.find('.', p1 + 1);
+            if (p2 == s.npos) [[unlikely]]
+                throw error("must have major.minor.patch format");
+            const auto minor = uint_from_string_strict(s.substr(p1 + 1, p2 - p1 - 1));
+            const auto patch = uint_from_string_strict(s.substr(p2 + 1));
+            return { major, minor, patch };
+        } catch (const std::exception &ex) {
+            throw error("invalid version: '{}': {}", s, ex.what());
+        }
+    }
+
+    version::version(const std::string &s): version { from_string(s) }
+    {
+    }
+
+    bool version::operator>=(const version &o) const
+    {
+        return major > o.major || (major == o.major && minor > o.minor)
+            || (major == o.major && minor == o.minor && patch >= o.patch);
+    }
+
+    bool version::operator==(const version &o) const
+    {
+        return major == o.major && minor == o.minor && patch == o.patch;
+    }
+
+    bstr_type bls_g1_compress(allocator &alloc, const bls12_381_g1_element &v)
+    {
+        bstr_type::value_type res { alloc, 48 };
+        blst_p1_compress(res.data(), &v.val);
+        return { alloc, std::move(res) };
+    }
+
+    bstr_type bls_g2_compress(allocator &alloc, const bls12_381_g2_element &v)
+    {
+        bstr_type::value_type res { alloc, 96 };
+        blst_p2_compress(res.data(), &v.val);
+        return { alloc, std::move(res) };
+    }
+
+    bls12_381_g1_element bls_g1_decompress(const buffer bytes)
     {
         if (bytes.size() != 48) [[unlikely]]
             throw error("bls12_381_g1 elements must provide 48 bytes but got: {}", bytes.size());
@@ -598,7 +815,7 @@ namespace daedalus_turbo::plutus {
         return out;
     }
 
-    bls12_381_g2_element bls_g2_decompress(const buffer &bytes)
+    bls12_381_g2_element bls_g2_decompress(const buffer bytes)
     {
         if (bytes.size() != 96) [[unlikely]]
             throw error("bls12_381_g2 elements must provide 86 bytes but got: {}", bytes.size());
@@ -612,7 +829,7 @@ namespace daedalus_turbo::plutus {
         return out;
     }
 
-    std::string escape_utf8_string(const std::string &s)
+    std::string escape_utf8_string(const std::string_view s)
     {
         std::string res {};
         auto res_it = std::back_inserter(res);

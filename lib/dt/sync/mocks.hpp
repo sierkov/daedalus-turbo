@@ -28,7 +28,7 @@ namespace daedalus_turbo::sync {
     struct mock_chain_config {
         size_t height = 9;
         std::optional<uint64_t> failure_height = {};
-	sync::failure_type failure_type = failure_type::prev_hash;
+        sync::failure_type failure_type = failure_type::prev_hash;
         configs_mock::map_type cfg {};
     };
 

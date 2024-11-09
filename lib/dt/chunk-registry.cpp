@@ -3,8 +3,9 @@
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
+#include <dt/cardano/ledger/state.hpp>
 #include <dt/chunk-registry.hpp>
-#include <dt/validator/state.hpp>
+#include <dt/crypto/crc32.hpp>
 
 namespace daedalus_turbo {
     chunk_registry::chunk_registry(const std::string &data_dir, const mode mode,
@@ -257,12 +258,12 @@ namespace daedalus_turbo {
         }
     }
 
-    void chunk_registry::node_export(const std::filesystem::path &node_dir, const bool ledger_only) const
+    void chunk_registry::node_export(const std::filesystem::path &node_dir, const cardano::point &tip, const bool ledger_only) const
     {
         progress_guard pg { "chunk-export", "ledger-export" };
         logger::debug("node_export started to {}", node_dir.string());
         const auto ex_ptr = logger::run_log_errors([&] {
-            node_export_ledger(std::filesystem::weakly_canonical(node_dir / "ledger"), immutable_tip());
+            node_export_ledger(std::filesystem::weakly_canonical(node_dir / "ledger"), tip);
             if (!ledger_only) {
                 std::filesystem::remove(node_dir / "clean");
                 _node_export_chain(std::filesystem::weakly_canonical(node_dir / "immutable").string(),

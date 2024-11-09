@@ -7,27 +7,9 @@
 
 #include <dt/cardano/mocks.hpp>
 #include <dt/plutus/types.hpp>
+#include <dt/plutus/costs.hpp>
 
 namespace daedalus_turbo::plutus {
-    struct purpose {
-        enum class type: uint8_t { spend, mint, certify, reward, propose, vote };
-        type typ;
-        uint8_t idx = 0;
-
-        purpose(const purpose &) = default;
-
-        purpose(const type typ_, const uint64_t idx_): typ { typ_ }, idx { _to_uint8(idx_) }
-        {
-        }
-    private:
-        static uint8_t _to_uint8(const uint64_t u)
-        {
-            if (u < 256) [[likely]]
-                return static_cast<uint8_t>(u);
-            throw error("reference index is too big: {}", u);
-        }
-    };
-
     struct stored_txo {
         cardano::tx_out_ref id {};
         cardano::tx_out_data data {};
@@ -38,6 +20,7 @@ namespace daedalus_turbo::plutus {
         cardano::tx_hash tx_id {};
         uint8_vector body {};
         uint8_vector wits {};
+        uint8_vector aux {};
         storage::block_info block {};
         stored_txo_list inputs {};
         stored_txo_list ref_inputs {};
@@ -53,28 +36,62 @@ namespace daedalus_turbo::plutus {
 
         context(const std::string &, const cardano::config &c_cfg=cardano::config::get());
         context(stored_tx_context &&, const cardano::config &c_cfg=cardano::config::get());
-        context(uint8_vector &&tx_body_data, uint8_vector &&tx_wits_data, storage::block_info &&block,
+        context(uint8_vector &&tx_body_data, uint8_vector &&tx_wits_data, uint8_vector &&tx_aux_data, storage::block_info &&block,
             stored_txo_list &&inputs, stored_txo_list &&ref_inputs, const cardano::config &c_cfg=cardano::config::get());
         const cardano::tx &tx() const;
         buffer mint_at(uint64_t r_idx) const;
+        cardano::stake_ident_hybrid withdraw_at(uint64_t r_idx) const;
         const stored_txo &input_at(uint64_t r_idx) const;
-        term_ptr data(allocator &alloc, cardano::script_type typ, const purpose &) const;
+        term data(cardano::script_type typ, const cardano::tx_redeemer &) const;
 
         const cardano::config &config() const
         {
             return _cfg;
         }
 
+        void cost_models(const costs::parsed_models &models) {
+            _cost_models = models;
+        }
+
+        const costs::parsed_models &cost_models() const
+        {
+            return _cost_models;
+        }
+
         const datum_map &datums() const
         {
             return _datums;
         }
+
+        allocator &alloc() const
+        {
+            return _alloc;
+        }
+
+        cardano::slot slot() const
+        {
+            return { _block_info.slot, _cfg };
+        }
+
+        const stored_txo_list &inputs() const
+        {
+            return _inputs;
+        }
+
+        const stored_txo_list &ref_inputs() const
+        {
+            return _ref_inputs;
+        }
     private:
+        mutable allocator _alloc {};
         const cardano::config &_cfg;
+        std::reference_wrapper<const costs::parsed_models> _cost_models;
         uint8_vector _tx_body_bytes;
         cbor::value _tx_body_cbor;
         uint8_vector _tx_wits_bytes;
         cbor::value _tx_wits_cbor;
+        uint8_vector _tx_aux_bytes;
+        std::unique_ptr<cbor::value> _tx_aux_cbor {};
         storage::block_info _block_info;
         cardano::mocks::block _block;
         std::unique_ptr<cardano::tx> _tx;

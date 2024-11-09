@@ -9,70 +9,73 @@
 #include <dt/index/common.hpp>
 
 namespace daedalus_turbo::index::timed_update {
-    struct stake_reg {
-        using serialize = ::zpp::bits::members<2>;
-        cardano::stake_ident stake_id {};
-        std::optional<uint64_t> deposit {};
-    };
-    struct stake_del {
-        using serialize = ::zpp::bits::members<2>;
-        cardano::stake_ident stake_id {};
-        std::optional<uint64_t> deposit {};
-    };
-    struct stake_deleg {
-        cardano::stake_ident stake_id  {};
-        cardano::pool_hash pool_id {};
-    };
     struct stake_withdraw {
         cardano::stake_ident stake_id {};
         uint64_t amount = 0;
-    };
-    struct instant_reward_single {
-        cardano::stake_ident stake_id {};
-        uint64_t amount {};
-        cardano::reward_source source {};
+
+        static constexpr auto serialize(auto &archive, auto &self)
+        {
+            return archive(self.stake_id, self.amount);
+        }
     };
     struct collected_collateral_input {
         cardano::tx_hash tx_hash {};
         cardano::tx_out_idx txo_idx {};
+
+        static constexpr auto serialize(auto &archive, auto &self)
+        {
+            return archive(self.tx_hash, self.txo_idx);
+        }
     };
     struct collected_collateral_refund {
+        using serialize = ::zpp::bits::members<1>;
         cardano::amount refund {};
     };
-    struct gen_deleg {
-        cardano::key_hash hash {};
-        cardano::pool_hash pool_id {};
-        cardano::vrf_vkey vrf_vkey {};
+    struct donation {
+        uint64_t coin = 0;
     };
     using variant = std::variant<
-        stake_reg,
-        cardano::pool_reg,
-        instant_reward_single,
-        stake_deleg,
+        cardano::shelley::stake_reg_cert,
+        cardano::conway::reg_cert,
+        cardano::conway::stake_reg_deleg_cert,
+        cardano::conway::vote_reg_deleg_cert,
+        cardano::conway::stake_vote_reg_deleg_cert,
+        cardano::conway::reg_drep_cert,
+        cardano::shelley::pool_reg_cert,
+        cardano::shelley::genesis_deleg_cert,
+        cardano::shelley::instant_reward_cert,
+        cardano::shelley::stake_deleg_cert,
+        cardano::conway::vote_deleg_cert,
+        cardano::conway::stake_vote_deleg_cert,
+        cardano::conway::auth_committee_hot_cert,
+        cardano::conway::resign_committee_cold_cert,
+        cardano::conway::update_drep_cert,
         stake_withdraw,
-        stake_del,
-        cardano::pool_unreg,
+        cardano::shelley::stake_dereg_cert,
+        cardano::shelley::pool_retire_cert,
+        cardano::conway::unreg_cert,
+        cardano::conway::unreg_drep_cert,
         cardano::param_update_proposal,
         cardano::param_update_vote,
         collected_collateral_input,
         collected_collateral_refund,
-        gen_deleg
+        cardano::conway::proposal_t,
+        cardano::conway::vote_info_t
     >;
     struct item {
-        uint64_t slot = 0;
-        size_t tx_idx = 0;
-        size_t cert_idx = 0;
+        cardano::cert_loc_t loc {};
         variant update;
+
+        static constexpr auto serialize(auto &archive, auto &self)
+        {
+            return archive(self.loc, self.update);
+        }
 
         bool operator<(const auto &b) const
         {
-            if (slot != b.slot)
-                return slot < b.slot;
-            if (tx_idx != b.tx_idx)
-                return tx_idx < b.tx_idx;
-            if (cert_idx != b.cert_idx)
-                return cert_idx < b.cert_idx;
-            return update.index() < b.update.index();
+            if (loc == b.loc)
+                return update.index() < b.update.index();
+            return loc < b.loc;
         }
     };
 
@@ -82,30 +85,35 @@ namespace daedalus_turbo::index::timed_update {
         void index_tx(const cardano::tx &tx) override
         {
             const auto slot = tx.block().slot();
-            tx.foreach_stake_reg([&](const auto &stake_id, size_t cert_idx, std::optional<uint64_t> deposit) {
-                _data.emplace_back(slot, tx.index(), cert_idx, stake_reg { stake_id, deposit });
-            });
-            tx.foreach_pool_reg([&](const auto &reg) {
-                _data.emplace_back(slot, tx.index(), 0, reg);
-            });
-            tx.foreach_instant_reward([&](const auto &ir) {
-                for (const auto &[stake_id, reward]: ir.rewards)
-                    _data.emplace_back(slot, tx.index(), 0, instant_reward_single { stake_id, reward, ir.source });
-            });
-            tx.foreach_stake_deleg([&](const auto &deleg) {
-                _data.emplace_back(slot, tx.index(), deleg.cert_idx, stake_deleg { deleg.stake_id, deleg.pool_id });
-            });
+            if (const auto *c_tx = dynamic_cast<const cardano::conway::tx *>(&tx); c_tx) {
+                c_tx->foreach_cert([&](const auto &v, const auto cert_idx) {
+                    cardano::conway::cert_t cert { v };
+                    std::visit([&](const auto &c) {
+                        _data.emplace_back(cardano::cert_loc_t { slot, tx.index(), cert_idx }, c);
+                    }, cert.val);
+                });
+                {
+                    size_t prop_idx = 0;
+                    c_tx->foreach_proposal([&](const auto &p) {
+                        _data.emplace_back(cardano::cert_loc_t { slot, tx.index(), prop_idx++ }, p);
+                    });
+                }
+                {
+                    size_t vote_idx = 0;
+                    c_tx->foreach_vote([&](const auto &p) {
+                        _data.emplace_back(cardano::cert_loc_t { slot, tx.index(), vote_idx++ }, p);
+                    });
+                }
+            } else {
+                tx.foreach_cert([&](const auto &v, const auto cert_idx) {
+                    cardano::shelley::cert_t cert { v };
+                    std::visit([&](const auto &c) {
+                        _data.emplace_back(cardano::cert_loc_t { slot, tx.index(), cert_idx }, c);
+                    }, cert.val);
+                });
+            }
             tx.foreach_withdrawal([&](const auto &with) {
-                _data.emplace_back(slot, tx.index(), 0, stake_withdraw { with.address.stake_id(), with.amount });
-            });
-            tx.foreach_stake_unreg([&](const auto &stake_id, size_t cert_idx, std::optional<uint64_t> deposit) {
-                _data.emplace_back(slot, tx.index(), cert_idx, stake_del { stake_id, deposit });
-            });
-            tx.foreach_pool_unreg([&](const auto &unreg) {
-                _data.emplace_back(slot, tx.index(), 0, unreg);
-            });
-            tx.foreach_genesis_deleg([&](const auto &deleg, const size_t cert_idx) {
-                _data.emplace_back(slot, tx.index(), cert_idx, gen_deleg { deleg.hash, deleg.pool_id, deleg.vrf_vkey });
+                _data.emplace_back(cardano::cert_loc_t { slot, tx.index(), 0 }, stake_withdraw { with.address.stake_id(), with.amount });
             });
         }
 
@@ -114,21 +122,21 @@ namespace daedalus_turbo::index::timed_update {
             const auto slot = tx.block().slot();
             if (const auto *babbage_tx = dynamic_cast<const cardano::babbage::tx *>(&tx); babbage_tx) {
                 if (const auto c_ret = babbage_tx->collateral_return(); c_ret)
-                    _data.emplace_back(slot, tx.index(), 0, collected_collateral_refund { c_ret->amount });
+                    _data.emplace_back(cardano::cert_loc_t { slot, tx.index(), 0 }, collected_collateral_refund { c_ret->amount });
             }
             tx.foreach_collateral([&](const auto &tx_in) {
                 logger::debug("collect collateral {}#{}", tx_in.tx_hash, tx_in.txo_idx);
-                _data.emplace_back(slot, tx.index(), 0, collected_collateral_input { tx_in.tx_hash, tx_in.txo_idx });
+                _data.emplace_back(cardano::cert_loc_t { slot, tx.index(), 0 }, collected_collateral_input { tx_in.tx_hash, tx_in.txo_idx });
             });
         }
 
         void _index_epoch(const cardano::block_base &blk, data_type &idx) override
         {
             blk.foreach_update_proposal([&](const auto &prop) {
-                idx.emplace_back(blk.slot(), 0, 0, prop);
+                idx.emplace_back(cardano::cert_loc_t { blk.slot(), 0, 0 }, prop);
             });
             blk.foreach_update_vote([&](const auto &vote) {
-                idx.emplace_back(blk.slot(), 0, 0, vote);
+                idx.emplace_back(cardano::cert_loc_t { blk.slot(), 0, 0 }, vote);
             });
         }
     };

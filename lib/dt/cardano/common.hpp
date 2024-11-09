@@ -23,6 +23,7 @@
 
 namespace daedalus_turbo::plutus {
     struct context;
+    struct term_list;
 }
 
 namespace daedalus_turbo::cardano {
@@ -141,10 +142,18 @@ namespace daedalus_turbo::cardano {
         const tx_out_idx idx;
     };
 
-    struct stake_deleg {
-        stake_ident stake_id {};
-        cardano_hash_28 pool_id {};
-        size_t cert_idx = 0;
+    enum class redeemer_tag: uint8_t {
+        spend, mint, cert, reward, vote, propose
+    };
+
+    extern redeemer_tag redeemer_tag_from_cbor(const cbor::value &v);
+
+    struct tx_redeemer {
+        redeemer_tag tag;
+        uint16_t idx;
+        uint16_t ref_idx;
+        buffer data;
+        ex_units budget;
     };
 
     using ipv4_addr = array<uint8_t, 4>;
@@ -202,9 +211,8 @@ namespace daedalus_turbo::cardano {
         }
     };
 
-    struct pool_reg {
-        cardano_hash_28 pool_id {};
-	cardano::vrf_vkey vrf_vkey {};
+    struct pool_params {
+        cardano::vrf_vkey vrf_vkey {};
         uint64_t pledge = 0;
         uint64_t cost = 0;
         rational_u64 margin {};
@@ -216,22 +224,26 @@ namespace daedalus_turbo::cardano {
         // non-mainnet reward addresses in the mainnet ledger
         uint8_t reward_network = 1;
 
-        constexpr static auto serialize(auto &archive, auto &self)
+        static constexpr auto serialize(auto &archive, auto &self)
         {
-            return archive(self.pool_id, self.vrf_vkey, self.pledge, self.cost, self.margin, self.reward_id, self.owners, self.relays, self.metadata, self.reward_network);
+            return archive(self.vrf_vkey, self.pledge, self.cost, self.margin, self.reward_id, self.owners, self.relays, self.metadata, self.reward_network);
         }
-    };
 
-    struct pool_unreg {
-        cardano_hash_28 pool_id {};
-        cardano::epoch epoch {};
-    };
+        static pool_params from_cbor(const cbor::array &, size_t base_idx=1);
 
-    enum class reward_source { reserves, treasury };
+        pool_params() =default;
+        pool_params(const pool_params &reg) =default;
+        pool_params(const cbor::value &);
+        pool_params &operator=(const pool_params &) =default;
+        void to_cbor(cbor::encoder &, const pool_hash &) const;
 
-    struct instant_reward {
-        reward_source source {};
-        std::map<stake_ident, amount> rewards {};
+        bool operator==(const pool_params &o) const
+        {
+            return reward_id == o.reward_id && owners == o.owners && pledge == o.pledge
+                && cost == o.cost && margin == o.margin
+                && vrf_vkey == o.vrf_vkey && relays == o.relays
+                && metadata == o.metadata && reward_network == o.reward_network;
+        }
     };
 
     struct kes_signature {
@@ -397,15 +409,6 @@ namespace daedalus_turbo::cardano {
 
     using tail_relative_stake_map = map<point, double>;
 
-    struct genesis_deleg {
-        buffer hash;
-        buffer pool_id;
-        buffer vrf_vkey;
-    };
-
-    using stake_reg_observer = std::function<void(const stake_ident &, size_t, std::optional<uint64_t>)>;
-    using stake_unreg_observer = std::function<void(const stake_ident &, size_t, std::optional<uint64_t>)>;
-
     struct tx {
         struct wit_cnt {
             size_t vkey = 0;
@@ -446,8 +449,15 @@ namespace daedalus_turbo::cardano {
             return 1.0;
         }
 
-        tx(const cbor_value &tx, const block_base &blk, const cbor::value *wit=nullptr, const size_t idx=0)
-            : _tx { tx }, _blk { blk }, _wit { wit }, _idx { idx }
+        inline uint16_t tx_idx_cast(const size_t idx)
+        {
+            if (idx < (1 << 15)) [[likely]]
+                return idx;
+            throw error("transaction idx is too large: {}!", idx);
+        }
+
+        tx(const cbor::value &tx, const block_base &blk, const size_t idx=0, const cbor::value *wit=nullptr, const cbor::value *aux=nullptr, bool invalid=false)
+            : _tx { tx }, _blk { blk }, _wit { wit }, _aux { aux }, _idx { tx_idx_cast(idx) }, _invalid { invalid }
         {
         }
 
@@ -458,25 +468,15 @@ namespace daedalus_turbo::cardano {
         virtual void foreach_output(const std::function<void(const tx_output &)> &) const {}
         virtual size_t foreach_mint(const std::function<void(const buffer &, const cbor::map &)> &) const { return 0; }
         virtual void foreach_withdrawal(const std::function<void(const tx_withdrawal &)> &) const {}
-        virtual void foreach_stake_reg(const stake_reg_observer &) const {}
-        virtual void foreach_stake_unreg(const stake_unreg_observer &) const {}
-        virtual void foreach_stake_deleg(const std::function<void(const stake_deleg &)> &) const {}
-        virtual void foreach_pool_reg(const std::function<void(const pool_reg &)> &) const {}
         virtual void foreach_param_update(const std::function<void(const param_update_proposal &)> &) const {}
-        virtual void foreach_pool_unreg(const std::function<void(const pool_unreg &)> &) const {}
-        virtual void foreach_genesis_deleg(const std::function<void(const genesis_deleg &, size_t)> &) const {}
-        virtual void foreach_instant_reward(const std::function<void(const instant_reward &)> &) const {}
         virtual void foreach_collateral(const std::function<void(const tx_input &)> &) const {}
         virtual void foreach_collateral_return(const std::function<void(const tx_output &)> &) const {}
-        virtual void foreach_cert(const std::function<void(const cbor::array &cert, size_t cert_idx)> &) const {}
+        virtual void foreach_cert(const std::function<void(const cbor::value &cert, size_t cert_idx)> &) const {}
         virtual void foreach_required_signer(const std::function<void(buffer)> &) const {}
+        virtual void foreach_script(const std::function<void(const script_info &)> &) const {}
+        virtual void foreach_redeemer(const std::function<void(const tx_redeemer &)> &) const {}
 
-        virtual void foreach_set(const cbor_value &set_raw, const std::function<void(const cbor_value &, size_t)> &observer) const
-        {
-            const auto &set = set_raw.array();
-            for (size_t i = 0; i < set.size(); ++i)
-                observer(set[i], i);
-        }
+        virtual void foreach_set(const cbor_value &set_raw, const std::function<void(const cbor_value &, size_t)> &observer) const;
 
         virtual void foreach_witness(const std::function<void(uint64_t, const cbor::value &)> &) const
         {
@@ -501,7 +501,7 @@ namespace daedalus_turbo::cardano {
         virtual const cardano_hash_32 &hash() const
         {
             if (!_cached_hash)
-                _cached_hash.emplace(blake2b<cardano_hash_32>(_tx.data_buf()));
+                _cached_hash.emplace(blake2b<cardano_hash_32>(_tx.raw_span()));
             return *_cached_hash;
         }
 
@@ -517,16 +517,6 @@ namespace daedalus_turbo::cardano {
 
         inline json::object to_json(const tail_relative_stake_map &) const;
 
-        const cbor_value &raw_cbor() const
-        {
-            return _tx;
-        }
-
-        buffer raw_data() const
-        {
-            return _tx.data_buf();
-        }
-
         const block_base &block() const
         {
             return _blk;
@@ -537,18 +527,50 @@ namespace daedalus_turbo::cardano {
             return _idx;
         }
 
-        const cbor_value &raw_witness() const
+        const cbor::value &cbor() const
         {
-            if (!_wit)
-                throw error("a transaction witness has not been supplied for this transaction!");
-            return *_wit;
+            return _tx;
+        }
+
+        const cbor::value &witness_cbor() const
+        {
+            if (_wit) [[likely]]
+                return *_wit;
+            throw error("a transaction witness has not been supplied for this transaction!");
+        }
+
+        bool has_auxiliary() const
+        {
+            return _aux;
+        }
+
+        const cbor::value &auxiliary_cbor() const
+        {
+            if (_aux) [[likely]]
+                return *_aux;
+            throw error("auxiliary data has not been supplied for this transaction!");
+        }
+
+        buffer auxiliary_raw_span() const
+        {
+            if (_aux) [[likely]]
+                return _aux->raw_span();
+            // the data size is zero, can pass any not-null valid pointer, and _tx.data is not worse than others
+            return buffer { _tx.data, 0 };
+        }
+
+        bool invalid() const
+        {
+            return _invalid;
         }
     protected:
         const cbor_value &_tx;
         const block_base &_blk;
         const cbor_value *_wit = nullptr;
-        const size_t _idx;
+        const cbor_value *_aux = nullptr;
         mutable std::optional<cardano_hash_32> _cached_hash {};
+        const uint16_t _idx: 15;
+        const uint16_t _invalid: 1;
     };
 
     inline void block_base::foreach_tx(const std::function<void(const tx &)> &) const
@@ -660,24 +682,6 @@ namespace fmt {
     };
 
     template<>
-    struct formatter<daedalus_turbo::cardano::reward_source>: formatter<uint64_t> {
-        template<typename FormatContext>
-        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
-            switch (v) {
-                case daedalus_turbo::cardano::reward_source::reserves:
-                    return fmt::format_to(ctx.out(), "reward_source::reserves");
-
-                case daedalus_turbo::cardano::reward_source::treasury:
-                    return fmt::format_to(ctx.out(), "reward_source::treasury");
-
-                default:
-                    throw daedalus_turbo::error("unsupported reward_source value: {}", static_cast<int>(v));
-                    break;
-            }
-        }
-    };
-
-    template<>
     struct formatter<daedalus_turbo::cardano::relay_info>: formatter<uint64_t> {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
@@ -708,11 +712,11 @@ namespace fmt {
     };
 
     template<>
-    struct formatter<daedalus_turbo::cardano::pool_reg>: formatter<uint64_t> {
+    struct formatter<daedalus_turbo::cardano::pool_params>: formatter<uint64_t> {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
-            return fmt::format_to(ctx.out(), "pool_id: {} vrf: {} pledge: {} cost: {} margin: {} reward: {} owners: {} relays: {} metadata: {}",
-                v.pool_id, v.vrf_vkey, v.pledge, v.cost, v.margin, v.reward_id, v.owners, v.relays, v.metadata);
+            return fmt::format_to(ctx.out(), "vrf: {} pledge: {} cost: {} margin: {} reward: {} owners: {} relays: {} metadata: {}",
+                v.vrf_vkey, v.pledge, v.cost, v.margin, v.reward_id, v.owners, v.relays, v.metadata);
         }
     };
 

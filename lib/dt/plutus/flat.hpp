@@ -14,7 +14,7 @@ namespace daedalus_turbo::plutus::flat {
         explicit script(allocator &alloc, uint8_vector &&bytes, bool cbor=true);
         ~script();
 	    plutus::version version() const;
-        term_ptr program() const;
+        term program() const;
     private:
         struct impl;
         std::unique_ptr<impl> _impl;

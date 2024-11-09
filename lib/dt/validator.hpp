@@ -7,12 +7,14 @@
 
 #include <dt/indexer.hpp>
 
+namespace daedalus_turbo::cardano::ledger {
+    struct state;
+}
+
 namespace daedalus_turbo::validator {
     static constexpr std::string_view validate_leaders_task { "validate-epoch" };
 
     extern indexer::indexer_map default_indexers(const std::string &data_dir, scheduler &sched=scheduler::get());
-
-    struct state;
 
     struct incremental {
         incremental(chunk_registry &cr);
@@ -23,7 +25,7 @@ namespace daedalus_turbo::validator {
         [[nodiscard]] cardano::optional_point tip() const;
         [[nodiscard]] cardano::optional_slot can_export(const cardano::optional_point &immutable_tip) const;
         std::string node_export(const std::filesystem::path &ledger_dir, const cardano::optional_point &immutable_tip, int prio=1000) const;
-        [[nodiscard]] const validator::state &state() const;
+        [[nodiscard]] const cardano::ledger::state &state() const;
     private:
         struct impl;
         std::unique_ptr<impl> _impl;

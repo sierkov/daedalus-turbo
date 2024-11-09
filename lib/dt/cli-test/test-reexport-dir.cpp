@@ -3,9 +3,11 @@
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #include <dt/cli.hpp>
-#include <dt/validator/state.hpp>
+#include <dt/cardano/ledger/state.hpp>
 
 namespace daedalus_turbo::cli::test_reexport_dir {
+    using namespace cardano::ledger;
+
     struct cmd: command {
         void configure(config &cmd) const override
         {
@@ -27,7 +29,7 @@ namespace daedalus_turbo::cli::test_reexport_dir {
                     try {
                         const auto orig_hash = blake2b<blake2b_256_hash>(file::read(orig_path));
                         const auto orig_size = std::filesystem::file_size(orig_path);
-                        validator::state st {};
+                        state st {};
                         const auto tip = st.load_node(orig_path);
                         st.save_node(tmp_path, tip);
                         const auto tmp_size = std::filesystem::file_size(tmp_path);

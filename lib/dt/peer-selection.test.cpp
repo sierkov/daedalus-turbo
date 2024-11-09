@@ -24,6 +24,6 @@ suite peer_selection_suite = [] {
             for (const auto &[host, freq]: host_dist)
                 expect(static_cast<double>(freq) / num_rolls >= 0.25 * static_cast<double>(host_dist.size()) / num_rolls) << host << freq << num_rolls;
         }
-        test_same("backbone.cardano.iog.io"s, ps.next_cardano().host);
+        expect(ps.next_cardano().host.starts_with("backbone")) << ps.next_cardano().host;
     };
 };

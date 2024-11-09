@@ -121,12 +121,13 @@ suite cardano_common_suite = [] {
                 parser.read(block_tuple);
                 const auto blk = cardano::make_block(block_tuple, block_tuple.data - chunk.data());
                 blk->foreach_tx([&](const auto &tx) {
-                    tx.foreach_stake_deleg([&](const auto &) {
-                        ++num_delegs;
+                    tx.foreach_cert([&](const auto &c, const auto) {
+                        if (const auto typ = c.at(0).uint(); typ == 0)
+                            ++num_delegs;
                     });
                 });
             }
-            expect(num_delegs == 251_u);
+            test_same(129, num_delegs);
         };
         "pool_reg"_test = [] {
             auto chunk = file::read("./data/chunk-registry/compressed/chunk/DF597E3FA352A7BD2F021733804C33729EBAA3DCAA9C0643BD263EFA09497B03.zstd");
@@ -137,15 +138,16 @@ suite cardano_common_suite = [] {
                 parser.read(block_tuple);
                 const auto blk = cardano::make_block(block_tuple, block_tuple.data - chunk.data());
                 blk->foreach_tx([&](const auto &tx) {
-                    tx.foreach_pool_reg([&](const auto &) {
-                        num_regs++;
+                    tx.foreach_cert([&](const auto &c, const auto) {
+                        if (c.at(0).uint() == 3)
+                            ++num_regs;
                     });
                 });
             }
             expect(num_regs == 2_u);
         };
         "stake_ident"_test = [] {
-            stake_ident i1 { cardano::key_hash::from_hex("41fbfce15acccb420982704c9e591f83ab3315c3314a18ecf65346e0") };
+            stake_ident i1 { cardano::key_hash::from_hex("41fbfce15acccb420982704c9e591f83ab3315c3314a18ecf65346e0"), false };
             stake_ident i2 { cardano::key_hash::from_hex("41fbfce15acccb420982704c9e591f83ab3315c3314a18ecf65346e0"), true };
             expect(i1 < i2);
             expect(i1 == i1);
@@ -165,11 +167,11 @@ suite cardano_common_suite = [] {
             expect(i1 != i2);
             expect(i1 != i3);
             const auto j2 = i2.to_json();
-            const auto j2_hash = to_lower(json::value_to<std::string>(j2.at("hash")));
+            const auto j2_hash = to_lower(::json::value_to<std::string>(j2.at("hash")));
             expect(j2_hash == "41fbfce15acccb420982704c9e591f83ab3315c3314a18ecf65346e0") << j2_hash;
-            expect(json::value_to<std::string>(j2.at("type")) == "shelley-script");
-            expect(json::value_to<std::string>(i1.to_json().at("type")) == "shelley-key");
-            expect(json::value_to<std::string>(i3.to_json().at("type")) == "byron-key");
+            expect(::json::value_to<std::string>(j2.at("type")) == "shelley-script");
+            expect(::json::value_to<std::string>(i1.to_json().at("type")) == "shelley-key");
+            expect(::json::value_to<std::string>(i3.to_json().at("type")) == "byron-key");
         };
         "param_update"_test = [] {
             param_update u1 {};

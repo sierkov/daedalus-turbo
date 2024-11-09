@@ -5,9 +5,12 @@
 #ifndef DAEDALUS_TURBO_MEMORY_HPP
 #define DAEDALUS_TURBO_MEMORY_HPP
 
+#include <cstddef>
+
 namespace daedalus_turbo::memory {
     extern size_t max_usage_mb();
     extern size_t physical_mb();
+    extern size_t my_usage_mb();
 }
 
 #endif // !DAEDALUS_TURBO_MEMORY_HPP

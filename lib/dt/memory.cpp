@@ -6,6 +6,11 @@
 #define DAEDALUS_TURBO_MEMORY_HPP
 
 extern "C" {
+#ifdef __APPLE__
+#   include <mach/mach_init.h>
+#   include <mach/task_info.h>
+#   include <mach/task.h>
+#endif
 #ifdef _WIN32
 #   define NOMINMAX 1
 #   include <windows.h>
@@ -16,10 +21,37 @@ extern "C" {
 #   include <sys/resource.h>
 #endif
 };
+#include <dt/file.hpp>
 #include <dt/memory.hpp>
 #include <dt/mutex.hpp>
 
 namespace daedalus_turbo::memory {
+    size_t my_usage_mb()
+    {
+        // Win API is not thread safe by default
+        alignas(mutex::padding) static mutex::unique_lock::mutex_type m {};
+        mutex::scoped_lock lk { m };
+#       ifdef _WIN32
+            PROCESS_MEMORY_COUNTERS_EX pmc {};
+            GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
+            return static_cast<size_t>(pmc.WorkingSetSize >> 20);
+#       elif __linux__
+            static size_t page_size = sysconf (_SC_PAGESIZE);
+            std::string stat { file::read("/proc/self/statm").str() };
+            const auto pos = stat.find(' ');
+            if (pos == stat.npos) [[unlikely]]
+                throw error("invalid statm file format!");
+            return (std::stoull(stat.substr(0, pos)) * page_size) >> 20;
+#       else
+            struct task_basic_info tinfo;
+            mach_msg_type_number_t count = TASK_BASIC_INFO_COUNT;
+            task_info(
+                mach_task_self(), TASK_BASIC_INFO,
+                (task_info_t) &tinfo, &count);
+            return tinfo.resident_size >> 20;
+#       endif
+    }
+
     size_t max_usage_mb()
     {
         // Win API is not thread safe by default

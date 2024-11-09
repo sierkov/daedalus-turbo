@@ -39,12 +39,12 @@ namespace daedalus_turbo::index::tx {
     protected:
         void index_tx(const cardano::tx &tx) override
         {
-            _idx.emplace_part(tx.hash().data()[0] / _part_range, tx.hash(), tx.offset(), tx.raw_witness().data - tx.raw_cbor().data, 0);
+            _idx.emplace_part(tx.hash().data()[0] / _part_range, tx.hash(), tx.offset(), tx.witness_cbor().data - tx.cbor().data, 0);
         }
 
         void index_invalid_tx(const cardano::tx &tx) override
         {
-            _idx.emplace_part(tx.hash().data()[0] / _part_range, tx.hash(), tx.offset(), tx.raw_witness().data - tx.raw_cbor().data, 1);
+            _idx.emplace_part(tx.hash().data()[0] / _part_range, tx.hash(), tx.offset(), tx.witness_cbor().data - tx.cbor().data, 1);
         }
     };
 

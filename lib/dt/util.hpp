@@ -46,14 +46,12 @@ namespace daedalus_turbo {
     struct uint8_vector: vector<uint8_t> {
         using vector::vector;
 
-        static uint8_vector from_hex(const std::string_view& hex)
+        static uint8_vector from_hex(const std::string_view hex)
         {
-            uint8_vector data {};
             if (hex.size() % 2 != 0)
                 throw error("hex string must have an even number of characters but got {}!", hex.size());
-            for (const char *p = hex.data(), *end = hex.data() + hex.size(); p < end; p += 2) {
-                data.push_back(uint_from_hex(*p) << 4 | uint_from_hex(*(p + 1)));
-            }
+            uint8_vector data(hex.size() / 2);
+            init_from_hex(data, hex);
             return data;
         }
 

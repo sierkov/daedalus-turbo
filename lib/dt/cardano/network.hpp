@@ -9,7 +9,6 @@
 #include <dt/cardano.hpp>
 #include <dt/cardano/config.hpp>
 #include <dt/cbor.hpp>
-#include <dt/cbor-encoder.hpp>
 #include <dt/logger.hpp>
 #include <dt/scheduler.hpp>
 #include <dt/util.hpp>

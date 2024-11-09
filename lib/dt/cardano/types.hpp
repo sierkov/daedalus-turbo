@@ -10,14 +10,13 @@
 #include <dt/blake2b.hpp>
 #include <dt/bech32.hpp>
 #include <dt/cbor.hpp>
-#include <dt/cbor-encoder.hpp>
+#include <dt/cbor/encoder.hpp>
 #include <dt/container.hpp>
-#include <dt/crypto/crc32.hpp>
-#include <dt/crypto/sha3.hpp>
 #include <dt/ed25519.hpp>
 #include <dt/json.hpp>
 #include <dt/kes.hpp>
-#include <dt/mutex.hpp>
+#include <dt/narrow-cast.hpp>
+#include <dt/partitioned-map.hpp>
 #include <dt/static-map.hpp>
 #include <dt/util.hpp>
 #include <dt/vrf.hpp>
@@ -65,7 +64,7 @@ namespace daedalus_turbo {
         struct config;
 
         struct slot_range {
-            constexpr static auto serialize(auto &archive, auto &self)
+            static constexpr auto serialize(auto &archive, auto &self)
             {
                 return archive(self._min, self._max);
             }
@@ -111,7 +110,7 @@ namespace daedalus_turbo {
         };
 
         struct slot {
-            constexpr static auto serialize(auto &archive, auto &self)
+            static constexpr auto serialize(auto &archive, auto &self)
             {
                 return archive(self._slot);
             }
@@ -133,6 +132,8 @@ namespace daedalus_turbo {
             slot(const slot &o): _slot { o._slot }, _cfg { o._cfg }
             {
             }
+
+            void to_cbor(cbor::encoder &enc) const;
 
             slot &operator=(const slot &o)
             {
@@ -237,12 +238,37 @@ namespace daedalus_turbo {
             return false;
         }
 
-        struct stake_pointer {
-            uint64_t slot {};
-            uint64_t tx_idx {};
-            uint64_t cert_idx {};
+        struct cert_loc_t {
+            uint64_t slot = 0;
+            uint32_t tx_idx = 0;
+            uint32_t cert_idx = 0;
 
-            bool operator<(const auto &b) const
+            static uint64_t max_slot()
+            {
+                return std::numeric_limits<decltype(slot)>::max();
+            }
+
+            static uint64_t max_tx_idx()
+            {
+                return std::numeric_limits<decltype(tx_idx)>::max();
+            }
+
+            static uint64_t max_cert_idx()
+            {
+                return std::numeric_limits<decltype(cert_idx)>::max();
+            }
+
+            static constexpr auto serialize(auto &archive, auto &self)
+            {
+                return archive(self.slot, self.tx_idx, self.cert_idx);
+            }
+
+            cert_loc_t() =default;
+            cert_loc_t(const cert_loc_t &) =default;
+            cert_loc_t(uint64_t, uint64_t, uint64_t);
+            cert_loc_t &operator=(const cert_loc_t &) =default;
+
+            bool operator<(const cert_loc_t &b) const
             {
                 if (slot != b.slot)
                     return slot < b.slot;
@@ -251,47 +277,71 @@ namespace daedalus_turbo {
                 return cert_idx < b.cert_idx;
             }
 
-            bool operator==(const auto &b) const
+            bool operator==(const cert_loc_t &b) const
             {
                 return slot == b.slot && tx_idx == b.tx_idx && cert_idx == b.cert_idx;
             }
+        };
+
+        struct stake_pointer: cert_loc_t {
+            using cert_loc_t::cert_loc_t;
+            stake_pointer(const cbor::value &v);
+
+            void to_cbor(cbor::encoder &) const;
 
             json::object to_json() const
             {
                 return json::object {
-                    { "slot", static_cast<uint64_t>(slot) },
+                    { "slot", slot },
                     { "txIdx", tx_idx },
                     { "certIdx", cert_idx }
                 };
             }
         };
 
-        struct __attribute__((packed)) stake_ident {
-            cardano_hash_28 hash {};
+        struct __attribute__((packed)) credential_t {
+            key_hash hash {};
             bool script { false };
 
-            bool operator<(const auto &b) const {
+            static constexpr auto serialize(auto &archive, auto &self)
+            {
+                return archive(self.hash, self.script);
+            }
+
+            credential_t() =default;
+            credential_t(const credential_t &) =default;
+            credential_t(const key_hash &, bool);
+            credential_t(const cbor::value &);
+            credential_t(const std::string_view);
+            credential_t &operator=(const credential_t &) =default;
+            void to_cbor(cbor::encoder &) const;
+
+            bool operator<(const auto &b) const
+            {
                 // compares the hash and the script in a single operation
                 static_assert(sizeof(*this) == 29);
                 return memcmp(this, &b, sizeof(*this)) < 0;
             }
 
-            bool operator==(const auto &b) const {
+            bool operator==(const credential_t &b) const
+            {
                 return memcmp(this, &b, sizeof(*this)) == 0 && script == b.script;
             }
 
-            bool operator!=(const auto &b) const {
+            bool operator!=(const credential_t &b) const
+            {
                 return !(*this == b);
             }
 
             json::value to_json() const
             {
                 return json::object {
-                    { "hash", fmt::format("{}", hash.span()) },
-                    { "script", script }
+                        { "hash", fmt::format("{}", hash.span()) },
+                        { "script", script }
                 };
             }
         };
+        using stake_ident = credential_t;
 
         struct __attribute__((packed)) pay_ident {
             enum class ident_type: uint8_t {
@@ -353,15 +403,16 @@ namespace daedalus_turbo {
         };
 
         struct script_info: uint8_vector {
-            script_info(const script_type type, const buffer script): uint8_vector {}
+            static script_info from_cbor(const buffer bytes);
+
+            script_info(const script_type type, const buffer script):
+                uint8_vector { _canonical(type, script) }, _hash { blake2b<script_hash>(*this) }
             {
-                reserve(script.size() + 1);
-                *this << static_cast<uint8_t>(type) << script;
             }
 
             [[nodiscard]] script_hash hash() const
             {
-                return blake2b<script_hash>(*this);
+                return _hash;
             }
 
             [[nodiscard]] script_type type() const
@@ -373,6 +424,16 @@ namespace daedalus_turbo {
             {
                 return span().subbuf(1);
             }
+        private:
+            static uint8_vector _canonical(const script_type type, const buffer script)
+            {
+                uint8_vector bytes {};
+                bytes.reserve(script.size() + 1);
+                bytes << static_cast<uint8_t>(type) << script;
+                return bytes;
+            }
+
+            script_hash _hash {};
         };
         using script_info_map = map<script_hash, script_info>;
 
@@ -423,10 +484,18 @@ namespace daedalus_turbo {
                     case 0b0101: // scripthash28, pointer
                     {
                         auto ptr_buf = _bytes.subbuf(29);
-                        stake_pointer ptr;
-                        const auto sz1 = _read_var_uint_be(ptr.slot, ptr_buf);
-                        const auto sz2 = _read_var_uint_be(ptr.tx_idx, ptr_buf.subbuf(sz1));
-                        const auto sz3 = _read_var_uint_be(ptr.cert_idx, ptr_buf.subbuf(sz1 + sz2));
+                        uint64_t slot = 0;
+                        const auto sz1 = _read_var_uint_be(slot, ptr_buf);
+                        uint64_t tx_idx = 0;
+                        const auto sz2 = _read_var_uint_be(tx_idx, ptr_buf.subbuf(sz1));
+                        uint64_t cert_idx = 0;
+                        const auto sz3 = _read_var_uint_be(cert_idx, ptr_buf.subbuf(sz1 + sz2));
+                        if (slot > cert_loc_t::max_slot() || tx_idx > cert_loc_t::max_tx_idx() || cert_idx > cert_loc_t::max_cert_idx()) {
+                            slot = 0;
+                            tx_idx = 0;
+                            cert_idx = 0;
+                        }
+                        stake_pointer ptr { slot, tx_idx, cert_idx };
                         ptr_buf = ptr_buf.subbuf(0, sz1 + sz2 + sz3);
                         uint8_vector ptr_enc {};
                         ptr_enc << _encode_var_uint_be(ptr.slot) << _encode_var_uint_be(ptr.tx_idx) << _encode_var_uint_be(ptr.cert_idx);
@@ -446,6 +515,8 @@ namespace daedalus_turbo {
                         throw cardano_error("unsupported address type: {}!", type());
                 }
             }
+
+            void to_cbor(cbor::encoder &enc) const;
 
             uint8_t network() const
             {
@@ -496,16 +567,15 @@ namespace daedalus_turbo {
 
             const stake_pointer pointer() const
             {
-                stake_pointer p {};
+
                 if (data().size() < 28 + 3)
                     throw error("pointer data is too small - expect 31+ bytes but got: {}", data().size());
-                auto ptr = data().subspan(28, data().size() - 28);
-                uint64_t rel_slot = 0;
-                auto sz1 = _read_var_uint_be(rel_slot, ptr);
-                p.slot = rel_slot;
-                auto sz2 = _read_var_uint_be(p.tx_idx, ptr.subspan(sz1, ptr.size() - sz1));
-                _read_var_uint_be(p.cert_idx, ptr.subspan(sz1 + sz2, ptr.size() - sz1 - sz2));
-                return p;
+                const auto ptr = data().subspan(28, data().size() - 28);
+                uint64_t slot, tx_idx, cert_idx;
+                const auto sz1 = _read_var_uint_be(slot, ptr);
+                const auto sz2 = _read_var_uint_be(tx_idx, ptr.subspan(sz1, ptr.size() - sz1));
+                _read_var_uint_be(cert_idx, ptr.subspan(sz1 + sz2, ptr.size() - sz1 - sz2));
+                return { slot, tx_idx, cert_idx };
             };
 
             const stake_ident stake_id() const
@@ -744,7 +814,7 @@ namespace daedalus_turbo {
         };
 
         struct tx_out_idx {
-            constexpr static auto serialize(auto &archive, auto &self)
+            static constexpr auto serialize(auto &archive, auto &self)
             {
                 return archive(self._out_idx);
             }
@@ -832,18 +902,19 @@ namespace daedalus_turbo {
         struct tx_out_data {
             using datum_option_type = std::variant<datum_hash, uint8_vector>;
 
-            constexpr static auto serialize(auto &archive, auto &self)
-            {
-                return archive(self.coin, self.address, self.assets, self.datum, self.script_ref);
-            }
-
-            static tx_out_data from_output(const tx_output &txo);
-
             uint64_t coin = 0;
             uint8_vector address {};
             std::optional<uint8_vector> assets {};
             std::optional<datum_option_type> datum {};
             std::optional<uint8_vector> script_ref {};
+
+            static constexpr auto serialize(auto &archive, auto &self)
+            {
+                return archive(self.coin, self.address, self.assets, self.datum, self.script_ref);
+            }
+
+            static tx_out_data from_output(const tx_output &txo);
+            void to_cbor(cbor::encoder &) const;
 
             bool empty() const noexcept
             {
@@ -856,8 +927,7 @@ namespace daedalus_turbo {
             }
         };
         using tx_out_data_list = vector<tx_out_data>;
-
-        using txo_map = map<tx_out_ref, tx_out_data>;
+        using txo_map = partitioned_map<tx_out_ref, tx_out_data>;
 
         struct protocol_version {
             uint64_t major = 1;
@@ -866,6 +936,13 @@ namespace daedalus_turbo {
             bool operator==(const auto &b) const
             {
                 return major == b.major && minor == b.minor;
+            }
+
+            bool operator<(const auto &o) const
+            {
+                if (major != o.major)
+                    return major < o.major;
+                return minor < o.minor;
             }
 
             bool aggregated_rewards() const
@@ -878,64 +955,59 @@ namespace daedalus_turbo {
                 return major > 6;
             }
 
-            bool keep_pointers() const {
+            bool keep_pointers() const
+            {
                 return major < 9;
+            }
+
+            uint64_t era() const {
+                switch (major) {
+                    case 0: return 0;
+                    case 1: return 1;
+                    case 2: return 2;
+                    case 3: return 3;
+                    case 4: return 4;
+                    case 5:
+                    case 6:
+                        return 5;
+                    case 7:
+                    case 8:
+                        return 6;
+                    case 9: return 7;
+                    default: throw error("unsupported protocol version: {}", *this);
+                }
             }
         };
 
         using nonce = std::optional<vrf_nonce>;
 
-        struct plutus_cost_model: static_map<std::string, uint64_t> {
-            using storage_type = static_map;
-
+        struct plutus_cost_model: static_map<std::string, int64_t> {
             using static_map::static_map;
 
-            static plutus_cost_model from_cbor(const plutus_cost_model &orig, const cbor_array &data)
-            {
-                if (orig.size() != data.size())
-                    throw error("was expecting an array with {} elements but got {}", orig.size(), data.size());
-                plutus_cost_model res {};
-                res.reserve(orig.size());
-                for (size_t i = 0; i < orig.size(); ++i) {
-                    res.emplace_back(orig.storage().at(i).first, data.at(i).uint());
-                }
-                return res;
-            }
+            using storage_type = static_map;
+            using diff_type = map<std::string, std::pair<std::optional<int64_t>, std::optional<int64_t>>>;
 
-            static plutus_cost_model from_json(const plutus_cost_model &orig, const json::value &data)
-            {
-                plutus_cost_model res {};
-                res.reserve(orig.size());
-                if (data.is_object()) {
-                    const auto &data_obj = data.as_object();
-                    if (orig.size() != data_obj.size())
-                        throw error("was expecting an array with {} elements but got {}", orig.size(), data_obj.size());
-                    for (size_t i = 0; i < orig.size(); ++i) {
-                        const auto &key = orig.storage().at(i).first;
-                        res.emplace_back(key, json::value_to<uint64_t>(data_obj.at(key)));
-                    }
-                } else if (data.is_array()) {
-                    const auto &data_arr = data.as_array();
-                    if (orig.size() != data_arr.size())
-                        throw error("was expecting an array with {} elements but got {}", orig.size(), data_arr.size());
-                    for (size_t i = 0; i < orig.size(); ++i) {
-                        const auto &key = orig.storage().at(i).first;
-                        res.emplace_back(key, json::value_to<uint64_t>(data_arr[i]));
-                    }
-                } else {
-                    throw error("an unsupported json value representing a cost model: {}", json::serialize_pretty(data));
-                }
-                return res;
-            }
+            static plutus_cost_model from_cbor(const plutus_cost_model &orig, const cbor_array &data);
+            static plutus_cost_model from_json(const plutus_cost_model &orig, const json::value &data);
+
+            void update(const plutus_cost_model &src);
+            diff_type diff(const plutus_cost_model &o) const;
         };
 
         struct ex_units {
             uint64_t mem = 0;
             uint64_t steps = 0;
 
+            static ex_units from_cbor(const cbor::value &v);
+
             bool operator==(const ex_units &o) const
             {
                 return mem == o.mem && steps == o.steps;
+            }
+
+            bool operator>(const ex_units &o) const
+            {
+                return mem > o.mem || steps > o.steps;
             }
         };
 
@@ -943,7 +1015,7 @@ namespace daedalus_turbo {
             rational_u64 mem {};
             rational_u64 steps {};
 
-            constexpr static auto serialize(auto &archive, auto &self)
+            static constexpr auto serialize(auto &archive, auto &self)
             {
                 return archive(self.mem, self.steps);
             }
@@ -959,15 +1031,63 @@ namespace daedalus_turbo {
             std::optional<plutus_cost_model> v2 {};
             std::optional<plutus_cost_model> v3 {};
 
-            constexpr static auto serialize(auto &archive, auto &self)
+            static constexpr auto serialize(auto &archive, auto &self)
             {
                 return archive(self.v1, self.v2, self.v3);
             }
+
+            void to_cbor(cbor::encoder &) const;
 
             bool operator==(const plutus_cost_models &o) const noexcept
             {
                 return v1 == o.v1 && v2 == o.v2 && v3 == o.v3;
             }
+        };
+
+        struct pool_voting_thresholds_t {
+            rational_u64 comittee_normal { 0.51 };
+            rational_u64 comittee_no_confidence { 0.51 };
+            rational_u64 hard_fork_initiation { 0.51 };
+            rational_u64 motion_no_confidence { 0.51 };
+            rational_u64 pp_secirity_group { 0.51 };
+
+            static constexpr auto serialize(auto &archive, auto &self)
+            {
+                return archive(self.comittee_normal, self.comittee_no_confidence, self.hard_fork_initiation,
+                    self.motion_no_confidence, self.pp_secirity_group);
+            }
+
+            pool_voting_thresholds_t() =default;
+            pool_voting_thresholds_t(const pool_voting_thresholds_t &) =default;
+            pool_voting_thresholds_t(const json::value &);
+            void to_cbor(cbor::encoder &) const;
+        };
+
+        struct drep_voting_thresholds_t {
+            rational_u64 motion_no_confidence { 0.67 };
+            rational_u64 committee_normal { 0.67 };
+            rational_u64 committee_no_confidence { 0.6 };
+            rational_u64 update_to_constitution { 0.75 };
+            rational_u64 hard_fork_initiation { 0.6 };
+            rational_u64 pp_network_group { 0.67 };
+            rational_u64 pp_economic_group { 0.67 };
+            rational_u64 pp_technical_group { 0.67 };
+            rational_u64 pp_gov_group { 0.75 };
+            rational_u64 treasury_withdrawal { 0.67 };
+
+            static constexpr auto serialize(auto &archive, auto &self)
+            {
+                return archive(self.motion_no_confidence, self.committee_normal, self.committee_no_confidence,
+                    self.update_to_constitution, self.hard_fork_initiation,
+                    self.pp_network_group, self.pp_economic_group, self.pp_technical_group,
+                    self.pp_gov_group, self.treasury_withdrawal
+                );
+            }
+
+            drep_voting_thresholds_t() =default;
+            drep_voting_thresholds_t(const drep_voting_thresholds_t &) =default;
+            drep_voting_thresholds_t(const json::value &);
+            void to_cbor(cbor::encoder &) const;
         };
 
         struct protocol_params {
@@ -990,15 +1110,24 @@ namespace daedalus_turbo {
             uint64_t min_utxo_value = 0;
             uint64_t min_pool_cost = 0;
             uint64_t lovelace_per_utxo_byte = 0;
-	    cardano::ex_unit_prices ex_unit_prices {};
+	        cardano::ex_unit_prices ex_unit_prices {};
             ex_units max_tx_ex_units {};
             ex_units max_block_ex_units {};
             uint64_t max_value_size = 0;
             uint64_t max_collateral_pct = 0;
             uint64_t max_collateral_inputs = 0;
-	    cardano::plutus_cost_models plutus_cost_models {};
+	        cardano::plutus_cost_models plutus_cost_models {};
+            pool_voting_thresholds_t pool_voting_thresholds {};
+            drep_voting_thresholds_t drep_voting_thresholds {};
+            uint64_t comittee_min_size = 7;
+            uint64_t committee_max_term_length = 146;
+            uint64_t gov_action_lifetime = 6;
+            uint64_t gov_action_deposit = 100'000'000'000;
+            uint64_t drep_deposit = 500'000'000;
+            uint64_t drep_activity = 20;
+            rational_u64 min_fee_ref_script_cost_per_byte { 15, 1 };
 
-            constexpr static auto serialize(auto &archive, auto &self)
+            static constexpr auto serialize(auto &archive, auto &self)
             {
                 return archive(
                     self.min_fee_a, self.min_fee_b,
@@ -1070,7 +1199,7 @@ namespace daedalus_turbo {
             std::optional<uint64_t> max_collateral_inputs {};
             std::optional<cardano::plutus_cost_models> plutus_cost_models {};
 
-            constexpr static auto serialize(auto &archive, auto &self)
+            static constexpr auto serialize(auto &archive, auto &self)
             {
                 return archive(
                     self.hash,
@@ -1107,7 +1236,7 @@ namespace daedalus_turbo {
             std::optional<uint64_t> epoch {};
             param_update update {};
 
-            constexpr static auto serialize(auto &archive, auto &self)
+            static constexpr auto serialize(auto &archive, auto &self)
             {
                 return archive(self.pool_id, self.epoch, self.update);
             }
@@ -1117,6 +1246,38 @@ namespace daedalus_turbo {
             pool_hash pool_id {};
             block_hash proposal_id {};
             bool vote = false;
+        };
+
+        struct drep_t {
+            enum type_t {
+                abstain, no_confidence, credential
+            };
+
+            type_t typ {};
+            std::optional<credential_t> cred {};
+
+            static constexpr auto serialize(auto &archive, auto &self)
+            {
+                return archive(self.typ, self.cred);
+            }
+
+            drep_t() =default;
+            drep_t(const type_t &);
+            drep_t(const credential_t &);
+            drep_t(const cbor::value &v);
+            void to_cbor(cbor::encoder &) const;
+
+            bool operator<(const drep_t &o) const noexcept
+            {
+                if (typ != o.typ)
+                    return typ < o.typ;
+                if (cred && o.cred) {
+                    if (cred->script != o.cred->script)
+                        return cred->script > o.cred->script; // inverse the order for scripts to come first
+                    return cred->hash < o.cred->hash;
+                }
+                return cred.has_value() < o.cred.has_value();
+            }
         };
     }
 }
@@ -1268,6 +1429,28 @@ namespace fmt {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
             return fmt::format_to(ctx.out(), "delegate: {} vrf: {}", v.delegate, v.vrf);
+        }
+    };
+
+    enum class script_type: uint8_t {
+        native = 0,
+        plutus_v1 = 1,
+        plutus_v2 = 2,
+        plutus_v3 = 3
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::cardano::script_type>: formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::cardano::script_type &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            using daedalus_turbo::cardano::script_type;
+            switch (v) {
+                case script_type::native: return fmt::format_to(ctx.out(), "native");
+                case script_type::plutus_v1: return fmt::format_to(ctx.out(), "plutus_v1");
+                case script_type::plutus_v2: return fmt::format_to(ctx.out(), "plutus_v2");
+                case script_type::plutus_v3: return fmt::format_to(ctx.out(), "plutus_v3");
+                default: throw daedalus_turbo::cardano_error("unsupported address type: {}!", static_cast<int>(v));
+            }
         }
     };
 
@@ -1424,6 +1607,19 @@ namespace fmt {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
             return fmt::format_to(ctx.out(), "[{}, {}]", v.min(), v.max());
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::cardano::drep_t>: formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            switch (v.typ) {
+                case daedalus_turbo::cardano::drep_t::credential: return fmt::format_to(ctx.out(), "{}", v.cred.value());
+                case daedalus_turbo::cardano::drep_t::abstain: return fmt::format_to(ctx.out(), "abstain");
+                case daedalus_turbo::cardano::drep_t::no_confidence: return fmt::format_to(ctx.out(), "no-confidence");
+                default: throw daedalus_turbo::error("unsupported drep.type: {}", static_cast<int>(v.typ));
+            }
         }
     };
 

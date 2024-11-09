@@ -85,39 +85,7 @@ namespace daedalus_turbo::storage {
     private:
         const vector<partition> _parts;
 
-        static vector<partition> _chunk_partitions(const chunk_registry &cr, const size_t num_parts)
-        {
-            const uint64_t part_size_mark = cr.num_bytes() / num_parts;
-            vector<partition> parts {};
-            partition::storage_type chunks {};
-            uint64_t part_size = 0;
-            for (const auto &[chunk_last_byte, chunk]: cr.chunks()) {
-                const auto potential_size = part_size + chunk.data_size;
-                if (potential_size < part_size_mark || parts.size() + 1 >= num_parts) [[likely]] {
-                    chunks.emplace_back(&chunk);
-                    part_size = potential_size;
-                } else {
-                    const auto excess = potential_size - part_size_mark;
-                    const auto lack = part_size_mark - part_size;
-                    if (chunks.empty() || lack > excess) {
-                        chunks.emplace_back(&chunk);
-                        parts.emplace_back(std::move(chunks));
-                        chunks.clear();
-                        part_size = 0;
-                    } else {
-                        parts.emplace_back(std::move(chunks));
-                        chunks.clear();
-                        chunks.emplace_back(&chunk);
-                        part_size = chunk.data_size;
-                    }
-                }
-            }
-            if (!chunks.empty())
-                parts.emplace_back(std::move(chunks));
-            if (parts.size() > num_parts) [[unlikely]]
-                throw error("invariant failed: the number of actual partitions: {} is greater than requested: {}", parts.size(), num_parts);
-            return parts;
-        }
+        static vector<partition> _chunk_partitions(const chunk_registry &cr, size_t num_parts);
 
         const_iterator _find_it(const uint64_t offset) const
         {

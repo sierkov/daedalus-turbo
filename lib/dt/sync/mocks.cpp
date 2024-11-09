@@ -37,7 +37,7 @@ namespace daedalus_turbo::sync {
             cfg.emplace("shelley-genesis", std::move(shelley_genesis));
         }
         cfg.emplace("alonzo-genesis", json::load("./etc/mainnet/alonzo-genesis.json").as_object());
-        cfg.emplace("conway-genesis", json::object {});
+        cfg.emplace("conway-genesis", json::load("./etc/mainnet/conway-genesis.json").as_object());
         cfg.emplace("config", json::object {
             { "ByronGenesisFile", "byron-genesis" },
             { "ByronGenesisHash", fmt::format("{}", blake2b<block_hash>(json::serialize_canon(cfg.at("byron-genesis").json()))) },
@@ -60,6 +60,7 @@ namespace daedalus_turbo::sync {
         std::uniform_int_distribution<uint64_t> dist { 0, 40 };
         while (height < mock_cfg.height) {
             auto &bp = slot % 2 == 0 ? bp1 : bp2;
+            bp.vrf_nonce = chain.cardano_cfg.shelley_genesis_hash;
             bp.height = height;
             bp.slot = slot;
             bp.prev_hash = prev_hash;

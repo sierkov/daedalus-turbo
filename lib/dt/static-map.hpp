@@ -176,7 +176,7 @@ namespace daedalus_turbo {
         {
             return _data;
         }
-    private:
+    protected:
         storage_type _data {};
     };
 }

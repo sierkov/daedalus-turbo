@@ -17,11 +17,22 @@ namespace daedalus_turbo::plutus::costs {
         virtual ~cost_fun() =default;
         virtual uint64_t cost(const arg_sizes &sizes, const value_list &args) const =0;
     };
-    using cost_fun_ptr = std::unique_ptr<cost_fun>;
+    using cost_fun_ptr = std::shared_ptr<cost_fun>;
 
     struct op_model {
         cost_fun_ptr cpu {};
         cost_fun_ptr mem {};
+
+        /*op_model() =default;
+        op_model(const op_model &) = delete;
+
+        op_model(op_model &&o) noexcept: cpu { std::move(o.cpu) }, mem { std::move(o.mem) }
+        {
+        }
+
+        op_model(cost_fun_ptr &&cpu_, cost_fun_ptr &&mem_): cpu { std::move(cpu_) }, mem { std::move(mem_) }
+        {
+        }*/
     };
 
     struct parsed_model {
@@ -42,8 +53,21 @@ namespace daedalus_turbo::plutus::costs {
         std::optional<parsed_model> v1 {};
         std::optional<parsed_model> v2 {};
         std::optional<parsed_model> v3 {};
+
+        const parsed_model &for_script(cardano::script_type typ) const;
+        const parsed_model &for_script(const cardano::script_info &) const;
     };
 
+    using arg_map = map<std::string, std::string>;
+
+    const vector<std::string> &cost_arg_names_v1();
+    const vector<std::string> &cost_arg_names_v2();
+    const vector<std::string> &cost_arg_names_v3();
+    const arg_map &default_cost_args_v1();
+    const arg_map &default_cost_args_v2();
+    const arg_map &default_cost_args_v3();
+    extern std::string canonical_arg_name(const std::string &name);
+    extern std::string v1_arg_name(const std::string &name);
     extern parsed_models parse(const cardano::plutus_cost_models &);
     extern const parsed_models &defaults();
 }

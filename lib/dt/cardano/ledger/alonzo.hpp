@@ -1,0 +1,37 @@
+/* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * This code is distributed under the license specified in:
+ * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
+#ifndef DAEDALUS_TURBO_CARDANO_LEDGER_ALONZO_HPP
+#define DAEDALUS_TURBO_CARDANO_LEDGER_ALONZO_HPP
+
+#include <dt/cardano/ledger/shelley.hpp>
+
+namespace daedalus_turbo::cardano::ledger::alonzo {
+    struct vrf_state: shelley::vrf_state {
+        vrf_state(shelley::vrf_state &&);
+    };
+
+    struct state: shelley::state {
+        state(shelley::state &&);
+    protected:
+        void _apply_alonzo_params(protocol_params &p) const;
+        param_update _parse_param_update(const cbor::value &proposal) const override;
+        void _apply_param_update(const param_update &update) override;
+        void _parse_protocol_params(protocol_params &params, const cbor_value &values) const override;
+        void _params_to_cbor(cbor::encoder &enc, const protocol_params &params) const override;
+        void _param_update_to_cbor(cbor::encoder &enc, const param_update &update) const override;
+    };
+}
+
+namespace fmt {
+    template<>
+    struct formatter<daedalus_turbo::cardano::ledger::alonzo::vrf_state>: formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "{}", static_cast<const daedalus_turbo::cardano::ledger::shelley::vrf_state &>(v));
+        }
+    };
+}
+
+#endif // !DAEDALUS_TURBO_CARDANO_LEDGER_ALONZO_HPP

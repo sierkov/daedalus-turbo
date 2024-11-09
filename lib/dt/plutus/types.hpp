@@ -9,9 +9,10 @@
 #include <memory_resource>
 #include <variant>
 #include <dt/big_int.hpp>
+#include <dt/container.hpp>
 #include <dt/crypto/blst.hpp>
+#include <dt/cbor/encoder.hpp>
 #include <dt/cbor/zero.hpp>
-#include <dt/cbor-encoder.hpp>
 #include <dt/error.hpp>
 #include <dt/format.hpp>
 #include <dt/util.hpp>
@@ -22,9 +23,26 @@ namespace daedalus_turbo::plutus {
         uint64_t minor = 1;
         uint64_t patch = 0;
 
+        version() =default;
+        version(const std::string &s);
+
+        version(const uint64_t major_, const uint64_t minor_, const uint64_t patch_):
+            major { major_ }, minor { minor_ }, patch { patch_ }
+        {
+        }
+
+        bool operator>=(const version &o) const;
+        bool operator==(const version &o) const;
+
         operator std::string() const
         {
             return fmt::format("{}.{}.{}", major, minor, patch);
+        }
+
+        bool operator>=(const std::string &s) const
+        {
+            const version o { s };
+            return *this >= o;
         }
     };
 
@@ -205,6 +223,8 @@ namespace daedalus_turbo::plutus {
     // For that to work all internal objects must also be allocated using the same allocator,
     // so that there are no memory leaks
     struct allocator {
+        using allocator_type = std::pmr::polymorphic_allocator<std::byte>;
+
         template<typename T>
         struct ptr_type {
             ptr_type() =default;
@@ -247,38 +267,8 @@ namespace daedalus_turbo::plutus {
             }
         }
 
-#if defined(__GNUC__) && !defined(__clang__)
-        // GCC 13 reacts oddly to the libc++ implementation of std::pmr::string
-#       pragma GCC diagnostic push
-#       pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
-#endif
-        // For types that either:
-        // 1. Do not contain nested data structures
-        // 2. Contains nested data structures that are recursively allocated with this allocator only
         template<typename T, typename... Args>
-        ptr_type<T> make_no_destroy(Args&&... a)
-        {
-            return new (_mr.allocate(sizeof(T))) T { std::forward<Args>(a)... };
-        }
-
-        // For types that require their destructor to be called before deallocation
-        template<typename T, typename... Args>
-        ptr_type<T> make(Args&&... a)
-        {
-            T *p = new (_mr.allocate(sizeof(T))) T { std::forward<Args>(a)... };
-            try {
-                _ptrs.emplace_back(p, [](const void* x) { static_cast<const T*>(x)->~T(); });
-            } catch (...) {
-                // Call the destructor to release the memory allocated with alternative allocators.
-                // There is no need to deallocate in _mr since all its buffers will be released at the end of its lifetime.
-                p->~T();
-                throw;
-            }
-            return p;
-        }
-#if defined(__GNUC__) && !defined(__clang__)
-#       pragma GCC diagnostic pop
-#endif
+        ptr_type<T> make(Args&&... a);
 
         std::pmr::memory_resource *resource()
         {
@@ -290,54 +280,183 @@ namespace daedalus_turbo::plutus {
             void(*dtr)(const void*);
         };
 
-        std::pmr::monotonic_buffer_resource _mr {};
+        struct my_resource: std::pmr::memory_resource {
+            using my_alloc = container_allocator<std::byte>;
+
+            static my_resource *get()
+            {
+                static my_resource mr {};
+                return &mr;
+            }
+
+            void *do_allocate(const size_t bytes, const size_t align) override
+            {
+                return _alloc.allocate(_aligned_bytes(bytes, align));
+            }
+
+            void do_deallocate(void *ptr, const size_t bytes, const size_t align) override
+            {
+                _alloc.deallocate(reinterpret_cast<std::byte *>(ptr), _aligned_bytes(bytes, align));
+            }
+
+            bool do_is_equal(const memory_resource &o) const noexcept override
+            {
+                return this == &o;
+            }
+        private:
+            static constexpr size_t _aligned_bytes(const size_t bytes, const size_t align) {
+                return bytes & align ? bytes + align - (bytes & align) : bytes;
+            }
+
+            my_alloc _alloc {};
+        };
+
+        std::pmr::monotonic_buffer_resource _mr { 0x800000, my_resource::get() };
         std::pmr::vector<any_ptr> _ptrs { &_mr };
     };
 
-    struct term;
-    // shared_ptr is used to make terms copyable while allowing for a recursive definition of "term"
-    using term_ptr = allocator::ptr_type<term>;
-    using term_list = std::pmr::vector<term_ptr>;
+    struct str_type {
+        using value_type = std::pmr::string;
 
-    struct variable {
-        std::pmr::string name;
+        str_type() =delete;
 
-        variable() =delete;
-        variable(const variable &) =delete;
-
-        variable(variable &&o): name { std::move(o.name) }
+        str_type(const str_type &o): _ptr { o._ptr }
         {
         }
 
-        variable(allocator &alloc, std::string_view n): name { n, alloc.resource() }
+        str_type(allocator &alloc, value_type &&s): _ptr { alloc.make<value_type>(std::move(s)) }
         {
         }
 
-        variable(allocator &alloc, const variable &other): name { other.name, alloc.resource() }
+        str_type(allocator &alloc, std::string_view s): _ptr { alloc.make<value_type>(s) }
         {
         }
 
-        variable &operator=(variable &&o)
+        bool operator==(const str_type &o) const
         {
-            name = std::move(o.name);
+            return *_ptr == *o._ptr;
+        }
+
+        const value_type *operator->() const
+        {
+            return _ptr.get();
+        }
+
+        const value_type &operator*() const
+        {
+            return *_ptr;
+        }
+    private:
+        allocator::ptr_type<value_type> _ptr;
+    };
+
+    struct term_value;
+
+    struct term {
+        using value_type = term_value;
+
+        term() =delete;
+
+        term(const term &o): _ptr { o._ptr }
+        {
+        }
+
+        term(allocator &alloc, value_type &&v): _ptr { alloc.make<value_type>(std::move(v)) }
+        {
+        }
+
+        term &operator=(const term &o)
+        {
+            _ptr = o._ptr;
             return *this;
         }
 
+        bool operator==(const term &o) const;
+
+        const value_type &operator*() const
+        {
+            return *_ptr;
+        }
+    private:
+        allocator::ptr_type<value_type> _ptr;
+    };
+
+    template<typename T>
+    struct list_type: std::pmr::vector<T> {
+        list_type() =delete;
+
+        list_type(allocator &alloc): std::pmr::vector<T> { alloc.resource() }
+        {
+        }
+
+        list_type(allocator &alloc, std::initializer_list<T> il): std::pmr::vector<T> { il, alloc.resource() }
+        {
+        }
+
+        list_type(allocator &alloc, list_type<T> &&l): std::pmr::vector<T> { std::move(l), alloc.resource() }
+        {
+        }
+    };
+
+    struct term_list {
+        using value_type = list_type<term>;
+
+        term_list() =delete;
+
+        term_list(allocator &alloc, std::initializer_list<term> il): _ptr { alloc.make<value_type>(alloc, il) }
+        {
+        }
+
+        term_list(allocator &alloc, value_type &&v): _ptr { alloc.make<value_type>(alloc, std::move(v)) }
+        {
+        }
+
+        term_list(const term_list &o): _ptr { o._ptr }
+        {
+        }
+
+        bool operator==(const term_list &o) const
+        {
+            if (_ptr->size() != o._ptr->size())
+                return false;
+            for (size_t i = 0; i < _ptr->size(); ++i) {
+                if ((*_ptr)[i] != (*o._ptr)[i])
+                    return false;
+            }
+            return true;
+        }
+
+        const value_type *operator->() const
+        {
+            return _ptr.get();
+        }
+
+        const value_type &operator*() const
+        {
+            return *_ptr;
+        }
+    private:
+        allocator::ptr_type<value_type> _ptr;
+    };
+
+    struct variable {
+        size_t idx;
+
         bool operator==(const variable &o) const
         {
-            return name == o.name;
+            return idx == o.idx;
         }
     };
 
     struct force {
-        term_ptr expr;
+        term expr;
 
         bool operator==(const force &o) const;
     };
 
     struct apply {
-        term_ptr func;
-        term_ptr arg;
+        term func;
+        term arg;
 
         bool operator==(const apply &o) const;
     };
@@ -350,35 +469,14 @@ namespace daedalus_turbo::plutus {
     };
 
     struct t_delay {
-        term_ptr expr;
+        term expr;
 
         bool operator==(const t_delay &o) const;
     };
 
     struct t_lambda {
-        std::pmr::string name;
-        term_ptr expr;
-
-        t_lambda() =delete;
-
-        t_lambda(t_lambda &&o): name { std::move(o.name) }, expr { std::move(o.expr) }
-        {
-        }
-
-        t_lambda(allocator &alloc, const std::string_view n, const term_ptr &e): name { n, alloc.resource() }, expr { e }
-        {
-        }
-
-        t_lambda(allocator &alloc, const t_lambda &o): name { o.name, alloc.resource() }, expr { o.expr }
-        {
-        }
-
-        t_lambda &operator=(t_lambda &&o)
-        {
-            name = std::move(o.name);
-            expr = std::move(o.expr);
-            return *this;
-        }
+        size_t var_idx;
+        term expr;
 
         bool operator==(const t_lambda &o) const;
     };
@@ -386,7 +484,7 @@ namespace daedalus_turbo::plutus {
     struct constant;
 
     struct constant_type {
-        using list_type = std::pmr::vector<constant_type>;
+        using list_type = list_type<constant_type>;
         struct value_type {
             type_tag typ;
             list_type nested;
@@ -394,7 +492,7 @@ namespace daedalus_turbo::plutus {
 
         static constant_type make_pair(allocator &alloc, constant_type &&fst, constant_type &&snd)
         {
-            list_type n {};
+            list_type n { alloc };
             n.emplace_back(std::move(fst));
             n.emplace_back(std::move(snd));
             return { alloc, type_tag::pair, std::move(n) };
@@ -412,16 +510,21 @@ namespace daedalus_turbo::plutus {
         {
         }
 
-        constant_type(allocator &alloc, value_type &&v): _ptr { alloc.make_no_destroy<value_type>(std::move(v) ) }
+        constant_type(allocator &alloc, value_type &&v): _ptr { alloc.make<value_type>(std::move(v) ) }
         {
         }
 
-        constant_type(allocator &alloc, const type_tag t): constant_type { alloc, value_type { t, list_type { alloc.resource() } } }
+        constant_type(allocator &alloc, const type_tag t): constant_type { alloc, value_type { t, list_type { alloc } } }
         {
         }
 
-        constant_type(allocator &alloc, const type_tag t, std::pmr::vector<constant_type> &&n):
+        constant_type(allocator &alloc, const type_tag t, list_type &&n):
             constant_type { alloc, value_type { t, std::move(n) } }
+        {
+        }
+
+        constant_type(allocator &alloc, const type_tag t, std::initializer_list<constant_type> il):
+            constant_type { alloc, value_type { t, { alloc, il } } }
         {
         }
 
@@ -481,43 +584,239 @@ namespace daedalus_turbo::plutus {
 
     struct data_pair {
         using value_type = std::pair<data, data>;
-        data_pair(data &&, data &&);
+
+        data_pair(allocator &alloc, const data &fst, const data &snd):
+            _ptr { alloc.make<value_type>(fst, snd) }
+        {
+        }
+
         bool operator==(const data_pair &o) const;
         const value_type &operator*() const;
         const value_type *operator->() const;
     private:
-        std::shared_ptr<value_type> _val;
+        allocator::ptr_type<value_type> _ptr;
+    };
+
+    using bint_backend_parent_type = boost::multiprecision::cpp_int_backend<
+        0,
+        0,
+        boost::multiprecision::signed_magnitude,
+        boost::multiprecision::checked,
+        std::allocator<uint64_t>
+    >;
+
+    struct bint_backend_type: bint_backend_parent_type
+    {
+        using bint_backend_parent_type::bint_backend_parent_type;
+    };
+
+    struct bint_type {
+        using value_type = boost::multiprecision::number<bint_backend_parent_type>;
+        //using value_type = boost::multiprecision::checked_int1024_t;
+
+        bint_type() =delete;
+
+        bint_type(const bint_type &o): _ptr { o._ptr }
+        {
+        }
+
+        bint_type(allocator &alloc): _ptr { alloc.make<value_type>() }
+        {
+        }
+
+        bint_type(allocator &alloc, const auto &v): _ptr { alloc.make<value_type>(v) }
+        {
+        }
+
+        bint_type &operator=(const bint_type &o)
+        {
+            _ptr = o._ptr;
+            return *this;
+        }
+
+        bool operator==(const auto &o) const
+        {
+            return *_ptr == o;
+        }
+
+        const value_type &operator*() const
+        {
+            return *_ptr;
+        }
+    private:
+        allocator::ptr_type<value_type> _ptr;
     };
 
     struct data_constr {
-        using value_type = std::pair<uint64_t, vector<data>>;
-        data_constr(uint64_t, vector<data> &&);
-        data_constr(const cpp_int &, vector<data> &&);
+        using list_type = list_type<data>;
+        using value_type = std::pair<uint64_t, list_type>;
+
+        data_constr(allocator &alloc, uint64_t t, std::initializer_list<data> il);
+        data_constr(allocator &alloc, uint64_t t, list_type &&l);
+
+        data_constr(allocator &alloc, const bint_type &t, std::initializer_list<data> il):
+            data_constr { alloc, static_cast<uint64_t>(*t), il }
+        {
+        }
+
+        data_constr(allocator &alloc, const bint_type &t, list_type &&l):
+            data_constr { alloc, static_cast<uint64_t>(*t), std::move(l) }
+        {
+        }
+
         bool operator==(const data_constr &o) const;
         const value_type &operator*() const;
         const value_type *operator->() const;
     private:
-        std::shared_ptr<value_type> _val;
+        allocator::ptr_type<value_type> _ptr;
+    };
+
+    struct bstr_type
+    {
+        struct value_type: std::pmr::vector<uint8_t> {
+            value_type() =delete;
+            value_type(const value_type &) =delete;
+
+            value_type(allocator &alloc): std::pmr::vector<uint8_t> { alloc.resource() }
+            {
+            }
+
+            value_type(allocator &alloc, const buffer b): std::pmr::vector<uint8_t>(b.size(), alloc.resource())
+            {
+                memcpy(data(), b.data(), b.size());
+            }
+
+            value_type(allocator &alloc, const size_t sz): std::pmr::vector<uint8_t>(sz, alloc.resource())
+            {
+            }
+
+            value_type &operator=(const buffer &buf)
+            {
+                resize(buf.size());
+                memcpy(data(), buf.data(), buf.size());
+                return *this;
+            }
+
+            value_type &operator<<(const buffer buf)
+            {
+                size_t end_off = size();
+                resize(end_off + buf.size());
+                memcpy(data() + end_off, buf.data(), buf.size());
+                return *this;
+            }
+
+            value_type &operator<<(const uint8_t k)
+            {
+                reserve(size() + 1);
+                emplace_back(k);
+                return *this;
+            }
+
+            buffer span() const
+            {
+                return buffer { data(), size() };
+            }
+
+            std::string_view str() const
+            {
+                return std::string_view { reinterpret_cast<const char *>(data()), size() };
+            }
+        };
+
+        static bstr_type from_hex(allocator &alloc, const std::string_view hex)
+        {
+            if (hex.size() % 2 != 0)
+                throw error("hex string must have an even number of characters but got {}!", hex.size());
+            bstr_type::value_type data { alloc, hex.size() / 2 };
+            init_from_hex(data, hex);
+            return { alloc, std::move(data) };
+        }
+
+        bstr_type() =delete;
+        bstr_type(const bstr_type &o): _ptr { o._ptr }
+        {
+        }
+
+        bstr_type(allocator &alloc, const buffer b): _ptr { alloc.make<value_type>(alloc, b ) }
+        {
+        }
+
+        bstr_type(allocator &alloc, value_type &&v): _ptr { alloc.make<value_type>(alloc, std::move(v) ) }
+        {
+        }
+
+        bool operator==(const bstr_type &o) const
+        {
+            return *_ptr == *o._ptr;
+        }
+
+        const value_type *operator->() const
+        {
+            return _ptr.get();
+        }
+
+        const value_type &operator*() const
+        {
+            return *_ptr;
+        }
+    private:
+        allocator::ptr_type<value_type> _ptr {};
     };
 
     struct data {
-        using int_type = cpp_int;
-        using bstr_type = uint8_vector;
-        using list_type = vector<data>;
-        using map_type = vector<data_pair>;
-        using value_type = std::variant<data_constr, map_type, list_type, int_type, bstr_type>;
-        value_type val;
+        using map_type = list_type<data_pair>;
 
-        static data from_cbor(buffer);
-        static data bstr(buffer);
-        static data bint(cpp_int &&);
-        static data bint(const cpp_int &);
-        static data constr(cpp_int &&, list_type &&);
-        static data list(list_type &&);
-        static data map(map_type &&);
-        bool operator==(const data &o) const;
-        uint8_vector as_cbor() const;
-        std::string as_string(const size_t shift=0) const;
+        using list_type = list_type<data>;
+        using int_type = bint_type;
+        using bstr_type = bstr_type;
+        using value_type = std::variant<data_constr, map_type, list_type, int_type, bstr_type>;
+
+        static data from_cbor(allocator &alloc, buffer);
+        static data bstr(allocator &alloc, const bstr_type &);
+        static data bstr(allocator &alloc, buffer);
+        static data bint(allocator &alloc, uint64_t);
+        static data bint(allocator &alloc, const cpp_int &);
+        static data bint(allocator &alloc, const int_type &);
+        static data constr(allocator &alloc, uint64_t, list_type &&);
+        static data constr(allocator &alloc, uint64_t, std::initializer_list<data>);
+        static data constr(allocator &alloc, const int_type &, list_type &&);
+        static data constr(allocator &alloc, const int_type &i, std::initializer_list<data>);
+        static data list(allocator &alloc, list_type &&);
+        static data list(allocator &alloc, std::initializer_list<data>);
+        static data map(allocator &alloc, std::initializer_list<data_pair>);
+        static data map(allocator &alloc, map_type &&);
+
+        data() =delete;
+
+        data(const data &o): _ptr { o._ptr }
+        {
+        }
+
+        data(allocator &alloc, value_type &&v): _ptr { alloc.make<value_type>(std::move(v)) }
+        {
+        }
+
+        data &operator=(const data &o)
+        {
+            _ptr = o._ptr;
+            return *this;
+        }
+
+        bool operator==(const data &o) const
+        {
+            return *_ptr == *o._ptr;
+        }
+
+        const value_type &operator*() const
+        {
+            return *_ptr;
+        }
+
+        void to_cbor(cbor::encoder &) const;
+        bstr_type as_cbor(allocator &alloc) const;
+        std::string as_string(size_t shift=0) const;
+    private:
+        allocator::ptr_type<value_type> _ptr;
     };
 
     struct constant_pair {
@@ -558,7 +857,7 @@ namespace daedalus_turbo::plutus {
     };
 
     struct constant_list {
-        using list_type = std::pmr::vector<constant>;
+        using list_type = list_type<constant>;
         struct value_type {
             constant_type typ;
             list_type vals;
@@ -567,25 +866,18 @@ namespace daedalus_turbo::plutus {
         static constant_list make_one(allocator &alloc, constant &&);
 
         constant_list() =delete;
+        constant_list(allocator &alloc, list_type &&);
+        constant_list(allocator &alloc, std::initializer_list<constant>);
+        constant_list(allocator &alloc, const constant_type &t);
+        constant_list(allocator &alloc, const constant_type &t, std::initializer_list<constant>);
+        constant_list(allocator &alloc, const constant_type &t, list_type &&);
 
         constant_list(allocator &alloc, value_type &&v): _ptr { alloc.make<value_type>(std::move(v)) }
         {
         }
 
-        constant_list(allocator &alloc, constant_type &&t, list_type &&l);
-
-        constant_list(constant_list &&o): _ptr { std::move(o._ptr) }
-        {
-        }
-
         constant_list(const constant_list &o): _ptr { o._ptr }
         {
-        }
-
-        constant_list &operator=(constant_list &&o)
-        {
-            _ptr = std::move(o._ptr);
-            return *this;
         }
 
         constant_list &operator=(const constant_list &o)
@@ -601,28 +893,18 @@ namespace daedalus_turbo::plutus {
     };
 
     struct constant {
-        using value_type = std::variant<cpp_int, uint8_vector, std::string, bool, constant_list, constant_pair,
+        using value_type = std::variant<bint_type, bstr_type, str_type, bool, constant_list, constant_pair,
             data, bls12_381_g1_element, bls12_381_g2_element, bls12_381_ml_result, std::monostate>;
 
         constant() =delete;
 
-        constant(allocator &alloc, value_type &&v)
-            : _ptr { alloc.make<value_type>(std::move(v)) }
+        constant(allocator &alloc, value_type &&v):
+            _ptr { alloc.make<value_type>(std::move(v)) }
         {
         }
 
         constant(const constant &o): _ptr { o._ptr }
         {
-        }
-
-        constant(constant &&o): _ptr { std::move(o._ptr) }
-        {
-        }
-
-        constant &operator=(constant &&o)
-        {
-            _ptr = std::move(o._ptr);
-            return *this;
         }
 
         constant &operator=(const constant &o)
@@ -631,9 +913,9 @@ namespace daedalus_turbo::plutus {
             return *this;
         }
 
-        const cpp_int &as_int() const
+        const bint_type &as_int() const
         {
-            return std::get<cpp_int>(*_ptr);
+            return std::get<bint_type>(*_ptr);
         }
 
         bool as_bool() const
@@ -641,14 +923,14 @@ namespace daedalus_turbo::plutus {
             return std::get<bool>(*_ptr);
         }
 
-        const uint8_vector &as_bstr() const
+        const bstr_type &as_bstr() const
         {
-            return std::get<uint8_vector>(*_ptr);
+            return std::get<bstr_type>(*_ptr);
         }
 
-        const std::string &as_str() const
+        const str_type &as_str() const
         {
-            return std::get<std::string>(*_ptr);
+            return std::get<str_type>(*_ptr);
         }
 
         const data &as_data() const
@@ -693,7 +975,7 @@ namespace daedalus_turbo::plutus {
     struct t_builtin {
         builtin_tag tag {};
 
-        static t_builtin from_name(const std::string &);
+        static t_builtin from_name(std::string_view);
 
         bool operator==(const t_builtin &o) const
         {
@@ -701,8 +983,7 @@ namespace daedalus_turbo::plutus {
         }
 
         size_t num_args() const;
-        builtin_any func() const;
-        const std::string &name() const;
+        std::string_view name() const;
         size_t polymorphic_args() const;
     };
 
@@ -710,96 +991,220 @@ namespace daedalus_turbo::plutus {
         uint64_t tag;
         term_list args;
 
-        t_constr() =delete;
-
-        t_constr(const uint64_t t, term_list &&a): tag { t }, args { std::move(a) }
-        {
-        }
-
-        t_constr(t_constr &&o): tag { o.tag }, args { std::move(o.args) }
-        {
-        }
-
-        t_constr &operator=(t_constr &&o)
-        {
-            tag = o.tag;
-            args = std::move(o.args);
-            return *this;
-        }
-
         bool operator==(const t_constr &o) const;
     };
 
     struct t_case {
-        term_ptr arg;
+        term arg;
         term_list cases;
-
-        t_case() =delete;
-
-        t_case(const term_ptr &arg_, term_list &&cases_): arg { arg_ }, cases { std::move(cases_) }
-        {
-        }
-
-        t_case(t_case &&o): arg { std::move(o.arg) }, cases { std::move(o.cases) }
-        {
-        }
-
-        t_case &operator=(t_case &&o)
-        {
-            arg = std::move(o.arg);
-            cases = std::move(o.cases);
-            return *this;
-        }
 
         bool operator==(const t_case &o) const;
     };
 
-    struct term {
-        using expr_type = std::variant<variable, t_delay, force, t_lambda, apply, constant, failure, t_builtin, t_constr, t_case>;
-        expr_type expr;
-
-        template<typename T>
-        static term_ptr make_ptr(allocator &alloc, T &&v)
-        {
-            return alloc.make<term>(std::move(v));
-        }
-
-        term() =delete;
-        term(const term &) =delete;
-
-        term(expr_type &&e): expr { std::move(e) }
-        {
-        }
-
-        term(term &&o): expr { std::move(o.expr) }
-        {
-        }
-
-        term &operator=(term &&o)
-        {
-            expr = std::move(o.expr);
-            return *this;
-        }
-
-        bool operator==(const term &o) const
-        {
-            return expr == o.expr;
-        }
+    struct term_value: std::variant<variable, t_delay, force, t_lambda, apply, constant, failure, t_builtin, t_constr, t_case> {
+        using std::variant<variable, t_delay, force, t_lambda, apply, constant, failure, t_builtin, t_constr, t_case>::variant;
     };
 
-    struct value;
-    using value_list = vector<value>;
+    struct v_builtin;
+    struct v_constr;
+    struct v_delay;
+    struct v_lambda;
 
-    extern bool builtin_tag_known_name(const std::string &name);
-    extern builtin_tag builtin_tag_from_name(const std::string &name);
-    extern uint8_vector bls_g1_compress(const bls12_381_g1_element &val);
-    extern uint8_vector bls_g2_compress(const bls12_381_g2_element &val);
-    extern bls12_381_g1_element bls_g1_decompress(const buffer &bytes);
-    extern bls12_381_g2_element bls_g2_decompress(const buffer &bytes);
-    extern std::string escape_utf8_string(const std::string &);
+    struct value {
+        using value_type = std::variant<constant, v_delay, v_lambda, v_builtin, v_constr>;
+        using ptr_type = allocator::ptr_type<value_type>;
+
+        static value make_list(allocator &, const constant_type &);
+        static value make_list(allocator &, std::initializer_list<constant>);
+        static value make_list(allocator &, constant_list::list_type &&);
+        static value make_list(allocator &, const constant_type &, constant_list::list_type &&);
+        static value make_list(allocator &, const constant_type &, std::initializer_list<constant>);
+        static value make_pair(allocator &, constant &&, constant &&);
+        static value unit(allocator &);
+        static value boolean(allocator &, bool); // a factory method to disambiguate with value(int64_t) which is more frequent
+
+        value() =delete;
+        value(const value &);
+        value(allocator &, value_type &&);
+        value(allocator &, const constant &);
+        value(allocator &, const bint_type &);
+        value(allocator &, const cpp_int &);
+        value(allocator &, int64_t);
+        value(allocator &, data &&);
+        value(allocator &, str_type &&);
+        value(allocator &, std::string_view);
+        value(allocator &, const bstr_type &);
+        value(allocator &, buffer);
+        value(allocator &, const blst_p1 &);
+        value(allocator &, const blst_p2 &);
+        value(allocator &, const blst_fp12 &);
+
+        value &operator=(const value &);
+
+        const constant &as_const() const;
+        const v_constr &as_constr() const;
+        void as_unit() const;
+        bool as_bool() const;
+        const bint_type &as_int() const;
+        const str_type &as_str() const;
+        const bstr_type &as_bstr() const;
+        const bls12_381_g1_element &as_bls_g1() const;
+        const bls12_381_g2_element &as_bls_g2() const;
+        const bls12_381_ml_result &as_bls_ml_res() const;
+        const data &as_data() const;
+        const constant_pair::value_type &as_pair() const;
+        const constant_list &as_list() const;
+        bool operator==(const value &o) const;
+        const value_type &operator*() const;
+        const value_type *operator->() const;
+    private:
+        ptr_type _ptr;
+    };
+
+    struct value_list {
+        using value_type = list_type<value>;
+
+        value_list() =delete;
+        value_list(allocator &alloc);
+        value_list(allocator &alloc, std::initializer_list<value>);
+        value_list(allocator &alloc, value_type &&v);
+        bool operator==(const value_list &) const;
+        const value_type &operator*() const;
+        const value_type *operator->() const;
+    private:
+        allocator::ptr_type<value_type> _ptr;
+    };
+
+    struct environment {
+        struct node {
+            using ptr_type = allocator::ptr_type<node>;
+            const ptr_type parent;
+            const size_t var_idx;
+            const value val;
+
+            bool operator==(const node &o) const
+            {
+                return var_idx == o.var_idx && val == o.val
+                    && ((!parent && !o.parent) || (parent && o.parent && *parent == *o.parent));
+            }
+        };
+
+        environment() =default;
+        ~environment() =default;
+
+        environment(allocator &alloc, const environment &parent, const size_t var_idx, const value &val):
+            _tail { alloc.make<node>(parent._tail, var_idx, val) }
+        {
+        }
+
+        environment(const environment &o): _tail { o._tail }
+        {
+
+        }
+
+        const node *get() const
+        {
+            return _tail.get();
+        }
+
+        bool operator==(const environment &o) const
+        {
+            return (!_tail && !o._tail) || (_tail && o._tail && *_tail == *o._tail);
+        }
+    private:
+        const node::ptr_type _tail;
+    };
+
+    struct v_builtin {
+        const t_builtin b;
+        value_list args;
+        size_t forces = 0;
+
+        bool operator==(const v_builtin &o) const;
+    };
+
+    struct v_constr {
+        const size_t tag;
+        const value_list args;
+
+        bool operator==(const v_constr &o) const;
+    };
+
+    struct v_delay {
+        const environment env;
+        const term expr;
+
+        bool operator==(const v_delay &o) const;
+    };
+
+    struct v_lambda {
+        const environment env;
+        const size_t var_idx;
+        const term body;
+
+        bool operator==(const v_lambda &o) const;
+    };
+
+#if defined(__GNUC__) && !defined(__clang__)
+    // GCC 13 reacts oddly to the libc++ implementation of std::pmr::string
+#       pragma GCC diagnostic push
+#       pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
+    template<typename T, typename... Args>
+    allocator::ptr_type<T> allocator::make(Args &&...a)
+    {
+        T *p = new (_mr.allocate(sizeof(T), 0x10)) T { std::forward<Args>(a)... };
+        if constexpr (std::is_same_v<T, bint_type>) {
+            try {
+                _ptrs.emplace_back(p, [](const void* x) { static_cast<const T*>(x)->~T(); });
+            } catch (...) {
+                // Call the destructor to release the memory allocated with alternative allocators.
+                // There is no need to deallocate in _mr since all its buffers will be released at the end of its lifetime.
+                p->~T();
+                throw;
+            }
+        }
+        return p;
+    }
+#if defined(__GNUC__) && !defined(__clang__)
+#       pragma GCC diagnostic pop
+#endif
+
+
+    extern bool builtin_tag_known_name(std::string_view name);
+    extern builtin_tag builtin_tag_from_name(std::string_view name);
+    extern bstr_type bls_g1_compress(allocator &alloc, const bls12_381_g1_element &val);
+    extern bstr_type bls_g2_compress(allocator &alloc, const bls12_381_g2_element &val);
+    extern bls12_381_g1_element bls_g1_decompress(buffer bytes);
+    extern bls12_381_g2_element bls_g2_decompress(buffer bytes);
+    extern std::string escape_utf8_string(std::string_view);
 }
 
 namespace fmt {
+    template<>
+        struct formatter<daedalus_turbo::plutus::bint_type>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::bint_type &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "{}", *v);
+        }
+    };
+
+    template<>
+        struct formatter<daedalus_turbo::plutus::str_type>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::str_type &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "{}", *v);
+        }
+    };
+
+    template<>
+        struct formatter<daedalus_turbo::plutus::bstr_type>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::bstr_type &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "{}", v->span());
+        }
+    };
+
     template<>
     struct formatter<daedalus_turbo::plutus::builtin_tag>: formatter<int> {
         template<typename FormatContext>
@@ -861,12 +1266,12 @@ namespace fmt {
                     return fmt::format_to(ctx.out(), "()");
                 } else if constexpr (std::is_same_v<T, bool>) {
                     return fmt::format_to(ctx.out(), "{}", v ? "True" : "False");
-                } else if constexpr (std::is_same_v<T, uint8_vector>) {
-                    return fmt::format_to(ctx.out(), "#{}", buffer_lowercase { v.span() });
-                } else if constexpr (std::is_same_v<T, data>) {
+                } else if constexpr (std::is_same_v<T, bstr_type>) {
+                    return fmt::format_to(ctx.out(), "#{}", buffer_lowercase { v->span() });
+                } else if constexpr (std::is_same_v<T, plutus::data>) {
                     return fmt::format_to(ctx.out(), "({})", v);
-                } else if constexpr (std::is_same_v<T, std::string>) {
-                    return fmt::format_to(ctx.out(), "\"{}\"", escape_utf8_string(v));
+                } else if constexpr (std::is_same_v<T, str_type>) {
+                    return fmt::format_to(ctx.out(), "\"{}\"", escape_utf8_string(*v));
                 } else if constexpr (std::is_same_v<T, constant_pair>) {
                     return fmt::format_to(ctx.out(), "({}, {})", *v->first, *v->second);
                 } else if constexpr (std::is_same_v<T, constant_list>) {
@@ -882,12 +1287,12 @@ namespace fmt {
     struct formatter<daedalus_turbo::plutus::constant_list_values_only>: formatter<int> {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
-            auto out_it = fmt::format_to(ctx.out(), "(");
+            auto out_it = fmt::format_to(ctx.out(), "[");
             for (auto it = v.vals.begin(); it != v.vals.end(); ++it) {
                 const std::string_view sep { std::next(it) == v.vals.end() ? "" : ", " };
                 out_it = fmt::format_to(out_it, "{}{}", **it, sep);
             }
-            return fmt::format_to(out_it, ")");
+            return fmt::format_to(out_it, "]");
         }
     };
 
@@ -919,7 +1324,7 @@ namespace fmt {
     struct formatter<daedalus_turbo::plutus::variable>: formatter<int> {
         template<typename FormatContext>
         auto format(const daedalus_turbo::plutus::variable &v, FormatContext &ctx) const -> decltype(ctx.out()) {
-            return fmt::format_to(ctx.out(), "{}", v.name);
+            return fmt::format_to(ctx.out(), "v{}", v.idx);
         }
     };
 
@@ -935,7 +1340,7 @@ namespace fmt {
     struct formatter<daedalus_turbo::plutus::t_lambda>: formatter<int> {
         template<typename FormatContext>
         auto format(const daedalus_turbo::plutus::t_lambda &v, FormatContext &ctx) const -> decltype(ctx.out()) {
-            return fmt::format_to(ctx.out(), "(lam {} {})", v.name, *v.expr);
+            return fmt::format_to(ctx.out(), "(lam v{} {})", v.var_idx, *v.expr);
         }
     };
 
@@ -959,7 +1364,7 @@ namespace fmt {
     struct formatter<daedalus_turbo::plutus::failure>: formatter<int> {
         template<typename FormatContext>
         auto format(const daedalus_turbo::plutus::failure &, FormatContext &ctx) const -> decltype(ctx.out()) {
-            return fmt::format_to(ctx.out(), "error");
+            return fmt::format_to(ctx.out(), "(error)");
         }
     };
 
@@ -988,9 +1393,9 @@ namespace fmt {
     };
 
     template<>
-    struct formatter<daedalus_turbo::plutus::term::expr_type>: formatter<int> {
+    struct formatter<daedalus_turbo::plutus::term::value_type>: formatter<int> {
         template<typename FormatContext>
-        auto format(const daedalus_turbo::plutus::term::expr_type &vv, FormatContext &ctx) const -> decltype(ctx.out()) {
+        auto format(const daedalus_turbo::plutus::term::value_type &vv, FormatContext &ctx) const -> decltype(ctx.out()) {
             return std::visit([&ctx](const auto &v) {
                 return fmt::format_to(ctx.out(), "{}", v);
             }, vv);
@@ -1001,14 +1406,6 @@ namespace fmt {
     struct formatter<daedalus_turbo::plutus::term>: formatter<int> {
         template<typename FormatContext>
         auto format(const daedalus_turbo::plutus::term &v, FormatContext &ctx) const -> decltype(ctx.out()) {
-            return fmt::format_to(ctx.out(), "{}", v.expr);
-        }
-    };
-
-    template<>
-    struct formatter<daedalus_turbo::plutus::term_ptr>: formatter<int> {
-        template<typename FormatContext>
-        auto format(const daedalus_turbo::plutus::term_ptr &v, FormatContext &ctx) const -> decltype(ctx.out()) {
             return fmt::format_to(ctx.out(), "{}", *v);
         }
     };
@@ -1018,6 +1415,114 @@ namespace fmt {
         template<typename FormatContext>
         auto format(const daedalus_turbo::plutus::version &v, FormatContext &ctx) const -> decltype(ctx.out()) {
             return fmt::format_to(ctx.out(), "{}", static_cast<std::string>(v));
+        }
+    };
+
+    template<typename T>
+    struct formatter<daedalus_turbo::plutus::list_type<T>>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::list_type<T> &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "{}", static_cast<std::pmr::vector<T>>(v));
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::plutus::value_list::value_type>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::value_list::value_type &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "{}", static_cast<std::pmr::vector<daedalus_turbo::plutus::value>>(v));
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::plutus::value_list>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::value_list &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "{}", *v);
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::plutus::term_list>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::term_list &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "{}", *v);
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::plutus::environment::node>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::environment::node &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            using namespace daedalus_turbo::plutus;
+            auto out_it = fmt::format_to(ctx.out(), "v{}={}", v.var_idx, v.val);
+            if (v.parent)
+                out_it = fmt::format_to(out_it, ", {}", *v.parent);
+            return out_it;
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::plutus::environment>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::environment &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            using namespace daedalus_turbo::plutus;
+            if (const auto *node = v.get(); node)
+                fmt::format_to(ctx.out(), "env [{}]", *node);
+            return fmt::format_to(ctx.out(), "env []");
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::plutus::value>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::value &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            using namespace daedalus_turbo::plutus;
+            return fmt::format_to(ctx.out(), "{}", *v);
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::plutus::v_builtin>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::v_builtin &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            using namespace daedalus_turbo::plutus;
+            return fmt::format_to(ctx.out(), "(builtin {} {})", v.b.name(), v.args);
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::plutus::v_constr>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::v_constr &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            using namespace daedalus_turbo::plutus;
+            return fmt::format_to(ctx.out(), "(constr {} {})", v.tag, v.args);
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::plutus::v_delay>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::v_delay &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            using namespace daedalus_turbo::plutus;
+            return fmt::format_to(ctx.out(), "(delay ({}) {})", v.env, *v.expr);
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::plutus::v_lambda>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::v_lambda &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            using namespace daedalus_turbo::plutus;
+            return fmt::format_to(ctx.out(), "(lam v{} ({}) {})", v.var_idx, v.env, *v.body);
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::plutus::value::value_type>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::plutus::value::value_type &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return std::visit([&ctx](const auto &vv) { return fmt::format_to(ctx.out(), "{}", vv); }, v);
         }
     };
 }

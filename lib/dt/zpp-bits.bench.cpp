@@ -2,39 +2,41 @@
  * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
-#include <map>
-#include <set>
-#include <dt/zpp.hpp>
+
 #include <dt/benchmark.hpp>
+#include <dt/container.hpp>
+#include <dt/zpp.hpp>
 
 using namespace boost::ut;
 using namespace daedalus_turbo;
+namespace dt = daedalus_turbo;
 
 suite zpp_bits_bench_suite = [] {
     "zpp::bits"_test = [] {
         "map of sets"_test = [] {
-            using test_item = std::map<std::string, std::set<uint64_t>>;
+            using test_item = dt::map<std::string, dt::set<uint64_t>>;
             test_item items {};
-            {
-                auto &set = items["item1"];
-                set.emplace(1234);
-                set.emplace(12);
+            for (size_t i = 0; i < 1024; ++i) {
+                auto &set = items[fmt::format("item{}", i)];
+                if (i % 2) {
+                    set.emplace(1234);
+                    set.emplace(12);
+                } else {
+                    set.emplace(0);
+                }
             }
-            {
-                auto &set = items["item2"];
-                set.emplace(0);
-            }
-            test_item out_items {};
-            size_t num_iters = 1'000;
-            auto [data, in, out] = ::zpp::bits::data_in_out();
+            uint8_vector data {};
             benchmark("serialize map of sets", 1e8, 5, [&] {
-                for (size_t i = 0; i < num_iters; ++i)
-                    out(items).or_throw();
+                auto out = ::zpp::bits::out(data);
+                out(items).or_throw();
                 return data.size();
             });
+            test_item out_items {};
+            volatile size_t do_not_optimize;
             benchmark("deserialize", 5e8, 5, [&] {
-                for (size_t i = 0; i < num_iters; ++i)
-                    in(items).or_throw();
+                auto in = ::zpp::bits::in(data);
+                in(out_items).or_throw();
+                do_not_optimize = out_items.size();
                 return data.size();
             });
         };

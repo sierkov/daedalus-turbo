@@ -5,10 +5,11 @@
 #ifndef DAEDALUS_TURBO_PROGRESS_HPP
 #define DAEDALUS_TURBO_PROGRESS_HPP
 
-#include <map>
 #include <dt/format.hpp>
 #include <dt/logger.hpp>
 #include <dt/mutex.hpp>
+#include <map>
+#include <utfcpp/utf8/unchecked.h>
 
 namespace daedalus_turbo {
     using progress_state = std::map<std::string, double>;
@@ -67,11 +68,20 @@ namespace daedalus_turbo {
             _state.erase(name);
         }
 
-        void inform() const
+        void inform()
         {
-            const auto state_copy = copy();
-            if (!state_copy.empty())
-                logger::info("progress: {}", state_copy);
+            const auto now = std::chrono::system_clock::now();
+            for (;;) {
+                auto old_next = _next_inform.load(std::memory_order_relaxed);
+                if (now < old_next)
+                    break;
+                auto new_next = now + std::chrono::milliseconds(1000);
+                if (_next_inform.compare_exchange_weak(old_next, new_next, std::memory_order_acquire)) {
+                    if (const auto state_copy = copy(); !state_copy.empty())
+                        logger::info("progress: {}", state_copy);
+                    break;
+                }
+            }
         }
 
         progress_state copy() const
@@ -86,6 +96,7 @@ namespace daedalus_turbo {
     private:
         alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _state_mutex {};
         progress_state _state {};
+        std::atomic<std::chrono::system_clock::time_point> _next_inform {};
 
         void _update(const std::string &name, const double value)
         {

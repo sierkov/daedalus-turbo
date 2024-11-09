@@ -61,17 +61,6 @@ namespace daedalus_turbo::cardano::mary {
 
         std::optional<uint64_t> validity_start() const override;
     };
-
-    inline void block::foreach_tx(const std::function<void(const cardano::tx &)> &observer) const
-    {
-        const auto &txs = transactions();
-        const auto &wits = witnesses();
-        if (txs.size() != wits.size())
-            throw error("slot: {}, the number of transactions {} does not match the number of witnesses {}", (uint64_t)slot(), txs.size(), wits.size());
-        for (size_t i = 0; i < txs.size(); ++i) {
-            observer(tx { txs.at(i), *this, &wits.at(i), i });
-        }
-    }
 }
 
 #endif // !DAEDALUS_TURBO_CARDANO_MARY_HPP

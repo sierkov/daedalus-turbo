@@ -1,13 +1,15 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
-* Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #include <dt/cli.hpp>
 #include <dt/compare.hpp>
 #include <dt/scheduler.hpp>
-#include <dt/validator/state-compare.hpp>
+#include <dt/cardano/ledger/state-compare.hpp>
 
 namespace daedalus_turbo::cli::test_node_state {
+    using namespace cardano::ledger;
+
     struct cmd: command {
         void configure(config &cmd) const override
         {
@@ -32,7 +34,7 @@ namespace daedalus_turbo::cli::test_node_state {
                 });
                 sched.process();
             }
-            validator::compare_node_state(orig_data, gen_data);
+            compare_node_state(orig_data, gen_data);
         }
     };
     static auto instance = command::reg(std::make_shared<cmd>());

@@ -109,28 +109,6 @@ namespace daedalus_turbo::cardano::babbage {
             });
         }
     };
-
-    inline void block::foreach_tx(const std::function<void(const cardano::tx &)> &observer) const
-    {
-        const auto &txs = transactions();
-        const auto &wits = witnesses();
-        std::set<size_t> invalid_tx_idxs {};
-        for (const auto &tx_idx: invalid_transactions())
-            invalid_tx_idxs.emplace(tx_idx.uint());
-        for (size_t i = 0; i < txs.size(); ++i)
-            if (!invalid_tx_idxs.contains(i))
-                observer(tx { txs.at(i), *this, &wits.at(i), i });
-    }
-
-    inline void block::foreach_invalid_tx(const std::function<void(const cardano::tx &)> &observer) const
-    {
-        const auto &txs = transactions();
-        const auto &wits = witnesses();
-        if (const auto &inv_txs = invalid_transactions(); !inv_txs.empty()) [[unlikely]] {
-            for (const auto &tx_idx: inv_txs)
-                observer(tx { txs.at(tx_idx.uint()), *this, &wits.at(tx_idx.uint()), tx_idx.uint() });
-        }
-    }
 }
 
 #endif // !DAEDALUS_TURBO_CARDANO_BABBAGE_HPP

@@ -154,13 +154,13 @@ namespace daedalus_turbo {
             }
         };
 
-        static inline size_t partition_idx(const auto &k)
+        static size_t partition_idx(const auto &k)
         {
             static_assert(sizeof(K) > 1);
             return *reinterpret_cast<const uint8_t *>(&k);
         }
 
-        constexpr static auto serialize(auto &archive, auto &self)
+        static constexpr auto serialize(auto &archive, auto &self)
         {
             return archive(self._parts);
         }

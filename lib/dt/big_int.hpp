@@ -5,6 +5,7 @@
 #ifndef DAEDALUS_TURBO_BIG_INT_HPP
 #define DAEDALUS_TURBO_BIG_INT_HPP
 
+#define BOOST_DETAIL_EMPTY_VALUE_BASE
 #include <boost/multiprecision/cpp_int.hpp>
 #include <dt/format.hpp>
 #include <dt/util.hpp>
@@ -12,10 +13,12 @@
 namespace daedalus_turbo {
     using boost::multiprecision::cpp_int;
 
+    static constexpr size_t big_int_max_size = 8192;
+
     inline cpp_int big_int_from_bytes(const buffer data)
     {
-        if (data.size() > 64)
-            throw error("big ints larger than 64 bytes are not supported but got: {}!", data.size());
+        if (data.size() > big_int_max_size)
+            throw error("big ints larger than {} bytes are not supported but got: {}!", big_int_max_size, data.size());
         cpp_int val {};
         for (const uint8_t b: data) {
             val <<= 8;
@@ -26,8 +29,8 @@ namespace daedalus_turbo {
 }
 
 namespace fmt {
-    template<>
-    struct formatter<boost::multiprecision::cpp_int>: formatter<int> {
+    template<typename T>
+    struct formatter<boost::multiprecision::number<T>>: formatter<int> {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
             std::ostringstream ss {};

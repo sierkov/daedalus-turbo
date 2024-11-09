@@ -16,22 +16,16 @@ suite plutus_machine_bench_suite = [] {
         "unique_ptr vs shared_ptr vs allocator"_test = [] {
             plutus::allocator alloc {};
             const auto sptr_rate = benchmark_rate("std::shared_ptr", 1'000'000, [&] {
-                const auto p = std::make_shared<value::value_type>(plutus::constant { alloc, cpp_int { 22 } });
+                const auto p = std::make_shared<value::value_type>(plutus::constant { alloc, bint_type { alloc, 22 } });
                 const volatile auto p2 = p;
-                return 1;
-            });
-            const auto uptr_rate = benchmark_rate("std::unique_ptr", 1'000'000, [&] {
-                const auto p = std::make_unique<value::value_type>(plutus::constant { alloc, cpp_int { 22 } });
-                const volatile auto p2 = std::make_unique<value::value_type>(*p);
                 return 1;
             });
             const auto mbr_rate = benchmark_rate("allocator", 1'000'000, [&] {
-                const auto p = alloc.make<value::value_type>(plutus::constant { alloc, cpp_int { 22 } });
+                const auto p = alloc.make<value::value_type>(plutus::constant { alloc, bint_type { alloc, 22 } });
                 const volatile auto p2 = p;
                 return 1;
             });
-            expect(sptr_rate > uptr_rate) << uptr_rate << sptr_rate;
-            expect(uptr_rate > mbr_rate) << uptr_rate << mbr_rate;
+            expect(sptr_rate > mbr_rate) << mbr_rate << sptr_rate;
         };
         "switch variant.index() vs std::visit"_test = [] {
             using val_type = std::variant<uint64_t, std::string, uint8_vector>;

@@ -47,26 +47,26 @@ namespace daedalus_turbo {
     };
 
     template<ConvertibleToInt T>
-    bool compare_values(const std::string &name, const T &expected, const T &actual)
+    bool compare_values(const std::string &name, const T &expected, const T &actual, const bool verbose=true)
     {
         const bool res = expected == actual;
-        if (res) {
-            logger::info("{} values match", name);
-        } else {
+        if (!res) {
             logger::warn("{} mismatch node: {} dt: {} diff: {}", name, expected, actual,
                 static_cast<int64_t>(actual) - static_cast<int64_t>(expected));
+        } else if (verbose) {
+            logger::info("{} values match", name);
         }
         return res;
     }
 
     template<typename T>
-    bool compare_values(const std::string &name, const T &expected, const T &actual)
+    bool compare_values(const std::string &name, const T &expected, const T &actual, const bool verbose=true)
     {
         const bool res = expected == actual;
-        if (res) {
-            logger::info("{} values match", name);
-        } else {
+        if (!res) {
             logger::warn("{} mismatch node: {} dt: {}", name, expected, actual);
+        } else if (verbose) {
+            logger::info("{} values match", name);
         }
         return res;
     }

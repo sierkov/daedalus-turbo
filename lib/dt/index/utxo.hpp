@@ -6,13 +6,10 @@
 #define DAEDALUS_TURBO_INDEX_UTXO_HPP
 
 #include <dt/cardano/common.hpp>
-#include <dt/cbor-encoder.hpp>
-#include <dt/cbor/zero.hpp>
 #include <dt/index/common.hpp>
-#include <dt/partitioned-map.hpp>
 
 namespace daedalus_turbo::index::utxo {
-    struct chunk_indexer: chunk_indexer_one_epoch_base<partitioned_map<cardano::tx_out_ref, cardano::tx_out_data>> {
+    struct chunk_indexer: chunk_indexer_one_epoch_base<cardano::txo_map> {
         using chunk_indexer_one_epoch_base::chunk_indexer_one_epoch_base;
     protected:
         void index_tx(const cardano::tx &tx) override

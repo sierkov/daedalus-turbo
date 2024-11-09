@@ -284,13 +284,13 @@ namespace daedalus_turbo::cardano::byron {
             data << "01"sv;
             data << signature().issuer_vkey_full();
             data << "\x09"sv;
-            data << protocol_magic_raw().data_buf();
+            data << protocol_magic_raw().raw_span();
             data << "\x85"sv; // CBOR Array of length 5
-            data << prev_hash_raw().data_buf();
-            data << body_proof_raw().data_buf();
-            data << slot_id_raw().data_buf();
-            data << difficulty_raw().data_buf();
-            data << extra_raw().data_buf();
+            data << prev_hash_raw().raw_span();
+            data << body_proof_raw().raw_span();
+            data << slot_id_raw().raw_span();
+            data << difficulty_raw().raw_span();
+            data << extra_raw().raw_span();
             return data;
         }
 
@@ -338,14 +338,13 @@ namespace daedalus_turbo::cardano::byron {
 
     inline void block::foreach_tx(const std::function<void(const cardano::tx &)> &observer) const
     {
-        for (const auto &tx_raw: transactions()) {
-            if (tx_raw.array().size() == 1) {
-                observer(tx { tx_raw.array().at(0), *this });
-            } else if (tx_raw.array().size() == 2) {
-                observer(tx { tx_raw.array().at(0), *this, &tx_raw.array().at(1) });
-            } else {
-                throw cardano_error("unexpected number of transaction entries: {}", tx_raw.array().size());
-            }
+        const auto &txs = transactions();
+        for (size_t i = 0, end = txs.size(); i < end; ++i) {
+            const auto &tx_raw = txs[i];
+            const cbor::value *wit = nullptr;
+            if (tx_raw.array().size() >= 2)
+                wit = &tx_raw.array().at(1);
+            observer(tx { tx_raw.array().at(0), *this, i, wit });
         }
     }
 }

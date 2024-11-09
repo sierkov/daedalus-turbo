@@ -383,6 +383,8 @@ namespace daedalus_turbo::file {
 
     using path_list = vector<std::filesystem::path>;
     extern path_list files_with_ext(const std::string_view &dir, const std::string_view &ext);
+    using path_list_str = vector<std::string>;
+    extern path_list_str files_with_ext_str(const std::string_view &dir, const std::string_view &ext);
 }
 
 namespace fmt {

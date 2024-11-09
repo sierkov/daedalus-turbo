@@ -6,7 +6,7 @@
 #define DAEDALUS_TURBO_PLUTUS_BUILTINS_HPP
 
 #include <functional>
-#include <dt/plutus/machine.hpp>
+#include <dt/plutus/types.hpp>
 
 namespace daedalus_turbo::plutus {
     struct builtin_one_arg: std::function<value(allocator &, const value &)> {
@@ -22,6 +22,15 @@ namespace daedalus_turbo::plutus {
         using std::function<value(allocator &, const value &, const value &, const value &, const value &, const value &, const value &)>::function;
     };
 
+    struct builtin_info {
+        size_t num_args;
+        builtin_any func;
+        std::string name;
+        size_t polymorphic_args = 0;
+        size_t batch = 1;
+    };
+    using builtin_map = unordered_map<builtin_tag, const builtin_info>;
+
     namespace builtins {
         extern value add_integer(allocator &, const value &x, const value &y);
         extern value subtract_integer(allocator &, const value &x, const value &y);
@@ -35,6 +44,7 @@ namespace daedalus_turbo::plutus {
         extern value less_than_equals_integer(allocator &, const value &x, const value &y);
         extern value append_byte_string(allocator &, const value &x, const value &y);
         extern value cons_byte_string(allocator &, const value &c, const value &s);
+        extern value cons_byte_string_v2(allocator &, const value &c, const value &s);
         extern value slice_byte_string(allocator &, const value &pos_raw, const value &sz_raw, const value &s_raw);
         extern value length_of_byte_string(allocator &, const value &s);
         extern value index_byte_string(allocator &, const value &s_t, const value &i_t);
@@ -98,6 +108,9 @@ namespace daedalus_turbo::plutus {
         extern value bls12_381_miller_loop(allocator &, const value &, const value &);
         extern value bls12_381_mul_ml_result(allocator &, const value &, const value &);
         extern value bls12_381_final_verify(allocator &, const value &, const value &);
+
+        extern const builtin_map &semantics_v1();
+        extern const builtin_map &semantics_v2();
     }
 }
 

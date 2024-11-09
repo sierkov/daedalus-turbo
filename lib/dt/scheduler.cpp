@@ -8,9 +8,10 @@
 #include <list>
 #include <queue>
 #include <source_location>
-#include <thread>
+//#include <thread>
 #include <unordered_map>
 #include <vector>
+#include <boost/thread.hpp>
 #include <dt/file.hpp>
 #include <dt/logger.hpp>
 #include <dt/memory.hpp>
@@ -19,6 +20,19 @@
 #include <dt/timer.hpp>
 #include <dt/mutex.hpp>
 #include <dt/static-map.hpp>
+
+namespace fmt {
+    template<>
+    struct formatter<boost::thread::id>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out())
+        {
+            std::ostringstream ss {};
+            ss << v;
+            return fmt::format_to(ctx.out(), "{}", ss.str());
+        }
+    };
+}
 
 namespace daedalus_turbo {
     struct scheduler::impl {
@@ -29,13 +43,15 @@ namespace daedalus_turbo {
                 throw error("the number of worker threads must be greater than zero!");
             logger::info("scheduler started, worker count: {}", _num_workers);
             _worker_tasks.resize(_num_workers);
-            map<std::thread::id, size_t> ids {};
+            map<boost::thread::id, size_t> ids {};
             // One worker is a special case handled by the process method itself
             if (_num_workers == 1) {
-                ids.emplace(std::this_thread::get_id(), 0);
+                ids.emplace(boost::this_thread::get_id(), 0);
             } else {
+                boost::thread::attributes attrs {};
+                attrs.set_stack_size(16 << 20);
                 for (size_t i = 0; i < _num_workers; ++i) {
-                    _workers.emplace_back([this, i]() { _worker_thread(i); });
+                    _workers.emplace_back(attrs, [this, i]() { _worker_thread(i); });
                     ids.emplace(_workers.back().get_id(), i);
                 }
             }
@@ -299,8 +315,8 @@ namespace daedalus_turbo {
         alignas(mutex::padding) mutex::unique_lock::mutex_type _completion_mutex {};
         std::map<std::string, completion_action> _completion_actions {};
 
-        std::vector<std::thread> _workers {};
-        static_map<std::thread::id, size_t> _worker_ids {};
+        std::vector<boost::thread> _workers {};
+        static_map<boost::thread::id, size_t> _worker_ids {};
         std::vector<std::optional<std::string>> _worker_tasks {};
         const size_t _num_workers;
         std::atomic_size_t _num_active = 0;
@@ -323,7 +339,7 @@ namespace daedalus_turbo {
 
         std::optional<size_t> _get_worker_id() const
         {
-            const auto w_it = _worker_ids.find(std::this_thread::get_id());
+            const auto w_it = _worker_ids.find(boost::this_thread::get_id());
             if (w_it != _worker_ids.end())
                 return w_it->second;
             return {};
@@ -500,7 +516,7 @@ namespace daedalus_turbo {
                 if (w_id)
                     _worker_try_execute(*w_id, default_wait_interval);
                 else
-                    logger::warn("Thread {} outside of the worker pool attempted to execute tasks", std::this_thread::get_id());
+                    logger::warn("Thread {} outside of the worker pool attempted to execute tasks", boost::this_thread::get_id());
             }
             if (process_results) {
                 mutex::unique_lock results_lock { _results_mutex };

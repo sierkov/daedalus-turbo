@@ -12,7 +12,7 @@ namespace daedalus_turbo::crypto::crc32
 {
     using hash_32 = uint32_t;
 
-    inline hash_32 digest(const buffer &in)
+    inline hash_32 digest(const buffer in)
     {
         hash_32 hash {};
         CRC32 crc {};

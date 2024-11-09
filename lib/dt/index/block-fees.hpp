@@ -6,6 +6,7 @@
 #define DAEDALUS_TURBO_INDEX_BLOCK_FEES_HPP
 
 #include <dt/cardano/types.hpp>
+#include <dt/cardano/conway.hpp>
 #include <dt/index/common.hpp>
 
 namespace daedalus_turbo::index::block_fees {
@@ -13,8 +14,14 @@ namespace daedalus_turbo::index::block_fees {
         uint64_t slot = 0;
         cardano::pool_hash issuer_id {};
         uint64_t fees = 0;
+        uint64_t donations = 0;
         uint64_t end_offset = 0;
         uint8_t era = 0;
+
+        static constexpr auto serialize(auto &archive, auto &self)
+        {
+            return archive(self.slot, self.issuer_id, self.fees, self.donations, self.end_offset, self.era);
+        }
 
         bool operator<(const auto &b) const
         {
@@ -30,10 +37,15 @@ namespace daedalus_turbo::index::block_fees {
         void _index_epoch(const cardano::block_base &blk, data_type &idx) override
         {
             uint64_t fees = 0;
+            uint64_t donations = 0;
             blk.foreach_tx([&](const auto &tx) {
                 fees += tx.fee();
+                if (const auto *c_tx = dynamic_cast<const cardano::conway::tx *>(&tx); c_tx) {
+                    if (const auto d = c_tx->donation(); d)
+                        donations += *d;
+                }
             });
-            idx.emplace_back(blk.slot(), blk.issuer_hash(), fees, blk.offset() + blk.size(), static_cast<uint8_t>(blk.era()));
+            idx.emplace_back(blk.slot(), blk.issuer_hash(), fees, donations, blk.offset() + blk.size(), static_cast<uint8_t>(blk.era()));
         }
     };
     using indexer = indexer_one_epoch<chunk_indexer>;

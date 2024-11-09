@@ -12,6 +12,69 @@
 namespace daedalus_turbo::cardano::shelley {
     static constexpr uint64_t kes_period_slots = 129600;
 
+    struct stake_reg_cert {
+        stake_ident stake_id {};
+    };
+
+    struct stake_dereg_cert {
+        stake_ident stake_id {};
+    };
+
+    struct stake_deleg_cert {
+        stake_ident stake_id {};
+        pool_hash pool_id {};
+    };
+
+    struct pool_reg_cert {
+        pool_hash pool_id {};
+        pool_params params {};
+
+        static pool_reg_cert from_cbor(const cbor::value &);
+    };
+
+    struct pool_retire_cert {
+        cardano_hash_28 pool_id {};
+        cardano::epoch epoch {};
+
+        static pool_retire_cert from_cbor(const cbor::value &);
+    };
+
+    struct genesis_deleg_cert {
+        key_hash hash;
+        pool_hash pool_id;
+        cardano::vrf_vkey vrf_vkey;
+    };
+
+    enum class reward_source { reserves, treasury };
+
+    struct instant_reward_cert {
+        reward_source source {};
+        map<stake_ident, amount> rewards {};
+
+        static constexpr auto serialize(auto &archive, auto &self)
+        {
+            return archive(self.source, self.rewards);
+        }
+
+        instant_reward_cert() =default;
+        instant_reward_cert(const cbor::value &);
+    };
+
+    struct cert_t {
+        using value_type = std::variant<
+            stake_reg_cert, stake_dereg_cert, stake_deleg_cert, pool_reg_cert, pool_retire_cert,
+            genesis_deleg_cert, instant_reward_cert>;
+        value_type val;
+
+        static constexpr auto serialize(auto &archive, auto &self)
+        {
+            return archive(self.val);
+        }
+
+        cert_t() =delete;
+        cert_t(const cbor::value &);
+    };
+
     inline void parse_shelley_param_update_common(param_update &res, const uint64_t idx, const cbor_value &val)
     {
         switch (idx) {
@@ -96,62 +159,11 @@ namespace daedalus_turbo::cardano::shelley {
         return upd;
     }
 
-    inline pool_reg pool_params_from_cbor(const cbor_array &cert, const size_t base_idx=1)
-    {
-        const address reward_addr { cert.at(base_idx + 5).buf() };
-        pool_reg params {
-            cert.at(base_idx + 0).buf(),
-            cert.at(base_idx + 1).buf(),
-            cert.at(base_idx + 2).uint(),
-            cert.at(base_idx + 3).uint(),
-            rational_u64 {
-                cert.at(base_idx + 4).tag().second->array().at(0).uint(),
-                cert.at(base_idx + 4).tag().second->array().at(1).uint(),
-            },
-            reward_addr.stake_id()
-        };
-        params.reward_network = reward_addr.network();
-        {
-            const auto &owners_raw = cert.at(base_idx + 6);
-            const auto &owners = (owners_raw.type == CBOR_TAG ? *owners_raw.tag().second : owners_raw).array();
-            for (const auto &addr: owners)
-                params.owners.emplace(stake_ident { addr.buf(), false });
-        }
-        for (const auto &relay: cert.at(base_idx + 7).array()) {
-            const auto &r_items = relay.array();
-            switch (r_items.at(0).uint()) {
-                case 0: {
-                    relay_addr ra {};
-                    if (r_items.at(1).type != CBOR_SIMPLE_NULL)
-                        ra.port.emplace(static_cast<uint16_t>(r_items.at(1).uint()));
-                    if (r_items.at(2).type != CBOR_SIMPLE_NULL)
-                        ra.ipv4.emplace(r_items.at(2).buf());
-                    if (r_items.at(3).type != CBOR_SIMPLE_NULL)
-                        ra.ipv6.emplace(r_items.at(3).buf());
-                    params.relays.emplace_back(std::move(ra));
-                    break;
-                } case 1: {
-                    relay_host rh { .host=std::string { r_items.at(2).text() }};
-                    if (r_items.at(1).type != CBOR_SIMPLE_NULL)
-                        rh.port.emplace(static_cast<uint16_t>(r_items.at(1).uint()));
-                    params.relays.emplace_back(std::move(rh));
-                    break;
-                } case 2: {
-                    params.relays.emplace_back(relay_dns { std::string { r_items.at(1).text() } });
-                    break;
-                }
-                default:
-                    throw error("unsupported relay value: {}", relay);
-            }
-        }
-        if (cert.at(base_idx + 8).type != CBOR_SIMPLE_NULL)
-            params.metadata.emplace(std::string { cert.at(base_idx + 8).at(0).text() }, cert.at(base_idx + 8).at(1).buf());
-        return params;
-    }
-
     struct tx;
 
     struct block: block_base {
+        using auxiliary_map = map<size_t, const cbor::value &>;
+
         block(const cbor_value &block_tuple, const uint64_t offset, const uint64_t era, const cbor_value &block, const cardano::config &cfg)
             : block_base { block_tuple, offset, era, block, cfg }
         {
@@ -223,6 +235,26 @@ namespace daedalus_turbo::cardano::shelley {
             return _block.array().at(2).array();
         }
 
+        const auxiliary_map &auxiliary() const
+        {
+            if (!_aux_cache) {
+                auxiliary_map m {};
+                for (const auto &[idx, val]: _block.array().at(3).map()) {
+                    m.try_emplace(idx.uint(), val);
+                }
+                _aux_cache.emplace(std::move(m));
+            }
+            return *_aux_cache;
+        }
+
+        const cbor::value *auxiliary_at(const size_t tx_idx) const
+        {
+            const auto &aux = auxiliary();
+            if (const auto it = aux.find(tx_idx); it != aux.end())
+                return &it->second;
+            return nullptr;
+        }
+
         const buffer issuer_vkey() const override
         {
             return header_body().at(3).buf();
@@ -278,6 +310,8 @@ namespace daedalus_turbo::cardano::shelley {
             return _validate_kes(kes_slot, kes_data, vkey);
         }
     protected:
+        mutable std::optional<auxiliary_map> _aux_cache {};
+
         static cardano_hash_32 _calc_body_hash(const cbor_array &block, const size_t begin_idx, const size_t end_idx)
         {
             const size_t num_hashes = end_idx - begin_idx;
@@ -363,30 +397,6 @@ namespace daedalus_turbo::cardano::shelley {
             throw error("a shelley+ transaction has no fee information: {} at offset {}!", hash(), offset());
         }
 
-        void foreach_stake_reg(const stake_reg_observer &observer) const override
-        {
-            _foreach_cert(0, [&observer](const auto &cert, size_t cert_idx) {
-                const auto &stake_cred = cert.at(1).array();
-                observer(stake_ident { stake_cred.at(1).buf(), stake_cred.at(0).uint() == 1 }, cert_idx, {});
-            });
-        }
-
-        void foreach_stake_unreg(const stake_unreg_observer &observer) const override
-        {
-            _foreach_cert(1, [&observer](const auto &cert, size_t cert_idx) {
-                const auto &stake_cred = cert.at(1).array();
-                observer(stake_ident { stake_cred.at(1).buf(), stake_cred.at(0).uint() == 1 }, cert_idx, {});
-            });
-        }
-
-        void foreach_stake_deleg(const std::function<void(const stake_deleg &)> &observer) const override
-        {
-            _foreach_cert(2, [&observer](const auto &cert, size_t cert_idx) {
-                const auto &stake_cred = cert.at(1).array();
-                observer(stake_deleg { stake_ident { stake_cred.at(1).buf(), stake_cred.at(0).uint() == 1 }, cert.at(2).buf(), cert_idx });
-            });
-        }
-
         void foreach_param_update(const std::function<void(const param_update_proposal &)> &observer) const override
         {
             _if_item_present(6, [&](const auto &update) {
@@ -399,47 +409,11 @@ namespace daedalus_turbo::cardano::shelley {
             });
         }
 
-        void foreach_pool_reg(const std::function<void(const pool_reg &)> &observer) const override
-        {
-            _foreach_cert(3, [&observer](const auto &cert, size_t) {
-                observer(pool_params_from_cbor(cert));
-            });
-        }
-
-        void foreach_pool_unreg(const std::function<void(const pool_unreg &)> &observer) const override
-        {
-            _foreach_cert(4, [&observer](const auto &cert, size_t) {
-                observer(pool_unreg { cert.at(1).buf(), cert.at(2).uint() });
-            });
-        }
-
-        void foreach_genesis_deleg(const std::function<void(const genesis_deleg &, size_t)> &observer) const override
-        {
-            _foreach_cert(5, [&observer](const auto &cert, const size_t cert_idx) {
-                observer(genesis_deleg { cert.at(1).buf(), cert.at(2).buf(), cert.at(3).buf() }, cert_idx);
-            });
-        }
-
-        void foreach_instant_reward(const std::function<void(const instant_reward &)> &observer) const override
-        {
-            _foreach_cert(6, [&observer](const auto &cert, size_t) {
-                const auto &reward = cert.at(1).array();
-                auto source_raw = reward.at(0).uint();
-                if (source_raw > 1)
-                    throw error("unexpected value of reward source: {}!", source_raw);
-                auto source = reward.at(0).uint() == 0 ? reward_source::reserves : reward_source::treasury;
-                std::map<stake_ident, cardano::amount> rewards {};
-                for (const auto &[stake_cred, coin]: reward.at(1).map()) {
-                    rewards.try_emplace(stake_ident { stake_cred.array().at(1).buf(), stake_cred.array().at(0).uint() == 1 }, coin.uint());
-                }
-                observer(instant_reward { source, std::move(rewards) });
-            });
-        }
-
         std::optional<uint64_t> validity_end() const override;
         wit_cnt witnesses_ok(const plutus::context *ctx=nullptr) const override;
         virtual wit_cnt witnesses_ok_other(const plutus::context *ctx=nullptr) const;
         void foreach_witness(const std::function<void(uint64_t, const cbor::value &)> &observer) const override;
+        void foreach_cert(const std::function<void(const cbor::value &cert, size_t cert_idx)> &observer) const override;
     protected:
         set<key_hash> _witnesses_ok_vkey(const cbor::value &w_val) const;
         size_t _witnesses_ok_bootstrap(const cbor::value &w_val) const;
@@ -454,34 +428,14 @@ namespace daedalus_turbo::cardano::shelley {
             }
         }
 
-        void _foreach_cert(const uint64_t cert_type, const std::function<void(const cbor_array &, size_t cert_idx)> &observer) const
+        void _foreach_cert(const uint64_t cert_type, const std::function<void(const cbor::value &, size_t cert_idx)> &observer) const
         {
             foreach_cert([cert_type, &observer](const auto &cert, const size_t cert_idx) {
                 if (cert.at(0).uint() == cert_type)
                     observer(cert, cert_idx);
             });
         }
-
-        void foreach_cert(const std::function<void(const cbor::array &cert, size_t cert_idx)> &observer) const override
-        {
-            for (const auto &[entry_type, entry]: _tx.map()) {
-                if (entry_type.uint() == 4) {
-                    foreach_set(entry, [&](const auto &cert_raw, const size_t cert_idx) {
-                        observer(cert_raw.array(), cert_idx);
-                    });
-                }
-            }
-        }
     };
-
-    inline void block::foreach_tx(const std::function<void(const cardano::tx &)> &observer) const
-    {
-        const auto &txs = transactions();
-        const auto &wits = witnesses();
-        for (size_t i = 0; i < txs.size(); ++i) {
-            observer(tx { txs.at(i), *this, &wits.at(i), i });
-        }
-    }
 
     inline void block::foreach_update_proposal(const std::function<void(const param_update_proposal &)> &observer) const
     {
@@ -489,6 +443,34 @@ namespace daedalus_turbo::cardano::shelley {
             tx.foreach_param_update(observer);
         });
     }
+}
+
+namespace fmt {
+    template<>
+    struct formatter<daedalus_turbo::cardano::shelley::reward_source>: formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            switch (v) {
+                case daedalus_turbo::cardano::shelley::reward_source::reserves:
+                    return fmt::format_to(ctx.out(), "reward_source::reserves");
+
+                case daedalus_turbo::cardano::shelley::reward_source::treasury:
+                    return fmt::format_to(ctx.out(), "reward_source::treasury");
+
+                default:
+                    throw daedalus_turbo::error("unsupported reward_source value: {}", static_cast<int>(v));
+                break;
+            }
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::cardano::shelley::pool_reg_cert>: formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "pool_id: {} params: ({})", v.pool_id, v.params);
+        }
+    };
 }
 
 #endif // !DAEDALUS_TURBO_CARDANO_SHELLEY_HPP

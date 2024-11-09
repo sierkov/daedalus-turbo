@@ -147,17 +147,17 @@ suite rational_suite = [] {
         };
         "from_double"_test = [] {
             {
-                const auto r = rational_u64::from_double(0.003);
+                const rational_u64 r { 0.003 };
                 expect(r.numerator == 3) << r.numerator;
                 expect(r.denominator == 1000) << r.denominator;
             }
             {
-                const auto r = rational_u64::from_double(1.0);
+                const rational_u64 r { 1.0 };
                 expect(r.numerator == 1) << r.numerator;
                 expect(r.denominator == 1) << r.denominator;
             }
             {
-                const auto r = rational_u64::from_double(7.21e-5);
+                const rational_u64 r { 7.21e-5 };
                 expect(r.numerator == 721) << r.numerator;
                 expect(r.denominator == 10'000'000) << r.denominator;
             }

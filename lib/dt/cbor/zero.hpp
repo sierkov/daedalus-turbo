@@ -139,7 +139,8 @@ namespace daedalus_turbo::cbor::zero {
         {
             if (!v.indefinite()) [[likely]]
                 return big_int_from_bytes(v.bytes());
-            auto bytes = v.bytes_alloc();
+            uint8_vector bytes {};
+            v.bytes_alloc(bytes);
             return big_int_from_bytes(bytes);
         }
 
@@ -164,7 +165,7 @@ namespace daedalus_turbo::cbor::zero {
         {
             if (type() == major_type::uint || type() == major_type::nint) [[likely]]
                 return special_uint();
-            throw error("expected uint but have {}", type());
+            throw error("expected an uint but have {}", type());
         }
 
         buffer bytes() const
@@ -177,12 +178,14 @@ namespace daedalus_turbo::cbor::zero {
             throw error("expected a byte string but got {}", type());
         }
 
-        uint8_vector bytes_alloc() const
+        template<typename T>
+        T &bytes_alloc(T &res) const
         {
             if (type() == major_type::bytes) [[likely]] {
-                if (special() != special_val::s_break) [[likely]]
-                    return _subbuf(special_bytes());
-                uint8_vector res {};
+                if (special() != special_val::s_break) [[likely]] {
+                    res = _subbuf(special_bytes());
+                    return res;
+                }
                 decoder dec { raw_span().subbuf(1) };
                 for (size_t i = 0; i < 1024; ++i) {
                     const auto chunk = dec.read();
@@ -207,12 +210,16 @@ namespace daedalus_turbo::cbor::zero {
 
         array_iterator array() const
         {
-            return { *this };
+            if (type() == major_type::array) [[likely]]
+                return { *this };
+            throw error("expected an array but got {}", type());
         }
 
         map_iterator map() const
         {
-            return { *this };
+            if (type() == major_type::map) [[likely]]
+                return { *this };
+            throw error("expected a map but got {}", type());
         }
 
         float float32() const
@@ -473,7 +480,8 @@ namespace daedalus_turbo::cbor::zero {
                 if (!v.indefinite()) [[likely]] {
                     b = v.bytes();
                 } else {
-                    storage.emplace(v.bytes_alloc());
+                    storage.emplace();
+                    v.bytes_alloc(*storage);
                     b = *storage;
                 }
                 if (cbor::zero::is_ascii(b))

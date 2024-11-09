@@ -14,14 +14,13 @@ using namespace daedalus_turbo::plutus;
 namespace {
     struct script_info {
         std::string version;
-        term_ptr expr = nullptr;
+        term expr;
         cardano::ex_units cost {};
 
         bool operator==(const script_info &o) const
         {
             return version == o.version
-                && static_cast<bool>(expr) == static_cast<bool>(o.expr)
-                && (!expr || *expr == *o.expr)
+                && *expr == *o.expr
                 && cost == o.cost;
         }
     };
@@ -80,7 +79,7 @@ namespace {
     machine::result run_script(allocator &alloc, const std::string &path, const optional_budget &budget={})
     {
         const uplc::script s { alloc, file::read(path) };
-        machine m { alloc, s.version(), budget };
+        machine m { alloc, costs::defaults().v3.value(), builtins::semantics_v2(), budget };
         return m.evaluate(s.program());
     }
 
@@ -98,7 +97,7 @@ namespace {
         if (std::holds_alternative<script_info>(res)) {
             try {
                 auto &si = std::get<script_info>(res);
-                machine m { alloc, {}, budget };
+                machine m { alloc, costs::defaults().v3.value(), builtins::semantics_v2(), budget };
                 auto [res, cost] = m.evaluate(si.expr);
                 si.expr = std::move(res);
                 si.cost = std::move(cost);
@@ -115,30 +114,34 @@ namespace {
 
     void test_script_dir(const std::string &script_dir, const optional_budget &budget={})
     {
-        vector<std::string> paths {};
-        for (auto &entry: std::filesystem::recursive_directory_iterator(script_dir)) {
-            if (entry.is_regular_file() && entry.path().extension().string() == ".uplc")
-                paths.emplace_back(entry.path().string());
-        }
-        std::sort(paths.begin(), paths.end());
-        for (const auto &path: paths)
+        for (const auto &path: file::files_with_ext_str(script_dir, ".uplc"))
             test_script(path, budget);
     }
 }
 
 suite plutus_machine_suite = [] {
     "plutus::machine"_test = [] {
+        "discharge updates variable indices"_test = [] {
+            const std::string_view uplc { "(program 1.0.0 [(lam v0 (lam v1 v1)) (con bool True)])" };
+            allocator alloc {};
+            uplc::script s { alloc, uint8_vector { uplc } };
+            machine m { alloc, costs::defaults().v3.value(), builtins::semantics_v2() };
+            const auto [res, cost] = m.evaluate(s.program());
+            const std::string exp { "(lam v0 v0)" };
+            const auto act = fmt::format("{}", res);
+            test_same(exp, act);
+        };
         "budget"_test = [] {
             allocator alloc {};
             const auto [res, cost] = run_script(alloc, "./data/plutus/conformance/example/factorial/factorial.uplc");
             test_same(50026, cost.mem);
-            test_same(14104357, cost.steps);
+            test_same(9352174, cost.steps);
             // fails with a low cpu budget
-            expect(throws([&] { run_script(alloc, "./data/plutus/conformance/example/factorial/factorial.uplc", cardano::ex_units { 50026, 14104356 }); }));
+            expect(throws([&] { run_script(alloc, "./data/plutus/conformance/example/factorial/factorial.uplc", cardano::ex_units { 50026, 9352173 }); }));
             // fails with a low mem budget
-            expect(throws([&] { run_script(alloc, "./data/plutus/conformance/example/factorial/factorial.uplc", cardano::ex_units { 50025, 14104357 }); }));
+            expect(throws([&] { run_script(alloc, "./data/plutus/conformance/example/factorial/factorial.uplc", cardano::ex_units { 50025, 9352174 }); }));
             // succeeds with a high-enough budget
-            expect(nothrow([&] { run_script(alloc, "./data/plutus/conformance/example/factorial/factorial.uplc", cardano::ex_units { 50026, 14104357 }); }));
+            expect(nothrow([&] { run_script(alloc, "./data/plutus/conformance/example/factorial/factorial.uplc", cardano::ex_units { 50026, 9352174 }); }));
         };
         "conformance"_test = [] {
             test_script_dir("./data/plutus/conformance/term");

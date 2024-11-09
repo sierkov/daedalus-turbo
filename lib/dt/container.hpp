@@ -32,8 +32,8 @@ namespace daedalus_turbo {
     template<typename K, typename V>
     using multimap = std::multimap<K, V, std::less<K>, container_allocator<std::pair<const K, V>>>;
 
-    template<typename T>
-    using set = std::set<T, std::less<T>, container_allocator<T>>;
+    template<typename T, typename C=std::less<T>>
+    using set = std::set<T, C, container_allocator<T>>;
 
     template<typename K, typename V>
     using unordered_map = std::unordered_map<K, V, std::hash<K>, std::equal_to<K>, container_allocator<std::pair<const K, V>>>;

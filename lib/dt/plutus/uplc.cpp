@@ -4,6 +4,7 @@
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
 #include <dt/file.hpp>
+#include <dt/narrow-cast.hpp>
 #include <dt/plutus/uplc.hpp>
 #include <utfcpp/utf8.h>
 
@@ -21,17 +22,17 @@ namespace daedalus_turbo::plutus::uplc {
             return *_version;
         }
 
-        term_ptr program() const
+        term program() const
         {
-            return _term;
+            return *_term;
         }
     private:
         allocator &_alloc;
         uint8_vector _bytes;
         size_t _pos = 0;
         std::optional<plutus::version> _version {};
-        term_ptr _term;
-        vector<std::string> _vars {};
+        std::optional<term> _term;
+        vector<str_type::value_type> _vars {};
 
         bool _next_is(const std::function<bool(char)> &pred, const size_t off=0)
         {
@@ -132,18 +133,18 @@ namespace daedalus_turbo::plutus::uplc {
                 _eat(k);
         }
 
-        std::string _eat_all(const std::function<bool(char)> &pred)
+        str_type::value_type _eat_all(const std::function<bool(char)> &pred)
         {
-            std::string tok {};
+            str_type::value_type tok { _alloc.resource() };
             for (; _pos < _bytes.size() && pred(static_cast<char>(_bytes[_pos])); ++_pos) {
                 tok += _bytes[_pos];
             }
             return tok;
         }
 
-        std::string _eat_up_to(const std::function<bool(char)> &pred)
+        str_type::value_type _eat_up_to(const std::function<bool(char)> &pred)
         {
-            std::string tok {};
+            str_type::value_type tok { _alloc.resource() };
             for (; _pos < _bytes.size() && !pred(static_cast<char>(_bytes[_pos])); ++_pos) {
                 tok += _bytes[_pos];
             }
@@ -153,12 +154,12 @@ namespace daedalus_turbo::plutus::uplc {
             return tok;
         }
 
-        std::string _eat_up_to(char k)
+        str_type::value_type _eat_up_to(char k)
         {
             return _eat_up_to([k](char test_k) { return k == test_k; });
         }
 
-        std::string _eat_up_to_space()
+        str_type::value_type _eat_up_to_space()
         {
             auto tok = _eat_up_to([](char test_k) { return std::isspace(test_k); });
             _eat_space();
@@ -167,7 +168,7 @@ namespace daedalus_turbo::plutus::uplc {
             throw error("invalid script: expected a non-empty token before space at pos: {}", _pos);
         }
 
-        std::string _eat_name()
+        str_type::value_type _eat_name()
         {
             auto name = _eat_all([](char k) { return std::isalnum(k) || k == '_' || k == '\''; });
             if (!name.empty()) [[likely]]
@@ -178,23 +179,23 @@ namespace daedalus_turbo::plutus::uplc {
         void _decode_version()
         {
             plutus::version ver {};
-            ver.major = static_cast<uint64_t>(_decode_integer());
+            ver.major = static_cast<uint64_t>(*_decode_integer());
             _eat('.');
-            ver.minor = static_cast<uint64_t>(_decode_integer());
+            ver.minor = static_cast<uint64_t>(*_decode_integer());
             _eat('.');
-            ver.patch = static_cast<uint64_t>(_decode_integer());
+            ver.patch = static_cast<uint64_t>(*_decode_integer());
             _version.emplace(std::move(ver));
         }
 
-        std::string _decode_hex()
+        str_type::value_type _decode_hex()
         {
             return _eat_all([](char k) { return std::isxdigit(k); });
         }
 
-        uint8_vector _decode_bytestring()
+        bstr_type _decode_bytestring()
         {
             _eat('#');
-            return uint8_vector::from_hex(_decode_hex());
+            return bstr_type::from_hex(_alloc, _decode_hex());
         }
 
         char _decode_hex_char()
@@ -212,7 +213,7 @@ namespace daedalus_turbo::plutus::uplc {
             return static_cast<char>(uint_from_oct(a) * 8 * 8 | uint_from_oct(b) * 8 | uint_from_oct(c));
         }
 
-        void _decode_dec_char(std::string &s, utf8::utfchar32_t k)
+        void _decode_dec_char(str_type::value_type &s, utf8::utfchar32_t k)
         {
             while (_next_is([](const char k) { return std::isdigit(k); })) {
                 k *= 10;
@@ -221,7 +222,7 @@ namespace daedalus_turbo::plutus::uplc {
             utf8::append(k, std::back_inserter(s));
         }
 
-        void _decode_escaped_char(std::string &s)
+        void _decode_escaped_char(str_type::value_type &s)
         {
             switch (const char k = _eat_next(); k) {
                 case 'a': s += static_cast<char>(0x07); break;
@@ -253,10 +254,10 @@ namespace daedalus_turbo::plutus::uplc {
             }
         }
 
-        std::string _decode_string()
+        str_type _decode_string()
         {
             _eat('"');
-            std::string s {};
+            str_type::value_type s { _alloc.resource() };
             while (!_next_is('"')) {
                 switch (const auto k = _eat_next(); k) {
                     case '\\': _decode_escaped_char(s); break;
@@ -264,23 +265,23 @@ namespace daedalus_turbo::plutus::uplc {
                 }
             }
             _eat('"');
-            return s;
+            return { _alloc, std::move(s) };
         }
 
-        cpp_int _decode_integer()
+        bint_type _decode_integer()
         {
             std::string str {};
             if (_next_is('+'))
                 ++_pos;
             else if (_next_is('-'))
                 str += _bytes[_pos++];
-            // skip forward zeros since otherwise cpp_int will interpret such string as of radix 8
+            // skip forward zeros since otherwise boost::multiprecision will interpret such string as of radix 8
             while (_next_is('0') && _next_is([](char k) { return std::isdigit(k); }, 1))
                 ++_pos;
             str += _eat_all([](char k) { return std::isdigit(k); });
             if (str.empty()) [[unlikely]]
                 throw error("expected an integer at pos: {}", _pos);
-            return cpp_int { str };
+            return bint_type { _alloc, str };
         }
 
         bool _decode_boolean()
@@ -311,7 +312,7 @@ namespace daedalus_turbo::plutus::uplc {
         data::list_type _decode_data_list()
         {
             _eat_lbr();
-            data::list_type l {};
+            data::list_type l { _alloc };
             while (!_next_is(']')) {
                 l.emplace_back(_decode_data_item());
                 _eat_space();
@@ -327,7 +328,7 @@ namespace daedalus_turbo::plutus::uplc {
         data::map_type _decode_data_map()
         {
             _eat_lbr();
-            data::map_type m {};
+            data::map_type m { _alloc };
             while (!_next_is(']')) {
                 _eat_lpar();
                 auto k = _decode_data_item();
@@ -335,7 +336,7 @@ namespace daedalus_turbo::plutus::uplc {
                 _eat(',');
                 _eat_space();
                 auto v = _decode_data_item();
-                m.emplace_back(std::move(k), std::move(v));
+                m.emplace_back(_alloc, std::move(k), std::move(v));
                 _eat_rpar();
                 if (_next_is(',')) {
                     _eat(',');
@@ -349,12 +350,12 @@ namespace daedalus_turbo::plutus::uplc {
         data _decode_data_item()
         {
             const auto tok = _eat_name();
-            switch (tok[0]) {
+            switch ((tok)[0]) {
                 case 'B': {
                     if (tok != "B") [[unlikely]]
                         throw error("unsupported token in data definition: {} at pos: {}", tok, _pos);
                     _eat_space();
-                    return { _decode_bytestring() };
+                    return { _alloc, _decode_bytestring() };
                 }
                 case 'C': {
                     if (tok != "Constr") [[unlikely]]
@@ -363,25 +364,25 @@ namespace daedalus_turbo::plutus::uplc {
                     auto id = _decode_integer();
                     _eat_space();
                     auto l = _decode_data_list();
-                    return { data_constr { std::move(id), std::move(l) } };
+                    return { _alloc, data_constr { _alloc, std::move(id), std::move(l) } };
                 }
                 case 'I': {
                     if (tok != "I") [[unlikely]]
                         throw error("unsupported token in data definition: {} at pos: {}", tok, _pos);
                     _eat_space();
-                    return { _decode_integer() };
+                    return { _alloc, _decode_integer() };
                 }
                 case 'L': {
                     if (tok != "List") [[unlikely]]
                         throw error("unsupported token in data definition: {} at pos: {}", tok, _pos);
                     _eat_space();
-                    return { _decode_data_list() };
+                    return { _alloc, _decode_data_list() };
                 }
                 case 'M': {
                     if (tok != "Map") [[unlikely]]
                         throw error("unsupported token in data definition: {} at pos: {}", tok, _pos);
                     _eat_space();
-                    return { _decode_data_map() };
+                    return { _alloc, _decode_data_map() };
                 }
                 default: throw error("unsupported token '{}' at pos: {}", tok, _pos);
             }
@@ -399,14 +400,14 @@ namespace daedalus_turbo::plutus::uplc {
         constant_type _decode_list_type()
         {
             _eat_space();
-            constant_type::list_type n { { _decode_constant_type() }, _alloc.resource() };
+            constant_type::list_type n { _alloc, { _decode_constant_type() } };
             return { _alloc, type_tag::list, std::move(n) };
         }
 
         constant_type _decode_pair_type()
         {
             _eat_space();
-            constant_type::list_type n { _alloc.resource() };
+            constant_type::list_type n { _alloc };
             n.emplace_back(_decode_constant_type());
             _eat_space();
             n.emplace_back(_decode_constant_type());
@@ -432,7 +433,7 @@ namespace daedalus_turbo::plutus::uplc {
                 return t;
             }
             const auto typ = _eat_name();
-            switch (typ[0]) {
+            switch ((typ)[0]) {
                 case 'b':
                     if (typ == "bytestring") [[likely]]
                         return { _alloc, type_tag::bytestring };
@@ -479,7 +480,7 @@ namespace daedalus_turbo::plutus::uplc {
         {
             _eat_lbr();
             auto typ = list_typ->nested.at(0);
-            constant_list::list_type vals { _alloc.resource() };
+            constant_list::list_type vals { _alloc };
             while (!_next_is(']')) {
                 vals.emplace_back(_decode_constant_value(constant_type { typ }));
                 _eat_space();
@@ -521,7 +522,7 @@ namespace daedalus_turbo::plutus::uplc {
             _eat_space();
             auto typ = _decode_constant_type();
             _eat_space();
-            return { _decode_constant_value(std::move(typ)) };
+            return { _alloc, _decode_constant_value(std::move(typ)) };
         }
 
         term _decode_constr()
@@ -529,13 +530,13 @@ namespace daedalus_turbo::plutus::uplc {
             if (_version && (_version->major > 1 || (_version->major == 1 && _version->minor >= 1))) {
                 _eat_space();
                 _eat_space();
-                auto tag = static_cast<uint64_t>(_decode_integer());
+                const auto tag = static_cast<uint64_t>(*_decode_integer());
                 _eat_space();
-                term_list args { _alloc.resource() };
+                term_list::value_type args { _alloc };
                 while (!_next_is(')')) {
-                    args.emplace_back(_alloc.make<term>(_decode_term()));
+                    args.emplace_back(_decode_term());
                 }
-                return { t_constr { tag, std::move(args) } };
+                return { _alloc, t_constr { tag, term_list { _alloc, std::move(args) } } };
             }
             throw error("constr term is allowed only for programs of versions 1.1.0 and higher");
         }
@@ -544,13 +545,13 @@ namespace daedalus_turbo::plutus::uplc {
         {
             if (_version && (_version->major > 1 || (_version->major == 1 && _version->minor >= 1))) {
                 _eat_space();
-                auto arg = term::make_ptr(_alloc, _decode_term());
+                auto arg = _decode_term();
                 _eat_space();
-                term_list cases { _alloc.resource() };
+                term_list::value_type cases { _alloc };
                 while (!_next_is(')')) {
-                    cases.emplace_back(_alloc.make<term>(_decode_term()));
+                    cases.emplace_back(_decode_term());
                 }
-                return { t_case { std::move(arg), std::move(cases) } };
+                return { _alloc, t_case { std::move(arg), { _alloc, std::move(cases) } } };
             }
             throw error("case term is allowed only for programs of versions 1.1.0 and higher");
         }
@@ -558,36 +559,37 @@ namespace daedalus_turbo::plutus::uplc {
         term _decode_builtin()
         {
             const auto name = _eat_name();
-            return { t_builtin::from_name(name) };
+            return { _alloc, t_builtin::from_name(name) };
         }
 
         term _decode_lambda() {
             auto name = _eat_name();
             _eat_space_must();
+            const auto var_idx = _vars.size();
             _vars.emplace_back(name);
-            auto body = _decode_term();
+            const auto body = _decode_term();
             if (_vars.empty() || _vars.back() != name) [[unlikely]]
                 throw error("internal error: expected variable {} is missing!", name);
             _vars.pop_back();
-            return { t_lambda { _alloc, std::move(name), term::make_ptr(_alloc, std::move(body)) } };
+            return { _alloc, t_lambda { var_idx, body } };
         }
 
         term _decode_force()
         {
-            return { force { term::make_ptr(_alloc, _decode_term()) } };
+            return { _alloc, force { _decode_term() } };
         }
 
         term _decode_delay()
         {
-            return { t_delay { term::make_ptr(_alloc, _decode_term()) } };
+            return { _alloc, t_delay { _decode_term() } };
         }
 
         term _decode_error()
         {
-            return { failure {} };
+            return { _alloc, failure {} };
         }
 
-        term _decode_term_tag(const std::string &tag)
+        term _decode_term_tag(const str_type::value_type &tag)
         {
             switch (tag[0]) {
                 case 'b':
@@ -636,13 +638,13 @@ namespace daedalus_turbo::plutus::uplc {
         term _decode_term_apply()
         {
             _eat_lbr();
-            auto func = _decode_term();
+            const auto func = _decode_term();
             auto arg = _decode_term();
-            term appl { apply { term::make_ptr(_alloc, std::move(func)), term::make_ptr(_alloc, std::move(arg)) } };
+            term appl { _alloc, apply { func, arg } };
             _eat_space();
             while (!_next_is(']')) {
                 arg = _decode_term();
-                appl = { apply { term::make_ptr(_alloc, std::move(appl)), term::make_ptr(_alloc, std::move(arg)) } };
+                appl = { _alloc, apply { appl, arg } };
             }
             _eat_rbr();
             return appl;
@@ -654,7 +656,11 @@ namespace daedalus_turbo::plutus::uplc {
                 return _decode_term_par();
             if (_next_is('['))
                 return _decode_term_apply();
-            return { variable { _alloc,_eat_name() } };
+            const auto name = _eat_name();
+            const auto it = std::find(_vars.rbegin(), _vars.rend(), name);
+            if (it == _vars.rend()) [[unlikely]]
+                throw error("unknown variable '{}' at pos: {}", name, _pos);
+            return { _alloc, variable { narrow_cast<size_t>(it.base() - 1 - _vars.begin()) } };
         }
 
         term _decode_term()
@@ -671,7 +677,7 @@ namespace daedalus_turbo::plutus::uplc {
             _eat("program");
             _eat_space();
             _decode_version();
-            _term = term::make_ptr(_alloc, _decode_term());
+            _term = _decode_term();
             _eat_rpar();
         }
     };
@@ -691,7 +697,7 @@ namespace daedalus_turbo::plutus::uplc {
         return _impl->version();
     }
 
-    term_ptr script::program() const
+    term script::program() const
     {
         return _impl->program();
     }

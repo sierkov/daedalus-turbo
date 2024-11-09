@@ -801,7 +801,7 @@ namespace daedalus_turbo {
         cardano::optional_point core_tip() const;
         cardano::optional_point immutable_tip() const;
         cardano::optional_slot can_export() const;
-        void node_export(const std::filesystem::path &node_dir, bool ledger_only=false) const;
+        void node_export(const std::filesystem::path &node_dir, const cardano::point &tip, bool ledger_only=false) const;
         std::string node_export_ledger(const std::filesystem::path &ledger_dir, const cardano::optional_point &imm_tip, int prio=1000) const;
     private:
         const std::filesystem::path _data_dir;

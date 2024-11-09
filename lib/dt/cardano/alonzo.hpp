@@ -139,32 +139,11 @@ namespace daedalus_turbo::cardano::alonzo {
             });
         }
 
+        void foreach_script(const std::function<void(const script_info &)> &) const override;
+        void foreach_redeemer(const std::function<void(const tx_redeemer &)> &) const override;
         wit_cnt witnesses_ok_other(const plutus::context *ctx=nullptr) const override;
+        virtual void evaluate_plutus(const plutus::context &ctx, const script_info &script, const plutus::term_list &args, const ex_units &max_cost) const;
     };
-
-    inline void block::foreach_tx(const std::function<void(const cardano::tx &)> &observer) const
-    {
-        const auto &txs = transactions();
-        const auto &wits = witnesses();
-        std::set<size_t> invalid_tx_idxs {};
-        if (protocol_ver().major >= 6) {
-            for (const auto &tx_idx: invalid_transactions())
-                invalid_tx_idxs.emplace(tx_idx.uint());
-        }
-        for (size_t i = 0; i < txs.size(); ++i)
-            if (!invalid_tx_idxs.contains(i))
-                observer(tx { txs.at(i), *this, &wits.at(i), i });
-    }
-
-    inline void block::foreach_invalid_tx(const std::function<void(const cardano::tx &)> &observer) const
-    {
-        if (protocol_ver().major >= 6) {
-            const auto &txs = transactions();
-            const auto &wits = witnesses();
-            for (const auto &tx_idx: invalid_transactions())
-                observer(tx { txs.at(tx_idx.uint()), *this, &wits.at(tx_idx.uint()), tx_idx.uint() });
-        }
-    }
 }
 
 #endif // !DAEDALUS_TURBO_CARDANO_ALONZO_HPP

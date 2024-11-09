@@ -14,7 +14,7 @@ namespace daedalus_turbo::plutus::uplc {
         script(script &&);
         ~script();
 	    plutus::version version() const;
-        term_ptr program() const;
+        term program() const;
     private:
         struct impl;
         std::unique_ptr<impl> _impl;

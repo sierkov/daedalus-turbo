@@ -6,9 +6,11 @@
 #include <dt/compare.hpp>
 #include <dt/requirements.hpp>
 #include <dt/sync/turbo.hpp>
-#include <dt/validator/state-compare.hpp>
+#include <dt/cardano/ledger/state-compare.hpp>
 
 namespace daedalus_turbo::cli::test_export_full {
+    using namespace cardano::ledger;
+
     struct cmd: command {
         void configure(config &cmd) const override
         {
@@ -57,7 +59,7 @@ namespace daedalus_turbo::cli::test_export_full {
                         });
                         sched.process();
                     }
-                    if (validator::compare_node_state(orig_data, gen_data))
+                    if (compare_node_state(orig_data, gen_data))
                         std::filesystem::remove(gen_path);
                 }
             }

@@ -7,7 +7,7 @@
 
 #include <dt/cardano/common.hpp>
 #include <dt/cardano/shelley.hpp>
-#include <dt/cbor-encoder.hpp>
+#include <dt/cbor/encoder.hpp>
 #include <dt/kes.hpp>
 #include <dt/vrf.hpp>
 

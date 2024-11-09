@@ -10,12 +10,17 @@
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <dt/config.hpp>
-#include <dt/debug.hpp>
 #include <dt/file.hpp>
 #include <dt/logger.hpp>
 #include <dt/mutex.hpp>
 
 namespace daedalus_turbo::logger {
+    bool &tracing_enabled()
+    {
+        static bool enabled = std::getenv("DT_DEBUG") != nullptr;
+        return enabled;
+    }
+
     static std::string log_path()
     {
         const char *env_log_path = std::getenv("DT_LOG");
@@ -41,10 +46,11 @@ namespace daedalus_turbo::logger {
         auto logger = console_sink
             ? spdlog::logger("dt", { console_sink, file_sink })
             : spdlog::logger("dt", { file_sink });
-        if (debug::tracing_enabled())
+        if (tracing_enabled()) {
             logger.set_level(spdlog::level::trace);
-        else
+        } else {
             logger.set_level(spdlog::level::debug);
+        }
         logger.flush_on(spdlog::level::debug);
         return logger;
     }

@@ -3,6 +3,7 @@ node_modules
 tmp
 out
 log
+vcpkg_installed
 .vs
 .vscode
 .idea

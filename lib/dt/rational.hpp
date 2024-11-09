@@ -7,40 +7,35 @@
 
 #include <numeric>
 #include <dt/big_int.hpp>
-#include <dt/error.hpp>
+#include <dt/json.hpp>
 
 namespace daedalus_turbo {
     using rational = boost::multiprecision::cpp_rational;
     using boost::multiprecision::numerator;
     using boost::multiprecision::denominator;
 
+    struct cbor_value;
+    struct cbor_array;
+
+    namespace cbor {
+        struct encoder;
+    }
+
     struct rational_u64 {
         uint64_t numerator = 0;
         uint64_t denominator = 1;
 
-        static rational_u64 from_double(const double &d)
-        {
-            double num = d;
-            uint64_t denom = 1;
-            while (std::fabs(num - static_cast<uint64_t>(num)) > 1e-6) {
-                if (denom >= 1'000'000'000)
-                    throw error("an unsupported value for a conversion to rational: {}", d);
-                num *= 10;
-                denom *= 10;
-            }
-            rational_u64 r { static_cast<uint64_t>(num), denom };
-            const auto div = std::gcd(r.numerator, r.denominator);
-            if (div != 0) {
-                r.numerator /= div;
-                r.denominator /= div;
-            }
-            return r;
-        }
-
-        constexpr static auto serialize(auto &archive, auto &self)
+        static constexpr auto serialize(auto &archive, auto &self)
         {
             return archive(self.numerator, self.denominator);
         }
+
+        rational_u64() =default;
+        rational_u64(uint64_t, uint64_t);
+        rational_u64(double);
+        rational_u64(const cbor_array &);
+        rational_u64(const cbor_value &);
+        rational_u64(const json::value &v);
 
         bool operator==(const auto &b) const
         {
@@ -70,6 +65,8 @@ namespace daedalus_turbo {
                 denominator /= div;
             }
         }
+
+        void to_cbor(cbor::encoder &) const;
     };
 }
 

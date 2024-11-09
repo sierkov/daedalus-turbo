@@ -14,4 +14,13 @@ namespace daedalus_turbo::cardano::mary {
         }
         return {};
     }
+
+    void block::foreach_tx(const std::function<void(const cardano::tx &)> &observer) const
+    {
+        const auto &txs = transactions();
+        const auto &wits = witnesses();
+        for (size_t i = 0; i < txs.size(); ++i) {
+            observer(tx { txs.at(i), *this, i, &wits.at(i), auxiliary_at(i) });
+        }
+    }
 }

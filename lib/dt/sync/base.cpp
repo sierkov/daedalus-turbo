@@ -20,7 +20,7 @@ namespace daedalus_turbo::sync {
 
         bool sync(peer_info &peer, cardano::optional_slot max_slot)
         {
-            static const auto mainnet_hash = uint8_vector::from_hex("15a199f895e461ec0ffc6dd4e4028af28a492ab4e806d39cb674c88f7643ef62");
+            /*static const auto mainnet_hash = uint8_vector::from_hex("15a199f895e461ec0ffc6dd4e4028af28a492ab4e806d39cb674c88f7643ef62");
             if (cardano::config::get().conway_genesis_hash == mainnet_hash) {
                 cardano::config::get().shelley_start_epoch(208);
                 static const auto babbage_max_slot = cardano::slot::from_epoch(507, cardano::config::get()) - 1;
@@ -28,7 +28,7 @@ namespace daedalus_turbo::sync {
                     logger::warn("Limiting the sync the Babbage era last slot: {}; Chang support comes soon!", babbage_max_slot);
                     max_slot = babbage_max_slot;
                 }
-            }
+            }*/
             logger::info("attempting to sync with {} with the tip {}", peer.id(), peer.tip());
             const auto start_tip = _cr.tip();
             static constexpr size_t max_retries = 1;

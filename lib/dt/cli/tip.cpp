@@ -2,7 +2,9 @@
  * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
+
 #include <dt/cli.hpp>
+#include <dt/cli/common.hpp>
 #include <dt/chunk-registry.hpp>
 
 namespace daedalus_turbo::cli::tip {
@@ -12,15 +14,22 @@ namespace daedalus_turbo::cli::tip {
             cmd.name = "tip";
             cmd.desc = "show the the last validated block and perform maintenance if necessary";
             cmd.args.expect({ "<data-dir>" });
+            common::add_opts(cmd);
         }
 
-        void run(const arguments &args) const override
+        void run(const arguments &args, const options &opts) const override
         {
             const auto &data_dir = args.at(0);
-            chunk_registry cr { data_dir };
-            logger::info("the local tip: {}", cr.tip());
-            logger::info("the local core tip: {}", cr.core_tip());
-            logger::info("the local immutable tip: {}", cr.immutable_tip());
+            const auto mode = common::cr_mode(opts);
+            chunk_registry cr { data_dir, mode };
+            const auto tip = cr.tip();
+            logger::info("the local tip: {}", tip);
+            if (mode == chunk_registry::mode::validate) {
+                logger::info("the local immutable tip: {}", cr.immutable_tip());
+                logger::info("the local core tip: {}", cr.core_tip());
+            }
+            if (tip)
+                logger::info("the latest slot: {}", cr.make_slot(tip->slot));
         }
     };
     static auto instance = command::reg(std::make_shared<cmd>());

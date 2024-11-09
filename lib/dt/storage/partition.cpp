@@ -6,6 +6,40 @@
 #include <dt/storage/partition.hpp>
 
 namespace daedalus_turbo::storage {
+    vector<partition> partition_map::_chunk_partitions(const chunk_registry &cr, const size_t num_parts)
+    {
+        vector<partition> parts {};
+        partition::storage_type chunks {};
+        uint64_t part_size = 0;
+        for (const auto &[chunk_last_byte, chunk]: cr.chunks()) {
+            const auto part_edge = cr.num_bytes() * (parts.size() + 1) / num_parts;
+            const auto potential_size = part_size + chunk.data_size;
+            if (chunk_last_byte < part_edge) [[likely]] {
+                chunks.emplace_back(&chunk);
+                part_size = potential_size;
+            } else {
+                const auto excess = potential_size - part_edge;
+                const auto lack = part_edge - part_size;
+                if (chunks.empty() || lack > excess) {
+                    chunks.emplace_back(&chunk);
+                    parts.emplace_back(std::move(chunks));
+                    chunks.clear();
+                    part_size = 0;
+                } else {
+                    parts.emplace_back(std::move(chunks));
+                    chunks.clear();
+                    chunks.emplace_back(&chunk);
+                    part_size = chunk.data_size;
+                }
+            }
+        }
+        if (!chunks.empty())
+            parts.emplace_back(std::move(chunks));
+        if (parts.size() > num_parts) [[unlikely]]
+            throw error("invariant failed: the number of actual partitions: {} is greater than requested: {}", parts.size(), num_parts);
+        return parts;
+    }
+
     void parse_parallel(const chunk_registry &cr, const size_t num_parts,
         const std::function<void(cardano::block_base &blk, std::any &)> &on_block,
         const std::function<std::any(size_t)> &on_part_init,

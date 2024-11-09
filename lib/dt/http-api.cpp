@@ -33,6 +33,7 @@
 #include <boost/url.hpp>
 
 #include <dt/asio.hpp>
+#include <dt/cardano/ledger/state.hpp>
 #include <dt/chunk-registry.hpp>
 #include <dt/format.hpp>
 #include <dt/json.hpp>
@@ -46,8 +47,6 @@
 #include <dt/sync/hybrid.hpp>
 #include <dt/util.hpp>
 #include <dt/zpp.hpp>
-
-#include "validator/state.hpp"
 
 namespace fmt {
     template<>
@@ -450,7 +449,7 @@ namespace daedalus_turbo::http_api {
             std::string export_dir {};
             export_dir.resize(export_dir_enc.decoded_size());
             export_dir_enc.decode({}, boost::urls::string_token::assign_to(export_dir));
-            _cr->node_export(export_dir);
+            _cr->node_export(export_dir, _cr->immutable_tip().value());
             return json::object {
                 { "dataSizeGB", static_cast<double>(_cr->valid_end_offset()) / (1ULL << 30) },
                 { "numChunks", _cr->num_chunks() }

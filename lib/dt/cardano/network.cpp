@@ -9,7 +9,7 @@
 #include <boost/asio.hpp>
 #include <dt/cardano/network.hpp>
 #include <dt/cbor.hpp>
-#include <dt/cbor-encoder.hpp>
+#include <dt/cbor/encoder.hpp>
 #include <dt/logger.hpp>
 #include <dt/mutex.hpp>
 #include <dt/util.hpp>
@@ -125,7 +125,7 @@ namespace daedalus_turbo::cardano::network {
                 throw error("DNS resolve for {}:{} returned no results!", _addr.host, _addr.port);
             tcp::socket socket { _asio_worker.io_context() };
             co_await socket.async_connect(*results.begin(), boost::asio::use_awaitable);
-            static constexpr uint64_t protocol_ver = 7;
+            static constexpr uint64_t protocol_ver = 10;
             cbor::encoder enc {};
             enc.array(2)
                     .uint(0)

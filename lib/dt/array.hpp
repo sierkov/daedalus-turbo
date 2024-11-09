@@ -50,6 +50,14 @@ namespace daedalus_turbo {
         }
     }
 
+    inline void init_from_hex(std::span<uint8_t> out, const std::string_view hex)
+    {
+        if (hex.size() != out.size() * 2)
+            throw error("hex string must have {} characters but got {}!", out.size() * 2, hex.size());
+        for (size_t i = 0; i < out.size(); ++i)
+            out[i] = uint_from_hex(hex[i * 2]) << 4 | uint_from_hex(hex[i * 2 + 1]);
+    }
+
     template<typename T, size_t SZ>
     struct
 #   ifndef _MSC_VER
@@ -58,13 +66,10 @@ namespace daedalus_turbo {
     array: std::array<T, SZ> {
         using std::array<T, SZ>::array;
 
-        static array<T, SZ> from_hex(const std::string_view &hex)
+        static array<T, SZ> from_hex(const std::string_view hex)
         {
             array<T, SZ> data;
-            if (hex.size() != SZ * 2)
-                throw error("hex string must have {} characters but got {}!", SZ * 2, hex.size());
-            for (size_t i = 0; i < SZ; ++i)
-                data[i] = uint_from_hex(hex[i * 2]) << 4 | uint_from_hex(hex[i * 2 + 1]);
+            init_from_hex(data, hex);
             return data;
         }
 
