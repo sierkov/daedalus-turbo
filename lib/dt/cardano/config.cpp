@@ -153,8 +153,17 @@ namespace daedalus_turbo::cardano {
         conway_pool_voting_thresholds { conway_genesis.at("poolVotingThresholds").as_object() },
         conway_drep_voting_thresholds { conway_genesis.at("dRepVotingThresholds").as_object() }
     {
+        shelley_start_epoch({});
+    }
+
+    void config::shelley_start_epoch(std::optional<uint64_t> epoch) const
+    {
         static const auto mainnet_hash = uint8_vector::from_hex("15a199f895e461ec0ffc6dd4e4028af28a492ab4e806d39cb674c88f7643ef62");
-        if (conway_genesis_hash == mainnet_hash)
-            shelley_start_epoch(208);
+        if (!epoch && conway_genesis_hash == mainnet_hash)
+            epoch = 208;
+        if (epoch)
+            _shelley_start_slot.emplace(*epoch * byron_epoch_length);
+        else
+            _shelley_start_slot.reset();
     }
 }

@@ -49,13 +49,7 @@ namespace daedalus_turbo::cardano {
             return static_cast<bool>(_shelley_start_slot);
         }
 
-        void shelley_start_epoch(const std::optional<uint64_t> epoch) const
-        {
-            if (epoch)
-                _shelley_start_slot.emplace(*epoch * byron_epoch_length);
-            else
-                _shelley_start_slot.reset();
-        }
+        void shelley_start_epoch(std::optional<uint64_t> epoch) const;
 
         uint64_t shelley_start_slot() const
         {

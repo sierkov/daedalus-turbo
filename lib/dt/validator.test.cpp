@@ -76,5 +76,40 @@ suite validator_suite = [] {
             expect(cr.num_blocks() == failure_height) << cr.num_blocks();
             expect(cr.valid_end_offset() < chain1.data.size()) << cr.valid_end_offset();
         };
+        "excessive snapshot"_test = [&] {
+            validator::snapshot_set s {};
+            expect(s.next_excessive() == s.end());
+            s.emplace(5, 5 * 10000, 5 * 432000, false);
+            expect(s.next_excessive() == s.end());
+            s.emplace(20, 20 * 10000, 20 * 432000, false);
+            expect(s.next_excessive() == s.end());
+            s.emplace(200, 200 * 10000, 200 * 432000, false);
+            expect(s.next_excessive() == s.end());
+            s.emplace(250, 250 * 10000, 250 * 432000, false);
+            expect(s.next_excessive() == s.end());
+            s.emplace(450, 450 * 10000, 450 * 432000, false);
+            expect(s.next_excessive() == s.end());
+            s.emplace(518, 518 * 10000, 518 * 432000, false);
+            expect(s.next_excessive() != s.end());
+            s.emplace(519, 519 * 10000, 519 * 432000, false);
+            if (const auto e_it = s.next_excessive(); e_it != s.end()) {
+                test_same(5, e_it->epoch);
+                s.erase(e_it);
+            } else {
+                expect(false);
+            }
+            if (const auto e_it = s.next_excessive(); e_it != s.end()) {
+                test_same(200, e_it->epoch);
+                s.erase(e_it);
+            } else {
+                expect(false);
+            }
+            s.emplace(5, 5 * 10000, 5 * 432000, false);
+            s.emplace(200, 200 * 10000, 200 * 432000, false);
+            set<uint64_t> removed {}, kept {};
+            s.remove_excessive([&](const auto &s) { removed.emplace(s.epoch); }, [&](const auto &s) { kept.emplace(s.epoch); });
+            test_same(set<uint64_t> { 5, 200 }, removed);
+            test_same(set<uint64_t> { 20, 250, 450, 518, 519 }, kept);
+        };
     };
 };

@@ -14,6 +14,38 @@ namespace daedalus_turbo::cardano::ledger {
 namespace daedalus_turbo::validator {
     static constexpr std::string_view validate_leaders_task { "validate-epoch" };
 
+    struct snapshot {
+        uint64_t epoch;
+        uint64_t end_offset;
+        uint64_t last_slot;
+        bool exportable;
+
+        static snapshot from_json(const json::value &j);
+        snapshot(const cardano::ledger::state &st);
+        snapshot(uint64_t epoch_, uint64_t end_offset_, uint64_t last_slot_, bool exportable_);
+        json::object to_json() const;
+
+        bool operator==(const snapshot &o) const
+        {
+            return epoch == o.epoch && end_offset == o.end_offset && last_slot == o.last_slot && exportable == o.exportable;
+        }
+
+        bool operator<(const snapshot &b) const
+        {
+            return end_offset < b.end_offset;
+        }
+    };
+
+    struct snapshot_set: set<snapshot> {
+        using set::set;
+
+        using action_t = std::function<void(const snapshot &)>;
+        using const_iterator = typename set<snapshot>::const_iterator;
+
+        const_iterator next_excessive() const;
+        void remove_excessive(const action_t &on_remove, const action_t &on_keep);
+    };
+
     extern indexer::indexer_map default_indexers(const std::string &data_dir, scheduler &sched=scheduler::get());
 
     struct incremental {

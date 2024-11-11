@@ -19,6 +19,68 @@
 namespace daedalus_turbo::validator {
     using namespace cardano::ledger;
 
+    snapshot snapshot::from_json(const json::value &j)
+    {
+        return snapshot {
+            json::value_to<uint64_t>(j.at("epoch")),
+            json::value_to<uint64_t>(j.at("endOffset")),
+            json::value_to<uint64_t>(j.at("lastSlot")),
+            json::value_to<bool>(j.at("exportable"))
+        };
+    }
+
+    snapshot::snapshot(const cardano::ledger::state &st)
+        : epoch { st.epoch() }, end_offset { st.end_offset() }, last_slot { st.last_slot() }, exportable { st.exportable() }
+    {
+    }
+
+    snapshot::snapshot(const uint64_t epoch_, const uint64_t end_offset_, const uint64_t last_slot_, const bool exportable_)
+        : epoch { epoch_ }, end_offset { end_offset_ }, last_slot { last_slot_ }, exportable { exportable_ }
+    {
+    }
+
+    json::object snapshot::to_json() const
+    {
+        return json::object {
+            { "epoch", epoch },
+            { "endOffset", end_offset },
+            { "lastSlot", last_slot },
+            { "exportable", exportable }
+        };
+    }
+
+    snapshot_set::const_iterator snapshot_set::next_excessive() const
+    {
+        if (size() <= 5)
+            return end();
+        std::optional<std::pair<const_iterator, uint64_t>> min {};
+        // do not consider as excessive the two most recent snapshots
+        auto end_it = end();
+        --end_it;
+        --end_it;
+        for (auto it = begin(); it != end_it; ++it) {
+            // The score is the number of epochs till the next snapshot.
+            // The lower score, the less important the snapshot is.
+            // <= is used so that an earlier snapshot with the same score is kept
+            if (const auto score = std::next(it)->epoch - it->epoch; !min || score <= min->second)
+                min.emplace(it, score);
+        }
+        if (!min) [[unlikely]]
+            throw error("internal error: couldn't identify the least useful snapshot!");
+        return min->first;
+    }
+
+    void snapshot_set::remove_excessive(const action_t &on_remove, const action_t &on_keep)
+    {
+        for (auto e_it = next_excessive(); e_it != end(); e_it = next_excessive()) {
+            on_remove(*e_it);
+            erase(e_it);
+        }
+        for (auto it = begin(); it != end(); ++it) {
+            on_keep(*it);
+        }
+    }
+
     indexer::indexer_map default_indexers(const std::string &data_dir, scheduler &sched)
     {
         const auto idx_dir = indexer::incremental::storage_dir(data_dir);
@@ -123,29 +185,16 @@ namespace daedalus_turbo::validator {
                     _storage_path("ledger", _reserve_snapshot->end_offset));
                 _snapshots.emplace(*_reserve_snapshot);
             }
-            const uint64_t end_offset = _snapshots.rbegin()->end_offset;
-            uint64_t last_offset = 0;
-            for (auto it = _snapshots.begin(); it != _snapshots.end(); ) {
-                if (_snapshots.size() > 5
-                    && ((end_offset - it->end_offset <= snapshot_hifreq_end_offset_range && it->end_offset - last_offset < snapshot_hifreq_distance)
-                    || (end_offset - it->end_offset > snapshot_hifreq_end_offset_range && it->end_offset - last_offset < snapshot_normal_distance))
-                    && it->end_offset != end_offset)
-                {
-                    logger::info("removing unnecessary snapshot of the validator state for end offset {}", it->end_offset);
-                    for (const auto &prefix: { "ledger" }) {
-                        const auto path = _storage_path(prefix, it->end_offset);
-                        logger::debug("marking state file {} for future deletion", path);
-                        _cr.remover().mark(path);
-                    }
-                    it = _snapshots.erase(it);
-                } else {
-                    for (const auto &prefix: { "ledger" }) {
-                        _cr.remover().unmark(_storage_path(prefix, it->end_offset));
-                    }
-                    last_offset = it->end_offset;
-                    ++it;
+            _snapshots.remove_excessive(
+                [&](const auto &snap) {
+                    const auto snap_path = _storage_path("ledger", snap.end_offset);
+                    _cr.remover().mark(snap_path);
+                },
+                [&](const auto &snap) {
+                    const auto snap_path = _storage_path("ledger", snap.end_offset);
+                    _cr.remover().unmark(snap_path);
                 }
-            }
+            );
             _save_json_snapshots(_state_path);
             _remove_temporary_data();
         }
@@ -290,53 +339,6 @@ namespace daedalus_turbo::validator {
         static constexpr uint64_t snapshot_normal_distance = indexer::merger::part_size * 2;
 
         using timed_update_list = vector<index::timed_update::item>;
-        struct snapshot {
-            uint64_t epoch;
-            uint64_t end_offset;
-            uint64_t last_slot;
-            bool exportable;
-
-            snapshot(const cardano::ledger::state &st)
-                : epoch { st.epoch() }, end_offset { st.end_offset() }, last_slot { st.last_slot() }, exportable { st.exportable() }
-            {
-            }
-
-            snapshot(const uint64_t epoch_, const uint64_t end_offset_, const uint64_t last_slot_, const bool exportable_)
-                : epoch { epoch_ }, end_offset { end_offset_ }, last_slot { last_slot_ }, exportable { exportable_ }
-            {
-            }
-
-            static snapshot from_json(const json::value &j)
-            {
-                return snapshot {
-                    json::value_to<uint64_t>(j.at("epoch")),
-                    json::value_to<uint64_t>(j.at("endOffset")),
-                    json::value_to<uint64_t>(j.at("lastSlot")),
-                    json::value_to<bool>(j.at("exportable"))
-                };
-            }
-
-            bool operator==(const snapshot &o) const
-            {
-                return epoch == o.epoch && end_offset == o.end_offset && last_slot == o.last_slot && exportable == o.exportable;
-            }
-
-            bool operator<(const snapshot &b) const
-            {
-                return end_offset < b.end_offset;
-            }
-
-            json::object to_json() const
-            {
-                return json::object {
-                    { "epoch", epoch },
-                    { "endOffset", end_offset },
-                    { "lastSlot", last_slot },
-                    { "exportable", exportable }
-                };
-            }
-        };
-        using snapshot_list = std::set<snapshot>;
         using epoch_task_map = map<uint64_t, cardano::slot_range>;
 
         chunk_registry &_cr;
@@ -348,7 +350,7 @@ namespace daedalus_turbo::validator {
         alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _next_task_mutex {};
         uint64_t _next_end_offset = 0;
         epoch_task_map _next_tasks {};
-        snapshot_list _snapshots {};
+        snapshot_set _snapshots {};
         std::optional<snapshot> _reserve_snapshot {};
         chunk_processor _proc {
             [this] { return my_end_offset(); },

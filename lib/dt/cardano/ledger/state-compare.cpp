@@ -323,7 +323,7 @@ namespace daedalus_turbo::cardano::ledger {
         }
     }
 
-    static void compare_states(const size_t era, const value s1, const value s2)
+    static void compare_states(const size_t /*era*/, const value s1, const value s2)
     {
         if (compare_sizes("era-state", s1, s2, 3)) {
             auto it1 = s1.array();

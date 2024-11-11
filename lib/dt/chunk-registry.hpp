@@ -247,11 +247,11 @@ namespace daedalus_turbo {
         void maintenance()
         {
             if (valid_end_offset() != max_end_offset()) {
-                logger::warn("chain is not in a consistent state, performing maintenance ...");
+                logger::warn("the local chain is not in a consistent state, performing maintenance ...");
                 truncate(tip());
                 remover().remove();
             } else {
-                logger::info("chain is in a consistent state - nothing to do");
+                logger::info("the local chain is in a consistent state");
             }
         }
 
@@ -516,6 +516,8 @@ namespace daedalus_turbo {
                 throw error("internal error: no block registered at a slot: {}!", slot);
             return *block_it;
         }
+
+        std::optional<storage::block_info> latest_block_before_or_at_slot(const uint64_t slot) const;
 
         std::optional<storage::block_info> find_block_by_slot_no_throw(const uint64_t slot, const cardano::block_hash &hash) const
         {

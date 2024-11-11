@@ -143,6 +143,7 @@ namespace daedalus_turbo::plutus::flat {
                         put_bit(true);
                         encode_type(tt);
                     }
+                    break;
                 }
                 default:
                     encode(t->typ);

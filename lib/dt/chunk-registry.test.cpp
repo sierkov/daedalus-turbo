@@ -98,6 +98,27 @@ suite chunk_registry_suite = [] {
                 expect(cr.find_data_hash_it(cardano::block_hash::from_hex("47F62675C9B0161211B9261B7BB1CF801EDD4B9C0728D9A6C7A910A1581EED41"))->second.offset == 84'430'954_ull);
                 expect(cr.find_data_hash_it(cardano::block_hash {}) == cr.chunks().end());
             };
+            "latest_block_before_slot"_test = [&] {
+                if (const auto blk = cr.latest_block_before_or_at_slot(0); blk) {
+                    test_same(0, blk->slot);
+                } else {
+                    expect(false);
+                }
+                if (const auto blk = cr.latest_block_before_or_at_slot(cr.max_slot()); blk) {
+                    expect(blk->slot <= cr.max_slot()) << fmt::format("{}", blk->point()) << cr.max_slot();
+                    expect(cr.max_slot() - blk->slot < 400) << fmt::format("{}", blk->point()) << cr.max_slot();
+                } else {
+                    expect(false);
+                }
+                const uint64_t mid_slot = cr.max_slot() / 2;
+                if (const auto blk = cr.latest_block_before_or_at_slot(mid_slot); blk) {
+                    expect(blk->slot <= mid_slot) << fmt::format("{}", blk->point()) << mid_slot;
+                    // test chain is sparse so the closeness transition is expected to fail
+                    // expect(cr.max_slot() - blk->slot < 400) << fmt::format("{}", blk->point()) << cr.max_slot();
+                } else {
+                    expect(false);
+                }
+            };
             "read"_test = [&cr] {
                 cbor_value block_tuple {};
                 cr.read(28'762'567, block_tuple);

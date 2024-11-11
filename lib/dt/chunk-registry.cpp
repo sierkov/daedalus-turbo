@@ -57,6 +57,7 @@ namespace daedalus_turbo {
                 _file_remover.mark(path);
         }
         logger::info("chunk_registry has data up to offset {}", num_bytes());
+        maintenance();
     }
 
     chunk_registry::~chunk_registry() =default;
@@ -134,6 +135,21 @@ namespace daedalus_turbo {
             throw error("the validator's state is currently not in the exportable period!");
         }
         throw error("This chunk_registry does not have a validator instance!");
+    }
+
+    std::optional<storage::block_info> chunk_registry::latest_block_before_or_at_slot(const uint64_t slot) const
+    {
+        std::optional<storage::block_info> res {};
+        for (auto chunk_it = _find_chunk_by_slot(slot); chunk_it != _chunks.end(); ) {
+            for (auto block_it = chunk_it->second.blocks.begin(); block_it != chunk_it->second.blocks.end(); ++block_it) {
+                if (block_it->slot <= slot)
+                    res = *block_it;
+            }
+            if (res || chunk_it == _chunks.begin())
+                break;
+            --chunk_it;
+        }
+        return res;
     }
 
     void chunk_registry::_node_export_chain(const std::filesystem::path &immutable_dir, const std::filesystem::path &volatile_dir, const int prio_base) const

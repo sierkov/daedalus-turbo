@@ -19,19 +19,21 @@ Daedalus Turbo is an open-source project that aims to improve drastically (>=10x
 Currently supported:
 - Incremental synchronization of compressed blockchain data over the Internet (the Turbo protocol)
 - Incremental synchronization using the normal Cardano Network protocol (no compression)
-- Incremental synchronization from a local Cardano Node instance
+- Incremental synchronization from a local Cardano Node (immutable and volatile files)
 - Parallelized Ouroboros Praos data validation (full consensus validation)
-- Ouroboros Genesis chain selection rule when synchronizing with a Cardano Network peer
+- Chain selection using Ouroboros Genesis rule (highest local chain density)
 - Interactive reconstruction of balances and transaction histories of stake and payment addresses
-- Compressed local storage of blockchain data (compression ratio ~4.5x)
 - Interactive search for transaction data
+- Compressed local storage of blockchain data (compression ratio ~4.5x)
 - ADA and non-ADA assets
+- Evaluation of Plutus scripts
 - Blockchain Explorer Desktop User Interface
-- Evaluation of Plutus programs
+- All Cardano block formats from Byron to Conway
 
 In active development:
-- Validation of Plutus script witnesses to enable the full tail validation, as explained in [On the Security of Wallet Nodes in the Cardano Blockchain](./doc/2024-sierkov-on-wallet-security.pdf)
-- Support for Cardano Chang hard fork
+- Tail transaction witness validation as explained in [On the Security of Wallet Nodes in the Cardano Blockchain](./doc/2024-sierkov-on-wallet-security.pdf)
+- Full transaction witness validation using the C++ Plutus Machine
+- Support for Conway governance actions
 
 As the project matures and moves through its [roadmap](#roadmap), the list of supported features will grow.
 
@@ -50,11 +52,6 @@ One can test the software using two methods:
 - Downloading and installing a prebuilt binary
 
 Each is described in more detail below.
-
-## Cardano Chang fork support
-On September 1, 2024 Cardano has introduced a number of new features with its Chang hard fork.
-The support for them is being actively developed. However, for the time being, the previous builds of DT Explorer likely won't work.
-On the other hand, the command line demo described below should work but limit the data to the last epoch of Cardano's Babbage era.
 
 ## Command line interface
 
