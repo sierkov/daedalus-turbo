@@ -573,19 +573,19 @@ namespace daedalus_turbo::plutus::costs {
 
     const arg_map &default_cost_args_v1()
     {
-        static auto args = load_cost_args("./etc/plutus/cekMachineCostsA.json", "./etc/plutus/builtinCostModelA.json");
+        static auto args = load_cost_args(install_path("etc/plutus/cekMachineCostsA.json"), install_path("etc/plutus/builtinCostModelA.json"));
         return args;
     }
 
     const arg_map &default_cost_args_v2()
     {
-        static auto args = load_cost_args("./etc/plutus/cekMachineCostsB.json", "./etc/plutus/builtinCostModelB.json");
+        static auto args = load_cost_args(install_path("etc/plutus/cekMachineCostsB.json"), install_path("etc/plutus/builtinCostModelB.json"));
         return args;
     }
 
     const arg_map &default_cost_args_v3()
     {
-        static auto args = load_cost_args("./etc/plutus/cekMachineCostsC.json", "./etc/plutus/builtinCostModelC.json");
+        static auto args = load_cost_args(install_path("etc/plutus/cekMachineCostsC.json"), install_path("./etc/plutus/builtinCostModelC.json"));
         return args;
     }
 
