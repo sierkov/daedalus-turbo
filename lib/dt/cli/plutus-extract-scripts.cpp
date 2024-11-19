@@ -5,7 +5,6 @@
 
 #include <dt/cardano/ledger/state.hpp>
 #include <dt/chunk-registry.hpp>
-#include <dt/cli-debug/scriptctx.hpp>
 #include <dt/cli.hpp>
 #include <dt/index/merge-zpp.hpp>
 #include <dt/index/utxo.hpp>
@@ -18,7 +17,6 @@ namespace daedalus_turbo::cli::plutus_extract_scripts {
     using namespace cardano;
     using namespace cardano::ledger;
     using namespace plutus;
-    using namespace scriptctx;
 
     struct cmd: command {
         void configure(config &cmd) const override

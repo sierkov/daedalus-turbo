@@ -4,24 +4,19 @@
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
 #include <random>
-#include <dt/cardano.hpp>
 #include <dt/chunk-registry.hpp>
 #include <dt/cli.hpp>
-#include <dt/cli-debug/scriptctx.hpp>
 #include <dt/index/merge-zpp.hpp>
 #include <dt/index/utxo.hpp>
-#include <dt/indexer.hpp>
 #include <dt/plutus/context.hpp>
 #include <dt/plutus/costs.hpp>
 #include <dt/storage/partition.hpp>
 #include <dt/cardano/ledger/state.hpp>
-#include <dt/zpp-stream.hpp>
 
 namespace daedalus_turbo::cli::plutus_sample_txs {
     using namespace cardano;
     using namespace cardano::ledger;
     using namespace plutus;
-    using namespace scriptctx;
 
     struct cmd: command {
         void configure(config &cmd) const override
