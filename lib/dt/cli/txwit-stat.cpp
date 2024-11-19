@@ -28,7 +28,6 @@ namespace daedalus_turbo::cli::txwit_stat {
         {
             const auto &data_dir = args.at(0);
             const chunk_registry cr { data_dir, chunk_registry::mode::store };
-            auto &sched = cr.sched();
             alignas(mutex::padding) mutex::unique_lock::mutex_type all_mutex {};
             part_info all {};
             storage::parse_parallel<part_info>(cr, 1024,
@@ -36,7 +35,7 @@ namespace daedalus_turbo::cli::txwit_stat {
                     ++part.num_blocks;
                     blk.foreach_tx([&](const auto &tx) {
                         ++part.num_txs;
-                        tx.foreach_redeemer([&](const auto &r) {
+                        tx.foreach_redeemer([&](const auto &) {
                             ++part.num_redeemers;
                         });
                         tx.foreach_witness([&](const auto wtyp, const auto &wit) {
