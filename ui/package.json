@@ -40,7 +40,7 @@
     "sass-loader": "^13.3.2",
     "shx": "^0.3.4",
     "style-loader": "^3.3.3",
-    "webpack": "^5.88.2",
+    "webpack": "^5.96.1",
     "webpack-cli": "^5.1.4",
     "ws": ">=8.17.1"
   },
