@@ -20,14 +20,15 @@ namespace daedalus_turbo::cli::plutus_benchmark {
         void configure(config &cmd) const override
         {
             cmd.name = "plutus-benchmark";
-            cmd.desc = "run the plutus benchmark";
-            cmd.args.expect({ "<script-dir>", "<thread-count>", "<results-csv>" });
+            cmd.desc = "run the plutus benchmark and save a CSV file with the results in <script-dir>/<run-id>-<thread-count>.csv";
+            cmd.args.expect({ "<script-dir>", "<thread-count>", "<run-id>" });
         }
 
         void run(const arguments &args) const override {
             const auto &script_dir = args.at(0);
             const auto num_workers = std::stoull(args.at(1));
-            const auto &res_path = args.at(2);
+            const auto &run_id = args.at(2);
+            const auto res_path = fmt::format("{}/{}-{}.csv", script_dir, run_id, num_workers);
 
             const auto paths = file::files_with_ext(script_dir, ".flat");
             static constexpr size_t batch_size = 1024;
