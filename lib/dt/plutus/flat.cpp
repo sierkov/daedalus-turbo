@@ -19,6 +19,8 @@ namespace daedalus_turbo::plutus::flat {
             _ver { _decode_version() },
             _term { _decode_term() }
         {
+            if (_bytes.empty()) [[unlikely]]
+                throw error("a flat script cannot be empty!");
         }
 
         plutus::version version() const
@@ -32,12 +34,16 @@ namespace daedalus_turbo::plutus::flat {
         }
     private:
         static constexpr size_t max_script_size = 1 << 16;
+        static constexpr size_t max_varint_bits = big_int_max_size * 2 * 8;
+        static constexpr size_t max_varint_bytes = max_varint_bits / 7;
 
         allocator &_alloc;
         uint8_vector _bytes_raw;
         buffer _bytes { _bytes_raw };
-        size_t _byte_pos = 0;
-        size_t _bit_pos = 0;
+        const uint8_t *_byte_next = _bytes.data();
+        const uint8_t *const _byte_end = _bytes.data() + _bytes.size();
+        uint8_t _next_bit_mask = 0x80;
+        uint8_vector _varint_data {};
         size_t _num_vars = 0;
         plutus::version _ver;
         term _term;
@@ -53,33 +59,38 @@ namespace daedalus_turbo::plutus::flat {
 
         bool _next_bit()
         {
-            if (_byte_pos >= _bytes.size()) [[unlikely]]
-                throw error("out of data at byte {}", _byte_pos);
-            const bool res = _bytes[_byte_pos] & (1 << (7 - _bit_pos));
-            if (_bit_pos < 7) {
-                ++_bit_pos;
-            } else {
-                _bit_pos = 0;
-                ++_byte_pos;
+            if (_byte_next >= _byte_end) [[unlikely]]
+                throw error("out of data at byte {}", _byte_pos());
+            // return a 0 or 1 so that the result can be used in a multiplication
+            const bool res = (*_byte_next & _next_bit_mask) > 0;
+            _next_bit_mask >>= 1;
+            if (!_next_bit_mask) {
+                _next_bit_mask = 0x80;
+                ++_byte_next;
             }
             return res;
         }
 
-        template<std::unsigned_integral N>
-        N _decode_fixed_uint(const size_t num_bits=sizeof(N) * 8)
+        template<size_t NUM_BITS>
+        uint8_t _decode_fixed_uint()
         {
-            static_assert(sizeof(N) <= sizeof(unsigned long long));
-            const size_t max_bit_idx = num_bits - 1;
-            N val {};
-            for (size_t i = 0; i < num_bits; ++i) {
-                if (_next_bit())
-                    val |= 1ULL << (max_bit_idx - i);
+            static_assert(NUM_BITS <= 8);
+            uint8_t next_bit_mask = 1ULL << (NUM_BITS - 1);
+            uint8_t val {};
+            while (next_bit_mask) {
+                val |= next_bit_mask * _next_bit();
+                next_bit_mask >>= 1;
             }
             return val;
         }
 
         uint8_t _next_byte()
         {
+            if (_next_bit_mask == 0x80) {
+                if (_byte_next >= _byte_end) [[unlikely]]
+                    throw error("out of data at byte {}", _byte_pos());
+                return *_byte_next++;
+            }
             uint8_t res = 0;
             res += _next_bit() * 0x80;
             res += _next_bit() * 0x40;
@@ -92,21 +103,24 @@ namespace daedalus_turbo::plutus::flat {
             return res;
         }
 
+        ptrdiff_t _byte_pos() const
+        {
+            return _byte_next - _bytes_raw.data();
+        }
+
         bint_type _decode_varlen_uint()
         {
-            static constexpr size_t max_bytes = big_int_max_size * 2 * 8 / 7;
-            uint8_t bytes[max_bytes];
-            size_t sz = 0;
+            _varint_data.clear();
             for (;;) {
                 const auto b = _next_byte();
-                bytes[sz++] = b;
+                _varint_data.emplace_back(b);
                 if (!(b & 0x80))
                     break;
-                if (sz >= max_bytes) [[unlikely]]
-                    throw error("a variable length uint that has more than {} bytes at byte: {}", max_bytes, _byte_pos);
+                if (_varint_data.size() >= max_varint_bytes) [[unlikely]]
+                    throw error("a variable length uint that has more than {} bytes at byte: {}", max_varint_bytes, _byte_pos());
             }
             bint_type::value_type v {};
-            boost::multiprecision::import_bits(v, bytes, bytes + sz, 7, false);
+            boost::multiprecision::import_bits(v, _varint_data.data(), _varint_data.data() + _varint_data.size(), 7, false);
             return { _alloc, std::move(v) };
         }
 
@@ -139,8 +153,8 @@ namespace daedalus_turbo::plutus::flat {
             while (!_next_bit()) {
                 // do nothing
             }
-            if (_bit_pos != 0) [[unlikely]]
-                throw error("consume_padding: didn't finish on a byte boundary at bit {}!", _byte_pos);
+            if (_next_bit_mask != 0x80) [[unlikely]]
+                throw error("consume_padding: didn't finish on a byte boundary at bit {}!", _byte_pos());
         }
 
         bstr_type _decode_bytestring()
@@ -148,15 +162,15 @@ namespace daedalus_turbo::plutus::flat {
             _consume_padding();
             bstr_type::value_type data { _alloc };
             for (;;) {
-                const size_t chunk_size = _decode_fixed_uint<uint8_t>();
+                const size_t chunk_size = _decode_fixed_uint<8>();
                 if (!chunk_size)
                     break;
                 const size_t data_idx = data.size();
                 data.resize(data.size() + chunk_size);
-                if (_byte_pos + chunk_size > _bytes.size())
-                    throw error("insufficient data for a bytestring of size {} at byte: {}", chunk_size, _byte_pos);
-                memcpy(data.data() + data_idx, _bytes.data() + _byte_pos, chunk_size);
-                _byte_pos += chunk_size;
+                if (_byte_next + chunk_size >= _byte_end)
+                    throw error("insufficient data for a bytestring of size {} at byte: {}", chunk_size, _byte_pos());
+                memcpy(data.data() + data_idx, _byte_next, chunk_size);
+                _byte_next += chunk_size;
             }
             return { _alloc, std::move(data) };
         }
@@ -277,10 +291,10 @@ namespace daedalus_turbo::plutus::flat {
             for (;;) {
                 if (!_next_bit())
                     break;
-                types.emplace_back(static_cast<type_tag>(_decode_fixed_uint<uint8_t>(4)));
+                types.emplace_back(static_cast<type_tag>(_decode_fixed_uint<4>()));
             }
             if (types.empty())
-                throw error("no type is defined at byte: {}!", _byte_pos);
+                throw error("no type is defined at byte: {}!", _byte_pos());
             auto types_it = types.begin();
             auto typ = _decode_constant_type(types_it, types.end());
             return _decode_constant_val(std::move(typ));
@@ -288,7 +302,7 @@ namespace daedalus_turbo::plutus::flat {
 
         t_builtin _decode_builtin()
         {
-            const auto tag = static_cast<builtin_tag>(_decode_fixed_uint<uint8_t>(7));
+            const auto tag = static_cast<builtin_tag>(_decode_fixed_uint<7>());
             if (builtins::semantics_v2().contains(tag)) [[likely]]
                 return { tag };
             throw error("unsupported builtin: {}!", static_cast<int>(tag));
@@ -335,7 +349,10 @@ namespace daedalus_turbo::plutus::flat {
 
         t_constr _decode_constr()
         {
-            const uint64_t tag = _decode_fixed_uint<uint64_t>();
+            const auto tag_bi = _decode_varlen_uint();
+            if (*tag_bi && boost::multiprecision::msb(*tag_bi) >= 64) [[unlikely]]
+                throw error("constr tag must fit into a 64-vit integer but got: {}", *tag_bi);
+            const auto tag = static_cast<uint64_t>(*tag_bi);
             term_list::value_type args { _alloc };
             while (_next_bit()) {
                 args.emplace_back(_decode_term());
@@ -355,7 +372,7 @@ namespace daedalus_turbo::plutus::flat {
 
         term _decode_term()
         {
-            const auto typ = static_cast<term_tag>(_decode_fixed_uint<uint8_t>(4));
+            const auto typ = static_cast<term_tag>(_decode_fixed_uint<4>());
             switch (typ) {
                 case term_tag::variable: return { _alloc, _decode_variable() };
                 case term_tag::delay: return { _alloc, _decode_delay() };

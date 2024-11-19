@@ -125,14 +125,16 @@ namespace daedalus_turbo::cardano::network {
                 throw error("DNS resolve for {}:{} returned no results!", _addr.host, _addr.port);
             tcp::socket socket { _asio_worker.io_context() };
             co_await socket.async_connect(*results.begin(), boost::asio::use_awaitable);
-            static constexpr uint64_t protocol_ver = 10;
+            static constexpr uint64_t protocol_ver = 13;
             cbor::encoder enc {};
             enc.array(2)
                     .uint(0)
                     .map(1)
                     .uint(protocol_ver) // versionNumber
-                    .array(2)
+                    .array(4)
                     .uint(_protocol_magic) // networkMagic
+                    .s_false() // initiatorOnlyDiffusionMode
+                    .uint(0)   // peerSharing
                     .s_false(); // diffusionMode
             auto resp = co_await _send_request(socket, protocol::handshake, enc.cbor());
             auto resp_cbor = cbor::parse(resp);

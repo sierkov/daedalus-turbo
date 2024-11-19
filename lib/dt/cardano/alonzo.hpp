@@ -8,6 +8,7 @@
 #include <dt/cardano/common.hpp>
 #include <dt/cardano/mary.hpp>
 #include <dt/cbor.hpp>
+#include <dt/plutus/types.hpp>
 
 namespace daedalus_turbo::cardano::alonzo {
     struct tx;
@@ -139,10 +140,9 @@ namespace daedalus_turbo::cardano::alonzo {
             });
         }
 
-        void foreach_script(const std::function<void(const script_info &)> &) const override;
+        void foreach_script(const std::function<void(script_info &&)> &, const plutus::context *ctx=nullptr) const override;
         void foreach_redeemer(const std::function<void(const tx_redeemer &)> &) const override;
         wit_cnt witnesses_ok_other(const plutus::context *ctx=nullptr) const override;
-        virtual void evaluate_plutus(const plutus::context &ctx, const script_info &script, const plutus::term_list &args, const ex_units &max_cost) const;
     };
 }
 

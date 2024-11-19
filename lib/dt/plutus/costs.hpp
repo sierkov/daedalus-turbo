@@ -16,6 +16,7 @@ namespace daedalus_turbo::plutus::costs {
     struct cost_fun {
         virtual ~cost_fun() =default;
         virtual uint64_t cost(const arg_sizes &sizes, const value_list &args) const =0;
+        virtual bool operator==(const cost_fun &) const =0;
     };
     using cost_fun_ptr = std::shared_ptr<cost_fun>;
 
@@ -23,16 +24,10 @@ namespace daedalus_turbo::plutus::costs {
         cost_fun_ptr cpu {};
         cost_fun_ptr mem {};
 
-        /*op_model() =default;
-        op_model(const op_model &) = delete;
-
-        op_model(op_model &&o) noexcept: cpu { std::move(o.cpu) }, mem { std::move(o.mem) }
+        bool operator==(const op_model &o) const
         {
+            return cpu && o.cpu && *cpu == *o.cpu && mem && o.mem && *mem == *o.mem;
         }
-
-        op_model(cost_fun_ptr &&cpu_, cost_fun_ptr &&mem_): cpu { std::move(cpu_) }, mem { std::move(mem_) }
-        {
-        }*/
     };
 
     struct parsed_model {

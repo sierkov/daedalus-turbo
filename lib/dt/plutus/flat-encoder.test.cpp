@@ -58,21 +58,27 @@ namespace {
         }
     }
 
-    void test_uplc_code(const std::string &code)
-    {
-        test_uplc_code(code, buffer { code });
-    }
-
     void test_uplc(const std::string &path)
     {
         test_uplc_code(path, file::read(path));
     }
+
+    void test_uplc_hex(const std::string &code, const std::string &exp_hex)
+    {
+        allocator alloc {};
+        const uplc::script s_uplc { alloc, buffer { code } };
+        const auto cbor = encode_cbor(s_uplc.version(), s_uplc.program());
+        test_same(code, uint8_vector::from_hex(exp_hex), cbor);
+    }
 }
 
 suite plutus_flat_encoder_suite = [] {
-    "plutus::flat_encoder"_test = [] {
-        test_uplc_code("(program 1.0.0 (con (list (pair data data)) []))");
-        test_flat("./data/plutus/script-v2/ECA13DA17F28EB51D7D90D2D16E95A39C21655DA130893A48997A38B.bin");
+    "plutus::flat::encoder"_test = [] {
+        "constr"_test = [] {
+            test_uplc_hex("(program 1.1.0 [ (builtin serialiseData) (con data (Constr 1 [I 0, I 1])) ])", "500101003766980106d87a9f0001ff0001");
+            test_uplc_hex("(program 1.1.0 (constr 1))", "450101008011");
+            test_uplc_hex("(program 1.1.0 (constr 1 (con integer 0) (con integer 1)))", "4a010100801a4001480081");
+        };
         "terms"_test = [] {
             for (const auto &path: file::files_with_ext("./data/plutus/conformance", ".uplc")) {
                 const auto exp_path = (path.parent_path() / path.stem()).string() + ".uplc.expected";

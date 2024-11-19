@@ -44,6 +44,37 @@ if(UNIX)
         link_libraries("atomic")
     endif()
 endif()
+if(CMAKE_BUILD_TYPE STREQUAL Sanitize)
+    message("Sanitize build")
+    if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        set(SANITIZER "address")
+        add_compile_options(-g)
+        add_compile_options(-O3)
+        add_compile_options("-fsanitize=${SANITIZER}")
+        add_link_options("-fsanitize=${SANITIZER}")
+        add_link_options("-static-libsan")
+    else()
+        message(FATAL_ERROR "Sanitize builds are only supported with Clang")
+    endif()
+elseif(CMAKE_BUILD_TYPE STREQUAL Coverage)
+    if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        target_compile_options(lib PRIVATE -fprofile-instr-generate -fcoverage-mapping -g -O3)
+        target_compile_options(run-test PRIVATE -fprofile-instr-generate -fcoverage-mapping -g -O3)
+        target_link_options(run-test PRIVATE -fprofile-instr-generate -fcoverage-mapping -g)
+        add_custom_target(coverage
+            COMMENT "Running test coverage ..."
+            COMMAND $<TARGET_FILE:run-test> ${COVERAGE_ARGS}
+            COMMAND echo "Indexing raw profdata"
+            COMMAND llvm-profdata merge -sparse default.profraw -o run-test.profdata
+            COMMAND echo "Generating coverage report"
+            COMMAND llvm-cov report $<TARGET_FILE:run-test> -instr-profile=run-test.profdata
+            DEPENDS run-test
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        )
+    else()
+        message(FATAL_ERROR "Coverage builds are only supported with Clang")
+    endif()
+endif()
 add_subdirectory(3rdparty)
 add_subdirectory(lib)
 target_link_libraries(lib PUBLIC 3rdparty 3rdparty-cpp)
@@ -93,12 +124,6 @@ file(GLOB_RECURSE BENCH_SRCS lib/dt/*.bench.cpp)
 add_executable(run-bench src/run-test.cpp ${BENCH_SRCS})
 target_link_libraries(run-bench PRIVATE lib 3rdparty 3rdparty-cpp)
 
-if(UNIX)
-    add_executable(dt-prof src/dt.cpp)
-    target_link_libraries(dt-prof PRIVATE lib 3rdparty 3rdparty-cpp)
-    target_link_options(dt-prof PRIVATE -g -lprofiler)
-endif()
-
 message("copying configs")
 file(COPY etc DESTINATION .)
 if (EXISTS ${CMAKE_SOURCE_DIR}/publisher)
@@ -108,54 +133,12 @@ message("copying test data")
 file(COPY data DESTINATION .)
 
 if(CMAKE_BUILD_TYPE STREQUAL Sanitize)
-    if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-        set(SANITIZER "address")
-        add_compile_options(-g)
-        add_compile_options(-O3)
-        add_compile_options("-fsanitize=${SANITIZER}")
-        add_link_options("-fsanitize=${SANITIZER}")
-    else()
-        message(FATAL_ERROR "Sinitize builds are only supported with Clang")
-    endif()
     file(GLOB_RECURSE FUZZ_SRCS lib/dt/*.fuzz.cpp)
     foreach(FUZZ_SRC IN LISTS FUZZ_SRCS)
         cmake_path(GET FUZZ_SRC STEM FUZZ_NAME)
         add_executable(fuzz-${FUZZ_NAME} ${FUZZ_SRC})
         target_link_libraries(fuzz-${FUZZ_NAME} PRIVATE lib 3rdparty 3rdparty-cpp)
     endforeach()
-elseif(CMAKE_BUILD_TYPE STREQUAL Coverage)
-    if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-        target_compile_options(lib PRIVATE -fprofile-instr-generate -fcoverage-mapping -g -O3)
-        target_compile_options(run-test PRIVATE -fprofile-instr-generate -fcoverage-mapping -g -O3)
-        target_link_options(run-test PRIVATE -fprofile-instr-generate -fcoverage-mapping -g)
-        add_custom_target(coverage
-                COMMENT "Running test coverage ..."
-                COMMAND $<TARGET_FILE:run-test> ${COVERAGE_ARGS}
-                COMMAND echo "Indexing raw profdata"
-                COMMAND llvm-profdata merge -sparse default.profraw -o run-test.profdata
-                COMMAND echo "Generating coverage report"
-                COMMAND llvm-cov report $<TARGET_FILE:run-test> -instr-profile=run-test.profdata
-                DEPENDS run-test
-                WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        )
-    else()
-        target_compile_options(lib PRIVATE -g --coverage)
-        target_compile_options(run-test PRIVATE -g --coverage)
-        target_link_options(run-test PRIVATE -g --coverage -lgcov)
-        add_custom_command(TARGET run-test PRE_BUILD COMMAND
-                find ${CMAKE_BINARY_DIR} -type f -name '*.gcda' -exec rm {} +)
-        find_program(GCOVR_PATH gcovr)
-        if (GCOVR_PATH)
-            message("adding target coverage using ${GCOVR_PATH}")
-            add_custom_target(coverage
-                COMMENT "Running test coverage ..."
-                COMMAND $<TARGET_FILE:run-test> ${COVERAGE_ARGS}
-                COMMAND mkdir -p ${CMAKE_BINARY_DIR}/coverage
-                COMMAND ${GCOVR_PATH} -j 8 -r ${CMAKE_SOURCE_DIR} --gcov-ignore-parse-errors=negative_hits.warn --merge-mode-functions=separate --html-details ${CMAKE_BINARY_DIR}/coverage/coverage.html .
-                WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-            )
-        endif()
-    endif()
 endif()
 
 if (EXISTS ${CMAKE_SOURCE_DIR}/ui)

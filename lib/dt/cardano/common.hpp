@@ -148,12 +148,34 @@ namespace daedalus_turbo::cardano {
 
     extern redeemer_tag redeemer_tag_from_cbor(const cbor::value &v);
 
+    struct redeemer_id {
+        redeemer_tag tag;
+        uint16_t ref_idx;
+
+        bool operator<(const redeemer_id &o) const
+        {
+            if (tag != o.tag)
+                return tag < o.tag;
+            return ref_idx < o.ref_idx;
+        }
+    };
+
+    struct redeemer_info {
+        buffer data;
+        ex_units budget;
+    };
+
     struct tx_redeemer {
         redeemer_tag tag;
         uint16_t idx;
         uint16_t ref_idx;
         buffer data;
         ex_units budget;
+
+        redeemer_id id() const
+        {
+            return { tag, ref_idx };
+        }
     };
 
     using ipv4_addr = array<uint8_t, 4>;
@@ -473,9 +495,8 @@ namespace daedalus_turbo::cardano {
         virtual void foreach_collateral_return(const std::function<void(const tx_output &)> &) const {}
         virtual void foreach_cert(const std::function<void(const cbor::value &cert, size_t cert_idx)> &) const {}
         virtual void foreach_required_signer(const std::function<void(buffer)> &) const {}
-        virtual void foreach_script(const std::function<void(const script_info &)> &) const {}
         virtual void foreach_redeemer(const std::function<void(const tx_redeemer &)> &) const {}
-
+        virtual void foreach_script(const std::function<void(script_info &&)> &, const plutus::context *ctx=nullptr) const =0;
         virtual void foreach_set(const cbor_value &set_raw, const std::function<void(const cbor_value &, size_t)> &observer) const;
 
         virtual void foreach_witness(const std::function<void(uint64_t, const cbor::value &)> &) const

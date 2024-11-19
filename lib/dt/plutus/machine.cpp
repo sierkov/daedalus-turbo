@@ -3,6 +3,7 @@
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
+#include <dt/config.hpp>
 #include <dt/cbor/zero.hpp>
 #include <dt/plutus/builtins.hpp>
 #include <dt/plutus/machine.hpp>
@@ -32,6 +33,7 @@ namespace daedalus_turbo::plutus {
 
         term apply_args(const term &expr, const term_list &args)
         {
+            //file::write(install_path("tmp/script-args-my.txt"), fmt::format("{}\n", args));
             term t = expr;
             for (const auto &arg: *args)
                 t = term { _alloc, apply { t, arg } };
@@ -205,58 +207,68 @@ namespace daedalus_turbo::plutus {
         {
             if (auto ptr_opt = _lookup_opt(env, var_idx); ptr_opt)
                 return std::move(*ptr_opt);
-            throw error("reference to free variable: v{}", var_idx);
+            throw error("reference to a free variable: v{}", var_idx);
         }
 
-        term _discharge_term(const environment &env, const term &t, const size_t level=0, const std::optional<size_t> base_var_idx={}) const
+        term _discharge_term(const environment &env, const term &t, const int64_t level, const int64_t var_idx_diff) const
         {
             return std::visit<term>([&](const auto &v) {
                 using T = std::decay_t<decltype(v)>;
                 if constexpr (std::is_same_v<T, variable>) {
                     if (const auto ptr_opt = _lookup_opt(env, v.idx); ptr_opt)
-                        return _discharge(**ptr_opt);
-                    return term { _alloc, variable { v.idx - base_var_idx.value_or(0) } };
+                        return _discharge(**ptr_opt, level, var_idx_diff);
+                    return term { _alloc, variable { narrow_cast<size_t>(static_cast<int64_t>(v.idx) + var_idx_diff) } };
                 } else if constexpr (std::is_same_v<T, t_lambda>) {
-                    return term { _alloc, t_lambda { level, _discharge_term(env, v.expr, level + 1, base_var_idx.value_or(v.var_idx)) } };
+                    return term { _alloc, t_lambda { narrow_cast<size_t>(level), _discharge_term(env, v.expr, level + 1, level - static_cast<int64_t>(v.var_idx)) } };
                 } else if constexpr (std::is_same_v<T, apply>) {
-                    return term { _alloc, apply { _discharge_term(env, v.func, level), _discharge_term(env, v.arg, level, base_var_idx) } };
+                    return term { _alloc, apply { _discharge_term(env, v.func, level, var_idx_diff), _discharge_term(env, v.arg, level, var_idx_diff) } };
                 } else if constexpr (std::is_same_v<T, force>) {
-                    return term { _alloc, force { _discharge_term(env, v.expr, level, base_var_idx) } };
+                    return term { _alloc, force { _discharge_term(env, v.expr, level, var_idx_diff) } };
                 } else if constexpr (std::is_same_v<T, t_delay>) {
-                    return term { _alloc, t_delay { _discharge_term(env, v.expr, level, base_var_idx) } };
+                    return term { _alloc, t_delay { _discharge_term(env, v.expr, level, var_idx_diff) } };
+                } else if constexpr (std::is_same_v<T, t_case>) {
+                    term_list::value_type l { _alloc };
+                    l.reserve(v.cases->size());
+                    for (auto &c: *v.cases)
+                        l.emplace_back(_discharge_term(env, c, level, var_idx_diff));
+                    return term { _alloc, t_case { _discharge_term(env, v.arg, level, var_idx_diff), term_list { _alloc, std::move(l) } } };
+                } else if constexpr (std::is_same_v<T, t_constr>) {
+                    term_list::value_type l { _alloc };
+                    l.reserve(v.args->size());
+                    for (auto &a: *v.args)
+                        l.emplace_back(_discharge_term(env, a, level, var_idx_diff));
+                    return term { _alloc, t_constr { v.tag, term_list { _alloc, std::move(l) } } };
                 } else {
                     return t;
                 }
             }, *t);
         }
 
-        term _discharge(const value::value_type &val) const
+        term _discharge(const value::value_type &val, const int64_t level=0, const int64_t &var_idx_diff=0) const
         {
-            return std::visit<term>([this](const auto &v) {
+            return std::visit<term>([&](const auto &v) {
                 using T = std::decay_t<decltype(v)>;
                 if constexpr (std::is_same_v<T, constant>) {
                     return term { _alloc, v };
                 } else if constexpr (std::is_same_v<T, v_delay>) {
-                    return _discharge_term(v.env, { _alloc, t_delay { v.expr } });
+                    return _discharge_term(v.env, { _alloc, t_delay { v.expr } }, level, var_idx_diff);
                 } else if constexpr (std::is_same_v<T, v_lambda>) {
-                    return _discharge_term(v.env, { _alloc, t_lambda { v.var_idx, v.body } });
+                    return _discharge_term(v.env, { _alloc, t_lambda { v.var_idx, v.body } }, level, var_idx_diff);
                 } else if constexpr (std::is_same_v<T, v_builtin>) {
                     auto t = term { _alloc, v.b };
                     for (size_t i = 0; i < v.forces; ++i)
                         t = term { _alloc, force { std::move(t) } };
                     for (const auto &arg: *v.args)
-                        t = term { _alloc, apply { std::move(t), _discharge(*arg) } };
+                        t = term { _alloc, apply { std::move(t), _discharge(*arg, level, var_idx_diff) } };
                     return t;
                 } else if constexpr (std::is_same_v<T, v_constr>) {
                     term_list::value_type args { _alloc };
                     for (const auto &arg: *v.args)
-                        args.emplace_back(_discharge(*arg));
+                        args.emplace_back(_discharge(*arg, level, var_idx_diff));
                     t_constr pc { v.tag, term_list { _alloc, std::move(args) } };
                     return term { _alloc, std::move(pc) };
                 } else {
                     throw error("an unsupported value type to discharge: {}", typeid(v).name());
-                    // never reached but makes Visual C++ happy
-                    //return term { _alloc, constant { _alloc, false } };
                 }
             }, val);
         }
@@ -412,6 +424,23 @@ namespace daedalus_turbo::plutus {
         return impl::mem_usage(v);
     }
 
+    machine::machine(allocator &alloc, const cardano::script_type typ, const optional_budget &budget)
+    {
+        using cardano::script_type;
+        switch (typ) {
+            case script_type::plutus_v1:
+                _impl = std::make_unique<impl>(alloc, costs::defaults().v1.value(), builtins::semantics_v1(), budget);
+                break;
+            case script_type::plutus_v2:
+                _impl = std::make_unique<impl>(alloc, costs::defaults().v2.value(), builtins::semantics_v1(), budget);
+                break;
+            case script_type::plutus_v3:
+                _impl = std::make_unique<impl>(alloc, costs::defaults().v3.value(), builtins::semantics_v2(), budget);
+                break;
+            default: throw error("unsupported script type: {}", typ);
+        }
+    }
+
     machine::machine(allocator &alloc, const costs::parsed_model &model, const builtin_map &semantics, const optional_budget &budget):
         _impl { std::make_unique<impl>(alloc, model, semantics, budget) }
     {
@@ -427,10 +456,5 @@ namespace daedalus_turbo::plutus {
     void machine::evaluate_no_res(const term &expr)
     {
         _impl->evaluate_no_res(expr);
-    }
-
-    term machine::apply_args(const term &expr, const term_list &args)
-    {
-        return _impl->apply_args(expr, args);
     }
 }

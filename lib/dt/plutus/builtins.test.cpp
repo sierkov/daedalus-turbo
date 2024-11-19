@@ -527,19 +527,38 @@ suite plutus_builtins_suite = [] {
                 expect(mk_nil_pair_data(alloc, value::unit(alloc)) == value::make_list(alloc, constant_type { alloc, type_tag::pair, std::move(nested) }));
             };
             "serialize"_test = [&] {
-                const auto val = value::make_list(alloc, {
-                    { alloc, constant_pair(alloc,
+                {
+                    const auto val = value::make_list(alloc, {
+                        { alloc, constant_pair(alloc,
+                            i_data(alloc, { alloc, -5 }).as_const(),
+                            b_data(alloc, { alloc, bstr_type::from_hex(alloc, "112233") }).as_const()
+                        ) },
+                        { alloc, constant_pair(alloc,
+                            i_data(alloc, { alloc, 17 }).as_const(),
+                            b_data(alloc, { alloc, bstr_type::from_hex(alloc, "AABBCC") }).as_const()
+                        ) }
+                    });
+                    const auto act = serialize_data(alloc, map_data(alloc, val)).as_bstr();
+                    const auto exp = bstr_type::from_hex(alloc, "A224431122331143aabbcc");
+                    test_same(exp, act);
+                }
+                {
+                    const auto val = value::make_list(alloc, {
                         i_data(alloc, { alloc, -5 }).as_const(),
-                        b_data(alloc, { alloc, bstr_type::from_hex(alloc, "112233") }).as_const()
-                    ) },
-                    { alloc, constant_pair(alloc,
+                        b_data(alloc, { alloc, bstr_type::from_hex(alloc, "112233") }).as_const(),
                         i_data(alloc, { alloc, 17 }).as_const(),
                         b_data(alloc, { alloc, bstr_type::from_hex(alloc, "AABBCC") }).as_const()
-                    ) }
-                });
-                const auto act = serialize_data(alloc, map_data(alloc, val)).as_bstr();
-                const auto exp = bstr_type::from_hex(alloc, "BF24431122331143aabbccFF");
-                test_same(exp, act);
+                    });
+                    const auto act = serialize_data(alloc, list_data(alloc, val)).as_bstr();
+                    const auto exp = bstr_type::from_hex(alloc, "9F24431122331143aabbccFF");
+                    test_same(exp, act);
+                }
+                {
+                    const auto val = value::make_list(alloc, constant_type { alloc, type_tag::data });
+                    const auto act = serialize_data(alloc, list_data(alloc, val)).as_bstr();
+                    const auto exp = bstr_type::from_hex(alloc, "80");
+                    test_same(exp, act);
+                }
             };
         };
         "v3"_test = [] {

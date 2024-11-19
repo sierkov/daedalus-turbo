@@ -188,17 +188,26 @@ namespace daedalus_turbo::cardano::conway {
     {
     }
 
-    void tx::evaluate_plutus(const context &ctx, const script_info &script, const term_list &args, const ex_units &max_cost) const
+    const credential_t &cert_t::cred() const
     {
-        try {
-            flat::script s { ctx.alloc(), script.script() };
-            const auto &model = ctx.cost_models().for_script(script);
-            const auto &semantics = script.type() == script_type::plutus_v3 ? builtins::semantics_v2() : builtins::semantics_v1();
-            machine m { ctx.alloc(), model, semantics, max_cost };
-            m.evaluate_no_res(m.apply_args(s.program(), args));
-        } catch (const std::exception &ex) {
-            throw error("script {}: {}", script.hash(), ex.what());
-        }
+        static credential_t empty {};
+        return std::visit([&](const auto &c)-> auto const & {
+            using T = std::decay_t<decltype(c)>;
+            if constexpr (std::is_same_v<T, auth_committee_hot_cert>
+                    || std::is_same_v<T, resign_committee_cold_cert>) {
+                return c.cold_id;
+            } else if constexpr (std::is_same_v<T, reg_drep_cert>
+                   || std::is_same_v<T, unreg_drep_cert>
+                   || std::is_same_v<T, update_drep_cert>) {
+                return c.drep_id;
+            } else if constexpr (std::is_same_v<T, pool_reg_cert>
+                   || std::is_same_v<T, pool_retire_cert>) {
+                throw error("unsupported certificate type: {}", typeid(T).name());
+                return empty;
+            } else {
+                return c.stake_id;
+            }
+        }, val);
     }
 
     void tx::foreach_set(const cbor_value &set_raw, const std::function<void(const cbor_value &, size_t)> &observer) const

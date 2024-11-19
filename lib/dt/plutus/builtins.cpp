@@ -711,22 +711,30 @@ namespace daedalus_turbo::plutus::builtins {
         m.try_emplace(builtin_tag::bls12_381_final_verify, 2, bls12_381_final_verify, "bls12_381_finalVerify", 0, 4);
     }
 
+    static builtin_map make_semantics_v1()
+    {
+        builtin_map m {};
+        init_builtin_map(m);
+        return m;
+    }
+
     const builtin_map &semantics_v1()
     {
-        static builtin_map m {};
-        if (m.empty()) [[unlikely]]
-            init_builtin_map(m);
+        static builtin_map m { make_semantics_v1() };
+        return m;
+    }
+
+    static builtin_map make_semantics_v2()
+    {
+        builtin_map m {};
+        init_builtin_map(m);
+        m.at(builtin_tag::cons_byte_string).func = cons_byte_string_v2;
         return m;
     }
 
     const builtin_map &semantics_v2()
     {
-        static builtin_map m {};
-        if (m.empty()) [[unlikely]] {
-            init_builtin_map(m);
-            auto &b = const_cast<builtin_info &>(m.at(builtin_tag::cons_byte_string));
-            b.func = cons_byte_string_v2;
-        }
+        static builtin_map m { make_semantics_v2() };
         return m;
     }
 }

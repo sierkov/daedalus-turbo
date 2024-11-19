@@ -74,19 +74,37 @@ namespace daedalus_turbo::cardano::byron {
         return tx_ok && dlg_ok && upd_ok;
     }
 
+    void tx::foreach_witness(const std::function<void(uint64_t, const cbor::value &)> &observer) const
+    {
+        for (const auto &w_raw: _wit->array()) {
+            observer(w_raw.at(0).uint(), *w_raw.at(1).tag().second);
+        }
+    }
+
+    void tx::foreach_script(const std::function<void(script_info &&)> &observer, const plutus::context *) const
+    {
+        foreach_witness([&](const auto typ, const auto &w_val) {
+            switch (typ) {
+                case 1: {
+                    observer({ script_type::native, w_val.raw_span() });
+                    break;
+                }
+                default: break;
+            }
+        });
+    }
+
     tx::wit_cnt tx::witnesses_ok(const plutus::context */*input_data*/) const
     {
         if (!_wit) [[unlikely]]
             throw cardano_error("vkey_witness_ok called on a transaction without witness data!");
         wit_cnt cnt {};
         const auto &tx_hash = hash();
-        for (const auto &w_raw: _wit->array()) {
-            const auto &w_items = w_raw.array();
-            switch (const auto w_type = w_items.at(0).uint(); w_type) {
+        foreach_witness([&](const auto w_typ, const auto &w_val) {
+            const auto w_data = cbor::parse(w_val.buf());
+            switch (w_typ) {
                 // Normal VKWitness
                 case 0: {
-                    cbor_value w_data;
-                    _parse_cbor_tag(w_data, w_items.at(1).tag());
                     const auto &vkey = w_data.array().at(0).buf();
                     const auto &sig = w_data.array().at(1).buf();
                     //const auto &msg = tx_hash;
@@ -99,10 +117,8 @@ namespace daedalus_turbo::cardano::byron {
                     ++cnt.vkey;
                     break;
                 }
-                // RedeemWitness
+                // BootstrapWitness
                 /*case 2: {
-                    cbor_value w_data;
-                    _parse_cbor_tag(w_data, w_items.at(1).tag());
                     const auto &vkey = w_data.array().at(0).buf();
                     const auto &sig = w_data.array().at(1).buf();
                     array<uint8_t, 34> msg;
@@ -115,9 +131,9 @@ namespace daedalus_turbo::cardano::byron {
                     break;
                 }*/
                 default:
-                    throw cardano_error("slot: {}, tx: {} - unsupported witness type: {}", (uint64_t)_blk.slot(), hash().span(), w_type);
+                    throw cardano_error("slot: {}, tx: {} - unsupported witness type: {}", (uint64_t)_blk.slot(), hash().span(), w_typ);
             }
-        }
+        });
         return cnt;
     }
 }

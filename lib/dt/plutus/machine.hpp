@@ -27,10 +27,11 @@ namespace daedalus_turbo::plutus {
 
         static uint64_t mem_usage(const value &v);
 
+        machine(allocator &alloc, cardano::script_type typ, const optional_budget &budget={});
         machine(allocator &alloc, const costs::parsed_model &model=costs::defaults().v3.value(),
                 const builtin_map &semantics=builtins::semantics_v2(), const optional_budget &budget={});
         ~machine();
-        term apply_args(const term &expr, const term_list &args);
+        //term apply_args(const term &expr, const term_list &args);
         result evaluate(const term &expr);
         void evaluate_no_res(const term &expr);
     private:

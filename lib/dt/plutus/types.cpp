@@ -212,12 +212,12 @@ namespace daedalus_turbo::plutus {
     }
 
     data_constr::data_constr(allocator &alloc, uint64_t t, std::initializer_list<data> il):
-        _ptr { alloc.make<value_type>(t, list_type { alloc, std::move(il) })}
+        _ptr { alloc.make<value_type>(t, list_type { alloc, std::move(il) }) }
     {
     }
 
     data_constr::data_constr(allocator &alloc, uint64_t t, list_type &&l):
-        _ptr { alloc.make<value_type>(t, list_type { alloc, std::move(l) })}
+        _ptr { alloc.make<value_type>(t, list_type { alloc, std::move(l) }) }
     {
     }
 
@@ -374,15 +374,26 @@ namespace daedalus_turbo::plutus {
 
     static void _to_cbor(cbor::encoder &enc, const bstr_type &b, const size_t)
     {
-        enc.bytes(*b);
+        if (b->size() <= 64) {
+            enc.bytes(*b);
+        } else {
+            enc.bytes();
+            for (size_t i = 0; i < b->size(); i += 64)
+                enc.bytes(buffer { b->data() + i, std::min(size_t { 64 }, b->size() - i) });
+            enc.s_break();
+        }
     }
 
     static void _to_cbor(cbor::encoder &enc, const data::list_type &l, const size_t level)
     {
-        enc.array();
-        for (const auto &d: l)
-            _to_cbor(enc, d, level + 1);
-        enc.s_break();
+        if (!l.empty()) {
+            enc.array();
+            for (const auto &d: l)
+                _to_cbor(enc, d, level + 1);
+            enc.s_break();
+        } else {
+            enc.array(0);
+        }
     }
 
     static void _to_cbor(cbor::encoder &enc, const data &c, const size_t level)
@@ -393,12 +404,11 @@ namespace daedalus_turbo::plutus {
         std::visit([&](const auto &v) {
             using T = std::decay_t<decltype(v)>;
             if constexpr (std::is_same_v<T, data::map_type>) {
-                enc.map();
+                enc.map(v.size());
                 for (const auto &p: v) {
                     _to_cbor(enc, p->first, level + 1);
                     _to_cbor(enc, p->second, level + 1);
                 }
-                enc.s_break();
             } else if constexpr (std::is_same_v<T, data_constr>) {
                 if (v->first < std::numeric_limits<uint64_t>::max()) [[likely]] {
                     const auto id = static_cast<uint64_t>(v->first);
@@ -409,11 +419,9 @@ namespace daedalus_turbo::plutus {
                     } else {
                         enc.tag(102);
                         enc.array(2);
+                        enc.uint(id);
                     }
-                    if (!v->second.empty())
-                        _to_cbor(enc, v->second, level + 1);
-                    else
-                        enc.array(0);
+                    _to_cbor(enc, v->second, level + 1);
                 } else {
                     throw error("constr id is too big: {}", v->first);
                 }

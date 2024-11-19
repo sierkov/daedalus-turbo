@@ -390,7 +390,7 @@ namespace daedalus_turbo::plutus::flat {
         void encode(const t_constr &c)
         {
             encode(term_tag::constr);
-            fixed_uint(64, c.tag);
+            var_uint(c.tag);
             for (const auto &t: *c.args) {
                 put_bit(true);
                 encode(t);

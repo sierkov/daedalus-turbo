@@ -197,6 +197,21 @@ namespace daedalus_turbo::cardano::shelley {
         }
     }
 
+    void tx::foreach_script(const std::function<void(script_info &&)> &observer, const plutus::context *) const
+    {
+        foreach_witness([&](const auto typ, const auto &w_val) {
+            switch (typ) {
+                case 1: {
+                    foreach_set(w_val, [&](const auto &script_raw, const auto) {
+                        observer({ script_type::native, script_raw.raw_span() });
+                    });
+                    break;
+                }
+                default: break;
+            }
+        });
+    }
+
     void tx::foreach_witness(const std::function<void(uint64_t, const cbor::value &)> &observer) const
     {
         for (const auto &[w_type, w_val]: _wit->map()) {

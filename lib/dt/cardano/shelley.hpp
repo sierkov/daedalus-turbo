@@ -414,6 +414,7 @@ namespace daedalus_turbo::cardano::shelley {
         virtual wit_cnt witnesses_ok_other(const plutus::context *ctx=nullptr) const;
         void foreach_witness(const std::function<void(uint64_t, const cbor::value &)> &observer) const override;
         void foreach_cert(const std::function<void(const cbor::value &cert, size_t cert_idx)> &observer) const override;
+        void foreach_script(const std::function<void(script_info &&)> &, const plutus::context *ctx=nullptr) const override;
     protected:
         set<key_hash> _witnesses_ok_vkey(const cbor::value &w_val) const;
         size_t _witnesses_ok_bootstrap(const cbor::value &w_val) const;

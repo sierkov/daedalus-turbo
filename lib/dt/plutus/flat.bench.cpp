@@ -12,15 +12,16 @@ suite plutus_flat_suite = [] {
     "plutus::flat"_test = [] {
         const auto paths = file::files_with_ext(install_path("./data/plutus/script-v2"), ".bin");
         daedalus_turbo::vector<uint8_vector> data {};
+        data.reserve(paths.size());
         for (const auto &path: paths) {
             data.emplace_back(file::read(path.string()));
         }
-        benchmark("flat parse speed", 1e6, 5, [&] {
+        benchmark("flat parse speed", 1e6, 4096, [&] {
             uint64_t total_size = 0;
             for (const auto &bytes: data) {
                 total_size += bytes.size();
                 plutus::allocator alloc {};
-                plutus::flat::script s { alloc, std::move(bytes) };
+                plutus::flat::script s { alloc, bytes };
             }
             return total_size;
         });

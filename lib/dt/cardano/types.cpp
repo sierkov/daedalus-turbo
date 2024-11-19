@@ -282,7 +282,7 @@ namespace daedalus_turbo::cardano {
         }
         for (const auto &[k, v]: o) {
             const auto it = find(k);
-            if (it == o.end())
+            if (it == end())
                 m.try_emplace(k, std::optional<int64_t> {}, v);
         }
         return m;

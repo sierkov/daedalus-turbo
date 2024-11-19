@@ -60,6 +60,7 @@ namespace daedalus_turbo::http {
 
         ~impl()
         {
+            _destroy = true;
             const auto num_reqs = cancel([](const auto &) { return true; });
             if (num_reqs > 0)
                 logger::warn("download_queue destroyed before completion: cancelled {} requests", num_reqs);
@@ -324,6 +325,7 @@ namespace daedalus_turbo::http {
         std::atomic<double> _speed_max { 0.0 };
         std::atomic<double> _speed_current { 0.0 };
         std::chrono::time_point<std::chrono::system_clock> _stats_next_report { std::chrono::system_clock::now() + stats_report_span };
+        bool _destroy = false;
 
         void _asio_before_run()
         {
@@ -362,7 +364,7 @@ namespace daedalus_turbo::http {
         {
             auto num_active = --_active_conns;
             logger::debug("connection_close: active_conns: {}", num_active);
-            if (num_active == 0)
+            if (num_active == 0 && !_destroy)
                 _work_cv.notify_one();
         }
 

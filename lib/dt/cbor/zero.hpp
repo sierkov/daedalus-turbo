@@ -356,7 +356,7 @@ namespace daedalus_turbo::cbor::zero {
         {
             if (!data.empty()) [[likely]]
                 return data.data();
-            throw error("value data must contain at least one byte!");
+            throw error("cbor value data must contain at least one byte!");
         }
 
     };

@@ -19,6 +19,11 @@ namespace daedalus_turbo::plutus::costs {
         {
             return _cost;
         }
+
+        bool operator==(const cost_fun &o) const override
+        {
+            return _cost == dynamic_cast<const constant_cost &>(o)._cost;
+        }
     protected:
         const uint64_t _cost;
     };
@@ -33,6 +38,12 @@ namespace daedalus_turbo::plutus::costs {
         uint64_t cost(const arg_sizes &sizes, const value_list &) const override
         {
             return _intercept + _slope * sizes.at(0);
+        }
+
+        bool operator==(const cost_fun &o_) const override
+        {
+            const auto &o = dynamic_cast<decltype(*this) &>(o_);
+            return _intercept == o._intercept && _slope == o._slope;
         }
     protected:
         const uint64_t _intercept, _slope;
@@ -88,6 +99,12 @@ namespace daedalus_turbo::plutus::costs {
         {
             return _intercept + _slope1 * sizes.at(1) + _slope2 * sizes.at(2);
         }
+
+        bool operator==(const cost_fun &o_) const override
+        {
+            const auto &o = dynamic_cast<decltype(*this) &>(o_);
+            return _intercept == o._intercept && _slope1 == o._slope1 && _slope2 == o._slope2;
+        }
     protected:
         const uint64_t _intercept, _slope1, _slope2;
     };
@@ -104,6 +121,12 @@ namespace daedalus_turbo::plutus::costs {
         {
             const auto &y = sizes.at(1);
             return _c0 + _c1 * y + _c2 * y * y;
+        }
+
+        bool operator==(const cost_fun &o_) const override
+        {
+            const auto &o = dynamic_cast<decltype(*this) &>(o_);
+            return _c0 == o._c0 && _c1 == o._c1 && _c2 == o._c2;
         }
     protected:
         const uint64_t _c0, _c1, _c2;
@@ -139,6 +162,13 @@ namespace daedalus_turbo::plutus::costs {
                 return static_cast<uint64_t>(res);
             throw error("quadratic_in_y_or_linear_in_z results in a negative cost!");
         }
+
+        bool operator==(const cost_fun &o_) const override
+        {
+            const auto &o = dynamic_cast<decltype(*this) &>(o_);
+            return _c00 == o._c00 && _c10 == o._c10 && _c01 == o._c01
+                && _c20 == o._c20 && _c11 == o._c11 && _c02 == o._c02;
+        }
     protected:
         const int64_t _c00, _c10, _c01, _c20, _c11, _c02;
     };
@@ -165,6 +195,12 @@ namespace daedalus_turbo::plutus::costs {
         uint64_t cost(const arg_sizes &sizes, const value_list &) const override
         {
             return _intercept + _slope * std::max(_minimum, (sizes.at(0) - sizes.at(1)));
+        }
+
+        bool operator==(const cost_fun &o_) const override
+        {
+            const auto &o = dynamic_cast<decltype(*this) &>(o_);
+            return _minimum == o._minimum && linear_in_x::operator==(o_);
         }
     protected:
         const uint64_t _minimum;
@@ -223,6 +259,12 @@ namespace daedalus_turbo::plutus::costs {
                 return _cost;
             return _model->cost(sizes, args);
         }
+
+        bool operator==(const cost_fun &o_) const override
+        {
+            const auto &o = dynamic_cast<decltype(*this) &>(o_);
+            return _cost == o._cost && _model && o._model && *_model == *o._model;
+        }
     protected:
         const uint64_t _cost;
         const cost_fun_ptr _model;
@@ -255,6 +297,12 @@ namespace daedalus_turbo::plutus::costs {
             if (x == y)
                 return _intercept + _slope * x;
             return _cost;
+        }
+
+        bool operator==(const cost_fun &o_) const override
+        {
+            const auto &o = dynamic_cast<decltype(*this) &>(o_);
+            return _cost == o._cost && linear_in_x::operator==(o_);
         }
     protected:
         const uint64_t _cost;

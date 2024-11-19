@@ -35,18 +35,37 @@ suite storage_partition_suite = [] {
         };
         "parse_parallel"_test = [&] {
             std::atomic_uint64_t num_parsed { 0 };
-            parse_parallel(cr, 4,
-                [&](const auto &blk, std::any &tmp) {
-                    tmp = std::any_cast<uint64_t>(tmp) + blk.size();
+            parse_parallel<uint64_t>(cr, 4,
+                [&](auto &part, const auto &blk) {
+                    part += blk.size();
                 },
-                [&](const size_t) {
+                [&](const size_t, const auto &) {
                     return uint64_t { 0 };
                 },
-                [&](const size_t, std::any &&tmp) {
-                    num_parsed.fetch_add(std::any_cast<uint64_t>(std::move(tmp)), std::memory_order_relaxed);
+                [&](auto &&tmp, const size_t, const auto &) {
+                    num_parsed.fetch_add(tmp, std::memory_order_relaxed);
                 }
             );
             test_same(cr.num_bytes(), num_parsed.load(std::memory_order_relaxed));
+        };
+
+        "parse_parallel_epoch"_test = [&] {
+            std::atomic_uint64_t num_parsed { 0 };
+            std::atomic_size_t num_epochs { 0 };
+            parse_parallel_epoch<uint64_t>(cr,
+                [&](auto &part, const auto &blk) {
+                    part += blk.size();
+                },
+                [&](const size_t, const auto &) {
+                    return uint64_t { 0 };
+                },
+                [&](auto &&tmp, const size_t, const auto &) {
+                    num_parsed.fetch_add(tmp, std::memory_order_relaxed);
+                    num_epochs.fetch_add(1, std::memory_order_relaxed);
+                }
+            );
+            test_same(cr.num_bytes(), num_parsed.load(std::memory_order_relaxed));
+            test_same(8, num_epochs.load(std::memory_order_relaxed));
         };
     };
 };

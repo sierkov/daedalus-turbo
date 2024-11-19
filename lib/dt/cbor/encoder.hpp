@@ -132,6 +132,12 @@ namespace daedalus_turbo::cbor {
             return *this;
         }
 
+        encoder &bytes()
+        {
+            _encode_item(major_type::bytes, static_cast<uint8_t>(special_val::s_break));
+            return *this;
+        }
+
         encoder &bytes(const buffer buf)
         {
             _encode_uint_item(major_type::bytes, buf.size());

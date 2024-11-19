@@ -5,19 +5,23 @@
 #ifndef DAEDALUS_TURBO_PLUTUS_CONTEXT_HPP
 #define DAEDALUS_TURBO_PLUTUS_CONTEXT_HPP
 
+#include <dt/cardano/conway.hpp>
 #include <dt/cardano/mocks.hpp>
 #include <dt/plutus/types.hpp>
 #include <dt/plutus/costs.hpp>
 
 namespace daedalus_turbo::plutus {
+    using namespace cardano;
+
     struct stored_txo {
-        cardano::tx_out_ref id {};
-        cardano::tx_out_data data {};
+        tx_out_ref id {};
+        tx_out_data data {};
     };
     using stored_txo_list = vector<stored_txo>;
 
     struct stored_tx_context {
-        cardano::tx_hash tx_id {};
+        tx_hash tx_id {};
+        size_t num_redeemers = 0;
         uint8_vector body {};
         uint8_vector wits {};
         uint8_vector aux {};
@@ -31,18 +35,34 @@ namespace daedalus_turbo::plutus {
         }
     };
 
+    struct prepared_script {
+        const script_info &script;
+        const term expr;
+        const version ver;
+        const std::optional<ex_units> budget {};
+    };
+
     struct context {
-        using datum_map = map<cardano::datum_hash, data>;
+        using datum_map = map<datum_hash, data>;
+        using policy_list = vector<script_hash>;
+        using cert_list = vector<conway::cert_t>;
+        using redeemer_map = map<redeemer_id, tx_redeemer>;
 
         context(const std::string &, const cardano::config &c_cfg=cardano::config::get());
         context(stored_tx_context &&, const cardano::config &c_cfg=cardano::config::get());
         context(uint8_vector &&tx_body_data, uint8_vector &&tx_wits_data, uint8_vector &&tx_aux_data, storage::block_info &&block,
             stored_txo_list &&inputs, stored_txo_list &&ref_inputs, const cardano::config &c_cfg=cardano::config::get());
         const cardano::tx &tx() const;
+        const credential_t &cert_cred_at(uint64_t) const;
+        const conway::cert_t &cert_at(uint64_t) const;
         buffer mint_at(uint64_t r_idx) const;
-        cardano::stake_ident_hybrid withdraw_at(uint64_t r_idx) const;
+        stake_ident_hybrid withdraw_at(uint64_t r_idx) const;
         const stored_txo &input_at(uint64_t r_idx) const;
-        term data(cardano::script_type typ, const cardano::tx_redeemer &) const;
+        term data(script_type typ, const tx_redeemer &) const;
+
+        prepared_script apply_script(const script_info &script, std::initializer_list<term> args, const std::optional<ex_units> &budget) const;
+        prepared_script prepare_script(const tx_redeemer &r) const;
+        void eval_script(const prepared_script &ps) const;
 
         const cardano::config &config() const
         {
@@ -82,7 +102,22 @@ namespace daedalus_turbo::plutus {
         {
             return _ref_inputs;
         }
+
+        const script_info_map &scripts() const
+        {
+            return _scripts;
+        }
+
+        const redeemer_map &redeemers() const
+        {
+            return _redeemers;
+        }
     private:
+        struct parsed_script {
+            term expr;
+            version ver;
+        };
+
         mutable allocator _alloc {};
         const cardano::config &_cfg;
         std::reference_wrapper<const costs::parsed_models> _cost_models;
@@ -93,11 +128,17 @@ namespace daedalus_turbo::plutus {
         uint8_vector _tx_aux_bytes;
         std::unique_ptr<cbor::value> _tx_aux_cbor {};
         storage::block_info _block_info;
-        cardano::mocks::block _block;
+        mocks::block _block;
         std::unique_ptr<cardano::tx> _tx;
         stored_txo_list _inputs;
         stored_txo_list _ref_inputs;
         datum_map _datums {};
+        policy_list _mints {};
+        cert_list _certs {};
+        script_info_map _scripts {};
+        redeemer_map _redeemers {};
+        mutable map<script_hash, parsed_script> _scripts_parsed {};
+        mutable map<script_type, plutus::data> _shared {};
     };
 }
 

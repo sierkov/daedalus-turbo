@@ -270,6 +270,9 @@ namespace daedalus_turbo::plutus {
         template<typename T, typename... Args>
         ptr_type<T> make(Args&&... a);
 
+        template<typename T, typename... Args>
+        ptr_type<T> make_foreign(Args&&... a);
+
         std::pmr::memory_resource *resource()
         {
             return &_mr;
@@ -328,7 +331,7 @@ namespace daedalus_turbo::plutus {
         {
         }
 
-        str_type(allocator &alloc, std::string_view s): _ptr { alloc.make<value_type>(s) }
+        str_type(allocator &alloc, std::string_view s): _ptr { alloc.make<value_type>(s, alloc.resource()) }
         {
         }
 
@@ -620,11 +623,11 @@ namespace daedalus_turbo::plutus {
         {
         }
 
-        bint_type(allocator &alloc): _ptr { alloc.make<value_type>() }
+        bint_type(allocator &alloc): _ptr { alloc.make_foreign<value_type>() }
         {
         }
 
-        bint_type(allocator &alloc, const auto &v): _ptr { alloc.make<value_type>(v) }
+        bint_type(allocator &alloc, const auto &v): _ptr { alloc.make_foreign<value_type>(v) }
         {
         }
 
@@ -668,7 +671,7 @@ namespace daedalus_turbo::plutus {
         const value_type &operator*() const;
         const value_type *operator->() const;
     private:
-        allocator::ptr_type<value_type> _ptr;
+        allocator::ptr_type<value_type> _ptr {};
     };
 
     struct bstr_type
@@ -1154,22 +1157,34 @@ namespace daedalus_turbo::plutus {
     allocator::ptr_type<T> allocator::make(Args &&...a)
     {
         T *p = new (_mr.allocate(sizeof(T), 0x10)) T { std::forward<Args>(a)... };
-        if constexpr (std::is_same_v<T, bint_type>) {
-            try {
-                _ptrs.emplace_back(p, [](const void* x) { static_cast<const T*>(x)->~T(); });
-            } catch (...) {
-                // Call the destructor to release the memory allocated with alternative allocators.
-                // There is no need to deallocate in _mr since all its buffers will be released at the end of its lifetime.
-                p->~T();
-                throw;
-            }
-        }
         return p;
     }
 #if defined(__GNUC__) && !defined(__clang__)
 #       pragma GCC diagnostic pop
 #endif
 
+#if defined(__GNUC__) && !defined(__clang__)
+    // GCC 13 reacts oddly to the libc++ implementation of std::pmr::string
+#       pragma GCC diagnostic push
+#       pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
+    template<typename T, typename... Args>
+    allocator::ptr_type<T> allocator::make_foreign(Args &&...a)
+    {
+        T *p = new (_mr.allocate(sizeof(T), 0x10)) T { std::forward<Args>(a)... };
+        try {
+            _ptrs.emplace_back(p, [](const void* x) { static_cast<const T*>(x)->~T(); });
+        } catch (...) {
+            // Call the destructor to release the memory allocated with alternative allocators.
+            // There is no need to deallocate in _mr since all its buffers will be released at the end of its lifetime.
+            p->~T();
+            throw;
+        }
+        return p;
+    }
+#if defined(__GNUC__) && !defined(__clang__)
+#       pragma GCC diagnostic pop
+#endif
 
     extern bool builtin_tag_known_name(std::string_view name);
     extern builtin_tag builtin_tag_from_name(std::string_view name);
@@ -1505,7 +1520,7 @@ namespace fmt {
         template<typename FormatContext>
         auto format(const daedalus_turbo::plutus::v_delay &v, FormatContext &ctx) const -> decltype(ctx.out()) {
             using namespace daedalus_turbo::plutus;
-            return fmt::format_to(ctx.out(), "(delay ({}) {})", v.env, *v.expr);
+            return fmt::format_to(ctx.out(), "(delay {})", *v.expr);
         }
     };
 
@@ -1514,7 +1529,7 @@ namespace fmt {
         template<typename FormatContext>
         auto format(const daedalus_turbo::plutus::v_lambda &v, FormatContext &ctx) const -> decltype(ctx.out()) {
             using namespace daedalus_turbo::plutus;
-            return fmt::format_to(ctx.out(), "(lam v{} ({}) {})", v.var_idx, v.env, *v.body);
+            return fmt::format_to(ctx.out(), "(lam v{} {})", v.var_idx, *v.body);
         }
     };
 

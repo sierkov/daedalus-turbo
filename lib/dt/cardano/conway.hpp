@@ -206,7 +206,6 @@ namespace daedalus_turbo::cardano::conway {
         }
 
         proposal_t() =default; // necessary for zpp serialization to work
-        proposal_t(const proposal_t &) =default;
         proposal_t(const gov_action_id_t &, const cbor::value &v);
     };
 
@@ -293,6 +292,7 @@ namespace daedalus_turbo::cardano::conway {
 
         cert_t() =delete;
         cert_t(const cbor::value &);
+        const credential_t &cred() const;
     };
 
     struct block: babbage::block {
@@ -317,7 +317,6 @@ namespace daedalus_turbo::cardano::conway {
 
     struct tx: babbage::tx {
         using babbage::tx::tx;
-        void evaluate_plutus(const plutus::context &ctx, const script_info &script, const plutus::term_list &args, const ex_units &max_cost) const override;
         void foreach_redeemer(const std::function<void(const tx_redeemer &)> &) const override;
         void foreach_set(const cbor_value &set_raw, const std::function<void(const cbor_value &, size_t)> &observer) const override;
         virtual void foreach_vote(const vote_observer_t &) const;

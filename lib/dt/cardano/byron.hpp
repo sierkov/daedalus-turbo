@@ -312,8 +312,7 @@ namespace daedalus_turbo::cardano::byron {
             for (size_t i = 0; i < inputs.size(); ++i) {
                 const auto &in = inputs.at(i).array();
                 if (in.at(0).uint() != 0) throw cardano_error("unsupported byron tx input encoding {}!", in.at(0).uint());
-                cbor_value in_data;
-                _parse_cbor_tag(in_data, in.at(1).tag());
+                const auto in_data = cbor::parse(in.at(1).tag().second->buf());
                 observer(tx_input { in_data.array().at(0).buf(), in_data.array().at(1).uint(), i });
             }
         }
@@ -325,15 +324,9 @@ namespace daedalus_turbo::cardano::byron {
                 observer(tx_output::from_cbor(_blk.era(), i, outputs.at(i)));
         }
 
+        void foreach_script(const std::function<void(script_info &&)> &, const plutus::context *ctx=nullptr) const override;
+        void foreach_witness(const std::function<void(uint64_t, const cbor::value &)> &) const override;
         wit_cnt witnesses_ok(const plutus::context *ctx=nullptr) const override;
-    private:
-        void _parse_cbor_tag(cbor_value &val, const cbor_tag &tag) const
-        {
-            if (tag.first != 24)
-                throw cardano_error("slot: {}, tx: {} - byron encoded cbor tag has a mark != 24: {}!", (uint64_t)_blk.slot(), hash().span(), tag.first);
-            cbor_parser parser { tag.second->buf() };
-            parser.read(val);
-        }
     };
 
     inline void block::foreach_tx(const std::function<void(const cardano::tx &)> &observer) const

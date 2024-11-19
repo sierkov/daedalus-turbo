@@ -29,7 +29,7 @@ namespace daedalus_turbo::plutus {
         size_t polymorphic_args = 0;
         size_t batch = 1;
     };
-    using builtin_map = unordered_map<builtin_tag, const builtin_info>;
+    using builtin_map = unordered_map<builtin_tag, builtin_info>;
 
     namespace builtins {
         extern value add_integer(allocator &, const value &x, const value &y);

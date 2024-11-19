@@ -402,11 +402,34 @@ namespace daedalus_turbo {
             plutus_v3 = 3
         };
 
+        inline script_type script_type_from_str(const std::string_view s)
+        {
+            if (s == "v1")
+                return script_type::plutus_v1;
+            if (s == "v2")
+                return script_type::plutus_v2;
+            if (s == "v3")
+                return script_type::plutus_v3;
+            if (s == "native")
+                return script_type::native;
+            throw error("unsupported script type: {}", s);
+        }
+
         struct script_info: uint8_vector {
-            static script_info from_cbor(const buffer bytes);
+            static script_info from_cbor(buffer bytes);
 
             script_info(const script_type type, const buffer script):
                 uint8_vector { _canonical(type, script) }, _hash { blake2b<script_hash>(*this) }
+            {
+            }
+
+            script_info(script_info &&o):
+                uint8_vector { std::move(o) }, _hash { blake2b<script_hash>(*this) }
+            {
+            }
+
+            script_info(const script_info &o):
+                script_info { o.type(), o.script() }
             {
             }
 
@@ -1058,7 +1081,6 @@ namespace daedalus_turbo {
             }
 
             pool_voting_thresholds_t() =default;
-            pool_voting_thresholds_t(const pool_voting_thresholds_t &) =default;
             pool_voting_thresholds_t(const json::value &);
             void to_cbor(cbor::encoder &) const;
         };
@@ -1085,7 +1107,6 @@ namespace daedalus_turbo {
             }
 
             drep_voting_thresholds_t() =default;
-            drep_voting_thresholds_t(const drep_voting_thresholds_t &) =default;
             drep_voting_thresholds_t(const json::value &);
             void to_cbor(cbor::encoder &) const;
         };

@@ -5,6 +5,8 @@
 
 #include <dt/history.hpp>
 #include <dt/plutus/context.hpp>
+#include <dt/plutus/flat.hpp>
+#include <dt/plutus/machine.hpp>
 #include <dt/zpp-stream.hpp>
 
 namespace daedalus_turbo::plutus {
@@ -18,6 +20,11 @@ namespace daedalus_turbo::plutus {
         data constr(uint64_t tag, std::initializer_list<data> il)
         {
             return data::constr(_alloc, tag, il);
+        }
+
+        data constr(uint64_t tag, data::list_type &&l)
+        {
+            return data::constr(_alloc, tag, std::move(l));
         }
 
         // a specific name to no allow collisions with int
@@ -43,10 +50,20 @@ namespace daedalus_turbo::plutus {
 
         data encode(const tx_out_ref &ref)
         {
-            return constr(0, {
-                constr(0, { encode(ref.hash) }),
-                encode(ref.idx)
-            });
+            switch (_typ) {
+                case script_type::plutus_v1:
+                case script_type::plutus_v2:
+                    return constr(0, {
+                        constr(0, { encode(ref.hash) }),
+                        encode(ref.idx)
+                    });
+                case script_type::plutus_v3:
+                    return constr(0, {
+                        encode(ref.hash),
+                        encode(ref.idx)
+                    });
+                default: throw error("unsupported script_type: {}", static_cast<int>(_typ));
+            }
         }
 
         data encode(const pay_ident &pay_id)
@@ -63,6 +80,16 @@ namespace daedalus_turbo::plutus {
             if (stake_id.script)
                 return constr(1, { encode(stake_id.hash) });
             return constr(0, { encode(stake_id.hash) });
+        }
+
+        data encode(const drep_t &drep)
+        {
+            switch (drep.typ) {
+                case drep_t::credential: return constr(0, { encode(*drep.cred) });
+                case drep_t::abstain: return constr(1, {});
+                case drep_t::no_confidence: return constr(2, {});
+                default: throw error("unsupported drep type: {}", static_cast<int>(drep.typ));
+            }
         }
 
         data encode(const stake_ident_hybrid &stake_id)
@@ -86,6 +113,112 @@ namespace daedalus_turbo::plutus {
                 ? constr(0, { encode(addr.stake_id_hybrid()) })
                 : constr(1, {});
             return constr(0, { std::move(pay_cred), std::move(stake_cred) });
+        }
+
+        data encode(const conway::optional_anchor_t &a)
+        {
+            if (a)
+                return constr(0, { encode(a->url), encode(a->hash) });
+            return constr(1, {});
+        }
+
+        data encode(const shelley::stake_reg_cert &c)
+        {
+            return constr(0, { encode(c.stake_id), constr(1, {}) });
+        }
+
+        data encode(const conway::reg_cert &c)
+        {
+            return constr(0, { encode(c.stake_id), data::bint(_alloc, c.deposit) });
+        }
+
+        data encode(const shelley::stake_dereg_cert &c)
+        {
+            return constr(1, { encode(c.stake_id), constr(1, {}) });
+        }
+
+        data encode(const conway::unreg_cert &c)
+        {
+            return constr(0, { encode(c.stake_id), data::bint(_alloc, c.deposit) });
+        }
+
+        data encode(const shelley::stake_deleg_cert &c)
+        {
+            switch (_typ) {
+                case script_type::plutus_v1:
+                case script_type::plutus_v2:
+                    return constr(2, { constr(0, { encode(c.stake_id) }), encode(c.pool_id) });
+                case script_type::plutus_v3:
+                    return constr(2, { encode(c.stake_id), constr(0, { encode(c.pool_id) }) });
+                default: throw error("unsupported script type: {}", static_cast<int>(_typ));
+            }
+        }
+
+        data encode(const conway::vote_deleg_cert &c)
+        {
+            return constr(2, { encode(c.stake_id), constr(1, { encode(c.drep) }) });
+        }
+
+        data encode(const conway::stake_vote_deleg_cert &c)
+        {
+            return constr(2, { encode(c.stake_id), constr(2, { encode(c.pool_id), encode(c.drep) }) });
+        }
+
+        data encode(const conway::stake_reg_deleg_cert &c)
+        {
+            return constr(3, { encode(c.stake_id), constr(0, { encode(c.pool_id) }), data::bint(_alloc, c.deposit) });
+        }
+
+        data encode(const conway::vote_reg_deleg_cert &c)
+        {
+            return constr(3, { encode(c.stake_id), constr(1, { encode(c.drep) }), data::bint(_alloc, c.deposit) });
+        }
+
+        data encode(const conway::stake_vote_reg_deleg_cert &c)
+        {
+            return constr(3, { encode(c.stake_id), constr(2, { encode(c.pool_id), encode(c.drep) }), data::bint(_alloc, c.deposit) });
+        }
+
+        data encode(const conway::reg_drep_cert &c)
+        {
+            return constr(4, { encode(c.drep_id), data::bint(_alloc, c.deposit) });
+        }
+
+        data encode(const conway::update_drep_cert &c)
+        {
+            return constr(5, { encode(c.drep_id) });
+        }
+
+        data encode(const conway::unreg_drep_cert &c)
+        {
+            return constr(6, { encode(c.drep_id), data::bint(_alloc, c.deposit) });
+        }
+
+        data encode(const shelley::pool_reg_cert &)
+        {
+            throw error("pool_reg_cert script witnesses not supported!");
+        }
+
+        data encode(const shelley::pool_retire_cert &)
+        {
+            throw error("pool_retire_cert script witnesses not supported!");
+        }
+
+        data encode(const conway::auth_committee_hot_cert &c)
+        {
+            return constr(9, { encode(c.cold_id), encode(c.hot_id) });
+        }
+
+        data encode(const conway::resign_committee_cold_cert &c)
+        {
+            return constr(10, { encode(c.cold_id) });
+        }
+
+        data encode(const conway::cert_t &cert)
+        {
+            return std::visit<data>([&](const auto &c) {
+                return encode(c);
+            }, cert.val);
         }
 
         data value(const uint64_t coin, const std::optional<uint8_vector> &assets)
@@ -147,6 +280,23 @@ namespace daedalus_turbo::plutus {
             return constr(0, {});
         }
 
+        data datum_value(const context &ctx, const std::optional<tx_out_data::datum_option_type> &datum)
+        {
+            if (datum) {
+                return std::visit([&](const auto &d) {
+                    using T = std::decay_t<decltype(d)>;
+                    if constexpr (std::is_same_v<T, datum_hash>) {
+                        return constr(0, { ctx.datums().at(d) });
+                    } else if constexpr (std::is_same_v<T, uint8_vector>) {
+                        return constr(0, { data::from_cbor(_alloc, d) });
+                    } else {
+                        throw error("unsupported datum type: {}", typeid(T).name());
+                    }
+                }, *datum);
+            }
+            return constr(1, {});
+        }
+
         data script_ref(const std::optional<uint8_vector> &script_ref)
         {
             if (script_ref) {
@@ -187,7 +337,8 @@ namespace daedalus_turbo::plutus {
                     }
                     return data::list(_alloc, std::move(l));
                 }
-                case script_type::plutus_v2: {
+                case script_type::plutus_v2:
+                case script_type::plutus_v3: {
                     data::map_type m { _alloc };
                     for (const auto &[hash, d]: datums) {
                         m.emplace_back(data_pair { _alloc, encode(hash), d });
@@ -201,9 +352,9 @@ namespace daedalus_turbo::plutus {
         data redeemers(const context &ctx)
         {
             data::map_type m { _alloc };
-            ctx.tx().foreach_redeemer([&](const auto &r) {
-                m.emplace_back(data_pair { _alloc, purpose(ctx, r), data::from_cbor(_alloc, r.data) });
-            });
+            for (const auto &[rid, rinfo]: ctx.redeemers()) {
+                m.emplace_back(data_pair { _alloc, purpose(ctx, rid), data::from_cbor(_alloc, rinfo.data) });
+            }
             return data::map(_alloc, std::move(m));
         }
 
@@ -229,30 +380,50 @@ namespace daedalus_turbo::plutus {
 
         data fee(const tx &tx)
         {
-            return data::map(_alloc, {
-                data_pair {_alloc,
-                    encode(uint8_vector {}),
-                    data::map(_alloc, {
-                        data_pair { _alloc, encode(uint8_vector {}), encode(tx.fee()) }
-                    })
-                }
-            });
+            switch (_typ) {
+                case script_type::plutus_v1:
+                case script_type::plutus_v2:
+                    return data::map(_alloc, {
+                        data_pair {_alloc,
+                            encode(uint8_vector {}),
+                            data::map(_alloc, {
+                                data_pair { _alloc, encode(uint8_vector {}), encode(tx.fee()) }
+                            })
+                        }
+                    });
+                case script_type::plutus_v3:
+                    return encode(tx.fee());
+                default: throw error("unsupported script type: {}", static_cast<int>(_typ));
+            }
         }
 
         data mints(const tx &tx)
         {
-            data::map_type m { _alloc,
-                { data_pair { _alloc,
-                        encode(uint8_vector {}),
-                        data::map(_alloc, { data_pair { _alloc, encode(uint8_vector {}), encode(0) } }) }
-                }
-            };
+            data::map_type m { _alloc };
+            switch (_typ) {
+                case script_type::plutus_v1:
+                case script_type::plutus_v2:
+                        m.emplace_back(_alloc,
+                            encode(uint8_vector {}),
+                            data::map(_alloc, { data_pair { _alloc, encode(uint8_vector {}), encode(0) } }));
+                    break;
+                case script_type::plutus_v3:
+                    // do nothing
+                    break;
+                default: throw error("unsupported script type: {}", static_cast<int>(_typ));
+            }
             tx.foreach_mint([&](const buffer &policy_id, const cbor_map &assets) {
                 data::map_type a_m { _alloc };
                 for (const auto &[name, value]: assets) {
                     a_m.emplace_back(_alloc, encode(name.buf()), encode(value.bigint()));
                 }
+                std::sort(a_m.begin(), a_m.end(), [](const auto &a, const auto &b) {
+                    return *std::get<data::bstr_type>(*a->first) < *std::get<data::bstr_type>(*b->first);
+                });
                 m.emplace_back(_alloc, encode(policy_id), data::map(_alloc, std::move(a_m)));
+            });
+            std::sort(m.begin(), m.end(), [](const auto &a, const auto &b) {
+                return *std::get<data::bstr_type>(*a->first) < *std::get<data::bstr_type>(*b->first);
             });
             return data::map(_alloc, std::move(m));
         }
@@ -264,26 +435,32 @@ namespace daedalus_turbo::plutus {
                 switch (const auto typ = cert.at(0).uint(); typ) {
                     case 0: {
                         const auto &cred = cert.at(1).array();
-                        return constr(0, { encode(stake_ident { cred.at(1).buf(), cred.at(0).uint() == 1 }) });
+                        l.emplace_back(constr(0, { encode(stake_ident { cred.at(1).buf(), cred.at(0).uint() == 1 }) }));
+                        break;
                     }
                     case 1: {
                         const auto &cred = cert.at(1).array();
-                        return constr(1, { encode(stake_ident { cred.at(1).buf(), cred.at(0).uint() == 1 }) });
+                        l.emplace_back(constr(1, { encode(stake_ident { cred.at(1).buf(), cred.at(0).uint() == 1 }) }));
+                        break;
                     }
                     case 2: {
                         const auto &cred = cert.at(1).array();
-                        return constr(1, {
+                        l.emplace_back(constr(1, {
                             encode(stake_ident { cred.at(1).buf(), cred.at(0).uint() == 1 }),
                             encode(cert.at(2).buf())
-                        });
+                        }));
+                        break;
                     }
                     case 4: {
-                        return constr(1, {
+                        l.emplace_back(constr(1, {
                             data::bstr(_alloc, cert.at(1).buf()),
                             data::bint(_alloc, cert.at(2).uint()),
-                        });
+                        }));
+                        break;
                     }
-                    default: throw error("unsupported certificate type: {}", typ);
+                    default:
+                        l.emplace_back(encode(conway::cert_t { cert }));
+                        break;
                 }
             });
             return data::list(_alloc, std::move(l));
@@ -302,7 +479,8 @@ namespace daedalus_turbo::plutus {
                     });
                     return data::list(_alloc, std::move(l));
                 }
-                case script_type::plutus_v2: {
+                case script_type::plutus_v2:
+                case script_type::plutus_v3: {
                     data::map_type m { _alloc };
                     tx.foreach_withdrawal([&](const tx_withdrawal &w) {
                         m.emplace_back(data_pair { _alloc,
@@ -359,72 +537,153 @@ namespace daedalus_turbo::plutus {
             return data::list(_alloc, std::move(l));
         }
 
-        data purpose(const context &ctx, const tx_redeemer &r)
+        data purpose(const context &ctx, const redeemer_id &r)
         {
             switch (r.tag) {
                 case redeemer_tag::mint:
                     return constr(0, { encode(ctx.mint_at(r.ref_idx)) });
-                case redeemer_tag::spend:
-                    return constr(1, { encode(ctx.input_at(r.ref_idx).id) });
+                case redeemer_tag::spend: {
+                    const auto &in = ctx.input_at(r.ref_idx);
+                    switch (_typ) {
+                        case script_type::plutus_v1:
+                        case script_type::plutus_v2:
+                            return constr(1, { encode(in.id) });
+                        case script_type::plutus_v3:
+                            return constr(1, { encode(in.id), datum_value(ctx, in.data.datum) });
+                        default: throw error("unsupported script type: {}", static_cast<int>(_typ));
+                    }
+                }
                 case redeemer_tag::reward:
                     return constr(2, { encode(ctx.withdraw_at(r.ref_idx)) });
-                /*case purpose::type::certify:
-                    return data::constr(3, { to_data(ctx.cert_at(p.idx).ref) });*/
+                case redeemer_tag::cert: {
+                    const auto &cert = ctx.cert_at(r.ref_idx);
+                    switch (_typ) {
+                        case script_type::plutus_v1:
+                        case script_type::plutus_v2:
+                            return constr(3, { encode(cert) });
+                        case script_type::plutus_v3:
+                            return constr(3, { data::bint(_alloc, r.ref_idx), encode(cert) });
+                        default: throw error("unsupported script type: {}", static_cast<int>(_typ));
+                    }
+                }
                 default: throw error("unsupported purpose: {}", static_cast<int>(r.tag));
             }
         }
 
-        data context_v1(const context &ctx, const tx_redeemer &r)
+        data proposals(const tx &)
+        {
+            data::map_type m { _alloc };
+            return data::map(_alloc, std::move(m));
+        }
+
+        data votes(const tx &)
+        {
+            data::list_type l { _alloc };
+            return data::list(_alloc, std::move(l));
+        }
+
+        data current_treasury(const tx &)
+        {
+            return constr(1, {});
+        }
+
+        data donation(const tx &)
+        {
+            return constr(1, {});
+        }
+
+        data redeemer(const tx_redeemer &r)
+        {
+            return data::from_cbor(_alloc, r.data);
+        }
+
+        data context_shared_v1(const context &ctx)
         {
             return constr(0, {
-                constr(0, {
-                    inputs(ctx.inputs()),
-                    outputs(ctx.tx()),
-                    fee(ctx.tx()),
-                    mints(ctx.tx()),
-                    certs(ctx.tx()),
-                    withdrawals(ctx.tx()),
-                    validity_range(ctx),
-                    signatories(ctx.tx()),
-                    datums(ctx.datums()),
-                    constr(0, { encode(ctx.tx().hash()) })
-                }),
-                purpose(ctx, r)
+                inputs(ctx.inputs()),
+                outputs(ctx.tx()),
+                fee(ctx.tx()),
+                mints(ctx.tx()),
+                certs(ctx.tx()),
+                withdrawals(ctx.tx()),
+                validity_range(ctx),
+                signatories(ctx.tx()),
+                datums(ctx.datums()),
+                constr(0, { encode(ctx.tx().hash()) })
             });
         }
 
-        data context_v2(const context &ctx, const tx_redeemer &r)
+        data context_shared_v2(const context &ctx)
         {
             return constr(0, {
-                constr(0, {
-                    inputs(ctx.inputs()),
-                    inputs(ctx.ref_inputs()),
-                    outputs(ctx.tx()),
-                    fee(ctx.tx()),
-                    mints(ctx.tx()),
-                    certs(ctx.tx()),
-                    withdrawals(ctx.tx()),
-                    validity_range(ctx),
-                    signatories(ctx.tx()),
-                    redeemers(ctx),
-                    datums(ctx.datums()),
-                    constr(0, { encode(ctx.tx().hash()) })
-                }),
-                purpose(ctx, r)
+                inputs(ctx.inputs()),
+                inputs(ctx.ref_inputs()),
+                outputs(ctx.tx()),
+                fee(ctx.tx()),
+                mints(ctx.tx()),
+                certs(ctx.tx()),
+                withdrawals(ctx.tx()),
+                validity_range(ctx),
+                signatories(ctx.tx()),
+                redeemers(ctx),
+                datums(ctx.datums()),
+                constr(0, { encode(ctx.tx().hash()) })
             });
         }
 
-        data context_v3(const context &, const tx_redeemer &)
+        data context_shared_v3(const context &ctx)
         {
-            throw error("not implemented");
+            return constr(0, {
+                inputs(ctx.inputs()),
+                inputs(ctx.ref_inputs()),
+                outputs(ctx.tx()),
+                fee(ctx.tx()),
+                mints(ctx.tx()),
+                certs(ctx.tx()),
+                withdrawals(ctx.tx()),
+                validity_range(ctx),
+                signatories(ctx.tx()),
+                redeemers(ctx),
+                datums(ctx.datums()),
+                encode(ctx.tx().hash()),
+                proposals(ctx.tx()),
+                votes(ctx.tx()),
+                current_treasury(ctx.tx()),
+                donation(ctx.tx())
+            });
         }
 
-        data context(const context &ctx, const tx_redeemer &r)
+        data context_v1(const context &ctx, const data &ctx_shared, const tx_redeemer &r)
+        {
+            return constr(0, { ctx_shared, purpose(ctx, r.id()) });
+        }
+
+        data context_v2(const context &ctx, const data &ctx_shared, const tx_redeemer &r)
+        {
+            return constr(0, { ctx_shared, purpose(ctx, r.id()) });
+        }
+
+        data context_v3(const context &ctx, const data &ctx_shared, const tx_redeemer &r)
+        {
+            return constr(0, { ctx_shared, redeemer(r), purpose(ctx, r.id()) });
+        }
+
+        data context_shared(const context &ctx)
         {
             switch (_typ) {
-                case script_type::plutus_v1: return context_v1(ctx, r);
-                case script_type::plutus_v2: return context_v2(ctx, r);
-                case script_type::plutus_v3: return context_v3(ctx, r);
+                case script_type::plutus_v1: return context_shared_v1(ctx);
+                case script_type::plutus_v2: return context_shared_v2(ctx);
+                case script_type::plutus_v3: return context_shared_v3(ctx);
+                default: throw error("unsupported script_type: {}", static_cast<int>(_typ));
+            }
+        }
+
+        data context(const context &ctx, const data &ctx_shared, const tx_redeemer &r)
+        {
+            switch (_typ) {
+                case script_type::plutus_v1: return context_v1(ctx, ctx_shared, r);
+                case script_type::plutus_v2: return context_v2(ctx, ctx_shared, r);
+                case script_type::plutus_v3: return context_v3(ctx, ctx_shared, r);
                 default: throw error("unsupported script_type: {}", static_cast<int>(_typ));
             }
         }
@@ -456,6 +715,22 @@ namespace daedalus_turbo::plutus {
                 });
             }
         });
+        _tx->foreach_cert([&](const auto &v_raw, const auto) {
+            _certs.emplace_back(v_raw);
+        });
+        _tx->foreach_mint([&](const buffer &p_id, const cbor_map &) {
+            _mints.emplace_back(p_id);
+        });
+        std::sort(_mints.begin(), _mints.end());
+        _tx->foreach_redeemer([&](const auto &r) {
+            const auto [it, created] = _redeemers.try_emplace(redeemer_id { r.tag, r.ref_idx }, r);
+            // There are in fact transactions with duplicate redeemers, such as E8D403D9D2AD5F1CD4D3327F48E34E717B66AC4E4764765BA3A5843758B696E4
+            if (!created)
+                it->second = r;
+        });
+        _tx->foreach_script([&](auto &&s) {
+            _scripts.try_emplace(s.hash(), std::move(s));
+        }, this);
     }
 
     context::context(stored_tx_context &&ctx, const cardano::config &c_cfg):
@@ -480,6 +755,88 @@ namespace daedalus_turbo::plutus {
         return *_tx;
     }
 
+    prepared_script context::apply_script(const script_info &script, const std::initializer_list<term> args, const std::optional<ex_units> &budget) const
+    {
+        auto s_it = _scripts_parsed.find(script.hash());
+        if (s_it == _scripts_parsed.end()) {
+            flat::script s { _alloc, script.script() };
+            auto [new_it, created] = _scripts_parsed.try_emplace(script.hash(), s.program(), s.version());
+            s_it = new_it;
+        }
+
+        term t = s_it->second.expr;
+        for (auto it = args.begin(); it != args.end(); ++it) {
+            //file::write(install_path(fmt::format("tmp/script-args-my-{}.txt", it - args.begin())), fmt::format("{}\n", *it));
+            if (std::next(it) != args.end()) {
+                if (script.type() == script_type::plutus_v1 || script.type() == script_type::plutus_v2)
+                    t = term { _alloc, apply { t, *it } };
+            } else {
+                t = term { _alloc, apply { t, *it } };
+            }
+        }
+        return { script, t, s_it->second.ver, budget };
+    }
+
+    static term term_from_datum(allocator &alloc, const context &ctx, const datum_hash &hash)
+    {
+        return { alloc, constant { alloc, ctx.datums().at(hash) } };
+    }
+
+    static term term_from_datum(allocator &alloc, const context &, const uint8_vector &datum)
+    {
+        return { alloc, constant { alloc, data::from_cbor(alloc, datum) } };
+    }
+
+    prepared_script context::prepare_script(const tx_redeemer &r) const
+    {
+        auto t_redeemer = term { _alloc, constant { _alloc, data::from_cbor(_alloc, r.data) } };
+        switch (r.tag) {
+            case redeemer_tag::spend: {
+                const auto &in = input_at(r.ref_idx);
+                const address addr { in.data.address };
+                if (const auto pay_id = addr.pay_id(); pay_id.type == pay_ident::ident_type::SHELLEY_SCRIPT) [[likely]] {
+                    const auto &script = _scripts.at(pay_id.hash);
+                    std::optional<term> t_datum {};
+                    if (in.data.datum)
+                        t_datum = std::visit([&](const auto &v) { return term_from_datum(_alloc, *this, v); }, *in.data.datum);
+                    if (!t_datum && !r.data.empty())
+                        t_datum.emplace(_alloc, constant { _alloc, data::from_cbor(_alloc, r.data) });
+                    if (!t_datum)
+                        throw error("couldn't find datum for tx {} redeemer {}", _tx->hash(), r.ref_idx);
+                    return apply_script(script, { *t_datum, t_redeemer, data(script.type(), r) }, r.budget);
+                }
+                throw error("tx {} redeemer #{} (spend) input #{}: the output address is not a payment script: {}!", _tx->hash(), r.idx, r.ref_idx, in);
+                break;
+            }
+            case redeemer_tag::mint: {
+                const auto policy_id = mint_at(r.ref_idx);
+                const auto &script = scripts().at(policy_id);
+                return apply_script(script, { t_redeemer, data(script.type(), r) }, r.budget);
+            }
+            case redeemer_tag::cert: {
+                const auto &script = scripts().at(cert_cred_at(r.ref_idx).hash);
+                return apply_script(script, { data(script.type(), r) }, r.budget);
+            }
+            case redeemer_tag::reward: {
+                const auto &script = scripts().at(std::get<stake_ident>(withdraw_at(r.ref_idx)).hash);
+                return apply_script(script, { t_redeemer, data(script.type(), r) }, r.budget);
+            }
+            default:
+                throw error("tx: {} unsupported redeemer_tag: {}", _tx->hash(), static_cast<int>(r.tag));
+        };
+    }
+
+    void context::eval_script(const prepared_script &ps) const
+    {
+        try {
+            const auto &semantics = ps.script.type() == script_type::plutus_v3 ? builtins::semantics_v2() : builtins::semantics_v1();
+            machine m { _alloc, cost_models().for_script(ps.script), semantics };
+            m.evaluate_no_res(ps.expr);
+        } catch (const std::exception &ex) {
+            throw error("script {} {}: {}", ps.script.type(), ps.script.hash(), ex.what());
+        }
+    };
+
     stake_ident_hybrid context::withdraw_at(uint64_t r_idx) const
     {
         std::optional<stake_ident_hybrid> stake_id {};
@@ -492,17 +849,19 @@ namespace daedalus_turbo::plutus {
         throw error("a redeemer referenced an unknown withdrawal instruction: {}", r_idx);
     }
 
+    const conway::cert_t &context::cert_at(const uint64_t r_idx) const
+    {
+        return _certs.at(r_idx);
+    }
+
+    const credential_t &context::cert_cred_at(const uint64_t r_idx) const
+    {
+        return _certs.at(r_idx).cred();
+    }
+
     buffer context::mint_at(const uint64_t r_idx) const
     {
-        size_t mi = 0;
-        std::optional<buffer> policy_id {};
-        _tx->foreach_mint([&](const buffer &p_id, const cbor_map &) {
-            if (mi++ == r_idx)
-                policy_id.emplace(p_id);
-        });
-        if (policy_id) [[likely]]
-            return *policy_id;
-        throw error("a redeemer referenced an unknown mint instruction: {}", r_idx);
+        return _mints.at(r_idx);
     }
 
     const stored_txo &context::input_at(const uint64_t r_idx) const
@@ -513,6 +872,11 @@ namespace daedalus_turbo::plutus {
     term context::data(const script_type typ, const tx_redeemer &r) const
     {
         data_encoder enc { _alloc, typ };
-        return { _alloc, constant { _alloc, enc.context(*this, r) } };
+        auto shared_it = _shared.find(typ);
+        if (shared_it == _shared.end()) {
+            auto [new_it, created] = _shared.try_emplace(typ, enc.context_shared(*this));
+            shared_it = new_it;
+        }
+        return { _alloc, constant { _alloc, enc.context(*this, shared_it->second, r) } };
     }
 }
