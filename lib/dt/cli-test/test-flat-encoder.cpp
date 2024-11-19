@@ -5,14 +5,9 @@
 
 #include <dt/cardano/ledger/state.hpp>
 #include <dt/chunk-registry.hpp>
-#include <dt/cli-debug/scriptctx.hpp>
 #include <dt/cli.hpp>
-#include <dt/index/merge-zpp.hpp>
-#include <dt/index/utxo.hpp>
 #include <dt/plutus/context.hpp>
-#include <dt/plutus/costs.hpp>
 #include <dt/plutus/flat-encoder.hpp>
-#include <dt/zpp-stream.hpp>
 
 namespace daedalus_turbo::cli::test_flat_encoder {
     using namespace cardano;
