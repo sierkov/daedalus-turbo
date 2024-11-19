@@ -29,7 +29,7 @@ The latest dataset is available as a two-part archive to keep each downloadable 
 | Unique mainnet scripts | 4,129 |
 | Transactions | 256,000 |
 | Compressed size | 149 MiB |
-| Uncompressed size | 3807 MiB |
+| Uncompressed size | 3,807 MiB |
 
 ## Statistics describing the Cardano mainnet at the generation time
 | Attribute | Value |
@@ -39,8 +39,8 @@ The latest dataset is available as a two-part archive to keep each downloadable 
 | Total transactions | 99,172,115 |
 | Total plutus redeemers | 40,525,056 |
 | Total native-script witnesses | 16,259,963 |
-| Total vkey witnesses | 167'742'451 |
-| Unique plutus scripts | 95'459 |
+| Total vkey witnesses | 167,742,451 |
+| Unique plutus scripts | 95,459 |
 
 # Latest benchmarks of the C++ Plutus implementation
 The raw outputs of the benchmarking script are located in [20241119/raw-results.tar.xz](./20241119/raw-results.tar.xz).
