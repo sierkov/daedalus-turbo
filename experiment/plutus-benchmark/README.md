@@ -13,11 +13,11 @@ The procedure for creating this dataset is as follows (full reproduction instruc
 3. **File Organization**: For easier debugging, organize all extracted scripts using the following filename pattern: ```<mainnet-epoch>/<transaction-id>-<redeemer-idx>-<script-hash>-<plutus-version>.flat.```
 
 ## Data
-The latest dataset is split into two archives each less than 100 MB in size:
+The latest dataset is available as a two-part archive to keep each downloadable file under 100 MB for problem-free downloads:
  - [dataset-20241119.tar.001.xz](./dataset-20241119.tar.001.xz)
  - [dataset-20241119.tar.002.xz](./dataset-20241119.tar.002.xz)
 
- It can be unpacked using the following Linux commands, where ```<target-dir>``` is the destination directory after decompression:
+ It can be unpacked using the following Linux command, where ```<target-dir>``` is the destination directory after decompression:
  ```(bash)
  xz -dkc dataset-20241119.tar.*.xz | tar -C <target-dir> -xvf -
  ```
