@@ -13,7 +13,6 @@ namespace daedalus_turbo::cli::test_flat_encoder {
     using namespace cardano;
     using namespace cardano::ledger;
     using namespace plutus;
-    using namespace scriptctx;
 
     struct cmd: command {
         void configure(config &cmd) const override
