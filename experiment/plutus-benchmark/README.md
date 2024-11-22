@@ -71,7 +71,7 @@ Clone this repository and make it your working directory:
 ```
 git clone https://github.com/sierkov/daedalus-turbo.git dt
 cd dt
-git checkout 8dd41710a855e283b325c43ba90aef0196b1d7c9
+git checkout 84d728abb769bf6788cce51cb9d455728babd7ae
 ```
 
 Build the test Docker container:
