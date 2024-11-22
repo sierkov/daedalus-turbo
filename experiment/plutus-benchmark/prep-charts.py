@@ -57,7 +57,7 @@ import numpy as np
 
 sns.set_palette(['#2CA02C'], n_colors=100)
 g = sns.barplot(data=df, y='rate', x='threads', hue='name')
-g.set(ylabel='rate, scripts per second', xlabel='number of worker threads')
+g.set(ylabel='rate, scripts per worker per second', xlabel='number of worker threads')
 plt.legend()
 fig = g.get_figure()
 fig.savefig(data_dir + '/chart-rate.png', dpi=300)
