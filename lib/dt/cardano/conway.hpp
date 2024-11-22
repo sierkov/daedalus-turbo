@@ -218,7 +218,7 @@ namespace daedalus_turbo::cardano::conway {
         using value_type = std::variant<parameter_change_t, hard_fork_init_t, treasury_withdrawals_t,
             no_confidence_t, update_committee_t, new_constitution_t, info_action_t>;
 
-        value_type val {};
+        value_type val { info_action_t {} };
 
         static constexpr auto serialize(auto &archive, auto &self)
         {

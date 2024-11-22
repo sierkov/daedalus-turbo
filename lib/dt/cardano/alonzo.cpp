@@ -12,11 +12,6 @@
 namespace daedalus_turbo::cardano::alonzo {
     using namespace daedalus_turbo::plutus;
 
-    static tx::wit_cnt _validate_plutus(const context &ctx)
-    {
-
-    }
-
     void tx::foreach_redeemer(const std::function<void(const tx_redeemer &)> &observer) const
     {
         foreach_witness([&](const auto typ, const auto &w_val) {

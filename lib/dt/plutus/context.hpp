@@ -38,7 +38,7 @@ namespace daedalus_turbo::plutus {
     struct prepared_script {
         const script_info &script;
         const term expr;
-        const version ver;
+        const version ver {};
         const std::optional<ex_units> budget {};
     };
 

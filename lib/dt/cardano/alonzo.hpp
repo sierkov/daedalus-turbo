@@ -13,7 +13,7 @@
 namespace daedalus_turbo::cardano::alonzo {
     struct tx;
 
-    inline param_update parse_alonzo_param_update(const cbor::value &proposal, const config &cfg)
+    inline param_update parse_alonzo_param_update(const cbor::value &proposal, const config &)
     {
         param_update upd {};
         for (const auto &[idx, val]: proposal.map()) {

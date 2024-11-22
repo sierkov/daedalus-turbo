@@ -373,7 +373,6 @@ namespace daedalus_turbo::cardano {
 
     plutus_cost_models::plutus_cost_models(const cbor::value &v)
     {
-        const auto &cfg = config::get();
         for (const auto &[model_id, values]: v.map()) {
             switch (model_id.uint()) {
                 case 0:
