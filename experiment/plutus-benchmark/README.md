@@ -123,5 +123,11 @@ Collect statistics about the total counts of transaction witnesses:
 ./dt txwit-stat /data/cardano
 ```
 
-The transaction sampling code is located in [lib/dt/cli/plutus-sample-txs.cpp](../../lib/dt/cli/plutus-sample-txs.cpp).
-The plutus script extraction code is located in [lib/dt/cli/plutus-extract-scripts.cpp](../../lib/dt/cli/plutus-extract-scripts.cpp).
+Measure the actual time to validate all Plutus witnesses:
+```(bash)
+./dt txwit-plutus /data/scriptctx --workers=24
+```
+
+The source code:
+- The transaction sampling code is located in [lib/dt/cli/plutus-sample-txs.cpp](../../lib/dt/cli/plutus-sample-txs.cpp).
+- The plutus script extraction code is located in [lib/dt/cli/plutus-extract-scripts.cpp](../../lib/dt/cli/plutus-extract-scripts.cpp).
