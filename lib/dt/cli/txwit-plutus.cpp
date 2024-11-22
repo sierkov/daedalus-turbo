@@ -23,21 +23,14 @@ namespace daedalus_turbo::cli::txwit_plutus {
             cmd.opts.try_emplace("epoch", "evaluate only the given epoch");
             cmd.opts.try_emplace("file", "evaluate only the given file");
             cmd.opts.try_emplace("tx", "evaluate only the given transaction");
+            cmd.opts.try_emplace("workers", "force the scheduler to use a given number of wokers");
         }
 
         void run(const arguments &args, const options &opts) const override
         {
             const auto &ctx_dir = args.at(0);
-            user_config cfg {};
-            if (const auto opt_it = opts.find("tx"); opt_it != opts.end() && opt_it->second)
-                cfg.tx = tx_hash::from_hex(*opt_it->second);
-            if (const auto opt_it = opts.find("file"); opt_it != opts.end() && opt_it->second)
-                cfg.file = *opt_it->second;
-            if (const auto opt_it = opts.find("epoch"); opt_it != opts.end() && opt_it->second)
-                cfg.epoch = std::stoull(*opt_it->second);
-            std::atomic_size_t ok = 0;
-            std::atomic_size_t err = 0;
-            auto &sched = scheduler::get();
+            user_config cfg { opts };
+            scheduler sched { cfg.num_workers };
             parsed_models_update_list epoch_cost_models {};
             {
                 zpp_stream::read_stream s { fmt::format("{}/cost-models/all.zpp", ctx_dir) };
@@ -58,6 +51,8 @@ namespace daedalus_turbo::cli::txwit_plutus {
             std::sort(paths.begin(), paths.end());
             alignas(mutex::padding) mutex::unique_lock::mutex_type wits_mutex {};
             tx::wit_cnt wits {};
+            std::atomic_size_t ok = 0;
+            std::atomic_size_t err = 0;
             for (size_t i = 0; i < paths.size(); ++i) {
                 if (std::filesystem::file_size(paths[i]) > 0 && (!cfg.file || *cfg.file == paths[i].filename())) {
                     const auto ctx_path = paths[i].string();
@@ -81,6 +76,19 @@ namespace daedalus_turbo::cli::txwit_plutus {
             std::optional<uint64_t> epoch {};
             std::optional<std::string> file {};
             std::optional<tx_hash> tx {};
+            size_t num_workers = scheduler::default_worker_count();
+
+            user_config(const options &opts)
+            {
+                if (const auto opt_it = opts.find("tx"); opt_it != opts.end() && opt_it->second)
+                    tx = tx_hash::from_hex(*opt_it->second);
+                if (const auto opt_it = opts.find("file"); opt_it != opts.end() && opt_it->second)
+                    file = *opt_it->second;
+                if (const auto opt_it = opts.find("epoch"); opt_it != opts.end() && opt_it->second)
+                    epoch = std::stoull(*opt_it->second);
+                if (const auto opt_it = opts.find("workers"); opt_it != opts.end() && opt_it->second)
+                    num_workers = std::stoull(*opt_it->second);
+            }
         };
 
         struct eval_result {
