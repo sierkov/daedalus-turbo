@@ -22,6 +22,8 @@ namespace daedalus_turbo::storage {
         uint8_t header_offset = 0;
         uint8_t era = 0; // necessary to exclude boundary blocks (era=0) during density estimation, etc.
 
+        static block_info from_block(const cardano::block_base &blk);
+
         constexpr static auto serialize(auto &archive, auto &self)
         {
             return archive(self.hash, self.offset, self.size, self.slot, self.height, self.chk_sum,

@@ -47,6 +47,9 @@ namespace daedalus_turbo::plutus {
         using policy_list = vector<script_hash>;
         using cert_list = vector<conway::cert_t>;
         using redeemer_map = map<redeemer_id, tx_redeemer>;
+        using vote_map = map<conway::gov_action_id_t, conway::voting_procedure_t>;
+        using voter_map = map<conway::voter_t, vote_map>;
+        using proposal_list = vector<conway::proposal_t>;
 
         context(const std::string &, const cardano::config &c_cfg=cardano::config::get());
         context(stored_tx_context &&, const cardano::config &c_cfg=cardano::config::get());
@@ -59,6 +62,10 @@ namespace daedalus_turbo::plutus {
         stake_ident_hybrid withdraw_at(uint64_t r_idx) const;
         const stored_txo &input_at(uint64_t r_idx) const;
         term data(script_type typ, const tx_redeemer &) const;
+        const conway::proposal_t &proposal_at(uint64_t r_idx) const;
+        const conway::voter_t &voter_at(uint64_t r_idx) const;
+        const proposal_list &proposals() const;
+        const voter_map &votes() const;
 
         prepared_script apply_script(const script_info &script, std::initializer_list<term> args, const std::optional<ex_units> &budget) const;
         prepared_script prepare_script(const tx_redeemer &r) const;
@@ -137,6 +144,8 @@ namespace daedalus_turbo::plutus {
         cert_list _certs {};
         script_info_map _scripts {};
         redeemer_map _redeemers {};
+        proposal_list _proposals {};
+        voter_map _votes {};
         mutable map<script_hash, parsed_script> _scripts_parsed {};
         mutable map<script_type, plutus::data> _shared {};
     };

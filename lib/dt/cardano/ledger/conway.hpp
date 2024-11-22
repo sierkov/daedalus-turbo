@@ -17,7 +17,7 @@ namespace daedalus_turbo::cardano::ledger::conway {
 
     struct drep_info_t {
         uint64_t deposited = 0;
-        optional_anchor_t anchor {};
+        optional_t<anchor_t> anchor {};
         uint64_t epoch_inactive = 0;
 
         void to_cbor(cbor::encoder &) const;
@@ -139,8 +139,8 @@ namespace fmt {
         }
     };
 
-    template<>
-    struct formatter<daedalus_turbo::cardano::ledger::conway::optional_anchor_t>: formatter<uint64_t> {
+    template<typename T>
+    struct formatter<daedalus_turbo::cardano::ledger::conway::optional_t<T>>: formatter<uint64_t> {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
             if (v)

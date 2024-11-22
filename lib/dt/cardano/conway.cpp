@@ -32,18 +32,65 @@ namespace daedalus_turbo::cardano::conway {
         enc.array(2).text(url).bytes(hash);
     }
 
-    optional_anchor_t::optional_anchor_t(const cbor::value &v)
+    pool_voting_thresholds_t::pool_voting_thresholds_t(const cbor::value &v):
+        motion_of_no_confidence { v.at(0) },
+        committee_normal { v.at(1) },
+        committee_no_confidence { v.at(2) },
+        hard_fork_initiation { v.at(3) },
+        security_voting_threshold { v.at(4) }
     {
-        if (!v.is_null())
-            emplace(v);
     }
 
-    void optional_anchor_t::to_cbor(cbor::encoder &enc) const
+    drep_voting_thresholds_t::drep_voting_thresholds_t(const cbor::value &v):
+        motion_no_confidence { v.at(0) },
+        committee_normal { v.at(1) },
+        committee_no_confidence { v.at(2) },
+        update_constitution { v.at(3) },
+        hard_fork_initiation { v.at(4) },
+        pp_network_group { v.at(5) },
+        pp_economic_group { v.at(6) },
+        pp_technical_group { v.at(7) },
+        pp_governance_group { v.at(8) },
+        treasury_withdrawal { v.at(9) }
     {
-        if (has_value()) {
-            value().to_cbor(enc);
-        } else {
-            enc.array(0);
+    }
+
+    param_update_t::param_update_t(const cbor::value &v)
+    {
+        for (const auto &[u_typ, u]: v.map()) {
+            switch (const auto typ = u_typ.uint()) {
+                case 0: min_fee_a.emplace(u.uint()); break;
+                case 1: min_fee_b.emplace(u.uint()); break;
+                case 2: max_block_body_size.emplace(narrow_cast<uint32_t>(u.uint())); break;
+                case 3: max_transaction_size.emplace(narrow_cast<uint32_t>(u.uint())); break;
+                case 4: max_block_header_size.emplace(narrow_cast<uint16_t>(u.uint())); break;
+                case 5: key_deposit.emplace(u.uint()); break;
+                case 6: pool_deposit.emplace(u.uint()); break;
+                case 7: e_max.emplace(narrow_cast<uint32_t>(u.uint())); break;
+                case 8: n_opt.emplace(u.uint()); break;
+                case 9: pool_pledge_influence.emplace(u); break;
+                case 10: expansion_rate.emplace(u); break;
+                case 11: treasury_growth_rate.emplace(u); break;
+                case 16: min_pool_cost.emplace(u.uint()); break;
+                case 17: lovelace_per_utxo_byte.emplace(u.uint()); break;
+                case 18: plutus_cost_models.emplace(u); break;
+                case 19: ex_unit_prices.emplace(u); break;
+                case 20: max_tx_ex_units.emplace(u); break;
+                case 21: max_block_ex_units.emplace(u); break;
+                case 22: max_value_size.emplace(u.uint()); break;
+                case 23: max_collateral_pct.emplace(u.uint()); break;
+                case 24: max_collateral_inputs.emplace(u.uint()); break;
+                case 25: pool_voting_thresholds.emplace(u); break;
+                case 26: drep_voting_thresholds.emplace(u); break;
+                case 27: comittee_min_size.emplace(narrow_cast<uint16_t>(u.uint())); break;
+                case 28: comittee_max_term_length.emplace(narrow_cast<uint32_t>(u.uint())); break;
+                case 29: gov_action_lifetime.emplace(narrow_cast<uint32_t>(u.uint())); break;
+                case 30: gov_action_deposit.emplace(u.uint()); break;
+                case 31: drep_deposit.emplace(u.uint()); break;
+                case 32: drep_activity.emplace(narrow_cast<uint32_t>(u.uint())); break;
+                case 33: min_fee_ref_script_cost_per_byte.emplace(u.uint()); break;
+                default: throw error("unsupported conway param update: {}", u);
+            }
         }
     }
 
@@ -90,8 +137,8 @@ namespace daedalus_turbo::cardano::conway {
     vote_t vote_from_cbor(const cbor::value &v)
     {
         switch (const auto vote = v.uint(); vote) {
-            case 0: return vote_t::yes;
-            case 1: return vote_t::no;
+            case 0: return vote_t::no;
+            case 1: return vote_t::yes;
             case 2: return vote_t::abstain;
             default: throw error("unsupported vote: {}", vote);
         }
@@ -107,23 +154,30 @@ namespace daedalus_turbo::cardano::conway {
     void voting_procedure_t::to_cbor(cbor::encoder &enc) const
     {
         switch (vote) {
-            case vote_t::yes: enc.uint(0); break;
-            case vote_t::no: enc.uint(1); break;
+            case vote_t::no: enc.uint(0); break;
+            case vote_t::yes: enc.uint(1); break;
             case vote_t::abstain: enc.uint(2); break;
             default: throw error("unsupported vote: {}", static_cast<int>(vote));
         }
     }
 
+    gov_action_t::parameter_change_t::parameter_change_t(const cbor::value &v):
+        prev_action_id { v.at(1) }, update { v.at(2) }, policy_id { v.at(3) }
+    {
+        if (const auto typ = v.at(0).uint(); typ != 0) [[unlikely]]
+            throw error("parameter_change action must have type 0 but got: {}", typ);
+    }
+
     static gov_action_t::value_type gov_action_t_from_cbor(const cbor::value &v)
     {
         switch (const auto typ = v.at(0).uint(); typ) {
-            case 0: return gov_action_t::parameter_change {};
-            case 1: return gov_action_t::hard_fork_init {};
-            case 2: return gov_action_t::treasury_withdrawals {};
-            case 3: return gov_action_t::no_confidence {};
-            case 4: return gov_action_t::update_committee {};
-            case 5: return gov_action_t::new_constitution {};
-            case 6: return gov_action_t::info_action {};
+            case 0: return gov_action_t::parameter_change_t { v };
+            case 1: return gov_action_t::hard_fork_init_t {};
+            case 2: return gov_action_t::treasury_withdrawals_t {};
+            case 3: return gov_action_t::no_confidence_t {};
+            case 4: return gov_action_t::update_committee_t {};
+            case 5: return gov_action_t::new_constitution_t {};
+            case 6: return gov_action_t::info_action_t {};
             default: throw error("unsupported gov action type: {}", typ);
         }
     }
@@ -138,19 +192,19 @@ namespace daedalus_turbo::cardano::conway {
         std::visit([&](const auto &v) {
             using T = std::decay_t<decltype(v)>;
             enc.array(1);
-            if constexpr (std::is_same_v<T, parameter_change>) {
+            if constexpr (std::is_same_v<T, parameter_change_t>) {
                 enc.uint(0);
-            } else if constexpr (std::is_same_v<T, hard_fork_init>) {
+            } else if constexpr (std::is_same_v<T, hard_fork_init_t>) {
                 enc.uint(1);
-            } else if constexpr (std::is_same_v<T, treasury_withdrawals>) {
+            } else if constexpr (std::is_same_v<T, treasury_withdrawals_t>) {
                 enc.uint(2);
-            } else if constexpr (std::is_same_v<T, no_confidence>) {
+            } else if constexpr (std::is_same_v<T, no_confidence_t>) {
                 enc.uint(3);
-            } else if constexpr (std::is_same_v<T, update_committee>) {
+            } else if constexpr (std::is_same_v<T, update_committee_t>) {
                 enc.uint(4);
-            } else if constexpr (std::is_same_v<T, new_constitution>) {
+            } else if constexpr (std::is_same_v<T, new_constitution_t>) {
                 enc.uint(5);
-            } else if constexpr (std::is_same_v<T, info_action>) {
+            } else if constexpr (std::is_same_v<T, info_action_t>) {
                 enc.uint(6);
             } else {
                 throw error("unsupported gov_action: {}", typeid(T).name());
@@ -236,7 +290,7 @@ namespace daedalus_turbo::cardano::conway {
                             narrow_cast<uint16_t>(ri),
                             narrow_cast<uint16_t>(r.at(1).uint()),
                             r.at(2).raw_span(),
-                            ex_units::from_cbor(r.at(3))
+                            r.at(3)
                         });
                     }
                     break;
@@ -250,7 +304,7 @@ namespace daedalus_turbo::cardano::conway {
                             narrow_cast<uint16_t>(ri),
                             narrow_cast<uint16_t>(k.at(1).uint()),
                             v.at(0).raw_span(),
-                            ex_units::from_cbor(v.at(1))
+                            v.at(1)
                         });
                     }
                     break;

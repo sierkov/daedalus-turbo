@@ -81,5 +81,12 @@ suite config_suite = [] {
             expect(cfg.at("turbo").at("vkey").as_string() == std::string_view { "F961D8754397FA2C39D69C97D598566A5E03C34E40FF71DB792E103380E7C105" });
             expect(cfg.at("cardano").at("networkMagic").as_int64() == 764824073_ll);
         };
+        "consider_install_dir"_test = [] {
+            const std::string test_file { "tmp/file.txt" };
+            const auto orig_path = install_path(test_file);
+            // Ignores an attempt to set install_dir to an improper location
+            consider_install_dir("/unknown/dir");
+            test_same(orig_path, install_path(test_file));
+        };
     };
 };

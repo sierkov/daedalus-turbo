@@ -68,14 +68,8 @@ namespace daedalus_turbo::cardano::ledger::alonzo {
             al_cfg.at("executionPrices").at("prMem"),
             al_cfg.at("executionPrices").at("prSteps")
         };
-        p.max_tx_ex_units = {
-            json::value_to<uint64_t>(al_cfg.at("maxTxExUnits").at("exUnitsMem")),
-            json::value_to<uint64_t>(al_cfg.at("maxTxExUnits").at("exUnitsSteps"))
-        };
-        p.max_block_ex_units = {
-            json::value_to<uint64_t>(al_cfg.at("maxBlockExUnits").at("exUnitsMem")),
-            json::value_to<uint64_t>(al_cfg.at("maxBlockExUnits").at("exUnitsSteps"))
-        };
+        p.max_tx_ex_units = ex_units { al_cfg.at("maxTxExUnits") };
+        p.max_block_ex_units = ex_units { al_cfg.at("maxBlockExUnits") };
         p.max_value_size = json::value_to<uint64_t>(al_cfg.at("maxValueSize"));
         p.max_collateral_pct = json::value_to<uint64_t>(al_cfg.at("collateralPercentage"));
         p.max_collateral_inputs = json::value_to<uint64_t>(al_cfg.at("maxCollateralInputs"));
@@ -139,28 +133,13 @@ namespace daedalus_turbo::cardano::ledger::alonzo {
         params.protocol_ver.minor = val.at(15).uint();
         params.min_pool_cost = val.at(16).uint();
         params.lovelace_per_utxo_byte = val.at(17).uint();
-        for (const auto &[model_id, values]: val.at(18).map()) {
-            switch (model_id.uint()) {
-                case 0:
-                    params.plutus_cost_models.v1 = plutus_cost_model::from_cbor(_cfg.plutus_all_cost_models.v1.value(), values.array());
-                    break;
-                break;
-                default:
-                    throw error("unsupported cost model id: {}", model_id);
-            }
-        }
+        params.plutus_cost_models = plutus_cost_models { val.at(18) };
         params.ex_unit_prices = {
             rational_u64 { val.at(19).at(0) },
             rational_u64 { val.at(19).at(1) }
         };
-        params.max_tx_ex_units = {
-            val.at(20).at(0).uint(),
-            val.at(20).at(1).uint()
-        };
-        params.max_block_ex_units = {
-            val.at(21).at(0).uint(),
-            val.at(21).at(1).uint()
-        };
+        params.max_tx_ex_units = ex_units { val.at(20) };
+        params.max_block_ex_units = ex_units { val.at(21) };
         params.max_value_size = val.at(22).uint();
         params.max_collateral_pct = val.at(23).uint();
         params.max_collateral_inputs = val.at(24).uint();

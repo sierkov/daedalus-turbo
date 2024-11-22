@@ -61,6 +61,17 @@ namespace daedalus_turbo::storage {
         return parts;
     }
 
+    vector<partition> chunk_partition_map::_make_partitions(const chunk_registry &cr)
+    {
+        vector<partition> parts {};
+        for (const auto &[chunk_last_byte, chunk]: cr.chunks()) {
+            partition::storage_type chunks {};
+            chunks.emplace_back(&chunk);
+            parts.emplace_back(std::move(chunks));
+        }
+        return parts;
+    }
+
     void parse_parallel(const chunk_registry &cr, const partition_map &pm,
         const std::function<void(std::any &, const cardano::block_base &blk)> &on_block,
         const std::function<std::any(size_t, const partition &)> &on_part_init,

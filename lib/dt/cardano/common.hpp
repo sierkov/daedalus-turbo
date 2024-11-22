@@ -749,6 +749,31 @@ namespace fmt {
                 v.vkey, v.native_script, v.plutus_v1_script, v.plutus_v2_script, v.plutus_v3_script);
         }
     };
+
+    template<>
+    struct formatter<daedalus_turbo::cardano::redeemer_tag>: formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            using daedalus_turbo::cardano::redeemer_tag;
+            switch (v) {
+                case redeemer_tag::spend: return fmt::format_to(ctx.out(), "spend");
+                case redeemer_tag::mint: return fmt::format_to(ctx.out(), "mint");
+                case redeemer_tag::cert: return fmt::format_to(ctx.out(), "cert");
+                case redeemer_tag::reward: return fmt::format_to(ctx.out(), "reward");
+                case redeemer_tag::vote: return fmt::format_to(ctx.out(), "vote");
+                case redeemer_tag::propose: return fmt::format_to(ctx.out(), "propose");
+                default: throw daedalus_turbo::error("unsupported redeemer tag value {}", static_cast<int>(v));
+            }
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::cardano::redeemer_id>: formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "purpose: {} ref_idx: {}", v.tag, v.ref_idx);
+        }
+    };
 }
 
 namespace daedalus_turbo::cardano {

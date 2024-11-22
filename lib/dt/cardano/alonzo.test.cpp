@@ -14,7 +14,7 @@ suite cardano_alonzo_suite = [] {
         configs_dir cfg { configs_dir::default_path() };
         cardano::config ccfg { cfg };
         ccfg.shelley_start_epoch(208);
-        "validate plutus v1"_test = [&] {
+        "validate plutus"_test = [&] {
             for (const auto &entry: std::filesystem::directory_iterator { install_path("data/alonzo") }) {
                 if (entry.is_regular_file() && entry.path().extension() == ".zpp") {
                     const auto path = entry.path().string();

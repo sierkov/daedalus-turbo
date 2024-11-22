@@ -1,0 +1,60 @@
+/* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
+ * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * This code is distributed under the license specified in:
+ * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
+#ifndef DAEDALUS_TURBO_PARALLEL_ORDERED_QUEUE_HPP
+#define DAEDALUS_TURBO_PARALLEL_ORDERED_QUEUE_HPP
+
+#include <atomic>
+#include <dt/container.hpp>
+#include <dt/error.hpp>
+#include <dt/mutex.hpp>
+
+namespace daedalus_turbo::parallel {
+    // This queue allows multiple pre-processing threads to report ready items
+    // and guarantees that consumers will process items only in the pre-defined order.
+    // It works with indices, so the actual storage of the items must be organized separately.
+    struct ordered_queue {
+        using index_type = uint64_t;
+        using optional_index = std::optional<index_type>;
+
+        void put(const index_type item_idx)
+        {
+            if (item_idx == std::numeric_limits<index_type>::max()) [[unlikely]]
+                throw error("the index is too large: {}", item_idx);
+            mutex::scoped_lock lk { _put_mutex };
+            while (_unordered.size() >= 32) {
+
+            }
+            _unordered.emplace(item_idx);
+            index_type proposed_next = _next_ordered.load(std::memory_order_relaxed);
+            for (auto it = _unordered.begin(); it != _unordered.end() && proposed_next == *it; it = _unordered.erase(it)) {
+                proposed_next = *it + 1;
+            }
+            _next_ordered.store(proposed_next, std::memory_order_release);
+        }
+
+        optional_index take()
+        {
+            for (;;) {
+                index_type exp_idx = _next_take.load(std::memory_order_relaxed);
+                if (exp_idx == _next_ordered.load(std::memory_order_relaxed))
+                    return {};
+                if (_next_take.compare_exchange_strong(exp_idx, exp_idx + 1, std::memory_order_acq_rel, std::memory_order_relaxed))
+                    return exp_idx;
+            }
+        }
+
+        index_type next() const
+        {
+            return _next_take.load(std::memory_order_relaxed);
+        }
+    private:
+        std::atomic<index_type> _next_take { 0 };
+        std::atomic<index_type> _next_ordered { 0 };
+        alignas(mutex::padding) mutex::unique_lock::mutex_type _put_mutex {};
+        set<index_type> _unordered {};
+    };
+}
+
+#endif //!DAEDALUS_TURBO_PARALLEL_ORDERED_QUEUE_HPP

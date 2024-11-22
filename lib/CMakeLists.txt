@@ -21,7 +21,6 @@ target_link_libraries(lib PUBLIC Boost::json Boost::coroutine Boost::url Boost::
 )
 find_package(spdlog CONFIG REQUIRED)
 target_link_libraries(lib PUBLIC spdlog::spdlog)
-message("SPDLOG_LIBRARY_DIRS: ${SPDLOG_LIBRARY_DIRS}")
 if (MSVC)
     find_library(SECP256K1_PRE_LIBRARY_PATH secp256k1_precomputed)
     target_link_libraries(lib PUBLIC libsodium.lib)

@@ -37,29 +37,7 @@ namespace daedalus_turbo::cardano::alonzo {
                     break;
                 case 16: upd.min_pool_cost.emplace(val.uint()); break;
                 case 17: upd.lovelace_per_utxo_byte.emplace(val.uint()); break;
-                case 18: {
-                    plutus_cost_models cost_mdls {};
-                    for (const auto &[model_id, values]: val.map()) {
-                        switch (model_id.uint()) {
-                            case 0:
-                                cost_mdls.v1.emplace(
-                                    plutus_cost_model::from_cbor(cfg.plutus_all_cost_models.v1.value(), values.array()));
-                                break;
-                            case 1:
-                                cost_mdls.v2.emplace(
-                                    plutus_cost_model::from_cbor(cfg.plutus_all_cost_models.v2.value(), values.array()));
-                                break;
-                            case 2:
-                                cost_mdls.v3.emplace(
-                                    plutus_cost_model::from_cbor(cfg.plutus_all_cost_models.v3.value(), values.array()));
-                                break;
-                            default:
-                                throw error("unsupported cost model id: {}", model_id);
-                        }
-                    }
-                    upd.plutus_cost_models.emplace(std::move(cost_mdls));
-                    break;
-                }
+                case 18: upd.plutus_cost_models.emplace(val); break;
                 case 19:
                     upd.ex_unit_prices.emplace(
                         rational_u64 { val.at(0).tag().second->at(0).uint(), val.at(0).tag().second->at(1).uint() },
@@ -67,10 +45,10 @@ namespace daedalus_turbo::cardano::alonzo {
                     );
                     break;
                 case 20:
-                    upd.max_tx_ex_units.emplace(val.at(0).uint(), val.at(1).uint());
+                    upd.max_tx_ex_units.emplace(val);
                     break;
                 case 21:
-                    upd.max_block_ex_units.emplace(val.at(0).uint(), val.at(1).uint());
+                    upd.max_block_ex_units.emplace(val);
                     break;
                 case 22: upd.max_value_size.emplace(val.uint()); break;
                 case 23: upd.max_collateral_pct.emplace(val.uint()); break;
@@ -142,6 +120,7 @@ namespace daedalus_turbo::cardano::alonzo {
 
         void foreach_script(const std::function<void(script_info &&)> &, const plutus::context *ctx=nullptr) const override;
         void foreach_redeemer(const std::function<void(const tx_redeemer &)> &) const override;
+        virtual wit_cnt witnesses_ok_plutus(const plutus::context &ctx) const;
         wit_cnt witnesses_ok_other(const plutus::context *ctx=nullptr) const override;
     };
 }

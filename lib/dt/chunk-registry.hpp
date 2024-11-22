@@ -517,6 +517,14 @@ namespace daedalus_turbo {
             return *block_it;
         }
 
+        const storage::chunk_info &find_chunk_by_slot(const uint64_t slot) const
+        {
+            const auto chunk_it = _find_chunk_by_slot(slot);
+            if (chunk_it == _chunks.end()) [[unlikely]]
+                throw error("internal error: no block registered at a slot: {}!", slot);
+            return chunk_it->second;
+        }
+
         std::optional<storage::block_info> latest_block_before_or_at_slot(const uint64_t slot) const;
 
         std::optional<storage::block_info> find_block_by_slot_no_throw(const uint64_t slot, const cardano::block_hash &hash) const

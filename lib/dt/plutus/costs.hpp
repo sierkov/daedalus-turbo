@@ -58,6 +58,7 @@ namespace daedalus_turbo::plutus::costs {
     const vector<std::string> &cost_arg_names_v1();
     const vector<std::string> &cost_arg_names_v2();
     const vector<std::string> &cost_arg_names_v3();
+    const vector<std::string> &cost_arg_names_v3b();
     const arg_map &default_cost_args_v1();
     const arg_map &default_cost_args_v2();
     const arg_map &default_cost_args_v3();

@@ -675,7 +675,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         acc.deleg.reset();
     }
 
-    void state::delegate_stake(const stake_ident &stake_id, const cardano_hash_28 &pool_id)
+    void state::delegate_stake(const stake_ident &stake_id, const pool_hash &pool_id)
     {
         if (!_active_pool_params.contains(pool_id))
             throw error("trying to delegate {} to an unknown pool: {}", stake_id, pool_id);

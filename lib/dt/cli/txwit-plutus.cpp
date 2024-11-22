@@ -10,15 +10,15 @@
 #include <dt/plutus/costs.hpp>
 #include <dt/zpp-stream.hpp>
 
-namespace daedalus_turbo::cli::txwit_script {
+namespace daedalus_turbo::cli::txwit_plutus {
     using namespace cardano;
     using namespace plutus;
 
     struct cmd: command {
         void configure(config &cmd) const override
         {
-            cmd.name = "txwit-script";
-            cmd.desc = "validate script witnesses using the context files prepared with txwit-prep";
+            cmd.name = "txwit-plutus";
+            cmd.desc = "validate plutus witnesses using the context files prepared with txwit-prep";
             cmd.args.expect({ "<context-dir>" });
             cmd.opts.try_emplace("epoch", "evaluate only the given epoch");
             cmd.opts.try_emplace("file", "evaluate only the given file");
@@ -126,9 +126,9 @@ namespace daedalus_turbo::cli::txwit_script {
                         throw error("internal error: can't find a passing epoch cost model!");
                     it = std::prev(it);
                     ctx.cost_models(it->models);
-                    const auto cnt = dynamic_cast<const shelley::tx&>(ctx.tx()).witnesses_ok(&ctx);
+                    if (const auto *a_tx = dynamic_cast<const alonzo::tx *>(&ctx.tx()); a_tx)
+                        res.wits += a_tx->witnesses_ok_plutus(ctx);
                     ++res.tx_ok;
-                    res.wits += cnt;
                 } catch (std::exception &ex) {
                     ++res.tx_err;
                     logger::warn("ctx: {} epoch: {} tx: {}: {}", ctx_path, epoch, tx_id, ex.what());

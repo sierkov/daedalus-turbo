@@ -14,13 +14,7 @@ namespace daedalus_turbo::cardano::alonzo {
 
     static tx::wit_cnt _validate_plutus(const context &ctx)
     {
-        tx::wit_cnt cnt {};
-        for (const auto &[rid, rinfo]: ctx.redeemers()) {
-            const auto ps = ctx.prepare_script(rinfo);
-            ctx.eval_script(ps);
-            cnt += ps.script;
-        }
-        return cnt;
+
     }
 
     void tx::foreach_redeemer(const std::function<void(const tx_redeemer &)> &observer) const
@@ -36,7 +30,7 @@ namespace daedalus_turbo::cardano::alonzo {
                     narrow_cast<uint16_t>(ri),
                     narrow_cast<uint16_t>(r.at(1).uint()),
                     r.at(2).raw_span(),
-                    ex_units::from_cbor(r.at(3))
+                    r.at(3)
                 });
             }
         });
@@ -86,16 +80,24 @@ namespace daedalus_turbo::cardano::alonzo {
         }
     }
 
+    tx::wit_cnt tx::witnesses_ok_plutus(const context &ctx) const
+    {
+        wit_cnt cnt {};
+        for (const auto &[rid, rinfo]: ctx.redeemers()) {
+            const auto ps = ctx.prepare_script(rinfo);
+            ctx.eval_script(ps);
+            cnt += ps.script;
+        }
+        return cnt;
+    }
+
     tx::wit_cnt tx::witnesses_ok_other(const context *ctx) const
     {
         if (ctx)
-            return _validate_plutus(*ctx);
-        size_t num_redeemers = 0;
+            return witnesses_ok_plutus(*ctx);
         foreach_redeemer([&](const auto &) {
-            ++num_redeemers;
+            throw error("the validation of transactions with plutus witnesses requires a plutus::context instance!");
         });
-        if (num_redeemers) [[unlikely]]
-            throw error("the evaluation of plutus witnesses requires a plutus::context instance!");
         return {};
     }
 

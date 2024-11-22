@@ -214,18 +214,18 @@ namespace daedalus_turbo::cardano {
         }
     }
 
-    plutus_cost_model plutus_cost_model::from_cbor(const plutus_cost_model &orig, const cbor_array &data)
+    plutus_cost_model plutus_cost_model::from_cbor(const vector<std::string> &names, const cbor_array &data)
     {
-        if (orig.size() != data.size())
-            throw error("was expecting an array with {} elements but got {}", orig.size(), data.size());
+        if (names.size() != data.size()) [[unlikely]]
+            throw error("plutus_cost_model: was expecting an array with {} elements but got {}", names.size(), data.size());
         plutus_cost_model res {};
-        res.reserve(orig.size());
-        for (size_t i = 0; i < orig.size(); ++i) {
-            const auto &v = data.at(i);
+        res.reserve(names.size());
+        for (size_t i = 0; i < names.size(); ++i) {
+            const auto &v = data[i];
             if (v.type == CBOR_UINT)
-                res.emplace_back(orig.storage().at(i).first, narrow_cast<int64_t>(v.uint()));
+                res.emplace_back(names[i], narrow_cast<int64_t>(v.uint()));
             else
-                res.emplace_back(orig.storage().at(i).first, -narrow_cast<int64_t>(v.nint()));
+                res.emplace_back(names[i], -narrow_cast<int64_t>(v.nint()));
         }
         return res;
     }
@@ -369,6 +369,35 @@ namespace daedalus_turbo::cardano {
     {
         memset(hash.data(), 0, hash.size());
         blake2b(hash, zpp::serialize(*this));
+    }
+
+    plutus_cost_models::plutus_cost_models(const cbor::value &v)
+    {
+        const auto &cfg = config::get();
+        for (const auto &[model_id, values]: v.map()) {
+            switch (model_id.uint()) {
+                case 0:
+                    v1.emplace(plutus_cost_model::from_cbor(plutus::costs::cost_arg_names_v1(), values.array()));
+                    break;
+                case 1:
+                    v2.emplace(plutus_cost_model::from_cbor(plutus::costs::cost_arg_names_v2(), values.array()));
+                    break;
+                case 2:
+                    switch (const auto sz = values.array().size(); sz) {
+                        case 251:
+                            v3.emplace(plutus_cost_model::from_cbor(plutus::costs::cost_arg_names_v3(), values.array()));
+                            break;
+                        case 297:
+                            v3.emplace(plutus_cost_model::from_cbor(plutus::costs::cost_arg_names_v3b(), values.array()));
+                            break;
+                        default:
+                            throw error("an unsupported number of arguments in plutus v2 cost model: {}", sz);
+                    }
+                    break;
+                default:
+                    throw error("unsupported cost model id: {}", model_id);
+            }
+        }
     }
 
     static std::optional<uint8_vector> _normalize_assets(const buffer policies_buf)
@@ -531,10 +560,15 @@ namespace daedalus_turbo::cardano {
         }
     }
 
-    ex_units ex_units::from_cbor(const cbor::value &v)
+    ex_units::ex_units(const cbor::value &v):
+        mem { v.at(0).uint() }, steps { v.at(1).uint() }
     {
-        const auto &items = v.array();
-        return { items.at(0).uint(), items.at(1).uint() };
+    }
+
+    ex_units::ex_units(const json::value &j):
+        mem { json::value_to<uint64_t>(j.at("exUnitsMem")) },
+        steps { json::value_to<uint64_t>(j.at("exUnitsSteps")) }
+    {
     }
 
     drep_t::drep_t(const type_t &t): typ { t }

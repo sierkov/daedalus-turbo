@@ -57,17 +57,24 @@ if(CMAKE_BUILD_TYPE STREQUAL Sanitize)
         message(FATAL_ERROR "Sanitize builds are only supported with Clang")
     endif()
 elseif(CMAKE_BUILD_TYPE STREQUAL Coverage)
+    message("Coverage build")
     if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-        target_compile_options(lib PRIVATE -fprofile-instr-generate -fcoverage-mapping -g -O3)
-        target_compile_options(run-test PRIVATE -fprofile-instr-generate -fcoverage-mapping -g -O3)
-        target_link_options(run-test PRIVATE -fprofile-instr-generate -fcoverage-mapping -g)
+        add_compile_options("-fprofile-instr-generate")
+        add_compile_options("-fcoverage-mapping")
+        add_compile_options("-g")
+        add_compile_options("-O3")
+        add_link_options("-fprofile-instr-generate")
+        add_link_options("-fcoverage-mapping")
+        add_link_options("-g")
+        find_program(LLVM_PROFDATA NAMES llvm-profdata llvm-profdata-18 llvm-profdata-17 REQUIRED)
+        find_program(LLVM_COV NAMES llvm-cov llvm-cov-18 llvm-cov-17 REQUIRED)
         add_custom_target(coverage
             COMMENT "Running test coverage ..."
             COMMAND $<TARGET_FILE:run-test> ${COVERAGE_ARGS}
             COMMAND echo "Indexing raw profdata"
-            COMMAND llvm-profdata merge -sparse default.profraw -o run-test.profdata
-            COMMAND echo "Generating coverage report"
-            COMMAND llvm-cov report $<TARGET_FILE:run-test> -instr-profile=run-test.profdata
+            COMMAND ${LLVM_PROFDATA} merge -sparse default.profraw -o run-test.profdata
+            COMMAND echo "Generating coverage report into tmp/coverage"
+            COMMAND ${LLVM_COV} show -show-branches=percent -ignore-filename-regex=lib/dt/cli -ignore-filename-regex=3rdparty/ -format=html -output-dir=tmp/coverage $<TARGET_FILE:run-test> -instr-profile=run-test.profdata
             DEPENDS run-test
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         )
@@ -75,6 +82,7 @@ elseif(CMAKE_BUILD_TYPE STREQUAL Coverage)
         message(FATAL_ERROR "Coverage builds are only supported with Clang")
     endif()
 endif()
+
 add_subdirectory(3rdparty)
 add_subdirectory(lib)
 target_link_libraries(lib PUBLIC 3rdparty 3rdparty-cpp)

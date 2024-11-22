@@ -24,20 +24,34 @@ namespace daedalus_turbo::cardano::conway {
         void to_cbor(cbor::encoder &) const;
     };
 
-    struct optional_anchor_t: std::optional<anchor_t> {
-        optional_anchor_t() =default;
-        optional_anchor_t(const cbor::value &v);
-        void to_cbor(cbor::encoder &) const;
+    template<typename T>
+    struct optional_t: std::optional<T> {
+        optional_t() =default;
 
-        optional_anchor_t &operator=(const value_type &v)
+        optional_t(const cbor::value &v)
         {
-            emplace(v);
+            if (!v.is_null())
+                std::optional<T>::emplace(v);
+        }
+
+        void to_cbor(cbor::encoder &enc) const
+        {
+            if (std::optional<T>::has_value()) {
+                std::optional<T>::value().to_cbor(enc);
+            } else {
+                enc.array(0);
+            }
+        }
+
+        optional_t &operator=(const std::optional<T>::value_type &v)
+        {
+            std::optional<T>::emplace(v);
             return *this;
         }
 
-        optional_anchor_t &operator=(const std::nullopt_t)
+        optional_t &operator=(const std::nullopt_t)
         {
-            reset();
+            std::optional<T>::reset();
             return *this;
         }
     };
@@ -64,23 +78,86 @@ namespace daedalus_turbo::cardano::conway {
         uint64_t end;
     };
 
-    // #25
-    struct pool_voting_thresholds {
-    };
-    // #26
-    struct drep_voting_thresholds {
-    };
-    // #27 - uint .size 2
-    // #28 - epoch_interval
-    // #29 - epoch_interval
-    // #30 - coin
-    // #31 - coin
-    // #32 - epoch_interval
-    // #33 - non_negative_interval
+    struct pool_voting_thresholds_t {
+        rational_u64 motion_of_no_confidence {};
+        rational_u64 committee_normal {};
+        rational_u64 committee_no_confidence {};
+        rational_u64 hard_fork_initiation {};
+        rational_u64 security_voting_threshold {};
 
-    struct param_update {
-        std::optional<pool_voting_thresholds> pool_voting_thresholds {};
-        std::optional<drep_voting_thresholds> drep_voting_thresholds {};
+        static constexpr auto serialize(auto &archive, auto &self)
+        {
+            return archive(self.motion_of_no_confidence, self.committee_normal,
+                self.committee_no_confidence, self.hard_fork_initiation, self.security_voting_threshold);
+        }
+
+        pool_voting_thresholds_t() =default;
+        pool_voting_thresholds_t(const cbor::value &);
+    };
+
+    struct drep_voting_thresholds_t {
+        rational_u64 motion_no_confidence {};
+        rational_u64 committee_normal {};
+        rational_u64 committee_no_confidence {};
+        rational_u64 update_constitution {};
+        rational_u64 hard_fork_initiation {};
+        rational_u64 pp_network_group {};
+        rational_u64 pp_economic_group {};
+        rational_u64 pp_technical_group {};
+        rational_u64 pp_governance_group {};
+        rational_u64 treasury_withdrawal {};
+
+        static constexpr auto serialize(auto &archive, auto &self)
+        {
+            return archive(self.motion_no_confidence, self.committee_normal,
+                self.committee_no_confidence, self.update_constitution, self.hard_fork_initiation,
+                self.pp_network_group, self.pp_economic_group, self.pp_technical_group,
+                self.pp_governance_group, self.treasury_withdrawal);
+        }
+
+        drep_voting_thresholds_t() =default;
+        drep_voting_thresholds_t(const cbor::value &);
+    };
+
+    struct param_update_t {
+        std::optional<uint64_t> min_fee_a {}; // 0
+        std::optional<uint64_t> min_fee_b {}; // 1
+        std::optional<uint32_t> max_block_body_size {}; // 2
+        std::optional<uint32_t> max_transaction_size {}; // 3
+        std::optional<uint16_t> max_block_header_size {}; // 4
+        std::optional<uint64_t> key_deposit {}; // 5
+        std::optional<uint64_t> pool_deposit {}; // 6
+        std::optional<uint32_t> e_max {}; // 7
+        std::optional<uint64_t> n_opt {}; // 8
+        std::optional<rational_u64> pool_pledge_influence {}; // 9
+        std::optional<rational_u64> expansion_rate {}; // 10
+        std::optional<rational_u64> treasury_growth_rate {}; // 11
+        std::optional<uint64_t> min_pool_cost {}; // 16
+        std::optional<uint64_t> lovelace_per_utxo_byte {}; // 17
+        std::optional<cardano::plutus_cost_models> plutus_cost_models {}; // 18
+        std::optional<cardano::ex_unit_prices> ex_unit_prices {}; // 19
+        std::optional<ex_units> max_tx_ex_units {}; // 20
+        std::optional<ex_units> max_block_ex_units {}; // 21
+        std::optional<uint64_t> max_value_size {}; // 22
+        std::optional<uint64_t> max_collateral_pct {}; // 23
+        std::optional<uint64_t> max_collateral_inputs {}; // 24
+        std::optional<pool_voting_thresholds_t> pool_voting_thresholds {}; // 25
+        std::optional<drep_voting_thresholds_t> drep_voting_thresholds {}; // 26
+        std::optional<uint16_t> comittee_min_size {}; // 27
+        std::optional<uint32_t> comittee_max_term_length {}; // 28
+        std::optional<uint32_t> gov_action_lifetime {}; // 29
+        std::optional<uint64_t> gov_action_deposit {}; // 30
+        std::optional<uint64_t> drep_deposit {}; // 31
+        std::optional<uint32_t> drep_activity {}; // 32
+        std::optional<uint64_t> min_fee_ref_script_cost_per_byte {}; // 33
+
+        static constexpr auto serialize(auto &archive, auto &self)
+        {
+            return archive(self.pool_voting_thresholds, self.drep_voting_thresholds);
+        }
+
+        param_update_t() =default;
+        param_update_t(const cbor::value &);
     };
 
     struct gov_action_id_t {
@@ -106,29 +183,40 @@ namespace daedalus_turbo::cardano::conway {
     };
 
     struct gov_action_t {
-        struct parameter_change {
+        struct parameter_change_t {
+            optional_t<gov_action_id_t> prev_action_id {};
+            param_update_t update {};
+            optional_t<script_hash> policy_id {};
+
+            static constexpr auto serialize(auto &archive, auto &self)
+            {
+                return archive(self.prev_action_id, self.update, self.policy_id);
+            }
+
+            parameter_change_t() =default; // Necessary for ZPP serialization to work
+            parameter_change_t(const cbor::value &v);
         };
 
-        struct hard_fork_init {
+        struct hard_fork_init_t {
         };
 
-        struct treasury_withdrawals {
+        struct treasury_withdrawals_t {
         };
 
-        struct no_confidence {
+        struct no_confidence_t {
         };
 
-        struct update_committee {
+        struct update_committee_t {
         };
 
-        struct new_constitution {
+        struct new_constitution_t {
         };
 
-        struct info_action {
+        struct info_action_t {
         };
 
-        using value_type = std::variant<parameter_change, hard_fork_init, treasury_withdrawals,
-            no_confidence, update_committee, new_constitution, info_action>;
+        using value_type = std::variant<parameter_change_t, hard_fork_init_t, treasury_withdrawals_t,
+            no_confidence_t, update_committee_t, new_constitution_t, info_action_t>;
 
         value_type val {};
 
@@ -143,14 +231,14 @@ namespace daedalus_turbo::cardano::conway {
     };
 
     enum class vote_t: uint8_t {
-        yes = 0,
-        no = 1,
+        no = 0,
+        yes = 1,
         abstain = 2
     };
 
     struct voting_procedure_t {
         vote_t vote {};
-        optional_anchor_t anchor {};
+        optional_t<anchor_t> anchor {};
 
         static constexpr auto serialize(auto &archive, auto &self)
         {
@@ -256,13 +344,13 @@ namespace daedalus_turbo::cardano::conway {
 
     struct resign_committee_cold_cert {
         credential_t cold_id {};
-        optional_anchor_t anchor {};
+        optional_t<anchor_t> anchor {};
     };
 
     struct reg_drep_cert {
         credential_t drep_id {};
         uint64_t deposit = 0;
-        optional_anchor_t anchor {};
+        optional_t<anchor_t> anchor {};
     };
 
     struct unreg_drep_cert {
@@ -272,7 +360,7 @@ namespace daedalus_turbo::cardano::conway {
 
     struct update_drep_cert {
         credential_t drep_id {};
-        optional_anchor_t anchor {};
+        optional_t<anchor_t> anchor {};
     };
 
     using shelley::stake_reg_cert;
@@ -312,8 +400,8 @@ namespace daedalus_turbo::cardano::conway {
         }
     };
 
-    typedef std::function<void(const vote_info_t &)> vote_observer_t;
-    typedef std::function<void(const proposal_t &)> proposal_observer_t;
+    typedef std::function<void(vote_info_t &&)> vote_observer_t;
+    typedef std::function<void(proposal_t &&)> proposal_observer_t;
 
     struct tx: babbage::tx {
         using babbage::tx::tx;

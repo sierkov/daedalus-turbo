@@ -33,7 +33,7 @@ namespace daedalus_turbo::cardano::shelley {
     };
 
     struct pool_retire_cert {
-        cardano_hash_28 pool_id {};
+        cardano::pool_hash pool_id {};
         cardano::epoch epoch {};
 
         static pool_retire_cert from_cbor(const cbor::value &);

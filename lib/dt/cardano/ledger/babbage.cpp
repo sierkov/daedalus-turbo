@@ -136,30 +136,13 @@ namespace daedalus_turbo::cardano::ledger::babbage {
         params.protocol_ver.minor = val.at(13).uint();
         params.min_pool_cost = val.at(14).uint();
         params.lovelace_per_utxo_byte = val.at(15).uint();
-        for (const auto &[model_id, values]: val.at(16).map()) {
-            switch (model_id.uint()) {
-                case 0:
-                    params.plutus_cost_models.v1 = cardano::plutus_cost_model::from_cbor(_cfg.plutus_all_cost_models.v1.value(), values.array());
-                break;
-                case 1:
-                    params.plutus_cost_models.v2 = cardano::plutus_cost_model::from_cbor(_cfg.plutus_all_cost_models.v1.value(), values.array());
-                break;
-                default:
-                    throw error("unsupported cost model id: {}", model_id);
-            }
-        }
+        params.plutus_cost_models = plutus_cost_models { val.at(16) };
         params.ex_unit_prices = {
             rational_u64 { val.at(17).at(0) },
             rational_u64 { val.at(17).at(1) }
         };
-        params.max_tx_ex_units = {
-            val.at(18).at(0).uint(),
-            val.at(18).at(1).uint()
-        };
-        params.max_block_ex_units = {
-            val.at(19).at(0).uint(),
-            val.at(19).at(1).uint()
-        };
+        params.max_tx_ex_units = ex_units { val.at(18) };
+        params.max_block_ex_units = ex_units { val.at(19) };
         params.max_value_size = val.at(20).uint();
         params.max_collateral_pct = val.at(21).uint();
         params.max_collateral_inputs = val.at(22).uint();

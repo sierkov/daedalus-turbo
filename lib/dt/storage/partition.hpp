@@ -13,7 +13,10 @@ namespace daedalus_turbo::storage {
         using const_iterator = storage_type::const_iterator;
 
         partition() =delete;
-        partition(const partition &) =delete;
+
+        partition(const partition &o): _chunks { o._chunks }
+        {
+        }
 
         partition(partition &&o): _chunks { std::move(o._chunks) }
         {
@@ -23,6 +26,16 @@ namespace daedalus_turbo::storage {
         {
             if (_chunks.empty()) [[unlikely]]
                 throw error("a partition must contain at least one chunk!");
+        }
+
+        uint64_t first_slot() const
+        {
+            return _chunks.front()->first_slot;
+        }
+
+        uint64_t last_slot() const
+        {
+            return _chunks.back()->last_slot;
         }
 
         uint64_t offset() const
@@ -54,12 +67,27 @@ namespace daedalus_turbo::storage {
     };
 
     struct partition_map {
-        using storage_type = const vector<partition>;
+        using storage_type = vector<partition>;
         using const_iterator = storage_type::const_iterator;
 
         explicit partition_map(const chunk_registry &cr, const size_t num_parts=256):
             partition_map { _chunk_partitions(cr, num_parts) }
         {
+        }
+
+        partition_map(const const_iterator begin, const const_iterator end):
+            partition_map { storage_type { begin, end } }
+        {
+        }
+
+        const_iterator begin() const
+        {
+            return _parts.begin();
+        }
+
+        const_iterator end() const
+        {
+            return _parts.end();
         }
 
         size_t find_no(const uint64_t offset) const
@@ -103,6 +131,16 @@ namespace daedalus_turbo::storage {
 
     struct epoch_partition_map: partition_map {
         explicit epoch_partition_map(const chunk_registry &cr): partition_map { _make_partitions(cr) }
+        {
+        }
+    private:
+        const vector<partition> _parts;
+
+        static vector<partition> _make_partitions(const chunk_registry &cr);
+    };
+
+    struct chunk_partition_map: partition_map {
+        explicit chunk_partition_map(const chunk_registry &cr): partition_map { _make_partitions(cr) }
         {
         }
     private:
@@ -173,6 +211,17 @@ namespace daedalus_turbo::storage {
         const std::optional<std::string> &progress_tag={})
     {
         const partition_map pm { cr, num_parts };
+        parse_parallel(cr, pm, on_block, on_part_init, on_part_done, progress_tag);
+    }
+
+    template<typename T>
+    void parse_parallel_chunk(const chunk_registry &cr,
+        const std::function<void(T&, const cardano::block_base &blk)> &on_block,
+        const std::function<T(size_t, const partition &)> &on_part_init,
+        const std::function<void(T &&, size_t, const partition &)> &on_part_done,
+        const std::optional<std::string> &progress_tag={})
+    {
+        const chunk_partition_map pm { cr };
         parse_parallel(cr, pm, on_block, on_part_init, on_part_done, progress_tag);
     }
 

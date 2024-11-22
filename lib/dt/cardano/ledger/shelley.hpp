@@ -127,7 +127,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         virtual void withdraw_reward(uint64_t slot, const stake_ident &stake_id, uint64_t amount);
         virtual void register_stake(uint64_t slot, const stake_ident &stake_id, std::optional<uint64_t> deposit, size_t tx_idx=0, size_t cert_idx=0);
         virtual void retire_stake(uint64_t slot, const stake_ident &stake_id, std::optional<uint64_t> deposit);
-        virtual void delegate_stake(const stake_ident &stake_id, const cardano_hash_28 &pool_id);
+        virtual void delegate_stake(const stake_ident &stake_id, const pool_hash &pool_id);
         virtual void update_stake(const stake_ident &stake_id, int64_t delta);
         virtual void update_pointer(const stake_pointer &ptr, int64_t delta);
         virtual void update_stake_id_hybrid(const stake_ident_hybrid &stake_id, int64_t delta);

@@ -38,11 +38,31 @@ namespace daedalus_turbo {
     using cardano_vrf_proof_span = std::span<const uint8_t, sizeof(cardano_vrf_proof)>;
 
     namespace cardano {
+        template <size_t SZ>
+        struct hash: array<uint8_t, SZ> {
+            using array<uint8_t, SZ>::array;
+
+            static hash from_hex(const std::string_view hex)
+            {
+                hash data;
+                init_from_hex(data, hex);
+                return data;
+            }
+
+            hash(const buffer bytes): array<uint8_t, SZ> { bytes }
+            {
+            }
+
+            hash(const cbor::value &v): array<uint8_t, SZ> { v.buf() }
+            {
+            }
+        };
+
         using vkey = cardano_vkey;
-        using key_hash = cardano_hash_28;
-        using script_hash = cardano_hash_28;
-        using pool_hash = cardano_hash_28;
-        using tx_hash = cardano_hash_32;
+        using key_hash =  hash<28>;
+        using script_hash = hash<28>;
+        using pool_hash =  hash<28>;
+        using tx_hash =  cardano_hash_32;
         using block_hash = cardano_hash_32;
         using vrf_nonce = cardano_hash_32;
         using vrf_vkey = cardano_vrf_vkey;
@@ -348,7 +368,7 @@ namespace daedalus_turbo {
               SHELLEY_KEY, SHELLEY_SCRIPT, BYRON_KEY
             };
 
-            cardano_hash_28 hash {};
+            key_hash hash {};
             ident_type type {};
 
             bool operator<(const auto &b) const {
@@ -431,6 +451,20 @@ namespace daedalus_turbo {
             script_info(const script_info &o):
                 script_info { o.type(), o.script() }
             {
+            }
+
+            script_info &operator=(script_info &&o)
+            {
+                _hash = o._hash;
+                uint8_vector::operator=(std::move(o));
+                return *this;
+            }
+
+            script_info &operator=(const script_info &o)
+            {
+                _hash = o._hash;
+                uint8_vector::operator=(o);
+                return *this;
             }
 
             [[nodiscard]] script_hash hash() const
@@ -1010,7 +1044,7 @@ namespace daedalus_turbo {
             using storage_type = static_map;
             using diff_type = map<std::string, std::pair<std::optional<int64_t>, std::optional<int64_t>>>;
 
-            static plutus_cost_model from_cbor(const plutus_cost_model &orig, const cbor_array &data);
+            static plutus_cost_model from_cbor(const vector<std::string> &names, const cbor_array &data);
             static plutus_cost_model from_json(const plutus_cost_model &orig, const json::value &data);
 
             void update(const plutus_cost_model &src);
@@ -1021,7 +1055,19 @@ namespace daedalus_turbo {
             uint64_t mem = 0;
             uint64_t steps = 0;
 
-            static ex_units from_cbor(const cbor::value &v);
+            static constexpr auto serialize(auto &archive, auto &self)
+            {
+                return archive(self.mem, self.steps);
+            }
+
+            ex_units() =default;
+            ex_units(const cbor::value &);
+            ex_units(const json::value &);
+
+            ex_units(const uint64_t mem_, const uint64_t steps_):
+                mem { mem_ }, steps { steps_ }
+            {
+            }
 
             bool operator==(const ex_units &o) const
             {
@@ -1058,6 +1104,9 @@ namespace daedalus_turbo {
             {
                 return archive(self.v1, self.v2, self.v3);
             }
+
+            plutus_cost_models() =default;
+            plutus_cost_models(const cbor::value &);
 
             void to_cbor(cbor::encoder &) const;
 
@@ -1303,7 +1352,24 @@ namespace daedalus_turbo {
     }
 }
 
+namespace std {
+    template<size_t SZ>
+    struct hash<daedalus_turbo::cardano::hash<SZ>>: hash<uint64_t> {
+        std::size_t operator()(const auto &v) const noexcept {
+            return std::hash<std::string_view>()(std::string_view { reinterpret_cast<const char *>(v.data()), v.size() });
+        }
+    };
+}
+
 namespace fmt {
+    template<size_t SZ>
+    struct formatter<daedalus_turbo::cardano::hash<SZ>>: formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "{}", static_cast<daedalus_turbo::array<uint8_t, SZ>>(v));
+        }
+    };
+
     template<>
     struct formatter<daedalus_turbo::cardano::protocol_version>: formatter<uint64_t> {
         template<typename FormatContext>
