@@ -39,7 +39,7 @@ namespace daedalus_turbo {
 
     namespace cardano {
         template <size_t SZ>
-        struct hash: array<uint8_t, SZ> {
+        struct __attribute__((packed)) hash: array<uint8_t, SZ> {
             using array<uint8_t, SZ>::array;
 
             static hash from_hex(const std::string_view hex)

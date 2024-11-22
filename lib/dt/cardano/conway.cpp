@@ -58,7 +58,7 @@ namespace daedalus_turbo::cardano::conway {
     param_update_t::param_update_t(const cbor::value &v)
     {
         for (const auto &[u_typ, u]: v.map()) {
-            switch (const auto typ = u_typ.uint()) {
+            switch (const auto typ = u_typ.uint(); typ) {
                 case 0: min_fee_a.emplace(u.uint()); break;
                 case 1: min_fee_b.emplace(u.uint()); break;
                 case 2: max_block_body_size.emplace(narrow_cast<uint32_t>(u.uint())); break;
