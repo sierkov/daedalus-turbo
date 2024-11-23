@@ -36,10 +36,14 @@ def load_data(dir_path):
         if m:
             print(fname)
             df = pd.read_csv(dir_path + "/" + fname)
+            num_workers = int(m.group(2))
+            rate_per_worker = 1 / df["run_time"].mean()
+            rate_total = rate_per_worker * num_workers
             recs.append({
                 "name": m.group(1),
-                "threads": int(m.group(2)),
-                "rate": 1 / df["run_time"].mean()
+                "threads": num_workers,
+                "rate_per_worker": rate_per_worker,
+                "rate_total": rate_total,
             })
     return pd.DataFrame.from_records(recs)
 
@@ -56,8 +60,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 sns.set_palette(['#2CA02C'], n_colors=100)
-g = sns.barplot(data=df, y='rate', x='threads', hue='name')
-g.set(ylabel='rate, scripts per worker per second', xlabel='number of worker threads')
+g = sns.barplot(data=df, y='rate_total', x='threads', hue='name')
+g.set(ylabel='rate, plutus witnesses per second', xlabel='number of worker threads')
+for c in g.containers:
+    g.bar_label(c)
 plt.legend()
 fig = g.get_figure()
 fig.savefig(data_dir + '/chart-rate.png', dpi=300)
@@ -65,8 +71,8 @@ plt.show(g)
 # -
 # ## Parallel efficiency
 
-base_rate = df.loc[df['threads'] == 1]['rate']
-df['efficiency'] = df['rate'] * 100 / base_rate[0]
+base_rate = df.loc[df['threads'] == 1]['rate_per_worker']
+df['efficiency'] = df['rate_per_worker'] * 100 / base_rate[0]
 g = sns.barplot(data=df, y='efficiency', x='threads',  hue='name', saturation=1.0)
 g.set(ylabel='parallel efficiency, %', xlabel='number of worker threads')
 ax = g.axes
@@ -82,7 +88,7 @@ plt.show(g)
 # this count is produced by txwit-stat command
 total_redeemers = 40_525_056
 
-df['pred_time'] = round(total_redeemers / (df['rate'] * df['threads']) / 60, 1)
+df['pred_time'] = round(total_redeemers / df['rate_total'] / 60, 1)
 g = sns.barplot(data=df, y='pred_time', x='threads',  hue='name', saturation=1.0)
 g.set(ylabel='predicted time, min', xlabel='number of worker threads')
 for c in g.containers:
