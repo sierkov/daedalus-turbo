@@ -42,8 +42,8 @@ def load_data(dir_path):
             recs.append({
                 "name": m.group(1),
                 "threads": num_workers,
-                "rate_per_worker": rate_per_worker,
-                "rate_total": rate_total,
+                "rate_per_worker": round(rate_per_worker, 1),
+                "rate_total": round(rate_total, 1),
             })
     return pd.DataFrame.from_records(recs)
 
