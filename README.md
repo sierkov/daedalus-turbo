@@ -91,21 +91,6 @@ Show information about the local chain:
 ./dt tip /data/cardano
 ```
 
-(Optional) Revalidate consensus since genesis for benchmark purposes:
-```
-./dt revalidate /data/cardano
-```
-
-(Optional) Revalidate transaction witnesses since genesis for benchmark purposes:
-```
-./dt txwit-all /data/cardano
-```
-
-(Optional) Compare the downloaded chain vs a Cardano Network node (`relays-new.cardano-mainnet.iohk.io` by default) and fetch differences if necessary:
-```
-./dt sync-p2p /data/cardano
-```
-
 Reconstruct the latest balance and transaction history of a stake key:
 ```
 ./dt stake-history /data/cardano stake1uxw70wgydj63u4faymujuunnu9w2976pfeh89lnqcw03pksulgcrg
@@ -126,6 +111,20 @@ Evaluate a Plutus script and show its result and costs:
 ./dt plutus-eval ../data/plutus/conformance/example/factorial/factorial.uplc
 ```
 
+(Optional) Revalidate consensus since genesis for benchmark purposes:
+```
+./dt revalidate /data/cardano
+```
+
+(Optional) Revalidate transaction witnesses since genesis for benchmark purposes:
+```
+./dt txwit-all /data/cardano
+```
+
+(Optional) Synchronize the local chain from a Cardano Network node (slower since Cardano network protocol lacks compression):
+```
+./dt sync-p2p /data/cardano
+```
 ## Pre-built binaries for Windows and Mac (ARM64)
 
 The latest builds of the DT Explorer application can be found in the Assets section of [the latest GitHub release](https://github.com/sierkov/daedalus-turbo/releases/latest) page.
@@ -186,7 +185,7 @@ The below notes may be helpful if you decide to build the software outside of Do
 
 ## Necessary software packages
 - [CMake](https://cmake.org/) >= 3.28, a build system
-- [boost](https://www.boost.org/) == 1.83, a collection of C++ libraries
+- [boost](https://www.boost.org/) >= 1.83 && <= 1.85, a collection of C++ libraries
 - [fmt](https://github.com/fmtlib/fmt) >= 8.1.1, a string formatting library
 - [libsodium](https://github.com/jedisct1/libsodium) >= 1.0.18, a cryptographic library
 - [secp256k1](https://github.com/bitcoin-core/secp256k1) >= 0.2.0, a cryptographic library
@@ -250,7 +249,9 @@ cmake --build cmake-build-release -j -t dt
 1. Open a terminal window and navigate to the directory with DT source code.
 2. Install the necessary packages with brew:
    ```
-   brew install cmake ninja boost fmt libsodium llvm@17 secp256k1 spdlog zstd
+   brew install cmake ninja fmt libsodium llvm@17 secp256k1 spdlog zstd
+   brew install boost@1.85
+   brew link boost@1.85
    ```
 3. Prepare cmake build files in cmake-build-release directory (the name is used in build scripts so stay be the same):
    ```
