@@ -9,7 +9,7 @@
 
 namespace daedalus_turbo {
     chunk_registry::chunk_registry(const std::string &data_dir, const mode mode,
-        const daedalus_turbo::configs &cfg, scheduler &sched, file_remover &fr)
+        const daedalus_turbo::configs &cfg, scheduler &sched, file_remover &fr, const bool auto_maintenance)
         : _data_dir { data_dir }, _db_dir { init_db_dir((_data_dir / "compressed").string()) },
             _cfg { cfg }, _sched { sched }, _file_remover { fr },
             _state_path { (_db_dir / "state.bin").string() },
@@ -57,7 +57,8 @@ namespace daedalus_turbo {
                 _file_remover.mark(path);
         }
         logger::info("chunk_registry has data up to offset {}", num_bytes());
-        maintenance();
+        if (auto_maintenance)
+            maintenance();
     }
 
     chunk_registry::~chunk_registry() =default;

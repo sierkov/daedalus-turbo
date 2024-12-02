@@ -231,7 +231,8 @@ namespace daedalus_turbo {
         }
 
         explicit chunk_registry(const std::string &data_dir, mode mode=mode::validate,
-            const configs &cfg=configs_dir::get(), scheduler &sched=scheduler::get(), file_remover &fr=file_remover::get());
+            const configs &cfg=configs_dir::get(), scheduler &sched=scheduler::get(), file_remover &fr=file_remover::get(),
+            bool auto_maintenance=true);
         ~chunk_registry();
 
         void register_processor(const chunk_processor &p)
