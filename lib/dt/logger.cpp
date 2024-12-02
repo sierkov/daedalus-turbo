@@ -15,6 +15,21 @@
 #include <dt/mutex.hpp>
 
 namespace daedalus_turbo::logger {
+    static mutex::unique_lock::mutex_type last_error_mutex alignas(mutex::padding) {};
+    static std::shared_ptr<std::string> last_error_ptr {};
+
+    std::shared_ptr<std::string> last_error()
+    {
+        mutex::scoped_lock lk { last_error_mutex };
+        return last_error_ptr;
+    }
+
+    void reset_last_error()
+    {
+        mutex::scoped_lock lk { last_error_mutex };
+        return last_error_ptr.reset();
+    }
+
     bool &tracing_enabled()
     {
         static bool enabled = std::getenv("DT_DEBUG") != nullptr;
@@ -76,9 +91,12 @@ namespace daedalus_turbo::logger {
             case level::warn:
                 get().warn(msg);
                 break;
-            case level::error:
+            case level::error: {
                 get().error(msg);
+                mutex::scoped_lock lk { last_error_mutex };
+                last_error_ptr = std::make_shared<std::string>(msg);
                 break;
+            }
             default:
                 throw daedalus_turbo::error("unsupported log level: {}", static_cast<int>(lev));
         }

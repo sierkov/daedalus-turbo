@@ -69,9 +69,9 @@ suite sync_p2p_suite = [] {
             paths.emplace_back("./data/chunk-registry-new/3-0.chunk");
             cardano_client_manager_mock ccm { paths };
             sync::p2p::syncer s { cr, ps, ccm };
-            s.sync(s.find_peer(), 50'000);
+            s.sync(s.find_peer(), 50'000, validation_mode_t::none);
             expect(cr.max_slot() == 50'000_ull);
-            s.sync(s.find_peer());
+            s.sync(s.find_peer(), {}, validation_mode_t::none);
             expect(cr.max_slot() == 79'999_ull);
         };
         "find_peer"_test = [&] {

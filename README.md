@@ -20,30 +20,26 @@ Currently supported:
 - Incremental synchronization of compressed blockchain data over the Internet (the Turbo protocol)
 - Incremental synchronization using the normal Cardano Network protocol (no compression)
 - Incremental synchronization from a local Cardano Node (immutable and volatile files)
-- Parallelized Ouroboros Praos data validation (full consensus validation)
-- Chain selection using Ouroboros Genesis rule (highest local chain density)
+- Parallelized consensus validation according to Ouroboros Praos/Genesis rules
+- Parallelized transaction witness validation using the [C++ Plutus Machine](lib/dt/plutus)
+- Consensus-based transaction witness validation (the Turbo validation) as explained in [On the Security of Wallet Nodes in the Cardano Blockchain](./doc/2024-sierkov-on-wallet-security.pdf)
+- Compressed local storage of blockchain data (compression ratio ~4.5x)
 - Interactive reconstruction of balances and transaction histories of stake and payment addresses
 - Interactive search for transaction data
-- Compressed local storage of blockchain data (compression ratio ~4.5x)
-- ADA and non-ADA assets
-- Evaluation of Plutus scripts
-- Blockchain Explorer Desktop User Interface
-- All Cardano block formats from Byron to Conway
+- Fully Local Blockchain Explorer Desktop User Interface
 
 In active development:
-- Tail transaction witness validation as explained in [On the Security of Wallet Nodes in the Cardano Blockchain](./doc/2024-sierkov-on-wallet-security.pdf)
-- Full transaction witness validation using the C++ Plutus Machine
 - Support for Conway governance actions
 
 As the project matures and moves through its [roadmap](#roadmap), the list of supported features will grow.
 
 # Requirements
-- a modern CPU with 8+ physical cores (will refuse to work on anything weaker than an Orange Pi 5 Plus)
-- 16+GB of RAM (The more cores a CPU has, the more RAM is needed)
-- a fast SSD with ~80GB of free space:
-  - ~60GB for the compressed blockchain data and search indices
-  - ~20GB for temporary use during indexing
-- a fast Internet connection (250 Mbps or better)
+- A modern CPU with 8+ physical cores. The code will refuse any CPU weaker than that of an Orange Pi 5 Plus.
+- 16+ GB of RAM. The more cores a CPU has, the more RAM is needed.
+- A fast SSD with 100+ GB of free space:
+  - ~70 GB for the compressed blockchain data and search indices.
+  - ~30+ GB for temporary use during indexing and validation. The fewer cores your CPU has, the more space is needed.
+- A fast Internet connection (250 Mbps or better).
 
 # Test it yourself
 
@@ -85,9 +81,22 @@ Download, validate, and prepare for querying a copy of the Cardano blockchain fr
 ./dt sync-turbo /data/cardano
 ```
 
-(Optional) Revalidate the data downloaded by sync-turbo for benchmark purposes:
+Show information about the local chain:
+- the physical tip (most recent valid block);
+- the core tip (confirmed by the majority of active stake);
+- the immutable tip (2160 blocks behind).
+```
+./dt tip /data/cardano
+```
+
+(Optional) Revalidate consensus since genesis for benchmark purposes:
 ```
 ./dt revalidate /data/cardano
+```
+
+(Optional) Revalidate transaction witnesses since genesis for benchmark purposes:
+```
+./dt txwit-all /data/cardano
 ```
 
 (Optional) Compare the downloaded chain vs a Cardano Network node (`relays-new.cardano-mainnet.iohk.io` by default) and fetch differences if necessary:

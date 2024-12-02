@@ -32,7 +32,7 @@ namespace daedalus_turbo {
     typedef uint64_t chunk_offset_t;
 
     struct epoch_info {
-        using chunk_list = std::vector<const storage::chunk_info *>;
+        using chunk_list = storage::chunk_cptr_list;
 
         epoch_info(chunk_list &&chunks): _chunks { std::move(chunks) }
         {
@@ -826,6 +826,7 @@ namespace daedalus_turbo {
         std::optional<active_transaction> _transaction {};
         alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _tx_progress_mutex {};
         mutable map<std::string, uint64_t> _tx_progress_max {};
+        mutable std::atomic_size_t _tx_progress_parse { 0 };
         const std::string _state_path;
         const std::string _state_path_pre;
         alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _update_mutex {};
@@ -885,6 +886,7 @@ namespace daedalus_turbo {
         void _my_start_tx()
         {
             _tx_progress_max.clear();
+            _tx_progress_parse.store(0, std::memory_order_relaxed);
             _notify_end_offset = num_bytes();
             _notify_next_epoch = _chunks.empty() ? 0 : make_slot(_chunks.rbegin()->second.first_slot).epoch();
             if (!_unmerged_chunks.empty()) {

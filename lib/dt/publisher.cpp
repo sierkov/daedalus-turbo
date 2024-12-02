@@ -27,7 +27,7 @@ namespace daedalus_turbo {
             timer tc { "publish cycle" };
             try {
                 const auto peer = _syncer.find_peer(_node_dir);
-                _syncer.sync(peer);
+                _syncer.sync(peer, {}, sync::validation_mode_t::none);
                 _write_meta();
                 _file_remover.mark_old_files(_cr.data_dir(), metadata_lifespan);
                 logger::info("publisher cycle time: {} sec", tc.stop(false));

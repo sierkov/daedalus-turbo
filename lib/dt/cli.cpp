@@ -32,11 +32,11 @@ namespace daedalus_turbo::cli {
         }
 #endif
         for (const auto &cmd: command_list) {
-            command_meta meta { *cmd.get() };
+            command_meta meta { cmd };
             cmd->configure(meta.cfg);
             meta.cfg.opts.emplace("config-dir", "a directory with Cardano configuration files");
             if (const auto [it, created] = commands.try_emplace(meta.cfg.name, std::move(meta)); !created) [[unlikely]]
-                        throw error("multiple definitions for {}", meta.cfg.name);
+                throw error("multiple definitions for {}", meta.cfg.name);
         }
         if (argc < 2) {
             std::cerr << "Usage: <command> [<arg> ...], where <command> is one of:\n" ;
@@ -59,8 +59,8 @@ namespace daedalus_turbo::cli {
         try {
             const auto &meta = cmd_it->second;
             timer t { fmt::format("run {}", cmd), logger::level::info };
-            const auto pr = meta.cmd.parse(meta.cfg, args);
-            meta.cmd.run(pr.args, pr.opts);
+            const auto pr = meta.cmd->parse(meta.cfg, args);
+            meta.cmd->run(pr.args, pr.opts);
         } catch (const std::exception &ex) {
             logger::error("{}: {}", cmd, ex.what());
             return 1;

@@ -17,23 +17,43 @@ namespace daedalus_turbo::cardano::ledger {
         size_t num_blocks = 0;
         size_t valid_blocks = 0;
         size_t first_block_slot = 0;
-        cardano::block_hash first_block_hash {};
+        block_hash first_block_hash {};
         size_t last_block_slot = 0;
-        cardano::block_hash last_block_hash {};
+        block_hash last_block_hash {};
 
         void merge(const subchain &right)
         {
+            right.check_coherency();
             if (end_offset() != right.offset)
-                throw error("unmergeable subchains left end: {} right start: {}", end_offset(), right.offset);
-            if (right.first_block_slot < first_block_slot)
-                throw error("unmergeable subchains left first_block_slot: {} right first_block_slot: {}", first_block_slot, right.first_block_slot);
-            if (right.last_block_slot < last_block_slot)
-                throw error("unmergeable subchains left last_block_slot: {} right last_block_slot: {}", last_block_slot, right.last_block_slot);
+                throw error("unmergeable sub-chains: left end: {} right start: {}", end_offset(), right.offset);
+            if (right.first_block_slot < last_block_slot)
+                throw error("unmergeable sub-chains: left last_block_slot: {} right first_block_slot: {}", last_block_slot, right.first_block_slot);
             num_bytes += right.num_bytes;
             num_blocks += right.num_blocks;
             valid_blocks += right.valid_blocks;
             last_block_slot = right.last_block_slot;
             last_block_hash = right.last_block_hash;
+            check_coherency();
+        }
+
+        void check_coherency() const
+        {
+            if (num_bytes == 0) [[unlikely]]
+                throw error("a sub-chain must contain data!");
+            if (num_blocks == 0) [[unlikely]]
+                throw error("a sub-chain must contain blocks!");
+            if (first_block_slot > last_block_slot) [[unlikely]]
+                throw error("a sub-chain must contain monotonically increasing slots but got {} > {}!", first_block_slot, last_block_slot);
+            if (num_blocks == 1) {
+                if (first_block_hash != last_block_hash) [[unlikely]]
+                    throw error("a single block sub-chain must have the same first and last hashes but got: {} and {}!", first_block_hash, last_block_hash);
+                if (first_block_slot != last_block_slot) [[unlikely]]
+                    throw error("a single block sub-chain must have the same first and last slots but got: {} and {}!", first_block_slot, last_block_slot);
+            } else {
+                if (first_block_hash == last_block_hash) [[unlikely]]
+                    throw error("a multi-block sub-chain must have different first and last hashes but got: {} and {}!", first_block_hash, last_block_hash);
+                // it is theoretically possible for two blocks to have the same slot, so no need to check for the slots
+            }
         }
 
         size_t end_offset() const
@@ -50,25 +70,28 @@ namespace daedalus_turbo::cardano::ledger {
 
         bool operator<(const auto &v) const
         {
-            if (offset != v.offset)
-                return offset < v.offset;
-            return num_bytes < v.num_bytes;
+            return offset < v.offset;
         }
 
         explicit operator bool() const
         {
-            return num_bytes > 0 && num_blocks > 0 && num_blocks == valid_blocks;
+            bool res = num_bytes > 0;
+            res &= num_blocks > 0;
+            res &= num_blocks == valid_blocks;
+            return res;
         }
     };
 
     struct subchain_list: std::map<uint64_t, subchain> {
         void add(subchain &&sc)
         {
-            if (sc.first_block_slot > sc.last_block_slot)
-                throw error("a subchain with an invalid slot range: [{}, {}]", sc.first_block_slot, sc.last_block_slot);
-            auto [it, created] = emplace(sc.offset + sc.num_bytes - 1, std::move(sc));
+            sc.check_coherency();
+            const auto last_byte_offset = sc.offset + sc.num_bytes - 1;
+            if (auto it = lower_bound(sc.offset); it != end() && it->second.offset <= last_byte_offset)
+                throw error("intersecting subchains: existing: {} new: {}", it->second, sc);
+            auto [it, created] = emplace(last_byte_offset, std::move(sc));
             if (!created)
-                throw error("duplicate subchain starting a offset {} size {}", sc.offset, sc.num_bytes);
+                throw error("a duplicate subchain: existing: {} new: {}", it->second, sc);
             if (it->second)
                 merge_valid();
         }
@@ -82,7 +105,7 @@ namespace daedalus_turbo::cardano::ledger {
         {
             auto it = lower_bound(offset);
             if (it == end() || !(it->second.offset <= offset && it->first >= offset))
-                throw error("internal error: can't find subchain for blockchain offset {}", offset);
+                throw error("internal error: can't find a sub-chain for the blockchain offset {}", offset);
             return it;
         }
 
@@ -93,10 +116,10 @@ namespace daedalus_turbo::cardano::ledger {
             return 0;
         }
 
-        cardano::optional_point max_valid_point() const
+        optional_point max_valid_point() const
         {
             if (const auto it = begin(); it != end() && it->second && it->second.offset == 0) [[likely]]
-                return cardano::point { it->second.last_block_hash, it->second.last_block_slot, 0, it->second.num_bytes };
+                return point { it->second.last_block_hash, it->second.last_block_slot, it->second.num_blocks, it->second.num_bytes };
             return {};
         }
 
@@ -129,6 +152,8 @@ namespace daedalus_turbo::cardano::ledger {
                     if (!next_it->second && next_first_block_slot.epoch() != next_last_block_slot.epoch())
                         throw error("an unvalidated subchain at [{}:{}) has slots from different epochs: first slot: {} last_slot: {}",
                             next_it->second.offset, next_it->second.end_offset(), next_first_block_slot, next_last_block_slot);
+                    if (static_cast<bool>(it->second) != static_cast<bool>(next_it->second))
+                        break;
                     if (last_block_slot.epoch() != next_first_block_slot.epoch())
                         break;
                     it->second.merge(next_it->second);
@@ -137,6 +162,17 @@ namespace daedalus_turbo::cardano::ledger {
                 _adjust_updated_subchain(it);
                 it = next_it;
             }
+        }
+
+        optional_point report_valid_blocks(const uint64_t chunk_offset, const size_t num_valid_blocks)
+        {
+            auto sc_it = find(chunk_offset);
+            sc_it->second.valid_blocks += num_valid_blocks;
+            if (sc_it->second) {
+                merge_valid();
+                return max_valid_point();
+            }
+            return {};
         }
     private:
         std::function<void(const subchain &)> _take_snapshot {};
@@ -151,6 +187,25 @@ namespace daedalus_turbo::cardano::ledger {
                 if (!created)
                     throw error("duplicate subchain found with last_offset {}", last_offset);
             }
+        }
+    };
+}
+
+namespace fmt {
+    template<>
+    struct formatter<daedalus_turbo::cardano::ledger::subchain>: formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::cardano::ledger::subchain &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "offset: {} size: {} blocks: {} valid_blocks: {} first_block_slot: {} first_block_hash: {} last_block_slot: {} last_block_hash: {}",
+                v.offset, v.num_bytes, v.num_blocks, v.valid_blocks, v.first_block_slot, v.first_block_hash, v.last_block_slot, v.last_block_hash);
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::cardano::ledger::subchain_list>: formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::cardano::ledger::subchain_list &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "{}", static_cast<const std::map<uint64_t, daedalus_turbo::cardano::ledger::subchain> &>(v));
         }
     };
 }

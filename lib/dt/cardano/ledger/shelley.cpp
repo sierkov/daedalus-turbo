@@ -355,7 +355,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         _pools_retiring.erase(reg.pool_id);
     }
 
-    void state::retire_pool(const cardano::pool_hash &pool_id, uint64_t epoch)
+    void state::retire_pool(const pool_hash &pool_id, uint64_t epoch)
     {
         if (_active_pool_params.contains(pool_id)) {
             _pools_retiring[pool_id] = epoch;
@@ -364,9 +364,20 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         }
     }
 
-    bool state::has_pool(const cardano::pool_hash &pool_id)
+    bool state::has_pool(const pool_hash &id) const
     {
-        return _active_pool_params.contains(pool_id);
+        return _active_pool_params.contains(id);
+    }
+
+    bool state::has_stake(const stake_ident &id) const
+    {
+        const auto acc_it = _accounts.find(id);
+        return acc_it != _accounts.end() && acc_it->second.ptr;
+    }
+
+    bool state::has_drep(const credential_t &) const
+    {
+        return false;
     }
 
     void state::instant_reward_reserves(const stake_ident &stake_id, const uint64_t reward)
@@ -429,6 +440,24 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         }
         for (const auto &[pool_id, num_blocks]: pool_blocks)
             add_pool_blocks(pool_id, num_blocks);
+    }
+
+    void state::process_cert(const cert_any_t &cert, const cert_loc_t &loc)
+    {
+        std::visit([&](const auto &c) {
+            using T = std::decay_t<decltype(c)>;
+            if constexpr (std::is_same_v<T, stake_reg_cert>
+                    || std::is_same_v<T, stake_dereg_cert>
+                    || std::is_same_v<T, stake_deleg_cert>
+                    || std::is_same_v<T, pool_reg_cert>
+                    || std::is_same_v<T, pool_retire_cert>
+                    || std::is_same_v<T, genesis_deleg_cert>
+                    || std::is_same_v<T, instant_reward_cert>) {
+                process_cert(c, loc);
+            } else {
+                throw error("certificate type is not supported in shelley era: {}", typeid(T).name());
+            }
+        }, cert.val);
     }
 
     void state::process_cert(const stake_reg_cert &c, const cert_loc_t &loc)
@@ -807,6 +836,11 @@ namespace daedalus_turbo::cardano::ledger::shelley {
     {
         _fees_next_reward += amount;
         _fees_utxo += amount;
+    }
+
+    const shelley_delegate_map &state::shelley_delegs() const
+    {
+        return _shelley_delegs;
     }
 
     void state::genesis_deleg_update(const cardano::key_hash &hash, const cardano::pool_hash &pool_id, const cardano::vrf_vkey &vrf_vkey)

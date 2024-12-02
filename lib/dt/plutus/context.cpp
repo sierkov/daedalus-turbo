@@ -6,8 +6,11 @@
 #include <dt/history.hpp>
 #include <dt/plutus/context.hpp>
 #include <dt/plutus/flat.hpp>
+#include <dt/plutus/flat-encoder.hpp>
 #include <dt/plutus/machine.hpp>
 #include <dt/zpp-stream.hpp>
+
+#define NDEBUG
 
 namespace daedalus_turbo::plutus {
     using namespace cardano;
@@ -906,29 +909,16 @@ namespace daedalus_turbo::plutus {
         script_type _typ;
     };
 
-    context::context(uint8_vector &&tx_body_data, uint8_vector &&tx_wits_data, uint8_vector &&tx_aux_data, storage::block_info &&block,
-        stored_txo_list &&inputs, stored_txo_list &&ref_inputs, const cardano::config &c_cfg):
-            _cfg { c_cfg },
-            _cost_models { costs::defaults() },
+    context::context(uint8_vector &&tx_body_data, uint8_vector &&tx_wits_data, const storage::block_info &block, const cardano::config &cfg):
+            _cfg { cfg },
             _tx_body_bytes { std::move(tx_body_data) },
             _tx_body_cbor { cbor::parse(_tx_body_bytes) },
             _tx_wits_bytes { std::move(tx_wits_data) },
             _tx_wits_cbor { cbor::parse(_tx_wits_bytes) },
-            _tx_aux_bytes { std::move(tx_aux_data) },
-            _tx_aux_cbor { _tx_aux_bytes.empty() ? nullptr : std::make_unique<cbor::value>(cbor::parse(_tx_aux_bytes)) },
-            _block_info { std::move(block) },
+            _block_info { block },
             _block { _block_info, _tx_body_cbor, _block_info.offset, _cfg },
-            _tx { make_tx(_tx_body_cbor, _block, 0, &_tx_wits_cbor, _tx_aux_cbor.get()) },
-            _inputs { std::move(inputs) },
-            _ref_inputs { std::move(ref_inputs) }
+            _tx { make_tx(_tx_body_cbor, _block, 0, &_tx_wits_cbor, nullptr) }
     {
-        _tx->foreach_witness([this](const auto typ, const auto &val) {
-            if (typ == 4) {
-                _tx->foreach_set(val, [&](const auto &d_raw, const auto) {
-                    _datums.try_emplace(blake2b<datum_hash>(d_raw.raw_span()), data::from_cbor(_alloc, d_raw.raw_span()));
-                });
-            }
-        });
         _tx->foreach_cert([&](const auto &v_raw, const auto) {
             _certs.emplace_back(v_raw);
         });
@@ -942,9 +932,6 @@ namespace daedalus_turbo::plutus {
             if (!created)
                 it->second = r;
         });
-        _tx->foreach_script([&](auto &&s) {
-            _scripts.try_emplace(s.hash(), std::move(s));
-        }, this);
         if (const auto *c_tx = dynamic_cast<const conway::tx *>(_tx.get()); c_tx) {
             c_tx->foreach_proposal([&](const auto &p) {
                 _proposals.emplace_back(p);
@@ -955,8 +942,15 @@ namespace daedalus_turbo::plutus {
         }
     }
 
+    context::context(uint8_vector &&tx_body_data, uint8_vector &&tx_wits_data, const storage::block_info &block,
+            stored_txo_list &&inputs_, stored_txo_list &&ref_inputs_, const cardano::config &c_cfg):
+        context { std::move(tx_body_data), std::move(tx_wits_data), block, c_cfg }
+    {
+        set_inputs(std::move(inputs_), std::move(ref_inputs_));
+    }
+
     context::context(stored_tx_context &&ctx, const cardano::config &c_cfg):
-        context { std::move(ctx.body), std::move(ctx.wits), std::move(ctx.aux), std::move(ctx.block),
+        context { std::move(ctx.body), std::move(ctx.wits), ctx.block,
                   std::move(ctx.inputs), std::move(ctx.ref_inputs), c_cfg }
     {
     }
@@ -972,33 +966,50 @@ namespace daedalus_turbo::plutus {
     {
     }
 
+    void context::set_inputs(stored_txo_list &&inputs_, stored_txo_list &&ref_inputs_)
+    {
+        _inputs = std::move(inputs_);
+        _ref_inputs = std::move(ref_inputs_);
+        _tx->foreach_script([&](auto &&s) {
+            _scripts.try_emplace(s.hash(), std::move(s));
+        }, this);
+        _tx->foreach_witness([this](const auto typ, const auto &val) {
+            if (typ == 4) {
+                _tx->foreach_set(val, [&](const auto &d_raw, const auto) {
+                    _datums.try_emplace(blake2b<datum_hash>(d_raw.raw_span()), data::from_cbor(alloc(), d_raw.raw_span()));
+                });
+            }
+        });
+        _tx->foreach_withdrawal([&](const tx_withdrawal &w) {
+            _withdraws.emplace_back(w.address.stake_id_hybrid());
+        });
+    }
+
     const tx &context::tx() const
     {
         return *_tx;
     }
 
-    prepared_script context::apply_script(const script_info &script, const std::initializer_list<term> args, const std::optional<ex_units> &budget) const
+    prepared_script context::apply_script(allocator &&script_alloc, const script_info &script, const std::initializer_list<term> args, const std::optional<ex_units> &budget) const
     {
-        auto s_it = _scripts_parsed.find(script.hash());
-        if (s_it == _scripts_parsed.end()) {
-            flat::script s { _alloc, script.script() };
-            auto [new_it, created] = _scripts_parsed.try_emplace(script.hash(), s.program(), s.version());
-            s_it = new_it;
-        }
-
-        term t = s_it->second.expr;
+        const flat::script s { script_alloc, script.script() };
+        term t = s.program();
         for (auto it = args.begin(); it != args.end(); ++it) {
 #ifndef NDEBUG
             file::write(install_path(fmt::format("tmp/script-args-my-{}.txt", it - args.begin())), fmt::format("{}\n", *it));
 #endif
             if (std::next(it) != args.end()) {
                 if (script.type() == script_type::plutus_v1 || script.type() == script_type::plutus_v2)
-                    t = term { _alloc, apply { t, *it } };
+                    t = term { script_alloc, apply { t, *it } };
             } else {
-                t = term { _alloc, apply { t, *it } };
+                t = term { script_alloc, apply { t, *it } };
             }
         }
-        return { script, t, s_it->second.ver, budget };
+#ifndef NDEBUG
+        file::write(install_path("tmp/script-with-args.uplc"), fmt::format("(program {} {})", s_it->second.ver, t));
+        file::write(install_path("tmp/script-with-args.flat"), flat::encode_cbor(s_it->second.ver, t));
+#endif
+        return prepared_script { std::move(script_alloc),  script.hash(), script.type(), t, s.version(), budget };
     }
 
     static term term_from_datum(allocator &alloc, const context &ctx, const datum_hash &hash)
@@ -1013,7 +1024,8 @@ namespace daedalus_turbo::plutus {
 
     prepared_script context::prepare_script(const tx_redeemer &r) const
     {
-        auto t_redeemer = term { _alloc, constant { _alloc, data::from_cbor(_alloc, r.data) } };
+        allocator script_alloc {};
+        auto t_redeemer = term { script_alloc, constant { script_alloc, data::from_cbor(script_alloc, r.data) } };
         switch (r.tag) {
             case redeemer_tag::spend: {
                 const auto &in = input_at(r.ref_idx);
@@ -1022,12 +1034,12 @@ namespace daedalus_turbo::plutus {
                     const auto &script = _scripts.at(pay_id.hash);
                     std::optional<term> t_datum {};
                     if (in.data.datum)
-                        t_datum = std::visit([&](const auto &v) { return term_from_datum(_alloc, *this, v); }, *in.data.datum);
+                        t_datum = std::visit([&](const auto &v) { return term_from_datum(script_alloc, *this, v); }, *in.data.datum);
                     if (!t_datum && !r.data.empty())
-                        t_datum.emplace(_alloc, constant { _alloc, data::from_cbor(_alloc, r.data) });
+                        t_datum.emplace(script_alloc, constant { script_alloc, data::from_cbor(script_alloc, r.data) });
                     if (!t_datum)
                         throw error("couldn't find datum for tx {} redeemer {}", _tx->hash(), r.ref_idx);
-                    return apply_script(script, { *t_datum, t_redeemer, data(script.type(), r) }, r.budget);
+                    return apply_script(std::move(script_alloc), script, { *t_datum, t_redeemer, data(script_alloc, script.type(), r) }, r.budget);
                 }
                 throw error("tx {} redeemer #{} (spend) input #{}: the output address is not a payment script: {}!", _tx->hash(), r.idx, r.ref_idx, in);
                 break;
@@ -1035,19 +1047,19 @@ namespace daedalus_turbo::plutus {
             case redeemer_tag::mint: {
                 const auto policy_id = mint_at(r.ref_idx);
                 const auto &script = scripts().at(policy_id);
-                return apply_script(script, { t_redeemer, data(script.type(), r) }, r.budget);
+                return apply_script(std::move(script_alloc), script, { t_redeemer, data(script_alloc, script.type(), r) }, r.budget);
             }
             case redeemer_tag::cert: {
                 const auto &script = scripts().at(cert_cred_at(r.ref_idx).hash);
-                return apply_script(script, { t_redeemer, data(script.type(), r) }, r.budget);
+                return apply_script(std::move(script_alloc), script, { t_redeemer, data(script_alloc, script.type(), r) }, r.budget);
             }
             case redeemer_tag::reward: {
                 const auto &script = scripts().at(std::get<stake_ident>(withdraw_at(r.ref_idx)).hash);
-                return apply_script(script, { t_redeemer, data(script.type(), r) }, r.budget);
+                return apply_script(std::move(script_alloc), script, { t_redeemer, data(script_alloc, script.type(), r) }, r.budget);
             }
             case redeemer_tag::vote: {
                 const auto &script = scripts().at(voter_at(r.ref_idx).hash);
-                return apply_script(script, { t_redeemer, data(script.type(), r) }, r.budget);
+                return apply_script(std::move(script_alloc), script, { t_redeemer, data(script_alloc, script.type(), r) }, r.budget);
             }
             case redeemer_tag::propose: {
                 const auto &p = proposal_at(r.ref_idx);
@@ -1055,14 +1067,57 @@ namespace daedalus_turbo::plutus {
                     using T = std::decay_t<decltype(a)>;
                     if constexpr (std::is_same_v<T, conway::gov_action_t::parameter_change_t>) {
                         const auto &script = scripts().at(a.policy_id.value());
-                        return apply_script(script, { t_redeemer, data(script.type(), r) }, r.budget);
+                        return apply_script(std::move(script_alloc), script, { t_redeemer, data(script_alloc, script.type(), r) }, r.budget);
                     }
                     throw error("unsupported gov_action type: {}", typeid(T).name());
                     // Unreachable and needed only to Make Visual C++ happy
                     return prepared_script {
-                        scripts().begin()->second,
-                        term { _alloc, failure {} }
+                        allocator {},
+                        script_hash {},
+                        script_type::plutus_v1,
+                        term { alloc(), failure {} }
                     };
+                }, p.action.val);
+            }
+            default:
+                throw error("tx: {} unsupported redeemer_tag: {}", _tx->hash(), static_cast<int>(r.tag));
+        }
+    }
+
+    void context::eval_script(prepared_script &ps) const
+    {
+        try {
+            const auto &semantics = ps.typ == script_type::plutus_v3 ? builtins::semantics_v2() : builtins::semantics_v1();
+            machine m { ps.alloc, cost_models().for_script(ps.typ), semantics };
+            m.evaluate_no_res(ps.expr);
+        } catch (const std::exception &ex) {
+            throw error("script {} {}: {}", ps.typ, ps.hash, ex.what());
+        }
+    }
+
+    script_hash context::redeemer_script(const redeemer_id &r) const
+    {
+        switch (r.tag) {
+            case redeemer_tag::spend: {
+                const auto &in = input_at(r.ref_idx);
+                const address addr { in.data.address };
+                if (const auto pay_id = addr.pay_id(); pay_id.type == pay_ident::ident_type::SHELLEY_SCRIPT) [[likely]]
+                    return pay_id.hash;
+                throw error("tx {} (spend) input #{}: the output address is not a payment script: {}!", _tx->hash(), r.ref_idx, in);
+            }
+            case redeemer_tag::mint: return mint_at(r.ref_idx);
+            case redeemer_tag::cert: return cert_cred_at(r.ref_idx).hash;
+            case redeemer_tag::reward: return std::get<stake_ident>(withdraw_at(r.ref_idx)).hash;
+            case redeemer_tag::vote: return voter_at(r.ref_idx).hash;
+            case redeemer_tag::propose: {
+                const auto &p = proposal_at(r.ref_idx);
+                return std::visit<script_hash>([&](const auto &a) {
+                    using T = std::decay_t<decltype(a)>;
+                    if constexpr (std::is_same_v<T, conway::gov_action_t::parameter_change_t>)
+                        return a.policy_id.value();
+                    throw error("unsupported gov_action type: {}", typeid(T).name());
+                    // Unreachable and needed only to Make Visual C++ happy
+                    return script_hash {};
                 }, p.action.val);
             }
             default:
@@ -1070,27 +1125,9 @@ namespace daedalus_turbo::plutus {
         };
     }
 
-    void context::eval_script(const prepared_script &ps) const
+    const stake_ident_hybrid &context::withdraw_at(uint64_t r_idx) const
     {
-        try {
-            const auto &semantics = ps.script.type() == script_type::plutus_v3 ? builtins::semantics_v2() : builtins::semantics_v1();
-            machine m { _alloc, cost_models().for_script(ps.script), semantics };
-            m.evaluate_no_res(ps.expr);
-        } catch (const std::exception &ex) {
-            throw error("script {} {}: {}", ps.script.type(), ps.script.hash(), ex.what());
-        }
-    };
-
-    stake_ident_hybrid context::withdraw_at(uint64_t r_idx) const
-    {
-        std::optional<stake_ident_hybrid> stake_id {};
-        _tx->foreach_withdrawal([&](const tx_withdrawal &w) {
-            if (w.idx == r_idx)
-                stake_id.emplace(w.address.stake_id_hybrid());
-        });
-        if (stake_id) [[likely]]
-            return *stake_id;
-        throw error("a redeemer referenced an unknown withdrawal instruction: {}", r_idx);
+        return _withdraws.at(r_idx);
     }
 
     const conway::cert_t &context::cert_at(const uint64_t r_idx) const
@@ -1138,14 +1175,17 @@ namespace daedalus_turbo::plutus {
         return _votes;
     }
 
-    term context::data(const script_type typ, const tx_redeemer &r) const
+    term context::data(allocator &script_alloc, const script_type typ, const tx_redeemer &r) const
     {
-        data_encoder enc { _alloc, typ };
+        // allocate the per-script data with the per-script allocator
+        // but allocate the shared date with the per-context allocator
+        data_encoder enc { script_alloc, typ };
         auto shared_it = _shared.find(typ);
         if (shared_it == _shared.end()) {
-            auto [new_it, created] = _shared.try_emplace(typ, enc.context_shared(*this));
+            data_encoder enc_shared { alloc(), typ };
+            auto [new_it, created] = _shared.try_emplace(typ, enc_shared.context_shared(*this));
             shared_it = new_it;
         }
-        return { _alloc, constant { _alloc, enc.context(*this, shared_it->second, r) } };
+        return { script_alloc, constant { script_alloc, enc.context(*this, shared_it->second, r) } };
     }
 }

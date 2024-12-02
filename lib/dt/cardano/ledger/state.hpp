@@ -6,7 +6,7 @@
 #define DAEDALUS_TURBO_CARDANO_LEDGER_STATE_HPP
 
 #include <ranges>
-#include <dt/atomic.hpp>
+#include <dt/cardano/conway.hpp>
 #include <dt/cardano/ledger/babbage.hpp>
 #include <dt/cardano/ledger/shelley.hpp>
 #include <dt/cardano/ledger/subchain.hpp>
@@ -24,13 +24,14 @@ namespace daedalus_turbo::cardano::ledger {
         void clear();
 
         void load_zpp(const std::string &path);
-        void save_zpp(const std::string &path);
+        void save_zpp(const std::string &path, std::unique_ptr<subchain_list> tmp_sc={});
         parallel_serializer serialize_node(const point &tip, int prio=1000) const;
         point deserialize_node(buffer data);
         point load_node(const std::string &path);
         void save_node(const std::string &path, const point &tip, int prio=1000) const;
 
         void track_era(uint64_t era, uint64_t slot);
+        void process_cert(const cert_any_t &, const cert_loc_t &);
         void process_updates(updates_t &&);
 
         optional_point add_subchain(subchain &&sc)
@@ -40,18 +41,10 @@ namespace daedalus_turbo::cardano::ledger {
             return _subchains.max_valid_point();
         }
 
-        optional_point mark_subchain_valid(const uint64_t epoch, const uint64_t epoch_min_offset, const size_t num_valid_blocks)
+        optional_point mark_subchain_valid(const uint64_t chunk_offset, const size_t num_valid_blocks)
         {
             mutex::scoped_lock sc_lk { _subchains_mutex };
-            auto sc_it = _subchains.find(epoch_min_offset);
-            sc_it->second.valid_blocks += num_valid_blocks;
-            if (sc_it->second) {
-                logger::debug("subchain became valid epoch: {} start_offset: {} end_offset: {}",
-                    epoch, sc_it->second.offset, sc_it->second.end_offset());
-                _subchains.merge_valid();
-                return _subchains.max_valid_point();
-            }
-            return {};
+            return _subchains.report_valid_blocks(chunk_offset, num_valid_blocks);
         }
 
         uint64_t valid_end_offset() const
@@ -60,10 +53,22 @@ namespace daedalus_turbo::cardano::ledger {
             return std::min(_subchains.valid_size(), _state->_end_offset);
         }
 
+        subchain_list set_subchains(subchain_list &&new_sc)
+        {
+            auto orig_sc = std::move(_subchains);
+            _subchains = std::move(new_sc);
+            return orig_sc;
+        }
+
         void merge_same_epoch_subchains()
         {
             mutex::scoped_lock sc_lk { _subchains_mutex };
             _subchains.merge_same_epoch(_cfg);
+        }
+
+        const shelley_delegate_map &shelley_delegs() const
+        {
+            return _state->shelley_delegs();
         }
 
         void proposal_vote(const uint64_t slot, const param_update_vote &vote)
@@ -379,6 +384,21 @@ namespace daedalus_turbo::cardano::ledger {
         uint64_t epoch() const
         {
             return _state->_epoch;
+        }
+
+        bool has_pool(const pool_hash &id) const
+        {
+            return _state->has_pool(id);
+        }
+
+        bool has_stake(const stake_ident &id) const
+        {
+            return _state->has_stake(id);
+        }
+
+        bool has_drep(const credential_t &id) const
+        {
+            return _state->has_drep(id);
         }
     private:
         // non-serializable members:

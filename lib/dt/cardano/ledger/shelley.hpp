@@ -6,6 +6,7 @@
 #define DAEDALUS_TURBO_CARDANO_LEDGER_SHELLEY_HPP
 
 #include <dt/cardano/common.hpp>
+#include <dt/cardano/cert.hpp>
 #include <dt/cardano/shelley.hpp>
 #include <dt/cardano/ledger/types.hpp>
 #include <dt/index/vrf.hpp>
@@ -110,11 +111,15 @@ namespace daedalus_turbo::cardano::ledger::shelley {
 
         virtual void compute_rewards_if_ready();
         virtual void process_updates(updates_t &&);
+        virtual void process_cert(const cert_any_t &, const cert_loc_t &);
         virtual void start_epoch(std::optional<uint64_t> new_epoch);
 
         virtual void register_pool(const pool_reg_cert &reg);
         virtual void retire_pool(const pool_hash &pool_id, uint64_t epoch);
-        virtual bool has_pool(const pool_hash &pool_id);
+
+        virtual bool has_pool(const pool_hash &id) const;
+        virtual bool has_stake(const stake_ident &id) const;
+        virtual bool has_drep(const credential_t &id) const;
 
         virtual void instant_reward_reserves(const stake_ident &stake_id, uint64_t reward);
         virtual void instant_reward_treasury(const stake_ident &stake_id, uint64_t reward);
@@ -143,6 +148,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         virtual void reserves(uint64_t new_reserves);
         virtual void treasury(uint64_t new_treasury);
 
+        virtual const shelley_delegate_map &shelley_delegs() const;
         virtual void genesis_deleg_update(const key_hash &hash, const pool_hash &pool_id, const vrf_vkey &vrf_vkey);
         virtual void rotate_snapshots();
 

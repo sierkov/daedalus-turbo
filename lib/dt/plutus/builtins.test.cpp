@@ -280,8 +280,8 @@ suite plutus_builtins_suite = [] {
                     constant_list cl { alloc, constant_type { alloc, type_tag::integer }, { { constant { alloc, bint_type(alloc, 0) } } } };
                     const auto res = mk_cons(alloc, value { alloc, 22 }, value { alloc, constant { alloc, std::move(cl) } }).as_list();
                     expect(res->vals.size() == 2_u);
-                    expect(res->vals.at(0).as_int() == 22);
-                    expect(res->vals.at(1).as_int() == 0);
+                    expect(res->vals.front().as_int() == 22);
+                    expect(res->vals.back().as_int() == 0);
                 }
             };
             "head_list"_test = [&] {
@@ -320,8 +320,8 @@ suite plutus_builtins_suite = [] {
                     constant_list cl{ alloc, constant_type { alloc, type_tag::integer }, std::move(vals) };
                     const auto res = tail_list(alloc, value { alloc, constant { alloc, std::move(cl) } }).as_list();
                     expect(res->vals.size() == 2_u);
-                    expect(res->vals.at(0).as_int() == 33);
-                    expect(res->vals.at(1).as_int() == 44);
+                    expect(res->vals.front().as_int() == 33);
+                    expect(res->vals.back().as_int() == 44);
                 }
                 expect(throws([&] { tail_list(alloc, value::make_list(alloc, constant_type { alloc, type_tag::integer })); }));
             };

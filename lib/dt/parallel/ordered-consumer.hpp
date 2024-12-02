@@ -6,9 +6,7 @@
 #define DAEDALUS_TURBO_PARALLEL_ORDERED_CONSUMER_HPP
 
 #include <atomic>
-#include <dt/container.hpp>
 #include <dt/error.hpp>
-#include <dt/mutex.hpp>
 #include <dt/scheduler.hpp>
 
 namespace daedalus_turbo::parallel {
@@ -23,12 +21,14 @@ namespace daedalus_turbo::parallel {
 
         bool try_push(const index_type end_idx)
         {
+            if (_error.load(std::memory_order_relaxed)) [[unlikely]]
+                throw error("One of the consumer executions has raised an error. Impossible to proceed. Please consult logs for details.");
             if (end_idx > _next.load(std::memory_order_relaxed) && !_running.load(std::memory_order_relaxed)) {
                 bool exp = false;
                 if (_running.compare_exchange_strong(exp, true, std::memory_order_acquire, std::memory_order_relaxed)) {
                     const auto start_idx = _next.load(std::memory_order_acquire);
                     _sched.submit_void(_sched_name, _sched_prio, [&, start_idx, end_idx] {
-                        logger::run_log_errors([&] {
+                        const auto ex_ptr = logger::run_log_errors([&] {
                             for (auto idx = start_idx; idx < end_idx; ++idx) {
                                 _consumer(idx);
                                 _next.store(idx + 1, std::memory_order_release);
@@ -36,11 +36,18 @@ namespace daedalus_turbo::parallel {
                         }, [&] {
                             _running.store(false, std::memory_order_release);
                         });
+                        if (ex_ptr)
+                            _error.store(true, std::memory_order_release);
                     });
                     return true;
                 }
             }
             return false;
+        }
+
+        bool cancel() const
+        {
+            return _error.load(std::memory_order_relaxed);
         }
 
         index_type next() const
@@ -54,6 +61,7 @@ namespace daedalus_turbo::parallel {
         scheduler &_sched;
         std::atomic<index_type> _next { 0 };
         std::atomic_bool _running { false };
+        std::atomic_bool _error { false };
     };
 }
 

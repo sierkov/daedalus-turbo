@@ -25,8 +25,11 @@ namespace daedalus_turbo::cli::tip {
             const auto tip = cr.tip();
             logger::info("the local tip: {}", tip);
             if (mode == chunk_registry::mode::validate) {
-                logger::info("the local immutable tip: {}", cr.immutable_tip());
                 logger::info("the local core tip: {}", cr.core_tip());
+                logger::info("the local immutable tip: {}", cr.immutable_tip());
+                for (const auto &snap: cr.validator().snapshots()) {
+                    logger::info("snapshot: {}", snap);
+                }
             }
             if (tip)
                 logger::info("the latest slot: {}", cr.make_slot(tip->slot));

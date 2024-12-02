@@ -17,15 +17,14 @@ namespace daedalus_turbo::parallel {
     struct ordered_queue {
         using index_type = uint64_t;
         using optional_index = std::optional<index_type>;
+        using index_range = std::pair<index_type, index_type>;
+        using optional_index_range = std::optional<index_range>;
 
         void put(const index_type item_idx)
         {
             if (item_idx == std::numeric_limits<index_type>::max()) [[unlikely]]
                 throw error("the index is too large: {}", item_idx);
             mutex::scoped_lock lk { _put_mutex };
-            while (_unordered.size() >= 32) {
-
-            }
             _unordered.emplace(item_idx);
             index_type proposed_next = _next_ordered.load(std::memory_order_relaxed);
             for (auto it = _unordered.begin(); it != _unordered.end() && proposed_next == *it; it = _unordered.erase(it)) {
@@ -43,6 +42,18 @@ namespace daedalus_turbo::parallel {
                 if (_next_take.compare_exchange_strong(exp_idx, exp_idx + 1, std::memory_order_acq_rel, std::memory_order_relaxed))
                     return exp_idx;
             }
+        }
+
+        optional_index_range take_all()
+        {
+            const optional_index first_item = take();
+            if (!first_item)
+                return {};
+            auto last_item = first_item;
+            for (auto next_item = first_item; next_item; next_item = take()) {
+                last_item = next_item;
+            }
+            return index_range { *first_item, *last_item };
         }
 
         index_type next() const

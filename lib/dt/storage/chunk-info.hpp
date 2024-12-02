@@ -138,6 +138,7 @@ namespace daedalus_turbo::storage {
             };
         }
     };
+    using chunk_cptr_list = std::vector<const chunk_info *>;
 }
 
 #endif //DAEDALUS_TURBO_STORAGE_CHUNK_INFO_HPP

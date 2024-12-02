@@ -1,12 +1,7 @@
 TEST_NAME=$1
-SOURCE_FILE=$2
-COMMAND=$3
-BUILD_DIR=$4
+BUILD_DIR=$2
 if [ -z "$BUILD_DIR" ]; then
-  BUILD_DIR="build-clion-coverage"
-fi
-if [ -z "$COMMAND" ]; then
-  COMMAND="show"
+  BUILD_DIR="build-clang-cov"
 fi
 $BUILD_DIR/run-test "$TEST_NAME"
 if [ -f /usr/bin/llvm-profdata-18 ]; then
@@ -17,4 +12,4 @@ else
   COV_BIN=llvm-cov
 fi
 $PROFDATA_BIN merge -sparse default.profraw -o run-test.profdata
-$COV_BIN $COMMAND $BUILD_DIR/run-test -instr-profile=run-test.profdata -sources "lib/dt/$SOURCE_FILE"
+$COV_BIN show -show-branches=percent -ignore-filename-regex=lib/dt/cli -ignore-filename-regex=3rdparty/ -format=html -output-dir=tmp/coverage $BUILD_DIR/run-test -instr-profile=run-test.profdata

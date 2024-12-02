@@ -99,9 +99,8 @@ suite parallel_ordered_consumer_suite = [] {
             test_same(true, c.try_push(11));
             sched.process();
             test_same(10, processed.size());
-            test_same(true, c.try_push(11));
-            sched.process();
-            test_same(10, processed.size());
+            expect(throws([&] { c.try_push(11); }));
+            test_same(10, c.next());
         };
     };
 };

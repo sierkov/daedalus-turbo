@@ -61,6 +61,16 @@ namespace daedalus_turbo::zpp {
     }
 
     template<typename T>
+    T load_zstd(const std::string &path)
+    {
+        const auto zpp_data = file::read_zstd(path);
+        ::zpp::bits::in in { zpp_data };
+        T v;
+        in(v).or_throw();
+        return v;
+    }
+
+    template<typename T>
     void serialize(uint8_vector &zpp_data, const T &v)
     {
         ::zpp::bits::out out { zpp_data };

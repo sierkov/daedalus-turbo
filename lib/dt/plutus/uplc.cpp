@@ -466,20 +466,24 @@ namespace daedalus_turbo::plutus::uplc {
 
         constant_pair _decode_pair_value(constant_type &&typ)
         {
+            if (typ->nested.size() != 2) [[unlikely]]
+                    throw error("the nested type list for a pair must have two elements but has {}", typ->nested.size());
             _eat_lpar();
-            auto fst = _decode_constant_value(constant_type { typ->nested.at(0) });
+            auto fst = _decode_constant_value(constant_type { typ->nested.front() });
             _eat_space();
             _eat(',');
             _eat_space();
-            auto snd = _decode_constant_value(constant_type { typ->nested.at(1) });
+            auto snd = _decode_constant_value(constant_type { typ->nested.back() });
             _eat_rpar();
             return { _alloc, std::move(fst), std::move(snd) };
         }
 
         constant_list _decode_list_value(constant_type &&list_typ)
         {
+            if (list_typ->nested.size() != 1) [[unlikely]]
+                    throw error("the nested type list for a list must have just one element but has {}", list_typ->nested.size());
             _eat_lbr();
-            auto typ = list_typ->nested.at(0);
+            auto typ = list_typ->nested.front();
             constant_list::list_type vals { _alloc };
             while (!_next_is(']')) {
                 vals.emplace_back(_decode_constant_value(constant_type { typ }));
@@ -527,8 +531,7 @@ namespace daedalus_turbo::plutus::uplc {
 
         term _decode_constr()
         {
-            if (_version && (_version->major > 1 || (_version->major == 1 && _version->minor >= 1))) {
-                _eat_space();
+            if (_version && (_version->empty() || (_version->major > 1 || (_version->major == 1 && _version->minor >= 1)))) {
                 _eat_space();
                 const auto tag = static_cast<uint64_t>(*_decode_integer());
                 _eat_space();
@@ -538,12 +541,12 @@ namespace daedalus_turbo::plutus::uplc {
                 }
                 return { _alloc, t_constr { tag, term_list { _alloc, std::move(args) } } };
             }
-            throw error("constr term is allowed only for programs of versions 1.1.0 and higher");
+            throw error("constr term is allowed only for programs of versions 1.1.0 and higher but have: {}", _version);
         }
 
         term _decode_case()
         {
-            if (_version && (_version->major > 1 || (_version->major == 1 && _version->minor >= 1))) {
+            if (_version && (_version->empty() || (_version->major > 1 || (_version->major == 1 && _version->minor >= 1)))) {
                 _eat_space();
                 auto arg = _decode_term();
                 _eat_space();
@@ -553,7 +556,7 @@ namespace daedalus_turbo::plutus::uplc {
                 }
                 return { _alloc, t_case { std::move(arg), { _alloc, std::move(cases) } } };
             }
-            throw error("case term is allowed only for programs of versions 1.1.0 and higher");
+            throw error("case term is allowed only for programs of versions 1.1.0 and higher but have: {}", _version);
         }
 
         term _decode_builtin()

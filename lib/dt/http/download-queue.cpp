@@ -124,11 +124,6 @@ namespace daedalus_turbo::http {
             _success = true;
             return res;
         }
-
-        speed_mbps internet_speed()
-        {
-            return speed_mbps { _speed_current.load(), _speed_max.load() };
-        }
     private:
         struct connection: std::enable_shared_from_this<connection> {
             connection(impl &dlq, net::io_context& ioc, tcp::resolver &resolver)
@@ -322,8 +317,6 @@ namespace daedalus_turbo::http {
         std::atomic_size_t _active_conns { 0 };
         std::atomic_size_t _queue_size { 0 };
         perf_stats _stats {};
-        std::atomic<double> _speed_max { 0.0 };
-        std::atomic<double> _speed_current { 0.0 };
         std::chrono::time_point<std::chrono::system_clock> _stats_next_report { std::chrono::system_clock::now() + stats_report_span };
         bool _destroy = false;
 
@@ -342,14 +335,7 @@ namespace daedalus_turbo::http {
             const auto now = std::chrono::system_clock::now();
             if (now >= _stats_next_report) {
                 const auto current_speed = _stats.report(stats_report_span_secs, _queue_size, _active_conns);
-                if (current_speed > 0) {
-                    for (;;) {
-                        double max_copy = _speed_max.load();
-                        if (current_speed <= max_copy || _speed_max.compare_exchange_strong(max_copy, current_speed))
-                            break;
-                    }
-                    _speed_current = current_speed;
-                }
+                _asio_worker.internet_speed_report(current_speed);
                 _stats_next_report = now + stats_report_span;
             }
         }
@@ -443,10 +429,4 @@ namespace daedalus_turbo::http {
     {
         return _impl->process_ok(report_progress, sched);
     }
-
-    download_queue::speed_mbps download_queue_async::_internet_speed_impl()
-    {
-        return _impl->internet_speed();
-    }
-
 }

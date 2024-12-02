@@ -6,6 +6,7 @@
 #define DAEDALUS_TURBO_PLUTUS_TYPES_HPP
 
 #include <any>
+#include <deque>
 #include <memory_resource>
 #include <variant>
 #include <dt/big_int.hpp>
@@ -33,6 +34,11 @@ namespace daedalus_turbo::plutus {
 
         bool operator>=(const version &o) const;
         bool operator==(const version &o) const;
+
+        bool empty() const
+        {
+            return major == 0 && minor == 0 && patch == 0;
+        }
 
         operator std::string() const
         {
@@ -219,8 +225,8 @@ namespace daedalus_turbo::plutus {
     typedef daedalus_turbo::error error;
 
     // The idea behind the faster allocation is to release all objects at once
-    // and save on the incremental deallocation and calls to destructors.
-    // For that to work all internal objects must also be allocated using the same allocator,
+    // and save on the incremental de-allocation and calls to destructors.
+    // For that to work all internal objects must be allocated using the same allocator,
     // so that there are no memory leaks
     struct allocator {
         using allocator_type = std::pmr::polymorphic_allocator<std::byte>;
@@ -232,10 +238,6 @@ namespace daedalus_turbo::plutus {
             ptr_type(const T *ptr): _ptr { ptr }
             {
             }
-
-            /*ptr_type(const ptr_type &o): _ptr { o._ptr }
-            {
-            }*/
 
             const T *get() const
             {
@@ -260,6 +262,22 @@ namespace daedalus_turbo::plutus {
             const T *_ptr = nullptr;
         };
 
+        allocator(const allocator &) =delete;
+        allocator &operator=(const allocator &) =delete;
+        allocator &operator=(allocator &&o) =delete;
+
+        allocator():
+            _mr { std::make_unique<std::pmr::monotonic_buffer_resource>(0x800000, my_resource::get()) },
+            _ptrs { _mr.get() }
+        {
+        }
+
+        allocator(allocator &&o):
+            _mr { std::move(o._mr) },
+            _ptrs { std::move(o._ptrs), _mr.get() }
+        {
+        }
+
         ~allocator()
         {
             for (const auto &[p, dtr]: _ptrs) {
@@ -275,7 +293,7 @@ namespace daedalus_turbo::plutus {
 
         std::pmr::memory_resource *resource()
         {
-            return &_mr;
+            return _mr.get();
         }
     private:
         struct any_ptr {
@@ -294,12 +312,14 @@ namespace daedalus_turbo::plutus {
 
             void *do_allocate(const size_t bytes, const size_t align) override
             {
-                return _alloc.allocate(_aligned_bytes(bytes, align));
+                const auto aligned_size = _aligned_bytes(bytes, align);
+                return _alloc.allocate(aligned_size);
             }
 
             void do_deallocate(void *ptr, const size_t bytes, const size_t align) override
             {
-                _alloc.deallocate(reinterpret_cast<std::byte *>(ptr), _aligned_bytes(bytes, align));
+                const auto aligned_size = _aligned_bytes(bytes, align);
+                _alloc.deallocate(reinterpret_cast<std::byte *>(ptr), aligned_size);
             }
 
             bool do_is_equal(const memory_resource &o) const noexcept override
@@ -314,8 +334,60 @@ namespace daedalus_turbo::plutus {
             my_alloc _alloc {};
         };
 
-        std::pmr::monotonic_buffer_resource _mr { 0x800000, my_resource::get() };
-        std::pmr::vector<any_ptr> _ptrs { &_mr };
+        struct counting_resource: std::pmr::memory_resource {
+            using my_alloc = container_allocator<std::byte>;
+
+            counting_resource(memory_resource *upstream): _upstream { upstream }
+            {
+                if (!_upstream) [[unlikely]]
+                    throw error("counting resource requires a not-null upstream memory resource!");
+            }
+
+            void *do_allocate(const size_t bytes, const size_t align) override
+            {
+                const auto aligned_size = _aligned_bytes(bytes, align);
+                _size += aligned_size;
+                ++_cnts[aligned_size].num_allocs;
+                return _mbr.allocate(aligned_size);
+            }
+
+            void do_deallocate(void *ptr, const size_t bytes, const size_t align) override
+            {
+                const auto aligned_size = _aligned_bytes(bytes, align);
+                if (aligned_size > _size) [[unlikely]]
+                    throw error("trying to deallocate more than has been allocated!");
+                _size -= aligned_size;
+                ++_cnts[aligned_size].num_deallocs;
+                _mbr.deallocate(ptr, aligned_size);
+            }
+
+            bool do_is_equal(const memory_resource &o) const noexcept override
+            {
+                return this == &o;
+            }
+
+            void log_stats(const std::string_view context) const
+            {
+                logger::debug("{}: memory usage: {} bytes", context, _size);
+            }
+        private:
+            static constexpr size_t _aligned_bytes(const size_t bytes, const size_t align) {
+                return bytes & align ? bytes + align - (bytes & align) : bytes;
+            }
+
+            struct info_t {
+                size_t num_allocs = 0;
+                size_t num_deallocs = 0;
+            };
+
+            memory_resource *_upstream;
+            std::pmr::monotonic_buffer_resource _mbr { _upstream };
+            size_t _size = 0;
+            map<size_t, info_t> _cnts {};
+        };
+
+        std::unique_ptr<std::pmr::memory_resource> _mr;
+        std::pmr::vector<any_ptr> _ptrs;
     };
 
     struct str_type {
@@ -386,17 +458,38 @@ namespace daedalus_turbo::plutus {
 
     template<typename T>
     struct list_type: std::pmr::vector<T> {
+        using base_type = std::pmr::vector<T>;
+
         list_type() =delete;
 
-        list_type(allocator &alloc): std::pmr::vector<T> { alloc.resource() }
+        list_type(allocator &alloc): base_type { alloc.resource() }
         {
         }
 
-        list_type(allocator &alloc, std::initializer_list<T> il): std::pmr::vector<T> { il, alloc.resource() }
+        list_type(allocator &alloc, std::initializer_list<T> il): base_type { il, alloc.resource() }
         {
         }
 
-        list_type(allocator &alloc, list_type<T> &&l): std::pmr::vector<T> { std::move(l), alloc.resource() }
+        list_type(allocator &alloc, list_type<T> &&l): base_type { std::move(l), alloc.resource() }
+        {
+        }
+    };
+
+    template<typename T>
+    struct map_type: std::pmr::vector<T> {
+        using base_type = std::pmr::vector<T>;
+
+        map_type() =delete;
+
+        map_type(allocator &alloc): base_type { alloc.resource() }
+        {
+        }
+
+        map_type(allocator &alloc, std::initializer_list<T> il): base_type { il, alloc.resource() }
+        {
+        }
+
+        map_type(allocator &alloc, map_type<T> &&l): base_type { std::move(l), alloc.resource() }
         {
         }
     };
@@ -420,13 +513,14 @@ namespace daedalus_turbo::plutus {
 
         bool operator==(const term_list &o) const
         {
-            if (_ptr->size() != o._ptr->size())
+            return *_ptr == *o._ptr;
+            /*if (_ptr->size() != o._ptr->size())
                 return false;
             for (size_t i = 0; i < _ptr->size(); ++i) {
                 if ((*_ptr)[i] != (*o._ptr)[i])
                     return false;
             }
-            return true;
+            return true;*/
         }
 
         const value_type *operator->() const
@@ -767,7 +861,7 @@ namespace daedalus_turbo::plutus {
     };
 
     struct data {
-        using map_type = list_type<data_pair>;
+        using map_type = map_type<data_pair>;
 
         using list_type = list_type<data>;
         using int_type = bint_type;
@@ -1156,7 +1250,7 @@ namespace daedalus_turbo::plutus {
     template<typename T, typename... Args>
     allocator::ptr_type<T> allocator::make(Args &&...a)
     {
-        T *p = new (_mr.allocate(sizeof(T), 0x10)) T { std::forward<Args>(a)... };
+        T *p = new (_mr->allocate(sizeof(T), 0x10)) T { std::forward<Args>(a)... };
         return p;
     }
 #if defined(__GNUC__) && !defined(__clang__)
@@ -1171,7 +1265,7 @@ namespace daedalus_turbo::plutus {
     template<typename T, typename... Args>
     allocator::ptr_type<T> allocator::make_foreign(Args &&...a)
     {
-        T *p = new (_mr.allocate(sizeof(T), 0x10)) T { std::forward<Args>(a)... };
+        T *p = new (_mr->allocate(sizeof(T), 0x10)) T { std::forward<Args>(a)... };
         try {
             _ptrs.emplace_back(p, [](const void* x) { static_cast<const T*>(x)->~T(); });
         } catch (...) {
@@ -1318,10 +1412,16 @@ namespace fmt {
             using namespace daedalus_turbo::plutus;
             if (v->nested.empty())
                 return fmt::format_to(ctx.out(), "{}", v->typ);
-            if (v->typ == type_tag::list)
-                return fmt::format_to(ctx.out(), "({} {})", v->typ, v->nested.at(0));
-            if (v->typ == type_tag::pair)
-                return fmt::format_to(ctx.out(), "({} {} {})", v->typ, v->nested.at(0), v->nested.at(1));
+            if (v->typ == type_tag::list) {
+                if (v->nested.size() != 1) [[unlikely]]
+                    throw error("the nested type list for a list must have just one element but has {}", v->nested.size());
+                return fmt::format_to(ctx.out(), "({} {})", v->typ, v->nested.front());
+            }
+            if (v->typ == type_tag::pair) {
+                if (v->nested.size() != 2) [[unlikely]]
+                    throw error("the nested type list for a pair must have two elements but has {}", v->nested.size());
+                return fmt::format_to(ctx.out(), "({} {} {})", v->typ, v->nested.front(), v->nested.back());
+            }
             throw daedalus_turbo::error("unsupported constant_type: {}!", v->typ);
         }
     };
@@ -1445,7 +1545,7 @@ namespace fmt {
     struct formatter<daedalus_turbo::plutus::value_list::value_type>: formatter<int> {
         template<typename FormatContext>
         auto format(const daedalus_turbo::plutus::value_list::value_type &v, FormatContext &ctx) const -> decltype(ctx.out()) {
-            return fmt::format_to(ctx.out(), "{}", static_cast<std::pmr::vector<daedalus_turbo::plutus::value>>(v));
+            return fmt::format_to(ctx.out(), "{}", static_cast<daedalus_turbo::plutus::value_list::value_type::base_type>(v));
         }
     };
 
@@ -1461,7 +1561,10 @@ namespace fmt {
     struct formatter<daedalus_turbo::plutus::term_list>: formatter<int> {
         template<typename FormatContext>
         auto format(const daedalus_turbo::plutus::term_list &v, FormatContext &ctx) const -> decltype(ctx.out()) {
-            return fmt::format_to(ctx.out(), "{}", *v);
+            auto out_it = ctx.out();
+            for (auto it = v->begin(); it != v->end(); ++it)
+                out_it = fmt::format_to(out_it, "{}{}", *it, std::next(it) != v->end() ? " " : "");
+            return out_it;
         }
     };
 

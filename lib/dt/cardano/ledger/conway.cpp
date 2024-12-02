@@ -172,6 +172,18 @@ namespace daedalus_turbo::cardano::ledger::conway {
         );
     }
 
+    void state::process_cert(const cert_any_t &cert, const cert_loc_t &loc)
+    {
+        std::visit([&](const auto &c) {
+            process_cert(c, loc);
+        }, cert.val);
+    }
+
+    bool state::has_drep(const credential_t &id) const
+    {
+        return _dreps.contains(id);
+    }
+
     void state::_add_encode_task(parallel_serializer &ser, const encode_cbor_func &t) const
     {
         ser.add([t] {
@@ -447,7 +459,6 @@ namespace daedalus_turbo::cardano::ledger::conway {
 
     void state::process_cert(const auth_committee_hot_cert &c, const cert_loc_t &)
     {
-        logger::debug("auth_committee_hot_cert cold: {} hot: {}", c.cold_id, c.hot_id);
         // Do not check for the presence in the committee to allow new members to immediately update their certs
         const auto [it, created] = _committee.hot_keys.try_emplace(c.cold_id, c.hot_id);
         if (!created) {
@@ -459,7 +470,6 @@ namespace daedalus_turbo::cardano::ledger::conway {
 
     void state::process_cert(const resign_committee_cold_cert &c, const cert_loc_t &)
     {
-        logger::debug("resign_committee_cold_cert cold: {}", c.cold_id);
         if (auto it = _committee.hot_keys.find(c.cold_id); it != _committee.hot_keys.end()) [[likely]] {
             it->second = committee_t::resigned_t {};
         } else {
@@ -470,7 +480,6 @@ namespace daedalus_turbo::cardano::ledger::conway {
     void state::process_cert(const reg_drep_cert &c, const cert_loc_t &)
     {
         const auto [it, created] = _dreps.try_emplace(c.drep_id, c.deposit, c.anchor, _epoch + _params_prev.drep_activity);
-        logger::debug("reg_drep_cert: {} deposit: {} anchor: {}", c.drep_id, c.deposit, c.anchor);
         if (created) {
             _deposited += c.deposit;
         } else {
@@ -483,7 +492,6 @@ namespace daedalus_turbo::cardano::ledger::conway {
 
     void state::process_cert(const unreg_drep_cert &c, const cert_loc_t &)
     {
-        logger::debug("unreg_drep_cert: {} deposit: {}", c.drep_id, c.deposit);
         const auto it = _dreps.find(c.drep_id);
         if (it ==_dreps.end()) [[unlikely]]
             throw error("unreg_drep_cert: an unknown drep_id: {}", c.drep_id);
@@ -507,9 +515,8 @@ namespace daedalus_turbo::cardano::ledger::conway {
         drep_it->second.anchor = c.anchor;
     }
 
-    void state::process_proposal(const proposal_t &p, const cert_loc_t &loc)
+    void state::process_proposal(const proposal_t &p, const cert_loc_t &)
     {
-        logger::debug("a proposal {} at slot: {} deposit: {} stake_id: {}", p.action_id, loc.slot, p.deposit, p.stake_id);
         _gov_actions.try_emplace(p.action_id, p.deposit, p.stake_id, p.action, p.anchor,
             _epoch, _epoch + _params_prev.gov_action_lifetime);
         _deposited += p.deposit;
@@ -517,7 +524,6 @@ namespace daedalus_turbo::cardano::ledger::conway {
 
     void state::process_vote(const vote_info_t &v, const cert_loc_t &)
     {
-        logger::debug("vote for {} from {}: {}", v.action_id, v.voter, v.voting_procedure);
         if (auto gov_it = _gov_actions.find(v.action_id); gov_it != _gov_actions.end()) [[unlikely]] {
             switch (v.voter.type) {
                 case voter_t::type_t::const_comm_key:

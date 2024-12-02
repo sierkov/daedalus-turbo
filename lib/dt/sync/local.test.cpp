@@ -20,7 +20,7 @@ suite sync_local_suite = [] {
         chunk_registry idxr { data_dir, chunk_registry::mode::index, cfg, scheduler::get(), my_fr };
         "from scratch"_test = [&] {
             sync::local::syncer syncr { idxr };
-            expect(syncr.sync(syncr.find_peer(node_dir)));
+            expect(syncr.sync(syncr.find_peer(node_dir), {}, sync::validation_mode_t::none));
             test_same(idxr.max_slot(), 93147517);
             test_same(333'649'716, idxr.num_bytes());
         };
@@ -36,13 +36,13 @@ suite sync_local_suite = [] {
         };
         "incremental"_test = [&] {
             sync::local::syncer syncr { idxr };
-            expect(syncr.sync(syncr.find_peer(node_dir)));
+            expect(syncr.sync(syncr.find_peer(node_dir), {}, sync::validation_mode_t::none));
             test_same(333'649'716, idxr.num_bytes());
             test_same(idxr.max_slot(), 93147517);
         };
         "nothing to do"_test = [&] {
             sync::local::syncer syncr { idxr };
-            expect(!syncr.sync(syncr.find_peer(node_dir)));
+            expect(!syncr.sync(syncr.find_peer(node_dir), {}, sync::validation_mode_t::none));
             test_same(333'649'716, idxr.num_bytes());
             test_same(idxr.max_slot(), 93147517);
         };
@@ -53,7 +53,7 @@ suite sync_local_suite = [] {
             std::filesystem::create_directories(empty_dir + "/volatile");
             sync::local::syncer syncr { idxr, 3, std::chrono::seconds { 0 } };
             const auto before_fr = my_fr.size();
-            expect(!syncr.sync(syncr.find_peer(empty_dir)));
+            expect(!syncr.sync(syncr.find_peer(empty_dir), {}, sync::validation_mode_t::none));
             test_same(idxr.max_slot(), 93147517);
             test_same(333'649'716, idxr.num_bytes());
             test_same(my_fr.size(), before_fr);

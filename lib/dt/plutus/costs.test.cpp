@@ -31,7 +31,7 @@ suite plutus_costs_suite = [] {
                 const value arg1 { alloc, data::constr(alloc, 0, { data::constr(alloc, 1, { data::bstr(alloc, uint8_vector::from_hex("AABB")) }) }) };
                 const value arg2 { alloc, data::constr(alloc, 0, { data::constr(alloc, 1, { data::bstr(alloc, uint8_vector::from_hex("DDDD")) }) }) };
                 value_list args { alloc, { arg1, arg2 } };
-                arg_sizes sizes { machine::mem_usage(args->at(0)), machine::mem_usage(args->at(1)) };
+                arg_sizes sizes { machine::mem_usage(args->front()), machine::mem_usage(args->back()) };
                 test_same(13, sizes.at(0));
                 test_same(13, sizes.at(1));
                 test_same(1252775, b.cpu->cost(sizes, args));

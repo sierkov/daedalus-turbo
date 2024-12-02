@@ -5,6 +5,7 @@
 #ifndef DAEDALUS_TURBO_CARDANO_SHELLEY_HPP
 #define DAEDALUS_TURBO_CARDANO_SHELLEY_HPP
 
+#include <dt/cardano/byron.hpp>
 #include <dt/cardano/common.hpp>
 #include <dt/cbor.hpp>
 #include <dt/ed25519.hpp>
@@ -43,6 +44,14 @@ namespace daedalus_turbo::cardano::shelley {
         key_hash hash;
         pool_hash pool_id;
         cardano::vrf_vkey vrf_vkey;
+
+        static constexpr auto serialize(auto &archive, auto &self)
+        {
+            return archive(self.hash, self.pool_id, self.vrf_vkey);
+        }
+
+        genesis_deleg_cert() =default;
+        genesis_deleg_cert(const cbor::value &v);
     };
 
     enum class reward_source { reserves, treasury };
@@ -356,8 +365,8 @@ namespace daedalus_turbo::cardano::shelley {
         }
     };
 
-    struct tx: cardano::tx {
-        using cardano::tx::tx;
+    struct tx: byron::tx {
+        using byron::tx::tx;
 
         void foreach_input(const std::function<void(const tx_input &)> &observer) const override;
 
@@ -411,14 +420,17 @@ namespace daedalus_turbo::cardano::shelley {
 
         std::optional<uint64_t> validity_end() const override;
         wit_cnt witnesses_ok(const plutus::context *ctx=nullptr) const override;
+        wit_cnt witnesses_ok_vkey(set<key_hash> &vkeys) const override;
+        wit_cnt witnesses_ok_native(const set<key_hash> &vkeys) const override;
         virtual wit_cnt witnesses_ok_other(const plutus::context *ctx=nullptr) const;
-        void foreach_witness(const std::function<void(uint64_t, const cbor::value &)> &observer) const override;
+        void foreach_witness(const witness_observer_t &observer) const override;
+        void foreach_witness_item(const witness_observer_t &observer) const override;
+        void foreach_witness_vkey(const vkey_observer_t &observer) const override;
         void foreach_cert(const std::function<void(const cbor::value &cert, size_t cert_idx)> &observer) const override;
         void foreach_script(const std::function<void(script_info &&)> &, const plutus::context *ctx=nullptr) const override;
     protected:
-        set<key_hash> _witnesses_ok_vkey(const cbor::value &w_val) const;
-        size_t _witnesses_ok_bootstrap(const cbor::value &w_val) const;
-        size_t _witnesses_ok_native_script(const cbor::value &w_val, const set<key_hash> &vkeys) const;
+        mutable std::optional<set<tx_out_ref>> _unique_inputs {};
+
         virtual wit_cnt _witnesses_ok_other(uint64_t typ, const cbor::value &w_val, const plutus::context *ctx=nullptr) const;
 
         void _if_item_present(const uint64_t idx, const std::function<void(const cbor_value &)> &observer) const

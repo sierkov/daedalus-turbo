@@ -78,47 +78,6 @@ namespace daedalus_turbo::cardano::conway {
         uint64_t end;
     };
 
-    struct pool_voting_thresholds_t {
-        rational_u64 motion_of_no_confidence {};
-        rational_u64 committee_normal {};
-        rational_u64 committee_no_confidence {};
-        rational_u64 hard_fork_initiation {};
-        rational_u64 security_voting_threshold {};
-
-        static constexpr auto serialize(auto &archive, auto &self)
-        {
-            return archive(self.motion_of_no_confidence, self.committee_normal,
-                self.committee_no_confidence, self.hard_fork_initiation, self.security_voting_threshold);
-        }
-
-        pool_voting_thresholds_t() =default;
-        pool_voting_thresholds_t(const cbor::value &);
-    };
-
-    struct drep_voting_thresholds_t {
-        rational_u64 motion_no_confidence {};
-        rational_u64 committee_normal {};
-        rational_u64 committee_no_confidence {};
-        rational_u64 update_constitution {};
-        rational_u64 hard_fork_initiation {};
-        rational_u64 pp_network_group {};
-        rational_u64 pp_economic_group {};
-        rational_u64 pp_technical_group {};
-        rational_u64 pp_governance_group {};
-        rational_u64 treasury_withdrawal {};
-
-        static constexpr auto serialize(auto &archive, auto &self)
-        {
-            return archive(self.motion_no_confidence, self.committee_normal,
-                self.committee_no_confidence, self.update_constitution, self.hard_fork_initiation,
-                self.pp_network_group, self.pp_economic_group, self.pp_technical_group,
-                self.pp_governance_group, self.treasury_withdrawal);
-        }
-
-        drep_voting_thresholds_t() =default;
-        drep_voting_thresholds_t(const cbor::value &);
-    };
-
     struct param_update_t {
         std::optional<uint64_t> min_fee_a {}; // 0
         std::optional<uint64_t> min_fee_b {}; // 1
@@ -410,7 +369,7 @@ namespace daedalus_turbo::cardano::conway {
         virtual void foreach_vote(const vote_observer_t &) const;
         virtual void foreach_proposal(const proposal_observer_t &) const;
         virtual std::optional<uint64_t> current_treasury() const;
-        virtual std::optional<positive_coin_t> donation() const;
+        uint64_t donation() const override;
     };
 }
 

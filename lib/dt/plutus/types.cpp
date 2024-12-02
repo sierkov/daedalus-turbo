@@ -127,6 +127,14 @@ namespace daedalus_turbo::plutus {
         return *_ptr;
     }
 
+    template<typename T>
+    T &require_front(list_type<T> &l)
+    {
+        if (l.empty()) [[unlikely]]
+            throw error("the list mist have at least one element!");
+        return l.front();
+    }
+
     constant_list::constant_list(allocator &alloc, const constant_type &t):
         constant_list { alloc, value_type { t, { alloc } } }
     {
@@ -138,7 +146,7 @@ namespace daedalus_turbo::plutus {
     }
 
     constant_list::constant_list(allocator &alloc, list_type &&l):
-        constant_list { alloc, constant_type::from_val(alloc, l.at(0)), std::move(l) }
+        constant_list { alloc, constant_type::from_val(alloc, require_front(l)), std::move(l) }
     {
     }
 
@@ -692,7 +700,7 @@ namespace daedalus_turbo::plutus {
     {
         if (vals.empty())
             throw error("value must not be empty!");
-        return { alloc, constant { alloc, constant_list { alloc, constant_type::from_val(alloc, vals.at(0)), std::move(vals) } } };
+        return { alloc, constant { alloc, constant_list { alloc, constant_type::from_val(alloc, require_front(vals)), std::move(vals) } } };
     }
 
     value value::make_pair(allocator &alloc, constant &&fst, constant &&snd)

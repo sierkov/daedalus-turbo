@@ -77,6 +77,25 @@ namespace daedalus_turbo::asio {
         {
             return _ioc;
         }
+
+        void internet_speed_report(const double current_speed)
+        {
+            if (current_speed > 0.0) {
+                for (;;) {
+                    double max_copy = _speed_max.load(std::memory_order_relaxed);
+                    if (current_speed <= max_copy)
+                        break;
+                    if (_speed_max.compare_exchange_strong(max_copy, current_speed, std::memory_order_relaxed, std::memory_order_relaxed))
+                        break;
+                }
+            }
+            _speed_current.store(current_speed, std::memory_order_relaxed);
+        }
+
+        speed_mbps internet_speed() const
+        {
+            return { _speed_current.load(std::memory_order_relaxed), _speed_max.load(std::memory_order_relaxed) };
+        }
     private:
         void _io_thread()
         {
@@ -108,6 +127,8 @@ namespace daedalus_turbo::asio {
         alignas(mutex::padding) mutex::unique_lock::mutex_type _after_actions_mutex {};
         std::map<std::string, std::function<void()>> _after_actions {};
         std::thread _worker { [&] { _io_thread(); } };
+        std::atomic<double> _speed_max { 0.0 };
+        std::atomic<double> _speed_current { 0.0 };
     };
 
     worker &worker::get()
@@ -145,5 +166,15 @@ namespace daedalus_turbo::asio {
     net::io_context &worker::io_context()
     {
         return _impl->io_context();
+    }
+
+    void worker::internet_speed_report(const double current_speed)
+    {
+        return _impl->internet_speed_report(current_speed);
+    }
+
+    speed_mbps worker::internet_speed() const
+    {
+        return _impl->internet_speed();
     }
 }

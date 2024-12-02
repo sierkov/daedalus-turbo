@@ -294,7 +294,7 @@ namespace daedalus_turbo::plutus::builtins {
         if (cl->vals.empty()) [[unlikely]]
             throw error("calling tail_list on an empty list!");
         constant_list::list_type vals { alloc };
-        std::copy(cl->vals.begin() + 1, cl->vals.end(), std::back_inserter(vals));
+        std::copy(std::next(cl->vals.begin(), 1), cl->vals.end(), std::back_inserter(vals));
         return value::make_list(alloc, constant_type { cl->typ }, std::move(vals));
     }
 

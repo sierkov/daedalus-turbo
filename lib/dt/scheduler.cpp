@@ -36,7 +36,7 @@ namespace fmt {
 
 namespace daedalus_turbo {
     struct scheduler::impl {
-        explicit impl(size_t user_num_workers)
+        explicit impl(const size_t user_num_workers)
             : _num_workers { _find_num_workers(user_num_workers) }
         {
             if (_num_workers == 0)
@@ -255,8 +255,6 @@ namespace daedalus_turbo {
                 }, true);
                 submit_tasks();
                 const auto process_results = !_process_running.load();
-                timer t{fmt::format("wait_all_done task: {} count: {} process_results: {}", task_group,
-                                    task_count, process_results), logger::level::debug };
                 while (done_parts < task_count) {
                     const auto now = std::chrono::system_clock::now();
                     if (now >= next_warn) {

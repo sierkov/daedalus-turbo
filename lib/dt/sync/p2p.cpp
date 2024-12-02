@@ -62,12 +62,13 @@ namespace daedalus_turbo::sync::p2p {
             // determine the block of the intersection point
             point_list points {};
             for (const auto &block: first_chunk_it->second.blocks)
-                points.emplace_back(block.hash, block.slot);
+                points.emplace_back(block.hash, block.slot, block.height, block.end_offset());
             std::ranges::reverse(points);
             const auto intersection = client->find_intersection_sync(points);
             if (!intersection.isect)
                 throw error("internal error: wasn't able to narrow down the intersection point to a block!");
-            return std::make_shared<peer_info>(std::move(client), std::move(intersection.tip), std::move(intersection.isect));
+            return std::make_shared<peer_info>(std::move(client), std::move(intersection.tip),
+                _parent.local_chain().find_block_by_slot(intersection.isect->slot, intersection.isect->hash).point());
         }
 
         void sync_attempt(peer_info &peer, const cardano::optional_slot max_slot)

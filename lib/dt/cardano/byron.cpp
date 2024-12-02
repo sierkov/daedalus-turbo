@@ -74,11 +74,53 @@ namespace daedalus_turbo::cardano::byron {
         return tx_ok && dlg_ok && upd_ok;
     }
 
-    void tx::foreach_witness(const std::function<void(uint64_t, const cbor::value &)> &observer) const
+    void block::foreach_update_proposal(const std::function<void(const param_update_proposal &)> &observer) const
+    {
+        const auto &updates = update_proposals();
+        for (const auto &r_prop: updates.at(0).array()) {
+            param_update upd { .protocol_ver=protocol_version { r_prop.at(0).at(0).uint(), r_prop.at(0).at(1).uint() } };
+            const auto &bvermod = r_prop.at(1).array();
+            if (const auto &v = bvermod.at(2).array(); !v.empty())
+                upd.max_block_body_size = v.at(0).uint();
+            if (const auto &v = bvermod.at(3).array(); !v.empty())
+                upd.max_block_header_size = v.at(0).uint();
+            if (const auto &v = bvermod.at(4).array(); !v.empty())
+                upd.max_transaction_size = v.at(0).uint();
+            param_update_proposal prop { .pool_id=issuer_hash(), .update=std::move(upd) };
+            prop.update.hash_from_cbor(r_prop);
+            observer(prop);
+        }
+    }
+
+    void tx::foreach_witness(const witness_observer_t &observer) const
     {
         for (const auto &w_raw: _wit->array()) {
             observer(w_raw.at(0).uint(), *w_raw.at(1).tag().second);
         }
+    }
+
+    void tx::foreach_witness_item(const witness_observer_t &observer) const
+    {
+        foreach_witness(observer);
+    }
+
+    void tx::foreach_witness_vkey(const vkey_observer_t &observer) const
+    {
+        foreach_witness([&](const auto wtyp, const auto &w_val) {
+            switch (wtyp) {
+                case 0: {
+                    const auto w_data = cbor::parse(w_val.buf());
+                    observer({ vkey_witness_t::byron_vkey, w_data.array().at(0).buf() });
+                    break;
+                }
+                case 2: {
+                    const auto w_data = cbor::parse(w_val.buf());
+                    observer({ vkey_witness_t::byron_redeem, w_data.array().at(0).buf() });
+                    break;
+                }
+                default: break;
+            }
+        });
     }
 
     void tx::foreach_script(const std::function<void(script_info &&)> &observer, const plutus::context *) const
@@ -94,12 +136,10 @@ namespace daedalus_turbo::cardano::byron {
         });
     }
 
-    tx::wit_cnt tx::witnesses_ok(const plutus::context */*input_data*/) const
-    {
-        if (!_wit) [[unlikely]]
-            throw cardano_error("vkey_witness_ok called on a transaction without witness data!");
-        wit_cnt cnt {};
+    tx::wit_cnt tx::witnesses_ok_vkey(set<key_hash> &valid_vkeys) const {
         const auto &tx_hash = hash();
+        const auto pm = dynamic_cast<const byron::block &>(block()).protocol_magic_raw().raw_span();
+        wit_cnt cnts {};
         foreach_witness([&](const auto w_typ, const auto &w_val) {
             const auto w_data = cbor::parse(w_val.buf());
             switch (w_typ) {
@@ -107,33 +147,119 @@ namespace daedalus_turbo::cardano::byron {
                 case 0: {
                     const auto &vkey = w_data.array().at(0).buf();
                     const auto &sig = w_data.array().at(1).buf();
-                    //const auto &msg = tx_hash;
-                    array<uint8_t, 34> msg;
-                    msg[0] = 0x82;
-                    msg[1] = 0x01;
-                    span_memcpy(std::span(msg.data() + 2, 32), tx_hash);
-                    if (!ed25519::verify(sig, vkey.subspan(0, 32), msg)) [[unlikely]]
+                    uint8_vector msg {};
+                    msg.reserve(64);
+                    msg << 0x01; // signing tag
+                    msg << pm;   // protocol magic
+                    msg << 0x58; // CBOR bytestring
+                    msg << 0x20; // hash size
+                    msg << tx_hash;
+                    const auto vkey_short = vkey.subspan(0, 32);
+                    if (!ed25519::verify(sig, vkey_short, msg)) [[unlikely]]
                         throw error("byron tx witness type 0 failed for tx {}: {}", tx_hash, w_data);
-                    ++cnt.vkey;
+                    valid_vkeys.emplace(blake2b<key_hash>(vkey_short));
+                    ++cnts.vkey;
                     break;
                 }
                 // BootstrapWitness
-                /*case 2: {
+                case 2: {
                     const auto &vkey = w_data.array().at(0).buf();
                     const auto &sig = w_data.array().at(1).buf();
-                    array<uint8_t, 34> msg;
-                    msg[0] = 0x82;
-                    msg[1] = 0x01;
-                    span_memcpy(std::span(msg.data() + 2, 32), tx_hash);
-                    if (!ed25519::verify(sig, vkey.subspan(0, 32), msg)) [[unlikely]]
+                    uint8_vector msg {};
+                    msg.reserve(64);
+                    msg << 0x02; // signing tag
+                    msg << pm;   // protocol magic
+                    msg << 0x58; // CBOR bytestring
+                    msg << 0x20; // hash size
+                    msg << tx_hash;
+                    const auto vkey_short = vkey.subspan(0, 32);
+                    if (!ed25519::verify(sig, vkey_short, msg)) [[unlikely]]
                         throw error("byron tx witness type 2 failed for tx {}: {}", tx_hash, w_data);
-                    ++ok.vkey_ok;
+                    valid_vkeys.emplace(blake2b<key_hash>(vkey_short));
+                    ++cnts.vkey;
                     break;
-                }*/
-                default:
-                    throw cardano_error("slot: {}, tx: {} - unsupported witness type: {}", (uint64_t)_blk.slot(), hash().span(), w_typ);
+                }
+                default: // do nothing
+                    break;
             }
         });
+        return cnts;
+    }
+
+    tx::optional_error_string tx::_validate_native_script_single(const cbor_value &script, const set<key_hash> &vkeys) const
+    {
+        switch (const auto typ = script.at(0).uint(); typ) {
+            case 0:
+                if (const auto &req_vkey = script.at(1).buf(); !vkeys.contains(req_vkey)) [[unlikely]]
+                    return fmt::format("required key {} didn't sign the transaction", req_vkey);
+                break;
+            case 1:
+                for (const auto &sub_script: script.at(1).array()) {
+                    if (const auto err = _validate_native_script_single(sub_script, vkeys); err)
+                        return err;
+                }
+                break;
+            case 2: {
+                bool any_ok = false;
+                for (const auto &sub_script: script.at(1).array()) {
+                    if (!_validate_native_script_single(sub_script, vkeys))
+                        any_ok = true;
+                }
+                if (!any_ok) [[unlikely]]
+                    return fmt::format("no child script was successful while require at least one!");
+                break;
+            }
+            case 3: {
+                const auto min_ok = script.at(1).uint();
+                uint64_t num_ok = 0;
+                for (const auto &sub_script: script.at(2).array()) {
+                    if (!_validate_native_script_single(sub_script, vkeys))
+                        ++num_ok;
+                }
+                if (num_ok < min_ok) [[unlikely]]
+                    return fmt::format("only {} child scripts succeed while {} are required!", num_ok, min_ok);
+                break;
+            }
+            case 4:
+                if (const auto invalid_before = script.at(1).uint(); block().slot() < invalid_before)
+                    return fmt::format("invalid before {} while the current slot is {}!", invalid_before, block().slot());
+                break;
+            case 5:
+                if (const auto invalid_after = script.at(1).uint(); block().slot() >= invalid_after)
+                    return fmt::format("invalid after {} while the current slot is {}!", invalid_after, block().slot());
+                break;
+            default:
+                return fmt::format("unsupported native script type {}", typ);
+        }
+        return {};
+    }
+
+    tx::wit_cnt tx::witnesses_ok_native(const set<key_hash> &vkeys) const
+    {
+        wit_cnt cnts {};
+        foreach_witness([&](const auto w_typ, const auto &w_val) {
+            const auto w_data = cbor::parse(w_val.buf());
+            switch (w_typ) {
+                case 1:
+                    if (const auto err = _validate_native_script_single(w_data, vkeys); err) [[unlikely]]
+                        throw cardano_error("native script for tx {} failed: {} script: {}", hash(), *err, w_val);
+                    ++cnts.native_script;
+                    break;
+                default:
+                    break;
+            }
+        });
+        return cnts;
+    }
+
+    tx::wit_cnt tx::witnesses_ok(const plutus::context */*input_data*/) const
+    {
+        if (!_wit) [[unlikely]]
+            throw cardano_error("vkey_witness_ok called on a transaction without witness data!");
+        wit_cnt cnt {};
+        set<key_hash> valid_vkeys {};
+        cnt += witnesses_ok_vkey(valid_vkeys);
+        cnt += witnesses_ok_native(valid_vkeys);
         return cnt;
     }
 }

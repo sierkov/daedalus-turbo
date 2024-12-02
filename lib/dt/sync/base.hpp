@@ -10,6 +10,8 @@
 #include <dt/peer-selection.hpp>
 
 namespace daedalus_turbo::sync {
+    enum class validation_mode_t { turbo, full, none };
+
     struct peer_info {
         virtual ~peer_info() =default;
         virtual std::string id() const =0;
@@ -20,7 +22,7 @@ namespace daedalus_turbo::sync {
     struct syncer {
         syncer(chunk_registry &cr, peer_selection &pr=peer_selection_simple::get());
         virtual ~syncer();
-        virtual bool sync(const std::shared_ptr<peer_info> &peer, cardano::optional_slot max_slot={});
+        virtual bool sync(const std::shared_ptr<peer_info> &peer, cardano::optional_slot max_slot={}, validation_mode_t mode=validation_mode_t::turbo);
         chunk_registry &local_chain() noexcept;
         peer_selection &peer_list() noexcept;
     protected:
@@ -30,6 +32,21 @@ namespace daedalus_turbo::sync {
     private:
         struct impl;
         std::unique_ptr<impl> _impl;
+    };
+}
+
+namespace fmt {
+    template<>
+    struct formatter<daedalus_turbo::sync::validation_mode_t>: formatter<int32_t> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::sync::validation_mode_t &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            using daedalus_turbo::sync::validation_mode_t;
+            switch (v) {
+                case validation_mode_t::full: return fmt::format_to(ctx.out(), "full");
+                case validation_mode_t::turbo: return fmt::format_to(ctx.out(), "turbo");
+                default: throw daedalus_turbo::error("unsupported validation_mode_t value: {}", static_cast<int>(v));
+            }
+        }
     };
 }
 

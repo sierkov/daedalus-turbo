@@ -14,6 +14,10 @@ namespace boost::asio {
 }
 
 namespace daedalus_turbo::asio {
+    struct speed_mbps {
+        double current = 0.0;
+        double max = 0.0;
+    };
 
     struct worker {
         using action_type = std::function<void()>;
@@ -26,6 +30,8 @@ namespace daedalus_turbo::asio {
         void add_after_action(const std::string &name, const action_type &act);
         void del_after_action(const std::string &name);
         boost::asio::io_context &io_context();
+        void internet_speed_report(double);
+        speed_mbps internet_speed() const;
     private:
         struct impl;
         std::unique_ptr<impl> _impl;

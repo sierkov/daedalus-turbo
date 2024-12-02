@@ -7,6 +7,7 @@
 #include <string_view>
 #include <tuple>
 #include <dt/cbor.hpp>
+#include <dt/crypto/sha3.hpp>
 #include <dt/ed25519.hpp>
 #include <dt/file.hpp>
 #include <dt/cardano/byron.hpp>
@@ -114,6 +115,67 @@ suite cardano_byron_suite = [] {
                     const auto blk = cardano::make_block(block_tuple, block_tuple.data - chunk.data());
                     expect(blk->body_hash_ok()) << blk->slot();
                 }
+            }
+        };
+
+        "witness key matches the address"_test = [] {
+            struct test_vec {
+                const char *addr;
+                const char *vk;
+                uint8_t typ;
+            };
+            static vector<test_vec> test_vecs {
+                {
+                    "82D818582183581C4041ADF6B03851A9C85DB3F028995504FB4BA48B50703AB1B9841350A0021AD658E71F",
+                    "8C0BDEDFBBAB26A1308300512FFB1B220F068EE13F7612AFB076C22DE3FB7641",
+                    2
+                },
+                {
+                    "83581C6C9982E7F2B6DCC5EAA880E8014568913C8868D9F0F86EB687B2633CA101581E581C010D876783FB2B4D0D17C86DF29AF8D35356ED3D1827BF4744F0670000",
+                    "42A2100A4BCE0F08ED211F980D7A848915FD48953BE80B4B4FB3A9BBF8AEA206CC8A84C83896F3D716FE0FC6AE8D5AE5554109C1FFF5B6CA6C53CC74741DCAD2",
+                    0
+                },
+                {
+                    "83581C396B2A0FFEEB442E50E5F07B18AC2CD708063E36A64D878C4404D085A101581E581C23CB6A8782C420E7D0EA8676E3E6960887625ADBE21A270A6C3B8C0600",
+                    "BAB0C9781244A2EAA6BF2467C1A3D253AB63C35B4757D4BCE9E0F573D2F81FED3C93A0E359137F5842E0DF4506477F4AEE4DB10B75E83ADBDF40D09CCEB2A911",
+                    0
+                }
+            };
+            for (size_t i = 0; i < test_vecs.size(); ++i) {
+                const auto &test = test_vecs[i];
+                const auto vk = uint8_vector::from_hex(test.vk);
+                const auto addr_raw = uint8_vector::from_hex(test.addr);
+                const byron_addr addr { addr_raw };
+                test_same(fmt::format("test vector #{}: {}", i, test.addr), true, addr.vkey_ok(vk, test.typ));
+            }
+        };
+
+        "raw witness matches the address"_test = [] {
+            struct test_vec {
+                const char *addr;
+                const char *wit;
+                uint8_t typ;
+            };
+            static vector<test_vec> test_vecs {
+                {
+                    "83581CB8C8F782060CD0A476DFDF618DDDE592CC6BEFE21F7AA660440102E7A101581E581CDFA7732F2BBD0E7D8BFEF150118840FAF14D0A0F866FC4174A193A6700",
+                    "825840C241211B30321DB26E23A59936C24F564EFC6AC37C83534BDE3C55F4EA96ECC3D9FB3C2A0196F167267882536379EABA489F3A5B0D47C588B0DA4E97A0914B3158400907D5F73F96D012CC0A6BA1F54D733A9BD6BDA6C6FF24025A458EE0D3295EF81F7AB3C16AB769F689FE402893A4531CFD5B333E958D8E5C02C1315F73400406",
+                    0
+                },
+                {
+                    "83581C41276B4C0BF10E73952582144E5B016497A988F99E8EFEB661C637F9A101581E581CDFA7732F2BBD0E22A199D85000EF78E8387F043DBD8FCC3C2D92E94000",
+                    "825840761C5F8190BD7618646CFA87E7D4995CA72E69EB686D666B81617602685602602118DFF5A46E1F2D08BAFB5379CC59E978F061FB45E9754A16F4BFE1B2C89AEB5840AB65F586B29D7A732BAD39019CAE8A8B1D4D5C1C613C402629EACF2C5FC9D9419FE8A0E8018F3091A9C3E3E6F327A8A219ED41E3249334C79BB94FA280F97B04",
+                    0
+                }
+            };
+            for (size_t i = 0; i < test_vecs.size(); ++i) {
+                const auto &test = test_vecs[i];
+                const auto wit_raw = uint8_vector::from_hex(test.wit);
+                const auto wit = cbor::parse(wit_raw);
+                const auto vk = wit.at(0).buf();
+                const auto addr_raw = uint8_vector::from_hex(test.addr);
+                const byron_addr addr { addr_raw };
+                test_same(fmt::format("test vector #{}: {}", i, test.addr), true, addr.vkey_ok(vk, test.typ));
             }
         };
     };  

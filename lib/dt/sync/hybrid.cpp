@@ -15,7 +15,7 @@ namespace daedalus_turbo::sync::hybrid {
         {
         }
 
-        bool sync(const std::shared_ptr<sync::peer_info> &turbo_peer, const cardano::optional_slot max_slot)
+        bool sync(const std::shared_ptr<sync::peer_info> &turbo_peer, const cardano::optional_slot max_slot, const validation_mode_t mode)
         {
             const auto &cr = _parent.local_chain();
             bool turbo_progress = false;
@@ -25,7 +25,7 @@ namespace daedalus_turbo::sync::hybrid {
             if (!cr.config().shelley_started() || cr.max_slot() + cr.config().shelley_randomness_stabilization_window <= future_slot) {
                 logger::info("turbo sync stage from {}", turbo_peer->intersection());
                 _progress_stage = stage::turbo;
-                turbo_progress = _turbo.sync(turbo_peer, max_slot);
+                turbo_progress = _turbo.sync(turbo_peer, max_slot, mode);
             }
             /*for (const auto &name: pg.names()) {
                 if (name != "verify")
@@ -34,7 +34,7 @@ namespace daedalus_turbo::sync::hybrid {
             const auto p2p_peer = _p2p.find_peer({});
             logger::info("P2P sync stage continues from {}", p2p_peer->intersection());
             _progress_stage = stage::p2p;
-            const auto p2p_progress = _p2p.sync(p2p_peer, max_slot);
+            const auto p2p_progress = _p2p.sync(p2p_peer, max_slot, mode);
             //progress::get().update("verify", 1, 1);
             return turbo_progress || p2p_progress;
         }
@@ -61,11 +61,11 @@ namespace daedalus_turbo::sync::hybrid {
 
     syncer::~syncer() =default;
 
-    bool syncer::sync(const std::shared_ptr<sync::peer_info> &peer, cardano::optional_slot max_slot)
+    bool syncer::sync(const std::shared_ptr<sync::peer_info> &peer, cardano::optional_slot max_slot, const validation_mode_t mode)
     {
         if (!peer)
             throw error("peer must be initialized!");
-        return _impl->sync(peer, max_slot);
+        return _impl->sync(peer, max_slot, mode);
     }
 
     void syncer::cancel_tasks(const uint64_t /*min_invalid_offset*/)

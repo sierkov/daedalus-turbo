@@ -43,11 +43,6 @@ namespace daedalus_turbo::http {
             }
         };
 
-        struct speed_mbps {
-            double current = 0.0;
-            double max = 0.0;
-        };
-
         using cancel_predicate = std::function<bool(const request &req)>;
 
         virtual ~download_queue() =default;
@@ -65,11 +60,6 @@ namespace daedalus_turbo::http {
         bool process_ok(bool report_progress=false, scheduler *sched = nullptr)
         {
             return _process_ok_impl(report_progress, sched);
-        }
-
-        speed_mbps internet_speed()
-        {
-            return _internet_speed_impl();
         }
 
         void process(bool report_progress=false, scheduler *sched = nullptr)
@@ -125,7 +115,6 @@ namespace daedalus_turbo::http {
 
         virtual void _download_impl(const std::string &url, const std::string &save_path, uint64_t priority, const std::function<void(result &&)> &handler) =0;
         virtual bool _process_ok_impl(bool report_progress, scheduler *sched) =0;
-        virtual speed_mbps _internet_speed_impl() =0;
     };
 
     struct download_queue_async: download_queue {
@@ -144,7 +133,6 @@ namespace daedalus_turbo::http {
         size_t _cancel_impl(const cancel_predicate &pred) override;
         void _download_impl(const std::string &url, const std::string &save_path, uint64_t priority, const std::function<void(result &&)> &handler) override;
         bool _process_ok_impl(bool report_progress, scheduler *sched) override;
-        speed_mbps _internet_speed_impl() override;
     };
 }
 

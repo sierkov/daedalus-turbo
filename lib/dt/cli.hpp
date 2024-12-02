@@ -83,16 +83,14 @@ namespace daedalus_turbo::cli {
     struct command {
         using command_list = std::vector<std::shared_ptr<command>>;
 
-        static command_list &registry()
+        static const command_list &registry()
         {
-            static command_list l {};
-            return l;
+            return _registry();
         }
 
-        static std::shared_ptr<command> reg(std::shared_ptr<command> cmd)
+        static std::shared_ptr<command> reg(std::shared_ptr<command> &&cmd)
         {
-            registry().emplace_back(cmd);
-            return cmd;
+            return _registry().emplace_back(std::move(cmd));
         }
 
         virtual ~command() =default;
@@ -180,10 +178,16 @@ namespace daedalus_turbo::cli {
             configure(cmd);
             _throw_usage(cmd);
         }
+    private:
+        static command_list &_registry()
+        {
+            static command_list l {};
+            return l;
+        }
     };
 
     struct command_meta {
-        const command &cmd;
+        std::shared_ptr<command> cmd {};
         config cfg {};
     };
 

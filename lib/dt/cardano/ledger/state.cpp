@@ -134,37 +134,60 @@ namespace daedalus_turbo::cardano::ledger {
 
     void state::load_zpp(const std::string &path)
     {
-        parallel_decoder dec { path };
-        zpp::deserialize(_subchains, dec.at(0));
-        dec.add([&](const auto) {
-            // do nothing as the field has been already decoded above
-        });
-        zpp::deserialize(_eras, dec.at(1));
-        dec.add([&](const auto) {
-            // do nothing as the field has been already decoded above
-        });
-        _transition_era(0, _eras.size());
-        _state->from_zpp(dec);
-        _vrf_state->from_zpp(dec);
-        dec.run(_sched, "parallel_decoder::run", 1000);
-        // Reserve snapshots can be saved to disk before the validation is fully finished.
-        // However, they will be renamed into their proper names only when they become valid.
-        // Thus, if we load a snapshot we need to merge the subchains.
-        for (auto &[offset, sc]: _subchains) {
-            if (!sc)
-                sc.valid_blocks = sc.num_blocks;
+        try {
+            parallel_decoder dec { path };
+            zpp::deserialize(_subchains, dec.at(0));
+            dec.add([&](const auto) {
+                // do nothing as the field has been already decoded above
+            });
+            zpp::deserialize(_eras, dec.at(1));
+            dec.add([&](const auto) {
+                // do nothing as the field has been already decoded above
+            });
+            _transition_era(0, _eras.size());
+            _state->from_zpp(dec);
+            _vrf_state->from_zpp(dec);
+            dec.run(_sched, "parallel_decoder::run", 1000);
+            if (!_subchains.empty()) {
+                // Reserve snapshots can be saved to disk before the validation is fully finished.
+                // However, they will be renamed into their proper names only when they become valid.
+                // Thus, if we load a snapshot we need to merge the subchains.
+                for (auto &[offset, sc]: _subchains) {
+                    if (!sc)
+                        sc.valid_blocks = sc.num_blocks;
+                }
+                _subchains.merge_valid();
+                if (_subchains.size() > 1)
+                    throw error("inconsistent subschain list: {}", _subchains);
+                const auto &sc = _subchains.rbegin()->second;
+                if (sc.offset != 0 || sc.end_offset() != end_offset())
+                    throw error("the local subchain range: [{}:{}] does not match the chain: [0:{}]",
+                        sc.offset, sc.end_offset(), end_offset());
+            }
+            if (end_offset() != valid_end_offset())
+                throw error("validator state from {} is in inconsistent state valid_end_offset: {} vs end_offset: {}",
+                    path, valid_end_offset(), end_offset());
+        } catch (const std::exception &ex) {
+            const auto err_path = path + ".err";
+            std::filesystem::rename(path, err_path);
+            throw error("loading state failed: {} moved the invalid state file to {}", ex.what(), err_path);
         }
-        _subchains.merge_valid();
-        if (end_offset() != valid_end_offset())
-            throw error("validator state from {} is in inconsistent state valid_end_offset: {} vs end_offset: {}",
-                path, valid_end_offset(), end_offset());
     }
 
-    void state::save_zpp(const std::string &path)
+    void state::save_zpp(const std::string &path, const std::unique_ptr<subchain_list> tmp_sc)
     {
         parallel_serializer ser {};
         ser.add([&] {
-            return zpp::serialize(_subchains);
+            mutex::scoped_lock lk { _subchains_mutex };
+            std::unique_ptr<subchain_list> orig_sc {};
+            if (tmp_sc) {
+                orig_sc = std::make_unique<subchain_list>(_subchains);
+                _subchains = std::move(*tmp_sc);
+            }
+            auto res = zpp::serialize(_subchains);
+            if (orig_sc)
+                _subchains = std::move(*orig_sc);
+            return res;
         });
         ser.add([&] {
             return zpp::serialize(_eras);
@@ -250,6 +273,11 @@ namespace daedalus_turbo::cardano::ledger {
             const auto tip_slot = slot::from_epoch(_state->_epoch, _state->_epoch_slot, _cfg);
             track_era(new_pv.era(), tip_slot);
         }
+    }
+
+    void state::process_cert(const cert_any_t &cert, const cert_loc_t &loc)
+    {
+        _state->process_cert(cert, loc);
     }
 
     void state::process_updates(updates_t &&updates)

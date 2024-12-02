@@ -75,6 +75,28 @@ namespace daedalus_turbo::cardano::network {
             _conn.reset();
         }
     private:
+        struct perf_stats {
+            std::atomic<std::chrono::system_clock::time_point> last_report_time = std::chrono::system_clock::now();
+            std::atomic_size_t bytes = 0;
+
+            void report(asio::worker &asio_w, const size_t bytes_downloaded)
+            {
+                const auto new_bytes = bytes.fetch_add(bytes_downloaded, std::memory_order_relaxed) + bytes_downloaded;
+                for (;;) {
+                    const auto now = std::chrono::system_clock::now();
+                    auto prev_time = last_report_time.load(std::memory_order_relaxed);
+                    if (prev_time + std::chrono::seconds { 5 } > now)
+                        break;
+                    if (last_report_time.compare_exchange_strong(prev_time, now, std::memory_order_relaxed, std::memory_order_relaxed)) {
+                        const double duration = std::chrono::duration_cast<std::chrono::duration<double>>(now - prev_time).count();
+                        asio_w.internet_speed_report(static_cast<double>(new_bytes) * 8 / 1'000'000 / duration);
+                        bytes.fetch_sub(new_bytes, std::memory_order_relaxed);
+                        break;
+                    }
+                }
+            }
+        };
+
         const address _addr;
         const uint64_t _protocol_magic;
         asio::worker &_asio_worker;
@@ -83,6 +105,7 @@ namespace daedalus_turbo::cardano::network {
         alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _requests_mutex {};
         alignas(mutex::padding) std::condition_variable_any _requests_cv {};
         std::atomic_size_t _requests = 0;
+        perf_stats _stats {};
 
         void _decrement_requests()
         {
@@ -249,7 +272,11 @@ namespace daedalus_turbo::cardano::network {
                 switch (resp_items.at(0).uint()) {
                     case 2: {
                         resp.erase(resp.begin(), resp.begin() + resp_cbor.size);
-                        co_await _receive_blocks(*_conn, std::move(resp), handler);
+                        co_await _receive_blocks(*_conn, std::move(resp), [&](block_response &&blk) {
+                            if (blk.block)
+                                _stats.report(_asio_worker, blk.block->data->size());
+                            return handler(std::move(blk));
+                        });
                         break;
                     }
                     case 3: {

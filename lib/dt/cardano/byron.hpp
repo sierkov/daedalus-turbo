@@ -161,19 +161,7 @@ namespace daedalus_turbo::cardano::byron {
             return _block.array().at(1).array();
         }
 
-        void foreach_update_proposal(const std::function<void(const param_update_proposal &)> &observer) const override
-        {
-            const auto &updates = update_proposals();
-            for (const auto &r_prop: updates.at(0).array()) {
-                param_update_proposal prop { .pool_id=issuer_hash(),
-                    .update={
-                        .protocol_ver=protocol_version { r_prop.at(0).at(0).uint(), r_prop.at(0).at(1).uint() }
-                    }
-                };
-                prop.update.hash_from_cbor(r_prop);
-                observer(prop);
-            }
-        }
+        void foreach_update_proposal(const std::function<void(const param_update_proposal &)> &observer) const override;
 
         void foreach_update_vote(const std::function<void(const param_update_vote &)> &observer) const override
         {
@@ -305,6 +293,7 @@ namespace daedalus_turbo::cardano::byron {
 
     struct tx: cardano::tx {
         using cardano::tx::tx;
+        using optional_error_string = std::optional<std::string>;
 
         void foreach_input(const std::function<void(const tx_input &)> &observer) const override
         {
@@ -325,8 +314,14 @@ namespace daedalus_turbo::cardano::byron {
         }
 
         void foreach_script(const std::function<void(script_info &&)> &, const plutus::context *ctx=nullptr) const override;
-        void foreach_witness(const std::function<void(uint64_t, const cbor::value &)> &) const override;
+        void foreach_witness(const witness_observer_t &) const override;
+        void foreach_witness_item(const witness_observer_t &) const override;
+        void foreach_witness_vkey(const vkey_observer_t &) const override;
         wit_cnt witnesses_ok(const plutus::context *ctx=nullptr) const override;
+        wit_cnt witnesses_ok_vkey(set<key_hash> &) const override;
+        wit_cnt witnesses_ok_native(const set<key_hash> &vkeys) const override;
+    protected:
+        virtual optional_error_string _validate_native_script_single(const cbor_value &script, const set<key_hash> &vkeys) const;
     };
 
     inline void block::foreach_tx(const std::function<void(const cardano::tx &)> &observer) const

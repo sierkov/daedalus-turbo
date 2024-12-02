@@ -32,9 +32,9 @@ namespace daedalus_turbo {
             if (!_printed) {
                 _printed = true;
                 if (std::uncaught_exceptions() == 0)
-                    logger::log(_level, "'{}' completed in {:0.3f} secs", _title, duration());
+                    logger::log(_level, "{} took {:0.3f} secs", _title, duration());
                 else
-                    logger::log(_level, "'{}' failed after {:0.3f} secs", _title, duration());
+                    logger::log(_level, "{} failed after {:0.3f} secs", _title, duration());
             }
         }
 

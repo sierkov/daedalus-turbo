@@ -5,6 +5,7 @@
 #ifndef DAEDALUS_TURBO_FORMAT_HPP
 #define DAEDALUS_TURBO_FORMAT_HPP
 
+#include <list>
 #include <map>
 #include <optional>
 #include <set>
@@ -13,6 +14,7 @@
 #include <string>
 #include <thread>
 #include <vector>
+
 #ifndef _MSC_VER
 #   pragma GCC diagnostic push
 #   pragma GCC diagnostic ignored "-Wpragmas"
@@ -91,6 +93,19 @@ namespace fmt {
     };
 
     template<typename T, typename A>
+    struct formatter<std::list<T, A>>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            auto out_it = fmt::format_to(ctx.out(), "[");
+            for (auto it = v.begin(); it != v.end(); ++it) {
+                const std::string sep { std::next(it) == v.end() ? "" : ", " };
+                out_it = fmt::format_to(out_it, "{}{}", *it, sep);
+            }
+            return fmt::format_to(out_it, "]");
+        }
+    };
+
+    template<typename T, typename A>
     struct formatter<std::set<T, std::less<T>, A>>: formatter<int> {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
@@ -123,6 +138,26 @@ namespace fmt {
             if (v)
                 return fmt::format_to(ctx.out(), "{}", *v);
             return fmt::format_to(ctx.out(), "std::nullopt");
+        }
+    };
+
+    template<typename T>
+    struct formatter<std::unique_ptr<T>>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            if (v)
+                return fmt::format_to(ctx.out(), "{}", *v);
+            return fmt::format_to(ctx.out(), "nullptr");
+        }
+    };
+
+    template<typename T>
+    struct formatter<std::shared_ptr<T>>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            if (v)
+                return fmt::format_to(ctx.out(), "{}", *v);
+            return fmt::format_to(ctx.out(), "nullptr");
         }
     };
 

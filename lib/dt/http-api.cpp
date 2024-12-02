@@ -45,8 +45,13 @@
 #include <dt/progress.hpp>
 #include <dt/requirements.hpp>
 #include <dt/sync/hybrid.hpp>
+#include <dt/sync/p2p.hpp>
 #include <dt/util.hpp>
 #include <dt/zpp.hpp>
+
+namespace daedalus_turbo::http_api {
+    enum class sync_type { none, turbo, p2p, hybrid };
+}
 
 namespace fmt {
     template<>
@@ -54,6 +59,20 @@ namespace fmt {
         template<typename FormatContext>
         auto format(const boost::string_view &sv, FormatContext &ctx) const -> decltype(ctx.out()) {
             return formatter<std::string_view>::format(std::string_view { sv.data(), sv.size() }, ctx);
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::http_api::sync_type>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::http_api::sync_type &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            switch (v) {
+                case daedalus_turbo::http_api::sync_type::none: return fmt::format_to(ctx.out(), "none");
+                case daedalus_turbo::http_api::sync_type::turbo: return fmt::format_to(ctx.out(), "turbo");
+                case daedalus_turbo::http_api::sync_type::p2p: return fmt::format_to(ctx.out(), "p2p");
+                case daedalus_turbo::http_api::sync_type::hybrid: return fmt::format_to(ctx.out(), "hybrid");
+                default: throw daedalus_turbo::error("unsupported sync_type: {}", static_cast<int>(v));
+            }
         }
     };
 }
@@ -73,7 +92,7 @@ namespace daedalus_turbo::http_api {
         {
         }
 
-        void serve(const std::string &ip, uint16_t port)
+        void serve(const std::string &ip, const uint16_t port)
         {
             {
                 mutex::scoped_lock results_lk { _results_mutex };
@@ -124,8 +143,11 @@ namespace daedalus_turbo::http_api {
         std::atomic<std::optional<uint64_t>> _sync_target_slot {};
         double _sync_duration {};
         double _sync_data_mb = 0;
-        std::optional<std::string> _sync_error {};
         std::optional<chunk_registry::chunk_info> _sync_last_chunk {};
+        std::shared_ptr<std::string> _sync_last_error {};
+
+        sync_type _sync_type { sync_type::none };
+        sync::validation_mode_t _validation_mode { sync::validation_mode_t::turbo };
         std::atomic<sync_status> _sync_status { sync_status::syncing };
         alignas(mutex::padding) mutex::unique_lock::mutex_type _requirements_mutex {};
         requirements::check_status _requirements_status {};
@@ -179,7 +201,11 @@ namespace daedalus_turbo::http_api {
                 timer t { fmt::format("handling request {}", target) };
                 const auto [req_id, params] = _parse_target(target);
                 logger::info("begin processing request {} with params {}", req_id, params);
-                if (req_id == "tx" && params.size() == 1 && params[0].size() == 2 * 32) {
+                if (req_id == "export" && params.size() == 1) {
+                    resp = _api_export(params.at(0));
+                } else if (req_id == "config-sync" && params.size() == 2) {
+                    resp = _api_config_sync(params.at(0), params.at(1));
+                } else if (req_id == "tx" && params.size() == 1 && params[0].size() == 2 * 32) {
                     resp = _api_tx_info(uint8_vector::from_hex(params[0]));
                 } else if (req_id == "stake" && params.size() == 1) {
                     const auto bytes = uint8_vector::from_hex(params[0]);
@@ -227,8 +253,6 @@ namespace daedalus_turbo::http_api {
                     resp = _api_pay_txs(addr.pay_id(), offset, count);
                 } else if (req_id == "sync") {
                     resp = _api_sync();
-                } else if (req_id == "export" && params.size() == 1) {
-                    resp = _api_export(params.at(0));
                 } else {
                     throw error("unsupported endpoint '{}'", req_id);
                 }
@@ -284,7 +308,7 @@ namespace daedalus_turbo::http_api {
         json::object _hardware_info() const
         {
             timer t { "collect hardware info" };
-            const auto net_speed = daedalus_turbo::http::download_queue_async::get().internet_speed();
+            const auto net_speed = asio::worker::get().internet_speed();
             return json::object {
                 { "internet", fmt::format("{:0.1f}/{:0.1f} Mbps", net_speed.current, net_speed.max) },
                 { "threads", fmt::format("{}/{}", _sched.active_workers(), _sched.num_workers()) },
@@ -334,6 +358,10 @@ namespace daedalus_turbo::http_api {
             }
             const auto status = _sync_status.load();
             json::object resp {};
+            resp.emplace("syncType", fmt::format("{}", _sync_type));
+            if (_sync_last_error)
+                resp.emplace("syncError", *_sync_last_error);
+            resp.emplace("validationMode", fmt::format("{}", _validation_mode));
             resp.emplace("ready", status == sync_status::ready);
             resp.emplace("requirements", req_status.to_json());
             resp.emplace("hardware", _hardware_info_cached());
@@ -371,27 +399,36 @@ namespace daedalus_turbo::http_api {
                 case sync_status::syncing: {
                     const double in_progress = std::chrono::duration<double>(std::chrono::system_clock::now() - _sync_start).count();
                     resp.emplace("syncDuration", fmt::format("{:0.1f}", in_progress / 60));
-                    if (const auto start_slot = _sync_start_slot.load())
-                        resp.emplace("syncStartSlot", fmt::format("from slot {} in epoch {}", *start_slot, _cr->make_slot(*start_slot).epoch()));
-                    if (const auto target_slot = _sync_target_slot.load())
-                        resp.emplace("syncTargetSlot", fmt::format("to slot {} in epoch {}", *target_slot, _cr->make_slot(*target_slot).epoch()));
-                    if (!progress_copy.empty()) {
-                        double mean_progress = 0.0;
-                        for (const auto &[name, value]: progress_copy)
-                            mean_progress += value;
-                        mean_progress /= progress_copy.size();
-                        if (in_progress >= 60 && mean_progress >= 0.01)
-                            resp.emplace("syncETA", fmt::format("{:0.1f}", in_progress / mean_progress * (1.0 - mean_progress) / 60));
-                    }
+                    if (const auto start_slot = _cr->make_slot(_sync_start_slot.load(std::memory_order_relaxed).value()))
+                        resp.emplace("syncStartSlot", fmt::format("from slot {} in epoch {}", start_slot.epoch_slot(), start_slot.epoch()));
+                    if (const auto target_slot = _cr->make_slot(_sync_target_slot.load(std::memory_order_relaxed).value()))
+                        resp.emplace("syncTargetSlot", fmt::format("to slot {} in epoch {}", target_slot.epoch_slot(), target_slot.epoch()));
                     break;
                 }
                 case sync_status::failed:
-                    resp.emplace("error", *_sync_error);
+                    resp.emplace("syncError", *_sync_last_error);
                     break;
                 default:
                     throw error("internal error: unsupported value of the internal status: {}", static_cast<int>(status));
             }
             return _send_json_response(req, std::move(resp));
+        }
+
+        json::value _api_config_sync(const std::string_view &network_source, const std::string_view &validation_mode)
+        {
+            if (network_source == "turbo")
+                _sync_type = sync_type::turbo;
+            else if (network_source == "p2p")
+                _sync_type = sync_type::p2p;
+            else
+                logger::warn("unsupported network source: {}", network_source);
+            if (validation_mode == "turbo")
+                _validation_mode = sync::validation_mode_t::turbo;
+            else if (validation_mode == "full")
+                _validation_mode = sync::validation_mode_t::full;
+            else
+                logger::warn("unsupported network source: {}", network_source);
+            return json::value { "ok" };
         }
 
         json::value _api_sync()
@@ -400,8 +437,8 @@ namespace daedalus_turbo::http_api {
             logger::info("sync start");
             _sync_start = std::chrono::system_clock::now();
             _sync_status = sync_status::syncing;
-            _sync_error.reset();
             _sync_last_chunk.reset();
+            _sync_last_error.reset();
             try {
                 if (!_ignore_requirements) {
                     const auto req_status = requirements::check(_data_dir.string());
@@ -412,14 +449,50 @@ namespace daedalus_turbo::http_api {
                     if (!req_status)
                         throw error("requirements check failed - cannot begin the sync!");
                 }
-                _cr = std::make_unique<chunk_registry>(_data_dir.string());
+                // destroy the reconstructor instance, so that the index files can be removed and updated
+                if (_reconst)
+                    _reconst.reset();
+                if (!_cr)
+                    _cr = std::make_unique<chunk_registry>(_data_dir.string());
                 {
-                    sync::hybrid::syncer syncr { *_cr };
+                    std::unique_ptr<sync::syncer> syncr {};
+                    std::shared_ptr<sync::peer_info> peer {};
+                    switch (_sync_type) {
+                        case sync_type::none: {
+                            // keep the pointers empty!
+                            break;
+                        }
+                        case sync_type::turbo: {
+                            auto t_syncr = std::make_unique<sync::turbo::syncer>(*_cr);
+                            peer = t_syncr->find_peer();
+                            syncr = std::move(t_syncr);
+                            break;
+                        }
+                        case sync_type::p2p: {
+                            auto t_syncr = std::make_unique<sync::p2p::syncer>(*_cr);
+                            peer = t_syncr->find_peer();
+                            syncr = std::move(t_syncr);
+                            break;
+                        }
+                        case sync_type::hybrid: {
+                            auto t_syncr = std::make_unique<sync::hybrid::syncer>(*_cr);
+                            peer = t_syncr->find_peer();
+                            syncr = std::move(t_syncr);
+                            break;
+                        }
+                        default:
+                            throw error("unsupported sync type: {}", static_cast<int>(_sync_type));
+                    }
                     const uint64_t start_offset = _cr->valid_end_offset();
-                    auto peer = syncr.find_peer();
                     _sync_start_slot = _cr->tip() ? _cr->tip()->slot : 0;
-                    _sync_target_slot = peer->tip() ? peer->tip()->slot : 0;
-                    syncr.sync(std::move(peer));
+                    if (syncr && peer) {
+                        _sync_target_slot = peer->tip() ? peer->tip()->slot : 0;
+                        logger::reset_last_error();
+                        syncr->sync(std::move(peer), {}, _validation_mode);
+                        _sync_last_error = logger::last_error();
+                    } else {
+                        _sync_target_slot.store(_sync_start_slot.load(std::memory_order_relaxed), std::memory_order_relaxed);
+                    }
                     _sync_data_mb = static_cast<double>(_cr->valid_end_offset() - start_offset) / 1000000;
                     // prepare JSON array with tail_relative_stake data
                     _tail_relative_stake = _cr->tail_relative_stake();
@@ -437,8 +510,9 @@ namespace daedalus_turbo::http_api {
                 _sync_status = sync_status::ready;
                 logger::info("synchronization complete, all API endpoints are available now");
             } catch (std::exception &ex) {
-                _sync_error.emplace(ex.what());
-                logger::error("sync failed: {}", *_sync_error);
+                logger::error("sync failed: {}", ex.what());
+                if (!_sync_last_error)
+                    _sync_last_error = std::make_shared<std::string>(ex.what());
                 _sync_status = sync_status::failed;
             }
             return json::value { "synchronization complete" };
@@ -594,7 +668,7 @@ namespace daedalus_turbo::http_api {
                     if (_sync_status == sync_status::syncing)
                         resp = _error_response("Sync in progress, the API is not yet ready!");
                     else if (_sync_status == sync_status::failed)
-                        resp = _error_response(*_sync_error);
+                        resp = _error_response(*_sync_last_error);
                     else
                         resp = _error_response("The syncronization state is unknown");
                     send(_send_json_response(req, resp));
@@ -602,12 +676,11 @@ namespace daedalus_turbo::http_api {
                     std::optional<json::value> resp {};
                     {
                         mutex::scoped_lock results_lk { _results_mutex };
-                        if (_results.contains(target)) {
-                            auto &cached_res = _results.at(target);
-                            if (cached_res) {
+                        if (auto r_it = _results.find(target); r_it != _results.end()) {
+                            if (r_it->second) {
                                 resp.emplace();
-                                std::swap(*resp, *cached_res);
-                                _results.erase(target);
+                                std::swap(*resp, *r_it->second);
+                                _results.erase(r_it);
                             } else {
                                 resp.emplace(json::object { { "delayed", true } });
                             }

@@ -228,13 +228,13 @@ namespace daedalus_turbo::plutus {
                     return term { _alloc, t_delay { _discharge_term(env, v.expr, level, var_idx_diff) } };
                 } else if constexpr (std::is_same_v<T, t_case>) {
                     term_list::value_type l { _alloc };
-                    l.reserve(v.cases->size());
+                    //l.reserve(v.cases->size());
                     for (auto &c: *v.cases)
                         l.emplace_back(_discharge_term(env, c, level, var_idx_diff));
                     return term { _alloc, t_case { _discharge_term(env, v.arg, level, var_idx_diff), term_list { _alloc, std::move(l) } } };
                 } else if constexpr (std::is_same_v<T, t_constr>) {
                     term_list::value_type l { _alloc };
-                    l.reserve(v.args->size());
+                    //l.reserve(v.args->size());
                     for (auto &a: *v.args)
                         l.emplace_back(_discharge_term(env, a, level, var_idx_diff));
                     return term { _alloc, t_constr { v.tag, term_list { _alloc, std::move(l) } } };
@@ -286,10 +286,27 @@ namespace daedalus_turbo::plutus {
             _spend(b.b.tag, b.args);
             const auto func = _get_builtin_func(b.b.tag);
             switch (num_args) {
-                case 1: return std::get<builtin_one_arg>(func)(_alloc, b.args->at(0));
-                case 2: return std::get<builtin_two_arg>(func)(_alloc, b.args->at(0), b.args->at(1));
-                case 3: return std::get<builtin_three_arg>(func)(_alloc, b.args->at(0), b.args->at(1), b.args->at(2));
-                case 6: return std::get<builtin_six_arg>(func)(_alloc, b.args->at(0), b.args->at(1), b.args->at(2), b.args->at(3), b.args->at(4), b.args->at(5));
+                case 1: return std::get<builtin_one_arg>(func)(_alloc, b.args->front());
+                case 2: {
+                    auto first = b.args->begin();
+                    auto second = std::next(first);
+                    return std::get<builtin_two_arg>(func)(_alloc, *first, *second);
+                }
+                case 3: {
+                    auto first = b.args->begin();
+                    auto second = std::next(first);
+                    auto third = std::next(second);
+                    return std::get<builtin_three_arg>(func)(_alloc, *first, *second, *third);
+                }
+                case 6: {
+                    auto first = b.args->begin();
+                    auto second = std::next(first);
+                    auto third = std::next(second);
+                    auto fourth = std::next(third);
+                    auto fifth = std::next(fourth);
+                    auto sixth = std::next(fifth);
+                    return std::get<builtin_six_arg>(func)(_alloc, *first, *second, *third, *fourth, *fifth, *sixth);
+                }
                 default: throw error("unsupported number of arguments: {}!", num_args);
             }
         }
@@ -312,7 +329,10 @@ namespace daedalus_turbo::plutus {
                         throw error("an application of an polymorphic builtin with an incorrect number of forces: {}", new_b.b.tag);
                     if (new_b.args->size() < new_b.b.num_args()) [[likely]]
                         return value { _alloc, std::move(new_b) };
-                    return _apply_builtin(new_b);
+                    //logger::info("{} {}", new_b.b.tag, new_b.args);
+                    auto res = _apply_builtin(new_b);
+                    //logger::info("{} => {}", new_b.b.tag, res);
+                    return res;
                 }
                 throw error("only lambdas and builtins can be applied but got: {}", typeid(T).name());
                 return value { _alloc, constant { _alloc, std::monostate {} } };
@@ -400,9 +420,9 @@ namespace daedalus_turbo::plutus {
             const auto &cc = v_arg.as_constr();
             if (cc.tag >= e.cases->size())
                 throw error("a case argument must have been less than {} but got {}!", e.cases->size(), cc.tag);
-            auto res = _compute(env, e.cases->at(cc.tag));
+            auto res = _compute(env, *std::next(e.cases->begin(), cc.tag));
             for (size_t i = 0; i < cc.args->size(); ++i)
-                res = _apply(*res, cc.args->at(i));
+                res = _apply(*res, *std::next(cc.args->begin(), i));
             return res;
         }
 

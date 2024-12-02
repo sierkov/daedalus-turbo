@@ -8,12 +8,16 @@
 #include <exception>
 #include <functional>
 #include <source_location>
+#include <dt/container.hpp>
 #include <dt/format.hpp>
 
 namespace daedalus_turbo::logger {
     enum class level {
         trace, debug, info, warn, error
     };
+
+    extern std::shared_ptr<std::string> last_error();
+    extern void reset_last_error();
 
     extern bool &tracing_enabled();
     extern void log(level lev, const std::string &msg);
@@ -67,12 +71,12 @@ namespace daedalus_turbo::logger {
                 (*cleanup)();
         } catch (const std::exception &ex) {
             cur_ex = std::current_exception();
-            logger::error("block at {}:{} failed with std::exception: {}", loc.file_name(), loc.line(), ex.what());
+            error("block at {}:{} failed with std::exception: {}", loc.file_name(), loc.line(), ex.what());
             if (cleanup)
                 (*cleanup)();
         } catch (...) {
             cur_ex = std::current_exception();
-            logger::error("block at {}:{} failed with an unknown error", loc.file_name(), loc.line());
+            error("block at {}:{} failed with an unknown error", loc.file_name(), loc.line());
             if (cleanup)
                 (*cleanup)();
         }

@@ -29,6 +29,8 @@ namespace daedalus_turbo::cardano::ledger::conway {
         void to_zpp(parallel_serializer &) const override;
         using babbage::state::process_cert;
         void start_epoch(std::optional<uint64_t> new_epoch) override;
+        bool has_drep(const credential_t &id) const override;
+        void process_cert(const cert_any_t &, const cert_loc_t &loc) override;
         virtual void process_cert(const reg_cert &, const cert_loc_t &);
         virtual void process_cert(const unreg_cert &, const cert_loc_t &);
         virtual void process_cert(const vote_deleg_cert &, const cert_loc_t &);

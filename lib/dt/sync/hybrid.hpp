@@ -14,7 +14,7 @@ namespace daedalus_turbo::sync::hybrid {
             cardano::network::client_manager &ccm=cardano::network::client_manager_async::get()
         );
         ~syncer() override;
-        bool sync(const std::shared_ptr<sync::peer_info> &peer, cardano::optional_slot max_slot={}) override;
+        bool sync(const std::shared_ptr<sync::peer_info> &peer, cardano::optional_slot max_slot={}, validation_mode_t=validation_mode_t::turbo) override;
     protected:
         void cancel_tasks(uint64_t max_valid_offset) override;
         void sync_attempt(sync::peer_info &peer, cardano::optional_slot max_slot) override;

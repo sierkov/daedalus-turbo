@@ -215,11 +215,6 @@ namespace daedalus_turbo::sync {
         {
             return _num_err.load() == 0;
         }
-
-        speed_mbps _internet_speed_impl() override
-        {
-            return speed_mbps {};
-        }
     };
 
     extern mock_chain gen_chain(const mock_chain_config &mock_cfg={});

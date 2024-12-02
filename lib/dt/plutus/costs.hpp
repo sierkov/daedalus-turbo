@@ -50,7 +50,6 @@ namespace daedalus_turbo::plutus::costs {
         std::optional<parsed_model> v3 {};
 
         const parsed_model &for_script(cardano::script_type typ) const;
-        const parsed_model &for_script(const cardano::script_info &) const;
     };
 
     using arg_map = map<std::string, std::string>;

@@ -54,8 +54,7 @@ namespace daedalus_turbo::cli::txwit_prep {
                         });
                         if (num_redeemers) {
                             stored_tx_context ctx { tx.hash(), num_redeemers, uint8_vector { tx.cbor().raw_span() },
-                                uint8_vector { tx.witness_cbor().raw_span() }, uint8_vector { tx.auxiliary_raw_span() },
-                                block_info };
+                                uint8_vector { tx.witness_cbor().raw_span() }, block_info };
                             bool complete = true;
                             tx.foreach_input([&](const auto &txi) {
                                 auto &txo = ctx.inputs.emplace_back(tx_out_ref::from_input(txi));

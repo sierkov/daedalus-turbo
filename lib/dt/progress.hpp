@@ -57,6 +57,12 @@ namespace daedalus_turbo {
             _update(name, pct_value);
         }
 
+        void update_inform(const std::string &name, const uint64_t current, const uint64_t max)
+        {
+            update(name, current, max);
+            inform();
+        }
+
         void done(const std::string &name)
         {
             _update(name, 1.0);

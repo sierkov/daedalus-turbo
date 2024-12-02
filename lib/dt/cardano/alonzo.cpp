@@ -79,9 +79,9 @@ namespace daedalus_turbo::cardano::alonzo {
     {
         wit_cnt cnt {};
         for (const auto &[rid, rinfo]: ctx.redeemers()) {
-            const auto ps = ctx.prepare_script(rinfo);
+            auto ps = ctx.prepare_script(rinfo);
             ctx.eval_script(ps);
-            cnt += ps.script;
+            cnt += ps.typ;
         }
         return cnt;
     }

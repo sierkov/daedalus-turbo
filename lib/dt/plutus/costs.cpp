@@ -81,7 +81,9 @@ namespace daedalus_turbo::plutus::costs {
 
         uint64_t cost(const arg_sizes &sizes, const value_list &args) const override
         {
-            if (const auto &y_val = static_cast<uint64_t>(*args->at(1).as_int()); y_val != 0)
+            if (args->size() < 2) [[unlikely]]
+                throw error("cost_function {} requires two arguments but got {}", typeid(*this).name(), args->size());
+            if (const auto &y_val = static_cast<uint64_t>(*std::next(args->begin())->as_int()); y_val != 0)
                 return (y_val + 7) / 8;
             return _intercept + _slope * sizes.at(2);
         }
@@ -612,11 +614,6 @@ namespace daedalus_turbo::plutus::costs {
             case cardano::script_type::plutus_v3: return v3.value();
             default: throw error("unsupported script type: {}", static_cast<int>(typ));
         }
-    }
-
-    const parsed_model &parsed_models::for_script(const cardano::script_info &s) const
-    {
-        return for_script(s.type());
     }
 
     const arg_map &default_cost_args_v1()

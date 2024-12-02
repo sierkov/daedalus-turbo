@@ -1,0 +1,1141 @@
+/* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
+ * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * This code is distributed under the license specified in:
+ * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
+
+#include <dt/cardano/common.hpp>
+#include <dt/cardano/ledger/state.hpp>
+#include <dt/memory.hpp>
+#include <dt/parallel/ordered-consumer.hpp>
+#include <dt/parallel/ordered-queue.hpp>
+#include <dt/plutus/context.hpp>
+#include <dt/txwit/validator.hpp>
+#include <dt/zpp-stream.hpp>
+
+namespace daedalus_turbo::txwit {
+    using namespace cardano;
+    using namespace cardano::ledger;
+    using namespace plutus;
+
+    struct byron_signer_t {
+        uint8_vector addr {};
+
+        bool operator<(const byron_signer_t& o) const
+        {
+            return addr < o.addr;
+        }
+    };
+
+    struct byron_witness_t {
+        enum type_t: uint8_t { vkey, redeem };
+
+        uint8_vector vk {};
+        type_t typ = vkey;
+
+        bool operator<(const byron_witness_t& o) const
+        {
+            if (typ != o.typ)
+                return typ < o.typ;
+            return vk < o.vk;
+        }
+
+        uint64_t cbor_type() const
+        {
+            switch (typ) {
+                case vkey: return 0;
+                case redeem: return 2;
+                default: throw error("unsupported byron_witness type: {}", static_cast<int>(typ));
+            }
+        }
+    };
+
+    struct vkey_signer_t {
+        key_hash hash {};
+
+        bool operator<(const vkey_signer_t& o) const
+        {
+            return hash < o.hash;
+        }
+    };
+
+    struct script_signer_t {
+        script_hash hash {};
+        redeemer_tag tag = redeemer_tag::spend;
+
+        bool operator<(const script_signer_t& o) const
+        {
+            if (tag != o.tag)
+                return tag < o.tag;
+            return hash < o.hash;
+        }
+    };
+
+    struct bootstrap_signer_t {
+        key_hash root_hash {};
+        uint8_t typ = 0;
+
+        bool operator<(const bootstrap_signer_t& o) const
+        {
+            if (typ != o.typ)
+                return typ < o.typ;
+            return root_hash < o.root_hash;
+        }
+    };
+
+    struct required_signer_t {
+        using value_type = std::variant<vkey_signer_t, script_signer_t, bootstrap_signer_t>;
+
+        value_type val;
+
+        static constexpr auto serialize(auto &archive, auto &self)
+        {
+            return archive(self.val);
+        }
+
+        static required_signer_t from_address(const redeemer_tag typ, const address &addr)
+        {
+            switch (const auto pay_id = addr.pay_id(); pay_id.type) {
+                case pay_ident::ident_type::BYRON_KEY: {
+                    const auto b_addr = addr.byron();
+                    return { bootstrap_signer_t { b_addr.root(), b_addr.type() } };
+                }
+                case pay_ident::ident_type::SHELLEY_KEY:
+                    return { vkey_signer_t { pay_id.hash } };
+                case pay_ident::ident_type::SHELLEY_SCRIPT:
+                    return { script_signer_t { pay_id.hash, typ } };
+                default:
+                    throw error("unsupported pay_ident type: {}", static_cast<int>(pay_id.type));
+            }
+        }
+
+        static required_signer_t from_cred(const credential_t &cred)
+        {
+            if (cred.script)
+                return { script_signer_t { cred.hash, redeemer_tag::cert } };
+            return { vkey_signer_t { cred.hash } };
+        }
+
+        // required only for zpp serialization methods
+        required_signer_t() =default;
+
+        required_signer_t(value_type &&v): val { std::move(v) }
+        {
+        }
+
+        required_signer_t(const required_signer_t &v): val { v.val }
+        {
+        }
+
+        required_signer_t(required_signer_t &&v): val { std::move(v.val) }
+        {
+        }
+
+        required_signer_t(const redeemer_tag typ, const address &addr): required_signer_t { from_address(typ, addr) }
+        {
+        }
+
+        required_signer_t(const credential_t cred): required_signer_t { from_cred(cred) }
+        {
+        }
+
+        bool operator<(const required_signer_t &o) const
+        {
+            return std::visit<bool>([&](const auto &v, const auto &ov) {
+                using T1 = std::decay_t<decltype(v)>;
+                using T2 = std::decay_t<decltype(ov)>;
+                if constexpr (!std::is_same_v<T1, T2>)
+                    return val.index() < o.val.index();
+                if constexpr (std::is_same_v<T1, T2>)
+                    return v < ov;
+            }, val, o.val);
+        }
+    };
+
+    struct balances_t {
+        uint64_t in_coin = 0;
+        uint64_t out_coin = 0;
+        policy_map in_assets {};
+        policy_map out_assets {};
+
+        bool match() const
+        {
+            return in_coin == out_coin && in_assets == out_assets;
+        }
+    };
+
+    // A compact way to reference a transaction in the same batch
+    // ZPP serialization does not support bit fields. Thus, the manual bit manipulations.
+    struct tx_loc_t {
+        tx_loc_t() =default;
+
+        static constexpr auto serialize(auto &archive, auto &self)
+        {
+            return archive(self._val);
+        }
+
+        tx_loc_t(const uint8_t part_idx, const size_t tx_idx)
+        {
+            _val = (part_idx << 24) | (tx_idx & 0xFFFFFF);
+        }
+
+        uint8_t part_idx() const
+        {
+            return _val >> 24;
+        }
+
+        size_t tx_idx() const
+        {
+            return _val & 0xFFFFFF;
+        }
+
+        bool operator<(const tx_loc_t &o) const noexcept
+        {
+            return _val < o._val;
+        }
+
+        bool operator==(const tx_loc_t &o) const noexcept
+        {
+            return _val == o._val;
+        }
+    private:
+        uint32_t _val = 0;
+    };
+    static_assert(sizeof(tx_loc_t) == 4);
+}
+
+namespace fmt {
+    template<>
+        struct formatter<daedalus_turbo::txwit::balances_t>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::txwit::balances_t &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            using daedalus_turbo::cardano::amount;
+            return fmt::format_to(
+                ctx.out(),
+                "in_coin: {} out_coin: {} in_assets: {} out_assets: {}",
+                amount { v.in_coin }, amount { v.out_coin }, v.in_assets, v.out_assets
+            );
+        }
+    };
+
+    template<>
+        struct formatter<daedalus_turbo::txwit::bootstrap_signer_t>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::txwit::bootstrap_signer_t &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "bootstrap {} {}", v.typ, v.root_hash);
+        }
+    };
+
+    template<>
+        struct formatter<daedalus_turbo::txwit::script_signer_t>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "script {} {}", v.tag, v.hash);
+        }
+    };
+
+    template<>
+        struct formatter<daedalus_turbo::txwit::byron_witness_t::type_t>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            using type_t = daedalus_turbo::txwit::byron_witness_t::type_t;
+            switch (v) {
+                case type_t::redeem: return fmt::format_to(ctx.out(), "redeem");
+                case type_t::vkey: return fmt::format_to(ctx.out(), "vkey");
+                default: throw daedalus_turbo::error("unsupported byron_witness type: {}", static_cast<int>(v));
+            }
+        }
+    };
+
+    template<>
+        struct formatter<daedalus_turbo::txwit::byron_witness_t>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "{} {}", v.typ, v.vk);
+        }
+    };
+
+    template<>
+        struct formatter<daedalus_turbo::txwit::byron_signer_t>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "byron {}", v.addr);
+        }
+    };
+
+    template<>
+        struct formatter<daedalus_turbo::txwit::vkey_signer_t>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "vkey {}", v.hash);
+        }
+    };
+
+    template<>
+        struct formatter<daedalus_turbo::txwit::required_signer_t>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return std::visit([&](const auto &vv) -> decltype(ctx.out()) {
+                return fmt::format_to(ctx.out(), "{}", vv);
+            }, v.val);
+        }
+    };
+}
+
+namespace daedalus_turbo::txwit {
+    witness_type witness_type_from_str(const std::string_view s)
+    {
+        if (s == "all")
+            return witness_type::all;
+        if (s == "vkey")
+            return witness_type::vkey;
+        if (s == "native")
+            return witness_type::native;
+        if (s == "plutus")
+            return witness_type::plutus;
+        if (s == "none")
+            return witness_type::none;
+        throw error("unsupported value of the wits options: {}", s);
+    }
+
+    struct validator {
+        validator(const chunk_registry &cr, const optional_point &intersection, const optional_point &to,
+                const witness_type typ, const error_handler_func &error_handler):
+            _cr { cr }, _cfg { intersection, to, typ, error_handler }
+        {
+        }
+
+        [[nodiscard]] optional_point validate() const
+        {
+            progress_guard pg { "txwit" };
+
+            const auto proc = std::make_shared<stage2_processor>(_cr, _cfg);
+            const auto batches = proc->prepare_batches();
+            const auto num_batches = batches.size();
+
+            parallel::ordered_consumer batch_consumer {
+                [this, proc, num_batches](const auto part_no) {
+                    timer t { fmt::format("txwit batch: {} consume_batch", part_no), logger::level::debug };
+                    const auto path_main = _batch_path(_cr, part_no, "main");
+                    const auto main_start = std::chrono::high_resolution_clock::now();
+                    auto part = zpp::load_zstd<batch_info>(path_main);
+                    logger::debug("txwit batch: {} epoch: {} seq main deserialization took {:0.5f} sec",
+                        part_no, part.epoch, std::chrono::duration<double>(std::chrono::high_resolution_clock::now() - main_start).count());
+                    proc->apply_batch(std::move(part));
+                    std::filesystem::remove(path_main);
+                    std::filesystem::remove(_batch_dir(_cr, part_no));
+                    progress::get().update_inform("txwit", part_no, num_batches);
+                },
+                "consumer-part", 500, _cr.sched()
+            };
+
+            logger::run_log_errors([&, proc] {
+                auto stats = _process_batches(batch_consumer, batches);
+                logger::debug("txwit: stage-1 txs: {} stage-2 txs: {} invalid txs: {}",
+                    stats.num_simple_txs, stats.num_plutus_txs, stats.num_invalid_txs);
+                logger::debug("txwit: stage-1: witnesses: {}", stats.wit_cnts);
+                logger::debug("txwit: stage-2: witnesses: {}", proc->counts());
+                stats.wit_cnts += proc->counts();
+                logger::info("txwit: total: witnesses: {}", stats.wit_cnts);
+            });
+            const auto batch_end = batch_consumer.next();
+            logger::debug("txwit: batch_end: {}", batch_end);
+            if (batch_end > 0)
+                return batches[batch_end - 1].back()->blocks.back().point();
+            return _cfg.intersection;
+        }
+    private:
+        struct param_update {
+            uint64_t slot = 0;
+            std::variant<param_update_proposal, param_update_vote> update {};
+
+            bool operator<(const param_update &o) const
+            {
+                return slot < o.slot;
+            }
+        };
+        using param_update_list = vector<param_update>;
+
+        // Examples of typical protocol-parameter-based checks
+        struct max_stats_t {
+            std::optional<uint32_t> max_block_body_size {};
+            std::optional<uint16_t> max_block_header_size {};
+            std::optional<uint32_t> max_tx_size {};
+
+            static constexpr auto serialize(auto &archive, auto &self)
+            {
+                return archive(self.max_block_body_size, self.max_block_header_size, self.max_tx_size);
+            }
+        };
+
+        struct batch_stats_t {
+            size_t num_simple_txs = 0;
+            size_t num_plutus_txs = 0;
+            size_t num_invalid_txs = 0;
+            tx::wit_cnt wit_cnts {};
+
+            batch_stats_t &operator+=(const batch_stats_t &o)
+            {
+                num_simple_txs += o.num_simple_txs;
+                num_plutus_txs += o.num_plutus_txs;
+                num_invalid_txs += o.num_invalid_txs;
+                wit_cnts += o.wit_cnts;
+                return *this;
+            }
+        };
+
+        struct cert_info_t {
+            // default values are needed only for zpp serialization to work
+            cert_any_t cert { stake_dereg_cert { stake_ident {} } };
+            cert_loc_t loc {};
+            tx_loc_t tx_loc {};
+
+            static constexpr auto serialize(auto &archive, auto &self)
+            {
+                return archive(self.cert, self.loc, self.tx_loc);
+            }
+        };
+
+        struct tx_context_t {
+            tx_hash tx_id {};
+            tx_loc_t tx_loc {};
+            uint32_t tx_size = 0;
+            uint64_t fee = 0;
+            uint8_t era = 0;
+            bool reqires_genesis_delegs_quorum = false;
+            balances_t balances {};
+            stored_txo_list inputs {};
+            stored_txo_list ref_inputs {};
+            set<required_signer_t> signers {};
+            set<required_signer_t> required_signers {};
+            set<script_hash> native_scripts {};
+            vector<byron_witness_t> byron_signers {};
+            std::optional<stored_tx_context> plutus_ctx {};
+
+            static constexpr auto serialize(auto &archive, auto &self)
+            {
+                return archive(self.tx_id, self.tx_loc, self.tx_size, self.fee, self.era, self.reqires_genesis_delegs_quorum,
+                    self.balances, self.inputs, self.ref_inputs,
+                    self.signers, self.required_signers,
+                    self.native_scripts, self.byron_signers, self.plutus_ctx);
+            }
+
+            static tx_context_t from_tx(const tx_loc_t &tx_loc, const tx &tx)
+            {
+                return {
+                    .tx_id=tx.hash(),
+                    .tx_loc=tx_loc,
+                    .tx_size=narrow_cast<uint32_t>(tx.size()),
+                    .fee=tx.fee(),
+                    .era=narrow_cast<uint8_t>(tx.block().era())
+                };
+            }
+        };
+
+        struct deposit_info_t {
+            uint64_t in_coin = 0;
+            uint64_t out_coin = 0;
+        };
+
+        struct batch_info {
+            static constexpr size_t num_parts = 256;
+
+            size_t part_id = 0;
+            size_t epoch = 0;
+            batch_stats_t stats {};
+            // data to update the ledger state
+            txo_map utxos {};
+            param_update_list updates {};
+            vector<cert_info_t> certs {};
+            // pre-aggregated data for processing
+            max_stats_t max_stats {};
+            // fields are not serialized as is:
+            // txs - no need to serialize as they have their own data stream
+            // registered_certs - no need to serialize as they are computed on the go
+            vector<vector<tx_context_t>> txs = vector<vector<tx_context_t>>(num_parts);
+            map<tx_loc_t, deposit_info_t> tx_deposits {};
+
+            static constexpr auto serialize(auto &archive, auto &self)
+            {
+                return archive(self.part_id, self.epoch, self.stats, self.utxos, self.updates, self.certs, self.max_stats);
+            }
+        };
+
+        struct validation_config_t {
+            const optional_point intersection;
+            const optional_point to;
+            const witness_type typ;
+            const error_handler_func error_handler;
+
+            // protocol parameter updates, UTXO data and certificates must be always processed
+            // transaction data may be skipped
+            void pre_aggregate_data(batch_info &part, const block_base &blk) const
+            {
+                auto &stats = part.stats;
+                auto &max = part.max_stats;
+                if (!max.max_block_body_size || *max.max_block_body_size < blk.body_size())
+                    max.max_block_body_size = narrow_cast<uint32_t>(blk.body_size());
+                if (!max.max_block_header_size || *max.max_block_header_size < blk.header_raw_data().size())
+                    max.max_block_header_size = narrow_cast<uint16_t>(blk.header_raw_data().size());
+                blk.foreach_update_proposal([&](const auto &prop) {
+                    part.updates.emplace_back(blk.slot(), prop);
+                });
+                blk.foreach_update_vote([&](const auto &vote) {
+                    part.updates.emplace_back(blk.slot(), vote);
+                });
+                const auto block_info = storage::block_info::from_block(blk);
+                blk.foreach_tx([&](const tx &tx) {
+                    const uint8_t tx_part_idx = tx.hash()[0];
+                    const size_t tx_idx = part.txs[tx_part_idx].size();
+                    tx_loc_t tx_loc { tx_part_idx, tx_idx };
+                    auto tx_checks = tx_context_t::from_tx(tx_loc, tx);
+                    tx_checks.balances.out_coin += tx.fee();
+                    if (!max.max_tx_size || *max.max_tx_size < tx.cbor().size)
+                        max.max_tx_size = narrow_cast<uint32_t>(tx.cbor().size);
+                    size_t num_redeemers = 0;
+                    tx.foreach_redeemer([&](const auto &) {
+                        ++num_redeemers;
+                    });
+                    if (num_redeemers) {
+                        tx_checks.plutus_ctx.emplace(
+                            tx.hash(), num_redeemers,
+                            uint8_vector { tx.cbor().raw_span() },
+                            uint8_vector { tx.witness_cbor().raw_span() }, block_info
+                        );
+                        tx.foreach_referenced_input([&](const tx_input &txi) {
+                            auto &txo = tx_checks.ref_inputs.emplace_back(tx_out_ref::from_input(txi));
+                            if (const auto txo_it = part.utxos.find(txo.id); txo_it != part.utxos.end())
+                                txo.data = txo_it->second;
+                        });
+                        ++stats.num_plutus_txs;
+                    } else {
+                        ++stats.num_simple_txs;
+                    }
+                    stats.wit_cnts += witnesses_ok_stage1(blk, tx);
+                    tx.foreach_cert([&](const cbor::value &cert_raw, const auto cert_idx) {
+                        cert_any_t cert { cert_raw };
+                        if (std::holds_alternative<instant_reward_cert>(cert.val))
+                            tx_checks.reqires_genesis_delegs_quorum = true;
+                        const cert_loc_t loc { blk.slot(), tx.index(), cert_idx };
+                        part.certs.emplace_back(cert, loc, tx_loc);
+                        if (const auto r_cred = cert.signing_cred(); r_cred)
+                            tx_checks.required_signers.emplace(*r_cred);
+                    });
+                    tx.foreach_script([&](const auto &s) {
+                        if (s.type() == script_type::native)
+                            tx_checks.native_scripts.emplace(s.hash());
+                    });
+                    // The available reward balance is checked by the consensus verification. No need to recheck it here.
+                    tx.foreach_withdrawal([&](const tx_withdrawal &withdr) {
+                        if (withdr.amount) {
+                            tx_checks.balances.in_coin += withdr.amount;
+                            const auto stake_id = withdr.address.stake_id();
+                            if (stake_id.script)
+                                tx_checks.required_signers.emplace(script_signer_t { stake_id.hash, redeemer_tag::reward });
+                            else
+                                tx_checks.required_signers.emplace(vkey_signer_t { stake_id.hash });
+                        }
+                    });
+                    tx.foreach_output([&](const tx_output &txo) {
+                        tx_checks.balances.out_coin += txo.amount;
+                        if (txo.assets) {
+                            for (const auto &[policy_id, assets]: txo.assets->map()) {
+                                for (const auto &[name, value]: assets.map()) {
+                                    if (const auto coin = value.uint())
+                                        tx_checks.balances.out_assets[policy_id.buf()][name.buf()] += coin;
+                                }
+                            }
+                        }
+                        _add_utxo(part.utxos, tx, txo);
+                    });
+                    tx.foreach_required_signer([&](const auto vkey) {
+                        tx_checks.required_signers.emplace(vkey_signer_t { vkey });
+                    });
+                    tx.foreach_input([&](const tx_input &txin) {
+                        auto &txo = tx_checks.inputs.emplace_back(tx_out_ref::from_input(txin));
+                        const auto [it, created] = part.utxos.try_emplace(txo.id);
+                        if (!created)
+                            txo.data = it->second;
+                        _del_utxo(part, it, created);
+                    });
+                    tx_checks.balances.out_coin += tx.donation();
+                    if (const auto *c_tx = dynamic_cast<const conway::tx *>(&tx); c_tx) {
+                        c_tx->foreach_proposal([&](const conway::proposal_t &p) {
+                            tx_checks.balances.out_coin += p.deposit;
+                        });
+                    }
+                    tx.foreach_witness_vkey([&](const vkey_witness_t &vk_w) {
+                        switch (vk_w.typ) {
+                            case vkey_witness_t::vkey:
+                                tx_checks.signers.emplace(vkey_signer_t { blake2b<key_hash>(vk_w.bytes) });
+                                break;
+                            case vkey_witness_t::bootstrap: {
+                                const auto w_data = cbor::zero::parse(vk_w.bytes);
+                                uint8_vector vk_full {};
+                                vk_full << w_data.at(0).bytes() << w_data.at(2).bytes();
+                                tx_checks.signers.emplace(bootstrap_signer_t { byron_addr_root_hash(0, vk_full, w_data.at(3).bytes()) });
+                                break;
+                            }
+                            case vkey_witness_t::byron_vkey:
+                                tx_checks.byron_signers.emplace_back(vk_w.bytes, byron_witness_t::vkey);
+                                break;
+                            case vkey_witness_t::byron_redeem:
+                                tx_checks.byron_signers.emplace_back(vk_w.bytes, byron_witness_t::redeem);
+                                break;
+                            default:
+                                throw error("unsupported vkey_witness_type: {}", static_cast<int>(vk_w.typ));
+                        }
+                    });
+                    tx.foreach_mint([&](const auto &policy_id, const auto &assets) {
+                        bool minted = false;
+                        for (const auto &[name, diff]: assets) {
+                            // negative mint values signify a permanent outflow of tokens
+                            if (diff.type == CBOR_NINT) {
+                                // guaranteed to be negative so no need to check for zero
+                                tx_checks.balances.out_assets[policy_id][name.buf()] += diff.nint();
+                                minted = true;
+                            } else if (const auto coin = diff.uint(); coin) {
+                                // zeros must be ignored
+                                tx_checks.balances.in_assets[policy_id][name.buf()] += coin;
+                                minted = true;
+                            }
+                        }
+                        if (minted)
+                            tx_checks.required_signers.emplace(script_signer_t { policy_id, redeemer_tag::mint });
+                    });
+                    part.txs[tx_part_idx].emplace_back(std::move(tx_checks));
+                });
+                blk.foreach_invalid_tx([&](const auto &tx) {
+                    ++stats.num_invalid_txs;
+                    tx.foreach_collateral([&](const auto &txi) {
+                        _del_utxo(part, tx_out_ref { txi.tx_hash, txi.txo_idx });
+                    });
+                    if (const auto *babbage_tx = dynamic_cast<const cardano::babbage::tx *>(&tx); babbage_tx) {
+                        if (const auto c_ret = babbage_tx->collateral_return(); c_ret)
+                            _add_utxo(part.utxos, tx, *c_ret);
+                    }
+                });
+            }
+
+            tx::wit_cnt witnesses_ok_stage1(const block_base &blk, const tx &tx) const
+            {
+                const bool first_slot_ok = !intersection || blk.offset() >= intersection->end_offset;
+                const bool last_slot_ok = !to || blk.offset() < to->end_offset;
+                if (first_slot_ok && last_slot_ok) {
+                    try {
+                        switch (typ) {
+                            case witness_type::all: {
+                                set<key_hash> vkey {};
+                                auto cnt = tx.witnesses_ok_vkey(vkey);
+                                cnt += tx.witnesses_ok_native(vkey);
+                                return cnt;
+                            }
+                            case witness_type::vkey: {
+                                set<key_hash> valid_vkeys {};
+                                return tx.witnesses_ok_vkey(valid_vkeys);
+                            }
+                            case witness_type::native: {
+                                bool has_native = false;
+                                tx.foreach_witness([&](const auto wtyp, auto &) {
+                                    if (wtyp == 1)
+                                        has_native = true;
+                                });
+                                if (has_native) {
+                                    set<key_hash> valid_vkeys {};
+                                    tx::wit_cnt cnts = tx.witnesses_ok_vkey(valid_vkeys);
+                                    cnts += tx.witnesses_ok_native(valid_vkeys);
+                                    return cnts;
+                                }
+                                return {};
+                            }
+                            case witness_type::plutus:
+                                return {};
+                            case witness_type::none:
+                                break;
+                            default: throw error("unsupported witness type: {}", static_cast<int>(typ));
+                        }
+                    } catch (const std::exception &ex) {
+                        const auto msg = fmt::format("txwit: slot: {} tx: {} error: {}", blk.slot(), tx.hash(), ex.what());
+                        logger::error("{}", msg);
+                        error_handler(msg);
+                    }
+                }
+                return {};
+            }
+
+            tx::wit_cnt witnesses_ok_stage2(const block_base &blk, const tx &tx, const context &ctx) const
+            {
+                const bool first_slot_ok = !intersection || blk.offset() >= intersection->end_offset;
+                const bool last_slot_ok = !to || blk.offset() < to->end_offset;
+                tx::wit_cnt cnts {};
+                if (first_slot_ok && last_slot_ok) {
+                    try {
+                        switch (typ) {
+                            case witness_type::all:
+                            case witness_type::plutus:
+                                cnts += tx.witnesses_ok_plutus(ctx);
+                                break;
+                            default:
+                                break;
+                        }
+                    } catch (const std::exception &ex) {
+                        const auto msg = fmt::format("txwit slot: {} tx: {} error: {}", blk.slot(), tx.hash(), ex.what());
+                        logger::error("{}", msg);
+                        error_handler(msg);
+                    }
+                }
+                return cnts;
+            }
+        };
+
+        struct stage2_processor {
+            stage2_processor(const chunk_registry &cr, const validation_config_t &cfg): _cr { cr }, _cfg { cfg }
+            {
+                _st.start_epoch(0);
+                if (_cfg.intersection) {
+                    const auto *snap = _cr.validator().snapshots().best([&](const auto &s) { return s.end_offset <=  _cfg.intersection->end_offset; });
+                    if (snap)
+                        _cr.validator().load_snapshot(_st, *snap);
+                }
+            }
+
+            void apply_batch(batch_info &&part)
+            {
+                _apply_epoch_update(part);
+                _process_certs_and_param_updates(part);
+                _cnts += _validate_witnesses_and_invariants(part);
+                _apply_utxos(part);
+            }
+
+            const tx::wit_cnt &counts() const
+            {
+                return _cnts;
+            }
+
+            size_t errors() const
+            {
+                return _num_errs;
+            }
+
+            vector<storage::chunk_cptr_list> prepare_batches() const
+            {
+                vector<storage::chunk_cptr_list> batches {};
+                storage::chunk_cptr_list chunks {};
+                for (const auto &[last_byte_offset, info]: _cr.chunks()) {
+                    if (info.end_offset() > _st.end_offset() && (!_cfg.to || info.first_slot <= _cfg.to->slot))
+                        chunks.emplace_back(&info);
+                }
+                logger::info("txwit: matched chunks for processing: {}", chunks.size());
+                if (!chunks.empty()) {
+                    if (chunks.front()->offset != _st.end_offset()) [[unlikely]]
+                        throw error("internal error: failed to match available chunks with ledger snapshots");
+                    logger::info("txwit: first chunk to be processed at offset: {} state end_offset: {}",
+                        chunks.front()->offset, _st.end_offset());
+                }
+
+                // Bigger batches provide for a higher total throughput
+                // However that requires more RAM makes the tasks occupy the scheduler workers for longer,
+                // which is a problem for latency sensitive tasks of the second stage
+                static constexpr size_t batch_size = 2;
+                storage::chunk_cptr_list batch {};
+                for (const auto *chunk: chunks) {
+                    // ensure that each batch has between 1 and batch_size elements and all from the same epoch
+                    if (batch.size() == batch_size || (!batch.empty() && _cr.make_slot(batch.front()->first_slot).epoch() != _cr.make_slot(chunk->first_slot).epoch())) {
+                        batches.emplace_back(std::move(batch));
+                        batch.clear();
+                    }
+                    batch.emplace_back(chunk);
+                }
+                if (!batch.empty())
+                    batches.emplace_back(std::move(batch));
+                logger::debug("txwit: prepared chunk batches: {}", batches.size());
+                return batches;
+            }
+        private:
+            const chunk_registry &_cr;
+            const validation_config_t &_cfg;
+            state _st {};
+            plutus_cost_models _cost_models_raw = _st.params().plutus_cost_models;
+            costs::parsed_models _cost_models = costs::parse(_cost_models_raw);
+            tx::wit_cnt _cnts {};
+            size_t _num_errs = 0;
+
+            void _apply_epoch_update(const batch_info &part)
+            {
+                if (part.epoch > _st.epoch()) {
+                    timer t { fmt::format("txwit batch: {} epoch: {} apply_epoch_update", part.part_id, part.epoch), logger::level::debug };
+                    if (part.epoch != _st.epoch() + 1) [[unlikely]]
+                        throw error("unexpected epoch: {} after: {}", part.epoch, _st.epoch());
+                    _st.start_epoch(part.epoch);
+                    if (_st.params().plutus_cost_models != _cost_models_raw) {
+                        _cost_models_raw = _st.params().plutus_cost_models;
+                        _cost_models = costs::parse(_cost_models_raw);
+                    }
+                }
+            }
+
+            void _process_certs_and_param_updates(batch_info &part)
+            {
+                timer t { fmt::format("txwit batch: {} epoch: {} seq process_certs_and_param_updates", part.part_id, part.epoch), logger::level::debug };
+                for (const auto &cert: part.certs) {
+                    std::visit([&](const auto &c) {
+                        using T = std::decay_t<decltype(c)>;
+                        if constexpr (std::is_same_v<T, stake_reg_cert>) {
+                            if (!_st.has_stake(c.stake_id))
+                                part.tx_deposits[cert.tx_loc].out_coin += _st.params().key_deposit;
+                        } else if constexpr (std::is_same_v<T, reg_cert>
+                                || std::is_same_v<T, stake_reg_deleg_cert>
+                                || std::is_same_v<T, vote_reg_deleg_cert>
+                                || std::is_same_v<T, stake_vote_reg_deleg_cert>) {
+                            if (!_st.has_stake(c.stake_id))
+                                part.tx_deposits[cert.tx_loc].out_coin += c.deposit;
+                        } else if constexpr (std::is_same_v<T, stake_dereg_cert>) {
+                            part.tx_deposits[cert.tx_loc].in_coin += _st.params().key_deposit;
+                        } else if constexpr (std::is_same_v<T, unreg_cert>) {
+                            part.tx_deposits[cert.tx_loc].in_coin += c.deposit;
+                        } else if constexpr (std::is_same_v<T, pool_reg_cert>) {
+                            if (!_st.has_pool(c.pool_id))
+                                part.tx_deposits[cert.tx_loc].out_coin += _st.params().pool_deposit;
+                        } else if constexpr (std::is_same_v<T, reg_drep_cert>) {
+                            if (!_st.has_drep(c.drep_id))
+                                part.tx_deposits[cert.tx_loc].out_coin += c.deposit;
+                        } else if constexpr (std::is_same_v<T, unreg_drep_cert>) {
+                            part.tx_deposits[cert.tx_loc].in_coin += c.deposit;
+                        }
+                    }, cert.cert.val);
+                    _st.process_cert(cert.cert, cert.loc);
+                }
+                for (const auto &pu: part.updates) {
+                    std::visit([&](const auto &u) {
+                        using T = std::decay_t<decltype(u)>;
+                        if constexpr (std::is_same_v<T, param_update_proposal>) {
+                            _st.propose_update(pu.slot, u);
+                            //std::cout << fmt::format("update proposal slot: {} data: {}\n", e.slot, std::get<cardano::param_update_proposal>(e.update));
+                        } else if constexpr (std::is_same_v<T, param_update_vote>) {
+                            //std::cout << fmt::format("update vote slot: {} data: {}\n", e.slot, std::get<cardano::param_update_vote>(e.update));
+                            _st.proposal_vote(pu.slot, u);
+                        } else {
+                            throw error("unsupported parameter update type: {}", typeid(T).name());
+                        }
+                    }, pu.update);
+                }
+            }
+
+            void _apply_utxos(batch_info &part)
+            {
+                timer t { fmt::format("txwit batch: {} epoch: {} par apply_utxos", part.part_id, part.epoch), logger::level::debug };
+                static const std::string task_id { "resolve-apply-utxos" };
+                auto &sched = _cr.sched();
+                sched.wait_all_done(task_id, part.utxos.num_parts, [&] {
+                    for (size_t pi = 0; pi < part.utxos.num_parts; ++pi) {
+                        sched.submit_void(task_id, 2000, [&, pi] {
+                            auto &utxo_part =  const_cast<txo_map &>(_st.utxos()).partition(pi);
+                            auto &ue_part = part.utxos.partition(pi);
+                            for (auto &&[txo_id, txo_data]: ue_part) {
+                                if (txo_data) {
+                                    if (auto [it, created] = utxo_part.try_emplace(txo_id, std::move(txo_data)); !created) [[unlikely]]
+                                        logger::warn("txwit: epoch: {} a non-unique TXO {}!", part.epoch, it->first);
+                                } else {
+                                    if (auto it = utxo_part.find(txo_id); it != utxo_part.end()) [[likely]] {
+                                        utxo_part.erase(it);
+                                    } else {
+                                        throw error("epoch: {} request to remove an unknown TXO {}!", part.epoch, txo_id);
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+
+            std::unique_ptr<context> _prep_plutus_ctx(tx_context_t &tx) const
+            {
+                const auto &utxos = _st.utxos();
+                // process inputs before they are moved
+                for (auto &[id, data]: tx.inputs) {
+                    if (!data) {
+                        const auto it = utxos.find(id);
+                        if (it == utxos.end()) [[unlikely]]
+                            throw error("tx {} references an unknown TXO {}!", tx.tx_id, id);
+                        data = it->second;
+                    }
+                    tx.balances.in_coin += data.coin;
+                    if (data.assets) {
+                        const auto policies = cbor::parse(*data.assets);
+                        for (const auto &[policy_id, assets]: policies.map()) {
+                            for (const auto &[name, value]: assets.map()) {
+                                if (const auto coin = value.uint(); coin)
+                                    tx.balances.in_assets[policy_id.buf()][name.buf()] += coin;
+                            }
+                        }
+                    }
+                    if (data.script_ref) {
+                        const auto s = script_info::from_cbor(*data.script_ref);
+                        if (s.type() == script_type::native)
+                            tx.native_scripts.emplace(s.hash());
+                    }
+                }
+                for (auto &[id, data]: tx.ref_inputs) {
+                    if (!data) {
+                        const auto it = utxos.find(id);
+                        if (it == utxos.end()) [[unlikely]]
+                            throw error("tx {} references an unknown TXO {}!", tx.tx_id, id);
+                        data = it->second;
+                    }
+                    if (data.script_ref) {
+                        const auto s = script_info::from_cbor(*data.script_ref);
+                        if (s.type() == script_type::native)
+                            tx.native_scripts.emplace(s.hash());
+                    }
+                }
+                if (tx.plutus_ctx) {
+                    auto p_ctx = std::make_unique<context>(
+                        std::move(tx.plutus_ctx->body), std::move(tx.plutus_ctx->wits),
+                        tx.plutus_ctx->block, _cr.config()
+                    );
+                    tx.plutus_ctx.reset();
+                    p_ctx->set_inputs(std::move(tx.inputs), std::move(tx.ref_inputs));
+                    return p_ctx;
+                }
+                return nullptr;
+            }
+
+            void _validate_byron_tx_invariants(const batch_info &part, tx_context_t &tx) const
+            {
+                // In Byron the difference between the inputs and the outputs is the fee, so not check that
+                size_t byron_input_idx = 0;
+                for (const auto &[id, data]: tx.inputs) {
+                    const byron_addr b_addr { data.address };
+                    const auto b_wit = tx.byron_signers.at(byron_input_idx++);
+                    if (!b_addr.vkey_ok(b_wit.vk, b_wit.cbor_type())) [[unlikely]]
+                        throw error("epoch: {} tx {} the byron witness #{}: {} does not match the address: {}!",
+                            part.epoch, tx.tx_id, byron_input_idx, b_wit, b_addr);
+                }
+            }
+
+            void _validate_shelley_tx_invariants(const batch_info &part, tx_context_t &tx, const context *plutus_ctx) const
+            {
+                if (const auto it = part.tx_deposits.find(tx.tx_loc); it != part.tx_deposits.end()) {
+                    tx.balances.in_coin += it->second.in_coin;
+                    tx.balances.out_coin += it->second.out_coin;
+                }
+                if (!tx.balances.match()) [[unlikely]]
+                    throw error(fmt::format("tx {}: consumed != produced: {}", tx.tx_id, tx.balances));
+                if (plutus_ctx) {
+                    for (const auto &[rid, rdata]: plutus_ctx->redeemers())
+                        tx.signers.emplace(script_signer_t { plutus_ctx->redeemer_script(rid), rid.tag });
+                }
+                for (const auto &rs: tx.required_signers) {
+                    if (tx.signers.contains(rs))
+                        continue;
+                    if (!std::holds_alternative<script_signer_t>(rs.val) || !tx.native_scripts.contains(std::get<script_signer_t>(rs.val).hash))
+                        throw error("epoch: {} tx {} missing a required_signer: {}", part.epoch, tx.tx_id, rs);
+                }
+            }
+
+            void _validate_tx_invariants(const batch_info &part, tx_context_t &tx, const context *plutus_ctx) const
+            {
+                try {
+                    const auto min_fee = _st.params().min_fee_a * tx.tx_size + _st.params().min_fee_b;
+                    if (tx.fee < min_fee) [[unlikely]]
+                        throw error("epoch: {} tx {} an insufficient fee for a tx of size {}: {} < {}",
+                            part.epoch, tx.tx_id, static_cast<size_t>(tx.tx_size), tx.fee, min_fee);
+                    switch (tx.era) {
+                        case 0:
+                            throw error("transaction {} in era 0!", tx.tx_id);
+                        case 1:
+                            _validate_byron_tx_invariants(part, tx);
+                            break;
+                        default:
+                            _validate_shelley_tx_invariants(part, tx, plutus_ctx);
+                        break;
+                    }
+                } catch (const std::exception &ex) {
+                    const auto msg = fmt::format("txwit epoch: {} tx: {} error: {}", part.epoch, tx.tx_id, ex.what());
+                    logger::error("{}", msg);
+                    _cfg.error_handler(msg);
+                }
+            }
+
+            tx::wit_cnt _validate_witnesses(batch_info &part) const
+            {
+                timer t { fmt::format("txwit batch: {} epoch: {} par validate_witnesses", part.part_id, part.epoch), logger::level::debug };
+                static const std::string task_id { "validate-batch" };
+                auto &sched = _cr.sched();
+                alignas(mutex::padding) mutex::unique_lock::mutex_type part_mutex {};
+                tx::wit_cnt cnts {};
+                sched.wait_all_done(task_id, batch_info::num_parts, [&] {
+                    for (size_t pi = 0; pi < batch_info::num_parts; ++pi) {
+                        sched.submit_void(task_id, 2000, [&, pi] {
+                            tx::wit_cnt batch_cnts {};
+                            const auto part_path = _batch_path(_cr, part.part_id, fmt::format("txs-{:02X}", pi));
+                            auto txs = zpp::load_zstd<vector<tx_context_t>>(part_path);
+                            for (auto &tx_ctx: txs) {
+                                std::unique_ptr<context> plutus_ctx {};
+                                plutus_ctx = _prep_plutus_ctx(tx_ctx);
+                                _validate_tx_invariants(part, tx_ctx, plutus_ctx.get());
+                                if (plutus_ctx) {
+                                    plutus_ctx->cost_models(_cost_models);
+                                    const auto &tx = plutus_ctx->tx();
+                                    batch_cnts += _cfg.witnesses_ok_stage2(tx.block(), tx, *plutus_ctx);
+                                }
+                            }
+                            // delete only when all txs validate to have the data for error analysis
+                            std::filesystem::remove(part_path);
+                            mutex::scoped_lock lk { part_mutex };
+                            cnts += batch_cnts;
+                        });
+                    }
+                });
+                return cnts;
+            }
+
+            void _validate_max_stats(const batch_info &part) const
+            {
+                const auto &max = part.max_stats;
+                if (max.max_block_body_size && *max.max_block_body_size > _st.params().max_block_body_size) [[unlikely]]
+                    throw error("block body size of {} exceeded the limit of {}", *max.max_block_body_size, _st.params().max_block_body_size);
+                if (max.max_block_header_size && *max.max_block_header_size > _st.params().max_block_header_size) [[unlikely]]
+                    throw error("block header size of {} exceeded the limit of {}", *max.max_block_header_size, _st.params().max_block_header_size);
+                if (max.max_tx_size && *max.max_tx_size > _st.params().max_transaction_size) [[unlikely]]
+                    throw error("tx size of {} exceeded the limit of {}", *max.max_tx_size, _st.params().max_transaction_size);
+            }
+
+            tx::wit_cnt _validate_witnesses_and_invariants(batch_info &part)
+            {
+                _validate_max_stats(part);
+                return _validate_witnesses(part);
+            }
+        };
+
+        const chunk_registry &_cr;
+        const validation_config_t _cfg;
+
+        static batch_stats_t _process_batch_stage1(const chunk_registry &cr, const size_t batch_no, const storage::chunk_cptr_list &batch, const validation_config_t &cfg)
+        {
+            if (batch.empty()) [[unlikely]]
+                throw error("batch {} is empty!", batch_no);
+            batch_info part { batch_no, cr.make_slot(batch.front()->first_slot).epoch() };
+            for (const auto *chunk_ptr: batch) {
+                const auto &chunk = *chunk_ptr;
+                const auto first_epoch = cr.make_slot(chunk.first_slot).epoch();
+                const auto last_epoch = cr.make_slot(chunk.last_slot).epoch();
+                if (first_epoch != part.epoch || last_epoch != part.epoch) [[unlikely]]
+                    throw error("batch: {} contains data from multiple epochs: {}, {}, {}", batch_no, part.epoch, first_epoch, last_epoch);
+
+                const auto canon_path = cr.full_path(chunk.rel_path());
+                const auto data = file::read(canon_path);
+                cbor_parser block_parser { data };
+                cbor_value block_tuple {};
+                while (!block_parser.eof()) {
+                    block_parser.read(block_tuple);
+                    const auto blk_ptr = make_block(block_tuple, chunk.offset + block_tuple.data - data.data(), cr.config());
+                    const auto &blk = *blk_ptr;
+                    // Byron epoch boundary blocks contain no information and therefore are skipped
+                    if (blk.era() > 0) [[likely]] {
+                        try {
+                            cfg.pre_aggregate_data(part, blk);
+                        } catch (const std::exception &ex) {
+                            throw error("failed to parse block at slot: {} hash: {}: {}", blk.slot_object(), blk.hash(), ex.what());
+                        }
+                    }
+                }
+            }
+            for (size_t pi = 0; pi < batch_info::num_parts; ++pi) {
+                const auto part_path = _batch_path(cr, part.part_id, fmt::format("txs-{:02X}", pi));
+                zpp::save_zstd(part_path, part.txs[pi]);
+            }
+            const auto path_main = _batch_path(cr, part.part_id, "main");
+            zpp::save_zstd(path_main, part);
+            return part.stats;
+        }
+
+        static void _del_utxo(batch_info &part, const txo_map::iterator it, bool created)
+        {
+            // If a txo is created and consumed within the same chunk, no need to report it further.
+            if (!created) {
+                if (it->second) [[likely]] {
+                    part.utxos.erase(it);
+                } else {
+                    throw error("found a non-unique TXO in the same chunk {}", it->first);
+                }
+            }
+        }
+
+        static void _del_utxo(batch_info &part, const tx_out_ref &txo_id)
+        {
+            auto [it, created] = part.utxos.try_emplace(txo_id);
+            _del_utxo(part, it, created);
+        }
+
+        static void _add_utxo(txo_map &idx, const tx &tx, const tx_output &tx_out)
+        {
+            if (const auto [it, created] = idx.try_emplace(tx_out_ref { tx.hash(), tx_out.idx }, tx_out_data::from_output(tx_out)); !created) [[unlikely]]
+                throw error("found a non-unique TXO {}#{}", tx.hash(), tx_out.idx);
+        }
+
+        static std::filesystem::path _batch_dir(const chunk_registry &cr, const size_t batch_id)
+        {
+            return cr.data_dir() / "txwit" / fmt::format("batch-{:05}", batch_id);
+        }
+
+        static std::string _batch_path(const chunk_registry &cr, const size_t batch_id, const std::string_view suffix)
+        {
+            return (_batch_dir(cr, batch_id)/ fmt::format("{}.zpp", suffix) ).string();
+        }
+
+        batch_stats_t _process_batches(parallel::ordered_consumer &part_c, const vector<storage::chunk_cptr_list> &batches) const
+        {
+            alignas(mutex::padding) mutex::unique_lock::mutex_type all_mutex {};
+            batch_stats_t all {};
+            auto &sched = _cr.sched();
+            const auto ex_ptr = logger::run_log_errors([&] {
+                std::shared_ptr<parallel::ordered_queue> part_q = std::make_shared<parallel::ordered_queue>();
+                for (size_t bi = 0; bi < batches.size(); ++bi) {
+                    sched.submit_void("parse", -static_cast<int64_t>(bi), [&, bi] {
+                        try {
+                            if (!part_c.cancel()) {
+                                {
+                                    auto stats = _process_batch_stage1(_cr, bi, batches[bi], _cfg);
+                                    mutex::scoped_lock lk { all_mutex };
+                                    all += stats;
+                                }
+                                part_q->put(bi);
+                                part_q->take_all();
+                                part_c.try_push(part_q->next());
+                            }
+                        } catch (const std::exception &ex) {
+                            vector<std::string> chunk_info {};
+                            for (const auto *c_ptr: batches[bi])
+                                chunk_info.emplace_back(fmt::format("{} first slot: {}", c_ptr->rel_path(), c_ptr->first_slot));
+                            const auto msg = fmt::format("batch {}: pre-processing failed: {} chunks: {}", bi, ex.what(), chunk_info);
+                            throw error(msg);
+                        }
+                    });
+                }
+                // let the running consumer tasks to finish
+                sched.process(true);
+                logger::debug("txwit: exited the processs_batches loop part_q: {} part_c: {}", part_q->next(), part_c.next());
+                part_q->take_all();
+                progress::get().update_inform("txwit", part_c.next(), batches.size());
+                logger::debug("txwit: pushed the remaining parts part_q: {} part_c: {}", part_q->next(), part_c.next());
+                if (part_c.next() < part_q->next()) {
+                    if (!part_c.try_push(part_q->next())) [[unlikely]]
+                        throw error("failed to schedule the final work items");
+                    sched.process(true);
+                }
+                logger::debug("txwit: consumed the remaining parts part_q: {} part_c: {}", part_q->next(), part_c.next());
+            });
+            // ensure there are no runaway tasks
+            if (ex_ptr)
+                sched.process(true);
+            return all;
+        }
+    };
+
+    optional_point validate(const chunk_registry &cr, const optional_point &intersection, const optional_point &to, const witness_type typ,
+        const error_handler_func &error_handler)
+    {
+        validator v { cr, intersection, to, typ, error_handler };
+        return v.validate();
+    }
+}

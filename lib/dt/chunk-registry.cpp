@@ -402,20 +402,7 @@ namespace daedalus_turbo {
                                 idxr->index_invalid_tx(tx);
                         });
                     }
-                    chunk.blocks.emplace_back(
-                        storage::block_info {
-                            .hash=blk.hash(),
-                            .offset=blk.offset(),
-                            .size=blk.size(),
-                            .slot=static_cast<uint32_t>(blk.slot()),
-                            .height=static_cast<uint32_t>(blk.height()),
-                            .chk_sum=crypto::crc32::digest(blk.raw_data()),
-                            .pool_id=blk.issuer_hash(),
-                            .header_size=static_cast<uint16_t>(blk.header_raw_data().size()),
-                            .header_offset=static_cast<uint8_t>(blk.header_raw_data().data() - blk.raw_data().data()),
-                            .era=static_cast<uint8_t>(blk.era())
-                        }
-                    );
+                    chunk.blocks.emplace_back(storage::block_info::from_block(blk));
                     ok_data << blk.raw_data();
                 }
             } catch (...) {
@@ -437,7 +424,10 @@ namespace daedalus_turbo {
             if (p->on_chunk_add)
                 p->on_chunk_add(chunk);
         }
-        report_progress("parse", { chunk.last_slot, chunk.end_offset() });
+        // chunks can be parsed out of order so in the end offset we report the number of parsed bytes
+        // rather than the last parsed offset as this better reflects the progress made
+        const auto num_parsed = _tx_progress_parse.fetch_add(chunk.data_size, std::memory_order_relaxed) + chunk.data_size;
+        report_progress("parse", { chunk.last_slot,  _transaction->start_offset() + num_parsed });
         return std::make_pair(std::move(chunk), std::move(ex_ptr));
     }
 }

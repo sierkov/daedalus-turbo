@@ -182,9 +182,14 @@ namespace daedalus_turbo::file {
                 throw error_sys("failed to seek in {}", _path);
         }
 
+        size_t try_read(std::span<uint8_t> buf)
+        {
+            return std::fread(buf.data(), 1, buf.size(), _f);
+        }
+
         void read(void *data, size_t num_bytes)
         {
-            if (const auto num_read = std::fread(data, 1, num_bytes, _f); num_read != num_bytes)
+            if (const auto num_read = try_read(std::span { reinterpret_cast<uint8_t *>(data), num_bytes }); num_read != num_bytes)
                 throw error_sys("could read only {} bytes instead of {} from {} ferror: {} feof: {}",
                     num_read, num_bytes, _path, std::ferror(_f), std::feof(_f));
         }

@@ -81,6 +81,15 @@ namespace daedalus_turbo::validator {
         }
     }
 
+    const snapshot *snapshot_set::best(const best_predicate_t &pred) const
+    {
+        for (const auto &snap: *this | std::ranges::views::reverse) {
+            if (pred(snap))
+                return &snap;
+        }
+        return nullptr;
+    }
+
     indexer::indexer_map default_indexers(const std::string &data_dir, scheduler &sched)
     {
         const auto idx_dir = indexer::incremental::storage_dir(data_dir);
@@ -127,7 +136,7 @@ namespace daedalus_turbo::validator {
                 if (!_snapshots.empty()) {
                     const auto &last_snapshot = *_snapshots.rbegin();
                     logger::info("validator's closest snapshot is for epoch {} and end_offset: {}", last_snapshot.epoch, last_snapshot.end_offset);
-                    _load_state_snapshot(last_snapshot.end_offset);
+                    _load_state_snapshot(last_snapshot);
                 } else {
                     _state.clear();
                     logger::info("validator has no applicable snapshots, reprocessing the chain data to create one");
@@ -222,27 +231,41 @@ namespace daedalus_turbo::validator {
             cardano::tail_relative_stake_map tail_stake {};
             set<cardano::pool_hash> seen_pools {};
             double signing_stake = 0.0;
+            size_t total_blocks = 0;
+            size_t repeated_signer_blocks = 0;
+            size_t obsolete_signer_blocks = 0;
+            const auto log_stats = [&] {
+                logger::debug("tail estimation: total_blocks: {} repeated_signer_blocks: {} obsolete_signer_blocks: {} edge signing stake: {}",
+                    total_blocks, repeated_signer_blocks, obsolete_signer_blocks, signing_stake);
+            };
             for (const auto &[last_byte_offset, chunk]: _cr.chunks() | std::ranges::views::reverse) {
                 for (const auto &block: chunk.blocks | std::ranges::views::reverse) {
+                    ++total_blocks;
                     if (block.era >= 2) [[likely]] {
                         if (const auto pool_it = stake_dist.find(block.pool_id); pool_it != stake_dist.end()) [[likely]] {
                             if (const auto [it, added] = seen_pools.emplace(block.pool_id); added) {
                                 signing_stake += static_cast<double>(pool_it->second.rel_stake);
+                            } else {
+                                ++repeated_signer_blocks;
                             }
-                        } else if (!genesis_pools.contains(block.pool_id)) [[unlikely]] {
-                            throw error("block {} issued by an unknown pool: {}", block.point(), block.pool_id);
+                        } else if (!genesis_pools.contains(block.pool_id)) {
+                            ++obsolete_signer_blocks;
                         }
                         tail_stake.try_emplace(block.point(), signing_stake);
-                        if (signing_stake > 0.5)
+                        if (signing_stake > 0.5) {
+                            log_stats();
                             return tail_stake;
+                        }
                     }
                 }
             }
+            log_stats();
             return tail_stake;
         }
 
         cardano::optional_point core_tip() const
         {
+            timer t { "core_tip estimation", logger::level::debug };
             for (const auto &[point, rel_stake]: tail_relative_stake()) {
                 if (rel_stake > 0.5)
                     return point;
@@ -333,6 +356,20 @@ namespace daedalus_turbo::validator {
         {
             return _state;
         }
+
+        const snapshot_set &snapshots() const
+        {
+            return _snapshots;
+        }
+
+        void load_snapshot(cardano::ledger::state &st, const snapshot &snap) const
+        {
+            st.load_zpp(_storage_path("ledger", snap.end_offset));
+            if (st.end_offset() != snap.end_offset)
+                throw error("loaded state does not match the recorded end offset: {} != {}", st.end_offset(), snap.end_offset);
+            if (st.end_offset() != st.valid_end_offset())
+                throw error("validator state is in inconsistent state valid_end_offset: {} vs end_offset: {}", st.valid_end_offset(), st.end_offset());
+        }
     private:
         static constexpr uint64_t snapshot_hifreq_end_offset_range = static_cast<uint64_t>(1) << 30;
         static constexpr uint64_t snapshot_hifreq_distance = static_cast<uint64_t>(1) << 27;
@@ -366,12 +403,8 @@ namespace daedalus_turbo::validator {
 
         const snapshot *_best_exportable_snapshot(const cardano::optional_point &imm_tip) const
         {
-            if (!_snapshots.empty() && imm_tip) {
-                for (const auto &snap: _snapshots | std::ranges::views::reverse) {
-                    if (snap.exportable && snap.end_offset <= imm_tip->end_offset)
-                        return &snap;
-                }
-            }
+            if (!_snapshots.empty() && imm_tip)
+                return _snapshots.best([&](const auto &snap) { return snap.exportable && snap.end_offset <= imm_tip->end_offset; });
             return nullptr;
         }
 
@@ -392,7 +425,7 @@ namespace daedalus_turbo::validator {
                     }
                 }
                 if (!_snapshots.empty())
-                    end_offset = _load_state_snapshot(_snapshots.rbegin()->end_offset);
+                    end_offset = _load_state_snapshot(*_snapshots.rbegin());
             }
             for (auto &e: std::filesystem::directory_iterator(_validate_dir)) {
                 const auto canon_path = std::filesystem::weakly_canonical(e.path()).string();
@@ -410,13 +443,9 @@ namespace daedalus_turbo::validator {
             json::save_pretty(path, j_snapshots);
         }
 
-        uint64_t _load_state_snapshot(const uint64_t end_offset)
+        uint64_t _load_state_snapshot(const snapshot &snap)
         {
-            _state.load_zpp(_storage_path("ledger", end_offset));
-            if (_state.end_offset() != end_offset)
-                throw error("loaded state does not match the recorded end offset: {} != {}", _state.end_offset(), end_offset);
-            if (_state.end_offset() != _state.valid_end_offset())
-                throw error("validator state is in inconsistent state valid_end_offset: {} vs end_offset: {}", _state.valid_end_offset(), _state.end_offset());
+            load_snapshot(_state, snap);
             return _state.end_offset();
         }
 
@@ -427,8 +456,17 @@ namespace daedalus_turbo::validator {
 
         void _save_reserve_snapshot()
         {
-            _state.save_zpp(_storage_path("ledger-reserve", _state.end_offset()));
-            _reserve_snapshot.emplace(_state);
+            if (_state.end_offset() && _cr.num_chunks()) {
+                const auto &first_block = _cr.chunks().begin()->second.blocks.front();
+                const auto &last_block = _cr.find_block_by_offset(_state.end_offset() - 1);
+                // the sub-chains will be checked at in prepare_tx
+                // here creating the sub-chains as they must be when the snapshot is valid
+                subchain_list tmp_sc {};
+                tmp_sc.add(subchain { 0, _state.end_offset(), last_block.height, last_block.height,
+                    first_block.slot, first_block.hash, last_block.slot, last_block.hash });
+                _state.save_zpp(_storage_path("ledger-reserve", _state.end_offset()), std::make_unique<subchain_list>(std::move(tmp_sc)));
+                _reserve_snapshot.emplace(_state);
+            }
         }
 
         void _save_state_snapshot()
@@ -715,8 +753,8 @@ namespace daedalus_turbo::validator {
                     }
                 }
             }
-            if (const auto valid = _state.mark_subchain_valid(epoch, epoch_min_offset, end_idx - start_idx); valid)
-                _cr.report_progress("validate", { valid->slot, valid->end_offset });
+            if (const auto new_valid_tip = _state.mark_subchain_valid(epoch_min_offset, end_idx - start_idx); new_valid_tip)
+                _cr.report_progress("validate", { new_valid_tip->slot, new_valid_tip->end_offset });
         }
 
         void _process_vrf_update_chunks(uint64_t epoch_min_offset, const vector<uint64_t> &chunks, const bool fast)
@@ -792,5 +830,15 @@ namespace daedalus_turbo::validator {
     const cardano::ledger::state &incremental::state() const
     {
         return _impl->state();
+    }
+
+    const snapshot_set &incremental::snapshots() const
+    {
+        return _impl->snapshots();
+    }
+
+    void incremental::load_snapshot(cardano::ledger::state &st, const snapshot &snap) const
+    {
+        return _impl->load_snapshot(st, snap);
     }
 }

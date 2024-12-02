@@ -3,10 +3,9 @@
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
-#include <boost/intrusive/options.hpp>
 #include <boost/url/url.hpp>
-
 #include <boost/url/urls.hpp>
+#include <dt/cardano/cert.hpp>
 #include <dt/cardano/conway.hpp>
 #include <dt/narrow-cast.hpp>
 #include <dt/plutus/context.hpp>
@@ -30,29 +29,6 @@ namespace daedalus_turbo::cardano::conway {
     void anchor_t::to_cbor(cbor::encoder &enc) const
     {
         enc.array(2).text(url).bytes(hash);
-    }
-
-    pool_voting_thresholds_t::pool_voting_thresholds_t(const cbor::value &v):
-        motion_of_no_confidence { v.at(0) },
-        committee_normal { v.at(1) },
-        committee_no_confidence { v.at(2) },
-        hard_fork_initiation { v.at(3) },
-        security_voting_threshold { v.at(4) }
-    {
-    }
-
-    drep_voting_thresholds_t::drep_voting_thresholds_t(const cbor::value &v):
-        motion_no_confidence { v.at(0) },
-        committee_normal { v.at(1) },
-        committee_no_confidence { v.at(2) },
-        update_constitution { v.at(3) },
-        hard_fork_initiation { v.at(4) },
-        pp_network_group { v.at(5) },
-        pp_economic_group { v.at(6) },
-        pp_technical_group { v.at(7) },
-        pp_governance_group { v.at(8) },
-        treasury_withdrawal { v.at(9) }
-    {
     }
 
     param_update_t::param_update_t(const cbor::value &v)
@@ -214,28 +190,31 @@ namespace daedalus_turbo::cardano::conway {
 
     static cert_t::value_type cert_from_cbor(const cbor::value &v)
     {
-        const auto &cert = v.array();
-        switch (const auto typ = cert.at(0).uint(); typ) {
-            case 0: return stake_reg_cert { cert.at(1) };
-            case 1: return stake_dereg_cert { cert.at(1) };
-            case 2: return stake_deleg_cert { cert.at(1), cert.at(2).buf() };
-            case 3: return pool_reg_cert::from_cbor(v);
-            case 4: return pool_retire_cert::from_cbor(v);
-            case 7: return reg_cert { cert.at(1), cert.at(2).uint() };
-            case 8: return unreg_cert { cert.at(1), cert.at(2).uint() };
-            case 9: return vote_deleg_cert { cert.at(1), cert.at(2) };
-            case 10: return stake_vote_deleg_cert { cert.at(1), cert.at(2).buf(), cert.at(3) };
-            case 11: return stake_reg_deleg_cert { cert.at(1), cert.at(2).buf(), cert.at(3).uint() };
-            case 12: return vote_reg_deleg_cert { cert.at(1), cert.at(2), cert.at(3).uint() };
-            case 13: return stake_vote_reg_deleg_cert { cert.at(1), cert.at(2).buf(), cert.at(3), cert.at(4).uint() };
-            case 14: return auth_committee_hot_cert { cert.at(1), cert.at(2) };
-            case 15: return resign_committee_cold_cert { cert.at(1), cert.at(2) };
-            case 16: return reg_drep_cert { cert.at(1), cert.at(2).uint(), cert.at(3) };
-            case 17: return unreg_drep_cert { cert.at(1), cert.at(2).uint() };
-            case 18: return update_drep_cert { cert.at(1), cert.at(2) };
-            default:
-                throw error("unsupported cert type: {}", typ);
-        }
+        const cert_any_t cert_any { cert_any_t::from_cbor(v) };
+        return std::visit<cert_t::value_type>([&](auto &&vv) {
+            using T = std::decay_t<decltype(vv)>;
+            if constexpr (std::is_same_v<T, stake_reg_cert>
+                    || std::is_same_v<T, stake_dereg_cert>
+                    || std::is_same_v<T, stake_deleg_cert>
+                    || std::is_same_v<T, pool_reg_cert>
+                    || std::is_same_v<T, pool_retire_cert>
+                    || std::is_same_v<T, reg_cert>
+                    || std::is_same_v<T, unreg_cert>
+                    || std::is_same_v<T, vote_deleg_cert>
+                    || std::is_same_v<T, stake_vote_deleg_cert>
+                    || std::is_same_v<T, stake_reg_deleg_cert>
+                    || std::is_same_v<T, vote_reg_deleg_cert>
+                    || std::is_same_v<T, stake_vote_reg_deleg_cert>
+                    || std::is_same_v<T, auth_committee_hot_cert>
+                    || std::is_same_v<T, resign_committee_cold_cert>
+                    || std::is_same_v<T, reg_drep_cert>
+                    || std::is_same_v<T, unreg_drep_cert>
+                    || std::is_same_v<T, update_drep_cert>)
+                return cert_t::value_type { std::move(vv) };
+            throw error("certificate types 5 and 6 are not supported in conway era!");
+            // Make Visual C++ happy
+            return cert_t::value_type { stake_reg_cert {} };
+        }, std::move(cert_any.val));
     }
 
     cert_t::cert_t(const cbor::value &v): val { cert_from_cbor(v) }
@@ -352,16 +331,13 @@ namespace daedalus_turbo::cardano::conway {
         return res;
     }
 
-    std::optional<positive_coin_t> tx::donation() const
+    uint64_t tx::donation() const
     {
-        std::optional<uint64_t> res {};
         for (const auto &[entry_type, entry]: _tx.map()) {
-            if (entry_type.uint() == 22) {
-                res.emplace(entry.uint());
-                break;
-            }
+            if (entry_type.uint() == 22)
+                return entry.uint();
         }
-        return res;
+        return 0;
     }
 
     void block::foreach_tx(const std::function<void(const cardano::tx &)> &observer) const

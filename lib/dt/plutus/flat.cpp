@@ -43,7 +43,6 @@ namespace daedalus_turbo::plutus::flat {
         const uint8_t *_byte_next = _bytes.data();
         const uint8_t *const _byte_end = _bytes.data() + _bytes.size();
         uint8_t _next_bit_mask = 0x80;
-        uint8_vector _varint_data {};
         size_t _num_vars = 0;
         plutus::version _ver;
         term _term;
@@ -108,27 +107,28 @@ namespace daedalus_turbo::plutus::flat {
             return _byte_next - _bytes_raw.data();
         }
 
-        bint_type _decode_varlen_uint()
+        const cpp_int &_decode_varlen_uint()
         {
-            _varint_data.clear();
+            thread_local uint8_vector bytes {};
+            thread_local cpp_int v {};
+            bytes.clear();
             for (;;) {
                 const auto b = _next_byte();
-                _varint_data.emplace_back(b);
+                bytes.emplace_back(b);
                 if (!(b & 0x80))
                     break;
-                if (_varint_data.size() >= max_varint_bytes) [[unlikely]]
+                if (bytes.size() >= max_varint_bytes) [[unlikely]]
                     throw error("a variable length uint that has more than {} bytes at byte: {}", max_varint_bytes, _byte_pos());
             }
-            bint_type::value_type v {};
-            boost::multiprecision::import_bits(v, _varint_data.data(), _varint_data.data() + _varint_data.size(), 7, false);
-            return { _alloc, std::move(v) };
+            boost::multiprecision::import_bits(v, bytes.data(), bytes.data() + bytes.size(), 7, false);
+            return v;
         }
 
         bint_type _decode_integer()
         {
-            auto u = _decode_varlen_uint();
-            bint_type::value_type i = *u >> 1;
-            if (*u & 1) {
+            const auto &u = _decode_varlen_uint();
+            cpp_int i = u >> 1;
+            if (u & 1) {
                 i = -(i + 1);
             }
             return { _alloc, std::move(i) };
@@ -157,43 +157,44 @@ namespace daedalus_turbo::plutus::flat {
                 throw error("consume_padding: didn't finish on a byte boundary at bit {}!", _byte_pos());
         }
 
-        bstr_type _decode_bytestring()
+        buffer _decode_bytestring()
         {
+            thread_local uint8_vector bytes {};
             _consume_padding();
-            bstr_type::value_type data { _alloc };
+            bytes.clear();
             for (;;) {
                 const size_t chunk_size = _decode_fixed_uint<8>();
                 if (!chunk_size)
                     break;
-                const size_t data_idx = data.size();
-                data.resize(data.size() + chunk_size);
+                const size_t data_idx = bytes.size();
+                bytes.resize(bytes.size() + chunk_size);
                 if (_byte_next + chunk_size >= _byte_end)
                     throw error("insufficient data for a bytestring of size {} at byte: {}", chunk_size, _byte_pos());
-                memcpy(data.data() + data_idx, _byte_next, chunk_size);
+                memcpy(bytes.data() + data_idx, _byte_next, chunk_size);
                 _byte_next += chunk_size;
             }
-            return { _alloc, std::move(data) };
+            return bytes;
         }
 
         str_type _decode_string()
         {
             auto bytes = _decode_bytestring();
-            return { _alloc, std::string_view { reinterpret_cast<const char *>(bytes->data()), bytes->size() } };
+            return { _alloc, std::string_view { reinterpret_cast<const char *>(bytes.data()), bytes.size() } };
         }
 
         data _decode_data()
         {
             const auto bytes = _decode_bytestring();
-            return data::from_cbor(_alloc, *bytes);
+            return data::from_cbor(_alloc, bytes);
         }
 
         bls12_381_g1_element _decode_bls_g1()
         {
             const auto bytes = _decode_bytestring();
             bls12_381_g1_element g1;
-            if (bytes->size() != sizeof(g1.val)) [[unlikely]]
-                throw error("expected {} bytes for bls12_381_g1_element but got: {}", sizeof(g1.val), bytes->size());
-            memcpy(&g1.val, bytes->data(), sizeof(g1.val));
+            if (bytes.size() != sizeof(g1.val)) [[unlikely]]
+                throw error("expected {} bytes for bls12_381_g1_element but got: {}", sizeof(g1.val), bytes.size());
+            memcpy(&g1.val, bytes.data(), sizeof(g1.val));
             return g1;
         }
 
@@ -201,9 +202,9 @@ namespace daedalus_turbo::plutus::flat {
         {
             const auto bytes = _decode_bytestring();
             bls12_381_g2_element g2;
-            if (bytes->size() != sizeof(g2.val)) [[unlikely]]
-                throw error("expected {} bytes for bls12_381_g1_element but got: {}", sizeof(g2.val), bytes->size());
-            memcpy(&g2.val, bytes->data(), sizeof(g2.val));
+            if (bytes.size() != sizeof(g2.val)) [[unlikely]]
+                throw error("expected {} bytes for bls12_381_g1_element but got: {}", sizeof(g2.val), bytes.size());
+            memcpy(&g2.val, bytes.data(), sizeof(g2.val));
             return g2;
         }
 
@@ -262,7 +263,7 @@ namespace daedalus_turbo::plutus::flat {
         {
             switch (typ->typ) {
                 case type_tag::integer: return { _alloc, _decode_integer() };
-                case type_tag::bytestring: return { _alloc, _decode_bytestring() };
+                case type_tag::bytestring: return { _alloc, bstr_type { _alloc, _decode_bytestring() } };
                 case type_tag::string: return { _alloc, _decode_string() };
                 case type_tag::unit: return { _alloc, std::monostate{} };
                 case type_tag::boolean: return { _alloc, _decode_boolean() };
@@ -272,13 +273,17 @@ namespace daedalus_turbo::plutus::flat {
                 case type_tag::list: {
                     constant_list::list_type cl { _alloc };
                     _decode_list([&] {
-                        cl.emplace_back(_decode_constant_val(typ->nested.at(0)));
+                        cl.emplace_back(_decode_constant_val(typ->nested.front()));
                     });
-                    return { _alloc, constant_list { _alloc, constant_type { typ->nested.at(0) }, std::move(cl) } };
+                    if (typ->nested.size() != 1) [[unlikely]]
+                        throw error("the nested type list for a list must have just one element but has {}", typ->nested.size());
+                    return { _alloc, constant_list { _alloc, constant_type { typ->nested.front() }, std::move(cl) } };
                 }
                 case type_tag::pair: {
-                    auto fst = _decode_constant_val(typ->nested.at(0));
-                    auto snd = _decode_constant_val(typ->nested.at(1));
+                    if (typ->nested.size() != 2) [[unlikely]]
+                        throw error("the nested type list for a pair must have two elements but has {}", typ->nested.size());
+                    auto fst = _decode_constant_val(typ->nested.front());
+                    auto snd = _decode_constant_val(typ->nested.back());
                     return { _alloc, constant_pair { _alloc, std::move(fst), std::move(snd) } };
                 }
                 default: throw error("unsupported constant type: {}", static_cast<int>(typ->typ));
@@ -287,7 +292,8 @@ namespace daedalus_turbo::plutus::flat {
 
         constant _decode_constant()
         {
-            vector<type_tag> types {};
+            thread_local vector<type_tag> types {};
+            types.clear();
             for (;;) {
                 if (!_next_bit())
                     break;
@@ -311,7 +317,7 @@ namespace daedalus_turbo::plutus::flat {
         variable _decode_variable()
         {
             // De Bruijn indices are 1-based!
-            const auto rel_idx = static_cast<size_t>(*_decode_varlen_uint());
+            const auto rel_idx = static_cast<size_t>(_decode_varlen_uint());
             if (rel_idx <= _num_vars) [[likely]]
                 return { _num_vars - rel_idx };
             throw daedalus_turbo::error("De Bruijn index is out of range: {} num_vars: {}", rel_idx, _num_vars);
@@ -350,9 +356,9 @@ namespace daedalus_turbo::plutus::flat {
         t_constr _decode_constr()
         {
             const auto tag_bi = _decode_varlen_uint();
-            if (*tag_bi && boost::multiprecision::msb(*tag_bi) >= 64) [[unlikely]]
-                throw error("constr tag must fit into a 64-vit integer but got: {}", *tag_bi);
-            const auto tag = static_cast<uint64_t>(*tag_bi);
+            if (tag_bi && boost::multiprecision::msb(tag_bi) >= 64) [[unlikely]]
+                throw error("constr tag must fit into a 64-vit integer but got: {}", tag_bi);
+            const auto tag = static_cast<uint64_t>(tag_bi);
             term_list::value_type args { _alloc };
             while (_next_bit()) {
                 args.emplace_back(_decode_term());
@@ -390,9 +396,9 @@ namespace daedalus_turbo::plutus::flat {
 
         plutus::version _decode_version()
         {
-            const auto major = static_cast<uint64_t>(*_decode_varlen_uint());
-            const auto minor = static_cast<uint64_t>(*_decode_varlen_uint());
-            const auto patch = static_cast<uint64_t>(*_decode_varlen_uint());
+            const auto major = static_cast<uint64_t>(_decode_varlen_uint());
+            const auto minor = static_cast<uint64_t>(_decode_varlen_uint());
+            const auto patch = static_cast<uint64_t>(_decode_varlen_uint());
             return { major, minor, patch };
         }
 

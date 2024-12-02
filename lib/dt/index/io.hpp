@@ -661,8 +661,6 @@ namespace daedalus_turbo::index {
 
         reader_multi_mt(const std::span<const std::string> &paths): _readers {}
         {
-            if (paths.empty()) [[unlikely]]
-                throw error("multi-part index with no slices! Is the data_dir correct?");
             _readers.reserve(paths.size());
             for (const auto &p: paths)
                 _readers.emplace_back(std::make_unique<reader_mt<T>>(p));

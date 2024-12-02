@@ -24,6 +24,43 @@ namespace daedalus_turbo::cardano {
         }
     }
 
+    byron_addr address::byron() const
+    {
+        if (is_byron())
+            return { bytes() };
+        throw error("address {} is not a byron one!", *this);
+    }
+
+    const pay_ident address::pay_id() const
+    {
+        switch (type()) {
+            case 0b0110: // enterprise key
+            case 0b0111: // enterprise script
+            case 0b0000: // base address: keyhash28,keyhash28
+            case 0b0001: // base address: scripthash28,keyhash28
+            case 0b0010: // base address: keyhash28,scripthash28
+            case 0b0011: // base address: scripthash28,scripthash28
+            case 0b0100: // pointer key
+            case 0b0101: // pointer script
+                return pay_ident { data().subbuf(0, 28), (type() & 0x1) > 0 ? pay_ident::ident_type::SHELLEY_SCRIPT : pay_ident::ident_type::SHELLEY_KEY };
+
+            case 0b1000: { // byron
+                const auto w_data = cbor::parse(data());
+                switch (const auto n_items = w_data.array().size(); n_items) {
+                    case 3: return pay_ident { w_data.at(0).buf(), pay_ident::ident_type::BYRON_KEY };
+                    case 2: {
+                        const auto nested_data = cbor::parse(w_data.at(0).tag().second->buf());
+                        return pay_ident { nested_data.at(0).buf(), pay_ident::ident_type::BYRON_KEY };
+                    }
+                    default: throw error("unsupported format of a byron address: {} items", n_items);
+                }
+            }
+
+            default:
+                throw cardano_error("unsupported address for type: {}!", type());
+        }
+    }
+
     cert_loc_t::cert_loc_t(const uint64_t s, const uint64_t t, const uint64_t c):
         slot { s }, tx_idx { narrow_cast<uint32_t>(t) }, cert_idx { narrow_cast<uint32_t>(c) }
     {
@@ -71,35 +108,58 @@ namespace daedalus_turbo::cardano {
         enc.array(2).uint(script ? 1 : 0).bytes(hash);
     }
 
+    pool_voting_thresholds_t::pool_voting_thresholds_t(const cbor::value &v):
+        motion_of_no_confidence { v.at(0) },
+        committee_normal { v.at(1) },
+        committee_no_confidence { v.at(2) },
+        hard_fork_initiation { v.at(3) },
+        security_voting_threshold { v.at(4) }
+    {
+    }
+
     pool_voting_thresholds_t::pool_voting_thresholds_t(const json::value &j):
-        comittee_normal { j.at("committeeNormal") },
-        comittee_no_confidence { j.at("committeeNoConfidence") },
+        motion_of_no_confidence { j.at("motionNoConfidence") },
+        committee_normal { j.at("committeeNormal") },
+        committee_no_confidence { j.at("committeeNoConfidence") },
         hard_fork_initiation { j.at("hardForkInitiation") },
-        motion_no_confidence { j.at("motionNoConfidence") },
-        pp_secirity_group { j.at("ppSecurityGroup") }
+        security_voting_threshold { j.at("ppSecurityGroup") }
     {
     }
 
     void pool_voting_thresholds_t::to_cbor(cbor::encoder &enc) const
     {
         enc.array(5)
-            .rational(comittee_normal)
-            .rational(comittee_no_confidence)
+            .rational(motion_of_no_confidence)
+            .rational(committee_normal)
+            .rational(committee_no_confidence)
             .rational(hard_fork_initiation)
-            .rational(motion_no_confidence)
-            .rational(pp_secirity_group);
+            .rational(security_voting_threshold);
+    }
+
+    drep_voting_thresholds_t::drep_voting_thresholds_t(const cbor::value &v):
+        motion_no_confidence { v.at(0) },
+        committee_normal { v.at(1) },
+        committee_no_confidence { v.at(2) },
+        update_constitution { v.at(3) },
+        hard_fork_initiation { v.at(4) },
+        pp_network_group { v.at(5) },
+        pp_economic_group { v.at(6) },
+        pp_technical_group { v.at(7) },
+        pp_governance_group { v.at(8) },
+        treasury_withdrawal { v.at(9) }
+    {
     }
 
     drep_voting_thresholds_t::drep_voting_thresholds_t(const json::value &j):
         motion_no_confidence { j.at("motionNoConfidence") },
         committee_normal { j.at("committeeNormal") },
         committee_no_confidence { j.at("committeeNoConfidence") },
-        update_to_constitution { j.at("updateToConstitution") },
+        update_constitution { j.at("updateToConstitution") },
         hard_fork_initiation { j.at("hardForkInitiation") },
         pp_network_group { j.at("ppNetworkGroup") },
         pp_economic_group { j.at("ppEconomicGroup") },
         pp_technical_group { j.at("ppTechnicalGroup") },
-        pp_gov_group { j.at("ppGovGroup") },
+        pp_governance_group { j.at("ppGovGroup") },
         treasury_withdrawal { j.at("treasuryWithdrawal") }
     {
     }
@@ -110,12 +170,12 @@ namespace daedalus_turbo::cardano {
             .rational(motion_no_confidence)
             .rational(committee_normal)
             .rational(committee_no_confidence)
-            .rational(update_to_constitution)
+            .rational(update_constitution)
             .rational(hard_fork_initiation)
             .rational(pp_network_group)
             .rational(pp_economic_group)
             .rational(pp_technical_group)
-            .rational(pp_gov_group)
+            .rational(pp_governance_group)
             .rational(treasury_withdrawal);
     }
 
@@ -674,6 +734,46 @@ namespace daedalus_turbo::cardano {
             }
         }
         return bytes;
+    }
+
+    byron_addr::byron_addr(const buffer bytes):
+        _bytes { bytes },
+        _addr { cbor::parse(_bytes) }
+    {
+        if (_addr.array().size() == 2) {
+            _bytes = uint8_vector { _addr.at(0).tag().second->buf() };
+            _addr = cbor::parse(_bytes);
+        }
+    }
+
+    bool byron_addr::vkey_ok(const buffer vk, const uint8_t typ) const
+    {
+        const auto root_hash = byron_addr_root_hash(type(), vk, attrs());
+        return root_hash == root() && typ == type();
+    }
+
+    key_hash byron_addr::bootstrap_root(const cbor::value &w_data) const
+    {
+        uint8_vector vk_full {};
+        vk_full << w_data.at(0).buf() << w_data.at(2).buf();
+        return byron_addr_root_hash(0, vk_full, w_data.at(3).buf());
+    }
+
+    bool byron_addr::bootstrap_ok(const cbor::value &w_data) const
+    {
+        const auto root_hash = bootstrap_root(w_data);
+        return root_hash == root() && 0 == type();
+    }
+
+    key_hash byron_addr_root_hash(const size_t typ, const buffer vk, const buffer attrs_cbor) {
+        cbor::encoder enc {};
+        enc.array(3);
+        enc.uint(typ);
+        enc.array(2);
+        enc.uint(typ);
+        enc.bytes(vk);
+        enc.raw_cbor(attrs_cbor);
+        return blake2b<key_hash>(sha3::digest(enc.cbor()));
     }
 
     inline uint8_vector byron_encode_redeem_root(const buffer redeem_vk)

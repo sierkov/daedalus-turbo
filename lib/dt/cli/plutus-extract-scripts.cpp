@@ -141,12 +141,12 @@ namespace daedalus_turbo::cli::plutus_extract_scripts {
                     ctx.cost_models(it->models);
                     for (const auto &[rid, r]: ctx.redeemers()) {
                         const auto ps = ctx.prepare_script(r);
-                        const auto typ_s = fmt::format("{}", ps.script.type());
+                        const auto typ_s = fmt::format("{}", ps.typ);
                         static std::string exp_prefix { "plutus_" };
                         if (!typ_s.starts_with(exp_prefix)) [[unlikely]]
                             throw error("unsupported script type: {}!", typ_s);
                         const auto out_prefix = fmt::format("{}/{}/{}-{}-{}-{}",
-                            out_dir, *epoch, tx_id, r.idx, ps.script.hash(), typ_s.substr(exp_prefix.size()));
+                            out_dir, *epoch, tx_id, r.idx, ps.hash, typ_s.substr(exp_prefix.size()));
                         if (cfg.uplc) {
                             file::write(out_prefix + ".uplc", fmt::format("(program 0.0.0 {})", ps.expr));
                         } else {

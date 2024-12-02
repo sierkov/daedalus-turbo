@@ -120,7 +120,7 @@ namespace daedalus_turbo::cardano::alonzo {
 
         void foreach_script(const std::function<void(script_info &&)> &, const plutus::context *ctx=nullptr) const override;
         void foreach_redeemer(const std::function<void(const tx_redeemer &)> &) const override;
-        virtual wit_cnt witnesses_ok_plutus(const plutus::context &ctx) const;
+        wit_cnt witnesses_ok_plutus(const plutus::context &ctx) const override;
         wit_cnt witnesses_ok_other(const plutus::context *ctx=nullptr) const override;
     };
 }

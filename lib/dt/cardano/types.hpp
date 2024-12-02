@@ -409,7 +409,9 @@ namespace daedalus_turbo {
 
         using stake_ident_hybrid = std::variant<stake_ident, stake_pointer>;
 
+
         extern uint8_vector byron_crc_protected(const buffer &encoded_addr);
+        extern key_hash byron_addr_root_hash(size_t typ, buffer vk, buffer attrs_cbor);
         extern std::tuple<uint8_t, size_t> from_haskell_char(std::string_view sv);
         extern uint8_vector from_haskell(std::string_view sv);
         extern uint8_vector byron_avvm_addr(std::string_view redeem_vk);
@@ -493,6 +495,37 @@ namespace daedalus_turbo {
             script_hash _hash {};
         };
         using script_info_map = map<script_hash, script_info>;
+
+        struct byron_addr {
+            byron_addr(const buffer bytes);
+            
+            bool vkey_ok(buffer vk, uint8_t typ) const;
+            key_hash bootstrap_root(const cbor::value &) const;
+            bool bootstrap_ok(const cbor::value &) const;
+
+            buffer root() const
+            {
+                return _addr.at(0).buf();
+            }
+
+            uint8_t type() const
+            {
+                return narrow_cast<uint8_t>(_addr.at(2).uint());
+            }
+
+            buffer attrs() const
+            {
+                return _addr.at(1).raw_span();
+            }
+
+            buffer bytes() const
+            {
+                return _bytes.span();
+            }
+        private:
+            uint8_vector _bytes;
+            cbor::value _addr;
+        };
 
         struct address {
             address(const address &o):
@@ -599,28 +632,7 @@ namespace daedalus_turbo {
                 return _bytes;
             }
 
-            const pay_ident pay_id() const
-            {
-                switch (type()) {
-                    case 0b0110: // enterprise key
-                    case 0b0111: // enterprise script
-                    case 0b0000: // base address: keyhash28,keyhash28
-                    case 0b0001: // base address: scripthash28,keyhash28
-                    case 0b0010: // base address: keyhash28,scripthash28
-                    case 0b0011: // base address: scripthash28,scripthash28
-                    case 0b0100: // pointer key
-                    case 0b0101: // pointer script
-                        return pay_ident { data().subbuf(0, 28), (type() & 0x1) > 0 ? pay_ident::ident_type::SHELLEY_SCRIPT : pay_ident::ident_type::SHELLEY_KEY };
-
-                    case 0b1000: { // byron
-                        auto addr_hash = blake2b<cardano_hash_28>(data());
-                        return pay_ident { addr_hash.span(), pay_ident::ident_type::BYRON_KEY };
-                    }
-
-                    default:
-                        throw cardano_error("unsupported address for type: {}!", type());
-                }
-            }
+            const pay_ident pay_id() const;
 
             const stake_pointer pointer() const
             {
@@ -718,6 +730,8 @@ namespace daedalus_turbo {
             {
                 return type() == 0b1000;
             }
+
+            byron_addr byron() const;
 
             json::value to_json() const
             {
@@ -841,6 +855,9 @@ namespace daedalus_turbo {
 
         using asset_map = map<uint8_vector, uint64_t>;
         using policy_map = map<script_hash, asset_map>;
+
+        using asset_mint_map = map<uint8_vector, int64_t>;
+        using policy_mint_map = map<script_hash, asset_mint_map>;
 
         inline std::string asset_name(const buffer &policy_id, const buffer &asset_name)
         {
@@ -975,7 +992,14 @@ namespace daedalus_turbo {
 
             bool empty() const noexcept
             {
+                if (!address.empty())
+                    return false;
                 return !(coin || assets || datum ||script_ref);
+            }
+
+            operator bool() const noexcept
+            {
+                return !empty();
             }
 
             bool operator==(const auto &o) const
@@ -1117,19 +1141,20 @@ namespace daedalus_turbo {
         };
 
         struct pool_voting_thresholds_t {
-            rational_u64 comittee_normal { 0.51 };
-            rational_u64 comittee_no_confidence { 0.51 };
+            rational_u64 motion_of_no_confidence { 0.51 };
+            rational_u64 committee_normal { 0.51 };
+            rational_u64 committee_no_confidence { 0.51 };
             rational_u64 hard_fork_initiation { 0.51 };
-            rational_u64 motion_no_confidence { 0.51 };
-            rational_u64 pp_secirity_group { 0.51 };
+            rational_u64 security_voting_threshold { 0.51 };
 
             static constexpr auto serialize(auto &archive, auto &self)
             {
-                return archive(self.comittee_normal, self.comittee_no_confidence, self.hard_fork_initiation,
-                    self.motion_no_confidence, self.pp_secirity_group);
+                return archive(self.motion_of_no_confidence, self.committee_normal,
+                    self.committee_no_confidence, self.hard_fork_initiation, self.security_voting_threshold);
             }
 
             pool_voting_thresholds_t() =default;
+            pool_voting_thresholds_t(const cbor::value &);
             pool_voting_thresholds_t(const json::value &);
             void to_cbor(cbor::encoder &) const;
         };
@@ -1138,24 +1163,25 @@ namespace daedalus_turbo {
             rational_u64 motion_no_confidence { 0.67 };
             rational_u64 committee_normal { 0.67 };
             rational_u64 committee_no_confidence { 0.6 };
-            rational_u64 update_to_constitution { 0.75 };
+            rational_u64 update_constitution { 0.75 };
             rational_u64 hard_fork_initiation { 0.6 };
             rational_u64 pp_network_group { 0.67 };
             rational_u64 pp_economic_group { 0.67 };
             rational_u64 pp_technical_group { 0.67 };
-            rational_u64 pp_gov_group { 0.75 };
+            rational_u64 pp_governance_group { 0.75 };
             rational_u64 treasury_withdrawal { 0.67 };
 
             static constexpr auto serialize(auto &archive, auto &self)
             {
                 return archive(self.motion_no_confidence, self.committee_normal, self.committee_no_confidence,
-                    self.update_to_constitution, self.hard_fork_initiation,
+                    self.update_constitution, self.hard_fork_initiation,
                     self.pp_network_group, self.pp_economic_group, self.pp_technical_group,
-                    self.pp_gov_group, self.treasury_withdrawal
+                    self.pp_governance_group, self.treasury_withdrawal
                 );
             }
 
             drep_voting_thresholds_t() =default;
+            drep_voting_thresholds_t(const cbor::value &);
             drep_voting_thresholds_t(const json::value &);
             void to_cbor(cbor::encoder &) const;
         };
@@ -1163,9 +1189,9 @@ namespace daedalus_turbo {
         struct protocol_params {
             uint64_t min_fee_a = 0;
             uint64_t min_fee_b = 0;
-            uint64_t max_block_body_size {};
-            uint64_t max_transaction_size {};
-            uint64_t max_block_header_size {};
+            uint64_t max_block_body_size = 2'000'000;
+            uint64_t max_transaction_size = 4096;
+            uint64_t max_block_header_size = 2'000'000;
             uint64_t key_deposit = 2'000'000;
             uint64_t pool_deposit = 500'000'000;
             uint64_t e_max = 0;
@@ -1538,6 +1564,14 @@ namespace fmt {
                 case script_type::plutus_v3: return fmt::format_to(ctx.out(), "plutus_v3");
                 default: throw daedalus_turbo::cardano_error("unsupported address type: {}!", static_cast<int>(v));
             }
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::cardano::byron_addr>: formatter<int> {
+        template<typename FormatContext>
+        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "byron/{}", v.bytes());
         }
     };
 

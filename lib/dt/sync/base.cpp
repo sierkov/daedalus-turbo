@@ -4,6 +4,7 @@
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
 #include <dt/sync/base.hpp>
+#include <dt/txwit/validator.hpp>
 
 namespace daedalus_turbo::sync {
     struct syncer::impl {
@@ -18,7 +19,7 @@ namespace daedalus_turbo::sync {
             _cr.remove_processor(_proc);
         }
 
-        bool sync(peer_info &peer, cardano::optional_slot max_slot)
+        bool sync(peer_info &peer, const cardano::optional_slot max_slot, const validation_mode_t mode)
         {
             logger::info("attempting to sync with {} with the tip {}", peer.id(), peer.tip());
             const auto start_tip = _cr.tip();
@@ -50,7 +51,23 @@ namespace daedalus_turbo::sync {
                     logger::info("retrying after a failure, number of planned attempts: {}", num_retries);
                 }
             }
-            logger::info("the new tip: {}", _cr.tip());
+            auto new_local_tip = _cr.tip();
+            if (new_local_tip != start_point && mode != validation_mode_t::none) {
+                timer t { fmt::format("{} transaction witness validation", mode), logger::level::info };
+                logger::info("the post-download tip: {}", new_local_tip);
+                cardano::optional_point validate_from = start_point;
+                if (mode == validation_mode_t::turbo) {
+                    const auto tail = _cr.tail_relative_stake();
+                    if (!tail.empty() && tail.begin()->second > 0.5 && start_point < tail.begin()->first)
+                        validate_from = tail.begin()->first;
+                }
+                const auto new_valid_tip = txwit::validate(_cr, validate_from, new_local_tip, txwit::witness_type::all);
+                logger::debug("the new valid tip: {}", new_valid_tip);
+                if (new_valid_tip != new_local_tip)
+                    _cr.truncate(new_valid_tip);
+            }
+
+            logger::info("the post-txwit tip: {}", new_local_tip);
             // the new chain's tip can be smaller but have a better chain, so compare for equality here
             return start_tip != _cr.tip();
         }
@@ -87,11 +104,11 @@ namespace daedalus_turbo::sync {
 
     syncer::~syncer() =default;
 
-    bool syncer::sync(const std::shared_ptr<peer_info> &peer, const cardano::optional_slot max_slot)
+    bool syncer::sync(const std::shared_ptr<peer_info> &peer, const cardano::optional_slot max_slot, const validation_mode_t mode)
     {
         if (!peer)
             throw error("peer must be initialized!");
-        return _impl->sync(*peer, max_slot);
+        return _impl->sync(*peer, max_slot, mode);
     }
 
     chunk_registry &syncer::local_chain() noexcept

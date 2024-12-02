@@ -42,7 +42,7 @@ namespace daedalus_turbo::index::block_fees {
                 fees += tx.fee();
                 if (const auto *c_tx = dynamic_cast<const cardano::conway::tx *>(&tx); c_tx) {
                     if (const auto d = c_tx->donation(); d)
-                        donations += *d;
+                        donations += d;
                 }
             });
             idx.emplace_back(blk.slot(), blk.issuer_hash(), fees, donations, blk.offset() + blk.size(), static_cast<uint8_t>(blk.era()));
