@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 import Progress from './Progress.jsx';
+import TransitionSimple from './TransitionSimple.jsx';
 import './Transition.scss';
 
 export default function Transition({ message, progressWeights }) {
-    if (!message)
-        message = 'Please wait, processing the data ...';
     const [progress, setProgress] = useState({});
     let updateInterval, cachedNow;
     const updateStatus = async (now) => {
@@ -35,14 +34,6 @@ export default function Transition({ message, progressWeights }) {
             <h1>Operation in progress</h1>
             <Progress progress={progress} names={Object.keys(progress)} weights={progressWeights} />
         </div>;
-    } else {
-        return <div className="transition">
-            <div>
-                <CircularProgress />
-            </div>
-            <p className="explain">
-                {message}
-            </p>
-        </div>;
-    }   
+    }
+    return <TransitionSimple message={message} />;
 }

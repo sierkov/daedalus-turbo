@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import SearchBox from './SearchBox.jsx';
+import SyncTip from './Sync/Tip.jsx';
 import './Dashboard.scss';
-import SaveAltIcon from '@mui/icons-material/SaveAlt';
-import Button from "@mui/material/Button";
-import {useNavigate} from "react-router-dom";
 
 export default function Dashboard() {
     const [status, setStatus] = useState({ ready: false });
-    const navigate = useNavigate();
     let cachedNow;
     const updateStatus = (now) => {
         if (cachedNow !== now) {
@@ -17,30 +14,20 @@ export default function Dashboard() {
             });
         }
     };
-    const doExport = async () => {
-        const selectRes = await appAPI.selectDir();
-        console.log('selectRes:', selectRes);
-        if (!selectRes?.canceled && Array.isArray(selectRes?.filePaths) && selectRes?.filePaths.length)
-            navigate('/export/' + encodeURIComponent(selectRes.filePaths[0]));
-    };
+
     useEffect(() => {
         updateStatus(Date.now());
     }, []);
     if (status?.ready) {
         return <div className="content">
-            <div className="dashboard">
+            <div className="dashboard screen">
                 <div className="col">
                     <div className="row">
                         <div>
                             <img className="logo-large" src="static/logo.svg" />
                         </div>
                     </div>
-                    <div className="row">
-                        <div className="col">
-                            <h3 className="white">{status?.lastBlock?.timestamp}</h3>
-                            <p className="note">the generation time of the last synchronized block</p>
-                        </div>
-                    </div>
+                    <SyncTip status={status} />
                     <div className="search">
                         <SearchBox />
                     </div>
@@ -63,12 +50,6 @@ export default function Dashboard() {
                             <h4>{status?.lastBlock?.epochSlot}</h4>
                             <p className="note">its epoch's slot</p>
                         </div>
-                    </div>
-                    <div className="row secondary">
-                        <Button className="search-button" startIcon={<SaveAltIcon />}
-                            variant="contained" color="secondary" size="large" onClick={doExport}
-                            disabled={false && !status?.exportable}>Export State to Daedalus
-                        </Button>
                     </div>
                 </div>
             </div>

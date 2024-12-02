@@ -4,6 +4,11 @@
 }
 .progress-item {
     color: rgba(255, 255, 255, 0.7);
+    .indicator {
+        p {
+            margin: 0;
+        }
+    }
 }
 .progress-item.total {
     margin-bottom: 32px;

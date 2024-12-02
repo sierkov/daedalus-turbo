@@ -14,7 +14,6 @@ const theme = createTheme({
 });
 
 export default function App() {
-    console.log('rerender App');
     return <ThemeProvider theme={theme}>
         <div className="background">
             <Outlet />

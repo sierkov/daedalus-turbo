@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Button from "@mui/material/Button";
-import HardwareStatus from './HardwareStatus.jsx';
-import './SyncReady.scss';
+import HardwareStatus from '../HardwareStatus.jsx';
+import './Ready.scss';
 
 function LinearProgressWithLabel(props) {
     return (

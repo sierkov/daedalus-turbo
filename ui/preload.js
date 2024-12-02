@@ -26,6 +26,7 @@ function multiRequest(name, ...params) {
 }
 
 contextBridge.exposeInMainWorld('appAPI', {
+  configSync: (netSrc, valMode) => multiRequest('configSync', netSrc, valMode),
   exit: () => ipcRenderer.send('exit'),
   export: (path) => multiRequest('export', path),
   freeSpace: (path) => multiRequest('freeSpace', path),
@@ -35,6 +36,8 @@ contextBridge.exposeInMainWorld('appAPI', {
   stakeInfo: (hash) => multiRequest('stakeInfo', hash),
   stakeAssets: (hash, offset, limit) => multiRequest('stakeAssets', hash, offset, limit),
   stakeTxs: (hash, offset, limit) => multiRequest('stakeTxs', hash, offset, limit),
+  sync: (now) => multiRequest('sync', now),
+  paperLink: () => ipcRenderer.send('paperLink'),
   payInfo: (hash) => multiRequest('payInfo', hash),
   payAssets: (hash, offset, limit) => multiRequest('payAssets', hash, offset, limit),
   payTxs: (hash, offset, limit) => multiRequest('payTxs', hash, offset, limit)

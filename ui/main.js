@@ -1,5 +1,5 @@
 const path = require('path');
-const { app, dialog, ipcMain, BrowserWindow } = require('electron');
+const { app, dialog, ipcMain, shell, BrowserWindow } = require('electron');
 const fetch = require('node-fetch');
 const { spawn } = require('child_process');
 const os = require('os');
@@ -201,7 +201,33 @@ function setupIdRequest(name, baseURI, reqURI) {
   });
 }
 
-ipcMain.on("exit", () => app.quit());
+function setupSimpleRequest(name, baseURI, reqURI) {
+  ipcMain.on(name, async (ev, reqId, params) => {
+    try {
+      const start = Date.now();
+      if (!apiServerReadyTime)
+        throw Error(`API server has not been started!`);
+      if (start < apiServerReadyTime) {
+        const sleepTime = apiServerReadyTime - start;
+        logger.info(`request for ${name} too early, sleeping for ${sleepTime}`);
+        await sleep(sleepTime);
+      }
+      const reqTarget = reqURI + params.map(v => encodeURIComponent(v)).join('/');
+      let resRaw = await fetchWithRetries(baseURI + reqTarget, 3);
+      let res = await resRaw.json();
+      const duration = (Date.now() - start) / 1000;
+      if (duration >= 0.100)
+        logger.warn(`main ${name} ${reqId} took ${duration} secs, sending the response to the renderer`);
+      ev.reply(name, reqId, undefined, await res);
+    } catch (err) {
+      logger.error('HTTP API error:', err);
+      ev.reply(name, reqId, err);
+    }
+  });
+}
+
+ipcMain.on('exit', () => app.quit());
+ipcMain.on('paperLink', () => shell.openExternal('https://github.com/sierkov/daedalus-turbo/blob/main/doc/2024-sierkov-on-wallet-security.pdf'));
 ipcMain.on('selectDir', async (event, reqId, params) => {
   try {
     let defaultPath;
@@ -233,12 +259,14 @@ ipcMain.on('freeSpace', async (event, reqId, params) => {
     event.reply('freeSpace', reqId, e, undefined);
   }
 });
+setupIdRequest('configSync', api.uri, '/config-sync/');
 setupIdRequest('export', api.uri, '/export/');
-setupIdRequest('status', api.uri, '/status/');
-setupIdRequest('txInfo', api.uri, '/tx/');
-setupIdRequest('stakeInfo', api.uri, '/stake/');
-setupIdRequest('stakeAssets', api.uri, '/stake-assets/');
-setupIdRequest('stakeTxs', api.uri, '/stake-txs/');
-setupIdRequest('payInfo', api.uri, '/pay/');
 setupIdRequest('payAssets', api.uri, '/pay-assets/');
+setupIdRequest('payInfo', api.uri, '/pay/');
 setupIdRequest('payTxs', api.uri, '/pay-txs/');
+setupIdRequest('txInfo', api.uri, '/tx/');
+setupIdRequest('status', api.uri, '/status/');
+setupIdRequest('stakeAssets', api.uri, '/stake-assets/');
+setupIdRequest('stakeInfo', api.uri, '/stake/');
+setupIdRequest('stakeTxs', api.uri, '/stake-txs/');
+setupSimpleRequest('sync', api.uri, '/sync/');

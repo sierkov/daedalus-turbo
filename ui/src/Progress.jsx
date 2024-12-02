@@ -43,8 +43,8 @@ export default function Progress({ progress, names, weights, titles, hardware, d
     const numItems = Object.keys(myProgress).length;
     const progressItems = Object.entries(myProgress).map((entry, idx) =>
         <div className="progress-item">
-            <div>{normTitles[entry[0]]}</div>
-            <div>
+            <div className="title">{normTitles[entry[0]]}</div>
+            <div className="indicator">
                 <LinearProgressWithLabel color="primary" variant="determinate" value={entry[1].slice(0, -1)} />
             </div>
         </div>
@@ -61,15 +61,15 @@ export default function Progress({ progress, names, weights, titles, hardware, d
     }
     const slotRangeDiv = slotRange
         ?   <div className="slot-range">
-                <div className="start">{slotRange.start}</div>
-                <div className="target">{slotRange.target}</div>
-            </div>
+            <div className="start">{slotRange.start}</div>
+            <div className="target">{slotRange.target}</div>
+        </div>
         :  <></>;
     return <div className="progress">
         {durationInfo}
         <div className="progress-item total">
-            <div>total</div>
-            <div>
+            <div className="title">total</div>
+            <div className="indicator">
                 <LinearProgressWithLabel color="primary" variant="determinate" value={totalProgress} />
             </div>
             {slotRangeDiv}
