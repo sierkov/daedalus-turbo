@@ -236,13 +236,13 @@ cmake --build cmake-build-release -j -t dt
    cmake --build build-win-release -j -t dt -t ui
    ```
 10. Switch to the build directory:
-   ```
-   cd build-win-release
-   ```
+    ```
+    cd build-win-release
+    ```
 11. Build the Windows installer:
-   ```
-   cpack --config CPackConfig.cmake
-   ```
+    ```
+    cpack --config CPackConfig.cmake
+    ```
 12. The installer will be stored in build-win-release directory.
 
 ## Build the Mac Arm64 disk image
