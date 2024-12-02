@@ -35,10 +35,12 @@ As the project matures and moves through its [roadmap](#roadmap), the list of su
 
 # Requirements
 - A modern CPU with 8+ physical cores. The code will refuse any CPU weaker than that of an Orange Pi 5 Plus.
-- 16+ GB of RAM. The more cores a CPU has, the more RAM is needed.
-- A fast SSD with 100+ GB of free space:
+- 16 GB of RAM for 8-to-12-core CPUs. 32 GB for 16-to-24-core CPUs
+  - The more cores a CPU has, the more RAM is needed.
+- A fast SSD with 200 GB of free space:
   - ~70 GB for the compressed blockchain data and search indices.
-  - ~30+ GB for temporary use during indexing and validation. The fewer cores your CPU has, the more space is needed.
+  - ~30 GB for temporary use during indexing.
+  - (Optional) ~100 GB for temporary use during full transaction witness validation.
 - A fast Internet connection (250 Mbps or better).
 
 # Test it yourself
@@ -220,39 +222,47 @@ cmake --build cmake-build-release -j -t dt
    ```
    "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
    ```
-5. Build release DT binaries:
+5. Use vcpkg to install the required packages specified in ```vcpkg.json```:
    ```
-   cmake -B build-win-release -GNinja -DCMAKE_BUILD_TYPE=Release --toolchain D:\dev\vcpkg\scripts\buildsystems\vcpkg.cmake
+   vcpkg install
    ```
-6. Switch to the build directory:
+6. Configure the build with CMake:
+   ```
+   cmake -B build-win-release -G Ninja
+   ```
+7. Build the DT binary:
+   ```
+   cmake --build build-win-release -j -t dt
+   ```
+8. Switch to the build directory:
    ```
    cd build-win-release
    ```
-7. Build the Windows installer:
+9. Build the Windows installer:
    ```
    cpack --config CPackConfig.cmake
    ```
-8. The installer will be stored in build-win-release directory.
+10. The installer will be stored in build-win-release directory.
 
 ## Build the Mac Arm64 disk image
 1. Open a terminal window and navigate to the directory with DT source code.
 2. Install the necessary packages with brew:
    ```
-   brew install cmake boost fmt libsodium llvm@17 secp256k1 spdlog zstd
+   brew install cmake ninja boost fmt libsodium llvm@17 secp256k1 spdlog zstd
    ```
-2. Prepare cmake build files in cmake-build-release directory (the name is used in build scripts so stay be the same):
+3. Prepare cmake build files in cmake-build-release directory (the name is used in build scripts so stay be the same):
    ```
-   cmake -B cmake-build-release
+   cmake -B cmake-build-release -G Ninja
    ```
-3. Build the Mac binaries
+4. Build the Mac binaries
    ```
    cmake --build cmake-build-release -j -t dt
    ```
-4. Switch to the UI directory:
+5. Switch to the UI directory:
    ```cd ui```
-5. Build the Mac disk image:
+6. Build the Mac disk image:
    ```
    npm i
    npm run pkg-mac
    ```
-6. The resulting disk image will be stored in the ui directory.
+7. The resulting disk image will be stored in the ui directory.
