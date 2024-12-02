@@ -217,6 +217,8 @@ cmake --build cmake-build-release -j -t dt
 ## Build the Windows installer
 1. Download and install [Microsoft Visual Studio Community 2022](https://visualstudio.microsoft.com/vs/community/)
 2. In the Visual Studio installer, enable "Desktop development with C++" workload.
+3. Download and install [NSIS installer compiler 3.10](https://nsis.sourceforge.io/Download).
+4. Download and install [Node.js 22](https://nsis.sourceforge.io/Download)
 3. Open a CMD terminal and navigate to the DT source code directory.
 4. Set up the necessary Visual Studio environment variables for a command line build:
    ```
@@ -228,7 +230,7 @@ cmake --build cmake-build-release -j -t dt
    ```
 6. Configure the build with CMake:
    ```
-   cmake -B build-win-release -G Ninja
+   cmake -B build-win-release -G Ninja --toolchain="%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake"
    ```
 7. Build the DT binary:
    ```
@@ -259,10 +261,15 @@ cmake --build cmake-build-release -j -t dt
    cmake --build cmake-build-release -j -t dt
    ```
 5. Switch to the UI directory:
-   ```cd ui```
-6. Build the Mac disk image:
+   ```
+   cd ui
+   ```
+6. Install the necessary NPM packages:
    ```
    npm i
+   ```
+7. Build the Mac disk image:
+   ```
    npm run pkg-mac
    ```
-7. The resulting disk image will be stored in the ui directory.
+8. The resulting disk image will be stored in the ui directory.
