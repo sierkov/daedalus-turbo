@@ -15,6 +15,7 @@ set(COVERAGE_ARGS "" CACHE STRING "select specific unit tests to run for test co
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_EXTENSIONS NO)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
+add_compile_options(-DFMT_HEADER_ONLY)
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     add_compile_options(-Wall)
     add_compile_options(-Wextra)
