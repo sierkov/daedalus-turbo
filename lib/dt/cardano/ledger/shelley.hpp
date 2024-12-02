@@ -109,6 +109,8 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         virtual bool operator==(const state &o) const;
         virtual void clear();
 
+        virtual const set<key_hash> &genesis_signers() const;
+
         virtual void compute_rewards_if_ready();
         virtual void process_updates(updates_t &&);
         virtual void process_cert(const cert_any_t &, const cert_loc_t &);

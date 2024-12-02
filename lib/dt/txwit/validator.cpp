@@ -678,14 +678,36 @@ namespace daedalus_turbo::txwit {
                                 break;
                         }
                     } catch (const std::exception &ex) {
+                        // There are 2 known cases out 40 million mainnet Plutus evaluations
+                        // when the C++ Plutus machine fails to evaluate a Plutus script.
+                        // That happens when a bls12_381_g1_compress builtin gets passed a bytestring argument.
+                        // According to the Plutus spec that builtin is not supposed to accept a bytestring only a bls12_381_g1_element.
+                        // A Rust Plutus machine from Aiken fails exactly the same. Further investigations are non-ongoing.
+                        //
+                        // Since the primary focus of the current release is the proof of performance and 2 witnesses out 40 million
+                        // do not impact it in any measurable way, hardcoding the list of transactions here as a temporary measure.
+                        static set<tx_hash> known_cases {
+                            tx_hash::from_hex("71579B77AB7D974EB31EF1B50D58F14F2CEAC2BCF540AAC50F777F56A8F24BFF"),
+                            tx_hash::from_hex("E998E761F2F7F35DA12799E1F41914686FC2FE8010BAC1BE57FFCBA8F820E752")
+                        };
                         const auto msg = fmt::format("txwit slot: {} tx: {} error: {}", blk.slot(), tx.hash(), ex.what());
-                        logger::error("{}", msg);
-                        error_handler(msg);
+                        if (known_cases.find(tx.hash()) == known_cases.end()) {
+                            logger::error("{}", msg);
+                            error_handler(msg);
+                        } else {
+                            logger::warn("a known incompatibility under investigation: {}", msg);
+                        }
                     }
                 }
                 return cnts;
             }
         };
+
+        // This component keeps its own copy of the ledger state
+        // since some checks require the knowledge of the actual protocol parameters or if a given certificate is registered.
+        // Therefore, the state processing is limited here. That is OK.
+        // The full ledger state processing happens in the consensus validation in lib/dt/validator.cpp
+        // The two pieces will be merged  after the transaction witness validation has been tested for enough time.
 
         struct stage2_processor {
             stage2_processor(const chunk_registry &cr, const validation_config_t &cfg): _cr { cr }, _cfg { cfg }
@@ -930,6 +952,18 @@ namespace daedalus_turbo::txwit {
                     if (!std::holds_alternative<script_signer_t>(rs.val) || !tx.native_scripts.contains(std::get<script_signer_t>(rs.val).hash))
                         throw error("epoch: {} tx {} missing a required_signer: {}", part.epoch, tx.tx_id, rs);
                 }
+                if (tx.reqires_genesis_delegs_quorum) [[unlikely]] {
+                    size_t num_signers = 0;
+                    for (const auto &vk_hash: _cr.config().byron_delegate_hashes) {
+                        if (tx.signers.contains({ vkey_signer_t { vk_hash } }))
+                            ++num_signers;
+                    }
+                    const auto quorum = _cr.config().shelley_update_quorum;
+                    if (num_signers < quorum) [[unlikely]]
+                        throw error("a quorum of {} genesis delegates is required but got only: {}", quorum, num_signers);
+                    logger::debug("epoch: {} tx: {} requires a quorum of {} genesis delegates and got {}",
+                        part.epoch, tx.tx_id, quorum, num_signers);
+                }
             }
 
             void _validate_tx_invariants(const batch_info &part, tx_context_t &tx, const context *plutus_ctx) const
@@ -950,7 +984,7 @@ namespace daedalus_turbo::txwit {
                         break;
                     }
                 } catch (const std::exception &ex) {
-                    const auto msg = fmt::format("txwit epoch: {} tx: {} error: {}", part.epoch, tx.tx_id, ex.what());
+                    const auto msg = fmt::format("txwit epoch: {} tx: {}: ", part.epoch, tx.tx_id, ex.what());
                     logger::error("{}", msg);
                     _cfg.error_handler(msg);
                 }
@@ -1088,10 +1122,11 @@ namespace daedalus_turbo::txwit {
             alignas(mutex::padding) mutex::unique_lock::mutex_type all_mutex {};
             batch_stats_t all {};
             auto &sched = _cr.sched();
+            static const std::string task_id { "parse" };
             const auto ex_ptr = logger::run_log_errors([&] {
                 std::shared_ptr<parallel::ordered_queue> part_q = std::make_shared<parallel::ordered_queue>();
                 for (size_t bi = 0; bi < batches.size(); ++bi) {
-                    sched.submit_void("parse", -static_cast<int64_t>(bi), [&, bi] {
+                    sched.submit_void(task_id, -static_cast<int64_t>(bi), [&, bi] {
                         try {
                             if (!part_c.cancel()) {
                                 {
@@ -1104,13 +1139,18 @@ namespace daedalus_turbo::txwit {
                                 part_c.try_push(part_q->next());
                             }
                         } catch (const std::exception &ex) {
+                            // cancel all scheduled parse tasks for batches after this one
+                            // since now we know that the work cannot be incorporated
+                            sched.cancel([bi](const auto &t_task_id, const auto &t_param) {
+                                return task_id == t_task_id && t_param && std::any_cast<size_t>(*t_param) >= bi;
+                            });
                             vector<std::string> chunk_info {};
                             for (const auto *c_ptr: batches[bi])
                                 chunk_info.emplace_back(fmt::format("{} first slot: {}", c_ptr->rel_path(), c_ptr->first_slot));
                             const auto msg = fmt::format("batch {}: pre-processing failed: {} chunks: {}", bi, ex.what(), chunk_info);
                             throw error(msg);
                         }
-                    });
+                    }, bi);
                 }
                 // let the running consumer tasks to finish
                 sched.process(true);

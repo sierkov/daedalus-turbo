@@ -18,15 +18,9 @@ suite cardano_alonzo_suite = [] {
             for (const auto &entry: std::filesystem::directory_iterator { install_path("data/alonzo") }) {
                 if (entry.is_regular_file() && entry.path().extension() == ".zpp") {
                     const auto path = entry.path().string();
-                    logger::debug("testing script context: {}", path);
-                    const plutus::context ctx { path, ccfg };
                     expect(nothrow([&] {
-                        try {
-                            ctx.tx().witnesses_ok(&ctx);
-                        } catch (const error &ex) {
-                            logger::warn("context {} failed with {}", path, ex.what());
-                            throw;
-                        }
+                        const plutus::context ctx { path, ccfg };
+                        ctx.tx().witnesses_ok(&ctx);
                     })) << path;
                 }
             }

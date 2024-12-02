@@ -330,6 +330,11 @@ namespace daedalus_turbo::cardano::ledger::shelley {
             && _blocks_past_voting_deadline == o._blocks_past_voting_deadline;
     }
 
+    const set<key_hash> &state::genesis_signers() const
+    {
+        return _cfg.byron_delegate_hashes;
+    }
+
     void state::register_pool(const pool_reg_cert &reg)
     {
         auto [it, created] = _active_pool_params.try_emplace(reg.pool_id, reg.params);

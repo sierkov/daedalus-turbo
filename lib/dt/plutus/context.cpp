@@ -10,8 +10,6 @@
 #include <dt/plutus/machine.hpp>
 #include <dt/zpp-stream.hpp>
 
-#define NDEBUG
-
 namespace daedalus_turbo::plutus {
     using namespace cardano;
 
@@ -995,9 +993,8 @@ namespace daedalus_turbo::plutus {
         const flat::script s { script_alloc, script.script() };
         term t = s.program();
         for (auto it = args.begin(); it != args.end(); ++it) {
-#ifndef NDEBUG
-            file::write(install_path(fmt::format("tmp/script-args-my-{}.txt", it - args.begin())), fmt::format("{}\n", *it));
-#endif
+            // Uncomment to debug potential script context generation issues
+            // file::write(install_path(fmt::format("tmp/script-args-my-{}.txt", it - args.begin())), fmt::format("{}\n", *it));
             if (std::next(it) != args.end()) {
                 if (script.type() == script_type::plutus_v1 || script.type() == script_type::plutus_v2)
                     t = term { script_alloc, apply { t, *it } };
@@ -1005,10 +1002,9 @@ namespace daedalus_turbo::plutus {
                 t = term { script_alloc, apply { t, *it } };
             }
         }
-#ifndef NDEBUG
-        file::write(install_path("tmp/script-with-args.uplc"), fmt::format("(program {} {})", s_it->second.ver, t));
-        file::write(install_path("tmp/script-with-args.flat"), flat::encode_cbor(s_it->second.ver, t));
-#endif
+        // Uncomment to debug potential script context generation issues
+        // file::write(install_path("tmp/script-with-args.uplc"), fmt::format("(program {} {})", s_it->second.ver, t));
+        // file::write(install_path("tmp/script-with-args.flat"), flat::encode_cbor(s_it->second.ver, t));
         return prepared_script { std::move(script_alloc),  script.hash(), script.type(), t, s.version(), budget };
     }
 

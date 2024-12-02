@@ -3,9 +3,6 @@
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
-#include <string>
-#include <string_view>
-#include <tuple>
 #include <dt/cbor.hpp>
 #include <dt/crypto/sha3.hpp>
 #include <dt/ed25519.hpp>
@@ -21,6 +18,21 @@ using namespace daedalus_turbo::cardano;
 
 suite cardano_byron_suite = [] {
     "cardano::byron"_test = [] {
+        "genesis signers"_test = [] {
+            const set<vkey> signers = {
+                vkey::from_hex("5FDDEEDADE2714D6DB2F9E1104743D2D8D818ECDDC306E176108DB14CAADD441"),
+                vkey::from_hex("61261A95B7613EE6BF2067DAD77B70349729B0C50D57BC1CF30DE0DB4A1E73A8"),
+                vkey::from_hex("89C29F8C4AF27B7ACCBE589747820134EBBAA1CAF3CE949270A3D0C7DCFD541B"),
+                vkey::from_hex("8B53207629F9A30E4B2015044F337C01735ABE67243C19470C9DAE8C7B732798"),
+                vkey::from_hex("9180D818E69CD997E34663C418A648C076F2E19CD4194E486E159D8580BC6CDA"),
+                vkey::from_hex("E8C03A03C0B2DDBEA4195CAF39F41E669F7D251ECF221FBB2F275C0A5D7E05D1"),
+                vkey::from_hex("F14F712DC600D793052D4842D50CEFA4E65884EA6CF83707079EB8CE302EFC85")
+            };
+            const auto &cfg = cardano::config::get();
+            for (const auto &vk: signers) {
+                expect(cfg.byron_delegate_hashes.contains(blake2b<key_hash>(vk))) << fmt::format("{}", vk);
+            }
+        };
         "match slot 1 data"_test = [] {
             // dlgsig.dlg.delegate
             auto cbor_vkey_full = bytes_from_hex("e8c03a03c0b2ddbea4195caf39f41e669f7d251ecf221fbb2f275c0a5d7e05d190dcc246f56c8e33ac0037066e2f664ddaa985ea5284082643308dde4f5bfedf");

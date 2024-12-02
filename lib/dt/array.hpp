@@ -104,7 +104,7 @@ namespace daedalus_turbo {
         array &operator=(const std::span<const T> &s)
         {
             if (s.size() != SZ)
-                throw error("span must of size {} but got {}", SZ, s.size());
+                throw error("span must be of size {} but got {}", SZ, s.size());
             memcpy(this, std::data(s), SZ * sizeof(T));
             return *this;
         }
