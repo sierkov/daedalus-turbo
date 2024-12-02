@@ -11,7 +11,9 @@
     "pkg-build-win": "npm run pkg-clean && npm run build && electron-packager . --overwrite --icon=./etc/logo.ico",
     "pkg-build-mac": "npm run pkg-clean && npm run build && electron-packager . --overwrite --icon=./etc/logo.icns",
     "pkg-mac-app": "npm run pkg-build-mac && node ./script/mac-copy-libs.js ../cmake-build-release/dt ./dt-explorer-darwin-arm64/dt-explorer.app/Contents/MacOS && cp -r ../etc ./dt-explorer-darwin-arm64/dt-explorer.app/Contents",
-    "pkg-mac": "npm run pkg-mac-app && mv ./dt-explorer-darwin-arm64/dt-explorer.app ./etc && appdmg ./etc/appdmg.json ./dt-explorer.dmg && rm -rf ./etc/dt-explorer.app"
+    "pkg-mac": "npm run pkg-mac-app && mv ./dt-explorer-darwin-arm64/dt-explorer.app ./etc && appdmg ./etc/appdmg.json ./dt-explorer.dmg && rm -rf ./etc/dt-explorer.app",
+    "_postinstall": "node ./node_modules/platform-dependent-modules/cli.js",
+    "postinstall": "npm run _postinstall"
   },
   "private": true,
   "devDependencies": {
@@ -37,6 +39,7 @@
     "html-webpack-plugin": "^5.5.3",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
+    "platform-dependent-modules": "^0.0.14",
     "sass": "^1.66.1",
     "sass-loader": "^13.3.2",
     "shx": "^0.3.4",
@@ -60,14 +63,11 @@
     "react-router-dom": "^6.15.0",
     "shell": "^0.12.0"
   },
-  "platformDependencies": [
-    {
-      "os": [
-        "darwin"
-      ],
-      "dependencySet": [
-        "appdmg"
+  "config": {
+    "platformDependentModules": {
+      "darwin": [
+        "appdmg@0.6.6"
       ]
     }
-  ]
+  }
 }
