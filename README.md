@@ -201,7 +201,7 @@ Additionally on Windows:
 - Windows 11 with Visual C++ 19.39.33520.0 that comes with Visual Studio 2022 Community Edition
 - Windows 11 with GCC 13.2 that comes with MinGW64
 
-## Build instructions
+## Build the command line version
 Verify the presence of the necessary libraries and generate build files in `cmake-build-release` directory for a release build:
 ```
 cmake -B cmake-build-release
@@ -211,3 +211,48 @@ Build `dt` binary using all available CPU cores (will be available in `cmake-bui
 ```
 cmake --build cmake-build-release -j -t dt
 ```
+
+## Build the Windows installer
+1. Download and install [Microsoft Visual Studio Community 2022](https://visualstudio.microsoft.com/vs/community/)
+2. In the Visual Studio installer, enable "Desktop development with C++" workload.
+3. Open a CMD terminal and navigate to the DT source code directory.
+4. Set up the necessary Visual Studio environment variables for a command line build:
+   ```
+   "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
+   ```
+5. Build release DT binaries:
+   ```
+   cmake -B build-win-release -GNinja -DCMAKE_BUILD_TYPE=Release --toolchain D:\dev\vcpkg\scripts\buildsystems\vcpkg.cmake
+   ```
+6. Switch to the build directory:
+   ```
+   cd build-win-release
+   ```
+7. Build the Windows installer:
+   ```
+   cpack --config CPackConfig.cmake
+   ```
+8. The installer will be stored in build-win-release directory.
+
+## Build the Mac Arm64 disk image
+1. Open a terminal window and navigate to the directory with DT source code.
+2. Install the necessary packages with brew:
+   ```
+   brew install cmake boost fmt libsodium llvm@17 secp256k1 spdlog zstd
+   ```
+2. Prepare cmake build files in cmake-build-release directory (the name is used in build scripts so stay be the same):
+   ```
+   cmake -B cmake-build-release
+   ```
+3. Build the Mac binaries
+   ```
+   cmake --build cmake-build-release -j -t dt
+   ```
+4. Switch to the UI directory:
+   ```cd ui```
+5. Build the Mac disk image:
+   ```
+   npm i
+   npm run pkg-mac
+   ```
+6. The resulting disk image will be stored in the ui directory.
