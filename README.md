@@ -252,6 +252,8 @@ cmake --build cmake-build-release -j -t dt
    brew install cmake ninja fmt libsodium llvm@17 secp256k1 spdlog zstd
    brew install boost@1.85
    brew link boost@1.85
+   brew install node@22
+   brew link node@22
    ```
 3. Prepare cmake build files in cmake-build-release directory (the name is used in build scripts so stay be the same):
    ```
