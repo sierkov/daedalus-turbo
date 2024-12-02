@@ -219,32 +219,32 @@ cmake --build cmake-build-release -j -t dt
 2. In the Visual Studio installer, enable "Desktop development with C++" workload.
 3. Download and install [NSIS installer compiler 3.10](https://nsis.sourceforge.io/Download).
 4. Download and install [Node.js 22](https://nsis.sourceforge.io/Download)
-3. Open a CMD terminal and navigate to the DT source code directory.
-4. Set up the necessary Visual Studio environment variables for a command line build:
+5. Open a CMD terminal and navigate to the DT source code directory.
+6. Set up the necessary Visual Studio environment variables for a command line build:
    ```
    "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
    ```
-5. Use vcpkg to install the required packages specified in ```vcpkg.json```:
+7. Use vcpkg to install the required packages specified in ```vcpkg.json```:
    ```
    vcpkg install
    ```
-6. Configure the build with CMake:
+8. Configure the build with CMake:
    ```
    cmake -B build-win-release -G Ninja --toolchain="%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake"
    ```
-7. Build the DT binary:
+9. Build the DT binaries:
    ```
-   cmake --build build-win-release -j -t dt
+   cmake --build build-win-release -j -t dt -t ui
    ```
-8. Switch to the build directory:
+10. Switch to the build directory:
    ```
    cd build-win-release
    ```
-9. Build the Windows installer:
+11. Build the Windows installer:
    ```
    cpack --config CPackConfig.cmake
    ```
-10. The installer will be stored in build-win-release directory.
+12. The installer will be stored in build-win-release directory.
 
 ## Build the Mac Arm64 disk image
 1. Open a terminal window and navigate to the directory with DT source code.
