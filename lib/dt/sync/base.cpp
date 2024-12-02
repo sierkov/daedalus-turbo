@@ -19,17 +19,23 @@ namespace daedalus_turbo::sync {
             _cr.remove_processor(_proc);
         }
 
-        bool sync(peer_info &peer, const cardano::optional_slot max_slot, const validation_mode_t mode)
+        bool sync(peer_info &peer, cardano::optional_slot max_slot, const validation_mode_t mode)
         {
             logger::info("attempting to sync with {} with the tip {}", peer.id(), peer.tip());
             const auto start_tip = _cr.tip();
             static constexpr size_t max_retries = 1;
             auto start_point = peer.intersection();
             optional_progress_point target { peer.tip() };
-            if (max_slot && max_slot < target) {
-                logger::info("user override of the target: up to {}", *max_slot);
-                target = max_slot;
+            if (target) {
+                // explicitly set the max slot to ensure that the progress is computed correctly
+                if (!max_slot)
+                    max_slot = target->slot;
+                if (max_slot && *max_slot < target->slot) {
+                    logger::info("user override of the target: up to {}", *max_slot);
+                    target = max_slot;
+                }
             }
+
             if (peer.intersection() < target && peer.intersection() < peer.tip()) {
                 for (size_t num_retries = max_retries; num_retries; --num_retries) {
                     logger::info("syncing from {} to {}", start_point, target);
