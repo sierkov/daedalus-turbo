@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import Progress from '../Progress.jsx';
 import SyncPaperLink from './PaperLink.jsx';
 import './ScreenProgress.scss';
