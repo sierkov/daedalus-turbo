@@ -853,11 +853,21 @@ namespace daedalus_turbo {
             }
         };
 
-        using asset_map = map<uint8_vector, uint64_t>;
-        using policy_map = map<script_hash, asset_map>;
+        struct asset_name_t: uint8_vector {
+            using uint8_vector::uint8_vector;
 
-        using asset_mint_map = map<uint8_vector, int64_t>;
-        using policy_mint_map = map<script_hash, asset_mint_map>;
+            bool operator<(const auto &o) const noexcept
+            {
+                const auto min_sz = std::min(size(), o.size());
+                // std::memcmp is guaranteed to return 0 if min_sz is 0
+                if (const int cmp = std::memcmp(data(), o.data(), min_sz); cmp != 0)
+                    return cmp < 0;
+                return size() < o.size();
+            }
+        };
+
+        using asset_map = map<asset_name_t, uint64_t>;
+        using policy_map = map<script_hash, asset_map>;
 
         inline std::string asset_name(const buffer &policy_id, const buffer &asset_name)
         {
@@ -1393,6 +1403,14 @@ namespace fmt {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
             return fmt::format_to(ctx.out(), "{}", static_cast<daedalus_turbo::array<uint8_t, SZ>>(v));
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::cardano::asset_name_t>: formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::cardano::asset_name_t &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "{}", daedalus_turbo::buffer_readable { v });
         }
     };
 
