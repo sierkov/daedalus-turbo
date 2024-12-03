@@ -399,10 +399,14 @@ namespace daedalus_turbo::http_api {
                 case sync_status::syncing: {
                     const double in_progress = std::chrono::duration<double>(std::chrono::system_clock::now() - _sync_start).count();
                     resp.emplace("syncDuration", fmt::format("{:0.1f}", in_progress / 60));
-                    if (const auto start_slot = _cr->make_slot(_sync_start_slot.load(std::memory_order_relaxed).value()))
-                        resp.emplace("syncStartSlot", fmt::format("from slot {} in epoch {}", start_slot.epoch_slot(), start_slot.epoch()));
-                    if (const auto target_slot = _cr->make_slot(_sync_target_slot.load(std::memory_order_relaxed).value()))
-                        resp.emplace("syncTargetSlot", fmt::format("to slot {} in epoch {}", target_slot.epoch_slot(), target_slot.epoch()));
+                    if (const auto start_slot = _sync_start_slot.load(std::memory_order_relaxed); start_slot) {
+                        const auto start_slot_obj = _cr->make_slot(*start_slot);
+                        resp.emplace("syncStartSlot", fmt::format("from slot {} in epoch {}", start_slot_obj.epoch_slot(), start_slot_obj.epoch()));
+                    }
+                    if (const auto target_slot = _sync_target_slot.load(std::memory_order_relaxed); target_slot) {
+                        const auto target_slot_obj = _cr->make_slot(*target_slot);
+                        resp.emplace("syncTargetSlot", fmt::format("to slot {} in epoch {}", target_slot_obj.epoch_slot(), target_slot_obj.epoch()));
+                    }
                     break;
                 }
                 case sync_status::failed:
@@ -435,10 +439,10 @@ namespace daedalus_turbo::http_api {
         {
             timer t { "api_sync" };
             logger::info("sync start");
-            _sync_start = std::chrono::system_clock::now();
-            _sync_status = sync_status::syncing;
             _sync_last_chunk.reset();
             _sync_last_error.reset();
+            _sync_start = std::chrono::system_clock::now();
+            _sync_status = sync_status::syncing;
             try {
                 if (!_ignore_requirements) {
                     const auto req_status = requirements::check(_data_dir.string());
@@ -670,7 +674,7 @@ namespace daedalus_turbo::http_api {
                     else if (_sync_status == sync_status::failed)
                         resp = _error_response(*_sync_last_error);
                     else
-                        resp = _error_response("The syncronization state is unknown");
+                        resp = _error_response("The synchronization state is unknown");
                     send(_send_json_response(req, resp));
                 } else {
                     std::optional<json::value> resp {};
