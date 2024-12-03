@@ -52,22 +52,22 @@ suite config_suite = [] {
         };
         "non-standard-location"_test = [] {
             expect(std::getenv("DT_ETC") == nullptr);
-            expect(configs_dir::default_path() == "./etc/mainnet");
+            test_same(install_path("etc/mainnet"), configs_dir::default_path());
             my_setenv("DT_ETC", "./etc-missing");
             expect(std::getenv("DT_ETC") != nullptr);
-            expect(configs_dir::default_path() == "./etc-missing") << configs_dir::default_path();
+            test_same(std::string { "./etc-missing" }, configs_dir::default_path());
             expect(throws([] { configs_dir cfg { configs_dir::default_path() }; }));
             my_setenv("DT_ETC", nullptr);
             expect(std::getenv("DT_ETC") == nullptr);
         };
         "non-standard-location override"_test = [] {
             expect(std::getenv("DT_ETC") == nullptr);
-            expect(configs_dir::default_path() == "./etc/mainnet");
+            test_same(install_path("etc/mainnet"), configs_dir::default_path());
             configs_dir::set_default_path("./new-path");
             expect(configs_dir::default_path() == "./new-path") << configs_dir::default_path();
             expect(throws([] { configs_dir cfg { configs_dir::default_path() }; }));
             configs_dir::set_default_path({});
-            expect(configs_dir::default_path() == "./etc/mainnet");
+            test_same(install_path("etc/mainnet"), configs_dir::default_path());
         };
         "mock"_test = [] {
             configs_mock::map_type cfg_data {};
@@ -81,11 +81,11 @@ suite config_suite = [] {
             expect(cfg.at("turbo").at("vkey").as_string() == std::string_view { "F961D8754397FA2C39D69C97D598566A5E03C34E40FF71DB792E103380E7C105" });
             expect(cfg.at("cardano").at("networkMagic").as_int64() == 764824073_ll);
         };
-        "consider_install_dir"_test = [] {
+        "consider_bin_dir"_test = [] {
             const std::string test_file { "tmp/file.txt" };
             const auto orig_path = install_path(test_file);
             // Ignores an attempt to set install_dir to an improper location
-            consider_install_dir("/unknown/dir");
+            consider_bin_dir("/unknown/dir");
             test_same(orig_path, install_path(test_file));
         };
     };
