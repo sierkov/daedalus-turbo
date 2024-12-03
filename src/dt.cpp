@@ -8,6 +8,6 @@
 int main(const int argc, const char **argv)
 {
     using namespace daedalus_turbo;
-    consider_install_dir(argv[0]);
+    consider_bin_dir(argv[0]);
     return cli::run(argc, argv);
 }

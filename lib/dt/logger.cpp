@@ -6,6 +6,7 @@
 #ifndef SPDLOG_FMT_EXTERNAL
 #   define SPDLOG_FMT_EXTERNAL 1
 #endif
+#include <fstream>
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
@@ -49,6 +50,15 @@ namespace daedalus_turbo::logger {
 
     static spdlog::logger create(const std::string &path)
     {
+        // check for access to provide a meaningful error
+        {
+            std::ofstream os { path, std::ios_base::app };
+            if (!os) {
+                std::cerr << fmt::format("Fatal: not able to write to the log file: {}; terminating.\n", path);
+                std::terminate();
+            }
+        }
+
         std::shared_ptr<spdlog::sinks::stderr_color_sink_mt> console_sink {};
         if (console_enabled()) {
             console_sink = std::make_shared<spdlog::sinks::stderr_color_sink_mt>();

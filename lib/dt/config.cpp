@@ -9,33 +9,47 @@
 namespace daedalus_turbo {
     static bool install_dir_ok(const std::filesystem::path &dir)
     {
-        return std::filesystem::exists(dir / "etc" / "mainnet" / "config.json");
-    }
-
-    static std::filesystem::path default_install_dir()
-    {
-        const auto dir = std::filesystem::absolute(std::filesystem::current_path());
-        if (install_dir_ok(dir))
-            return dir;
-        throw error("cannot find required configuration files using the default search path: {}", dir);
+        if (!std::filesystem::exists(dir / "etc" / "mainnet" / "config.json"))
+            return false;
+        if (!std::filesystem::exists(dir / "log"))
+            return false;
+        return true;
     }
 
     // Must be configured before any multi-threading code is executed
     static std::filesystem::path install_dir(const std::optional<std::filesystem::path> &override_dir={})
     {
-        static std::filesystem::path dir = default_install_dir();
-        if (override_dir && *override_dir != dir && install_dir_ok(*override_dir))
-            dir = *override_dir;
-        return dir;
+        static std::optional<std::filesystem::path> dir {};
+        if (override_dir) {
+             if (install_dir_ok(*override_dir)) {
+                dir.emplace(*override_dir);
+            }
+        }
+        if (!dir) {
+            auto default_dir = std::filesystem::absolute(std::filesystem::current_path());
+            if (!install_dir_ok(default_dir)) {
+                std::cerr << fmt::format("cannot find required configuration files using the default search path: {}\n", dir);
+                std::terminate();
+            }
+            dir.emplace(std::move(default_dir));
+        }
+        return *dir;
     }
 
     // The dt binary is expected to be located:
     // 1) in prod: in a bin subdirectory of the installation directory
     // 2) in dev: in a build subdirectory of the source-code directory
-    void consider_install_dir(const std::string_view bin_path)
+    void consider_bin_dir(const std::string_view bin_path)
     {
-        const std::filesystem::path proposed_dir = std::filesystem::canonical(std::filesystem::absolute(bin_path).parent_path().parent_path());
-        install_dir(proposed_dir);
+        const auto bin_dir = std::filesystem::weakly_canonical(std::filesystem::absolute(bin_path)).parent_path();
+        // Normally, the installation path is expected to be <install-dir>/bin/dt.exe
+        // However, for extra robustness, checking both the direct parent and the parent's parent dir.
+        if (install_dir_ok(bin_dir)) {
+            install_dir(bin_dir);
+        } else if (install_dir_ok(bin_dir.parent_path())) {
+            install_dir(bin_dir.parent_path());
+        }
+        // If both do not work, resort to the default based on the current working directory
     }
 
     std::string install_path(const std::string_view rel_path)
