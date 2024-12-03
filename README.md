@@ -40,7 +40,7 @@ As the project matures and moves through its [roadmap](#roadmap), the list of su
 - A fast SSD with 200 GB of free space:
   - ~70 GB for the compressed blockchain data and search indices.
   - ~30 GB for temporary use during indexing.
-  - (Optional) ~100 GB for temporary use during full transaction witness validation.
+  - ~100 GB for temporary use during full transaction witness validation.
 - A fast Internet connection (250 Mbps or better).
 
 # Test it yourself
@@ -229,11 +229,11 @@ cmake --build cmake-build-release -j -t dt
    ```
 8. Configure the build with CMake:
    ```
-   cmake -B build-win-release -G Ninja --toolchain="%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake"
+   cmake -B build-win-release -G Ninja -DCMAKE_BUILD_TYPE=Release --toolchain="%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake"
    ```
 9. Build the DT binaries:
    ```
-   cmake --build build-win-release -j -t dt -t ui
+   cmake --build build-win-release --config Release -j -t dt -t ui
    ```
 10. Switch to the build directory:
     ```
