@@ -27,7 +27,7 @@ function computeETA(progress, weights, duration, prevETA) {
         newETA = Math.round(duration / wsum * (1.0 - wsum) * 10) / 10;
     // Smooth drastic changes in the predicted ETA
     if (prevETA !== undefined && newETA !== undefined)
-        return prevETA * 0.9 + newETA * 0.1;
+        return Math.round((prevETA * 0.9 + newETA * 0.1) * 10) / 10;
     return newETA;
 }
 
