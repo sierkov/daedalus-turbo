@@ -21,6 +21,7 @@ extern "C" {
 #   include <sys/resource.h>
 #endif
 };
+#include <fstream>
 #include <dt/file.hpp>
 #include <dt/memory.hpp>
 #include <dt/mutex.hpp>
@@ -37,10 +38,15 @@ namespace daedalus_turbo::memory {
             return static_cast<size_t>(pmc.WorkingSetSize >> 20);
 #       elif __linux__
             static size_t page_size = sysconf (_SC_PAGESIZE);
-            std::string stat { file::read("/proc/self/statm").str() };
+            // statm file has always a 0 size despite having the content, so cannot use file::read
+            std::ifstream is { "/proc/self/statm" };
+            if (!is) [[unlikely]]
+                throw error("unable to open /proc/self/statm");
+            std::string stat;
+            std::getline(is, stat);
             const auto pos = stat.find(' ');
             if (pos == stat.npos) [[unlikely]]
-                throw error("invalid statm file format!");
+                throw error("invalid /proc/self/statm file format: '{}'!", stat);
             return (std::stoull(stat.substr(0, pos)) * page_size) >> 20;
 #       else
             struct task_basic_info tinfo;
