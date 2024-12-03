@@ -50,11 +50,11 @@ namespace daedalus_turbo::logger {
 
     static spdlog::logger create(const std::string &path)
     {
-        // check for access to provide a meaningful error
+        std::cerr << fmt::format("DT INIT: log path: {}\n", path);
         {
             std::ofstream os { path, std::ios_base::app };
             if (!os) {
-                std::cerr << fmt::format("Fatal: not able to write to the log file: {}; terminating.\n", path);
+                std::cerr << fmt::format("DT INIT: Unable to write to the log file: {}; terminating.\n", path);
                 std::terminate();
             }
         }
@@ -77,6 +77,7 @@ namespace daedalus_turbo::logger {
             logger.set_level(spdlog::level::debug);
         }
         logger.flush_on(spdlog::level::debug);
+        logger.debug("Installation directory: {}", install_path(""));
         return logger;
     }
 
