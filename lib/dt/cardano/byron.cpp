@@ -4,6 +4,7 @@
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
 #include <dt/cardano/byron.hpp>
+#include <dt/cardano/native-script.hpp>
 #include <dt/container.hpp>
 
 namespace daedalus_turbo::cardano::byron {
@@ -186,54 +187,6 @@ namespace daedalus_turbo::cardano::byron {
         return cnts;
     }
 
-    tx::optional_error_string tx::_validate_native_script_single(const cbor_value &script, const set<key_hash> &vkeys) const
-    {
-        switch (const auto typ = script.at(0).uint(); typ) {
-            case 0:
-                if (const auto &req_vkey = script.at(1).buf(); !vkeys.contains(req_vkey)) [[unlikely]]
-                    return fmt::format("required key {} didn't sign the transaction", req_vkey);
-                break;
-            case 1:
-                for (const auto &sub_script: script.at(1).array()) {
-                    if (const auto err = _validate_native_script_single(sub_script, vkeys); err)
-                        return err;
-                }
-                break;
-            case 2: {
-                bool any_ok = false;
-                for (const auto &sub_script: script.at(1).array()) {
-                    if (!_validate_native_script_single(sub_script, vkeys))
-                        any_ok = true;
-                }
-                if (!any_ok) [[unlikely]]
-                    return fmt::format("no child script was successful while require at least one!");
-                break;
-            }
-            case 3: {
-                const auto min_ok = script.at(1).uint();
-                uint64_t num_ok = 0;
-                for (const auto &sub_script: script.at(2).array()) {
-                    if (!_validate_native_script_single(sub_script, vkeys))
-                        ++num_ok;
-                }
-                if (num_ok < min_ok) [[unlikely]]
-                    return fmt::format("only {} child scripts succeed while {} are required!", num_ok, min_ok);
-                break;
-            }
-            case 4:
-                if (const auto invalid_before = script.at(1).uint(); block().slot() < invalid_before)
-                    return fmt::format("invalid before {} while the current slot is {}!", invalid_before, block().slot());
-                break;
-            case 5:
-                if (const auto invalid_after = script.at(1).uint(); block().slot() >= invalid_after)
-                    return fmt::format("invalid after {} while the current slot is {}!", invalid_after, block().slot());
-                break;
-            default:
-                return fmt::format("unsupported native script type {}", typ);
-        }
-        return {};
-    }
-
     tx::wit_cnt tx::witnesses_ok_native(const set<key_hash> &vkeys) const
     {
         wit_cnt cnts {};
@@ -241,7 +194,7 @@ namespace daedalus_turbo::cardano::byron {
             const auto w_data = cbor::parse(w_val.buf());
             switch (w_typ) {
                 case 1:
-                    if (const auto err = _validate_native_script_single(w_data, vkeys); err) [[unlikely]]
+                    if (const auto err = native_script::validate(w_data, block().slot(), vkeys); err) [[unlikely]]
                         throw cardano_error("native script for tx {} failed: {} script: {}", hash(), *err, w_val);
                     ++cnts.native_script;
                     break;

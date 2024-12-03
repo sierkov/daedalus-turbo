@@ -8,7 +8,7 @@
 #include <dt/chunk-registry.hpp>
 
 namespace daedalus_turbo::txwit {
-    enum class witness_type { all, vkey, native, plutus, none };
+    enum class witness_type { all, vkey, script, none };
     using error_handler_func = std::function<void(const std::string &)>;
 
     extern witness_type witness_type_from_str(std::string_view);

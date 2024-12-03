@@ -293,7 +293,6 @@ namespace daedalus_turbo::cardano::byron {
 
     struct tx: cardano::tx {
         using cardano::tx::tx;
-        using optional_error_string = std::optional<std::string>;
 
         void foreach_input(const std::function<void(const tx_input &)> &observer) const override
         {
@@ -320,8 +319,6 @@ namespace daedalus_turbo::cardano::byron {
         wit_cnt witnesses_ok(const plutus::context *ctx=nullptr) const override;
         wit_cnt witnesses_ok_vkey(set<key_hash> &) const override;
         wit_cnt witnesses_ok_native(const set<key_hash> &vkeys) const override;
-    protected:
-        virtual optional_error_string _validate_native_script_single(const cbor_value &script, const set<key_hash> &vkeys) const;
     };
 
     inline void block::foreach_tx(const std::function<void(const cardano::tx &)> &observer) const

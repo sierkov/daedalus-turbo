@@ -147,6 +147,7 @@ namespace daedalus_turbo::cardano {
         shelley_epoch_length { json::value_to<uint64_t>(shelley_genesis.at("epochLength")) },
         shelley_update_quorum { json::value_to<uint64_t>(shelley_genesis.at("updateQuorum")) },
         shelley_max_lovelace_supply { json::value_to<uint64_t>(shelley_genesis.at("maxLovelaceSupply")) },
+        shelley_network_id { shelley_genesis.at("networkId").as_string() == "Mainnet" ? uint8_t { 1 } : uint8_t { 0 } },
         shelley_active_slots { json::value_to<double>(shelley_genesis.at("activeSlotsCoeff")) },
         shelley_security_param { json::value_to<uint64_t>(shelley_genesis.at("securityParam")) },
         shelley_epoch_blocks { static_cast<uint64_t>(shelley_active_slots * shelley_epoch_length) },

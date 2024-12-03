@@ -25,6 +25,7 @@ namespace daedalus_turbo::cardano {
         const uint64_t shelley_epoch_length;
         const uint64_t shelley_update_quorum;
         const uint64_t shelley_max_lovelace_supply;
+        const uint8_t shelley_network_id;
         const double shelley_active_slots;
         const uint64_t shelley_security_param;
         const uint64_t shelley_epoch_blocks;

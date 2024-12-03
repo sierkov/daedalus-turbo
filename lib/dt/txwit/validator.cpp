@@ -5,7 +5,7 @@
 
 #include <dt/cardano/common.hpp>
 #include <dt/cardano/ledger/state.hpp>
-#include <dt/memory.hpp>
+#include <dt/cardano/native-script.hpp>
 #include <dt/parallel/ordered-consumer.hpp>
 #include <dt/parallel/ordered-queue.hpp>
 #include <dt/plutus/context.hpp>
@@ -288,10 +288,8 @@ namespace daedalus_turbo::txwit {
             return witness_type::all;
         if (s == "vkey")
             return witness_type::vkey;
-        if (s == "native")
-            return witness_type::native;
-        if (s == "plutus")
-            return witness_type::plutus;
+        if (s == "script")
+            return witness_type::script;
         if (s == "none")
             return witness_type::none;
         throw error("unsupported value of the wits options: {}", s);
@@ -400,6 +398,7 @@ namespace daedalus_turbo::txwit {
             tx_loc_t tx_loc {};
             uint32_t tx_size = 0;
             uint64_t fee = 0;
+            uint32_t slot = 0;
             uint8_t era = 0;
             bool reqires_genesis_delegs_quorum = false;
             balances_t balances {};
@@ -408,12 +407,13 @@ namespace daedalus_turbo::txwit {
             set<required_signer_t> signers {};
             set<required_signer_t> required_signers {};
             set<script_hash> native_scripts {};
+            map<script_hash, std::optional<script_info>> native_script_refs {}; // filled in stage2 so does not need to be serialized
             vector<byron_witness_t> byron_signers {};
             std::optional<stored_tx_context> plutus_ctx {};
 
             static constexpr auto serialize(auto &archive, auto &self)
             {
-                return archive(self.tx_id, self.tx_loc, self.tx_size, self.fee, self.era, self.reqires_genesis_delegs_quorum,
+                return archive(self.tx_id, self.tx_loc, self.tx_size, self.fee, self.slot, self.era, self.reqires_genesis_delegs_quorum,
                     self.balances, self.inputs, self.ref_inputs,
                     self.signers, self.required_signers,
                     self.native_scripts, self.byron_signers, self.plutus_ctx);
@@ -426,6 +426,7 @@ namespace daedalus_turbo::txwit {
                     .tx_loc=tx_loc,
                     .tx_size=narrow_cast<uint32_t>(tx.size()),
                     .fee=tx.fee(),
+                    .slot=narrow_cast<uint32_t>(tx.block().slot()),
                     .era=narrow_cast<uint8_t>(tx.block().era())
                 };
             }
@@ -492,6 +493,19 @@ namespace daedalus_turbo::txwit {
                     if (!max.max_tx_size || *max.max_tx_size < tx.cbor().size)
                         max.max_tx_size = narrow_cast<uint32_t>(tx.cbor().size);
                     size_t num_redeemers = 0;
+                    if (const auto start_slot = tx.validity_start(); start_slot) {
+                        if (*start_slot > blk.slot()) [[unlikely]]
+                            throw error("tx {} validity start interval: {} starts after the block's slot: {}",
+                                tx.hash(), *start_slot, blk.slot());
+                    }
+                    if (const auto end_slot = tx.validity_end(); end_slot) {
+                        if (*end_slot <= blk.slot()) [[unlikely]] {
+                            // when validity_start is not defined, the validity_end slot is inclusive!
+                            if (*end_slot != blk.slot() || !tx.validity_end())
+                                throw error("tx {} validity end interval: {} ends before the block's slot: {}",
+                                    tx.hash(), *end_slot, blk.slot());
+                        }
+                    }
                     tx.foreach_redeemer([&](const auto &) {
                         ++num_redeemers;
                     });
@@ -537,6 +551,10 @@ namespace daedalus_turbo::txwit {
                     });
                     tx.foreach_output([&](const tx_output &txo) {
                         tx_checks.balances.out_coin += txo.amount;
+                        if (!txo.address.is_byron()) {
+                            if (txo.address.network() != blk.config().shelley_network_id) [[unlikely]]
+                                throw error("the network id of a shelley address: {} does not match the config: {}", txo.address, blk.config().shelley_network_id);
+                        }
                         if (txo.assets) {
                             for (const auto &[policy_id, assets]: txo.assets->map()) {
                                 for (const auto &[name, value]: assets.map()) {
@@ -550,13 +568,17 @@ namespace daedalus_turbo::txwit {
                     tx.foreach_required_signer([&](const auto vkey) {
                         tx_checks.required_signers.emplace(vkey_signer_t { vkey });
                     });
+                    size_t num_inputs = 0;
                     tx.foreach_input([&](const tx_input &txin) {
                         auto &txo = tx_checks.inputs.emplace_back(tx_out_ref::from_input(txin));
                         const auto [it, created] = part.utxos.try_emplace(txo.id);
                         if (!created)
                             txo.data = it->second;
                         _del_utxo(part, it, created);
+                        ++num_inputs;
                     });
+                    if (!num_inputs) [[unlikely]]
+                        throw error("tx {} does not have any inputs!", tx.hash());
                     tx_checks.balances.out_coin += tx.donation();
                     if (const auto *c_tx = dynamic_cast<const conway::tx *>(&tx); c_tx) {
                         c_tx->foreach_proposal([&](const conway::proposal_t &p) {
@@ -588,7 +610,7 @@ namespace daedalus_turbo::txwit {
                     tx.foreach_mint([&](const auto &policy_id, const auto &assets) {
                         bool minted = false;
                         for (const auto &[name, diff]: assets) {
-                            // negative mint values signify a permanent outflow of tokens
+                            // negative mint values signify anl outflow of tokens
                             if (diff.type == CBOR_NINT) {
                                 // guaranteed to be negative so no need to check for zero
                                 tx_checks.balances.out_assets[policy_id][name.buf()] += diff.nint();
@@ -624,33 +646,15 @@ namespace daedalus_turbo::txwit {
                     try {
                         switch (typ) {
                             case witness_type::all: {
-                                set<key_hash> vkey {};
-                                auto cnt = tx.witnesses_ok_vkey(vkey);
-                                cnt += tx.witnesses_ok_native(vkey);
-                                return cnt;
-                            }
-                            case witness_type::vkey: {
+                            case witness_type::vkey:
                                 set<key_hash> valid_vkeys {};
-                                return tx.witnesses_ok_vkey(valid_vkeys);
+                                auto cnts = tx.witnesses_ok_vkey(valid_vkeys);
+                                cnts += tx.witnesses_ok_native(valid_vkeys);
+                                return cnts;
                             }
-                            case witness_type::native: {
-                                bool has_native = false;
-                                tx.foreach_witness([&](const auto wtyp, auto &) {
-                                    if (wtyp == 1)
-                                        has_native = true;
-                                });
-                                if (has_native) {
-                                    set<key_hash> valid_vkeys {};
-                                    tx::wit_cnt cnts = tx.witnesses_ok_vkey(valid_vkeys);
-                                    cnts += tx.witnesses_ok_native(valid_vkeys);
-                                    return cnts;
-                                }
-                                return {};
-                            }
-                            case witness_type::plutus:
-                                return {};
+                            case witness_type::script:
                             case witness_type::none:
-                                break;
+                                return {};
                             default: throw error("unsupported witness type: {}", static_cast<int>(typ));
                         }
                     } catch (const std::exception &ex) {
@@ -671,7 +675,7 @@ namespace daedalus_turbo::txwit {
                     try {
                         switch (typ) {
                             case witness_type::all:
-                            case witness_type::plutus:
+                            case witness_type::script:
                                 cnts += tx.witnesses_ok_plutus(ctx);
                                 break;
                             default:
@@ -872,7 +876,7 @@ namespace daedalus_turbo::txwit {
             std::unique_ptr<context> _prep_plutus_ctx(tx_context_t &tx) const
             {
                 const auto &utxos = _st.utxos();
-                // process inputs before they are moved
+                // process inputs before they are moved into the plutus::context
                 for (auto &[id, data]: tx.inputs) {
                     if (!data) {
                         const auto it = utxos.find(id);
@@ -891,9 +895,9 @@ namespace daedalus_turbo::txwit {
                         }
                     }
                     if (data.script_ref) {
-                        const auto s = script_info::from_cbor(*data.script_ref);
+                        auto s = script_info::from_cbor(*data.script_ref);
                         if (s.type() == script_type::native)
-                            tx.native_scripts.emplace(s.hash());
+                            tx.native_script_refs.try_emplace(s.hash(), std::move(s));
                     }
                 }
                 for (auto &[id, data]: tx.ref_inputs) {
@@ -904,9 +908,9 @@ namespace daedalus_turbo::txwit {
                         data = it->second;
                     }
                     if (data.script_ref) {
-                        const auto s = script_info::from_cbor(*data.script_ref);
+                        auto s = script_info::from_cbor(*data.script_ref);
                         if (s.type() == script_type::native)
-                            tx.native_scripts.emplace(s.hash());
+                            tx.native_script_refs.try_emplace(s.hash(), std::move(s));
                     }
                 }
                 if (tx.plutus_ctx) {
@@ -946,11 +950,32 @@ namespace daedalus_turbo::txwit {
                     for (const auto &[rid, rdata]: plutus_ctx->redeemers())
                         tx.signers.emplace(script_signer_t { plutus_ctx->redeemer_script(rid), rid.tag });
                 }
+                std::optional<set<key_hash>> vkey_signers {};
                 for (const auto &rs: tx.required_signers) {
                     if (tx.signers.contains(rs))
                         continue;
-                    if (!std::holds_alternative<script_signer_t>(rs.val) || !tx.native_scripts.contains(std::get<script_signer_t>(rs.val).hash))
-                        throw error("epoch: {} tx {} missing a required_signer: {}", part.epoch, tx.tx_id, rs);
+                    if (std::holds_alternative<script_signer_t>(rs.val)) {
+                        const auto &s_hash = std::get<script_signer_t>(rs.val).hash;
+                        if (tx.native_scripts.contains(s_hash))
+                            continue;
+                        // validate references native scripts here since they do not have their own tx_witness entries
+                        // the optional in s_it->second has value only the first time a given script is referenced
+                        if (const auto s_it = tx.native_script_refs.find(s_hash); s_it != tx.native_script_refs.end() && s_it->second) {
+                            if (!vkey_signers) {
+                                vkey_signers.emplace();
+                                for (const auto &s: tx.signers) {
+                                    if (std::holds_alternative<vkey_signer_t>(s.val))
+                                        vkey_signers->emplace(std::get<vkey_signer_t>(s.val).hash);
+                                }
+                                const auto &script = *s_it->second;
+                                if (const auto err = native_script::validate(cbor::parse(script.script()), tx.slot, *vkey_signers); err) [[unlikely]]
+                                    throw error("native script: {} failed to validate tx {}: {}", script.hash(), tx.tx_id, err);
+                            }
+                            s_it->second.reset();
+                            continue;
+                        }
+                    }
+                    throw error("epoch: {} tx {} missing a required_signer: {}", part.epoch, tx.tx_id, rs);
                 }
                 if (tx.reqires_genesis_delegs_quorum) [[unlikely]] {
                     size_t num_signers = 0;
@@ -981,7 +1006,7 @@ namespace daedalus_turbo::txwit {
                             break;
                         default:
                             _validate_shelley_tx_invariants(part, tx, plutus_ctx);
-                        break;
+                            break;
                     }
                 } catch (const std::exception &ex) {
                     const auto msg = fmt::format("txwit epoch: {} tx: {}: ", part.epoch, tx.tx_id, ex.what());

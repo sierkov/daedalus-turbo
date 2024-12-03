@@ -3,6 +3,7 @@
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
+#include <dt/cardano/native-script.hpp>
 #include <dt/cardano/shelley.hpp>
 
 namespace daedalus_turbo::cardano::shelley {
@@ -93,7 +94,7 @@ namespace daedalus_turbo::cardano::shelley {
             switch (typ) {
                 case 1:
                     foreach_set(w_list, [&](const auto &w, const auto) {
-                        if (const auto err = _validate_native_script_single(w, valid_vkeys); err) [[unlikely]]
+                        if (const auto err = native_script::validate(w, block().slot(), valid_vkeys); err) [[unlikely]]
                             throw cardano_error("native script for tx {} failed: {} script: {}", hash(), *err, w);
                         ++cnts.native_script;
                     });
