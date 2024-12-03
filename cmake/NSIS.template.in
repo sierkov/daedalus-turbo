@@ -547,11 +547,11 @@ FunctionEnd
 
   PageEx directory
     DirVar $PROJECT_DATA_DIR
-    DirText "DT Explorer downloads the Cardano blockchain and creates additional on-disk data to provide interactive history reconstruction. \
+    DirText "DT Explorer downloadss the Cardano blockchain and creates additional on-disk data to provide interactive history reconstruction. \
 This functionality requires a fast Solid State Disk (SSD). Please, make sure that this directory is on your fastest local storage device. \
 Do not put this directory on a Hard Disk Drive. Only on a SSD." \
       "Blockchain and run-time data"
-    DirVerify leave
+    DirVerify auto
   PageExEnd
 
   ;Start Menu Folder Page Configuration
@@ -667,7 +667,7 @@ Section "-DataDir config"
   FileOpen $0 "$INSTDIR\etc\data-dir.txt" "w"
   FileWrite $0 $PROJECT_DATA_DIR
   FileClose $0
-  AddSize 83886080
+  AddSize 209715200
 SectionEnd
 
 Section "-Core installation"
