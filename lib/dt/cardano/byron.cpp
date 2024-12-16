@@ -82,11 +82,11 @@ namespace daedalus_turbo::cardano::byron {
             param_update upd { .protocol_ver=protocol_version { r_prop.at(0).at(0).uint(), r_prop.at(0).at(1).uint() } };
             const auto &bvermod = r_prop.at(1).array();
             if (const auto &v = bvermod.at(2).array(); !v.empty())
-                upd.max_block_body_size = v.at(0).uint();
+                upd.max_block_body_size = narrow_cast<uint32_t>(v.at(0).uint());
             if (const auto &v = bvermod.at(3).array(); !v.empty())
-                upd.max_block_header_size = v.at(0).uint();
+                upd.max_block_header_size = narrow_cast<uint32_t>(v.at(0).uint());
             if (const auto &v = bvermod.at(4).array(); !v.empty())
-                upd.max_transaction_size = v.at(0).uint();
+                upd.max_transaction_size = narrow_cast<uint32_t>(v.at(0).uint());
             param_update_proposal prop { .pool_id=issuer_hash(), .update=std::move(upd) };
             prop.update.hash_from_cbor(r_prop);
             observer(prop);
@@ -157,7 +157,7 @@ namespace daedalus_turbo::cardano::byron {
                     msg << tx_hash;
                     const auto vkey_short = vkey.subspan(0, 32);
                     if (!ed25519::verify(sig, vkey_short, msg)) [[unlikely]]
-                        throw error("byron tx witness type 0 failed for tx {}: {}", tx_hash, w_data);
+                        throw error(fmt::format("byron tx witness type 0 failed for tx {}: {}", tx_hash, w_data));
                     valid_vkeys.emplace(blake2b<key_hash>(vkey_short));
                     ++cnts.vkey;
                     break;
@@ -175,7 +175,7 @@ namespace daedalus_turbo::cardano::byron {
                     msg << tx_hash;
                     const auto vkey_short = vkey.subspan(0, 32);
                     if (!ed25519::verify(sig, vkey_short, msg)) [[unlikely]]
-                        throw error("byron tx witness type 2 failed for tx {}: {}", tx_hash, w_data);
+                        throw error(fmt::format("byron tx witness type 2 failed for tx {}: {}", tx_hash, w_data));
                     valid_vkeys.emplace(blake2b<key_hash>(vkey_short));
                     ++cnts.vkey;
                     break;
@@ -195,7 +195,7 @@ namespace daedalus_turbo::cardano::byron {
             switch (w_typ) {
                 case 1:
                     if (const auto err = native_script::validate(w_data, block().slot(), vkeys); err) [[unlikely]]
-                        throw cardano_error("native script for tx {} failed: {} script: {}", hash(), *err, w_val);
+                        throw cardano_error(fmt::format("native script for tx {} failed: {} script: {}", hash(), *err, w_val));
                     ++cnts.native_script;
                     break;
                 default:

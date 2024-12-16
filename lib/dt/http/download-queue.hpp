@@ -5,6 +5,7 @@
 #ifndef DAEDALUS_TURBO_HTTP_DOWNLOAD_QUEUE_HPP
 #define DAEDALUS_TURBO_HTTP_DOWNLOAD_QUEUE_HPP
 
+#include <condition_variable>
 #include <functional>
 #include <memory>
 #include <optional>
@@ -70,8 +71,8 @@ namespace daedalus_turbo::http {
 
         std::string fetch(const std::string &url)
         {
-            alignas(mutex::padding) mutex::unique_lock::mutex_type m {};
-            alignas(mutex::padding) std::condition_variable_any cv {};
+            mutex::unique_lock::mutex_type m alignas(mutex::padding) {};
+            std::condition_variable_any cv alignas(mutex::padding) {};
             const auto url_hash = blake2b<blake2b_256_hash>(url);
             const file::tmp tmp { fmt::format("http-fetch-sync-{}.tmp", url_hash) };
             std::atomic_bool ready { false };
@@ -86,7 +87,7 @@ namespace daedalus_turbo::http {
                 cv.wait(lk, [&] { return ready.load(); });
             }
             if (err)
-                throw error("download of {} failed: {}", url, *err);
+                throw error(fmt::format("download of {} failed: {}", url, *err));
             return std::string { file::read(tmp.path()).span().string_view() };
         }
 
@@ -95,7 +96,7 @@ namespace daedalus_turbo::http {
             try {
                 return json::parse(fetch(url));
             } catch (std::exception &ex) {
-                throw error("fetch {} failed with error: {}", url, ex.what());
+                throw error(fmt::format("fetch {} failed with error: {}", url, ex.what()));
             }
         }
 
@@ -104,7 +105,7 @@ namespace daedalus_turbo::http {
             try {
                 return json::parse_signed(fetch(url), vk);
             } catch (std::exception &ex) {
-                throw error("fetch {} failed with error: {}", url, ex.what());
+                throw error(fmt::format("fetch {} failed with error: {}", url, ex.what()));
             }
         }
     private:

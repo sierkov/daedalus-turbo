@@ -69,7 +69,7 @@ namespace daedalus_turbo::indexer::merger {
             auto [it, created] = try_emplace(s.offset, s);
             if (!created) {
                 if (!allow_same && it->second.size != s.size)
-                    throw error("internal error: a duplicate slice with offset {}!", it->first);
+                    throw error(fmt::format("internal error: a duplicate slice with offset {}!", it->first));
             }
         }
 

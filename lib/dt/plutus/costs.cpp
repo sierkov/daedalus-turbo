@@ -82,7 +82,7 @@ namespace daedalus_turbo::plutus::costs {
         uint64_t cost(const arg_sizes &sizes, const value_list &args) const override
         {
             if (args->size() < 2) [[unlikely]]
-                throw error("cost_function {} requires two arguments but got {}", typeid(*this).name(), args->size());
+                throw error(fmt::format("cost_function {} requires two arguments but got {}", typeid(*this).name(), args->size()));
             if (const auto &y_val = static_cast<uint64_t>(*std::next(args->begin())->as_int()); y_val != 0)
                 return (y_val + 7) / 8;
             return _intercept + _slope * sizes.at(2);
@@ -331,7 +331,7 @@ namespace daedalus_turbo::plutus::costs {
             return startup_tag {};
         if (name == "cekVarCost")
             return term_tag::variable;
-        throw error("unsupported CEK cost item: {}", name);
+        throw error(fmt::format("unsupported CEK cost item: {}", name));
     }
 
     static cost_fun_ptr cost_fun_from_args(const arg_map &args)
@@ -375,7 +375,7 @@ namespace daedalus_turbo::plutus::costs {
             return std::make_shared<const_below_diagonal>(args);
         if (typ == "linear_on_diagonal")
             return std::make_shared<linear_on_diagonal>(args);
-        throw error("unsupported cost model type: {}", typ);
+        throw error(fmt::format("unsupported cost model type: {}", typ));
     }
 
     static cost_fun_ptr cost_fun_from_prefixed_args(const arg_map &prefixed_args, const std::string &prefix)
@@ -385,7 +385,7 @@ namespace daedalus_turbo::plutus::costs {
             if (k.starts_with(prefix)) {
                 const auto [it, created] = args.try_emplace(k.substr(prefix.size()), v);
                 if (!created) [[unlikely]]
-                    throw error("duplicate argument {}", k);
+                    throw error(fmt::format("duplicate argument {}", k));
             }
         }
         return cost_fun_from_args(args);
@@ -402,14 +402,14 @@ namespace daedalus_turbo::plutus::costs {
                 } else if (k == "exBudgetMemory") {
                     c.mem = std::stoull(v);
                 } else {
-                    throw error("unsupported cost argument name: {}", k);
+                    throw error(fmt::format("unsupported cost argument name: {}", k));
                 }
             } else {
-                throw error("unsupported cost argument category: {}", k);
+                throw error(fmt::format("unsupported cost argument category: {}", k));
             }
         }
         if (!c.steps || !c.mem) [[unlikely]]
-            throw error("partially initialized constant cost {}", args);
+            throw error(fmt::format("partially initialized constant cost {}", args));
         return c;
     }
 
@@ -429,7 +429,7 @@ namespace daedalus_turbo::plutus::costs {
                     mem_args.emplace("arguments", v);
                     mem_args.emplace("type", "constant_cost");
                 } else {
-                    throw error("unsupported cost argument name: {}", k);
+                    throw error(fmt::format("unsupported cost argument name: {}", k));
                 }
             } else {
                 const auto cat_name = k.substr(0, pos);
@@ -439,7 +439,7 @@ namespace daedalus_turbo::plutus::costs {
                 } else if (cat_name == "memory") {
                     mem_args.emplace(sub_name, v);
                 } else {
-                    throw error("unsupported cost argument category: {}", cat_name);
+                    throw error(fmt::format("unsupported cost argument category: {}", cat_name));
                 }
             }
         }
@@ -464,7 +464,7 @@ namespace daedalus_turbo::plutus::costs {
                 case json::kind::string:
                     args.try_emplace(fmt::format("{}{}", prefix, static_cast<std::string_view>(k)), fmt::format("{}", json::value_to<std::string>(v)));
                     break;
-                default: throw error("unsupported json kind at {}{}: {}", prefix, static_cast<std::string_view>(k), static_cast<int>(v.kind()));
+                default: throw error(fmt::format("unsupported json kind at {}{}: {}", prefix, static_cast<std::string_view>(k), static_cast<int>(v.kind())));
             }
         }
         return args;
@@ -537,7 +537,7 @@ namespace daedalus_turbo::plutus::costs {
         for (const auto &[k, v]: model) {
             const auto pos = k.find('-');
             if (pos == 0 || pos == k.npos) [[unlikely]]
-                throw error("invalid cost model item: {}", k);
+                throw error(fmt::format("invalid cost model item: {}", k));
             auto op_name = canonical_arg_name(k.substr(0, pos));
             const auto arg_name = k.substr(pos + 1);
             auto full_arg_name = fmt::format("{}-{}", op_name, arg_name);
@@ -557,17 +557,17 @@ namespace daedalus_turbo::plutus::costs {
         for (const auto &[k, v]: args) {
             const auto pos = k.find('-');
             if (pos == k.npos) [[unlikely]]
-                throw error("invalid cost model item: {}", k);
+                throw error(fmt::format("invalid cost model item: {}", k));
             const auto op_name = k.substr(0, pos);
             const auto arg_name = k.substr(pos + 1);
             if (op_name.starts_with("cek")) {
                 const auto [it, created] = tmp[op_tag_from_cek_name(op_name)].try_emplace(arg_name, v);
                 if (!created) [[unlikely]]
-                            throw error("duplicate argument {} for op {}", arg_name, op_name);
+                            throw error(fmt::format("duplicate argument {} for op {}", arg_name, op_name));
             } else if (builtin_tag_known_name(op_name)) {
                 const auto [it, created] = tmp[builtin_tag_from_name(op_name)].try_emplace(arg_name, v);
                 if (!created) [[unlikely]]
-                            throw error("duplicate argument {} for op {}", arg_name, op_name);
+                            throw error(fmt::format("duplicate argument {} for op {}", arg_name, op_name));
             } else {
                 // configs do contain builtins that are not on mainnet, such as addByteString
                 // log each unsupported builtin only once
@@ -592,14 +592,14 @@ namespace daedalus_turbo::plutus::costs {
                         case term_tag::force: m.force_op = ex_units_from_args(args); break;
                         case term_tag::lambda: m.lambda_op = ex_units_from_args(args); break;
                         case term_tag::variable: m.variable_op = ex_units_from_args(args); break;
-                        default: throw error("unsupported tag: {}", tag);
+                        default: throw error(fmt::format("unsupported tag: {}", tag));
                     }
                 } else if constexpr (std::is_same_v<T, builtin_tag>) {
                     const auto [it, created] = m.builtin_fun.try_emplace(tag, op_model_from_args(args));
                     if (!created) [[unlikely]]
                         throw error("internal error: duplicate tag in the parsed cost model!");
                 } else {
-                    throw error("unsupported tag type: {}", typeid(T).name());
+                    throw error(fmt::format("unsupported tag type: {}", typeid(T).name()));
                 }
             }, t);
         }
@@ -612,7 +612,7 @@ namespace daedalus_turbo::plutus::costs {
             case cardano::script_type::plutus_v1: return v1.value();
             case cardano::script_type::plutus_v2: return v2.value();
             case cardano::script_type::plutus_v3: return v3.value();
-            default: throw error("unsupported script type: {}", static_cast<int>(typ));
+            default: throw error(fmt::format("unsupported script type: {}", static_cast<int>(typ)));
         }
     }
 
@@ -641,7 +641,7 @@ namespace daedalus_turbo::plutus::costs {
             for (const auto &[name, arg]: default_cost_args_v1()) {
                 const auto pos = name.find('-');
                 if (pos == name.npos) [[unlikely]]
-                    throw error("invalid cost arg name: {}", name);
+                    throw error(fmt::format("invalid cost arg name: {}", name));
                 const auto op_name = name.substr(0, pos);
                 if (op_name.starts_with("cek")) {
                     if (op_name != "cekConstrCost" && op_name != "cekCaseCost")
@@ -665,7 +665,7 @@ namespace daedalus_turbo::plutus::costs {
             for (const auto &[name, arg]: default_cost_args_v2()) {
                 const auto pos = name.find('-');
                 if (pos == name.npos) [[unlikely]]
-                    throw error("invalid cost arg name: {}", name);
+                    throw error(fmt::format("invalid cost arg name: {}", name));
                 const auto op_name = name.substr(0, pos);
                 if (op_name.starts_with("cek")) {
                     if (op_name != "cekConstrCost" && op_name != "cekCaseCost")

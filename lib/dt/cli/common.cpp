@@ -20,6 +20,6 @@ namespace daedalus_turbo::cli::common {
             return chunk_registry::mode::index;
         if (mode_s == "validate")
             return chunk_registry::mode::validate;
-        throw error("unsupported mode: '{}'", mode_s);
+        throw error(fmt::format("unsupported mode: '{}'", mode_s));
     }
 }

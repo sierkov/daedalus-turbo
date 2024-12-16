@@ -11,6 +11,7 @@
 
 namespace daedalus_turbo::sync {
     enum class validation_mode_t { turbo, full, none };
+    extern validation_mode_t validation_mode_from_text(std::string_view);
 
     struct peer_info {
         virtual ~peer_info() =default;
@@ -44,7 +45,7 @@ namespace fmt {
             switch (v) {
                 case validation_mode_t::full: return fmt::format_to(ctx.out(), "full");
                 case validation_mode_t::turbo: return fmt::format_to(ctx.out(), "turbo");
-                default: throw daedalus_turbo::error("unsupported validation_mode_t value: {}", static_cast<int>(v));
+                default: throw daedalus_turbo::error(fmt::format("unsupported validation_mode_t value: {}", static_cast<int>(v)));
             }
         }
     };

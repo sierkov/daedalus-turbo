@@ -62,7 +62,7 @@ namespace daedalus_turbo::cardano {
         tx_size(size_t sz)
         {
             size_t packed_sz = sz >> 8;
-            if (packed_sz >= 256 || (packed_sz == 255 && sz & 0xFF)) throw error("tx size is too big: {}!", sz);
+            if (packed_sz >= 256 || (packed_sz == 255 && sz & 0xFF)) throw error(fmt::format("tx size is too big: {}!", sz));
             if (sz & 0xFF) ++packed_sz;
             _size = (uint8_t)packed_sz;
         }
@@ -82,14 +82,14 @@ namespace daedalus_turbo::cardano {
         cert_idx(size_t idx)
         {
             if (idx >= (1U << 16))
-                throw error("tx out idx is too big: {}!", idx);
+                throw error(fmt::format("tx out idx is too big: {}!", idx));
             _idx = idx;
         }
 
         cert_idx &operator=(size_t idx)
         {
             if (idx >= (1U << 16))
-                throw error("tx out idx is too big: {}!", idx);
+                throw error(fmt::format("tx out idx is too big: {}!", idx));
             _idx = idx;
             return *this;
         }
@@ -111,7 +111,7 @@ namespace daedalus_turbo::cardano {
         static void check(uint64_t epoch)
         {
             if (epoch >= (1U << 16))
-                throw error("epoch number is too big: {}!", epoch);
+                throw error(fmt::format("epoch number is too big: {}!", epoch));
         }
 
         epoch() =default;
@@ -292,7 +292,7 @@ namespace daedalus_turbo::cardano {
                 return false;
             uint64_t block_period = (uint64_t)slot / 129600;
             if (period > block_period)
-                throw error("KES period {} is greater than the current period {}", period, block_period);
+                throw error(fmt::format("KES period {} is greater than the current period {}", period, block_period));
             uint64_t t = block_period - period;
             cardano_kes_signature kes_sig { sig };
             return kes_sig.verify(t, vkey.first<32>(), header_body);
@@ -418,7 +418,7 @@ namespace daedalus_turbo::cardano {
         uint32_t size() const
         {
             if (_block_tuple.size > std::numeric_limits<uint32_t>::max())
-                throw error("block size is too large: {}", _block_tuple.size);
+                throw error(fmt::format("block size is too large: {}", _block_tuple.size));
             return _block_tuple.size;
         }
 
@@ -464,7 +464,7 @@ namespace daedalus_turbo::cardano {
                     case script_type::plutus_v1: ++plutus_v1_script; break;
                     case script_type::plutus_v2: ++plutus_v2_script; break;
                     case script_type::plutus_v3: ++plutus_v3_script; break;
-                    default: throw error("unsupported script type: {}", static_cast<int>(typ));
+                    default: throw error(fmt::format("unsupported script type: {}", static_cast<int>(typ)));
                 }
                 return *this;
             }
@@ -498,7 +498,7 @@ namespace daedalus_turbo::cardano {
         {
             if (idx < (1 << 15)) [[likely]]
                 return idx;
-            throw error("transaction idx is too large: {}!", idx);
+            throw error(fmt::format("transaction idx is too large: {}!", idx));
         }
 
         tx(const cbor::value &tx, const block_base &blk, const size_t idx=0, const cbor::value *wit=nullptr, const cbor::value *aux=nullptr, bool invalid=false)
@@ -802,7 +802,7 @@ namespace fmt {
                 case redeemer_tag::reward: return fmt::format_to(ctx.out(), "reward");
                 case redeemer_tag::vote: return fmt::format_to(ctx.out(), "vote");
                 case redeemer_tag::propose: return fmt::format_to(ctx.out(), "propose");
-                default: throw daedalus_turbo::error("unsupported redeemer tag value {}", static_cast<int>(v));
+                default: throw daedalus_turbo::error(fmt::format("unsupported redeemer tag value {}", static_cast<int>(v)));
             }
         }
     };

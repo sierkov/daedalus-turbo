@@ -7,6 +7,17 @@
 #include <dt/txwit/validator.hpp>
 
 namespace daedalus_turbo::sync {
+    validation_mode_t validation_mode_from_text(const std::string_view s)
+    {
+        if (s == "none")
+            return validation_mode_t::none;
+        if (s == "turbo")
+            return validation_mode_t::turbo;
+        if (s == "full")
+            return validation_mode_t::full;
+        throw error(fmt::format("unsupported validation mode: {}", s));
+    }
+
     struct syncer::impl {
         impl(syncer &parent, chunk_registry &cr, peer_selection &ps)
             : _parent { parent }, _cr { cr }, _ps { ps }

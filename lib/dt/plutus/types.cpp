@@ -31,7 +31,7 @@ namespace daedalus_turbo::plutus {
         const auto &name_map = builtin_names();
         if (const auto it = name_map.find(name); it != name_map.end()) [[likely]]
             return it->second;
-        throw error("unknown builtin: {}", name);
+        throw error(fmt::format("unknown builtin: {}", name));
     }
 
     static const builtin_info &_builtin_info(const builtin_tag tag)
@@ -56,11 +56,11 @@ namespace daedalus_turbo::plutus {
                         throw error("internal error: invalid plutus builtin configuration!");
                     break;
                 default:
-                    throw error("internal error: invalid plutus builtin configuration: num_args: {}!", it->second.num_args);
+                    throw error(fmt::format("internal error: invalid plutus builtin configuration: num_args: {}!", it->second.num_args));
             }
             return it->second;
         }
-        throw error("not implemented: {}", tag);
+        throw error(fmt::format("not implemented: {}", tag));
     }
 
     size_t t_builtin::num_args() const
@@ -192,7 +192,7 @@ namespace daedalus_turbo::plutus {
             } else if constexpr (std::is_same_v<T, constant_pair>) {
                 return constant_type { alloc, type_tag::pair, { alloc, { from_val(alloc, v->first), from_val(alloc, v->second) } } };
             } else {
-                throw error("unsupported constant value: {}!", typeid(T).name());
+                throw error(fmt::format("unsupported constant value: {}!", typeid(T).name()));
                 // Noop to make Visual C++ happy
                 return constant_type { alloc, type_tag::unit };
             }
@@ -339,7 +339,7 @@ namespace daedalus_turbo::plutus {
                             id = it.next().uint();
                             val = it.next();
                         } else {
-                            throw error("unsupported tag id: {}", id);
+                            throw error(fmt::format("unsupported tag id: {}", id));
                         }
                         return { alloc, data_constr { alloc, bint_type { alloc, id }, _from_cbor(alloc, val.array()) } };
                     }
@@ -364,7 +364,7 @@ namespace daedalus_turbo::plutus {
             }
             case cbor::major_type::uint: return { alloc, bint_type { alloc, v.big_int() } };
             case cbor::major_type::nint: return { alloc, bint_type { alloc, v.big_int() } };
-            default: throw error("unsupported CBOR type {}!", typ);
+            default: throw error(fmt::format("unsupported CBOR type {}!", typ));
         }
     }
 
@@ -431,7 +431,7 @@ namespace daedalus_turbo::plutus {
                     }
                     _to_cbor(enc, v->second, level + 1);
                 } else {
-                    throw error("constr id is too big: {}", v->first);
+                    throw error(fmt::format("constr id is too big: {}", v->first));
                 }
             } else {
                 _to_cbor(enc, v, level);
@@ -509,7 +509,7 @@ namespace daedalus_turbo::plutus {
                 return fmt::format_to(out_it, "I {}", v);
             if constexpr (std::is_same_v<T, data::bstr_type>)
                 return fmt::format_to(out_it, "B #{}", v);
-            throw error("unsupported data type: {}", typeid(T).name());
+            throw error(fmt::format("unsupported data type: {}", typeid(T).name()));
         }, *vv);
     }
 
@@ -611,7 +611,7 @@ namespace daedalus_turbo::plutus {
     {
         const auto &c = as_const();
         if (!std::holds_alternative<std::monostate>(*c))
-            throw error("expected a unit but got: {}", c);
+            throw error(fmt::format("expected a unit but got: {}", c));
     }
 
     bool value::as_bool() const
@@ -762,11 +762,11 @@ namespace daedalus_turbo::plutus {
     static uint64_t uint_from_string_strict(const std::string &s)
     {
         if (s.empty() || !std::isdigit(s[0])) [[unlikely]]
-            throw error("invalid unsigned integer: '{}'", s);
+            throw error(fmt::format("invalid unsigned integer: '{}'", s));
         std::size_t consumed = 0;
         const auto u = std::stoull(s, &consumed);
         if (consumed != s.size()) [[unlikely]]
-            throw error("invalid unsigned integer: '{}'", s);
+            throw error(fmt::format("invalid unsigned integer: '{}'", s));
         return u;
     }
 
@@ -784,7 +784,7 @@ namespace daedalus_turbo::plutus {
             const auto patch = uint_from_string_strict(s.substr(p2 + 1));
             return { major, minor, patch };
         } catch (const std::exception &ex) {
-            throw error("invalid version: '{}': {}", s, ex.what());
+            throw error(fmt::format("invalid version: '{}': {}", s, ex.what()));
         }
     }
 
@@ -820,12 +820,12 @@ namespace daedalus_turbo::plutus {
     bls12_381_g1_element bls_g1_decompress(const buffer bytes)
     {
         if (bytes.size() != 48) [[unlikely]]
-            throw error("bls12_381_g1 elements must provide 48 bytes but got: {}", bytes.size());
+            throw error(fmt::format("bls12_381_g1 elements must provide 48 bytes but got: {}", bytes.size()));
         blst_p1_affine out_a;
         if (const auto err = blst_p1_uncompress(&out_a, reinterpret_cast<const byte *>(bytes.data())); err != BLST_SUCCESS) [[unlikely]]
-            throw error("blst12_381_g1 element decoding failed for 0x{}", bytes);
+            throw error(fmt::format("blst12_381_g1 element decoding failed for 0x{}", bytes));
         if (!blst_p1_affine_in_g1(&out_a)) [[unlikely]]
-            throw error("blst12_381_g1 element is invalid 0x{}", bytes);
+            throw error(fmt::format("blst12_381_g1 element is invalid 0x{}", bytes));
         bls12_381_g1_element out;
         blst_p1_from_affine(&out.val, &out_a);
         return out;
@@ -834,12 +834,12 @@ namespace daedalus_turbo::plutus {
     bls12_381_g2_element bls_g2_decompress(const buffer bytes)
     {
         if (bytes.size() != 96) [[unlikely]]
-            throw error("bls12_381_g2 elements must provide 86 bytes but got: {}", bytes.size());
+            throw error(fmt::format("bls12_381_g2 elements must provide 86 bytes but got: {}", bytes.size()));
         blst_p2_affine out_a;
         if (const auto err = blst_p2_uncompress(&out_a, reinterpret_cast<const byte *>(bytes.data())); err != BLST_SUCCESS) [[unlikely]]
-            throw error("blst12_381_g2 element decoding failed at for 0x{}", bytes);
+            throw error(fmt::format("blst12_381_g2 element decoding failed at for 0x{}", bytes));
         if (!blst_p2_affine_in_g2(&out_a)) [[unlikely]]
-            throw error("blst12_381_g2 element is invalid 0x{}", bytes);
+            throw error(fmt::format("blst12_381_g2 element is invalid 0x{}", bytes));
         bls12_381_g2_element out;
         blst_p2_from_affine(&out.val, &out_a);
         return out;

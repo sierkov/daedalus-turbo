@@ -20,7 +20,7 @@ namespace daedalus_turbo {
         denominator = 1;
         while (std::fabs(num - static_cast<uint64_t>(num)) > 1e-6) {
             if (denominator >= 1'000'000'000)
-                throw error("an unsupported value for a conversion to rational: {}", d);
+                throw error(fmt::format("an unsupported value for a conversion to rational: {}", d));
             num *= 10;
             denominator *= 10;
         }

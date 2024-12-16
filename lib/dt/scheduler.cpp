@@ -4,6 +4,7 @@
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
 #include <atomic>
+#include <condition_variable>
 #include <cstdlib>
 #include <list>
 #include <queue>
@@ -143,7 +144,7 @@ namespace daedalus_turbo {
         void on_result(const std::string &task_group, const std::function<void (std::any &&)> &observer, bool replace_if_exists=false)
         {
             if (task_count(task_group) != 0)
-                throw error("observers for task '{}' must be configured before task submission!", task_group);
+                throw error(fmt::format("observers for task '{}' must be configured before task submission!", task_group));
             const mutex::scoped_lock lock { _observers_mutex };
             auto [ it, created ] = _observers.emplace(task_group, 0);
             if (!created && replace_if_exists)
@@ -156,7 +157,7 @@ namespace daedalus_turbo {
             mutex::scoped_lock lk { _completion_mutex };
             const auto [it, created] = _completion_actions.try_emplace(task_group, action, task_count);
             if (!created)
-                throw error("duplicate completion handler for {}", task_group);
+                throw error(fmt::format("duplicate completion handler for {}", task_group));
         }
 
         void clear_observers(const std::string &task_group)
@@ -238,7 +239,7 @@ namespace daedalus_turbo {
             if (!_wait_all_done_running.compare_exchange_strong(exp_false, true))
                 throw error("concurrent wait_all_done calls are not allowed!");
             if (_num_workers < 4)
-                throw error("wait_all_done relies on a high worker count but got {} worker threads!", _num_workers);
+                throw error(fmt::format("wait_all_done relies on a high worker count but got {} worker threads!", _num_workers));
             std::atomic_size_t errors = 0;
             try {
                 static constexpr std::chrono::milliseconds report_period{10000};
@@ -277,7 +278,7 @@ namespace daedalus_turbo {
                 throw;
             }
             if (errors > 0)
-                throw scheduler_error("wait_all_done {} - there were failed tasks; cannot continue", task_group);
+                throw scheduler_error(fmt::format("wait_all_done {} - there were failed tasks; cannot continue", task_group));
         }
     private:
         struct completion_action {
@@ -386,7 +387,7 @@ namespace daedalus_turbo {
                                 mutex::scoped_lock tasks_lock { _tasks_mutex };
                                 auto it = _task_stats.find(res.task_group);
                                 if (it == _task_stats.end())
-                                    throw error("internal error: unknown task: {}", res.task_group);
+                                    throw error(fmt::format("internal error: unknown task: {}", res.task_group));
                                 --it->second.queued;
                                 ++it->second.completed;
                                 it->second.cpu_time += res.cpu_time;
@@ -479,11 +480,11 @@ namespace daedalus_turbo {
                     } catch (const std::exception &ex) {
                         _success = false;
                         logger::warn("worker-{} task {} std::exception: {}", worker_idx, task.task_group, ex.what());
-                        task_res = std::make_any<scheduled_task_error>(std::move(task), "task: '{}' error: '{}' of type: '{}'!", task.task_group, ex.what(), typeid(ex).name());
+                        task_res = std::make_any<scheduled_task_error>(std::source_location::current(), std::move(task), "task: '{}' error: '{}' of type: '{}'!", task.task_group, ex.what(), typeid(ex).name());
                     } catch (...) {
                         _success = false;
                         logger::warn("worker-{} task {} unknown exception", worker_idx, task.task_group);
-                        task_res = std::make_any<scheduled_task_error>(std::move(task), "task: '{}' unknown exception", task.task_group);
+                        task_res = std::make_any<scheduled_task_error>(std::source_location::current(), std::move(task), "task: '{}' unknown exception", task.task_group);
                     }
                 }
                 const auto cpu_time = std::chrono::duration<double> { std::chrono::system_clock::now() - start_time }.count();

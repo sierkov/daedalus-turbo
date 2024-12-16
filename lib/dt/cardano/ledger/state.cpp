@@ -158,19 +158,19 @@ namespace daedalus_turbo::cardano::ledger {
                 }
                 _subchains.merge_valid();
                 if (_subchains.size() > 1)
-                    throw error("inconsistent subschain list: {}", _subchains);
+                    throw error(fmt::format("inconsistent subschain list: {}", _subchains));
                 const auto &sc = _subchains.rbegin()->second;
                 if (sc.offset != 0 || sc.end_offset() != end_offset())
-                    throw error("the local subchain range: [{}:{}] does not match the chain: [0:{}]",
-                        sc.offset, sc.end_offset(), end_offset());
+                    throw error(fmt::format("the local subchain range: [{}:{}] does not match the chain: [0:{}]",
+                        sc.offset, sc.end_offset(), end_offset()));
             }
             if (end_offset() != valid_end_offset())
-                throw error("validator state from {} is in inconsistent state valid_end_offset: {} vs end_offset: {}",
-                    path, valid_end_offset(), end_offset());
+                throw error(fmt::format("validator state from {} is in inconsistent state valid_end_offset: {} vs end_offset: {}",
+                    path, valid_end_offset(), end_offset()));
         } catch (const std::exception &ex) {
             const auto err_path = path + ".err";
             std::filesystem::rename(path, err_path);
-            throw error("loading state failed: {} moved the invalid state file to {}", ex.what(), err_path);
+            throw error(fmt::format("loading state failed: {} moved the invalid state file to {}", ex.what(), err_path));
         }
     }
 
@@ -218,14 +218,14 @@ namespace daedalus_turbo::cardano::ledger {
     {
         if (era > 0) {
             if (!_eras.empty() && slot < _eras.back())
-                throw error("era blocks have reported out of order slot {} came after {}", slot, _eras.back());
+                throw error(fmt::format("era blocks have reported out of order slot {} came after {}", slot, _eras.back()));
             if (era > _eras.size()) {
                 const auto era_start_slot = !_eras.empty() && era > 2 ? slot - (slot - _eras.back()) % _cfg.shelley_epoch_length : slot;
                 while (era > _eras.size()) {
                     _eras.emplace_back(era_start_slot);
                 }
             } else if (era < _eras.size()) {
-                throw error("a block of era {} came in era {}", era, _eras.size());
+                throw error(fmt::format("a block of era {} came in era {}", era, _eras.size()));
             }
         }
     }
@@ -254,7 +254,7 @@ namespace daedalus_turbo::cardano::ledger {
                     _state = std::make_unique<conway::state>(std::move(dynamic_cast<babbage::state &>(*_state)));
                     _vrf_state = std::make_unique<conway::vrf_state>(std::move(dynamic_cast<babbage::vrf_state &>(*_vrf_state)));
                     break;
-                default: throw error("unsupported era: {}", new_era);
+                default: throw error(fmt::format("unsupported era: {}", new_era));
             }
         }
     }
@@ -268,7 +268,7 @@ namespace daedalus_turbo::cardano::ledger {
         const auto new_pv = _state->_params.protocol_ver;
         if (new_pv != prev_pv) {
             if (new_pv < prev_pv) [[unlikely]]
-                throw error("protocol downgrades are not supported: went from {} to {}", prev_pv, new_pv);
+                throw error(fmt::format("protocol downgrades are not supported: went from {} to {}", prev_pv, new_pv));
             _transition_era(prev_pv.era(), new_pv.era());
             const auto tip_slot = slot::from_epoch(_state->_epoch, _state->_epoch_slot, _cfg);
             track_era(new_pv.era(), tip_slot);

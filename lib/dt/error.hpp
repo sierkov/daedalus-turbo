@@ -11,26 +11,33 @@
 #include <dt/logger.hpp>
 
 namespace daedalus_turbo {
-    extern std::string error_stacktrace();
-    extern const std::string &error_trace(const std::string &msg, const std::string &stack);
-
     struct error: std::runtime_error {
-        template<typename... Args>
-        explicit error(const char *fmt, Args&&... a)
-            : error { format(fmt::runtime(fmt), std::forward<Args>(a)...), error_stacktrace() }
+        explicit error(const std::string &msg, const std::source_location &loc=std::source_location::current())
+            : error { true, fmt::format("{} at {}:{}", msg, loc.file_name(), loc.line()) }
         {
         }
 
-        explicit error(const std::string &msg, const std::string &stack=error_stacktrace())
-            : std::runtime_error { error_trace(msg, stack) }
+        explicit error(const std::string &msg, const std::exception &ex, const std::source_location &loc=std::source_location::current())
+            : error { true, fmt::format("{} at {}:{} caused by {}: {}", msg, loc.file_name(), loc.line(), typeid(ex).name(), ex.what()) }
         {
+        }
+
+        template<typename ...Args>
+        explicit error(const std::source_location &loc, const char *fmt, Args&&... a)
+            : error { true, fmt::format("{} at {}:{}", fmt::format(fmt::runtime(fmt), std::forward<Args>(a)...), loc.file_name(), loc.line()) }
+        {
+        }
+    protected:
+        explicit error(const bool trace, const std::string &msg): std::runtime_error { msg }
+        {
+            if (trace)
+                logger::debug("an exception created: {}", msg);
         }
     };
 
     struct error_sys: error {
-        template<typename... Args>
-        explicit error_sys(const char *fmt, Args&&... a)
-            : error { fmt::format("{}, errno: {}, strerror: {}", format(fmt::runtime(fmt), std::forward<Args>(a)...), errno, std::strerror(errno)), error_stacktrace() }
+        explicit error_sys(const std::string &msg, const std::source_location &loc=std::source_location::current())
+            : error { fmt::format("{}, errno: {}, strerror: {}", msg, errno, std::strerror(errno)), loc }
         {
         }
     };

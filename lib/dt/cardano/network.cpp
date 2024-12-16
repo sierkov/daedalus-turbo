@@ -6,6 +6,7 @@
 #ifdef _MSC_VER
 #   include <SDKDDKVer.h>
 #endif
+#include <condition_variable>
 #include <boost/asio.hpp>
 #include <dt/cardano/network.hpp>
 #include <dt/cbor.hpp>
@@ -71,7 +72,7 @@ namespace daedalus_turbo::cardano::network {
             mutex::unique_lock lk { _requests_mutex };
             const auto num_reqs = _requests.load();
             if (num_reqs > 0)
-                throw error("a client instances can be reset only when there are no active requests but there are: {}", num_reqs);
+                throw error(fmt::format("a client instances can be reset only when there are no active requests but there are: {}", num_reqs));
             _conn.reset();
         }
     private:
@@ -122,7 +123,7 @@ namespace daedalus_turbo::cardano::network {
             if (recv_info.mode() != channel_mode::responder || recv_info.protocol_id() != protocol_id) {
                 logger::error("unexpected message: mode: {} protocol_id: {} body size: {} body: {}",
                               static_cast<int>(recv_info.mode()), static_cast<uint16_t>(recv_info.protocol_id()), recv_payload.size(), cbor::stringify(recv_payload));
-                throw error("unexpected message: mode: {} protocol_id: {}", static_cast<int>(recv_info.mode()), static_cast<uint16_t>(recv_info.protocol_id()));
+                throw error(fmt::format("unexpected message: mode: {} protocol_id: {}", static_cast<int>(recv_info.mode()), static_cast<uint16_t>(recv_info.protocol_id())));
             }
             co_return recv_payload;
         }
@@ -130,7 +131,7 @@ namespace daedalus_turbo::cardano::network {
         static boost::asio::awaitable<uint8_vector> _send_request(tcp::socket &socket, protocol protocol_id, const buffer &data)
         {
             if (data.size() >= (1 << 16))
-                throw error("payload is larger than allowed: {}!", data.size());
+                throw error(fmt::format("payload is larger than allowed: {}!", data.size()));
             uint8_vector segment {};
             auto epoch_time = std::chrono::system_clock::now().time_since_epoch();
             auto micros = static_cast<uint32_t>(std::chrono::duration_cast<std::chrono::microseconds>(epoch_time).count());
@@ -145,7 +146,7 @@ namespace daedalus_turbo::cardano::network {
         {
             auto results = co_await _resolver.async_resolve(_addr.host, _addr.port, boost::asio::use_awaitable);
             if (results.empty())
-                throw error("DNS resolve for {}:{} returned no results!", _addr.host, _addr.port);
+                throw error(fmt::format("DNS resolve for {}:{} returned no results!", _addr.host, _addr.port));
             tcp::socket socket { _asio_worker.io_context() };
             co_await socket.async_connect(*results.begin(), boost::asio::use_awaitable);
             static constexpr uint64_t protocol_ver = 13;
@@ -163,9 +164,9 @@ namespace daedalus_turbo::cardano::network {
             auto resp_cbor = cbor::parse(resp);
             auto &resp_items = resp_cbor.array();
             if (resp_items.at(0).uint() != 1ULL)
-                throw error("peer at {}:{} refused the protocol version {}: {}!", _addr.host, _addr.port, protocol_ver, resp_cbor);
+                throw error(fmt::format("peer at {}:{} refused the protocol version {}: {}!", _addr.host, _addr.port, protocol_ver, resp_cbor));
             if (resp_items.at(1).uint() != protocol_ver)
-                throw error("peer at {}:{} ignored the requested protocol version {}!", _addr.host, _addr.port, protocol_ver);
+                throw error(fmt::format("peer at {}:{} ignored the requested protocol version {}!", _addr.host, _addr.port, protocol_ver));
             co_return socket;
         }
 
@@ -197,7 +198,7 @@ namespace daedalus_turbo::cardano::network {
                     break;
                 }
                 default:
-                    throw error("unexpected chain_sync message: {}!", resp_arr.at(0).uint());
+                    throw error(fmt::format("unexpected chain_sync message: {}!", resp_arr.at(0).uint()));
             }
             co_return isect;
         }
@@ -244,7 +245,7 @@ namespace daedalus_turbo::cardano::network {
                                 co_return;
                             }
                             default:
-                                throw error("unexpected chain_sync message: {}!", resp_items.at(0).uint());
+                                throw error(fmt::format("unexpected chain_sync message: {}!", resp_items.at(0).uint()));
                         }
                         parse_buf.erase(parse_buf.begin(), parse_buf.begin() + resp_cbor.size);
                     } catch (const cbor_incomplete_data_error &) {
@@ -284,7 +285,7 @@ namespace daedalus_turbo::cardano::network {
                         break;
                     }
                     default:
-                        throw error("unexpected chain_sync message: {}!", resp_items.at(0).uint());
+                        throw error(fmt::format("unexpected chain_sync message: {}!", resp_items.at(0).uint()));
                 }
                 _decrement_requests();
             } catch (const std::exception &ex) {
@@ -323,7 +324,7 @@ namespace daedalus_turbo::cardano::network {
                         break;
                     }
                     if (resp_items.at(0).uint() != 2) // !MsgRollForward
-                        throw error("unexpected chain_sync message: {}!", resp_items.at(0).uint());
+                        throw error(fmt::format("unexpected chain_sync message: {}!", resp_items.at(0).uint()));
                     const auto &hdr_items = resp_items.at(1).array();
                     const auto &tip =  resp_items.at(2).array();
                     isect.tip = point { tip.at(0).array().at(1).buf(), tip.at(0).array().at(0).uint(), tip.at(1).uint() };

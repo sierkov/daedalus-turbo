@@ -6,9 +6,8 @@
 #define DAEDALUS_TURBO_CARDANO_TYPES_HPP
 
 #include <chrono>
-#include <ctime>
-#include <dt/blake2b.hpp>
 #include <dt/bech32.hpp>
+#include <dt/blake2b.hpp>
 #include <dt/cbor.hpp>
 #include <dt/cbor/encoder.hpp>
 #include <dt/container.hpp>
@@ -49,12 +48,9 @@ namespace daedalus_turbo {
                 return data;
             }
 
-            hash(const buffer bytes): array<uint8_t, SZ> { bytes }
+            static hash from_cbor(const cbor::value &v)
             {
-            }
-
-            hash(const cbor::value &v): array<uint8_t, SZ> { v.buf() }
-            {
+                return { v.buf() };
             }
         };
 
@@ -68,7 +64,7 @@ namespace daedalus_turbo {
         using vrf_vkey = cardano_vrf_vkey;
         using vrf_result = cardano_vrf_result;
         using vrf_proof = cardano_vrf_proof;
-        using datum_hash = cardano_hash_32;
+        using datum_hash = hash<32>;
 
         struct shelley_delegate {
             pool_hash delegate {};
@@ -109,9 +105,9 @@ namespace daedalus_turbo {
             void update(const uint64_t slot)
             {
                 if (slot < _min)
-                    throw error("block supplied not in order slot {} observed after slot {}", slot, _min);
+                    throw error(fmt::format("block supplied not in order slot {} observed after slot {}", slot, _min));
                 if (slot < _max)
-                    throw error("block supplied not in order slot {} observed after slot {}", slot, _max);
+                    throw error(fmt::format("block supplied not in order slot {} observed after slot {}", slot, _max));
                 _max = slot;
             }
 
@@ -328,12 +324,8 @@ namespace daedalus_turbo {
                 return archive(self.hash, self.script);
             }
 
-            credential_t() =default;
-            credential_t(const credential_t &) =default;
-            credential_t(const key_hash &, bool);
-            credential_t(const cbor::value &);
-            credential_t(const std::string_view);
-            credential_t &operator=(const credential_t &) =default;
+            static credential_t from_cbor(const cbor::value &);
+            static credential_t from_json(std::string_view);
             void to_cbor(cbor::encoder &) const;
 
             bool operator<(const auto &b) const
@@ -434,7 +426,7 @@ namespace daedalus_turbo {
                 return script_type::plutus_v3;
             if (s == "native")
                 return script_type::native;
-            throw error("unsupported script type: {}", s);
+            throw error(fmt::format("unsupported script type: {}", s));
         }
 
         struct script_info: uint8_vector {
@@ -553,7 +545,7 @@ namespace daedalus_turbo {
                         if (_bytes.size() > 29) [[unlikely]]
                             _bytes = _bytes.subbuf(0, 29);
                         if (_bytes.size() < 29) [[unlikely]]
-                            throw cardano_error("cardano reward addresses must have at least 29 bytes: {}!", _bytes);
+                            throw cardano_error(fmt::format("cardano reward addresses must have at least 29 bytes: {}!", _bytes));
                         break;
 
                     case 0b0000: // base address: keyhash28,keyhash28
@@ -563,7 +555,7 @@ namespace daedalus_turbo {
                         if (_bytes.size() > 57) [[unlikely]]
                             _bytes = _bytes.subbuf(0, 57);
                         if (_bytes.size() < 57) [[unlikely]]
-                            throw cardano_error("shelley base address must have at least 57 bytes: {}!", _bytes);
+                            throw cardano_error(fmt::format("shelley base address must have at least 57 bytes: {}!", _bytes));
                         break;
 
                     case 0b1000: // byron
@@ -602,7 +594,7 @@ namespace daedalus_turbo {
                     }
 
                     default:
-                        throw cardano_error("unsupported address type: {}!", type());
+                        throw cardano_error(fmt::format("unsupported address type: {}!", type()));
                 }
             }
 
@@ -638,7 +630,7 @@ namespace daedalus_turbo {
             {
 
                 if (data().size() < 28 + 3)
-                    throw error("pointer data is too small - expect 31+ bytes but got: {}", data().size());
+                    throw error(fmt::format("pointer data is too small - expect 31+ bytes but got: {}", data().size()));
                 const auto ptr = data().subspan(28, data().size() - 28);
                 uint64_t slot, tx_idx, cert_idx;
                 const auto sz1 = _read_var_uint_be(slot, ptr);
@@ -661,7 +653,7 @@ namespace daedalus_turbo {
                         return stake_ident { data().subbuf(28, 28), (type() & 0x2) > 0 };
 
                     default:
-                        throw cardano_error("address::stake_id unsupported for address type: {}!", type());
+                        throw cardano_error(fmt::format("address::stake_id unsupported for address type: {}!", type()));
                 }
             }
 
@@ -671,7 +663,7 @@ namespace daedalus_turbo {
                     return stake_id();
                 if (has_pointer())
                     return pointer();
-                throw error("address {} has neither a stake_id not a pointer reference!", _bytes);
+                throw error(fmt::format("address {} has neither a stake_id not a pointer reference!", _bytes));
             }
 
             bool has_stake_id() const
@@ -773,7 +765,7 @@ namespace daedalus_turbo {
                         break;
                 }
                 if (!type_str)
-                    throw cardano_error("unsupported address type: {}!", type());
+                    throw cardano_error(fmt::format("unsupported address type: {}!", type()));
                 json::object res {
                     { "type", type_str },
                     { "data", fmt::format("{}", _bytes) }
@@ -806,7 +798,7 @@ namespace daedalus_turbo {
                     x |= val & 0x7F;
                     if (val & 0x80) {
                         if (buf.size() < num_read + 1)
-                            throw error("the buffer is too small: {}!", buf.size());
+                            throw error(fmt::format("the buffer is too small: {}!", buf.size()));
                         val = static_cast<uint64_t>(buf[num_read]);
                         ++num_read;
                     } else {
@@ -908,14 +900,14 @@ namespace daedalus_turbo {
             tx_out_idx(size_t out_idx)
             {
                 if (out_idx >= (1U << 16)) [[unlikely]]
-                    throw error("tx out idx is too big: {}!", out_idx);
+                    throw error(fmt::format("tx out idx is too big: {}!", out_idx));
                 _out_idx = out_idx;
             }
 
             tx_out_idx &operator=(size_t out_idx)
             {
                 if (out_idx >= (1U << 16)) [[unlikely]]
-                    throw error("tx out idx is too big: {}!", out_idx);
+                    throw error(fmt::format("tx out idx is too big: {}!", out_idx));
                 _out_idx = out_idx;
                 return *this;
             }
@@ -1024,6 +1016,11 @@ namespace daedalus_turbo {
             uint64_t major = 1;
             uint64_t minor = 0;
 
+            static constexpr auto serialize(auto &archive, auto &self)
+            {
+                return archive(self.major, self.minor);
+            }
+
             bool operator==(const auto &b) const
             {
                 return major == b.major && minor == b.minor;
@@ -1051,6 +1048,11 @@ namespace daedalus_turbo {
                 return major < 9;
             }
 
+            bool bootstrap_phase() const
+            {
+                return major == 9;
+            }
+
             uint64_t era() const {
                 switch (major) {
                     case 0: return 0;
@@ -1065,9 +1067,13 @@ namespace daedalus_turbo {
                     case 8:
                         return 6;
                     case 9: return 7;
-                    default: throw error("unsupported protocol version: {}", *this);
+                    default: throw error(fmt::format("unsupported protocol major version: {}", major));
                 }
             }
+
+            protocol_version() =default;
+            protocol_version(const cbor::value &);
+            protocol_version(uint64_t major, uint64_t minor);
         };
 
         using nonce = std::optional<vrf_nonce>;
@@ -1181,6 +1187,15 @@ namespace daedalus_turbo {
             rational_u64 pp_governance_group { 0.75 };
             rational_u64 treasury_withdrawal { 0.67 };
 
+            static const drep_voting_thresholds_t &zero()
+            {
+                static drep_voting_thresholds_t t {
+                    {0, 1}, {0, 1}, {0, 1}, {0, 1}, {0, 1},
+                    {0, 1}, {0, 1}, {0, 1}, {0, 1}, {0, 1}
+                };
+                return t;
+            }
+
             static constexpr auto serialize(auto &archive, auto &self)
             {
                 return archive(self.motion_no_confidence, self.committee_normal, self.committee_no_confidence,
@@ -1190,103 +1205,41 @@ namespace daedalus_turbo {
                 );
             }
 
+            drep_voting_thresholds_t(const rational_u64 motion_no_confidence_,
+                    const rational_u64 committee_normal_, const  rational_u64 committee_no_confidence_,
+                    const rational_u64 update_constitution_, const rational_u64 hard_fork_initiation_,
+                    const rational_u64 pp_network_group_, const rational_u64 pp_economic_group_,
+                    const rational_u64 pp_technical_group_, const rational_u64 pp_governance_group_,
+                    const rational_u64 treasury_withdrawal_):
+                motion_no_confidence { motion_no_confidence_ },
+                committee_normal { committee_normal_ },
+                committee_no_confidence { committee_no_confidence_ },
+                update_constitution { update_constitution_ },
+                hard_fork_initiation { hard_fork_initiation_ },
+                pp_network_group { pp_network_group_ },
+                pp_economic_group { pp_economic_group_ },
+                pp_technical_group { pp_technical_group_ },
+                pp_governance_group { pp_governance_group_ },
+                treasury_withdrawal { treasury_withdrawal_ }
+            {
+            }
+
             drep_voting_thresholds_t() =default;
             drep_voting_thresholds_t(const cbor::value &);
             drep_voting_thresholds_t(const json::value &);
             void to_cbor(cbor::encoder &) const;
         };
 
-        struct protocol_params {
-            uint64_t min_fee_a = 0;
-            uint64_t min_fee_b = 0;
-            uint64_t max_block_body_size = 2'000'000;
-            uint64_t max_transaction_size = 4096;
-            uint64_t max_block_header_size = 2'000'000;
-            uint64_t key_deposit = 2'000'000;
-            uint64_t pool_deposit = 500'000'000;
-            uint64_t e_max = 0;
-            uint64_t n_opt = 150;
-            rational_u64 pool_pledge_influence { 3, 10 };
-            rational_u64 expansion_rate { 3, 1000 };
-            rational_u64 treasury_growth_rate { 1, 5 };
-            rational_u64 decentralization { 1, 1 };
-            rational_u64 decentralizationThreshold { 4, 5 };
-            nonce extra_entropy {};
-            protocol_version protocol_ver {};
-            uint64_t min_utxo_value = 0;
-            uint64_t min_pool_cost = 0;
-            uint64_t lovelace_per_utxo_byte = 0;
-	        cardano::ex_unit_prices ex_unit_prices {};
-            ex_units max_tx_ex_units {};
-            ex_units max_block_ex_units {};
-            uint64_t max_value_size = 0;
-            uint64_t max_collateral_pct = 0;
-            uint64_t max_collateral_inputs = 0;
-	        cardano::plutus_cost_models plutus_cost_models {};
-            pool_voting_thresholds_t pool_voting_thresholds {};
-            drep_voting_thresholds_t drep_voting_thresholds {};
-            uint64_t comittee_min_size = 7;
-            uint64_t committee_max_term_length = 146;
-            uint64_t gov_action_lifetime = 6;
-            uint64_t gov_action_deposit = 100'000'000'000;
-            uint64_t drep_deposit = 500'000'000;
-            uint64_t drep_activity = 20;
-            rational_u64 min_fee_ref_script_cost_per_byte { 15, 1 };
-
-            static constexpr auto serialize(auto &archive, auto &self)
-            {
-                return archive(
-                    self.min_fee_a, self.min_fee_b,
-                    self.max_block_body_size, self.max_transaction_size, self.max_block_header_size,
-                    self.key_deposit, self.pool_deposit, self.e_max,
-                    self.n_opt, self.pool_pledge_influence,
-                    self.expansion_rate, self.treasury_growth_rate, self.decentralization,
-                    self.decentralizationThreshold, self.extra_entropy, self.protocol_ver,
-                    self.min_utxo_value,
-                    self.min_pool_cost, self.lovelace_per_utxo_byte,
-                    self.ex_unit_prices, self.max_tx_ex_units, self.max_block_ex_units,
-                    self.max_value_size,
-                    self.max_collateral_pct, self.max_collateral_inputs,
-                    self.plutus_cost_models
-                );
-            }
-
-            bool operator==(const auto &o) const
-            {
-                return min_fee_a == o.min_fee_a && min_fee_b == o.min_fee_b
-                    && max_block_body_size == o.max_block_body_size && max_transaction_size == o.max_transaction_size && max_block_header_size == o.max_block_header_size
-                    && key_deposit == o.key_deposit && pool_deposit == o.pool_deposit && e_max == o.e_max
-                    && n_opt == o.n_opt && pool_pledge_influence == o.pool_pledge_influence
-                    && expansion_rate == o.expansion_rate && treasury_growth_rate == o.treasury_growth_rate && decentralization == o.decentralization
-                    && decentralizationThreshold == o.decentralizationThreshold && extra_entropy == o.extra_entropy && protocol_ver == o.protocol_ver
-                    && min_utxo_value == o.min_utxo_value
-                    && min_pool_cost == o.min_pool_cost
-                    && lovelace_per_utxo_byte == o.lovelace_per_utxo_byte
-                    && ex_unit_prices == o.ex_unit_prices
-                    && max_tx_ex_units == o.max_tx_ex_units
-                    && max_block_ex_units == o.max_block_ex_units
-                    && max_value_size == o.max_value_size
-                    && max_collateral_pct == o.max_collateral_pct
-                    && max_collateral_inputs == o.max_collateral_inputs
-                    && plutus_cost_models == o.plutus_cost_models;
-            }
-
-            void clear()
-            {
-                *this = {};
-            }
-        };
-
         struct param_update {
             block_hash hash {};
             std::optional<uint64_t> min_fee_a {};
             std::optional<uint64_t> min_fee_b {};
-            std::optional<uint64_t> max_block_body_size {};
-            std::optional<uint64_t> max_transaction_size {};
-            std::optional<uint64_t> max_block_header_size {};
+            std::optional<uint32_t> max_block_body_size {};
+            std::optional<uint32_t> max_transaction_size {};
+            std::optional<uint32_t> max_block_header_size {};
             std::optional<uint64_t> key_deposit {};
             std::optional<uint64_t> pool_deposit {};
-            std::optional<uint64_t> e_max {};
+            std::optional<uint32_t> e_max {};
             std::optional<uint64_t> n_opt {};
             std::optional<rational_u64> pool_pledge_influence {};
             std::optional<rational_u64> expansion_rate {};
@@ -1337,6 +1290,94 @@ namespace daedalus_turbo {
             void rehash();
         };
 
+        namespace conway {
+            struct param_update_t;
+        }
+
+        struct protocol_params {
+            uint64_t min_fee_a = 0;
+            uint64_t min_fee_b = 0;
+            uint32_t max_block_body_size = 2'000'000;
+            uint32_t max_transaction_size = 4096;
+            uint32_t max_block_header_size = 65535;
+            uint64_t key_deposit = 2'000'000;
+            uint64_t pool_deposit = 500'000'000;
+            uint32_t e_max = 0;
+            uint64_t n_opt = 150;
+            rational_u64 pool_pledge_influence { 3, 10 };
+            rational_u64 expansion_rate { 3, 1000 };
+            rational_u64 treasury_growth_rate { 1, 5 };
+            rational_u64 decentralization { 1, 1 };
+            rational_u64 decentralizationThreshold { 4, 5 };
+            nonce extra_entropy {};
+            protocol_version protocol_ver {};
+            uint64_t min_utxo_value = 0;
+            uint64_t min_pool_cost = 0;
+            uint64_t lovelace_per_utxo_byte = 0;
+	        cardano::ex_unit_prices ex_unit_prices {};
+            ex_units max_tx_ex_units {};
+            ex_units max_block_ex_units {};
+            uint64_t max_value_size = 0;
+            uint64_t max_collateral_pct = 0;
+            uint64_t max_collateral_inputs = 0;
+	        cardano::plutus_cost_models plutus_cost_models {};
+            pool_voting_thresholds_t pool_voting_thresholds {};
+            drep_voting_thresholds_t drep_voting_thresholds {};
+            uint16_t committee_min_size = 7;
+            uint32_t committee_max_term_length = 146;
+            uint32_t gov_action_lifetime = 6;
+            uint64_t gov_action_deposit = 100'000'000'000;
+            uint64_t drep_deposit = 500'000'000;
+            uint32_t drep_activity = 20;
+            rational_u64 min_fee_ref_script_cost_per_byte { 15, 1 };
+
+            static constexpr auto serialize(auto &archive, auto &self)
+            {
+                return archive(
+                    self.min_fee_a, self.min_fee_b,
+                    self.max_block_body_size, self.max_transaction_size, self.max_block_header_size,
+                    self.key_deposit, self.pool_deposit, self.e_max,
+                    self.n_opt, self.pool_pledge_influence,
+                    self.expansion_rate, self.treasury_growth_rate, self.decentralization,
+                    self.decentralizationThreshold, self.extra_entropy, self.protocol_ver,
+                    self.min_utxo_value,
+                    self.min_pool_cost, self.lovelace_per_utxo_byte,
+                    self.ex_unit_prices, self.max_tx_ex_units, self.max_block_ex_units,
+                    self.max_value_size,
+                    self.max_collateral_pct, self.max_collateral_inputs,
+                    self.plutus_cost_models
+                );
+            }
+
+            bool operator==(const auto &o) const
+            {
+                return min_fee_a == o.min_fee_a && min_fee_b == o.min_fee_b
+                    && max_block_body_size == o.max_block_body_size && max_transaction_size == o.max_transaction_size && max_block_header_size == o.max_block_header_size
+                    && key_deposit == o.key_deposit && pool_deposit == o.pool_deposit && e_max == o.e_max
+                    && n_opt == o.n_opt && pool_pledge_influence == o.pool_pledge_influence
+                    && expansion_rate == o.expansion_rate && treasury_growth_rate == o.treasury_growth_rate && decentralization == o.decentralization
+                    && decentralizationThreshold == o.decentralizationThreshold && extra_entropy == o.extra_entropy && protocol_ver == o.protocol_ver
+                    && min_utxo_value == o.min_utxo_value
+                    && min_pool_cost == o.min_pool_cost
+                    && lovelace_per_utxo_byte == o.lovelace_per_utxo_byte
+                    && ex_unit_prices == o.ex_unit_prices
+                    && max_tx_ex_units == o.max_tx_ex_units
+                    && max_block_ex_units == o.max_block_ex_units
+                    && max_value_size == o.max_value_size
+                    && max_collateral_pct == o.max_collateral_pct
+                    && max_collateral_inputs == o.max_collateral_inputs
+                    && plutus_cost_models == o.plutus_cost_models;
+            }
+
+            void clear()
+            {
+                *this = {};
+            }
+
+            std::string apply(const param_update &);
+            std::string apply(const conway::param_update_t &);
+        };
+
         struct param_update_proposal {
             pool_hash pool_id {};
             std::optional<uint64_t> epoch {};
@@ -1367,10 +1408,7 @@ namespace daedalus_turbo {
                 return archive(self.typ, self.cred);
             }
 
-            drep_t() =default;
-            drep_t(const type_t &);
-            drep_t(const credential_t &);
-            drep_t(const cbor::value &v);
+            static drep_t from_cbor(const cbor::value &v);
             void to_cbor(cbor::encoder &) const;
 
             bool operator<(const drep_t &o) const noexcept
@@ -1513,7 +1551,7 @@ namespace fmt {
             switch (v.index()) {
                 case 0: return fmt::format_to(ctx.out(), "{}", std::get<daedalus_turbo::cardano::datum_hash>(v));
                 case 1: return fmt::format_to(ctx.out(), "{}", std::get<daedalus_turbo::uint8_vector>(v));
-                default: throw daedalus_turbo::error("unsupported variant index: {}", v.index());
+                default: throw daedalus_turbo::error(fmt::format("unsupported variant index: {}", v.index()));
             }
         }
     };
@@ -1550,7 +1588,7 @@ namespace fmt {
                     return fmt::format_to(ctx.out(), "{}", std::get<daedalus_turbo::cardano::stake_pointer>(v));
 
                 default:
-                    throw daedalus_turbo::error("unsupported stake_ident_hybrid index: {}", v.index());
+                    throw daedalus_turbo::error(fmt::format("unsupported stake_ident_hybrid index: {}", v.index()));
             }
         }
     };
@@ -1580,7 +1618,7 @@ namespace fmt {
                 case script_type::plutus_v1: return fmt::format_to(ctx.out(), "plutus_v1");
                 case script_type::plutus_v2: return fmt::format_to(ctx.out(), "plutus_v2");
                 case script_type::plutus_v3: return fmt::format_to(ctx.out(), "plutus_v3");
-                default: throw daedalus_turbo::cardano_error("unsupported address type: {}!", static_cast<int>(v));
+                default: throw daedalus_turbo::cardano_error(fmt::format("unsupported address type: {}!", static_cast<int>(v)));
             }
         }
     };
@@ -1589,7 +1627,7 @@ namespace fmt {
     struct formatter<daedalus_turbo::cardano::byron_addr>: formatter<int> {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
-            return fmt::format_to(ctx.out(), "byron/{}", v.bytes());
+            return fmt::format_to(ctx.out(), "byron: (root: {} type: {} attrs: {})", v.root(), v.type(), v.attrs());
         }
     };
 
@@ -1626,7 +1664,7 @@ namespace fmt {
                                 (addr.type() & 1) ? "script" : "key", addr.data().subspan(0, 28), addr.pointer());
 
                 default:
-                    throw daedalus_turbo::cardano_error("unsupported address type: {}!", addr.type());
+                    throw daedalus_turbo::cardano_error(fmt::format("unsupported address type: {}!", addr.type()));
             }
         }
     };
@@ -1742,6 +1780,31 @@ namespace fmt {
     };
 
     template<>
+        struct formatter<daedalus_turbo::cardano::drep_voting_thresholds_t>: formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::cardano::drep_voting_thresholds_t &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(
+                ctx.out(),
+                "motion_no_confidence: {} committee_normal: {} committee_no_confidence: {} update_constitution: {} hard_fork_initiation: {} "
+                "pp_network_group: {} pp_economic_group: {} pp_technical_group: {} pp_governance_group: {} treasury_withdrawal: {}",
+                v.motion_no_confidence, v.committee_normal, v.committee_no_confidence, v.update_constitution, v.hard_fork_initiation,
+                v.pp_network_group, v.pp_economic_group, v.pp_technical_group, v.pp_governance_group, v.treasury_withdrawal
+            );
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::cardano::pool_voting_thresholds_t>: formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::cardano::pool_voting_thresholds_t &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(
+                ctx.out(),
+                "motion_of_no_confidence: {} committee_normal: {} committee_no_confidence: {} hard_fork_initiation: {} security_voting_threshold: {}",
+                v.motion_of_no_confidence, v.committee_normal, v.committee_no_confidence, v.hard_fork_initiation, v.security_voting_threshold);
+        }
+    };
+
+    template<>
     struct formatter<daedalus_turbo::cardano::slot_range>: formatter<uint64_t> {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
@@ -1757,7 +1820,7 @@ namespace fmt {
                 case daedalus_turbo::cardano::drep_t::credential: return fmt::format_to(ctx.out(), "{}", v.cred.value());
                 case daedalus_turbo::cardano::drep_t::abstain: return fmt::format_to(ctx.out(), "abstain");
                 case daedalus_turbo::cardano::drep_t::no_confidence: return fmt::format_to(ctx.out(), "no-confidence");
-                default: throw daedalus_turbo::error("unsupported drep.type: {}", static_cast<int>(v.typ));
+                default: throw daedalus_turbo::error(fmt::format("unsupported drep.type: {}", static_cast<int>(v.typ)));
             }
         }
     };

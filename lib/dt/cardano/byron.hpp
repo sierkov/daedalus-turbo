@@ -260,7 +260,7 @@ namespace daedalus_turbo::cardano::byron {
             const auto &sig = consensus().at(3).array();
             const auto sig_type = sig.at(0).uint();
             if (sig_type != 2)
-                throw cardano_error("Byron block signature must have type 2 but got {}!", sig_type);
+                throw cardano_error(fmt::format("Byron block signature must have type 2 but got {}!", sig_type));
             return block_signature { sig.at(1).array() };
         }
 
@@ -299,7 +299,7 @@ namespace daedalus_turbo::cardano::byron {
             const auto &inputs = _tx.array().at(0).array();
             for (size_t i = 0; i < inputs.size(); ++i) {
                 const auto &in = inputs.at(i).array();
-                if (in.at(0).uint() != 0) throw cardano_error("unsupported byron tx input encoding {}!", in.at(0).uint());
+                if (in.at(0).uint() != 0) throw cardano_error(fmt::format("unsupported byron tx input encoding {}!", in.at(0).uint()));
                 const auto in_data = cbor::parse(in.at(1).tag().second->buf());
                 observer(tx_input { in_data.array().at(0).buf(), in_data.array().at(1).uint(), i });
             }

@@ -57,7 +57,7 @@ namespace daedalus_turbo {
                 case '7': return 24 + 6;
                 case 'l': return 24 + 7;
             }
-            throw error("Unsupported Bech32 data char: '{}'", k);
+            throw error(fmt::format("Unsupported Bech32 data char: '{}'", k));
         }
 
         static uint32_t polymod(const std::vector<uint8_t> &vals)
@@ -94,19 +94,19 @@ namespace daedalus_turbo {
         bech32(const std::string_view &sv, bool check_prefix=false)
         {
             auto sep_pos = sv.find(_sep);
-            if (sep_pos == sv.npos) throw error("Can't find Bech32 separator '{}' in '{}'", _sep, sv);
+            if (sep_pos == sv.npos) throw error(fmt::format("Can't find Bech32 separator '{}' in '{}'", _sep, sv));
             const std::string_view &prefix = sv.substr(0, sep_pos);
             if (check_prefix) {
                 if (find(_known_prefixes.begin(), _known_prefixes.end(), prefix) == _known_prefixes.end()) {
-                    throw error("unsupported Bech32 prefix: {}!", prefix);
+                    throw error(fmt::format("unsupported Bech32 prefix: {}!", prefix));
                 }
             }
 
             const std::string_view &data = sv.substr(sep_pos + 1);
             std::vector<uint8_t> u5_data;
             for (auto k: data) u5_data.push_back(decode_char(k));
-            if (u5_data.size() < 6) throw error("bech32 data part must be at least 6 characters long: {}", data);
-            if (!verify(prefix, u5_data)) throw error("bech32 checksum verification failed: {}", data);
+            if (u5_data.size() < 6) throw error(fmt::format("bech32 data part must be at least 6 characters long: {}", data));
+            if (!verify(prefix, u5_data)) throw error(fmt::format("bech32 checksum verification failed: {}", data));
 
             uint32_t acc = 0;
             uint32_t bits = 0;
@@ -119,13 +119,13 @@ namespace daedalus_turbo {
                 bits += 5;
                 while (bits >= 8) {
                     bits -= 8;
-                    if (_sz >= sizeof(_buf)) throw error("bech32 payload must not exceed 57 bytes! {}", data);
+                    if (_sz >= sizeof(_buf)) throw error(fmt::format("bech32 payload must not exceed 57 bytes! {}", data));
                     _buf[_sz++] = (acc >> bits) & 0xFF;
                 }
             }
             if (bits > 0) {
-                if (bits >= 5) throw error("should not contain incomplete bytes with more than filled 5 bits: {}", data);
-                if ((acc & ((1 << bits) - 1)) != 0) throw error("all the bits in the incomplete byte must be 0: {}", data);
+                if (bits >= 5) throw error(fmt::format("should not contain incomplete bytes with more than filled 5 bits: {}", data));
+                if ((acc & ((1 << bits) - 1)) != 0) throw error(fmt::format("all the bits in the incomplete byte must be 0: {}", data));
             }
         }
 

@@ -53,13 +53,13 @@ namespace daedalus_turbo::plutus::flat {
             const auto buf = cbor_item.bytes();
             if (buf.size() <= max_script_size) [[likely]]
                 return buf;
-            throw error("script size of {} bytes exceeds the maximum allowed size of {}", buf.size(), max_script_size);
+            throw error(fmt::format("script size of {} bytes exceeds the maximum allowed size of {}", buf.size(), max_script_size));
         }
 
         bool _next_bit()
         {
             if (_byte_next >= _byte_end) [[unlikely]]
-                throw error("out of data at byte {}", _byte_pos());
+                throw error(fmt::format("out of data at byte {}", _byte_pos()));
             // return a 0 or 1 so that the result can be used in a multiplication
             const bool res = (*_byte_next & _next_bit_mask) > 0;
             _next_bit_mask >>= 1;
@@ -87,7 +87,7 @@ namespace daedalus_turbo::plutus::flat {
         {
             if (_next_bit_mask == 0x80) {
                 if (_byte_next >= _byte_end) [[unlikely]]
-                    throw error("out of data at byte {}", _byte_pos());
+                    throw error(fmt::format("out of data at byte {}", _byte_pos()));
                 return *_byte_next++;
             }
             uint8_t res = 0;
@@ -118,7 +118,7 @@ namespace daedalus_turbo::plutus::flat {
                 if (!(b & 0x80))
                     break;
                 if (bytes.size() >= max_varint_bytes) [[unlikely]]
-                    throw error("a variable length uint that has more than {} bytes at byte: {}", max_varint_bytes, _byte_pos());
+                    throw error(fmt::format("a variable length uint that has more than {} bytes at byte: {}", max_varint_bytes, _byte_pos()));
             }
             boost::multiprecision::import_bits(v, bytes.data(), bytes.data() + bytes.size(), 7, false);
             return v;
@@ -154,7 +154,7 @@ namespace daedalus_turbo::plutus::flat {
                 // do nothing
             }
             if (_next_bit_mask != 0x80) [[unlikely]]
-                throw error("consume_padding: didn't finish on a byte boundary at bit {}!", _byte_pos());
+                throw error(fmt::format("consume_padding: didn't finish on a byte boundary at bit {}!", _byte_pos()));
         }
 
         buffer _decode_bytestring()
@@ -169,7 +169,7 @@ namespace daedalus_turbo::plutus::flat {
                 const size_t data_idx = bytes.size();
                 bytes.resize(bytes.size() + chunk_size);
                 if (_byte_next + chunk_size >= _byte_end)
-                    throw error("insufficient data for a bytestring of size {} at byte: {}", chunk_size, _byte_pos());
+                    throw error(fmt::format("insufficient data for a bytestring of size {} at byte: {}", chunk_size, _byte_pos()));
                 memcpy(bytes.data() + data_idx, _byte_next, chunk_size);
                 _byte_next += chunk_size;
             }
@@ -193,7 +193,7 @@ namespace daedalus_turbo::plutus::flat {
             const auto bytes = _decode_bytestring();
             bls12_381_g1_element g1;
             if (bytes.size() != sizeof(g1.val)) [[unlikely]]
-                throw error("expected {} bytes for bls12_381_g1_element but got: {}", sizeof(g1.val), bytes.size());
+                throw error(fmt::format("expected {} bytes for bls12_381_g1_element but got: {}", sizeof(g1.val), bytes.size()));
             memcpy(&g1.val, bytes.data(), sizeof(g1.val));
             return g1;
         }
@@ -203,7 +203,7 @@ namespace daedalus_turbo::plutus::flat {
             const auto bytes = _decode_bytestring();
             bls12_381_g2_element g2;
             if (bytes.size() != sizeof(g2.val)) [[unlikely]]
-                throw error("expected {} bytes for bls12_381_g1_element but got: {}", sizeof(g2.val), bytes.size());
+                throw error(fmt::format("expected {} bytes for bls12_381_g1_element but got: {}", sizeof(g2.val), bytes.size()));
             memcpy(&g2.val, bytes.data(), sizeof(g2.val));
             return g2;
         }
@@ -233,7 +233,7 @@ namespace daedalus_turbo::plutus::flat {
                 case type_tag::application:
                     return _decode_type_application(it, end);
                 default:
-                    throw error("unsupported container type for an application: {}", *it);
+                    throw error(fmt::format("unsupported container type for an application: {}", *it));
             }
         }
 
@@ -255,7 +255,7 @@ namespace daedalus_turbo::plutus::flat {
                     throw error("list and pair types are supported only within a type application");
                 case type_tag::application:
                     return _decode_type_application(it, end);
-                default: throw error("unsupported constant type: {}", static_cast<int>(typ));
+                default: throw error(fmt::format("unsupported constant type: {}", static_cast<int>(typ)));
             }
         }
 
@@ -276,17 +276,17 @@ namespace daedalus_turbo::plutus::flat {
                         cl.emplace_back(_decode_constant_val(typ->nested.front()));
                     });
                     if (typ->nested.size() != 1) [[unlikely]]
-                        throw error("the nested type list for a list must have just one element but has {}", typ->nested.size());
+                        throw error(fmt::format("the nested type list for a list must have just one element but has {}", typ->nested.size()));
                     return { _alloc, constant_list { _alloc, constant_type { typ->nested.front() }, std::move(cl) } };
                 }
                 case type_tag::pair: {
                     if (typ->nested.size() != 2) [[unlikely]]
-                        throw error("the nested type list for a pair must have two elements but has {}", typ->nested.size());
+                        throw error(fmt::format("the nested type list for a pair must have two elements but has {}", typ->nested.size()));
                     auto fst = _decode_constant_val(typ->nested.front());
                     auto snd = _decode_constant_val(typ->nested.back());
                     return { _alloc, constant_pair { _alloc, std::move(fst), std::move(snd) } };
                 }
-                default: throw error("unsupported constant type: {}", static_cast<int>(typ->typ));
+                default: throw error(fmt::format("unsupported constant type: {}", static_cast<int>(typ->typ)));
             }
         }
 
@@ -300,7 +300,7 @@ namespace daedalus_turbo::plutus::flat {
                 types.emplace_back(static_cast<type_tag>(_decode_fixed_uint<4>()));
             }
             if (types.empty())
-                throw error("no type is defined at byte: {}!", _byte_pos());
+                throw error(fmt::format("no type is defined at byte: {}!", _byte_pos()));
             auto types_it = types.begin();
             auto typ = _decode_constant_type(types_it, types.end());
             return _decode_constant_val(std::move(typ));
@@ -311,7 +311,7 @@ namespace daedalus_turbo::plutus::flat {
             const auto tag = static_cast<builtin_tag>(_decode_fixed_uint<7>());
             if (builtins::semantics_v2().contains(tag)) [[likely]]
                 return { tag };
-            throw error("unsupported builtin: {}!", static_cast<int>(tag));
+            throw error(fmt::format("unsupported builtin: {}!", static_cast<int>(tag)));
         }
 
         variable _decode_variable()
@@ -320,7 +320,7 @@ namespace daedalus_turbo::plutus::flat {
             const auto rel_idx = static_cast<size_t>(_decode_varlen_uint());
             if (rel_idx <= _num_vars) [[likely]]
                 return { _num_vars - rel_idx };
-            throw daedalus_turbo::error("De Bruijn index is out of range: {} num_vars: {}", rel_idx, _num_vars);
+            throw daedalus_turbo::error(fmt::format("De Bruijn index is out of range: {} num_vars: {}", rel_idx, _num_vars));
         }
 
         t_delay _decode_delay()
@@ -357,7 +357,7 @@ namespace daedalus_turbo::plutus::flat {
         {
             const auto tag_bi = _decode_varlen_uint();
             if (tag_bi && boost::multiprecision::msb(tag_bi) >= 64) [[unlikely]]
-                throw error("constr tag must fit into a 64-vit integer but got: {}", tag_bi);
+                throw error(fmt::format("constr tag must fit into a 64-vit integer but got: {}", tag_bi));
             const auto tag = static_cast<uint64_t>(tag_bi);
             term_list::value_type args { _alloc };
             while (_next_bit()) {
@@ -390,7 +390,7 @@ namespace daedalus_turbo::plutus::flat {
                 case term_tag::builtin: return { _alloc, _decode_builtin() };
                 case term_tag::constr:  return { _alloc, _decode_constr() };
                 case term_tag::acase:  return { _alloc, _decode_case() };
-                default: throw error("unexpected term: {}", static_cast<int>(typ));
+                default: throw error(fmt::format("unexpected term: {}", static_cast<int>(typ)));
             }
         }
 
@@ -420,7 +420,7 @@ namespace daedalus_turbo::plutus::flat {
                 bits.emplace_back(false);
             bits.emplace_back(true);
             if (bits.size() % 8 != 0)
-                throw error("failed to pad the bit string to a byte boundary: {}!", bits.size());
+                throw error(fmt::format("failed to pad the bit string to a byte boundary: {}!", bits.size()));
         }
     };
 

@@ -49,7 +49,7 @@ namespace daedalus_turbo {
         static uint8_vector from_hex(const std::string_view hex)
         {
             if (hex.size() % 2 != 0)
-                throw error("hex string must have an even number of characters but got {}!", hex.size());
+                throw error(fmt::format("hex string must have an even number of characters but got {}!", hex.size()));
             uint8_vector data(hex.size() / 2);
             init_from_hex(data, hex);
             return data;
@@ -114,24 +114,24 @@ namespace daedalus_turbo {
         template<typename M>
         constexpr M to() const
         {
-            if (size() != sizeof(M))
-                throw error("buffer size: {} does not match the type's size: {}!", size(), sizeof(M));
+            if (size() != sizeof(M)) [[unlikely]]
+                throw error(fmt::format("buffer size: {} does not match the type's size: {}!", size(), sizeof(M)));
             return *reinterpret_cast<const M*>(data());
         }
 
         template<typename M>
         constexpr M to_host() const
         {
-            if (size() != sizeof(M))
-                throw error("buffer size: {} does not match the type's size: {}!", size(), sizeof(M));
+            if (size() != sizeof(M)) [[unlikely]]
+                throw error(fmt::format("buffer size: {} does not match the type's size: {}!", size(), sizeof(M)));
             return net_to_host(*reinterpret_cast<const M*>(data()));
         }
 
         template<typename M>
         constexpr M to_net() const
         {
-            if (size() != sizeof(M))
-                throw error("buffer size: {} does not match the type's size: {}!", size(), sizeof(M));
+            if (size() != sizeof(M)) [[unlikely]]
+                throw error(fmt::format("buffer size: {} does not match the type's size: {}!", size(), sizeof(M)));
             return host_to_net(*reinterpret_cast<const M*>(data()));
         }
 
@@ -144,14 +144,14 @@ namespace daedalus_turbo {
         {
             if (offset + sz <= size()) [[likely]]
                 return buffer { data() + offset, sz };
-            throw error("requested offset: {} and size: {} end over the end of buffer's size: {}!", offset, sz, size());
+            throw error(fmt::format("requested offset: {} and size: {} end over the end of buffer's size: {}!", offset, sz, size()));
         }
 
         buffer subbuf(const size_t offset) const
         {
             if (offset <= size()) [[likely]]
                 return subbuf(offset, size() - offset);
-            throw error("a buffer's offset {} is greater than its size {}", offset, size());
+            throw error(fmt::format("a buffer's offset {} is greater than its size {}", offset, size()));
         }
 
         buffer subspan(size_t offset, size_t sz) const
@@ -163,7 +163,7 @@ namespace daedalus_turbo {
         std::span<const uint8_t, SZ> subspan_fix(size_t offset) const
         {
             if (offset + SZ > size())
-                throw error("not enough data to create {} sized span at offset {}", SZ, offset);
+                throw error(fmt::format("not enough data to create {} sized span at offset {}", SZ, offset));
             return std::span<const uint8_t, SZ> { data() + offset, SZ };
         }
 
@@ -222,26 +222,28 @@ namespace daedalus_turbo {
     inline void span_memcpy_off(const std::span<uint8_t> &dst, size_t dst_off, const buffer &src, const std::source_location &loc=std::source_location::current())
     {
         if (dst_off >= dst.size())
-            throw error("dst_off must be less than {} but got {} in file {} at line {}!",
-                dst.size(), dst_off, loc.file_name(), loc.line());
+            throw error(fmt::format("dst_off must be less than {} but got {} in file {} at line {}!",
+                dst.size(), dst_off, loc.file_name(), loc.line()));
         if (dst.size() - dst_off < src.size())
-            throw error("expected dst must have more than {} bytes after offset {} but got {} in file {}, line {}!",
-                src.size(), dst_off, dst.size() - dst_off, loc.file_name(), loc.line());
+            throw error(fmt::format("expected dst must have more than {} bytes after offset {} but got {} in file {}, line {}!",
+                src.size(), dst_off, dst.size() - dst_off, loc.file_name(), loc.line()));
         memcpy(dst.data() + dst_off, src.data(), src.size());
     }
 
     inline void span_memcpy(const std::span<uint8_t> &dst, const buffer &src, const std::source_location &loc=std::source_location::current())
     {
-        if (dst.size() != src.size()) throw error("expected src span to be of {} bytes but got {} in file {}, line {}!",
-                                                  dst.size(), src.size(), loc.file_name(), loc.line());
+        if (dst.size() != src.size())
+            throw error(fmt::format("expected src span to be of {} bytes but got {} in file {}, line {}!",
+                dst.size(), src.size(), loc.file_name(), loc.line()));
         memcpy(dst.data(), src.data(), dst.size());
     }
 
     template <size_t SZ>
-    inline void span_memcpy(const std::span<uint8_t> &dst, const std::span<const uint8_t, SZ> &src, const std::source_location &loc=std::source_location::current())
+    void span_memcpy(const std::span<uint8_t> &dst, const std::span<const uint8_t, SZ> &src, const std::source_location &loc=std::source_location::current())
     {
-        if (dst.size() != src.size()) throw error("expected src span to be of {} bytes but got {} in file {}, line {}!",
-                                                  dst.size(), src.size(), loc.file_name(), loc.line());
+        if (dst.size() != src.size())
+            throw error(fmt::format("expected src span to be of {} bytes but got {} in file {}, line {}!",
+                dst.size(), src.size(), loc.file_name(), loc.line()));
         memcpy(dst.data(), src.data(), dst.size());
     }
 
@@ -254,10 +256,11 @@ namespace daedalus_turbo {
     }
 
     template <size_t SZ>
-    inline int span_memcmp(const std::span<uint8_t> &dst, const std::span<const uint8_t, SZ> &src, const std::source_location &loc=std::source_location::current())
+    int span_memcmp(const std::span<uint8_t> &dst, const std::span<const uint8_t, SZ> &src, const std::source_location &loc=std::source_location::current())
     {
-        if (dst.size() != src.size()) throw error("expected src span to be of {} bytes but got {} in file {}, line {}!",
-                                                  dst.size(), src.size(), loc.file_name(), loc.line());
+        if (dst.size() != src.size())
+            throw error(fmt::format("expected src span to be of {} bytes but got {} in file {}, line {}!",
+                dst.size(), src.size(), loc.file_name(), loc.line()));
         return memcmp(dst.data(), src.data(), dst.size());
     }
 
@@ -277,8 +280,7 @@ namespace daedalus_turbo {
         ForwardIt i = std::lower_bound(first, last, value, cmp);
         if (i != last && !cmp(value, *i))
             return i;
-        else
-            return last;
+        return last;
     }
 
     inline std::string to_lower(const std::string &s)

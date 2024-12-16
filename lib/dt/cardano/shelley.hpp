@@ -89,12 +89,12 @@ namespace daedalus_turbo::cardano::shelley {
         switch (idx) {
             case 0: res.min_fee_a.emplace(val.uint()); break;
             case 1: res.min_fee_b.emplace(val.uint()); break;
-            case 2: res.max_block_body_size.emplace(val.uint()); break;
-            case 3: res.max_transaction_size.emplace(val.uint()); break;
-            case 4: res.max_block_header_size.emplace(val.uint()); break;
+            case 2: res.max_block_body_size.emplace(narrow_cast<uint32_t>(val.uint())); break;
+            case 3: res.max_transaction_size.emplace(narrow_cast<uint32_t>(val.uint())); break;
+            case 4: res.max_block_header_size.emplace(narrow_cast<uint16_t>(val.uint())); break;
             case 5: res.key_deposit.emplace(val.uint()); break;
             case 6: res.pool_deposit.emplace(val.uint()); break;
-            case 7: res.e_max.emplace(val.uint()); break;
+            case 7: res.e_max.emplace(narrow_cast<uint32_t>(val.uint())); break;
             case 8: res.n_opt.emplace(val.uint()); break;
             case 9:
                 res.pool_pledge_influence.emplace(
@@ -131,7 +131,7 @@ namespace daedalus_turbo::cardano::shelley {
             case 14: res.protocol_ver.emplace(val.array().at(0).uint(), val.array().at(1).uint());
                 break;
             default:
-                throw error("protocol parameter index is out of the expected range for common params: {}", idx);
+                throw error(fmt::format("protocol parameter index is out of the expected range for common params: {}", idx));
         }
     }
 
@@ -161,7 +161,7 @@ namespace daedalus_turbo::cardano::shelley {
                     upd.min_utxo_value.emplace(val.uint());
                     break;
                 default:
-                    throw error("shelley unsupported protocol parameters update: {}", idx.uint());
+                    throw error(fmt::format("shelley unsupported protocol parameters update: {}", idx.uint()));
                     break;
             }
         }
@@ -178,7 +178,7 @@ namespace daedalus_turbo::cardano::shelley {
         {
             // cardano::network may call this to parse only the headers; in that case the block will contain just the header
             if (_block.array().size() >= 3 && transactions().size() != witnesses().size())
-                throw error("slot: {} the number of transactions {} does not match the number of witnesses {}", slot(), transactions().size(), witnesses().size());
+                throw error(fmt::format("slot: {} the number of transactions {} does not match the number of witnesses {}", slot(), transactions().size(), witnesses().size()));
         }
 
         cardano_hash_32 hash() const override
@@ -392,7 +392,7 @@ namespace daedalus_turbo::cardano::shelley {
             if (withdrawals == nullptr) return;
             for (size_t i = 0; i < withdrawals->size(); i++) {
                 const auto &[address, amount] = withdrawals->at(i);
-                if (i >= 0x10000) throw cardano_error("transaction withdrawal number is too high {}!", i);
+                if (i >= 0x10000) throw cardano_error(fmt::format("transaction withdrawal number is too high {}!", i));
                 observer(tx_withdrawal { cardano::address { address.buf() }, cardano::amount { amount.uint() }, i });
             }
         }
@@ -403,7 +403,7 @@ namespace daedalus_turbo::cardano::shelley {
                 if (entry_type.uint() == 2)
                     return { entry.uint() };
             }
-            throw error("a shelley+ transaction has no fee information: {} at offset {}!", hash(), offset());
+            throw error(fmt::format("a shelley+ transaction has no fee information: {} at offset {}!", hash(), offset()));
         }
 
         void foreach_param_update(const std::function<void(const param_update_proposal &)> &observer) const override
@@ -471,7 +471,7 @@ namespace fmt {
                     return fmt::format_to(ctx.out(), "reward_source::treasury");
 
                 default:
-                    throw daedalus_turbo::error("unsupported reward_source value: {}", static_cast<int>(v));
+                    throw daedalus_turbo::error(fmt::format("unsupported reward_source value: {}", static_cast<int>(v)));
                 break;
             }
         }

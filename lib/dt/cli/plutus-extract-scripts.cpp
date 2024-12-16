@@ -144,7 +144,7 @@ namespace daedalus_turbo::cli::plutus_extract_scripts {
                         const auto typ_s = fmt::format("{}", ps.typ);
                         static std::string exp_prefix { "plutus_" };
                         if (!typ_s.starts_with(exp_prefix)) [[unlikely]]
-                            throw error("unsupported script type: {}!", typ_s);
+                            throw error(fmt::format("unsupported script type: {}!", typ_s));
                         const auto out_prefix = fmt::format("{}/{}/{}-{}-{}-{}",
                             out_dir, *epoch, tx_id, r.idx, ps.hash, typ_s.substr(exp_prefix.size()));
                         if (cfg.uplc) {
@@ -157,7 +157,7 @@ namespace daedalus_turbo::cli::plutus_extract_scripts {
                     for (const auto &[hash, script]: ctx.scripts())
                         res.scripts.emplace(hash);
                 } catch (std::exception &ex) {
-                    throw error("ctx: {} epoch: {} tx: {}: {}", ctx_path, epoch, tx_id, ex.what());
+                    throw error(fmt::format("ctx: {} epoch: {} tx: {}: {}", ctx_path, epoch, tx_id, ex.what()));
                 }
             }
             return res;

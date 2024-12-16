@@ -86,7 +86,7 @@ namespace daedalus_turbo {
             const auto last_era = _chunks.back()->era();
             if (first_era == last_era || (first_era == 0 && last_era == 1)) [[likely]]
                 return last_era;
-            throw error("epoch has blocks from multiple eras {} and {}", first_era, last_era);
+            throw error(fmt::format("epoch has blocks from multiple eras {} and {}", first_era, last_era));
         }
 
         [[nodiscard]] uint64_t compressed_size() const
@@ -304,7 +304,7 @@ namespace daedalus_turbo {
             auto canon_path = std::filesystem::weakly_canonical(full_path);
             auto [diffBegin, diffEnd] = std::mismatch(_db_dir.begin(), _db_dir.end(), canon_path.begin());
             if (diffBegin != _db_dir.end())
-                throw error("the supplied path '{}' is not inside the host directory '{}'", canon_path.string(), _db_dir.string());
+                throw error(fmt::format("the supplied path '{}' is not inside the host directory '{}'", canon_path.string(), _db_dir.string()));
             return std::filesystem::relative(canon_path, _db_dir).string();
         }
 
@@ -313,7 +313,7 @@ namespace daedalus_turbo {
             auto canon_path = std::filesystem::weakly_canonical(_db_dir / rel_path);
             auto [diffBegin, diffEnd] = std::mismatch(_db_dir.begin(), _db_dir.end(), canon_path.begin());
             if (diffBegin != _db_dir.end())
-                throw error("the supplied path '{}' does not resolve into the host directory '{}'", canon_path.string(), _db_dir.string());
+                throw error(fmt::format("the supplied path '{}' does not resolve into the host directory '{}'", canon_path.string(), _db_dir.string()));
             std::filesystem::create_directories(canon_path.parent_path());
             return canon_path.string();
         }
@@ -408,7 +408,7 @@ namespace daedalus_turbo {
                     };
                 }
             }
-            throw error("unknown block slot: {} hash: {}", slot, hash);
+            throw error(fmt::format("unknown block slot: {} hash: {}", slot, hash));
         }
 
         cardano::slot make_slot(uint64_t slot_) const
@@ -502,19 +502,19 @@ namespace daedalus_turbo {
         {
             if (const auto block = find_block_by_offset_no_throw(offset))
                 return *block;
-            throw error("unknown offset: {}!", offset);
+            throw error(fmt::format("unknown offset: {}!", offset));
         }
 
         const storage::block_info &find_block_by_slot(const uint64_t slot) const
         {
             const auto chunk_it = _find_chunk_by_slot(slot);
             if (chunk_it == _chunks.end())
-                throw error("internal error: no block registered at a slot: {}!", slot);
+                throw error(fmt::format("internal error: no block registered at a slot: {}!", slot));
             const auto block_it = _find_block_by_slot(chunk_it, slot);
             if (block_it == chunk_it->second.blocks.end())
-                throw error("internal error: no block registered at a slot: {}!", slot);
+                throw error(fmt::format("internal error: no block registered at a slot: {}!", slot));
             if (block_it->slot != slot)
-                throw error("internal error: no block registered at a slot: {}!", slot);
+                throw error(fmt::format("internal error: no block registered at a slot: {}!", slot));
             return *block_it;
         }
 
@@ -522,7 +522,7 @@ namespace daedalus_turbo {
         {
             const auto chunk_it = _find_chunk_by_slot(slot);
             if (chunk_it == _chunks.end()) [[unlikely]]
-                throw error("internal error: no block registered at a slot: {}!", slot);
+                throw error(fmt::format("internal error: no block registered at a slot: {}!", slot));
             return chunk_it->second;
         }
 
@@ -554,7 +554,7 @@ namespace daedalus_turbo {
         {
             if (const auto block = find_block_by_slot_no_throw(slot, hash); block) [[likely]]
                 return *block;
-            throw error("internal error: no such block: {} {}!", slot, hash);
+            throw error(fmt::format("internal error: no such block: {} {}!", slot, hash));
         }
 
         uint64_t find_epoch(const uint64_t offset) const
@@ -573,7 +573,7 @@ namespace daedalus_turbo {
             const auto it = std::find_if(_chunks.begin(), _chunks.end(),
                                          [&](const auto &el) { return el.second.last_block_hash == last_block_hash; });
             if (it == _chunks.end())
-                throw error("there is no chunk with its last block hash {}", last_block_hash);
+                throw error(fmt::format("there is no chunk with its last block hash {}", last_block_hash));
             return it->second;
         }
 
@@ -581,7 +581,7 @@ namespace daedalus_turbo {
         {
             const auto chunk_it = _find_chunk_by_slot(slot);
             if (chunk_it == _chunks.end())
-                throw error("there is no chunk with a block at slot {}", slot);
+                throw error(fmt::format("there is no chunk with a block at slot {}", slot));
             return chunk_it;
         }
 
@@ -636,7 +636,7 @@ namespace daedalus_turbo {
         uint64_t read_holding_chunk(uint8_vector &chunk_data, const uint64_t offset) const
         {
             if (offset >= num_bytes())
-                throw error("the requested offset {} is larger than the maximum one: {}", offset, num_bytes());
+                throw error(fmt::format("the requested offset {} is larger than the maximum one: {}", offset, num_bytes()));
             const auto &chunk = find_offset(offset);
             if (offset >= chunk.offset + chunk.data_size)
                 throw error("the requested chunk segment is too small to parse it");
@@ -699,7 +699,7 @@ namespace daedalus_turbo {
                             try {
                                 act(res, canon_path, *blk);
                             } catch (const std::exception &ex) {
-                                throw error("failed to parse block at slot: {} hash: {}: {}", blk->slot(), blk->hash(), ex.what());
+                                throw error(fmt::format("failed to parse block at slot: {} hash: {}: {}", blk->slot(), blk->hash(), ex.what()));
                             }
                         }
                     }
@@ -850,7 +850,7 @@ namespace daedalus_turbo {
                 if (chunk_it->second.offset < max_end_offset) {
                     auto block_it = _find_block_by_offset(chunk_it, max_end_offset);
                     if (block_it == chunk_it->second.blocks.end())
-                        throw error("internal error: no block covers offset {}", max_end_offset);
+                        throw error(fmt::format("internal error: no block covers offset {}", max_end_offset));
                     // truncate chunk data and update its metadata
                     if (track_changes)
                         _truncated_chunks.emplace_back(chunk_it->second);
@@ -932,7 +932,7 @@ namespace daedalus_turbo {
                 _file_remover.unmark(chunk_path);
                 const auto [it, created] = _chunks.try_emplace(chunk.offset + chunk.data_size - 1, std::move(chunk));
                 if (!created)
-                    throw error("rollback failed: couldn't reinsert chunk {}", chunk_path);
+                    throw error(fmt::format("rollback failed: couldn't reinsert chunk {}", chunk_path));
             }
             _truncated_chunks.clear();
             _unmerged_chunks.clear();
@@ -941,7 +941,7 @@ namespace daedalus_turbo {
         void _my_commit_tx()
         {
             if (!std::filesystem::exists(_state_path_pre))
-                throw error("the prepared chunk_registry state file is missing: {}!", _state_path_pre);
+                throw error(fmt::format("the prepared chunk_registry state file is missing: {}!", _state_path_pre));
             std::filesystem::rename(_state_path_pre, _state_path);
             for (const auto &chunk: _truncated_chunks)
                 _file_remover.mark(full_path(chunk.rel_path()));
@@ -954,7 +954,7 @@ namespace daedalus_turbo {
         {
             const auto new_tip = tip();
             if (!new_tip || !(_transaction->start < new_tip))
-                throw error("candidate chain is not better: proposed tip: {} intersection: {}", new_tip, _transaction->start);
+                throw error(fmt::format("candidate chain is not better: proposed tip: {} intersection: {}", new_tip, _transaction->start));
             if (!_truncated_chunks.empty()) {
                 // slot window for the chain density calculation
                 const auto win_size = cardano::density_default_window;
@@ -996,8 +996,8 @@ namespace daedalus_turbo {
                 const auto last_valid_slot = std::min(win_last_slot, static_cast<uint64_t>(last_valid_block.slot));
                 const auto cand_num_blocks = count_blocks(isect, last_valid_slot);
                 if (orig_num_blocks >= cand_num_blocks)
-                    throw error("candidate chain at byte {} and point {} is not better than the original: candidate block count {} vs {}",
-                        _transaction->start_offset(), isect, cand_num_blocks, orig_num_blocks);
+                    throw error(fmt::format("candidate chain at byte {} and point {} is not better than the original: candidate block count {} vs {}",
+                        _transaction->start_offset(), isect, cand_num_blocks, orig_num_blocks));
             }
         }
 
@@ -1034,7 +1034,7 @@ namespace daedalus_turbo {
             if (_transaction)
                 throw error("nested transactions are not allowed!");
             if (target < start)
-                throw error("the target slot {} cannot be smaller than the start chain {}", target, start);
+                throw error(fmt::format("the target slot {} cannot be smaller than the start chain {}", target, start));
             if (start) {
                 // checks that the requested start point is known
                 const auto &block = find_block_by_slot(start->slot, start->hash);
@@ -1153,7 +1153,7 @@ namespace daedalus_turbo {
         {
             const auto it = _chunks.lower_bound(offset);
             if (it == _chunks.end())
-                throw error("no chunk matches offset: {}!", offset);
+                throw error(fmt::format("no chunk matches offset: {}!", offset));
             return it;
         }
 
@@ -1166,14 +1166,14 @@ namespace daedalus_turbo {
         {
             const auto it = _find_chunk_by_offset_no_throw(offset);
             if (it == _chunks.end())
-                throw error("no chunk matches offset: {}!", offset);
+                throw error(fmt::format("no chunk matches offset: {}!", offset));
             return it;
         }
 
         storage::block_list::const_iterator _find_block_by_offset(const chunk_map::const_iterator chunk_it, const uint64_t offset) const
         {
             if (chunk_it == _chunks.end())
-                throw error("internal error: a non-empty chunk_iterator is expected!");
+                throw error(fmt::format("internal error: a non-empty chunk_iterator is expected!"));
             const auto &blocks = chunk_it->second.blocks;
             const auto block_it = std::lower_bound(blocks.begin(), blocks.end(), offset,
                 [](const auto &b, const auto offset) { return b.end_offset() - 1 < offset; });
@@ -1192,7 +1192,7 @@ namespace daedalus_turbo {
         storage::block_list::const_iterator _find_block_by_slot(const chunk_map::const_iterator chunk_it, const uint64_t slot) const
         {
             if (chunk_it == _chunks.end())
-                throw error("internal error: a non-empty chunk_iterator is expected!");
+                throw error(fmt::format("internal error: a non-empty chunk_iterator is expected!"));
             const auto &blocks = chunk_it->second.blocks;
             const auto block_it = std::lower_bound(blocks.begin(), blocks.end(), slot,
                 [](const auto &b, const auto &slot) { return b.slot < slot; });

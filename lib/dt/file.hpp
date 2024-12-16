@@ -25,7 +25,7 @@ namespace daedalus_turbo::file {
         if (current_max_open_files != max_open_files) {
 #           ifdef _WIN32
                 if (_setmaxstdio(max_open_files) != max_open_files)
-                    throw error_sys("can't increase the max number of open files to {}!", max_open_files);
+                    throw error_sys(fmt::format("can't increase the max number of open files to {}!", max_open_files));
 #           else
                 struct rlimit lim;
                 if (getrlimit(RLIMIT_NOFILE, &lim) != 0)
@@ -36,7 +36,7 @@ namespace daedalus_turbo::file {
                     lim.rlim_max = max_open_files;
                     logger::trace("setting RLIMIT_NOFILE to cur: {} max: {}", lim.rlim_cur, lim.rlim_max);
                     if (setrlimit(RLIMIT_NOFILE, &lim) != 0)
-                        throw error_sys("failed to increase the max number of open files to {}", max_open_files);
+                        throw error_sys(fmt::format("failed to increase the max number of open files to {}", max_open_files));
                     if (getrlimit(RLIMIT_NOFILE, &lim) != 0)
                         throw error_sys("getrlimit failed");
                     logger::trace("after RLIMIT_NOFILE to cur: {} max: {}", lim.rlim_cur, lim.rlim_max);
@@ -139,9 +139,9 @@ namespace daedalus_turbo::file {
         {
             _f = std::fopen(_path.c_str(), "rb");
             if (_f == NULL) [[unlikely]]
-                throw error_sys("failed to open a file for reading {}", _path);
+                throw error_sys(fmt::format("failed to open a file for reading {}", _path));
             if (std::setvbuf(_f, reinterpret_cast<char *>(_buf.data()), _buf.empty() ? _IONBF : _IOFBF, _buf.size()) != 0) [[unlikely]]
-                throw error_sys("failed to disable read buffering for {}", _path);
+                throw error_sys(fmt::format("failed to disable read buffering for {}", _path));
             _report_open_file();
         }
 
@@ -166,7 +166,7 @@ namespace daedalus_turbo::file {
         {
             if (_f != NULL) {
                 if (std::fclose(_f) != 0)
-                    throw error_sys("failed to close file {}!", _path);
+                    throw error_sys(fmt::format("failed to close file {}!", _path));
                 _f = NULL;
                 --_open_files;
             }
@@ -179,7 +179,7 @@ namespace daedalus_turbo::file {
 #else
             if (fseek(_f, off, SEEK_SET) != 0)
 #endif
-                throw error_sys("failed to seek in {}", _path);
+                throw error_sys(fmt::format("failed to seek in {}", _path));
         }
 
         size_t try_read(std::span<uint8_t> buf)
@@ -190,8 +190,8 @@ namespace daedalus_turbo::file {
         void read(void *data, size_t num_bytes)
         {
             if (const auto num_read = try_read(std::span { reinterpret_cast<uint8_t *>(data), num_bytes }); num_read != num_bytes)
-                throw error_sys("could read only {} bytes instead of {} from {} ferror: {} feof: {}",
-                    num_read, num_bytes, _path, std::ferror(_f), std::feof(_f));
+                throw error_sys(fmt::format("could read only {} bytes instead of {} from {} ferror: {} feof: {}",
+                    num_read, num_bytes, _path, std::ferror(_f), std::feof(_f)));
         }
     protected:
         std::FILE *_f = NULL;
@@ -210,9 +210,9 @@ namespace daedalus_turbo::file {
                 std::filesystem::create_directories(dir_path);
             _f = std::fopen(_path.c_str(), "wb");
             if (_f == NULL)
-                throw error_sys("failed to open a file for writing {}", _path);
+                throw error_sys(fmt::format("failed to open a file for writing {}", _path));
             if (std::setvbuf(_f, reinterpret_cast<char *>(_buf.data()), _buf.empty() ? _IONBF : _IOFBF, _buf.size()) != 0)
-                throw error_sys("failed to disable write buffering for {}", _path);
+                throw error_sys(fmt::format("failed to disable write buffering for {}", _path));
             _report_open_file();
         }
 
@@ -240,7 +240,7 @@ namespace daedalus_turbo::file {
         {
             if (_f != NULL) {
                 if (std::fclose(_f) != 0)
-                    throw error("failed to close file {}!", _path);
+                    throw error(fmt::format("failed to close file {}!", _path));
                 _f = NULL;
                 _buf.clear();
                 _buf.shrink_to_fit();
@@ -255,7 +255,7 @@ namespace daedalus_turbo::file {
 #else
             if (fseek(_f, off, SEEK_SET) != 0)
 #endif
-                throw error_sys("failed to seek in {}", _path);
+                throw error_sys(fmt::format("failed to seek in {}", _path));
         }
 
         uint64_t tellp()
@@ -266,14 +266,14 @@ namespace daedalus_turbo::file {
             auto pos = ftell(_f);
 #endif
             if (pos < 0)
-                throw error_sys("failed to tell the stream position in {}", _path);
+                throw error_sys(fmt::format("failed to tell the stream position in {}", _path));
             return pos;
         }
 
         void write(const void *data, const size_t num_bytes)
         {
             if (num_bytes > 0 && std::fwrite(data, 1, num_bytes, _f) != num_bytes)
-                throw error_sys("failed to write {} bytes to {}", num_bytes, _path);
+                throw error_sys(fmt::format("failed to write {} bytes to {}", num_bytes, _path));
         }
 
         void write(const buffer data)
@@ -343,7 +343,7 @@ namespace daedalus_turbo::file {
         if (num_bytes == 0)
             num_bytes = std::filesystem::file_size(path);
         if (v.size() != num_bytes)
-            throw error("span size: {} != the size of the file: {}", v.size(), num_bytes);
+            throw error(fmt::format("span size: {} != the size of the file: {}", v.size(), num_bytes));
         read_stream is { path };
         is.read(v.data(), v.size());
     }

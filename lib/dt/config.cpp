@@ -23,7 +23,7 @@ namespace daedalus_turbo {
         if (override_dir) {
              if (install_dir_ok(*override_dir)) {
                  dir.emplace(*override_dir);
-                 std::cerr << fmt::format("DT_INIT: Using the binary-relative path as the install dir: {}\n", dir);
+                 std::cerr << fmt::format("DT_INIT: install dir: {} resolved using the binary-relative path\n", dir);
             }
         }
         if (!dir) {
@@ -33,7 +33,7 @@ namespace daedalus_turbo {
                 std::terminate();
             }
             dir.emplace(std::move(default_dir));
-            std::cerr << fmt::format("DT_INIT: Using the working-directory-relative path as the install dir: {}\n", dir);
+            std::cerr << fmt::format("DT_INIT: install dir: {} resolved using the current directory\n", dir);
         }
         return *dir;
     }
@@ -65,7 +65,7 @@ namespace daedalus_turbo {
     {
         const auto it = _parsed.find(name);
         if (it == _parsed.end())
-            throw error("configuration file does not have the element {}!", name);
+            throw error(fmt::format("configuration file does not have the element {}!", name));
         return it->value();
     }
 
@@ -110,7 +110,7 @@ namespace daedalus_turbo {
     {
         const auto it = _configs.find(name);
         if (it == _configs.end())
-            throw error("there is no config named {}!", name);
+            throw error(fmt::format("there is no config named {}!", name));
         return it->second;
     }
 }

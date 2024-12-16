@@ -8,29 +8,75 @@
 namespace daedalus_turbo::cardano {
     cert_any_t::value_type cert_any_t::from_cbor(const cbor::value &v)
     {
+        using conway::optional_anchor_t;
         const auto &cert = v.array();
         switch (const auto typ = cert.at(0).uint(); typ) {
-            case 0: return stake_reg_cert { cert.at(1) };
-            case 1: return stake_dereg_cert { cert.at(1) };
-            case 2: return stake_deleg_cert { cert.at(1), cert.at(2).buf() };
+            case 0: return stake_reg_cert { credential_t::from_cbor(cert.at(1)) };
+            case 1: return stake_dereg_cert { credential_t::from_cbor(cert.at(1)) };
+            case 2: return stake_deleg_cert {
+                credential_t::from_cbor(cert.at(1)),
+                pool_hash::from_cbor(cert.at(2))
+            };
             case 3: return pool_reg_cert::from_cbor(v);
             case 4: return pool_retire_cert::from_cbor(v);
             case 5: return genesis_deleg_cert { v };
             case 6: return instant_reward_cert { v };
-            case 7: return reg_cert { cert.at(1), cert.at(2).uint() };
-            case 8: return unreg_cert { cert.at(1), cert.at(2).uint() };
-            case 9: return vote_deleg_cert { cert.at(1), cert.at(2) };
-            case 10: return stake_vote_deleg_cert { cert.at(1), cert.at(2).buf(), cert.at(3) };
-            case 11: return stake_reg_deleg_cert { cert.at(1), cert.at(2).buf(), cert.at(3).uint() };
-            case 12: return vote_reg_deleg_cert { cert.at(1), cert.at(2), cert.at(3).uint() };
-            case 13: return stake_vote_reg_deleg_cert { cert.at(1), cert.at(2).buf(), cert.at(3), cert.at(4).uint() };
-            case 14: return auth_committee_hot_cert { cert.at(1), cert.at(2) };
-            case 15: return resign_committee_cold_cert { cert.at(1), cert.at(2) };
-            case 16: return reg_drep_cert { cert.at(1), cert.at(2).uint(), cert.at(3) };
-            case 17: return unreg_drep_cert { cert.at(1), cert.at(2).uint() };
-            case 18: return update_drep_cert { cert.at(1), cert.at(2) };
+            case 7: return reg_cert {
+                credential_t::from_cbor(cert.at(1)),
+                cert.at(2).uint()
+            };
+            case 8: return unreg_cert {
+                credential_t::from_cbor(cert.at(1)),
+                cert.at(2).uint()
+            };
+            case 9: return vote_deleg_cert {
+                credential_t::from_cbor(cert.at(1)),
+                drep_t::from_cbor(cert.at(2))
+            };
+            case 10: return stake_vote_deleg_cert {
+                credential_t::from_cbor(cert.at(1)),
+                pool_hash::from_cbor(cert.at(2)),
+                drep_t::from_cbor(cert.at(3))
+            };
+            case 11: return stake_reg_deleg_cert {
+                credential_t::from_cbor(cert.at(1)),
+                pool_hash::from_cbor(cert.at(2)),
+                cert.at(3).uint()
+            };
+            case 12: return vote_reg_deleg_cert {
+                credential_t::from_cbor(cert.at(1)),
+                drep_t::from_cbor(cert.at(2)),
+                cert.at(3).uint()
+            };
+            case 13: return stake_vote_reg_deleg_cert {
+                credential_t::from_cbor(cert.at(1)),
+                pool_hash::from_cbor(cert.at(2)),
+                drep_t::from_cbor(cert.at(3)),
+                cert.at(4).uint()
+            };
+            case 14: return auth_committee_hot_cert {
+                credential_t::from_cbor(cert.at(1)),
+                credential_t::from_cbor(cert.at(2))
+            };
+            case 15: return resign_committee_cold_cert {
+                credential_t::from_cbor(cert.at(1)),
+                optional_anchor_t::from_cbor(cert.at(2))
+            };
+            case 16: return reg_drep_cert {
+                credential_t::from_cbor(cert.at(1)),
+                cert.at(2).uint(),
+                optional_anchor_t::from_cbor(cert.at(3))
+            };
+            case 17: return unreg_drep_cert {
+                credential_t::from_cbor(cert.at(1)),
+                cert.at(2).uint()
+            };
+            case 18: return update_drep_cert {
+                credential_t::from_cbor(cert.at(1)),
+                optional_anchor_t::from_cbor(cert.at(2))
+            };
             default:
-                throw error("unsupported cert type: {}", typ);
+                throw error(fmt::format("unsupported cert type: {}", typ));
         }
     }
 

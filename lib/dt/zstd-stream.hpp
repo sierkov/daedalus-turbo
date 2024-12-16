@@ -22,7 +22,7 @@ namespace daedalus_turbo::zstd {
             if (!_zstd_ds) [[unlikely]]
                 throw error("failed to allocate a ZSTD decompression stream!");
             if (const auto res = ZSTD_initDStream(_zstd_ds); ZSTD_isError(res)) [[unlikely]]
-                throw error("failed to create a ZSTD decompression stream: {}", ZSTD_getErrorName(res));
+                throw error(fmt::format("failed to create a ZSTD decompression stream: {}", ZSTD_getErrorName(res)));
         }
 
         ~read_stream()
@@ -45,7 +45,7 @@ namespace daedalus_turbo::zstd {
                 }
                 const auto res = ZSTD_decompressStream(_zstd_ds, &ob, &_zstd_in_buf);
                 if (ZSTD_isError(res)) [[unlikely]]
-                    throw error("zstd::read_stream: decompression failed: {}", ZSTD_getErrorName(res));
+                    throw error(fmt::format("zstd::read_stream: decompression failed: {}", ZSTD_getErrorName(res)));
                 if (ob.pos == ob.size)
                     return ob.size;
             }

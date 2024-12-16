@@ -36,7 +36,7 @@ namespace daedalus_turbo::cli {
             cmd->configure(meta.cfg);
             meta.cfg.opts.emplace("config-dir", "a directory with Cardano configuration files");
             if (const auto [it, created] = commands.try_emplace(meta.cfg.name, std::move(meta)); !created) [[unlikely]]
-                throw error("multiple definitions for {}", meta.cfg.name);
+                throw error(fmt::format("multiple definitions for {}", meta.cfg.name));
         }
         if (argc < 2) {
             std::cerr << "Usage: <command> [<arg> ...], where <command> is one of:\n" ;

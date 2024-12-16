@@ -154,10 +154,10 @@ namespace daedalus_turbo::cbor::zero {
                     switch (t.first) {
                         case 2: return _raw_big_int_from_value(t.second);
                         case 3: return (_raw_big_int_from_value(t.second) + 1) * -1;
-                        default: throw error("unsupported tag type for a bigint: {}!", t.first);
+                        default: throw error(fmt::format("unsupported tag type for a bigint: {}!", t.first));
                     }
                 }
-                default: throw error("cannot interpret cbor value as a bigint: {}", *this);
+                default: throw error(fmt::format("cannot interpret cbor value as a bigint: {}", stringify()));
             }
         }
 
@@ -165,7 +165,7 @@ namespace daedalus_turbo::cbor::zero {
         {
             if (type() == major_type::uint || type() == major_type::nint) [[likely]]
                 return special_uint();
-            throw error("expected an uint but have {}", type());
+            throw error(fmt::format("expected an uint but have {}", type()));
         }
 
         buffer bytes() const
@@ -175,7 +175,7 @@ namespace daedalus_turbo::cbor::zero {
                     return _subbuf(special_bytes());
                 throw error("bytes method does not support indefinite byte strings, use bytes_alloc instead!");
             }
-            throw error("expected a byte string but got {}", type());
+            throw error(fmt::format("expected a byte string but got {}", type()));
         }
 
         template<typename T>
@@ -195,7 +195,7 @@ namespace daedalus_turbo::cbor::zero {
                 }
                 throw error("indefinite byte strings of more than 1024 chunks are not supported!");
             }
-            throw error("expected a byte string but got {}", type());
+            throw error(fmt::format("expected a byte string but got {}", type()));
         }
 
         std::string_view text() const
@@ -205,28 +205,28 @@ namespace daedalus_turbo::cbor::zero {
                     return _subbuf(special_bytes()).string_view();
                 throw error("text method does not support indefinite byte strings use text_alloc instead!");
             }
-            throw error("expected a text string but got {}", type());
+            throw error(fmt::format("expected a text string but got {}", type()));
         }
 
         array_iterator array() const
         {
             if (type() == major_type::array) [[likely]]
                 return { *this };
-            throw error("expected an array but got {}", type());
+            throw error(fmt::format("expected an array but got {}", type()));
         }
 
         map_iterator map() const
         {
             if (type() == major_type::map) [[likely]]
                 return { *this };
-            throw error("expected a map but got {}", type());
+            throw error(fmt::format("expected a map but got {}", type()));
         }
 
         float float32() const
         {
             if (type() == major_type::simple || special() == special_val::four_bytes) [[likely]]
                 return _subbuf(1, 4).to_host<float>();
-            throw error("expected a float32 but have {} {}", type(), special());
+            throw error(fmt::format("expected a float32 but have {} {}", type(), special()));
         }
 
         tag_item tag() const
@@ -235,14 +235,14 @@ namespace daedalus_turbo::cbor::zero {
                 const auto id = special_uint();
                 return { id, decoder { _subbuf(special_bytes()) }.read() };
             }
-            throw error("expected a tag but got {}", type());
+            throw error(fmt::format("expected a tag but got {}", type()));
         }
 
         special_val simple() const
         {
             if (type() == major_type::simple) [[likely]]
                 return special();
-            throw error("expected a simple value but got {}", type());
+            throw error(fmt::format("expected a simple value but got {}", type()));
         }
 
         value at(const size_t idx) const
@@ -269,7 +269,7 @@ namespace daedalus_turbo::cbor::zero {
                 case major_type::map:
                     return special() == special_val::s_break;
                 default:
-                    throw error("indefinite is supported only for bytes, text, array, and map but got {}", type());
+                    throw error(fmt::format("indefinite is supported only for bytes, text, array, and map but got {}", type()));
             }
         }
 
@@ -288,7 +288,7 @@ namespace daedalus_turbo::cbor::zero {
             const auto typ = type();
             if (typ == major_type::array || typ == major_type::map) [[likely]]
                 return special_uint();
-            throw error("the number of items is available only in array and maps but got {}", type());
+            throw error(fmt::format("the number of items is available only in array and maps but got {}", type()));
         }
 
         buffer raw_span() const
@@ -385,7 +385,7 @@ namespace daedalus_turbo::cbor::zero {
                 _read_tag(v);
                 break;
             default:
-                throw error("unsupported type {}", v.type());
+                throw error(fmt::format("unsupported type {}", v.type()));
         }
         return v;
     }
@@ -531,7 +531,7 @@ namespace daedalus_turbo::cbor::zero {
                     return fmt::format_to(out_it, "F32 {}", v.float32());
                 return fmt::format_to(out_it, "{}", v.special());
             default:
-                throw error("unsupported CBOR type {}", v.type());
+                throw error(fmt::format("unsupported CBOR type {}", v.type()));
         }
     }
 

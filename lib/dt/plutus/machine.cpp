@@ -158,9 +158,9 @@ namespace daedalus_turbo::plutus {
         {
             if (_budget) {
                 if (_cost.steps > _budget->steps) [[unlikely]]
-                    throw error("plutus program CPU cost has exceeded it's budget: {}", _budget->steps);
+                    throw error(fmt::format("plutus program CPU cost has exceeded it's budget: {}", _budget->steps));
                 if (_cost.mem > _budget->mem) [[unlikely]]
-                    throw error("plutus program memory has exceeded it's budget: {}", _budget->mem);
+                    throw error(fmt::format("plutus program memory has exceeded it's budget: {}", _budget->mem));
             }
         }
 
@@ -207,7 +207,7 @@ namespace daedalus_turbo::plutus {
         {
             if (auto ptr_opt = _lookup_opt(env, var_idx); ptr_opt)
                 return std::move(*ptr_opt);
-            throw error("reference to a free variable: v{}", var_idx);
+            throw error(fmt::format("reference to a free variable: v{}", var_idx));
         }
 
         term _discharge_term(const environment &env, const term &t, const int64_t level, const int64_t var_idx_diff) const
@@ -268,7 +268,7 @@ namespace daedalus_turbo::plutus {
                     t_constr pc { v.tag, term_list { _alloc, std::move(args) } };
                     return term { _alloc, std::move(pc) };
                 } else {
-                    throw error("an unsupported value type to discharge: {}", typeid(v).name());
+                    throw error(fmt::format("an unsupported value type to discharge: {}", typeid(v).name()));
                 }
             }, val);
         }
@@ -282,7 +282,7 @@ namespace daedalus_turbo::plutus {
         {
             const auto num_args = b.b.num_args();
             if (b.args->size() != num_args) [[unlikely]]
-                throw error("can't apply builtin {} to {} arguments: {} arguments are required!", b.b.tag, b.args->size(), num_args);
+                throw error(fmt::format("can't apply builtin {} to {} arguments: {} arguments are required!", b.b.tag, b.args->size(), num_args));
             _spend(b.b.tag, b.args);
             const auto func = _get_builtin_func(b.b.tag);
             switch (num_args) {
@@ -307,7 +307,7 @@ namespace daedalus_turbo::plutus {
                     auto sixth = std::next(fifth);
                     return std::get<builtin_six_arg>(func)(_alloc, *first, *second, *third, *fourth, *fifth, *sixth);
                 }
-                default: throw error("unsupported number of arguments: {}!", num_args);
+                default: throw error(fmt::format("unsupported number of arguments: {}!", num_args));
             }
         }
 
@@ -326,7 +326,7 @@ namespace daedalus_turbo::plutus {
                     new_args.emplace_back(arg);
                     v_builtin new_b { f.b, { _alloc, std::move(new_args) }, f.forces };
                     if (new_b.b.polymorphic_args() != new_b.forces)
-                        throw error("an application of an polymorphic builtin with an incorrect number of forces: {}", new_b.b.tag);
+                        throw error(fmt::format("an application of an polymorphic builtin with an incorrect number of forces: {}", new_b.b.tag));
                     if (new_b.args->size() < new_b.b.num_args()) [[likely]]
                         return value { _alloc, std::move(new_b) };
                     //logger::info("{} {}", new_b.b.tag, new_b.args);
@@ -334,7 +334,7 @@ namespace daedalus_turbo::plutus {
                     //logger::info("{} => {}", new_b.b.tag, res);
                     return res;
                 }
-                throw error("only lambdas and builtins can be applied but got: {}", typeid(T).name());
+                throw error(fmt::format("only lambdas and builtins can be applied but got: {}", typeid(T).name()));
                 return value { _alloc, constant { _alloc, std::monostate {} } };
             }, func);
         }
@@ -353,9 +353,9 @@ namespace daedalus_turbo::plutus {
                         ++new_b.forces;
                         return value { _alloc, std::move(new_b) };
                     }
-                    throw error("an unexpected force of a builtin: {} polymorhpic_args: {} num_forces: {}", v.b.tag, v.b.polymorphic_args(), v.forces);
+                    throw error(fmt::format("an unexpected force of a builtin: {} polymorhpic_args: {} num_forces: {}", v.b.tag, v.b.polymorphic_args(), v.forces));
                 }
-                throw error("unsupported value for force: {}", typeid(T).name());
+                throw error(fmt::format("unsupported value for force: {}", typeid(T).name()));
                 return value { _alloc, constant { _alloc, std::monostate {} } };
             }, *val);
         }
@@ -419,7 +419,7 @@ namespace daedalus_turbo::plutus {
             const auto v_arg = _compute(env, e.arg);
             const auto &cc = v_arg.as_constr();
             if (cc.tag >= e.cases->size())
-                throw error("a case argument must have been less than {} but got {}!", e.cases->size(), cc.tag);
+                throw error(fmt::format("a case argument must have been less than {} but got {}!", e.cases->size(), cc.tag));
             auto res = _compute(env, *std::next(e.cases->begin(), cc.tag));
             for (size_t i = 0; i < cc.args->size(); ++i)
                 res = _apply(*res, *std::next(cc.args->begin(), i));
@@ -457,7 +457,7 @@ namespace daedalus_turbo::plutus {
             case script_type::plutus_v3:
                 _impl = std::make_unique<impl>(alloc, costs::defaults().v3.value(), builtins::semantics_v2(), budget);
                 break;
-            default: throw error("unsupported script type: {}", typ);
+            default: throw error(fmt::format("unsupported script type: {}", typ));
         }
     }
 

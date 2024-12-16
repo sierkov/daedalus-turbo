@@ -82,7 +82,7 @@ namespace daedalus_turbo {
                 if (const std::string host = *(_turbo_hosts.begin() + ri); _update_peers_from(host))
                     return host;
             }
-            throw error("failed to find a working turbo host after {} attempts", max_retries);
+            throw error(fmt::format("failed to find a working turbo host after {} attempts", max_retries));
         }
 
         cardano::network::address _next_cardano_impl() override

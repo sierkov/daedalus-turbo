@@ -20,10 +20,7 @@ suite memory_suite = [] {
                 *p = p - data.data();
             after_alloc = memory::my_usage_mb();
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds { 200 });
-        const auto after_dealloc = memory::my_usage_mb();
         expect(after_alloc >= before + (alloc_size >> 20)) << after_alloc << before;
-        // Some standard libraries do not immediately return memory to the OS
-        //expect(after_dealloc < after_alloc) << after_dealloc << after_alloc;
+        // Some standard libraries do not immediately return the memory to the OS, thus, not checking for the memory release
     };
 };

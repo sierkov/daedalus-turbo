@@ -48,7 +48,7 @@ namespace daedalus_turbo::indexer {
                 }
             }
             if (end_offset != indexed_bytes())
-                throw error("internal error: indexed size calculation is incorrect: {} vs {}", end_offset, indexed_bytes());
+                throw error(fmt::format("internal error: indexed size calculation is incorrect: {} vs {}", end_offset, indexed_bytes()));
             _cr.register_processor(_proc);
             logger::info("indices have data up to offset {}", end_offset);
         }
@@ -168,7 +168,7 @@ namespace daedalus_turbo::indexer {
         void _schedule_final_merge(mutex::unique_lock &epoch_slices_lk, const bool force=false)
         {
             if (!epoch_slices_lk)
-                throw error("_cr.sched()ule_final_merge requires epoch_slices_mutex to be locked!");
+                throw error("_cr.schedule_final_merge requires epoch_slices_mutex to be locked!");
             while (!_epoch_slices.empty()) {
                 uint64_t total_size = 0;
                 for (const auto &[epoch, slice]: _epoch_slices) {
@@ -296,7 +296,7 @@ namespace daedalus_turbo::indexer {
         void _idx_commit_tx()
         {
             if (!std::filesystem::exists(_index_state_pre_path))
-                throw error("the prepared chunk_registry state file is missing: {}!", _index_state_pre_path);
+                throw error(fmt::format("the prepared chunk_registry state file is missing: {}!", _index_state_pre_path));
             std::filesystem::rename(_index_state_pre_path, _index_state_path);
             for (const auto &s: _slices_truncated) {
                 for (auto &[name, idxr_ptr]: _indexers)

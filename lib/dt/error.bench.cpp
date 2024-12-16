@@ -11,14 +11,14 @@ suite error_bench_suite = [] {
     "error"_test = [] {
         benchmark_r("construct one-param", 2.0, 10,
             [] {
-                error("Hello {}!", "world");
+                error(fmt::format("Hello {}!", "world"));
             }
         );
         benchmark_r("construct, throw, and catch", 2.0, 10,
             [] {
                 try {
-                    throw error("Hello {}!", "world");
-                } catch (error &ex) {
+                    throw error(fmt::format("Hello {}!", "world"));
+                } catch (error &) {
                 }
             }
         );

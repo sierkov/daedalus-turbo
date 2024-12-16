@@ -53,24 +53,24 @@ suite error_suite = [] {
             expect_throws_msg(f, "Hello!");
         };
         "integers"_test = [] {
-            auto f = [] { throw error("Hello {}!", 123); };
+            auto f = [] { throw error(fmt::format("Hello {}!", 123)); };
             expect_throws_msg(f, "Hello 123!");
         };
         "string"_test = [] {
-            auto f = [&] { throw error("Hello {}!", "world"); };
+            auto f = [&] { throw error(fmt::format("Hello {}!", "world")); };
             expect_throws_msg(f, "Hello world!");
         };
         "buffer"_test = [] {
             array<uint8_t, 4> buf { 0xDE, 0xAD, 0xBE, 0xEF };
-            auto f = [&] { throw error("Hello {}!", buf.span()); };
+            auto f = [&] { throw error(fmt::format("Hello {}!", buf.span())); };
             expect_throws_msg(f, "Hello DEADBEEF!");
         };
         "error_sys_ok"_test = [] {
-            auto f = [&] { errno = 0; throw error_sys("Hello {}!", "world"); };
+            auto f = [&] { errno = 0; throw error_sys(fmt::format("Hello {}!", "world")); };
             expect_throws_msg(f, "Hello world!, errno: 0, strerror: " + no_error_msg);
         };
         "error_sys_fail"_test = [] {
-            auto f = [&] { errno = 2; throw error_sys("Hello {}!", "world"); };
+            auto f = [&] { errno = 2; throw error_sys(fmt::format("Hello {}!", "world")); };
             expect_throws_msg(f, "Hello world!, errno: 2, strerror: No such file or directory");
         };
     };

@@ -32,7 +32,7 @@ namespace daedalus_turbo::sync::turbo {
             auto chain = _dlq.fetch_json_signed(fmt::format("http://{}/chain.json", *host), _vk).as_object();;
             const auto host_api_version = json::value_to<size_t>(chain.at("api").at("version"));
             if (max_supported_api_version < host_api_version)
-                throw error("Please, upgrade. {} has API version {} while your client supports only version {}", *host, host_api_version);
+                throw error(fmt::format("Please, upgrade. {} has API version {} while your client supports only version {}", *host, host_api_version, max_supported_api_version));
             return _peer_find_intersection(*host, std::move(chain));
         }
 
@@ -132,7 +132,7 @@ namespace daedalus_turbo::sync::turbo {
                 // delete if the error snapshot with the same name already exist
                 std::filesystem::remove(debug_path);
                 std::filesystem::rename(save_path, debug_path);
-                throw error("can't parse {}: {}", save_path, ex.what());
+                throw error(fmt::format("can't parse {}: {}", save_path, ex.what()));
             }
         }
 
@@ -241,7 +241,7 @@ namespace daedalus_turbo::sync::turbo {
             uint64_t last_offset = 0;
             for (const auto &[epoch_id, epoch_start_offset]: epoch_offsets) {
                 if (!_epoch_json_cache.contains(epoch_id))
-                    throw error("internal error: epoch cache is missing epoch {} sync start: {}", epoch_id, peer.intersection());
+                    throw error(fmt::format("internal error: epoch cache is missing epoch {} sync start: {}", epoch_id, peer.intersection()));
                 uint64_t chunk_start_offset = epoch_start_offset;
                 const auto &j_epoch = _epoch_json_cache.at(epoch_id);
                 for (const auto &j_chunk: j_epoch.at("chunks").as_array()) {
@@ -256,8 +256,8 @@ namespace daedalus_turbo::sync::turbo {
                         chunk.offset = chunk_start_offset;
                         download_tasks.emplace_back(std::move(chunk));
                     } else if (chunk_it->second.data_size != chunk_size || chunk_it->second.offset != chunk_start_offset) {
-                        throw error("remote chunk offset: {} and size: {} does not match the local ones: {} and {}",
-                            chunk_start_offset, chunk_size, chunk_it->second.offset, chunk_it->second.data_size);
+                        throw error(fmt::format("remote chunk offset: {} and size: {} does not match the local ones: {} and {}",
+                            chunk_start_offset, chunk_size, chunk_it->second.offset, chunk_it->second.data_size));
                     }
                     chunk_start_offset += chunk_size;
                 }

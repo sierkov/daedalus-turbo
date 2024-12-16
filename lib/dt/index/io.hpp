@@ -78,7 +78,7 @@ namespace daedalus_turbo::index {
                 _os { _path + ".tmp" }
         {
             if (_num_parts > max_parts)
-                throw error("num_partitions: {} is greater than the pre-configured maximum: {}!", _num_parts, max_parts);
+                throw error(fmt::format("num_partitions: {} is greater than the pre-configured maximum: {}!", _num_parts, max_parts));
             for (auto &buf: _bufs)
                 buf.resize(chunk_size);
         }
@@ -106,7 +106,7 @@ namespace daedalus_turbo::index {
         const T &emplace_part(size_t part_id, A &&...args)
         {
             if (_commited)
-                throw error("writer::emplace_part {} has already been commited!", _path);
+                throw error(fmt::format("writer::emplace_part {} has already been commited!", _path));
             auto &cnt = _cnts.at(part_id);
             auto &buf = _bufs.at(part_id);
             T &item = buf.at(cnt % _chunk_size);
@@ -142,11 +142,11 @@ namespace daedalus_turbo::index {
         {
             mutex::scoped_lock lock { _write_mutex };
             if (_commited)
-                throw error("set_meta called for {} after it has been commited!", _path);
+                throw error(fmt::format("set_meta called for {} after it has been commited!", _path));
             if (name.size() > 255)
-                throw error("name of metadata item is too long: {}!", name.size());
+                throw error(fmt::format("name of metadata item is too long: {}!", name.size()));
             if (data.size() > 255)
-                throw error("size of the metadata item is too big: {}!", data.size());
+                throw error(fmt::format("size of the metadata item is too big: {}!", data.size()));
             _meta[name] = data;
         }
 
@@ -170,7 +170,7 @@ namespace daedalus_turbo::index {
         void _commit()
         {
             if (_commited)
-                throw error("writer::commit {} has already been commited!", _path);
+                throw error(fmt::format("writer::commit {} has already been commited!", _path));
             {
                 mutex::scoped_lock lock { _write_mutex };
                 _commited = true;
@@ -181,7 +181,7 @@ namespace daedalus_turbo::index {
             mutex::scoped_lock lock { _write_mutex };
             uint64_t meta_off = _os.tellp();
             if (_meta.size() > 255)
-                throw error("internal error: only up to 255 meta items are supported but got: {}", _meta.size());
+                throw error(fmt::format("internal error: only up to 255 meta items are supported but got: {}", _meta.size()));
             const uint8_t meta_size = _meta.size();
             uint8_vector meta_buf {};
             meta_buf << buffer::from(_num_parts)
@@ -189,9 +189,9 @@ namespace daedalus_turbo::index {
                 << buffer::from(meta_size);
             for (const auto &[name, data]: _meta) {
                 if (name.size() > 255)
-                    throw error("internal error: metadata name must not exceed 255 bytes but got {}", name.size());
+                    throw error(fmt::format("internal error: metadata name must not exceed 255 bytes but got {}", name.size()));
                 if (data.size() > 255)
-                    throw error("internal error: metadata value must not exceed 255 bytes but got {}", data.size());
+                    throw error(fmt::format("internal error: metadata value must not exceed 255 bytes but got {}", data.size()));
                 uint8_t name_size = name.size();
                 uint8_t data_size = data.size();
                 meta_buf << buffer::from(name_size)
@@ -224,7 +224,7 @@ namespace daedalus_turbo::index {
                     throw error("internal_error: only the final chunk may have a size less than chunk_size constant!");
                 auto &buf = _bufs.at(part_id);
                 if (part.size() > 0 && buf.at(cnt_todo - 1) < part.back().max_item)
-                    throw error("{} partition-{} chunks {} and {} are not ordered!", _path, part_id, part.size() - 1, part.size());
+                    throw error(fmt::format("{} partition-{} chunks {} and {} are not ordered!", _path, part_id, part.size() - 1, part.size()));
                 std::span<uint8_t> data { reinterpret_cast<uint8_t *>(buf.data()), cnt_todo * sizeof(T) };
                 thread_local uint8_vector comp_data {};
                 zstd::compress(comp_data, data, 3);
@@ -232,7 +232,7 @@ namespace daedalus_turbo::index {
                 mutex::scoped_lock lock { _write_mutex };
                 size_t fact_off = _os.tellp();
                 if (fact_off != _free_off)
-                    throw error("internal error with {}: expected file position {} but got {}", _path, (size_t)_free_off, fact_off);
+                    throw error(fmt::format("internal error with {}: expected file position {} but got {}", _path, (size_t)_free_off, fact_off));
                 auto packed_hash = blake2b<blake2b_64_hash>(comp_data);
                 part.emplace_back(_free_off, comp_data.size(), buf.at(cnt_todo - 1), packed_hash);
                 _free_off += comp_data.size();
@@ -259,7 +259,7 @@ namespace daedalus_turbo::index {
         const T &emplace_part(size_t part_idx, A &&...args)
         {
             if (_commited)
-                throw error("sorting-writer::emplace_part {} has already been commited!", _writer.path());
+                throw error(fmt::format("sorting-writer::emplace_part {} has already been commited!", _writer.path()));
             auto &buf = _bufs.at(part_idx);
             auto &item = buf.emplace_back(std::forward<A>(args)...);
             return item;
@@ -313,7 +313,7 @@ namespace daedalus_turbo::index {
         {
             auto data_size = std::filesystem::file_size(_path);
             if (data_size < sizeof(uint64_t))
-                throw error("{} is too small - no metadata can be found", _path);
+                throw error(fmt::format("{} is too small - no metadata can be found", _path));
             _is.seek(data_size - sizeof(uint64_t));
             uint64_t meta_off;
             _is.read(&meta_off, sizeof(meta_off));
@@ -326,13 +326,13 @@ namespace daedalus_turbo::index {
             _is.read(&meta_hash, sizeof(meta_hash));
             auto meta_hash_computed = blake2b<blake2b_64_hash>(meta_buf);
             if (meta_hash_computed != meta_hash)
-                throw error("{}: metadata hash mismatch computed: {} vs stored: {}", _path, meta_hash_computed, meta_hash);
+                throw error(fmt::format("{}: metadata hash mismatch computed: {} vs stored: {}", _path, meta_hash_computed, meta_hash));
             _is.seek(meta_off);
             _is.read(&_num_parts, sizeof(_num_parts));
             if (_num_parts == 0)
-                throw error("num_partitions is {} for {}!", _num_parts, _path);
+                throw error(fmt::format("num_partitions is {} for {}!", _num_parts, _path));
             if (_num_parts > max_parts)
-                throw error("num_partitions: {} is greater than the preconfigured maximum: {}!", _num_parts, max_parts);
+                throw error(fmt::format("num_partitions: {} is greater than the preconfigured maximum: {}!", _num_parts, max_parts));
             _is.read(&_chunk_size, sizeof(_chunk_size));
             uint8_t meta_cnt;
             _is.read(&meta_cnt, sizeof(meta_cnt));
@@ -363,7 +363,7 @@ namespace daedalus_turbo::index {
                     _is.read(chunk_list.data(), sizeof(chunk_list[0]) * list_size);
                     for (size_t ci = 1; ci < chunk_list.size(); ci++) {
                         if (chunk_list.at(ci).max_item < chunk_list.at(ci - 1).max_item)
-                            throw error("index {}: partition-{} chunks {} and {} are not ordered!", _path, p, ci - 1, ci);
+                            throw error(fmt::format("index {}: partition-{} chunks {} and {} are not ordered!", _path, p, ci - 1, ci));
                     }
                     _max_items.at(p) = chunk_list.back().max_item;
                 } else if (p > 0) {
@@ -372,7 +372,7 @@ namespace daedalus_turbo::index {
             }
             for (size_t pi = 1; pi < _num_parts; ++pi) {
                 if (_max_items.at(pi) < _max_items.at(pi - 1))
-                    throw error("index {}: partitions {} and {} are not ordered!", _path, pi - 1, pi);
+                    throw error(fmt::format("index {}: partitions {} and {} are not ordered!", _path, pi - 1, pi));
             }
         }
 
@@ -460,7 +460,7 @@ namespace daedalus_turbo::index {
         {
             auto it = _meta.find(name);
             if (it == _meta.end())
-                throw error("unknown metadata item: {}!", name);
+                throw error(fmt::format("unknown metadata item: {}!", name));
             return it->second.span();
         }
 
@@ -486,7 +486,7 @@ namespace daedalus_turbo::index {
             const auto &cnt = _cnts.at(part_idx);
             auto &offset = t.offsets.at(t_part_idx);
             if (new_offset >= cnt)
-                throw error("offset is larger than the number of available elements: {} >= {}", new_offset, cnt);
+                throw error(fmt::format("offset is larger than the number of available elements: {} >= {}", new_offset, cnt));
             offset = new_offset;
         }
 
@@ -552,7 +552,7 @@ namespace daedalus_turbo::index {
         {
             if (t.single_part_idx != max_parts) {
                 if (part_idx != t.single_part_idx)
-                    throw error("reader configured for a single partition {} but got request for data from partition {}!", t.single_part_idx, part_idx);
+                    throw error(fmt::format("reader configured for a single partition {} but got request for data from partition {}!", t.single_part_idx, part_idx));
                 part_idx = 0;
             }
             return part_idx;
@@ -579,8 +579,8 @@ namespace daedalus_turbo::index {
             }
             auto packed_hash = blake2b<blake2b_64_hash>(t.read_buf);
             if (packed_hash != chunk.packed_hash)
-                throw error("corrupted chunk data in index {} part {} chunk {} at offset {} size {} hash {} while expected hash {}",
-                        _path, part_idx, new_chunk_idx, chunk.file_offset, chunk.packed_size, packed_hash, chunk.packed_hash);
+                throw error(fmt::format("corrupted chunk data in index {} part {} chunk {} at offset {} size {} hash {} while expected hash {}",
+                        _path, part_idx, new_chunk_idx, chunk.file_offset, chunk.packed_size, packed_hash, chunk.packed_hash));
             std::span<uint8_t> cache_buf { reinterpret_cast<uint8_t *>(cache.data()), sizeof(T) * cache.size() };
             zstd::decompress(cache_buf, t.read_buf);
             t.num_reads++;
@@ -819,7 +819,7 @@ namespace daedalus_turbo::index {
         {
             if (t.single_part_no != max_parts) {
                 if (part_no != t.single_part_no)
-                    throw error("reader configured for a single partition {} but got request for data from partition {}!", t.single_part_no, part_no);
+                    throw error(fmt::format("reader configured for a single partition {} but got request for data from partition {}!", t.single_part_no, part_no));
                 part_no = 0;
             }
             return part_no;

@@ -102,7 +102,7 @@ suite cardano_common_bench_suite = [] {
                 }
                 if (sum == 1434 * num_iter) [[likely]]
                     return num_iter * s_objs.size();
-                throw error("invalid sum: {}", sum);
+                throw error(fmt::format("invalid sum: {}", sum));
             });
             daedalus_turbo::vector<std::unique_ptr<dynamic_base>> d_objs {};
             d_objs.emplace_back(std::make_unique<dynamic_a>());
@@ -116,7 +116,7 @@ suite cardano_common_bench_suite = [] {
                 }
                 if (sum == 1434 * num_iter) [[likely]]
                     return num_iter * d_objs.size();
-                throw error("invalid sum: {}", sum);
+                throw error(fmt::format("invalid sum: {}", sum));
             });
             expect(stat > dyn) << stat << dyn;
         };

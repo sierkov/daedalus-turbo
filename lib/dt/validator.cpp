@@ -172,12 +172,12 @@ namespace daedalus_turbo::validator {
                 _cr.sched().process(true);
             }
             if (_state.valid_end_offset() < _state.end_offset()) {
-                throw error("valid subchain end offset: {} is less than the final state end offset: {}",
-                    _state.valid_end_offset(), _state.end_offset());
+                throw error(fmt::format("valid subchain end offset: {} is less than the final state end offset: {}",
+                    _state.valid_end_offset(), _state.end_offset()));
             }
             if (_reserve_snapshot && _state.valid_end_offset() < _reserve_snapshot->end_offset)
-                throw error("valid subchain end offset: {} is less than the reserve state end offset: {}",
-                    _state.valid_end_offset(), _reserve_snapshot->end_offset);
+                throw error(fmt::format("valid subchain end offset: {} is less than the reserve state end offset: {}",
+                    _state.valid_end_offset(), _reserve_snapshot->end_offset));
         }
 
         void my_rollback_tx()
@@ -277,19 +277,19 @@ namespace daedalus_turbo::validator {
         {
             auto slot = blk.slot();
             if (!blk.signature_ok()) [[unlikely]]
-                throw error("validation of the block signature at slot {} failed!", slot);
+                throw error(fmt::format("validation of the block signature at slot {} failed!", slot));
             if (blk.era() > 0 && !blk.body_hash_ok()) [[unlikely]]
-                throw error("validation of the block body hash at slot {} failed!", slot);
+                throw error(fmt::format("validation of the block body hash at slot {} failed!", slot));
             switch (blk.era()) {
                 case 0: {
                     static auto boundary_issuer_vkey = cardano::vkey::from_hex("0000000000000000000000000000000000000000000000000000000000000000");
                     if (blk.issuer_vkey() != boundary_issuer_vkey)
-                        throw error("boundary block contains an unexpected issuer_vkey: {}", blk.issuer_vkey());
+                        throw error(fmt::format("boundary block contains an unexpected issuer_vkey: {}", blk.issuer_vkey()));
                     break;
                 }
                 case 1: {
                     if (!_cr.config().byron_issuers.contains(blk.issuer_vkey())) [[unlikely]]
-                        throw error("unexpected Byron issuer_vkey: {}", blk.issuer_vkey());
+                        throw error(fmt::format("unexpected Byron issuer_vkey: {}", blk.issuer_vkey()));
                     break;
                 }
                 case 2:
@@ -301,7 +301,7 @@ namespace daedalus_turbo::validator {
                     // do nothing here, the block signer's eligibility is tested later process_vrf_chunks
                     break;
                 default:
-                    throw error("unsupported block era: {}", blk.era());
+                    throw error(fmt::format("unsupported block era: {}", blk.era()));
             }
         }
 
@@ -366,9 +366,9 @@ namespace daedalus_turbo::validator {
         {
             st.load_zpp(_storage_path("ledger", snap.end_offset));
             if (st.end_offset() != snap.end_offset)
-                throw error("loaded state does not match the recorded end offset: {} != {}", st.end_offset(), snap.end_offset);
+                throw error(fmt::format("loaded state does not match the recorded end offset: {} != {}", st.end_offset(), snap.end_offset));
             if (st.end_offset() != st.valid_end_offset())
-                throw error("validator state is in inconsistent state valid_end_offset: {} vs end_offset: {}", st.valid_end_offset(), st.end_offset());
+                throw error(fmt::format("validator state is in inconsistent state valid_end_offset: {} vs end_offset: {}", st.valid_end_offset(), st.end_offset()));
         }
     private:
         static constexpr uint64_t snapshot_hifreq_end_offset_range = static_cast<uint64_t>(1) << 30;
@@ -601,7 +601,7 @@ namespace daedalus_turbo::validator {
                 if (const auto valid_point = _state.add_subchain(std::move(sc)); valid_point)
                     _cr.report_progress("validate", { valid_point->slot, valid_point->end_offset });
             } else {
-                throw error("chunk at offset {} contains no blocks!", sc.offset);
+                throw error(fmt::format("chunk at offset {} contains no blocks!", sc.offset));
             }
         }
 
@@ -689,7 +689,7 @@ namespace daedalus_turbo::validator {
                 }
             } catch (const std::exception &ex) {
                 logger::error("apply_updates for epoch: {} std::exception: {}", e, ex.what());
-                throw error("failed to process epoch {} updates: {}", e, ex.what());
+                throw error(fmt::format("failed to process epoch {} updates: {}", e, ex.what()));
             } catch (...) {
                 logger::error("apply_updates for epoch: {} unknown exception", e);
                 throw;
@@ -709,7 +709,7 @@ namespace daedalus_turbo::validator {
                     logger::info("applied ledger updates for epoch: {} end offset: {} utxos: {}", _state.epoch(), _state.end_offset(), _state.utxos().size());
                 } catch (const std::exception &ex) {
                     logger::error("failed to process epoch {} updates: {}", e, ex.what());
-                    throw error("failed to process epoch {} updates: {}", e, ex.what());
+                    throw error(fmt::format("failed to process epoch {} updates: {}", e, ex.what()));
                 } catch (...) {
                     logger::error("failed to process epoch {} updates: unknown exception", e);
                     throw;
@@ -718,7 +718,7 @@ namespace daedalus_turbo::validator {
         }
 
         void _validate_epoch_leaders(const uint64_t epoch, const uint64_t epoch_min_offset, const std::shared_ptr<vector<index::vrf::item>> &vrf_updates_ptr,
-            const std::shared_ptr<pool_stake_distribution> &pool_dist_ptr,
+            const std::shared_ptr<operating_pool_map> &pool_dist_ptr,
             const cardano::vrf_nonce &nonce_epoch, const cardano::vrf_nonce &uc_nonce, const cardano::vrf_nonce &uc_leader,
             const size_t start_idx, const size_t end_idx)
         {
@@ -728,28 +728,28 @@ namespace daedalus_turbo::validator {
                 if (item.era < 6) {
                     const auto leader_input = vrf_make_seed(uc_leader, item.slot, nonce_epoch);
                     if (!vrf03_verify(item.leader_result, item.vkey, item.leader_proof, leader_input))
-                        throw error("leader VRF verification failed: epoch: {} slot {} era {}", epoch, item.slot, item.era);
+                        throw error(fmt::format("leader VRF verification failed: epoch: {} slot {} era {}", epoch, item.slot, item.era));
                     auto nonce_input = vrf_make_seed(uc_nonce, item.slot, nonce_epoch);
                     if (!vrf03_verify(item.nonce_result, item.vkey, item.nonce_proof, nonce_input))
-                        throw error("nonce VRF verification failed: epoch: {} slot {} era {}", epoch, item.slot, item.era);
+                        throw error(fmt::format("nonce VRF verification failed: epoch: {} slot {} era {}", epoch, item.slot, item.era));
                 } else {
                     const auto vrf_input = vrf_make_input(item.slot, nonce_epoch);
                     if (!vrf03_verify(item.leader_result, item.vkey, item.leader_proof, vrf_input))
-                        throw error("VRF verification failed: epoch: {} slot {} era {}", epoch, item.slot, item.era);
+                        throw error(fmt::format("VRF verification failed: epoch: {} slot {} era {}", epoch, item.slot, item.era));
                 }
                 if (!_state.pbft_pools().contains(item.pool_id)) {
                     const auto pool_it = pool_dist_ptr->find(item.pool_id);
                     if (pool_it == pool_dist_ptr->end())
-                        throw error("epoch {} pool-stake distribution misses block-issuing pool id {}!", epoch, item.pool_id);
-                    rational rel_stake { pool_it->second, pool_dist_ptr->total_stake() };
+                        throw error(fmt::format("epoch {} pool-stake distribution misses block-issuing pool id {}!", epoch, item.pool_id));
+                    const auto rel_stake = static_cast<rational>(pool_it->second.rel_stake);
                     if (item.era < 6) {
                         if (!vrf_leader_is_eligible(item.leader_result, 0.05, rel_stake))
-                            throw error("Leader-eligibility check failed for block at slot {} issued by {}: leader_result: {} rel_stake: {}",
-                                item.slot, item.pool_id, item.leader_result, rel_stake);
+                            throw error(fmt::format("Leader-eligibility check failed for block at slot {} issued by {}: leader_result: {} rel_stake: {}",
+                                item.slot, item.pool_id, item.leader_result, rel_stake));
                     } else {
                         if (!vrf_leader_is_eligible(vrf_leader_value(item.leader_result), 0.05, rel_stake))
-                            throw error("era 6 Leader-eligibility check failed for block at slot {} issued by {}: leader_result: {} rel_stake: {}",
-                                item.slot, item.pool_id, item.leader_result, rel_stake);
+                            throw error(fmt::format("era 6 Leader-eligibility check failed for block at slot {} issued by {}: leader_result: {} rel_stake: {}",
+                                item.slot, item.pool_id, item.leader_result, rel_stake));
                     }
                 }
             }
@@ -773,7 +773,7 @@ namespace daedalus_turbo::validator {
             if (!vrf_updates_ptr->empty()) {
                 std::sort(vrf_updates_ptr->begin(), vrf_updates_ptr->end());
                 if (!fast) {
-                    auto pool_dist_ptr = std::make_shared<pool_stake_distribution>(_state.pool_dist_set());
+                    const auto pool_dist_ptr = std::make_shared<operating_pool_map>(_state.pool_stake_dist());
                     const auto &nonce_epoch = _state.vrf_state().nonce_epoch();
                     const auto &uc_nonce = _state.vrf_state().uc_nonce();
                     const auto &uc_leader = _state.vrf_state().uc_leader();

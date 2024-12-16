@@ -52,7 +52,7 @@ namespace daedalus_turbo {
         {
             const auto it = _json.find(name);
             if (it == _json.end())
-                throw error("Config does not have the requested {} element!", name);
+                throw error(fmt::format("Config does not have the requested {} element!", name));
             return it->value();
         }
 

@@ -40,7 +40,7 @@ namespace daedalus_turbo {
             if (span_memcmp(computed_vkey, vkey) != 0)
                 return false;
             if (period >= period_max)
-                throw error("KES period out of range: {}!", period);
+                throw error(fmt::format("KES period out of range: {}!", period));
             if (period < period_split_point)
                 return _signature.verify(period, _lhs_vk, msg);
             return _signature.verify(period - period_split_point, _rhs_vk, msg);
@@ -66,7 +66,7 @@ namespace daedalus_turbo {
         [[nodiscard]] bool verify(size_t period, const kes_vkey_span &vkey, const buffer &msg) const
         {
             if (period != 0)
-                throw error("period value must be 0 but got: {}", period);
+                throw error(fmt::format("period value must be 0 but got: {}", period));
             return ed25519::verify(_signature, vkey, msg);
         }
     private:
@@ -82,7 +82,7 @@ namespace daedalus_turbo {
 
             explicit split_seed(const buffer &sd) {
                 if (sd.size() != sizeof(ed25519::seed))
-                    throw error("seed buffer must be of of {} bytes but got {}!", sizeof(ed25519::seed), sd.size());
+                    throw error(fmt::format("seed buffer must be of of {} bytes but got {}!", sizeof(ed25519::seed), sd.size()));
                 uint8_vector tmp {};
                 tmp << std::string_view { "\x01" } << sd;
                 blake2b(left, tmp);
@@ -114,7 +114,7 @@ namespace daedalus_turbo {
             void update()
             {
                 if (_period + 1 >= period_end)
-                    throw error("KES secret of level {} cannot grow >= {} while the current period is {}", period_end, _period);
+                    throw error(fmt::format("KES secret of level {} cannot grow >= {} while the current period is {}", DEPTH, period_end, _period));
                 ++_period;
             }
 

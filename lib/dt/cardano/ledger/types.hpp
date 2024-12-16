@@ -63,9 +63,9 @@ namespace daedalus_turbo::cardano::ledger {
             if (stake > 0) {
                 auto it = map_with_get<C>::find(id);
                 if (it == map_with_get<C>::end()) 
-                    throw error("request to remove stake from an unknown id: {}", id);
+                    throw error(fmt::format("request to remove stake from an unknown id: {}", id));
                 if (it->second < stake)
-                    throw error("request to delete more stake ({}) than id {} has: {}", stake, id, it->second);
+                    throw error(fmt::format("request to delete more stake ({}) than id {} has: {}", stake, id, it->second));
                 it->second -= stake;
                 if (it->second == 0 && remove_zero)
                     map_with_get<C>::erase(it);
@@ -102,7 +102,7 @@ namespace daedalus_turbo::cardano::ledger {
         {
             auto it = distribution<C>::find(id);
             if (it == distribution<C>::end())
-                throw error("retiring an unknown id {}", id);
+                throw error(fmt::format("retiring an unknown id {}", id));
             distribution<C>::_total_stake -= static_cast<uint64_t>(it->second);
             distribution<C>::erase(it);
         }
@@ -110,7 +110,7 @@ namespace daedalus_turbo::cardano::ledger {
         void add(distribution<C>::iterator it, typename C::mapped_type stake)
         {
             if (it == distribution<C>::end())
-                throw error("request to increase an unregistered id {} by {}", it->first, stake);
+                throw error(fmt::format("request to increase an unregistered id {} by {}", it->first, stake));
             distribution<C>::add(it, stake);
         }
 
@@ -212,14 +212,14 @@ namespace daedalus_turbo::cardano::ledger {
         {
             auto it = C::find(id);
             if (it == C::end())
-                throw error("retiring an unknown id {}", id);
+                throw error(fmt::format("retiring an unknown id {}", id));
             C::erase(it);
         }
 
         void add(map_with_get<C>::iterator it, C::mapped_type stake)
         {
             if (it == C::end())
-                throw error("request to increase an unregistered id {} by {}", it->first, stake);
+                throw error(fmt::format("request to increase an unregistered id {} by {}", it->first, stake));
             it->second += stake;
         }
 
@@ -232,9 +232,9 @@ namespace daedalus_turbo::cardano::ledger {
         {
             auto it = C::find(id);
             if (it == C::end())
-                throw error("request to increase an unregistered id {} by {}", it->first, stake);
+                throw error(fmt::format("request to increase an unregistered id {} by {}", it->first, stake));
             if (it->second < stake)
-                throw error("request to delete more stake ({}) than id {} has: {}", stake, id, it->second);
+                throw error(fmt::format("request to delete more stake ({}) than id {} has: {}", stake, id, it->second));
             it->second -= stake;
         }
     };
@@ -349,7 +349,7 @@ namespace daedalus_turbo::cardano::ledger {
                 case 0: return mark_deleg;
                 case 1: return set_deleg;
                 case 2: return go_deleg;
-                default: throw error("unsupported deleg_copy index: {}", idx);
+                default: throw error(fmt::format("unsupported deleg_copy index: {}", idx));
             }
         }
 
@@ -364,7 +364,7 @@ namespace daedalus_turbo::cardano::ledger {
                 case 0: return mark_stake;
                 case 1: return set_stake;
                 case 2: return go_stake;
-                default: throw error("unsupported stake_copy index: {}", idx);
+                default: throw error(fmt::format("unsupported stake_copy index: {}", idx));
             }
         }
 

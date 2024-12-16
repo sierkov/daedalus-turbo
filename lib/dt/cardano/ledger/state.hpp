@@ -137,78 +137,6 @@ namespace daedalus_turbo::cardano::ledger {
             return copy;
         }
 
-        reward_distribution reward_dist() const
-        {
-            reward_distribution rewards {};
-            for (const auto &[stake_id, acc]: _state->_accounts) {
-                if (acc.ptr && acc.reward) {
-                    rewards.create(stake_id);
-                    rewards.add(stake_id, acc.reward);
-                }
-            }
-            return rewards;
-        }
-
-        const stake_distribution &instant_rewards_reserves() const
-        {
-            return _state->_instant_rewards_reserves;
-        }
-
-        const stake_distribution &instant_rewards_treasury() const
-        {
-            return _state->_instant_rewards_treasury;
-        }
-
-        delegation_map_copy delegs_mark() const
-        {
-            return _filtered_delegs(0);
-        }
-
-        delegation_map_copy delegs_set() const
-        {
-            return _filtered_delegs(1);
-        }
-
-        delegation_map_copy delegs_go() const
-        {
-            return _filtered_delegs(2);
-        }
-
-        const stake_distribution stake_dist_mark() const
-        {
-            return _filtered_stake_dist(0);
-        }
-
-        const stake_distribution stake_dist_set() const
-        {
-            return _filtered_stake_dist(1);
-        }
-
-        const stake_distribution stake_dist_go() const
-        {
-            return _filtered_stake_dist(2);
-        }
-
-        const pool_deposit_map &pool_deposits() const
-        {
-            return _state->_pool_deposits;
-        }
-
-        const pool_stake_distribution &pool_dist_go() const
-        {
-            return _state->_go.pool_dist;
-        }
-
-        const pool_stake_distribution &pool_dist_mark() const
-        {
-            return _state->_mark.pool_dist;
-        }
-
-        const pool_stake_distribution &pool_dist_set() const
-        {
-            return _state->_set.pool_dist;
-        }
-
         const operating_pool_map &pool_stake_dist() const
         {
             return _state->_operating_stake_dist;
@@ -219,16 +147,6 @@ namespace daedalus_turbo::cardano::ledger {
             return _state->_mark.pool_params;
         }
 
-        const pool_info_map &pool_params_set() const
-        {
-            return _state->_set.pool_params;
-        }
-
-        const pool_info_map &pool_params_go() const
-        {
-            return _state->_go.pool_params;
-        }
-
         const pool_info_map &pool_params() const
         {
             return _state->_active_pool_params;
@@ -237,36 +155,6 @@ namespace daedalus_turbo::cardano::ledger {
         const pool_info_map &pool_params_future() const
         {
             return _state->_future_pool_params;
-        }
-
-        const pool_block_dist &blocks_before() const
-        {
-            return _state->_blocks_before;
-        }
-
-        const pool_block_dist &blocks_current() const
-        {
-            return _state->_blocks_current;
-        }
-
-        const pool_retiring_map &pools_retiring() const
-        {
-            return _state->_pools_retiring;
-        }
-
-        uint64_t deposited() const
-        {
-            return _state->_deposited;
-        }
-
-        uint64_t fees_reward_snapshot() const
-        {
-            return _state->_fees_next_reward;
-        }
-
-        void sub_fees(const uint64_t refund)
-        {
-            _state->sub_fees(refund);
         }
 
         void add_fees(const uint64_t amount)
@@ -294,26 +182,6 @@ namespace daedalus_turbo::cardano::ledger {
             return _state->_params_prev;
         }
 
-        const partitioned_reward_update_dist &potential_rewards() const
-        {
-            return _state->_potential_rewards;
-        }
-
-        const nonmyopic_likelihood_map &nonmyopic() const
-        {
-            return _state->_nonmyopic;
-        }
-
-        uint64_t nonmyopic_reward_pot() const
-        {
-            return _state->_nonmyopic_reward_pot;
-        }
-
-        const nonmyopic_likelihood_map &potential_nonmyopic() const
-        {
-            return _state->_nonmyopic_next;
-        }
-
         cardano::slot last_slot() const
         {
             return cardano::slot::from_epoch(_state->_epoch, _state->_epoch_slot, _cfg);
@@ -322,36 +190,6 @@ namespace daedalus_turbo::cardano::ledger {
         uint64_t end_offset() const
         {
             return _state->_end_offset;
-        }
-
-        uint64_t delta_reserves() const
-        {
-            return _state->_delta_reserves;
-        }
-
-        uint64_t delta_treasury() const
-        {
-            return _state->_delta_treasury;
-        }
-
-        uint64_t delta_fees() const
-        {
-            return _state->_delta_fees;
-        }
-
-        uint64_t reward_pot() const
-        {
-            return _state->_reward_pot;
-        }
-
-        const shelley_delegate_map &future_shelley_delegates() const
-        {
-            return _state->_future_shelley_delegs;
-        }
-
-        const shelley_delegate_map &shelley_delegates() const
-        {
-            return _state->_shelley_delegs;
         }
 
         const set<pool_hash> &pbft_pools() const

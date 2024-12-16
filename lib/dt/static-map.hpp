@@ -142,7 +142,7 @@ namespace daedalus_turbo {
         {
             if (auto it = find(k); it != end())
                 return it->second;
-            throw error("unknown key: {}", k);
+            throw error(fmt::format("unknown key: {}", k));
         }
 
         const V get(const K &k) const
@@ -152,6 +152,16 @@ namespace daedalus_turbo {
             if (it != end())
                 res = it->second;
             return res;
+        }
+
+        iterator begin()
+        {
+            return _data.begin();
+        }
+
+        iterator end()
+        {
+            return _data.end();
         }
 
         const_iterator begin() const

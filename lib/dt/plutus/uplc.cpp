@@ -52,7 +52,7 @@ namespace daedalus_turbo::plutus::uplc {
         {
             if (_pos< _bytes.size()) [[likely]]
                 return static_cast<char>(_bytes[_pos++]);
-            throw error("invalid script: expected more data at pos: {}", _pos);
+            throw error(fmt::format("invalid script: expected more data at pos: {}", _pos));
         }
 
         void _eat(char k)
@@ -60,10 +60,10 @@ namespace daedalus_turbo::plutus::uplc {
             if (_pos < _bytes.size()) [[likely]] {
                 const char b = static_cast<char>(_bytes[_pos]);
                 if (k != b) [[unlikely]]
-                    throw error("invalid script: expected {} at pos {} but got {}", k, _pos, b);
+                    throw error(fmt::format("invalid script: expected {} at pos {} but got {}", k, _pos, b));
                 ++_pos;
             } else {
-                throw error("invalid script: expected {} after the end of data", k);
+                throw error(fmt::format("invalid script: expected {} after the end of data", k));
             }
         }
 
@@ -96,7 +96,7 @@ namespace daedalus_turbo::plutus::uplc {
         void _eat_space_must()
         {
             if (_eat_space() == 0) [[unlikely]]
-                throw error("invalid script: expected a space at pos: {}", _pos);
+                throw error(fmt::format("invalid script: expected a space at pos: {}", _pos));
         }
 
         void _eat_lpar()
@@ -149,7 +149,7 @@ namespace daedalus_turbo::plutus::uplc {
                 tok += _bytes[_pos];
             }
             if (_pos >= _bytes.size() || !pred(static_cast<char>(_bytes[_pos]))) [[unlikely]]
-                throw error("invalid script: match predicate failed at pos: {}", _pos);
+                throw error(fmt::format("invalid script: match predicate failed at pos: {}", _pos));
             ++_pos;
             return tok;
         }
@@ -165,7 +165,7 @@ namespace daedalus_turbo::plutus::uplc {
             _eat_space();
             if (!tok.empty()) [[likely]]
                 return tok;
-            throw error("invalid script: expected a non-empty token before space at pos: {}", _pos);
+            throw error(fmt::format("invalid script: expected a non-empty token before space at pos: {}", _pos));
         }
 
         str_type::value_type _eat_name()
@@ -173,7 +173,7 @@ namespace daedalus_turbo::plutus::uplc {
             auto name = _eat_all([](char k) { return std::isalnum(k) || k == '_' || k == '\''; });
             if (!name.empty()) [[likely]]
                 return name;
-            throw error("name cannot be empty at pos: {}", _pos);
+            throw error(fmt::format("name cannot be empty at pos: {}", _pos));
         }
 
         void _decode_version()
@@ -280,7 +280,7 @@ namespace daedalus_turbo::plutus::uplc {
                 ++_pos;
             str += _eat_all([](char k) { return std::isdigit(k); });
             if (str.empty()) [[unlikely]]
-                throw error("expected an integer at pos: {}", _pos);
+                throw error(fmt::format("expected an integer at pos: {}", _pos));
             return bint_type { _alloc, str };
         }
 
@@ -294,7 +294,7 @@ namespace daedalus_turbo::plutus::uplc {
                 _eat("True");
                 return true;
             }
-            throw error("unexpected boolean value at pos: {}", _pos);
+            throw error(fmt::format("unexpected boolean value at pos: {}", _pos));
         }
 
         bls12_381_g1_element _decode_bls12_381_g1()
@@ -353,13 +353,13 @@ namespace daedalus_turbo::plutus::uplc {
             switch ((tok)[0]) {
                 case 'B': {
                     if (tok != "B") [[unlikely]]
-                        throw error("unsupported token in data definition: {} at pos: {}", tok, _pos);
+                        throw error(fmt::format("unsupported token in data definition: {} at pos: {}", tok, _pos));
                     _eat_space();
                     return { _alloc, _decode_bytestring() };
                 }
                 case 'C': {
                     if (tok != "Constr") [[unlikely]]
-                        throw error("unsupported token in data definition: {} at pos: {}", tok, _pos);
+                        throw error(fmt::format("unsupported token in data definition: {} at pos: {}", tok, _pos));
                     _eat_space();
                     auto id = _decode_integer();
                     _eat_space();
@@ -368,23 +368,23 @@ namespace daedalus_turbo::plutus::uplc {
                 }
                 case 'I': {
                     if (tok != "I") [[unlikely]]
-                        throw error("unsupported token in data definition: {} at pos: {}", tok, _pos);
+                        throw error(fmt::format("unsupported token in data definition: {} at pos: {}", tok, _pos));
                     _eat_space();
                     return { _alloc, _decode_integer() };
                 }
                 case 'L': {
                     if (tok != "List") [[unlikely]]
-                        throw error("unsupported token in data definition: {} at pos: {}", tok, _pos);
+                        throw error(fmt::format("unsupported token in data definition: {} at pos: {}", tok, _pos));
                     _eat_space();
                     return { _alloc, _decode_data_list() };
                 }
                 case 'M': {
                     if (tok != "Map") [[unlikely]]
-                        throw error("unsupported token in data definition: {} at pos: {}", tok, _pos);
+                        throw error(fmt::format("unsupported token in data definition: {} at pos: {}", tok, _pos));
                     _eat_space();
                     return { _alloc, _decode_data_map() };
                 }
-                default: throw error("unsupported token '{}' at pos: {}", tok, _pos);
+                default: throw error(fmt::format("unsupported token '{}' at pos: {}", tok, _pos));
             }
         }
 
@@ -421,7 +421,7 @@ namespace daedalus_turbo::plutus::uplc {
                 return _decode_list_type();
             if (typ == "pair")
                 return _decode_pair_type();
-            throw error("unexpected token '{}' at pos: {}", typ, _pos);
+            throw error(fmt::format("unexpected token '{}' at pos: {}", typ, _pos));
         }
 
         constant_type _decode_constant_type()
@@ -443,31 +443,31 @@ namespace daedalus_turbo::plutus::uplc {
                         return { _alloc, type_tag::bls12_381_g1_element };
                     if (typ == "bls12_381_G2_element")
                         return { _alloc, type_tag::bls12_381_g2_element };
-                    throw error("unexpected token '{}' at pos: {}", typ, _pos);
+                    throw error(fmt::format("unexpected token '{}' at pos: {}", typ, _pos));
                 case 'd':
                     if (typ != "data") [[unlikely]]
-                        throw error("unexpected token '{}' at pos: {}", typ, _pos);
+                        throw error(fmt::format("unexpected token '{}' at pos: {}", typ, _pos));
                     return { _alloc, type_tag::data };
                 case 'i':
                     if (typ != "integer") [[unlikely]]
-                        throw error("unexpected token '{}' at pos: {}", typ, _pos);
+                        throw error(fmt::format("unexpected token '{}' at pos: {}", typ, _pos));
                     return { _alloc, type_tag::integer };
                 case 's':
                     if (typ != "string") [[unlikely]]
-                        throw error("unexpected token '{}' at pos: {}", typ, _pos);
+                        throw error(fmt::format("unexpected token '{}' at pos: {}", typ, _pos));
                     return { _alloc, type_tag::string };
                 case 'u':
                     if (typ != "unit") [[unlikely]]
-                        throw error("unexpected token '{}' at pos: {}", typ, _pos);
+                        throw error(fmt::format("unexpected token '{}' at pos: {}", typ, _pos));
                     return { _alloc, type_tag::unit };
-                default: throw error("unexpected token '{}' at pos: {}", typ, _pos);
+                default: throw error(fmt::format("unexpected token '{}' at pos: {}", typ, _pos));
             }
         }
 
         constant_pair _decode_pair_value(constant_type &&typ)
         {
             if (typ->nested.size() != 2) [[unlikely]]
-                    throw error("the nested type list for a pair must have two elements but has {}", typ->nested.size());
+                    throw error(fmt::format("the nested type list for a pair must have two elements but has {}", typ->nested.size()));
             _eat_lpar();
             auto fst = _decode_constant_value(constant_type { typ->nested.front() });
             _eat_space();
@@ -481,7 +481,7 @@ namespace daedalus_turbo::plutus::uplc {
         constant_list _decode_list_value(constant_type &&list_typ)
         {
             if (list_typ->nested.size() != 1) [[unlikely]]
-                    throw error("the nested type list for a list must have just one element but has {}", list_typ->nested.size());
+                    throw error(fmt::format("the nested type list for a list must have just one element but has {}", list_typ->nested.size()));
             _eat_lbr();
             auto typ = list_typ->nested.front();
             constant_list::list_type vals { _alloc };
@@ -517,7 +517,7 @@ namespace daedalus_turbo::plutus::uplc {
                 case type_tag::unit: return { _alloc, _decode_unit() };
                 case type_tag::list: return { _alloc, _decode_list_value(std::move(typ)) };
                 case type_tag::pair: return { _alloc, _decode_pair_value(std::move(typ)) };
-                default: throw error("unexpected type: {}", tag);
+                default: throw error(fmt::format("unexpected type: {}", tag));
             }
         }
 
@@ -541,7 +541,7 @@ namespace daedalus_turbo::plutus::uplc {
                 }
                 return { _alloc, t_constr { tag, term_list { _alloc, std::move(args) } } };
             }
-            throw error("constr term is allowed only for programs of versions 1.1.0 and higher but have: {}", _version);
+            throw error(fmt::format("constr term is allowed only for programs of versions 1.1.0 and higher but have: {}", _version));
         }
 
         term _decode_case()
@@ -556,7 +556,7 @@ namespace daedalus_turbo::plutus::uplc {
                 }
                 return { _alloc, t_case { std::move(arg), { _alloc, std::move(cases) } } };
             }
-            throw error("case term is allowed only for programs of versions 1.1.0 and higher but have: {}", _version);
+            throw error(fmt::format("case term is allowed only for programs of versions 1.1.0 and higher but have: {}", _version));
         }
 
         term _decode_builtin()
@@ -572,7 +572,7 @@ namespace daedalus_turbo::plutus::uplc {
             _vars.emplace_back(name);
             const auto body = _decode_term();
             if (_vars.empty() || _vars.back() != name) [[unlikely]]
-                throw error("internal error: expected variable {} is missing!", name);
+                throw error(fmt::format("internal error: expected variable {} is missing!", name));
             _vars.pop_back();
             return { _alloc, t_lambda { var_idx, body } };
         }
@@ -597,7 +597,7 @@ namespace daedalus_turbo::plutus::uplc {
             switch (tag[0]) {
                 case 'b':
                     if (tag != "builtin") [[unlikely]]
-                        throw error("unexpected token '{}' at pos: {}", tag, _pos);
+                        throw error(fmt::format("unexpected token '{}' at pos: {}", tag, _pos));
                     return _decode_builtin();
                 case 'c':
                     if (tag == "con") [[likely]]
@@ -606,25 +606,25 @@ namespace daedalus_turbo::plutus::uplc {
                         return _decode_constr();
                     if (tag == "case")
                         return _decode_case();
-                    throw error("unexpected token '{}' at pos: {}", tag, _pos);
+                    throw error(fmt::format("unexpected token '{}' at pos: {}", tag, _pos));
                 case 'd':
                     if (tag != "delay") [[unlikely]]
-                        throw error("unexpected token '{}' at pos: {}", tag, _pos);
+                        throw error(fmt::format("unexpected token '{}' at pos: {}", tag, _pos));
                     return _decode_delay();
                 case 'e':
                     if (tag != "error") [[unlikely]]
-                        throw error("unexpected token '{}' at pos: {}", tag, _pos);
+                        throw error(fmt::format("unexpected token '{}' at pos: {}", tag, _pos));
                     return _decode_error();
                 case 'f':
                     if (tag != "force") [[unlikely]]
-                        throw error("unexpected token '{}' at pos: {}", tag, _pos);
+                        throw error(fmt::format("unexpected token '{}' at pos: {}", tag, _pos));
                     return _decode_force();
                 case 'l':
                     if (tag != "lam") [[unlikely]]
-                        throw error("unexpected token '{}' at pos: {}", tag, _pos);
+                        throw error(fmt::format("unexpected token '{}' at pos: {}", tag, _pos));
                     return _decode_lambda();
                 default:
-                    throw error("unexpected token '{}' at pos: {}", tag, _pos);
+                    throw error(fmt::format("unexpected token '{}' at pos: {}", tag, _pos));
             }
         }
 
@@ -662,7 +662,7 @@ namespace daedalus_turbo::plutus::uplc {
             const auto name = _eat_name();
             const auto it = std::find(_vars.rbegin(), _vars.rend(), name);
             if (it == _vars.rend()) [[unlikely]]
-                throw error("unknown variable '{}' at pos: {}", name, _pos);
+                throw error(fmt::format("unknown variable '{}' at pos: {}", name, _pos));
             return { _alloc, variable { narrow_cast<size_t>(it.base() - 1 - _vars.begin()) } };
         }
 

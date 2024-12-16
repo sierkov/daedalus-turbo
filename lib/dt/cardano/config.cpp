@@ -34,7 +34,7 @@ namespace daedalus_turbo::cardano {
             tx_out_ref txo_id { blake2b<tx_hash>(txo_addr), 0 };
             tx_out_data txo_data { std::stoull(json::value_to<std::string>(lovelace)), std::move(txo_addr) };
             if (const auto [it, created] = txos.try_emplace(txo_id, std::move(txo_data)); !created) [[unlikely]]
-                throw error("duplicate TXO {} in the byron genesis config", txo_id);
+                throw error(fmt::format("duplicate TXO {} in the byron genesis config", txo_id));
         }
         return txos;
     }
@@ -72,7 +72,7 @@ namespace daedalus_turbo::cardano {
         const auto cfg_hash = block_hash::from_hex(hash_hex);
         auto act_hash = blake2b<block_hash>(genesis.bytes());
         if (act_hash != cfg_hash)
-            throw error("The actual hash of genesis file does not match {}!", hash_hex);
+            throw error(fmt::format("The actual hash of genesis file does not match {}!", hash_hex));
         return act_hash;
     }
 

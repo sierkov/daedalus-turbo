@@ -32,8 +32,8 @@ namespace daedalus_turbo {
 
     struct scheduled_task_error: scheduler_error {
         template<typename... Args>
-        scheduled_task_error(scheduled_task &&task, const char *fmt, Args&&... a)
-            : scheduler_error { fmt, std::forward<Args>(a)... }, _task { std::move(task) }
+        scheduled_task_error(const std::source_location &loc, scheduled_task &&task, const char *fmt, Args&&... a)
+            : scheduler_error { loc, fmt, std::forward<Args>(a)... }, _task { std::move(task) }
         {
         }
 

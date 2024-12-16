@@ -15,7 +15,7 @@ namespace daedalus_turbo::cardano {
             case 3: return redeemer_tag::reward;
             case 4: return redeemer_tag::vote;
             case 5: return redeemer_tag::propose;
-            default: throw error("unsupported redeemer tag: {}", typ);
+            default: throw error(fmt::format("unsupported redeemer tag: {}", typ));
         }
     }
 
@@ -62,7 +62,7 @@ namespace daedalus_turbo::cardano {
                     break;
                 }
                 default:
-                    throw error("unsupported relay value: {}", relay);
+                    throw error(fmt::format("unsupported relay value: {}", relay));
             }
         }
         if (cert.at(base_idx + 8).type != CBOR_SIMPLE_NULL)
@@ -126,7 +126,7 @@ namespace daedalus_turbo::cardano {
                         break;
                     }
                     default:
-                        throw error("unsupported relay variant index: {}", relay.index());
+                        throw error(fmt::format("unsupported relay variant index: {}", relay.index()));
                 }
             }
         });

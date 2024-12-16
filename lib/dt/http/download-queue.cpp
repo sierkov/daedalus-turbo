@@ -162,9 +162,9 @@ namespace daedalus_turbo::http {
                 _req = std::move(*req);
                 boost::url_view uri { _req.url };
                 if (uri.scheme() != "http")
-                    throw error("only http urls are supported but got {}", _req.url);
+                    throw error(fmt::format("only http urls are supported but got {}", _req.url));
                 if (uri.path().empty())
-                    throw error("path component of the downloaded URI cannot be empty but got {}", _req.url);
+                    throw error(fmt::format("path component of the downloaded URI cannot be empty but got {}", _req.url));
                 _http_req.emplace();
                 _http_req->version(11);
                 _http_req->keep_alive(true);

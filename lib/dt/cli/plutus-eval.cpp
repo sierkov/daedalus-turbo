@@ -32,7 +32,7 @@ namespace daedalus_turbo::cli::plutus_eval {
                 return _eval<uplc::script>(path, typ);
             if (format == "flat")
                 return _eval<flat::script>(path, typ);
-            throw error("unsupported script format: {}", format);
+            throw error(fmt::format("unsupported script format: {}", format));
         }
     private:
         static script_type parse_version(const std::string &version)
@@ -43,7 +43,7 @@ namespace daedalus_turbo::cli::plutus_eval {
                 return script_type::plutus_v2;
             if (version == "v3")
                 return script_type::plutus_v3;
-            throw error("unsupported plutus version: {}", version);
+            throw error(fmt::format("unsupported plutus version: {}", version));
         }
 
         template<typename S>

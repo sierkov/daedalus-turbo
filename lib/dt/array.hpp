@@ -23,7 +23,7 @@ namespace daedalus_turbo {
             case '5': return 5;
             case '6': return 6;
             case '7': return 7;
-            default: throw error("unexpected character in an octal number: {}!", k);
+            default: throw error(fmt::format("unexpected character in an octal number: {}!", k));
         }
     }
 
@@ -46,14 +46,14 @@ namespace daedalus_turbo {
             case 'd': return 13;
             case 'e': return 14;
             case 'f': return 15;
-            default: throw error("unexpected character in a hex number: {}!", k);
+            default: throw error(fmt::format("unexpected character in a hex number: {}!", k));
         }
     }
 
     inline void init_from_hex(std::span<uint8_t> out, const std::string_view hex)
     {
         if (hex.size() != out.size() * 2)
-            throw error("hex string must have {} characters but got {}: {}!", out.size() * 2, hex.size(), hex);
+            throw error(fmt::format("hex string must have {} characters but got {}: {}!", out.size() * 2, hex.size(), hex));
         for (size_t i = 0; i < out.size(); ++i)
             out[i] = uint_from_hex(hex[i * 2]) << 4 | uint_from_hex(hex[i * 2 + 1]);
     }
@@ -76,7 +76,7 @@ namespace daedalus_turbo {
         array(std::initializer_list<T> s) {
             static_assert(sizeof(*this) == SZ * sizeof(T));
             if (s.size() != SZ)
-                throw error("span must be of size {} but got {}", SZ, s.size());
+                throw error(fmt::format("span must be of size {} but got {}", SZ, s.size()));
 #if !defined(__clang__) && !defined(_MSC_VER)
 #   pragma GCC diagnostic push
 #   pragma GCC diagnostic ignored "-Wclass-memaccess"
@@ -90,21 +90,21 @@ namespace daedalus_turbo {
         array(const std::span<const T> &s)
         {
             if (s.size() != SZ)
-                throw error("span must be of size {} but got {}", SZ, s.size());
+                throw error(fmt::format("span must be of size {} but got {}", SZ, s.size()));
             memcpy(this, std::data(s), SZ * sizeof(T));
         }
 
         array(const std::string_view s)
         {
             if (s.size() != SZ * sizeof(T))
-                throw error("string_view must be of size {} but got {}", SZ * sizeof(T), s.size());
+                throw error(fmt::format("string_view must be of size {} but got {}", SZ * sizeof(T), s.size()));
             memcpy(this, std::data(s), SZ * sizeof(T));
         }
 
         array &operator=(const std::span<const T> &s)
         {
             if (s.size() != SZ)
-                throw error("span must be of size {} but got {}", SZ, s.size());
+                throw error(fmt::format("span must be of size {} but got {}", SZ, s.size()));
             memcpy(this, std::data(s), SZ * sizeof(T));
             return *this;
         }
@@ -112,7 +112,7 @@ namespace daedalus_turbo {
         array &operator=(const std::string_view s)
         {
             if (s.size() != SZ * sizeof(T))
-                throw error("string_view must be of size {} but got {}", SZ * sizeof(T), s.size());
+                throw error(fmt::format("string_view must be of size {} but got {}", SZ * sizeof(T), s.size()));
             memcpy(this, std::data(s), SZ * sizeof(T));
             return *this;
         }

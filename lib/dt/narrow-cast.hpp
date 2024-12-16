@@ -14,25 +14,25 @@ namespace daedalus_turbo {
     {
         if constexpr (std::numeric_limits<FROM>::is_signed == std::numeric_limits<TO>::is_signed) {
           if (from > std::numeric_limits<TO>::max()) [[unlikely]]
-            throw error("can't convert {} {} to {}: the value is too big", typeid(FROM).name(), from, typeid(TO).name());
+            throw error(fmt::format("can't convert {} {} to {}: the value is too big", typeid(FROM).name(), from, typeid(TO).name()));
           if (from < std::numeric_limits<TO>::min()) [[unlikely]]
-              throw error("can't convert {} {} to {}: the value is too small", typeid(FROM).name(), from, typeid(TO).name());
+              throw error(fmt::format("can't convert {} {} to {}: the value is too small", typeid(FROM).name(), from, typeid(TO).name()));
           return static_cast<TO>(from);
         }
         if constexpr (std::numeric_limits<FROM>::is_signed) {
             if (from < 0) [[unlikely]]
-                throw error("can't convert {} {} to {}: the value is native", typeid(FROM).name(), from, typeid(TO).name());
+                throw error(fmt::format("can't convert {} {} to {}: the value is native", typeid(FROM).name(), from, typeid(TO).name()));
             if (std::numeric_limits<FROM>::max() > std::numeric_limits<TO>::max()
                     && from > static_cast<FROM>(std::numeric_limits<TO>::max())) [[unlikely]]
-                throw error("can't convert {} {} to {}: the value is too big", typeid(FROM).name(), from, typeid(TO).name());
+                throw error(fmt::format("can't convert {} {} to {}: the value is too big", typeid(FROM).name(), from, typeid(TO).name()));
             return static_cast<TO>(from);
         }
         if constexpr (std::numeric_limits<FROM>::digits > std::numeric_limits<TO>::digits) {
             if (from > static_cast<FROM>(std::numeric_limits<TO>::max())) [[unlikely]]
-                throw error("can't convert {} {} to {}: the value is too big", typeid(FROM).name(), from, typeid(TO).name());
+                throw error(fmt::format("can't convert {} {} to {}: the value is too big", typeid(FROM).name(), from, typeid(TO).name()));
         } else {
             if (static_cast<TO>(from) > std::numeric_limits<TO>::max()) [[unlikely]]
-                throw error("can't convert {} {} to {}: the value is too big", typeid(FROM).name(), from, typeid(TO).name());
+                throw error(fmt::format("can't convert {} {} to {}: the value is too big", typeid(FROM).name(), from, typeid(TO).name()));
         }
         return static_cast<TO>(from);
     }

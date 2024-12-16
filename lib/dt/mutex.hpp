@@ -7,11 +7,9 @@
 
 #define DT_MUTEX_WITH_STACKTRACE 0
 
-#include <condition_variable>
 #include <chrono>
 #include <mutex>
 #include <source_location>
-#include <sstream>
 #include <stack>
 #include <dt/error.hpp>
 #include <dt/logger.hpp>
@@ -66,8 +64,8 @@ namespace daedalus_turbo::mutex {
                     logger::warn("waiting for lock at {}:{} for longer than {} sec;",
                         _src_loc.file_name(), _src_loc.line(), retry * wait_duration_sec);
                 }
-                throw error("couldn't acquire lock at {}:{} for longer than {} sec",
-                    _src_loc.file_name(), _src_loc.line(), _max_retries * wait_duration_sec);
+                throw error(fmt::format("couldn't acquire lock at {}:{} for longer than {} sec",
+                    _src_loc.file_name(), _src_loc.line(), _max_retries * wait_duration_sec));
             }
         }
 

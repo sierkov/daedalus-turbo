@@ -44,7 +44,7 @@ namespace daedalus_turbo::cardano::ledger {
     void parallel_decoder::run(scheduler &sched, const std::string &task_group, const int prio, const bool report_progress)
     {
         if (_tasks.size() != _buffers.size()) [[unlikely]]
-            throw error("was expecting {} items in the serialized data but got {}!", _buffers.size(), _tasks.size());
+            throw error(fmt::format("was expecting {} items in the serialized data but got {}!", _buffers.size(), _tasks.size()));
         sched.wait_all_done(task_group, _buffers.size(),
             [&] {
                 for (size_t i = 0; i < _buffers.size(); ++i) {

@@ -18,7 +18,7 @@ namespace daedalus_turbo::cardano::shelley {
         switch (const auto source_raw = reward.at(0).uint(); source_raw) {
             case 0: source = reward_source::reserves; break;
             case 1: source = reward_source::treasury; break;
-            default: throw error("unexpected value of reward source: {}!", source_raw);
+            default: throw error(fmt::format("unexpected value of reward source: {}!", source_raw));
         }
         for (const auto &[stake_cred, coin]: reward.at(1).map()) {
             rewards.try_emplace(stake_ident { stake_cred.array().at(1).buf(), stake_cred.array().at(0).uint() == 1 }, coin.uint());
@@ -41,15 +41,15 @@ namespace daedalus_turbo::cardano::shelley {
     {
         const auto &cert = v.array();
         switch (const auto typ = cert.at(0).uint(); typ) {
-            case 0: return stake_reg_cert { cert.at(1) };
-            case 1: return stake_dereg_cert { cert.at(1) };
-            case 2: return stake_deleg_cert { cert.at(1), cert.at(2).buf() };
+            case 0: return stake_reg_cert { credential_t::from_cbor(cert.at(1)) };
+            case 1: return stake_dereg_cert { credential_t::from_cbor(cert.at(1)) };
+            case 2: return stake_deleg_cert { credential_t::from_cbor(cert.at(1)), cert.at(2).buf() };
             case 3: return pool_reg_cert::from_cbor(v);
             case 4: return pool_retire_cert::from_cbor(v);
             case 5: return genesis_deleg_cert { v };
             case 6: return instant_reward_cert { v };
             default:
-                throw error("unsupported cert type: {}", typ);
+                throw error(fmt::format("unsupported cert type: {}", typ));
         }
     }
 
@@ -67,7 +67,7 @@ namespace daedalus_turbo::cardano::shelley {
                         const auto &vkey = w.array().at(0).buf();
                         const auto &sig = w.array().at(1).buf();
                         if (!ed25519::verify(sig, vkey, hash())) [[unlikely]]
-                            throw error("tx vkey witness failed at slot {}: vkey: {}, sig: {} tx_hash: {}", block().slot(), vkey, sig, hash());
+                            throw error(fmt::format("tx vkey witness failed at slot {}: vkey: {}, sig: {} tx_hash: {}", block().slot(), vkey, sig, hash()));
                         valid_vkeys.emplace(blake2b<key_hash>(vkey));
                         ++cnts.vkey;
                     });
@@ -77,7 +77,7 @@ namespace daedalus_turbo::cardano::shelley {
                         const auto &vkey = w.at(0).buf();
                         const auto &sig = w.at(1).buf();
                         if (!ed25519::verify(sig, vkey, hash())) [[unlikely]]
-                            throw cardano_error("tx bootstrap witness failed at slot {}: vkey: {}, sig: {} tx_hash: {}", block().slot(), vkey, sig, hash());
+                            throw cardano_error(fmt::format("tx bootstrap witness failed at slot {}: vkey: {}, sig: {} tx_hash: {}", block().slot(), vkey, sig, hash()));
                         valid_vkeys.emplace(blake2b<key_hash>(vkey));
                         ++cnts.vkey;
                     });
@@ -95,7 +95,7 @@ namespace daedalus_turbo::cardano::shelley {
                 case 1:
                     foreach_set(w_list, [&](const auto &w, const auto) {
                         if (const auto err = native_script::validate(w, block().slot(), valid_vkeys); err) [[unlikely]]
-                            throw cardano_error("native script for tx {} failed: {} script: {}", hash(), *err, w);
+                            throw cardano_error(fmt::format("native script for tx {} failed: {} script: {}", hash(), *err, w));
                         ++cnts.native_script;
                     });
                     break;
@@ -107,7 +107,7 @@ namespace daedalus_turbo::cardano::shelley {
 
     tx::wit_cnt tx::_witnesses_ok_other(uint64_t typ, const cbor::value &w_val, const plutus::context *) const
     {
-        throw cardano_error("unsupported witness type {} at tx {}: {}", typ, hash(), w_val);
+        throw cardano_error(fmt::format("unsupported witness type {} at tx {}: {}", typ, hash(), w_val));
     }
 
     cardano::tx::wit_cnt tx::witnesses_ok_other(const plutus::context *ctx) const

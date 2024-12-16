@@ -41,7 +41,7 @@ namespace daedalus_turbo::index::utxo {
                 if (!it->second.address.empty()) [[likely]] {
                     idx.erase(it);
                 } else {
-                    throw error("found a non-unique TXO in the same chunk {}#{}", txo_id);
+                    throw error(fmt::format("found a non-unique TXO in the same chunk {}", txo_id));
                 }
             }
         }
@@ -49,7 +49,7 @@ namespace daedalus_turbo::index::utxo {
         static void _add_utxo(data_type &idx, const cardano::tx &tx, const cardano::tx_output &tx_out)
         {
             if (const auto [it, created] = idx.try_emplace(cardano::tx_out_ref { tx.hash(), tx_out.idx }, cardano::tx_out_data::from_output(tx_out) ); !created) [[unlikely]]
-                throw error("found a non-unique TXO {}#{}", tx.hash(), tx_out.idx);
+                throw error(fmt::format("found a non-unique TXO {}#{}", tx.hash(), tx_out.idx));
         }
     };
     using indexer = indexer_one_epoch<chunk_indexer>;

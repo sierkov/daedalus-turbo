@@ -117,7 +117,7 @@ namespace daedalus_turbo::plutus::builtins {
         bstr_type::value_type res { alloc };
         res.reserve(1 + s_val->size());
         if (*c_val < 0 || *c_val > 255)
-            throw error("cons_byte_string's first parameter must be between 0 and 255: {}!", c_val);
+            throw error(fmt::format("cons_byte_string's first parameter must be between 0 and 255: {}!", c_val));
         res << static_cast<uint8_t>(*c_val) << *s_val;
         return { alloc, std::move(res) };
     }
@@ -149,10 +149,10 @@ namespace daedalus_turbo::plutus::builtins {
         const auto &s = s_t.as_bstr();
         const auto &i_bi = i_t.as_int();
         if (*i_bi < 0 || *i_bi >= std::numeric_limits<size_t>::max()) [[unlikely]]
-            throw error("byte_string index out of the allowed range: {}", i_bi);
+            throw error(fmt::format("byte_string index out of the allowed range: {}", i_bi));
         const auto i = static_cast<size_t>(*i_bi);
         if (i >= s->size()) [[unlikely]]
-            throw error("byte_string index too big: {}", i);
+            throw error(fmt::format("byte_string index too big: {}", i));
         return { alloc, bint_type { alloc, (*s)[i] } };
     }
 
@@ -195,7 +195,7 @@ namespace daedalus_turbo::plutus::builtins {
         const auto s = b.as_bstr()->str();
         if (const auto it = utf8::find_invalid(s.begin(), s.end()); it == s.end()) [[likely]]
             return { alloc, str_type { alloc, s } };
-        throw error("an invalid utf8 sequence: {}", b.as_bstr());
+        throw error(fmt::format("an invalid utf8 sequence: {}", b.as_bstr()));
     }
 
     value if_then_else(allocator &, const value &condition, const value &yes, const value &no)
@@ -273,7 +273,7 @@ namespace daedalus_turbo::plutus::builtins {
         const auto &cx = x.as_const();
         const auto &cl = l.as_const().as_list();
         if (const auto cx_typ = constant_type::from_val(alloc, cx); cx_typ != cl->typ) [[unlikely]]
-            throw error("mkCons requires both arguments to be of the same type but got {} and {}", cx_typ, cl->typ);
+            throw error(fmt::format("mkCons requires both arguments to be of the same type but got {} and {}", cx_typ, cl->typ));
         constant_list::list_type vals { alloc };
         vals.emplace_back(cx);
         std::copy(cl->vals.begin(), cl->vals.end(), std::back_inserter(vals));
@@ -324,7 +324,7 @@ namespace daedalus_turbo::plutus::builtins {
             } else if constexpr (std::is_same_v<T, data_constr>) {
                 return c;
             } else {
-                throw error("unsupported data type: {}!", typeid(T).name());
+                throw error(fmt::format("unsupported data type: {}!", typeid(T).name()));
             }
         }, *d.as_data());
     }
@@ -375,7 +375,7 @@ namespace daedalus_turbo::plutus::builtins {
             return { alloc, constant { alloc, constant_pair { alloc, constant { alloc, bint_type { alloc, c->first } },
                 constant { alloc, constant_list { alloc, constant_type { alloc, type_tag::data }, std::move(cl) } } } } };
         }
-        throw error("invalid input for un_constr_data: {}!", t);
+        throw error(fmt::format("invalid input for un_constr_data: {}!", t));
     }
 
     value un_map_data(allocator &alloc, const value &t)
@@ -388,7 +388,7 @@ namespace daedalus_turbo::plutus::builtins {
                 cl.emplace_back(alloc, constant_pair { alloc, constant { alloc, p->first }, constant { alloc, p->second } });
             return value::make_list(alloc, std::move(typ) , std::move(cl));
         }
-        throw error("invalid input for un_map_data: {}!", t);
+        throw error(fmt::format("invalid input for un_map_data: {}!", t));
     }
 
     value un_list_data(allocator &alloc, const value &t) {
@@ -399,20 +399,20 @@ namespace daedalus_turbo::plutus::builtins {
                 cl.emplace_back(alloc, d);
             return value::make_list(alloc, constant_type { alloc, type_tag::data }, std::move(cl));
         }
-        throw error("invalid input for un_list_data: {}!", t);
+        throw error(fmt::format("invalid input for un_list_data: {}!", t));
     }
 
     value un_i_data(allocator &alloc, const value &t)
     {
         if (const auto &d = t.as_data(); std::holds_alternative<data::int_type>(*d))
             return { alloc, std::get<data::int_type>(*d) };
-        throw error("invalid input for un_i_data: {}!", t);
+        throw error(fmt::format("invalid input for un_i_data: {}!", t));
     }
 
     value un_b_data(allocator &alloc, const value &t) {
         if (const auto &d = t.as_data(); std::holds_alternative<data::bstr_type>(*d))
             return { alloc, *std::get<data::bstr_type>(*d) };
-        throw error("invalid input for un_b_data: {}!", t);
+        throw error(fmt::format("invalid input for un_b_data: {}!", t));
     }
 
     value equals_data(allocator &alloc, const value &d1, const value &d2)
@@ -460,17 +460,17 @@ namespace daedalus_turbo::plutus::builtins {
         const auto w = static_cast<size_t>(*w_t.as_int());
         const auto &v = val.as_int();
         if (*v < 0) [[unlikely]]
-            throw error("integer_to_byte_string requires non-negative integers but got: {}", v);
+            throw error(fmt::format("integer_to_byte_string requires non-negative integers but got: {}", v));
         if (*v >= max_val) [[unlikely]]
-            throw error("integer_to_byte_string allows only values less than 2^65536 but got: {}", v);
+            throw error(fmt::format("integer_to_byte_string allows only values less than 2^65536 but got: {}", v));
         std::pmr::vector<uint8_t> bytes { alloc.resource() };
         if (*v > 0) [[likely]]
             boost::multiprecision::export_bits(*val.as_int(), std::back_inserter(bytes), 8, msb);
         if (w) {
             if (w > 8192)
-                throw error("maximum allowed width is 8192 but got {}!", w);
+                throw error(fmt::format("maximum allowed width is 8192 but got {}!", w));
             if (bytes.size() > w) [[unlikely]]
-                throw error("expected {} bytes but got {}", bytes.size(), w);
+                throw error(fmt::format("expected {} bytes but got {}", bytes.size(), w));
             if (bytes.size() < w) {
                 const auto orig_size = bytes.size();
                 const auto padding_size = w - orig_size;
@@ -521,7 +521,7 @@ namespace daedalus_turbo::plutus::builtins {
         while (k_bytes.size() < 32)
             k_bytes.emplace_back(0);
         if (k_bytes.size() > 32) [[unlikely]]
-            throw error("expected {} scalar must be not more than 32 bytes but got {}!", k_bytes.size(), k);
+            throw error(fmt::format("expected {} scalar must be not more than 32 bytes but got {}!", k_bytes.size(), k));
         blst_scalar k_s {};
         blst_scalar_from_lendian(&k_s, k_bytes.data());
         return k_s;
@@ -545,7 +545,7 @@ namespace daedalus_turbo::plutus::builtins {
         const auto &msg = msg_t.as_bstr();
         const auto &dst = dst_t.as_bstr();
         if (dst->size() > 255) [[unlikely]]
-            throw error("dst must be less than 256 bytes but got {}!", dst->size());
+            throw error(fmt::format("dst must be less than 256 bytes but got {}!", dst->size()));
         blst_p1 out;
         blst_hash_to_g1(&out, msg->data(), msg->size(), dst->data(), dst->size());
         return { alloc, out };
@@ -593,7 +593,7 @@ namespace daedalus_turbo::plutus::builtins {
         const auto &msg = msg_t.as_bstr();
         const auto &dst = dst_t.as_bstr();
         if (dst->size() > 255) [[unlikely]]
-            throw error("dst must be less than 256 bytes but got {}!", dst->size());
+            throw error(fmt::format("dst must be less than 256 bytes but got {}!", dst->size()));
         blst_p2 out;
         blst_hash_to_g2(&out, msg->data(), msg->size(), dst->data(), dst->size());
         return { alloc, out };

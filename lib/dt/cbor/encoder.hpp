@@ -145,6 +145,12 @@ namespace daedalus_turbo::cbor {
             return *this;
         }
 
+        encoder &text()
+        {
+            _encode_item(major_type::text, static_cast<uint8_t>(special_val::s_break));
+            return *this;
+        }
+
         encoder &text(const std::string_view sv)
         {
             _encode_uint_item(major_type::text, sv.size());

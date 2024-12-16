@@ -32,7 +32,7 @@ namespace daedalus_turbo::cardano {
         case 7:
             return std::make_unique<conway::tx>(tx, blk, idx, wit, aux);
         default:
-            throw cardano_error("unsupported era {}!", blk.era());
+            throw cardano_error(fmt::format("unsupported era {}!", blk.era()));
         }
     }
 
@@ -56,7 +56,7 @@ namespace daedalus_turbo::cardano {
         case 7:
             return std::make_unique<conway::block>(block_tuple, offset, era, block, cfg);
         default:
-            throw cardano_error("unsupported era {}!", era);
+            throw cardano_error(fmt::format("unsupported era {}!", era));
         }
     }
 }

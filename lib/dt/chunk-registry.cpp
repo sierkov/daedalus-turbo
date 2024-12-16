@@ -28,7 +28,7 @@ namespace daedalus_turbo {
                 // do nothing
                 break;
             default:
-                throw error("unsupported mode: {}", static_cast<int>(mode));
+                throw error(fmt::format("unsupported mode: {}", static_cast<int>(mode)));
         }
         file_set known_chunks {}, deletable_chunks {};
         chunk_map chunks {};
@@ -119,7 +119,7 @@ namespace daedalus_turbo {
             size_t blocks_after = 0;
             for (const auto &[last_byte, chunk]: _chunks | std::ranges::views::reverse) {
                 if (blocks_after >= _cardano_cfg.shelley_security_param)
-                    return std::min(core_tip(), cardano::optional_point { chunk.blocks.back().point() });
+                    return chunk.blocks.back().point();
                 blocks_after += chunk.num_blocks;
             }
         }
@@ -216,12 +216,12 @@ namespace daedalus_turbo {
                     uint32_t next_rel_slot = 0;
                     for (const auto *blk: m_chunk.blocks) {
                         if (blk->slot < chunk_start_slot) [[unlikely]]
-                            throw error("block with slot {} must not be in chunk {}!", blk->slot, chunk_id);
+                            throw error(fmt::format("block with slot {} must not be in chunk {}!", blk->slot, chunk_id));
                         const auto blk_rel_slot = blk->era > 0 ? blk->slot - chunk_start_slot + 1 : 0;
                         for (; next_rel_slot <= blk_rel_slot; ++next_rel_slot)
                             pri_ws.write(buffer::from(host_to_net<uint32_t>(next_block_offset)));
                         if (blk->offset < chunk_start_offset) [[unlikely]]
-                            throw error("block with offset {} must not be in chunk starting at offset {}!", blk->offset, chunk_start_offset);
+                            throw error(fmt::format("block with offset {} must not be in chunk starting at offset {}!", blk->offset, chunk_start_offset));
                         const auto blk_rel_offset = blk->offset - chunk_start_offset;
                         sec_ws.write(buffer::from(host_to_net<uint64_t>(blk_rel_offset)));
                         sec_ws.write(buffer::from(host_to_net<uint16_t>(blk->header_offset)));
@@ -305,14 +305,14 @@ namespace daedalus_turbo {
     void chunk_registry::_add(chunk_info &&chunk, const bool normal)
     {
         if (normal && _transaction->target_slot() < chunk.last_slot)
-            throw error("chunk's data exceeds the target slot: {}", _transaction->target_slot());
+            throw error(fmt::format("chunk's data exceeds the target slot: {}", _transaction->target_slot()));
         if (chunk.data_size == 0 || chunk.num_blocks == 0 || chunk.blocks.empty())
-            throw error("chunk at offset {} is empty!", chunk.offset);
+            throw error(fmt::format("chunk at offset {} is empty!", chunk.offset));
         mutex::unique_lock update_lk { _update_mutex };
         auto [um_it, um_created] = _unmerged_chunks.try_emplace(chunk.offset + chunk.data_size - 1, std::move(chunk));
         // chunk variable should not be used after this point due to std::move(chunk) right above
         if (!um_created)
-            throw error("internal error: duplicate chunk offset: {} size: {}", um_it->second.offset, um_it->second.data_size);
+            throw error(fmt::format("internal error: duplicate chunk offset: {} size: {}", um_it->second.offset, um_it->second.data_size));
         while (!_unmerged_chunks.empty() && _unmerged_chunks.begin()->second.offset == num_bytes()) {
             const auto &tested_chunk = _unmerged_chunks.begin()->second;
             if (const auto &first_block = tested_chunk.blocks.at(0); first_block.era >= 2 && !_cardano_cfg.shelley_started()) {
@@ -321,31 +321,31 @@ namespace daedalus_turbo {
             }
             if (_validator) {
                 if (const auto future_slot = cardano::slot::from_future(_cardano_cfg); tested_chunk.last_slot >= future_slot)
-                    throw error("a chunk with its last block with a time slot from the future: {}!", tested_chunk.last_slot);
+                    throw error(fmt::format("a chunk with its last block with a time slot from the future: {}!", tested_chunk.last_slot));
                 if (!_chunks.empty()) {
                     const auto &last = _chunks.rbegin()->second;
                     if (tested_chunk.first_slot < last.last_slot)
-                        throw error("chunk at offset {} has its first slot {} less than the last slot in the registry {}",
-                            tested_chunk.offset, tested_chunk.first_slot, last.last_slot);
+                        throw error(fmt::format("chunk at offset {} has its first slot {} less than the last slot in the registry {}",
+                            tested_chunk.offset, tested_chunk.first_slot, last.last_slot));
                     if (last.last_block_hash != tested_chunk.prev_block_hash)
-                        throw error("chunk at offset {}: prev_block_hash {} does not match the prev chunk's last_block_hash of the last block {}",
-                            tested_chunk.offset, tested_chunk.prev_block_hash, last.last_block_hash);
+                        throw error(fmt::format("chunk at offset {}: prev_block_hash {} does not match the prev chunk's last_block_hash of the last block {}",
+                            tested_chunk.offset, tested_chunk.prev_block_hash, last.last_block_hash));
                 } else {
                     if (tested_chunk.prev_block_hash != _cardano_cfg.byron_genesis_hash)
-                        throw error("chunk at offset {}: prev_block_hash {} does not match the genesis hash {}",
-                            tested_chunk.offset, tested_chunk.prev_block_hash, _cardano_cfg.byron_genesis_hash);
+                        throw error(fmt::format("chunk at offset {}: prev_block_hash {} does not match the genesis hash {}",
+                            tested_chunk.offset, tested_chunk.prev_block_hash, _cardano_cfg.byron_genesis_hash));
                 }
             }
             const auto first_slot = make_slot(tested_chunk.first_slot);
             const auto last_slot = make_slot(tested_chunk.last_slot);
             if (first_slot.epoch() != last_slot.epoch())
-                throw error("chunk at offset {} contains blocks from multiple epochs: first slot: {} last_slot: {}", tested_chunk.offset, first_slot, last_slot);
+                throw error(fmt::format("chunk at offset {} contains blocks from multiple epochs: first slot: {} last_slot: {}", tested_chunk.offset, first_slot, last_slot));
             if (first_slot.chunk_id() != last_slot.chunk_id())
-                throw error("chunk at offset {} contains blocks from multiple chunks: {} and {}", tested_chunk.offset, first_slot.chunk_id(), last_slot.chunk_id());
+                throw error(fmt::format("chunk at offset {} contains blocks from multiple chunks: {} and {}", tested_chunk.offset, first_slot.chunk_id(), last_slot.chunk_id()));
             auto [it, created, node] = _chunks.insert(_unmerged_chunks.extract(_unmerged_chunks.begin()));
             const auto &inserted_chunk = it->second;
             if (!created)
-                throw error("internal error: duplicate chunk offset: {} size: {}", inserted_chunk.offset, inserted_chunk.data_size);
+                throw error(fmt::format("internal error: duplicate chunk offset: {} size: {}", inserted_chunk.offset, inserted_chunk.data_size));
         }
         if (normal)
             _notify_of_updates(update_lk);
@@ -370,17 +370,17 @@ namespace daedalus_turbo {
                     const auto &blk = *blk_ptr;
                     const auto slot = blk.slot();
                     if (slot < prev_slot)
-                        throw error("chunk at {}: a block's slot {} is less than the slot of the prev block {}!", offset, slot, prev_slot);
+                        throw error(fmt::format("chunk at {}: a block's slot {} is less than the slot of the prev block {}!", offset, slot, prev_slot));
                     prev_slot = slot;
                     static constexpr auto max_era = std::numeric_limits<uint8_t>::max();
                     if (blk.era() > max_era)
-                        throw error("block at slot {} has era {} that is outside of the supported max limit of {}", slot, blk.era(), max_era);
+                        throw error(fmt::format("block at slot {} has era {} that is outside of the supported max limit of {}", slot, blk.era(), max_era));
                     static constexpr auto max_size = std::numeric_limits<uint32_t>::max();
                     if (blk.size() > max_size)
-                        throw error("block at slot {} has size {} that is outside of the supported max limit of {}", slot, blk.size(), max_size);
+                        throw error(fmt::format("block at slot {} has size {} that is outside of the supported max limit of {}", slot, blk.size(), max_size));
                     if (!chunk.blocks.empty()) {
                         if (_validator && blk.prev_hash() != chunk.last_block_hash)
-                            throw error("block at slot {} has an inconsistent prev_hash {}", blk.slot(), blk.prev_hash());
+                            throw error(fmt::format("block at slot {} has an inconsistent prev_hash {}", blk.slot(), blk.prev_hash()));
                     } else {
                         chunk.prev_block_hash = blk.prev_hash();
                         chunk.first_slot = slot;

@@ -131,10 +131,10 @@ namespace daedalus_turbo::cli {
                     }
                     const auto cfg_it = cfg.opts.find(name);
                     if (cfg_it == cfg.opts.end())
-                        throw error("unknown option '--{}'", name);
+                        throw error(fmt::format("unknown option '--{}'", name));
                     const auto [opt_it, opt_created] = pr.opts.try_emplace(name, std::move(val));
                     if (!opt_created)
-                        throw error("duplicate option specification '{}'", arg);
+                        throw error(fmt::format("duplicate option specification '{}'", arg));
                 } else {
                     pr.args.emplace_back(arg);
                 }
@@ -145,7 +145,7 @@ namespace daedalus_turbo::cli {
                 // creates an empty value if not initialized
                 if (const auto &val_it = pr.opts.find(name); cfg.validator && val_it != pr.opts.end()) {
                     if (const auto val_err = (*cfg.validator)(val_it->second); val_err)
-                        throw error("value {} is invalid for '--{}': {}", val_it->second, name, *val_err);
+                        throw error(fmt::format("value {} is invalid for '--{}': {}", val_it->second, name, *val_err));
                 }
             }
             if (cfg.args.min && pr.args.size() < *cfg.args.min)

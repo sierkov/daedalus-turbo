@@ -13,10 +13,11 @@ namespace daedalus_turbo::cli::sync_turbo {
             cmd.name = "sync-turbo";
             cmd.desc = "synchronize the blockchain from a Turbo server <host> into <data-dir>";
             cmd.args.expect({ "<data-dir>" });
-            cmd.opts.emplace("host", "the turbo peer to synchronize with");
-            cmd.opts.emplace("max-slot", "do not synchronize beyond the end of this epoch");
-            cmd.opts.emplace("max-epoch", "synchronize up to the last block of the given epoch; needs --shelley-start-epoch for post-shelley epochs");
-            cmd.opts.emplace("shelley-start-epoch", "defines the first shelley epoch");
+            cmd.opts.try_emplace("host", "the turbo peer to synchronize with");
+            cmd.opts.try_emplace("max-slot", "do not synchronize beyond the end of this epoch");
+            cmd.opts.try_emplace("max-epoch", "synchronize up to the last block of the given epoch; needs --shelley-start-epoch for post-shelley epochs");
+            cmd.opts.try_emplace("shelley-start-epoch", "defines the first shelley epoch");
+            cmd.opts.try_emplace("txwit", "the transaction witness validation method to use: full, turbo or none", "turbo");
         }
 
         void run(const arguments &args, const options &opts) const override
@@ -48,7 +49,8 @@ namespace daedalus_turbo::cli::sync_turbo {
             sync::turbo::syncer syncr { cr };
             progress_guard pg { "download", "parse", "merge", "validate" };
             const auto peer = syncr.find_peer(host);
-            syncr.sync(peer, max_slot);
+            const sync::validation_mode_t txwit_mode = sync::validation_mode_from_text(opts.at("txwit").value());
+            syncr.sync(peer, max_slot, txwit_mode);
         }
     };
     static auto instance = command::reg(std::make_shared<cmd>());

@@ -5,54 +5,98 @@
 #ifndef DAEDALUS_TURBO_CARDANO_CONWAY_HPP
 #define DAEDALUS_TURBO_CARDANO_CONWAY_HPP
 
-#include <dt/cardano/shelley.hpp>
+#include "ledger/types.hpp"
+
+
 #include <dt/cardano/babbage.hpp>
+#include <dt/cardano/shelley.hpp>
+#include <dt/container.hpp>
 
 namespace daedalus_turbo::cardano::conway {
+    template<typename T>
+    struct optional_t: std::optional<T> {
+        using base_type = std::optional<T>;
+        using std::optional<T>::optional;
+
+        static optional_t<T> from_cbor(const cbor::value &v)
+        {
+            if (!v.is_null())
+                return { T::from_cbor(v) };
+            return {};
+        }
+
+        optional_t(optional_t &&o): std::optional<T>(std::move(o))
+        {
+        }
+
+        optional_t(const optional_t &o): std::optional<T>(o)
+        {
+        }
+
+        void to_cbor(cbor::encoder &enc) const
+        {
+            if (std::optional<T>::has_value()) {
+                if constexpr (std::is_same_v<T, script_hash>) {
+                    enc.bytes(std::optional<T>::value());
+                } else {
+                    enc.array(1);
+                    std::optional<T>::value().to_cbor(enc);
+                }
+            } else {
+                enc.array(0);
+            }
+        }
+
+        optional_t<T> &operator=(optional_t<T> &&o)
+        {
+            std::optional<T>::operator=(std::move(o));
+            return *this;
+        }
+
+        optional_t<T> &operator=(const optional_t<T> &o)
+        {
+            std::optional<T>::operator=(o);
+            return *this;
+        }
+    };
+
     struct anchor_t {
-        std::string url;
-        datum_hash hash;
+        std::string url {};
+        datum_hash hash {};
 
         static constexpr auto serialize(auto &archive, auto &self)
         {
             return archive(self.url, self.hash);
         }
 
-        anchor_t() =default;
-        anchor_t(const cbor::value &);
-        anchor_t(const json::value &);
+        static anchor_t from_cbor(const cbor::value &);
+        static anchor_t from_json(const json::value &);
         void to_cbor(cbor::encoder &) const;
     };
+    using optional_anchor_t = optional_t<anchor_t>;
 
     template<typename T>
-    struct optional_t: std::optional<T> {
-        optional_t() =default;
+    struct set_t: set<T> {
+        using base_type = set<T>;
+        using base_type::base_type;
 
-        optional_t(const cbor::value &v)
+        static set_t<T> from_cbor(const cbor::value &v)
         {
-            if (!v.is_null())
-                std::optional<T>::emplace(v);
+            set_t<T> tmp {};
+            const auto &set = (v.type == CBOR_TAG ? *v.tag().second : v).array();
+            for (const auto &v: set) {
+                tmp.emplace(v.raw_span());
+            }
+            return tmp;
         }
 
         void to_cbor(cbor::encoder &enc) const
         {
-            if (std::optional<T>::has_value()) {
-                std::optional<T>::value().to_cbor(enc);
-            } else {
-                enc.array(0);
-            }
-        }
-
-        optional_t &operator=(const std::optional<T>::value_type &v)
-        {
-            std::optional<T>::emplace(v);
-            return *this;
-        }
-
-        optional_t &operator=(const std::nullopt_t)
-        {
-            std::optional<T>::reset();
-            return *this;
+            enc.tag(258);
+            enc.array_compact(base_type::size(), [&] {
+                for (const auto &v: *this)
+                    v.to_cbor(enc);
+            });
         }
     };
 
@@ -102,21 +146,26 @@ namespace daedalus_turbo::cardano::conway {
         std::optional<uint64_t> max_collateral_inputs {}; // 24
         std::optional<pool_voting_thresholds_t> pool_voting_thresholds {}; // 25
         std::optional<drep_voting_thresholds_t> drep_voting_thresholds {}; // 26
-        std::optional<uint16_t> comittee_min_size {}; // 27
-        std::optional<uint32_t> comittee_max_term_length {}; // 28
+        std::optional<uint16_t> committee_min_size {}; // 27
+        std::optional<uint32_t> committee_max_term_length {}; // 28
         std::optional<uint32_t> gov_action_lifetime {}; // 29
         std::optional<uint64_t> gov_action_deposit {}; // 30
         std::optional<uint64_t> drep_deposit {}; // 31
         std::optional<uint32_t> drep_activity {}; // 32
-        std::optional<uint64_t> min_fee_ref_script_cost_per_byte {}; // 33
+        std::optional<rational_u64> min_fee_ref_script_cost_per_byte {}; // 33
 
         static constexpr auto serialize(auto &archive, auto &self)
         {
             return archive(self.pool_voting_thresholds, self.drep_voting_thresholds);
         }
+        ;
+        static param_update_t from_cbor(const cbor::value &);
 
-        param_update_t() =default;
-        param_update_t(const cbor::value &);
+        bool security_group() const;
+        bool network_group() const;
+        bool economic_group() const;
+        bool technical_group() const;
+        bool governance_group() const;
     };
 
     struct gov_action_id_t {
@@ -128,10 +177,13 @@ namespace daedalus_turbo::cardano::conway {
             return archive(self.tx_id, self.idx);
         }
 
-        gov_action_id_t() =default; // necessary for zpp serialization to work
-        gov_action_id_t(buffer, uint64_t);
-        gov_action_id_t(const cbor::value &v);
+        static gov_action_id_t from_cbor(const cbor::value &v);
         void to_cbor(cbor::encoder &) const;
+
+        bool operator==(const gov_action_id_t &o) const noexcept
+        {
+            return tx_id == o.tx_id && idx == o.idx;
+        }
 
         bool operator<(const gov_action_id_t &o) const noexcept
         {
@@ -140,38 +192,102 @@ namespace daedalus_turbo::cardano::conway {
             return idx < o.idx;
         }
     };
+    using gov_action_id_list = vector<gov_action_id_t>;
+
+    struct constitution_t {
+        anchor_t anchor {};
+        optional_t<script_hash> policy_id {};
+
+        static constexpr auto serialize(auto &archive, auto &self)
+        {
+            return archive(self.anchor, self.policy_id);
+        }
+
+        static constitution_t from_cbor(const cbor::value &);
+        static constitution_t from_json(const json::value &j);
+        void to_cbor(cbor::encoder &) const;
+    };
+
+    using optional_gov_action_id_t = optional_t<gov_action_id_t>;
+    using optional_script_t = optional_t<script_hash>;
 
     struct gov_action_t {
         struct parameter_change_t {
-            optional_t<gov_action_id_t> prev_action_id {};
+            optional_gov_action_id_t prev_action_id {};
             param_update_t update {};
-            optional_t<script_hash> policy_id {};
+            optional_script_t policy_id {};
 
             static constexpr auto serialize(auto &archive, auto &self)
             {
                 return archive(self.prev_action_id, self.update, self.policy_id);
             }
 
-            parameter_change_t() =default; // Necessary for ZPP serialization to work
-            parameter_change_t(const cbor::value &v);
+            static parameter_change_t from_cbor(const cbor::value &v);
         };
 
         struct hard_fork_init_t {
+            optional_t<gov_action_id_t> prev_action_id {};
+            protocol_version protocol_ver {};
+
+            static constexpr auto serialize(auto &archive, auto &self)
+            {
+                return archive(self.prev_action_id, self.protocol_ver);
+            }
+
+            static hard_fork_init_t from_cbor(const cbor::value &v);
         };
 
         struct treasury_withdrawals_t {
+            ledger::stake_distribution withdrawals {};
+            optional_script_t policy_id {};
+
+            static constexpr auto serialize(auto &archive, auto &self)
+            {
+                return archive(self.withdrawals, self.policy_id);
+            }
+
+            static treasury_withdrawals_t from_cbor(const cbor::value &v);
         };
 
         struct no_confidence_t {
+            optional_gov_action_id_t prev_action_id {};
+
+            static constexpr auto serialize(auto &archive, auto &self)
+            {
+                return archive(self.prev_action_id);
+            }
+
+            static no_confidence_t from_cbor(const cbor::value &v);
         };
 
         struct update_committee_t {
+            optional_gov_action_id_t prev_action_id {};
+            set_t<credential_t> members_to_remove {};
+            map<credential_t, uint64_t> members_to_add {};
+            rational_u64 new_threshold {};
+
+            static constexpr auto serialize(auto &archive, auto &self)
+            {
+                return archive(self.prev_action_id, self.members_to_remove, self.members_to_add, self.new_threshold);
+            }
+
+            static update_committee_t from_cbor(const cbor::value &v);
         };
 
         struct new_constitution_t {
+            optional_gov_action_id_t prev_action_id {};
+            constitution_t new_constitution {};
+
+            static constexpr auto serialize(auto &archive, auto &self)
+            {
+                return archive(self.prev_action_id, self.new_constitution);
+            }
+
+            static new_constitution_t from_cbor(const cbor::value &v);
         };
 
         struct info_action_t {
+            static info_action_t from_cbor(const cbor::value &v);
         };
 
         using value_type = std::variant<parameter_change_t, hard_fork_init_t, treasury_withdrawals_t,
@@ -184,8 +300,7 @@ namespace daedalus_turbo::cardano::conway {
             return archive(self.val);
         }
 
-        gov_action_t() =default; // necessary for zpp serialization to work
-        gov_action_t(const cbor::value &);
+        static gov_action_t from_cbor(const cbor::value &);
         void to_cbor(cbor::encoder &) const;
     };
 
@@ -204,8 +319,7 @@ namespace daedalus_turbo::cardano::conway {
             return archive(self.vote, self.anchor);
         }
 
-        voting_procedure_t() =default; // necessary for zpp serialization to work
-        voting_procedure_t(const cbor::value &);
+        static voting_procedure_t from_cbor(const cbor::value &);
         void to_cbor(cbor::encoder &) const;
     };
 
@@ -225,12 +339,7 @@ namespace daedalus_turbo::cardano::conway {
             return archive(self.type, self.hash);
         }
 
-        voter_t(const type_t t, const buffer b): type { t }, hash { b }
-        {
-        }
-
-        voter_t() =default; // necessary for zpp serialization to work
-        voter_t(const cbor::value &v);
+        static voter_t from_cbor(const cbor::value &v);
 
         bool operator<(const voter_t &o) const noexcept
         {
@@ -240,20 +349,31 @@ namespace daedalus_turbo::cardano::conway {
         }
     };
 
-    struct proposal_t {
-        stake_ident stake_id {};
+    struct proposal_procedure_t {
         uint64_t deposit = 0;
-        gov_action_id_t action_id {};
+        stake_ident return_addr {};
         gov_action_t action {};
         anchor_t anchor {};
 
         static constexpr auto serialize(auto &archive, auto &self)
         {
-            return archive(self.stake_id, self.deposit, self.action_id, self.action, self.anchor);
+            return archive(self.deposit, self.return_addr, self.action, self.anchor);
         }
 
-        proposal_t() =default; // necessary for zpp serialization to work
-        proposal_t(const gov_action_id_t &, const cbor::value &v);
+        static proposal_procedure_t from_cbor(const cbor::value &v);
+        void to_cbor(cbor::encoder &) const;
+    };
+
+    struct proposal_t {
+        gov_action_id_t id {};
+        proposal_procedure_t procedure {};
+
+        static constexpr auto serialize(auto &archive, auto &self)
+        {
+            return archive(self.id, self.procedure);
+        }
+
+        static proposal_t from_cbor(const gov_action_id_t &, const cbor::value &v);
     };
 
     struct reg_cert {
@@ -304,12 +424,22 @@ namespace daedalus_turbo::cardano::conway {
     struct resign_committee_cold_cert {
         credential_t cold_id {};
         optional_t<anchor_t> anchor {};
+
+        static constexpr auto serialize(auto &archive, auto &self)
+        {
+            return archive(self.cold_id, self.anchor);
+        }
     };
 
     struct reg_drep_cert {
         credential_t drep_id {};
         uint64_t deposit = 0;
         optional_t<anchor_t> anchor {};
+
+        static constexpr auto serialize(auto &archive, auto &self)
+        {
+            return archive(self.drep_id, self.deposit, self.anchor);
+        }
     };
 
     struct unreg_drep_cert {
@@ -320,6 +450,11 @@ namespace daedalus_turbo::cardano::conway {
     struct update_drep_cert {
         credential_t drep_id {};
         optional_t<anchor_t> anchor {};
+
+        static constexpr auto serialize(auto &archive, auto &self)
+        {
+            return archive(self.drep_id, self.anchor);
+        }
     };
 
     using shelley::stake_reg_cert;
@@ -401,7 +536,7 @@ namespace fmt {
                 case type_t::drep_key: return fmt::format_to(ctx.out(), "drep_key");
                 case type_t::drep_script: return fmt::format_to(ctx.out(), "drep_script");
                 case type_t::pool_key: return fmt::format_to(ctx.out(), "pool_key");
-                default: throw daedalus_turbo::error("unsupported voter_t::type_t value: {}", static_cast<int>(v));
+                default: throw daedalus_turbo::error(fmt::format("unsupported voter_t::type_t value: {}", static_cast<int>(v)));
             }
         }
     };
@@ -423,7 +558,7 @@ namespace fmt {
                 case vote_t::yes: return fmt::format_to(ctx.out(), "yes");
                 case vote_t::no: return fmt::format_to(ctx.out(), "no");
                 case vote_t::abstain: return fmt::format_to(ctx.out(), "abstain");
-                default: throw daedalus_turbo::error("unsupported vote_t value: {}", static_cast<int>(v));
+                default: throw daedalus_turbo::error(fmt::format("unsupported vote_t value: {}", static_cast<int>(v)));
             }
         }
     };
@@ -433,6 +568,14 @@ namespace fmt {
         template<typename FormatContext>
         auto format(const daedalus_turbo::cardano::conway::voting_procedure_t &v, FormatContext &ctx) const -> decltype(ctx.out()) {
             return fmt::format_to(ctx.out(), "{} anchor: {}", v.vote, v.anchor);
+        }
+    };
+
+    template<>
+    struct formatter<daedalus_turbo::cardano::conway::vote_info_t>: formatter<uint64_t> {
+        template<typename FormatContext>
+        auto format(const daedalus_turbo::cardano::conway::vote_info_t &v, FormatContext &ctx) const -> decltype(ctx.out()) {
+            return fmt::format_to(ctx.out(), "action_id: {} voter: {} voting_procedure: {}", v.action_id, v.voter,v.voting_procedure);
         }
     };
 }

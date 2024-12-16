@@ -53,7 +53,7 @@ namespace daedalus_turbo::cli::plutus_benchmark {
                             const auto run_time = std::chrono::duration<double>(std::chrono::high_resolution_clock::now() - start_time).count();
                             res.try_emplace(script_path, flat::encode_cbor(s.version(), s_res.expr), run_time);
                         } catch (const std::exception &ex) {
-                            throw error("script {} (size: {}) failed: {}", script_path, bytes.size(), ex.what());
+                            throw error(fmt::format("script {} (size: {}) failed: {}", script_path, bytes.size(), ex.what()));
                         }
                     }
                     {
@@ -106,7 +106,7 @@ namespace daedalus_turbo::cli::plutus_benchmark {
                 items.emplace_back(item);
             }
             if (items.size() != 4)
-                throw error("script name must encode 4 fields but got: {}", stem);
+                throw error(fmt::format("script name must encode 4 fields but got: {}", stem));
             return { tx_hash::from_hex(items[0]), script_hash::from_hex(items[2]),
                 narrow_cast<uint16_t>(std::stoul(items[1])), script_type_from_str(items[3])
             };

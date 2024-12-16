@@ -36,7 +36,7 @@ namespace daedalus_turbo::storage {
         if (!chunks.empty())
             parts.emplace_back(std::move(chunks));
         if (parts.size() > num_parts) [[unlikely]]
-            throw error("invariant failed: the number of actual partitions: {} is greater than requested: {}", parts.size(), num_parts);
+            throw error(fmt::format("invariant failed: the number of actual partitions: {} is greater than requested: {}", parts.size(), num_parts));
         return parts;
     }
 
@@ -99,14 +99,14 @@ namespace daedalus_turbo::storage {
                         try {
                             on_block(tmp, *blk);
                         } catch (const std::exception &ex) {
-                            throw error("failed to parse block at slot: {} hash: {}: {}", blk->slot(), blk->hash(), ex.what());
+                            throw error(fmt::format("failed to parse block at slot: {} hash: {}: {}", blk->slot(), blk->hash(), ex.what()));
                         }
                     }
                 }
                 try {
                     on_part_done(std::move(tmp), part_no, part);
                 } catch (const std::exception &ex) {
-                    throw error("failed to complete partition [{}:{}]: {}", part.offset(), part.end_offset(), ex.what());
+                    throw error(fmt::format("failed to complete partition [{}:{}]: {}", part.offset(), part.end_offset(), ex.what()));
                 }
                 if (progress_tag) {
                     const auto done = parsed_size.fetch_add(part.size(), std::memory_order::relaxed) + part.size();

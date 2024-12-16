@@ -34,28 +34,28 @@ suite ed25519_bench_suite = [] {
                 std::make_tuple("ed25519-sodium", blake2b_sodium, ed25519::verify)
             }) {
             size_t num_evals = 1'000;
-            benchmark(std::string { name } + "/raw", 100'000.0, 5, [&] {
+            benchmark_r(std::string { name } + "/raw", 10'000.0, 5, [&] {
                 for (size_t i = 0; i < num_evals; ++i) {
                     verify_func(sig, vk, msg);
                 }
-                return msg.size() * num_evals;
+                return num_evals;
             });
-            benchmark(std::string { name } + "/raw-invalid", 100'000.0, 5, [&] {
+            benchmark_r(std::string { name } + "/raw-invalid", 10'000.0, 5, [&] {
                 for (size_t i = 0; i < num_evals; ++i) {
                     verify_func(sig_invalid, vk, msg);
                 }
-                return msg.size() * num_evals;
+                return msg.size() *num_evals;
             });
-            benchmark(std::string { name } + "/hash", 100'000.0, 5, [&] {
+            benchmark_r(std::string { name } + "/hash", 10'000.0, 5, [&] {
                 blake2b_256_hash hash;
                 for (size_t i = 0; i < num_evals; ++i) {
                     hash_func(hash.data(), hash.size(), msg.data(), msg.size());
                     verify_func(sig, vk, hash);
                 }
-                return msg.size() * num_evals;
+                return num_evals;
             });
             size_t num_evals_par = 100;
-            benchmark(name + std::string { "-parallel" }, 500'000.0, 3, [&] {
+            benchmark_r(name + std::string { "-parallel" }, 80'000.0, 3, [&] {
                 for (size_t i = 0; i < num_evals_par; ++i)
                     sched.submit("hash", 100, [&]() {
                         blake2b_256_hash hash;
@@ -66,7 +66,7 @@ suite ed25519_bench_suite = [] {
                         return true;
                     });
                 sched.process(false);
-                return msg.size() * num_evals * num_evals_par;
+                return num_evals * num_evals_par;
             });
         }
     };

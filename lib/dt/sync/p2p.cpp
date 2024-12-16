@@ -133,7 +133,7 @@ namespace daedalus_turbo::sync::p2p {
                 });
                 peer.client().process(&_parent.local_chain().sched());
                 if (err)
-                    throw error("fetch_block has failed with error: {}", err);
+                    throw error(fmt::format("fetch_block has failed with error: {}", err));
             }
         }
 

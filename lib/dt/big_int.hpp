@@ -18,7 +18,7 @@ namespace daedalus_turbo {
     inline cpp_int big_int_from_bytes(const buffer data)
     {
         if (data.size() > big_int_max_size)
-            throw error("big ints larger than {} bytes are not supported but got: {}!", big_int_max_size, data.size());
+            throw error(fmt::format("big ints larger than {} bytes are not supported but got: {}!", big_int_max_size, data.size()));
         cpp_int val {};
         for (const uint8_t b: data) {
             val <<= 8;

@@ -71,7 +71,7 @@ namespace fmt {
                 case daedalus_turbo::http_api::sync_type::turbo: return fmt::format_to(ctx.out(), "turbo");
                 case daedalus_turbo::http_api::sync_type::p2p: return fmt::format_to(ctx.out(), "p2p");
                 case daedalus_turbo::http_api::sync_type::hybrid: return fmt::format_to(ctx.out(), "hybrid");
-                default: throw daedalus_turbo::error("unsupported sync_type: {}", static_cast<int>(v));
+                default: throw daedalus_turbo::error(fmt::format("unsupported sync_type: {}", static_cast<int>(v)));
             }
         }
     };
@@ -166,7 +166,7 @@ namespace daedalus_turbo::http_api {
             std::optional<std::string_view> req_id {};
             std::vector<std::string_view> params {};
             if (target.at(0) != '/')
-                throw error("target must begin with / but got: '{}'", target);
+                throw error(fmt::format("target must begin with / but got: '{}'", target));
             size_t start = 1;
             while (start < target.size()) {
                 size_t end = target.find('/', start);
@@ -182,7 +182,7 @@ namespace daedalus_turbo::http_api {
                 start = end + 1;
             }
             if (!req_id)
-                throw error("target must have request id: '{}'", target);
+                throw error(fmt::format("target must have request id: '{}'", target));
             return std::make_pair(std::move(*req_id), std::move(params));
         }
 
@@ -211,13 +211,13 @@ namespace daedalus_turbo::http_api {
                     const auto bytes = uint8_vector::from_hex(params[0]);
                     const cardano::address addr { bytes };
                     if (!addr.has_stake_id())
-                        throw error("provided address does not have a stake-key component: {}", bytes);
+                        throw error(fmt::format("provided address does not have a stake-key component: {}", bytes));
                     resp = _api_stake_id_info(addr.stake_id());
                 } else if (req_id == "stake-assets" && params.size() == 3) {
                     const auto bytes = uint8_vector::from_hex(params.at(0));
                     const cardano::address addr { bytes };
                     if (!addr.has_stake_id())
-                        throw error("provided address does not have a stake-key component: {}", bytes);
+                        throw error(fmt::format("provided address does not have a stake-key component: {}", bytes));
                     const auto offset = std::stoull(static_cast<std::string>(params.at(1)));
                     const auto count = std::stoull(static_cast<std::string>(params.at(2)));
                     resp = _api_stake_assets(addr.stake_id(), offset, count);
@@ -225,7 +225,7 @@ namespace daedalus_turbo::http_api {
                     const auto bytes = uint8_vector::from_hex(params.at(0));
                     const cardano::address addr { bytes };
                     if (!addr.has_stake_id())
-                        throw error("provided address does not have a stake-key component: {}", bytes);
+                        throw error(fmt::format("provided address does not have a stake-key component: {}", bytes));
                     const auto offset = std::stoull(static_cast<std::string>(params.at(1)));
                     const auto count = std::stoull(static_cast<std::string>(params.at(2)));
                     resp = _api_stake_txs(addr.stake_id(), offset, count);
@@ -233,13 +233,13 @@ namespace daedalus_turbo::http_api {
                     const auto bytes = uint8_vector::from_hex(params[0]);
                     const cardano::address addr { bytes };
                     if (!addr.has_pay_id())
-                        throw error("provided address does not have a payment-key component: {}", bytes);
+                        throw error(fmt::format("provided address does not have a payment-key component: {}", bytes));
                     resp = _api_pay_id_info(addr.pay_id());
                 } else if (req_id == "pay-assets" && params.size() == 3) {
                     auto bytes = uint8_vector::from_hex(params.at(0));
                     const cardano::address addr { bytes };
                     if (!addr.has_pay_id())
-                        throw error("provided address does not have a payment-key component: {}", bytes);
+                        throw error(fmt::format("provided address does not have a payment-key component: {}", bytes));
                     auto offset = std::stoull(static_cast<std::string>(params.at(1)));
                     auto count = std::stoull(static_cast<std::string>(params.at(2)));
                     resp = _api_pay_assets(addr.pay_id(), offset, count);
@@ -247,14 +247,14 @@ namespace daedalus_turbo::http_api {
                     auto bytes = uint8_vector::from_hex(params.at(0));
                     const cardano::address addr { bytes };
                     if (!addr.has_pay_id())
-                        throw error("provided address does not have a pay-key component: {}", bytes);
+                        throw error(fmt::format("provided address does not have a pay-key component: {}", bytes));
                     const auto offset = std::stoull(static_cast<std::string>(params.at(1)));
                     const auto count = std::stoull(static_cast<std::string>(params.at(2)));
                     resp = _api_pay_txs(addr.pay_id(), offset, count);
                 } else if (req_id == "sync") {
                     resp = _api_sync();
                 } else {
-                    throw error("unsupported endpoint '{}'", req_id);
+                    throw error(fmt::format("unsupported endpoint '{}'", req_id));
                 }
                 logger::info("request {} succeeded in {:0.3f} secs", target, t.stop());
             } catch (const std::exception &ex) {
@@ -413,7 +413,7 @@ namespace daedalus_turbo::http_api {
                     resp.emplace("syncError", *_sync_last_error);
                     break;
                 default:
-                    throw error("internal error: unsupported value of the internal status: {}", static_cast<int>(status));
+                    throw error(fmt::format("internal error: unsupported value of the internal status: {}", static_cast<int>(status)));
             }
             return _send_json_response(req, std::move(resp));
         }
@@ -485,7 +485,7 @@ namespace daedalus_turbo::http_api {
                             break;
                         }
                         default:
-                            throw error("unsupported sync type: {}", static_cast<int>(_sync_type));
+                            throw error(fmt::format("unsupported sync type: {}", static_cast<int>(_sync_type)));
                     }
                     const uint64_t start_offset = _cr->valid_end_offset();
                     _sync_start_slot = _cr->tip() ? _cr->tip()->slot : 0;
@@ -661,7 +661,7 @@ namespace daedalus_turbo::http_api {
         void _handle_request(http::request<http::string_body> &&req, send_lambda &&send)
         {
             if(req.method() != http::verb::get)
-                throw error("Unsupported HTTP method {}", static_cast<std::string_view>(req.method_string()));
+                throw error(fmt::format("Unsupported HTTP method {}", static_cast<std::string_view>(req.method_string())));
             const auto target = static_cast<std::string>(req.target());
             try {
                 timer t { target, logger::level::trace };

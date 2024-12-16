@@ -39,10 +39,10 @@ namespace daedalus_turbo::cli::test_flat_encoder {
                                 const auto act = flat::encode_cbor(s.version(), s.program());
                                 if (act != exp) {
                                     logger::warn("{}: {}", script_path, stringify_diff(exp, act));
-                                    throw error("reencoded value does not match!", script_path);
+                                    throw error(fmt::format("reencoded value does not match!", script_path));
                                 }
                             } catch (const std::exception &ex) {
-                                throw error("failed to re-encode script {}: {}", script_path, ex.what());
+                                throw error(fmt::format("failed to re-encode script {}: {}", script_path, ex.what()));
                             }
                         });
                         if (ex_ptr)

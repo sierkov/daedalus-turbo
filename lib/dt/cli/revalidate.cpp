@@ -70,7 +70,7 @@ namespace daedalus_turbo::cli::validate {
                         const auto debug_path = cr.full_path(fmt::format("error/{}", orig_path.filename().string()));
                         logger::warn("moving an unparsable chunk {} to {}", save_path, debug_path);
                         std::filesystem::copy_file(save_path, debug_path, std::filesystem::copy_options::overwrite_existing);
-                        throw error("can't parse {}: {}", save_path, ex.what());
+                        throw error(fmt::format("can't parse {}: {}", save_path, ex.what()));
                     }
                 });
             }

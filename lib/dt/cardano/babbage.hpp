@@ -18,8 +18,7 @@ namespace daedalus_turbo::cardano::babbage {
 
         const protocol_version protocol_ver() const override
         {
-            const auto &pv = header_body().at(9).array();
-            return protocol_version { pv.at(0).uint(), pv.at(1).uint() };
+            return protocol_version { header_body().at(9) };
         }
 
         const kes_signature kes() const override

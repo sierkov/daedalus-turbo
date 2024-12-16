@@ -341,7 +341,7 @@ namespace daedalus_turbo::index {
                         for (const auto chunk_id: it->second)
                             chunks.emplace_back(chunk_id);
                     } else {
-                        throw error("the chunk with slot range {} does not fit into the epoch slot range {}", it->first, epoch_slots);
+                        throw error(fmt::format("the chunk with slot range {} does not fit into the epoch slot range {}", it->first, epoch_slots));
                     }
                 }
             }

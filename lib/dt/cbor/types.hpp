@@ -52,6 +52,15 @@ namespace daedalus_turbo::cbor {
         }
         return value_path;
     }
+
+    inline bool is_ascii(const buffer b)
+    {
+        for (const uint8_t *p = b.data(), *end = p + b.size(); p < end; ++p) {
+            if (*p < 32 || *p > 127) [[unlikely]]
+                return false;
+        }
+        return true;
+    }
 }
 
 namespace fmt {
@@ -89,7 +98,7 @@ namespace fmt {
                 case major_type::map: return fmt::format_to(ctx.out(), "map");
                 case major_type::tag: return fmt::format_to(ctx.out(), "tag");
                 case major_type::simple: return fmt::format_to(ctx.out(), "simple");
-                default: throw daedalus_turbo::error("unexpected major_type value: {}", static_cast<int>(v));
+                default: throw daedalus_turbo::error(fmt::format("unexpected major_type value: {}", static_cast<int>(v)));
             }
 
         }

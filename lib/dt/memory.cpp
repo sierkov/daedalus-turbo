@@ -46,7 +46,7 @@ namespace daedalus_turbo::memory {
             std::getline(is, stat);
             const auto pos = stat.find(' ');
             if (pos == stat.npos) [[unlikely]]
-                throw error("invalid /proc/self/statm file format: '{}'!", stat);
+                throw error(fmt::format("invalid /proc/self/statm file format: '{}'!", stat));
             return (std::stoull(stat.substr(0, pos)) * page_size) >> 20;
 #       else
             struct task_basic_info tinfo;

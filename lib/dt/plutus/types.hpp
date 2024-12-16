@@ -215,7 +215,7 @@ namespace fmt {
                 case type::bls12_381_g1_element: return fmt::format_to(ctx.out(), "bls12_381_g1_element");
                 case type::bls12_381_g2_element: return fmt::format_to(ctx.out(), "bls12_381_g2_element");
                 case type::bls12_381_ml_result: return fmt::format_to(ctx.out(), "bls12_381_ml_result");
-                default: throw daedalus_turbo::error("unknown type: {}", static_cast<int>(v));
+                default: throw daedalus_turbo::error(fmt::format("unknown type: {}", static_cast<int>(v)));
             }
         }
     };
@@ -823,7 +823,7 @@ namespace daedalus_turbo::plutus {
         static bstr_type from_hex(allocator &alloc, const std::string_view hex)
         {
             if (hex.size() % 2 != 0)
-                throw error("hex string must have an even number of characters but got {}!", hex.size());
+                throw error(fmt::format("hex string must have an even number of characters but got {}!", hex.size()));
             bstr_type::value_type data { alloc, hex.size() / 2 };
             init_from_hex(data, hex);
             return { alloc, std::move(data) };
@@ -1414,15 +1414,15 @@ namespace fmt {
                 return fmt::format_to(ctx.out(), "{}", v->typ);
             if (v->typ == type_tag::list) {
                 if (v->nested.size() != 1) [[unlikely]]
-                    throw error("the nested type list for a list must have just one element but has {}", v->nested.size());
+                    throw error(fmt::format("the nested type list for a list must have just one element but has {}", v->nested.size()));
                 return fmt::format_to(ctx.out(), "({} {})", v->typ, v->nested.front());
             }
             if (v->typ == type_tag::pair) {
                 if (v->nested.size() != 2) [[unlikely]]
-                    throw error("the nested type list for a pair must have two elements but has {}", v->nested.size());
+                    throw error(fmt::format("the nested type list for a pair must have two elements but has {}", v->nested.size()));
                 return fmt::format_to(ctx.out(), "({} {} {})", v->typ, v->nested.front(), v->nested.back());
             }
-            throw daedalus_turbo::error("unsupported constant_type: {}!", v->typ);
+            throw error(fmt::format("unsupported constant_type: {}!", v->typ));
         }
     };
 

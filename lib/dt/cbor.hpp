@@ -16,13 +16,14 @@
 #include <dt/util.hpp>
 
 namespace daedalus_turbo {
+    struct cbor_value;
     namespace cbor {
         static constexpr size_t default_max_collection_size = 0x100'000;
 
         typedef daedalus_turbo::error error;
         struct collection_too_big_error: error {
             explicit collection_too_big_error(const size_t size):
-                error { fmt::format("Trying to create an array or map larger than {} items", size), error_stacktrace() }
+                error { fmt::format("Trying to create an array or map larger than {} items", size) }
             {
             }
         };
@@ -32,13 +33,13 @@ namespace daedalus_turbo {
             {
             }
         };
-    }
 
+        inline std::string stringify(const cbor_value &item);
+    }
     using cbor_error = cbor::error;
     using cbor_incomplete_data_error = cbor::incomplete_error;
 
     using cbor_buffer = buffer;
-    struct cbor_value;
 
     typedef std::pair<cbor_value, cbor_value> cbor_map_value;
 
@@ -102,7 +103,7 @@ namespace daedalus_turbo {
             };
             size_t type_idx = static_cast<size_t>(type);
             if (type_idx >= names.size())
-                throw error("unsupported CBOR type index: {}", type_idx);
+                throw error(fmt::format("unsupported CBOR type index: {}", type_idx));
             return names[type_idx];
         }
 
@@ -154,7 +155,7 @@ namespace daedalus_turbo {
                         val *= -1;
                         return val;
                         default:
-                            throw error("cannot interpret tag as a bigint: {}", *this);
+                            throw error(fmt::format("cannot interpret tag as a bigint: {}", cbor::stringify(*this)));
                     }
             }
         }
@@ -220,26 +221,23 @@ namespace daedalus_turbo {
             return { data, size };
         }
     private:
-
         template<typename T>
-        inline const T get(cbor_value_type exp_type, const std::source_location &loc = std::source_location::current()) const
+        const T get(cbor_value_type exp_type, const std::source_location &loc = std::source_location::current()) const
         {
             try {
                 return std::get<T>(content);
             } catch (std::bad_variant_access &ex) {
-                throw cbor_error("invalid cbor value access, expecting type {} while the present value is {} in file {} line {}!",
-                                 type_name(exp_type), *this, loc.file_name(), loc.line());
+                throw cbor_error(loc, "invalid cbor value access, expecting type {} while the present value is {}!", type_name(exp_type), *this);
             }
         }
 
         template<typename T>
-        inline const T &get_ref(cbor_value_type exp_type, const std::source_location &loc = std::source_location::current()) const
+        const T &get_ref(cbor_value_type exp_type, const std::source_location &loc = std::source_location::current()) const
         {
             try {
                 return std::get<T>(content);
             } catch (std::bad_variant_access &ex) {
-                throw cbor_error("invalid cbor value access, expecting type {} while the present value is {} in file {} line {}!",
-                                 type_name(exp_type), *this, loc.file_name(), loc.line());
+                throw cbor_error(loc, "invalid cbor value access, expecting type {} while the present value is {}!", type_name(exp_type), *this);
             }
         }
 
@@ -251,8 +249,8 @@ namespace daedalus_turbo {
         try {
             return vector::at(pos);
         } catch (std::out_of_range &ex) {
-            throw cbor_error("invalid element index {} in the array of size {} in file {} line {}!",
-                                pos, size(), loc.file_name(), loc.line());
+            throw cbor_error(fmt::format("invalid element index {} in the array of size {} in file {} line {}!",
+                                pos, size(), loc.file_name(), loc.line()));
         }
     }
 
@@ -435,7 +433,7 @@ namespace daedalus_turbo {
                 break;
 
                 default:
-                    throw cbor_error("simple values beyond BREAK are not supported yet! augVal: {}, augBuf.size: {}", (int)augVal, augBuf.size());
+                    throw cbor_error(fmt::format("simple values beyond BREAK are not supported yet! augVal: {}, augBuf.size: {}", (int)augVal, augBuf.size()));
             }            
         }
     public:
@@ -485,17 +483,17 @@ namespace daedalus_turbo {
                 case 28:
                 case 29:
                 case 30:
-                    throw cbor_error("Invalid CBOR header argument value at byte {}", _offset);
+                    throw cbor_error(fmt::format("Invalid CBOR header argument value at byte {}", _offset));
 
                 case 31:
                     if (type == 0 || type == 1 || type == 6)
-                        throw cbor_error("Invalid CBOR header: unexpected indefinite value at byte {}", _offset);
+                        throw cbor_error(fmt::format("Invalid CBOR header: unexpected indefinite value at byte {}", _offset));
                     indefinite = true;
                     break;
 
                 default:
                     if (augVal >= 24)
-                        throw cbor_error("Internal error: reached an impossible state at byte {}", _offset);
+                        throw cbor_error(fmt::format("Internal error: reached an impossible state at byte {}", _offset));
                     break;
             }
 
@@ -532,7 +530,7 @@ namespace daedalus_turbo {
                     _read_simple_value(val, augVal, augBuf, indefinite);
                     break;
 
-                default: throw cbor_error("Internal error: reached an impossible state at byte {}", _offset);
+                default: throw cbor_error(fmt::format("Internal error: reached an impossible state at byte {}", _offset));
             }
             val.size = _offset - val.offset(_data);
         }

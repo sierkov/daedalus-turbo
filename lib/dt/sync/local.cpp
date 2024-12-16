@@ -18,7 +18,7 @@ namespace daedalus_turbo::sync::local {
                 offset + block_data.back().raw_span().data() - data.data(), cfg);
             return { blk->hash(), blk->slot(), blk->height(), blk->end_offset() };
         }
-        throw error("empty chunk: {}", path);
+        throw error(fmt::format("empty chunk: {}", path));
     }
 
     static bool is_volatile_rel_path(const std::string &rel_path)
@@ -154,7 +154,7 @@ namespace daedalus_turbo::sync::local {
             uint8_vector chunk {};
             file::read(update.path, chunk);
             if (chunk.size() != update.data_size)
-                throw error("file changed: {} new size: {} recorded size: {}!", update.path, chunk.size(), update.data_size);
+                throw error(fmt::format("file changed: {} new size: {} recorded size: {}!", update.path, chunk.size(), update.data_size));
             const auto rel_path = std::filesystem::relative(std::filesystem::canonical(update.path), node_dir).string();
             const auto data_hash = blake2b<cardano::block_hash>(chunk);
             const auto dist_it = _parent.local_chain().find_data_hash_it(data_hash);
@@ -180,8 +180,8 @@ namespace daedalus_turbo::sync::local {
             if (!peer.updated_chunks().empty()) {
                 const auto updated_start_offset = peer.updated_chunks().front().offset;
                 if (updated_start_offset != _parent.local_chain().num_bytes())
-                    throw error("internal error: updated chunk offset {} is greater than the compressed data size {}!",
-                                updated_start_offset, _parent.local_chain().num_bytes());
+                    throw error(fmt::format("internal error: updated chunk offset {} is greater than the compressed data size {}!",
+                                updated_start_offset, _parent.local_chain().num_bytes()));
                 logger::info("update_start_offset: {}", updated_start_offset);
                 static const std::string task_name { "import-chunk" };
                 timer t { "process updated chunks" };

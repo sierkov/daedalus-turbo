@@ -292,7 +292,7 @@ namespace daedalus_turbo {
             auto &part = _parts[partition_idx(k)];
             auto it = part.find(k);
             if (it == part.end())
-                throw error("unknown key: {}", k);
+                throw error(fmt::format("unknown key: {}", k));
             return it->second;
         }
 
@@ -301,7 +301,7 @@ namespace daedalus_turbo {
             auto &part = _parts[partition_idx(k)];
             auto it = part.find(k);
             if (it == part.end())
-                throw error("unknown key: {}", k);
+                throw error(fmt::format("unknown key: {}", k));
             return it->second;
         }
 
@@ -338,10 +338,10 @@ namespace daedalus_turbo {
             return std::ranges::subrange<partitioned_map<K,V>::const_iterator>(begin(), end());
         }
     private:
-        static inline void _check_part_idx(size_t part_idx)
+        static void _check_part_idx(size_t part_idx)
         {
             if (part_idx >= num_parts)
-                throw error("partition idx is too big {}", part_idx);
+                throw error(fmt::format("partition idx is too big {}", part_idx));
         }
 
         storage_type _parts {};

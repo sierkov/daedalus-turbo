@@ -155,7 +155,7 @@ namespace daedalus_turbo::cardano::network {
             _find_intersection_impl({}, [&](auto &&r) { iresp = std::move(r); });
             process();
             if (std::holds_alternative<error_msg>(iresp.res))
-                throw error("find_tip error: {}", std::get<error_msg>(iresp.res));
+                throw error(fmt::format("find_tip error: {}", std::get<error_msg>(iresp.res)));
             if (std::holds_alternative<point>(iresp.res))
                 return std::get<point>(iresp.res);
             if (std::holds_alternative<point_pair>(iresp.res))
@@ -169,7 +169,7 @@ namespace daedalus_turbo::cardano::network {
             _find_intersection_impl(points, [&](auto &&r) { iresp = std::move(r); });
             process();
             if (std::holds_alternative<error_msg>(iresp.res))
-                throw error("find_intersection error: {}", std::get<error_msg>(iresp.res));
+                throw error(fmt::format("find_intersection error: {}", std::get<error_msg>(iresp.res)));
             if (std::holds_alternative<point>(iresp.res))
                 return { std::get<point>(iresp.res) };
             if (std::holds_alternative<point_pair>(iresp.res)) {
@@ -187,7 +187,7 @@ namespace daedalus_turbo::cardano::network {
             });
             process();
             if (std::holds_alternative<client::error_msg>(iresp.res))
-                throw error("fetch_headers error: {}", std::get<client::error_msg>(iresp.res));
+                throw error(fmt::format("fetch_headers error: {}", std::get<client::error_msg>(iresp.res)));
             if (!iresp.tip)
                 throw error("no tip information received!");
             const auto &headers = std::get<header_list>(iresp.res);

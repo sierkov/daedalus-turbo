@@ -63,7 +63,7 @@ namespace daedalus_turbo::plutus {
                         encode(ref.hash),
                         encode(ref.idx)
                     });
-                default: throw error("unsupported script_type: {}", static_cast<int>(_typ));
+                default: throw error(fmt::format("unsupported script_type: {}", static_cast<int>(_typ)));
             }
         }
 
@@ -72,7 +72,7 @@ namespace daedalus_turbo::plutus {
             switch (pay_id.type) {
                 case pay_ident::ident_type::SHELLEY_KEY: return constr(0, { encode(pay_id.hash) });
                 case pay_ident::ident_type::SHELLEY_SCRIPT: return constr(1, { encode(pay_id.hash) });
-                default: throw error("an unsupported pay_id type within a script context: {}", static_cast<int>(pay_id.type));
+                default: throw error(fmt::format("an unsupported pay_id type within a script context: {}", static_cast<int>(pay_id.type)));
             }
         }
 
@@ -92,7 +92,7 @@ namespace daedalus_turbo::plutus {
                 case script_type::plutus_v3:
                     return encode(stake_id);
                 default:
-                    throw error("unsupported script type: {}", _typ);
+                    throw error(fmt::format("unsupported script type: {}", _typ));
             }
         }
 
@@ -102,7 +102,7 @@ namespace daedalus_turbo::plutus {
                 case drep_t::credential: return constr(0, { encode(*drep.cred) });
                 case drep_t::abstain: return constr(1, {});
                 case drep_t::no_confidence: return constr(2, {});
-                default: throw error("unsupported drep type: {}", static_cast<int>(drep.typ));
+                default: throw error(fmt::format("unsupported drep type: {}", static_cast<int>(drep.typ)));
             }
         }
 
@@ -120,7 +120,7 @@ namespace daedalus_turbo::plutus {
                 case conway::voter_t::pool_key:
                     return constr(2, { encode(voter.hash) });
                 default:
-                    throw error("unsuported voter type: {}", static_cast<int>(voter.type));
+                    throw error(fmt::format("unsuported voter type: {}", static_cast<int>(voter.type)));
             }
         }
 
@@ -135,7 +135,7 @@ namespace daedalus_turbo::plutus {
                 case conway::vote_t::no: return constr(0, {});
                 case conway::vote_t::yes: return constr(1, {});
                 case conway::vote_t::abstain: return constr(2, {});
-                default: throw error("unsupported vote: {}", static_cast<int>(vote));
+                default: throw error(fmt::format("unsupported vote: {}", static_cast<int>(vote)));
             }
         }
 
@@ -163,7 +163,7 @@ namespace daedalus_turbo::plutus {
                             return constr(3, { encode(cert) });
                         case script_type::plutus_v3:
                             return constr(3, { data::bint(_alloc, r.ref_idx), encode(cert) });
-                        default: throw error("unsupported script type: {}", _typ);
+                        default: throw error(fmt::format("unsupported script type: {}", _typ));
                     }
                 }
                 case redeemer_tag::vote: {
@@ -172,7 +172,7 @@ namespace daedalus_turbo::plutus {
                 case redeemer_tag::propose: {
                     return constr(5, { data::bint(_alloc, r.ref_idx), encode(ctx.proposal_at(r.ref_idx)) });
                 }
-                default: throw error("unsupported redeemer_tag: {}", static_cast<int>(r.tag));
+                default: throw error(fmt::format("unsupported redeemer_tag: {}", static_cast<int>(r.tag)));
             }
         }
 
@@ -184,7 +184,7 @@ namespace daedalus_turbo::plutus {
                     return constr(0, { encode(id) });
                 if constexpr (std::is_same_v<T, stake_pointer>)
                     return constr(1, { encode(id.slot), encode(id.tx_idx), encode(id.cert_idx) });
-                throw error("unsupported stake_id type: {}", typeid(T).name());
+                throw error(fmt::format("unsupported stake_id type: {}", typeid(T).name()));
                 // A noop, to make Visual C++ happy
                 return data::bint(_alloc, 0);
             }, stake_id);
@@ -221,7 +221,7 @@ namespace daedalus_turbo::plutus {
                 case script_type::plutus_v3:
                     return constr(0, { stake_cred(c.stake_id), constr(1, {}) });
                 default:
-                    throw error("unsupported script type: {}", _typ);
+                    throw error(fmt::format("unsupported script type: {}", _typ));
             }
         }
 
@@ -240,7 +240,7 @@ namespace daedalus_turbo::plutus {
                 case script_type::plutus_v3:
                     return constr(1, { stake_cred(c.stake_id), constr(1, {}) });
                 default:
-                    throw error("unsupported script type: {}", _typ);
+                    throw error(fmt::format("unsupported script type: {}", _typ));
             }
         }
 
@@ -254,7 +254,7 @@ namespace daedalus_turbo::plutus {
                     //return constr(1, { stake_cred(c.stake_id), data::bint(_alloc, c.deposit) });
                     return constr(1, { stake_cred(c.stake_id), constr(1, {}) });
                 default:
-                    throw error("unsupported script type: {}", _typ);
+                    throw error(fmt::format("unsupported script type: {}", _typ));
             }
         }
 
@@ -266,7 +266,7 @@ namespace daedalus_turbo::plutus {
                     return constr(2, { stake_cred(c.stake_id), encode(c.pool_id) });
                 case script_type::plutus_v3:
                     return constr(2, { stake_cred(c.stake_id), constr(0, { encode(c.pool_id) }) });
-                default: throw error("unsupported script type: {}", static_cast<int>(_typ));
+                default: throw error(fmt::format("unsupported script type: {}", static_cast<int>(_typ)));
             }
         }
 
@@ -415,9 +415,9 @@ namespace daedalus_turbo::plutus {
         data encode(const conway::proposal_t &p)
         {
             return constr(0, {
-                data::bint(_alloc, p.deposit),
-                constr(0, { encode(p.stake_id.hash) }),
-                encode(p.action)
+                data::bint(_alloc, p.procedure.deposit),
+                constr(0, { encode(p.procedure.return_addr.hash) }),
+                encode(p.procedure.action)
             });
         }
 
@@ -455,7 +455,7 @@ namespace daedalus_turbo::plutus {
                     using T = std::decay_t<decltype(d)>;
                     if constexpr (std::is_same_v<T, datum_hash>)
                         return constr(0, { encode(d) });
-                    throw error("unsupported datum type: {}", typeid(T).name());
+                    throw error(fmt::format("unsupported datum type: {}", typeid(T).name()));
                     // Make Visual C++ happy
                     return data::bint(_alloc, 0);
                 }, *datum);
@@ -473,7 +473,7 @@ namespace daedalus_turbo::plutus {
                     } else if constexpr (std::is_same_v<T, uint8_vector>) {
                         return constr(2, { data::from_cbor(_alloc, d) });
                     } else {
-                        throw error("unsupported datum type: {}", typeid(T).name());
+                        throw error(fmt::format("unsupported datum type: {}", typeid(T).name()));
                     }
                 }, *datum);
             }
@@ -490,7 +490,7 @@ namespace daedalus_turbo::plutus {
                     } else if constexpr (std::is_same_v<T, uint8_vector>) {
                         return constr(0, { data::from_cbor(_alloc, d) });
                     } else {
-                        throw error("unsupported datum type: {}", typeid(T).name());
+                        throw error(fmt::format("unsupported datum type: {}", typeid(T).name()));
                     }
                 }, *datum);
             }
@@ -523,7 +523,7 @@ namespace daedalus_turbo::plutus {
                         datum_option(txo.datum),
                         script_ref(txo.script_ref)
                     });
-                default: throw error("unsupported script type: {}", static_cast<int>(_typ));
+                default: throw error(fmt::format("unsupported script type: {}", static_cast<int>(_typ)));
             }
         }
 
@@ -545,7 +545,7 @@ namespace daedalus_turbo::plutus {
                     }
                     return data::map(_alloc, std::move(m));
                 }
-                default: throw error("unsupported script type: {}", static_cast<int>(_typ));
+                default: throw error(fmt::format("unsupported script type: {}", static_cast<int>(_typ)));
             }
         }
 
@@ -593,7 +593,7 @@ namespace daedalus_turbo::plutus {
                     });
                 case script_type::plutus_v3:
                     return encode(tx.fee());
-                default: throw error("unsupported script type: {}", static_cast<int>(_typ));
+                default: throw error(fmt::format("unsupported script type: {}", static_cast<int>(_typ)));
             }
         }
 
@@ -610,7 +610,7 @@ namespace daedalus_turbo::plutus {
                 case script_type::plutus_v3:
                     // do nothing
                     break;
-                default: throw error("unsupported script type: {}", static_cast<int>(_typ));
+                default: throw error(fmt::format("unsupported script type: {}", static_cast<int>(_typ)));
             }
             tx.foreach_mint([&](const buffer &policy_id, const cbor_map &assets) {
                 data::map_type a_m { _alloc };
@@ -699,7 +699,7 @@ namespace daedalus_turbo::plutus {
                     });
                     return data::map(_alloc, std::move(m));
                 }
-                default: throw error("unsupported script type: {}", static_cast<int>(_typ));
+                default: throw error(fmt::format("unsupported script type: {}", static_cast<int>(_typ)));
             }
         }
 
@@ -757,7 +757,7 @@ namespace daedalus_turbo::plutus {
                             return constr(1, { encode(in.id) });
                         case script_type::plutus_v3:
                             return constr(1, { encode(in.id), datum_value(ctx, in.data.datum) });
-                        default: throw error("unsupported script type: {}", static_cast<int>(_typ));
+                        default: throw error(fmt::format("unsupported script type: {}", static_cast<int>(_typ)));
                     }
                 }
                 case redeemer_tag::cert: {
@@ -768,7 +768,7 @@ namespace daedalus_turbo::plutus {
                             return constr(3, { encode(cert) });
                         case script_type::plutus_v3:
                             return constr(3, { data::bint(_alloc, r.ref_idx), encode(cert) });
-                        default: throw error("unsupported script type: {}", static_cast<int>(_typ));
+                        default: throw error(fmt::format("unsupported script type: {}", static_cast<int>(_typ)));
                     }
                 }
                 default: return encode(r, ctx);
@@ -889,7 +889,7 @@ namespace daedalus_turbo::plutus {
                 case script_type::plutus_v1: return context_shared_v1(ctx);
                 case script_type::plutus_v2: return context_shared_v2(ctx);
                 case script_type::plutus_v3: return context_shared_v3(ctx);
-                default: throw error("unsupported script_type: {}", static_cast<int>(_typ));
+                default: throw error(fmt::format("unsupported script_type: {}", static_cast<int>(_typ)));
             }
         }
 
@@ -899,7 +899,7 @@ namespace daedalus_turbo::plutus {
                 case script_type::plutus_v1: return context_v1(ctx, ctx_shared, r);
                 case script_type::plutus_v2: return context_v2(ctx, ctx_shared, r);
                 case script_type::plutus_v3: return context_v3(ctx, ctx_shared, r);
-                default: throw error("unsupported script_type: {}", static_cast<int>(_typ));
+                default: throw error(fmt::format("unsupported script_type: {}", static_cast<int>(_typ)));
             }
         }
     private:
@@ -1034,10 +1034,10 @@ namespace daedalus_turbo::plutus {
                     if (!t_datum && !r.data.empty())
                         t_datum.emplace(script_alloc, constant { script_alloc, data::from_cbor(script_alloc, r.data) });
                     if (!t_datum)
-                        throw error("couldn't find datum for tx {} redeemer {}", _tx->hash(), r.ref_idx);
+                        throw error(fmt::format("couldn't find datum for tx {} redeemer {}", _tx->hash(), r.ref_idx));
                     return apply_script(std::move(script_alloc), script, { *t_datum, t_redeemer, data(script_alloc, script.type(), r) }, r.budget);
                 }
-                throw error("tx {} redeemer #{} (spend) input #{}: the output address is not a payment script: {}!", _tx->hash(), r.idx, r.ref_idx, in);
+                throw error(fmt::format("tx {} redeemer #{} (spend) input #{}: the output address is not a payment script: {}!", _tx->hash(), r.idx, r.ref_idx, in));
                 break;
             }
             case redeemer_tag::mint: {
@@ -1065,7 +1065,7 @@ namespace daedalus_turbo::plutus {
                         const auto &script = scripts().at(a.policy_id.value());
                         return apply_script(std::move(script_alloc), script, { t_redeemer, data(script_alloc, script.type(), r) }, r.budget);
                     }
-                    throw error("unsupported gov_action type: {}", typeid(T).name());
+                    throw error(fmt::format("unsupported gov_action type: {}", typeid(T).name()));
                     // Unreachable and needed only to Make Visual C++ happy
                     return prepared_script {
                         allocator {},
@@ -1073,10 +1073,10 @@ namespace daedalus_turbo::plutus {
                         script_type::plutus_v1,
                         term { alloc(), failure {} }
                     };
-                }, p.action.val);
+                }, p.procedure.action.val);
             }
             default:
-                throw error("tx: {} unsupported redeemer_tag: {}", _tx->hash(), static_cast<int>(r.tag));
+                throw error(fmt::format("tx: {} unsupported redeemer_tag: {}", _tx->hash(), static_cast<int>(r.tag)));
         }
     }
 
@@ -1087,7 +1087,7 @@ namespace daedalus_turbo::plutus {
             machine m { ps.alloc, cost_models().for_script(ps.typ), semantics };
             m.evaluate_no_res(ps.expr);
         } catch (const std::exception &ex) {
-            throw error("script {} {}: {}", ps.typ, ps.hash, ex.what());
+            throw error(fmt::format("script {} {}: {}", ps.typ, ps.hash, ex.what()));
         }
     }
 
@@ -1099,7 +1099,7 @@ namespace daedalus_turbo::plutus {
                 const address addr { in.data.address };
                 if (const auto pay_id = addr.pay_id(); pay_id.type == pay_ident::ident_type::SHELLEY_SCRIPT) [[likely]]
                     return pay_id.hash;
-                throw error("tx {} (spend) input #{}: the output address is not a payment script: {}!", _tx->hash(), r.ref_idx, in);
+                throw error(fmt::format("tx {} (spend) input #{}: the output address is not a payment script: {}!", _tx->hash(), r.ref_idx, in));
             }
             case redeemer_tag::mint: return mint_at(r.ref_idx);
             case redeemer_tag::cert: return cert_cred_at(r.ref_idx).hash;
@@ -1111,13 +1111,13 @@ namespace daedalus_turbo::plutus {
                     using T = std::decay_t<decltype(a)>;
                     if constexpr (std::is_same_v<T, conway::gov_action_t::parameter_change_t>)
                         return a.policy_id.value();
-                    throw error("unsupported gov_action type: {}", typeid(T).name());
+                    throw error(fmt::format("unsupported gov_action type: {}", typeid(T).name()));
                     // Unreachable and needed only to Make Visual C++ happy
                     return script_hash {};
-                }, p.action.val);
+                }, p.procedure.action.val);
             }
             default:
-                throw error("tx: {} unsupported redeemer_tag: {}", _tx->hash(), static_cast<int>(r.tag));
+                throw error(fmt::format("tx: {} unsupported redeemer_tag: {}", _tx->hash(), static_cast<int>(r.tag)));
         };
     }
 
@@ -1163,7 +1163,7 @@ namespace daedalus_turbo::plutus {
             if (idx++ == r_idx)
                 return v;
         }
-        throw error("unable to find a vote at index {}!", r_idx);
+        throw error(fmt::format("unable to find a vote at index {}!", r_idx));
     }
 
     const context::voter_map &context::votes() const

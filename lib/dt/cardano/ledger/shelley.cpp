@@ -40,7 +40,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         for (const auto &[pool_id, ctr]: raw.at(1).at(0).at(0).map()) {
             const auto [it, created] = _kes_counters.try_emplace(pool_id.buf(), ctr.uint());
             if (!created) [[unlikely]]
-                throw error("duplicate kes counter reported for pool: {}", pool_id);
+                throw error(fmt::format("duplicate kes counter reported for pool: {}", pool_id));
         }
         _nonce_evolving = raw.at(1).at(0).at(1).at(1).buf();
         _nonce_candidate = raw.at(1).at(0).at(2).at(1).buf();
@@ -70,7 +70,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         blake2b_256_hash nonce_block {};
         for (const auto &item: updates) {
             if (item.slot < _slot_last)
-                throw error("got block with a slot number {} when last seed slot is : {}", item.slot, _slot_last);
+                throw error(fmt::format("got block with a slot number {} when last seed slot is : {}", item.slot, _slot_last));
             if (item.era < 6) {
                 blake2b(nonce_block, item.nonce_result);
             } else {
@@ -90,7 +90,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
                 if (item.kes_counter > kes_it->second)
                     kes_it->second = item.kes_counter;
                 else if (item.kes_counter < kes_it->second)
-                    throw error("slot: {} out of order KES counter {} < {} for pool: {}", item_slot, item.kes_counter, kes_it->second, item.pool_id);
+                    throw error(fmt::format("slot: {} out of order KES counter {} < {} for pool: {}", item_slot, item.kes_counter, kes_it->second, item.pool_id));
             }
         }
     }
@@ -259,7 +259,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
             }
         }
         {
-            for (const auto &[pool_id, info]: snap.at(5).map()) {
+            for (const auto &[pool_id, info]: snap.at(5).at(0).map()) {
                 _operating_stake_dist.try_emplace(pool_id.buf(), info.at(0).array(), info.at(1).buf());
             }
         }
@@ -267,7 +267,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
             // const auto &tbd = snap.at(6); NULL
         }
         _blocks_past_voting_deadline = v.at(2).uint();
-        _reward_pulsing_snapshot_slot = slot::from_epoch(_epoch, _cfg) + _cfg.shelley_randomness_stabilization_window;
+        _pulsing_snapshot_slot = slot::from_epoch(_epoch, _cfg) + _cfg.shelley_randomness_stabilization_window;
         _recompute_caches();
     }
 
@@ -276,7 +276,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         return typeid(*this) == typeid(o)
             && _end_offset == o._end_offset
             && _epoch_slot == o._epoch_slot
-            && _reward_pulsing_snapshot_slot == o._reward_pulsing_snapshot_slot
+            && _pulsing_snapshot_slot == o._pulsing_snapshot_slot
             && _reward_pulsing_snapshot == o._reward_pulsing_snapshot
             && _active_pool_dist == o._active_pool_dist
             && _active_inv_delegs == o._active_inv_delegs
@@ -431,7 +431,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
     void state::utxo_del(const cardano::tx_out_ref &txo_id)
     {
         if (const size_t num_del = _utxo.erase(txo_id); num_del != 1)
-            throw error("request to remove an unknown TXO {}!", txo_id);
+            throw error(fmt::format("request to remove an unknown TXO {}!", txo_id));
     }
 
     void state::_process_block_updates(block_update_list &&block_updates)
@@ -449,6 +449,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
 
     void state::process_cert(const cert_any_t &cert, const cert_loc_t &loc)
     {
+        _tick(loc.slot);
         std::visit([&](const auto &c) {
             using T = std::decay_t<decltype(c)>;
             if constexpr (std::is_same_v<T, stake_reg_cert>
@@ -460,7 +461,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
                     || std::is_same_v<T, instant_reward_cert>) {
                 process_cert(c, loc);
             } else {
-                throw error("certificate type is not supported in shelley era: {}", typeid(T).name());
+                throw error(fmt::format("certificate type is not supported in shelley era: {}", typeid(T).name()));
             }
         }, cert.val);
     }
@@ -503,7 +504,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
             else if (c.source == reward_source::treasury)
                 instant_reward_treasury(stake_id, coin);
             else
-                throw error("unsupported reward source: {}", static_cast<int>(c.source));
+                throw error(fmt::format("unsupported reward source: {}", static_cast<int>(c.source)));
         }
     }
 
@@ -512,7 +513,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         std::visit([&](const auto &u) {
             using T = std::decay_t<decltype(u)>;
             if constexpr (std::is_same_v<T, index::timed_update::stake_withdraw>) {
-                withdraw_reward(upd.loc.slot, u.stake_id, u.amount);
+                withdraw_reward(u.stake_id, u.amount);
             } else if constexpr (std::is_same_v<T, param_update_proposal>) {
                 propose_update(upd.loc.slot, u);
             } else if constexpr (std::is_same_v<T, param_update_vote>) {
@@ -529,9 +530,9 @@ namespace daedalus_turbo::cardano::ledger::shelley {
                 || std::is_same_v<T, pool_retire_cert>
                 || std::is_same_v<T, genesis_deleg_cert>
                 || std::is_same_v<T, instant_reward_cert>) {
-                process_cert(u, upd.loc);
+                process_cert(cert_any_t { u }, upd.loc);
             } else {
-                throw error("unsupported timed update: {}", typeid(u).name());
+                throw error(fmt::format("unsupported timed update: {}", typeid(u).name()));
             }
         }, upd.update);
     }
@@ -581,7 +582,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
                                             pointer_deltas[addr.pointer()] -= static_cast<int64_t>(it->second.coin);
                                         utxo_part.erase(it);
                                     } else {
-                                        throw error("request to remove an unknown TXO {}!", txo_id);
+                                        throw error(fmt::format("request to remove an unknown TXO {}!", txo_id));
                                     }
                                 }
                             }
@@ -612,7 +613,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         for (const auto &txo_id: collected_collateral) {
             const auto txo_data = utxo_find(txo_id);
             if (!txo_data) [[unlikely]]
-                throw error("epoch {}: cannot find data about a TXO used as a collateral input: {}", _epoch, txo_id);
+                throw error(fmt::format("epoch {}: cannot find data about a TXO used as a collateral input: {}", _epoch, txo_id));
             logger::debug("fees from used collateral {}: {}", txo_id, txo_data->coin);
             add_fees(txo_data->coin);
             if (const address addr { txo_data->address }; addr.has_stake_id_hybrid()) [[likely]]
@@ -655,11 +656,11 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         return total_balance.load();
     }
 
-    void state::withdraw_reward(const uint64_t, const cardano::stake_ident &stake_id, const uint64_t amount)
+    void state::withdraw_reward(const stake_ident &stake_id, const uint64_t amount)
     {
         auto &acc = _accounts.at(stake_id);
         if (acc.reward < amount)
-            throw error("trying to withdraw from account {} more stake {} than it has: {}", stake_id, amount, acc.reward);
+            throw error(fmt::format("trying to withdraw from account {} more stake {} than it has: {}", stake_id, amount, acc.reward));
         acc.reward -= amount;
         if (acc.deleg)
             _active_pool_dist.sub(*acc.deleg, amount);
@@ -667,7 +668,6 @@ namespace daedalus_turbo::cardano::ledger::shelley {
 
     void state::register_stake(const uint64_t slot, const stake_ident &stake_id, const std::optional<uint64_t> deposit, const size_t tx_idx, const size_t cert_idx)
     {
-        _tick(slot);
         const auto deposit_size = deposit ? *deposit : _params.key_deposit;
         auto [acc_it, acc_created] = _accounts.try_emplace(stake_id);
         if (acc_created || !acc_it->second.ptr) {
@@ -681,14 +681,13 @@ namespace daedalus_turbo::cardano::ledger::shelley {
 
     void state::retire_stake(const uint64_t slot, const stake_ident &stake_id, const std::optional<uint64_t> deposit)
     {
-        _tick(slot);
         const auto deposit_size = deposit ? *deposit : _params.key_deposit;
         auto &acc = _accounts.at(stake_id);
         if (acc.ptr) {
             if (acc.deposit >= deposit_size) [[likely]]
                 acc.deposit -= deposit_size;
             else
-                throw error("expected stake deposit: {} is more than the actual one: {}", deposit_size, acc.deposit);
+                throw error(fmt::format("expected stake deposit: {} is more than the actual one: {}", deposit_size, acc.deposit));
             if (_deposited >= deposit_size) [[likely]]
                 _deposited -= deposit_size;
             else
@@ -712,7 +711,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
     void state::delegate_stake(const stake_ident &stake_id, const pool_hash &pool_id)
     {
         if (!_active_pool_params.contains(pool_id))
-            throw error("trying to delegate {} to an unknown pool: {}", stake_id, pool_id);
+            throw error(fmt::format("trying to delegate {} to an unknown pool: {}", stake_id, pool_id));
         auto &acc = _accounts.at(stake_id);
         const auto stake = acc.stake + acc.reward;
         const bool deleg_created = !acc.deleg;
@@ -742,7 +741,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         } else {
             const uint64_t dec = static_cast<uint64_t>(-delta);
             if (acc.stake < dec)
-                throw error("trying to remove from account {} more stake {} than it has: {}", stake_id, dec, acc.stake);
+                throw error(fmt::format("trying to remove from account {} more stake {} than it has: {}", stake_id, dec, acc.stake));
             acc.stake -= dec;
             if (acc.deleg && _active_pool_params.contains(*acc.deleg))
                 _active_pool_dist.sub(*acc.deleg, static_cast<uint64_t>(-delta));
@@ -795,7 +794,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         logger::debug("slot: {} proposal: {}", slot, prop);
         if (_params.protocol_ver.major >= 2) {
             if (!_cfg.shelley_delegates.contains(prop.pool_id))
-                throw error("protocol update proposal from a key not in the shelley genesis delegate list: {}!", prop.pool_id);
+                throw error(fmt::format("protocol update proposal from a key not in the shelley genesis delegate list: {}!", prop.pool_id));
             if (!prop.epoch || *prop.epoch == _epoch) {
                 const auto too_late = cardano::slot::from_epoch(_epoch + 1, _cfg) - 2 * _cfg.shelley_stability_window;
                 if (slot < too_late) {
@@ -830,11 +829,11 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         if (_fees_next_reward >= refund) [[likely]]
             _fees_next_reward -= refund;
         else
-            throw error("insufficient fees_next_reward: {} to refund {}", _fees_next_reward, refund);
+            throw error(fmt::format("insufficient fees_next_reward: {} to refund {}", _fees_next_reward, refund));
         if (_fees_utxo >= refund) [[likely]]
             _fees_utxo -= refund;
         else
-            throw error("insufficient fees_utxo: {} to refund {}", _fees_utxo, refund);
+            throw error(fmt::format("insufficient fees_utxo: {} to refund {}", _fees_utxo, refund));
     }
 
     void state::add_fees(const uint64_t amount)
@@ -857,7 +856,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
                 f_it->second.vrf = vrf_vkey;
             }
         } else {
-            throw error("an attempt to redelegate an unknown shelley genesis delegate {}", hash);
+            throw error(fmt::format("an attempt to redelegate an unknown shelley genesis delegate {}", hash));
         }
     }
 
@@ -932,7 +931,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
                 new_epoch = 0;
         }
         if (*new_epoch < _epoch || *new_epoch > _epoch + 1)
-            throw error("unexpected new epoch value: {} the current epoch: {}", *new_epoch, _epoch);;
+            throw error(fmt::format("unexpected new epoch value: {} the current epoch: {}", *new_epoch, _epoch));;
         _epoch = *new_epoch;
         _epoch_slot = 0;
         const auto prev_params = _apply_param_updates();
@@ -966,7 +965,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
             _fees_utxo -= _delta_fees;
             _delta_fees = _fees_next_reward;
             _fees_next_reward = 0;
-            _reward_pulsing_snapshot_slot = cardano::slot::from_epoch(_epoch, _cfg) + _cfg.shelley_randomness_stabilization_window;
+            _pulsing_snapshot_slot = cardano::slot::from_epoch(_epoch, _cfg) + _cfg.shelley_randomness_stabilization_window;
 
             const auto [ refunds_user, refunds_treasury ] = _retire_pools();
 
@@ -1070,7 +1069,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         switch (val.at(13).at(0).uint()) {
             case 0: params.extra_entropy.reset(); break;
             case 1: params.extra_entropy.emplace(val.at(13).at(1).buf()); break;
-            default: throw error("unexpected value for extra_entropy: {}", val.at(13));
+            default: throw error(fmt::format("unexpected value for extra_entropy: {}", val.at(13)));
         }
         params.protocol_ver.major = val.at(14).uint();
         params.protocol_ver.minor = val.at(15).uint();
@@ -1088,7 +1087,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
             data.assets.emplace(val.at(1).raw_span());
             break;
             default:
-                throw error("unexpected type of txo_data amount: {} in {}", val, id);
+                throw error(fmt::format("unexpected type of txo_data amount: {} in {}", val, id));
         }
     }
 
@@ -1224,7 +1223,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
                 double pool_rel_active_stake = static_cast<double>(pool_stake) / std::max(static_cast<uint64_t>(1), _go.pool_dist.total_stake());
                 double pledge_rel_total_stake = static_cast<double>(info.params.pledge) / std::max(static_cast<uint64_t>(1), total_stake);
                 if (pool_rel_total_stake < pledge_rel_total_stake)
-                    throw error("internal error: pledged stake: {} of pool {} is larger than the pool's total stake: {}", info.params.pledge, pool_id, pool_stake);
+                    throw error(fmt::format("internal error: pledged stake: {} of pool {} is larger than the pool's total stake: {}", info.params.pledge, pool_id, pool_stake));
                 double s_mark = std::min(pledge_rel_total_stake, z0);
                 uint64_t optimal_reward = static_cast<uint64_t>(staking_reward_pot / (1 + _params_prev.pool_pledge_influence.as_r()) *
                     (sigma_mark + s_mark * _params_prev.pool_pledge_influence.as_r() * (sigma_mark - s_mark * (z0 - sigma_mark) / (z0)) / z0));
@@ -1361,16 +1360,34 @@ namespace daedalus_turbo::cardano::ledger::shelley {
 
     void state::_apply_param_update(const param_update &update)
     {
-        std::string update_desc {};
         if (update.protocol_ver) {
             if (update.protocol_ver->major >= 2 && _params.protocol_ver.major < 2) {
                 {
                     const auto utxo_bal = utxo_balance();
                     if (utxo_bal > _cfg.shelley_max_lovelace_supply)
-                        throw error("utxo balance: {} is larger than the total ADA supply: {}",
-                            cardano::amount { utxo_bal }, cardano::amount { _cfg.shelley_max_lovelace_supply });
+                        throw error(fmt::format("utxo balance: {} is larger than the total ADA supply: {}",
+                            cardano::amount { utxo_bal }, cardano::amount { _cfg.shelley_max_lovelace_supply }));
                     _reserves = _cfg.shelley_max_lovelace_supply - utxo_bal;
                 }
+                // remove empty UTXO entries
+                static const std::string task_name { "shelley-remove-empty-utxos" };
+                _sched.wait_all_done(task_name, txo_map::num_parts,
+                    [&] {
+                        for (size_t part_idx = 0; part_idx < txo_map::num_parts; ++part_idx) {
+                            _sched.submit_void(task_name, 1000, [this, part_idx] {
+                                auto &utxo_part = _utxo.partition(part_idx);
+                                for (auto it = utxo_part.begin(); it != utxo_part.end();) {
+                                    if (it->second.coin) [[likely]] {
+                                        ++it;
+                                    } else {
+                                        logger::debug("removed empty UTXO {}", it->first);
+                                        it = utxo_part.erase(it);
+                                    }
+                                }
+                            });
+                        }
+                    }
+                );
                 _apply_shelley_params(_params);
                 _apply_shelley_params(_params_prev);
                 _params_prev.protocol_ver = *update.protocol_ver;
@@ -1381,38 +1398,12 @@ namespace daedalus_turbo::cardano::ledger::shelley {
                 logger::info("retired {} in unclaimed AVVM vouchers", cardano::amount { unspent_avvm });
             }
         }
-        _apply_one_param_update(_params.protocol_ver, update_desc, update.protocol_ver, "protocol_ver");
-        _apply_one_param_update(_params.min_fee_a, update_desc, update.min_fee_a, "min_fee_a");
-        _apply_one_param_update(_params.min_fee_b, update_desc, update.min_fee_b, "min_fee_b");
-        _apply_one_param_update(_params.max_block_body_size, update_desc, update.max_block_body_size, "max_block_body_size");
-        _apply_one_param_update(_params.max_transaction_size, update_desc, update.max_transaction_size, "max_transaction_size");
-        _apply_one_param_update(_params.max_block_header_size, update_desc, update.max_block_header_size, "max_block_header_size");
-        _apply_one_param_update(_params.key_deposit, update_desc, update.key_deposit, "key_deposit");
-        _apply_one_param_update(_params.pool_deposit, update_desc, update.pool_deposit, "pool_deposit");
-        _apply_one_param_update(_params.e_max, update_desc, update.e_max, "e_max");
-        _apply_one_param_update(_params.n_opt, update_desc, update.n_opt, "n_opt");
-        _apply_one_param_update(_params.pool_pledge_influence, update_desc, update.pool_pledge_influence, "pool_pledge_influence");
-        _apply_one_param_update(_params.expansion_rate, update_desc, update.expansion_rate, "expansion_rate");
-        _apply_one_param_update(_params.treasury_growth_rate, update_desc, update.treasury_growth_rate, "treasury_growth_rate");
-        _apply_one_param_update(_params.decentralization, update_desc, update.decentralization, "decentralization");
-        _apply_one_param_update(_params.extra_entropy, update_desc, update.extra_entropy, "extra_entropy");
-        _apply_one_param_update(_params.min_utxo_value, update_desc, update.min_utxo_value, "min_utxo_value");
-        _apply_one_param_update(_params.min_pool_cost, update_desc, update.min_pool_cost, "min_pool_cost");
-        _apply_one_param_update(_params.lovelace_per_utxo_byte, update_desc, update.lovelace_per_utxo_byte, "lovelace_per_utxo_byte");
-        _apply_one_param_update(_params.ex_unit_prices, update_desc, update.ex_unit_prices, "ex_unit_prices");
-        _apply_one_param_update(_params.max_tx_ex_units, update_desc, update.max_tx_ex_units, "max_tx_ex_units");
-        _apply_one_param_update(_params.max_block_ex_units, update_desc, update.max_block_ex_units, "max_block_ex_units");
-        _apply_one_param_update(_params.max_value_size, update_desc, update.max_value_size, "max_value_size");
-        _apply_one_param_update(_params.max_collateral_pct, update_desc, update.max_collateral_pct, "max_collateral_pct");
-        _apply_one_param_update(_params.max_collateral_inputs, update_desc, update.max_collateral_inputs, "max_collateral_inputs");
-        _apply_one_param_update(_params.plutus_cost_models, update_desc, update.plutus_cost_models, "plutus_cost_models");
+        const auto update_desc = _params.apply(update);
         logger::info("epoch: {} protocol params update: [ {}]", _epoch, update_desc);
     }
 
-    protocol_params state::_apply_param_updates()
+    std::optional<param_update> state::_prep_param_update() const
     {
-        auto orig_params_prev = std::move(_params_prev);
-        _params_prev = _params;
         std::optional<param_update> update {};
         {
             std::unordered_map<param_update, size_t> votes {};
@@ -1429,7 +1420,14 @@ namespace daedalus_turbo::cardano::ledger::shelley {
                 }
             }
         }
-        if (update)
+        return update;
+    }
+
+    protocol_params state::_apply_param_updates()
+    {
+        auto orig_params_prev = std::move(_params_prev);
+        _params_prev = _params;
+        if (const auto update = _prep_param_update(); update)
             _apply_param_update(*update);
         _ppups = std::move(_ppups_future);
         _ppups_future.clear();
@@ -1439,10 +1437,10 @@ namespace daedalus_turbo::cardano::ledger::shelley {
     void state::_tick(const uint64_t slot)
     {
         if (_params.protocol_ver.major >= 2) {
-            if (!_params_prev.protocol_ver.forgo_reward_prefilter() && slot > _reward_pulsing_snapshot_slot) {
+            if (!_params_prev.protocol_ver.forgo_reward_prefilter() && slot > _pulsing_snapshot_slot) {
                 if (_reward_pulsing_snapshot.empty() && !_accounts.empty()) {
                     timer t { fmt::format("epoch: {} create a pulsing snapshot of reward accounts", _epoch), logger::level::debug };
-                    _reward_pulsing_snapshot.clear();
+                    _reward_pulsing_snapshot.reserve(_accounts.size());
                     for (const auto &[stake_id, acc]: _accounts) {
                         if (acc.ptr)
                             _reward_pulsing_snapshot.emplace_back(stake_id, acc.reward);
@@ -1665,19 +1663,19 @@ namespace daedalus_turbo::cardano::ledger::shelley {
                                         data.datum.emplace(uint8_vector { val.at(1).tag().second->buf() });
                                         break;
                                     default:
-                                        throw error("unexpected format of datum_option in {}: {}", id, val);
+                                        throw error(fmt::format("unexpected format of datum_option in {}: {}", id, val));
                                 }
                                 break;
                             case 3:
                                 data.script_ref.emplace(val.tag().second->buf());
                                 break;
                             default:
-                                throw error("unexpected value of txo_data map {} in {} {}", val_id, id, txo_data);
+                                throw error(fmt::format("unexpected value of txo_data map {} in {} {}", val_id, id, txo_data));
                         }
                     }
                     break;
                 default:
-                    throw error("unexpected txo_data value: {}", txo_data);
+                    throw error(fmt::format("unexpected txo_data value: {}", txo_data));
             }
             utxo_add(id, std::move(data));
         }
@@ -1723,16 +1721,6 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         enc.uint(params.protocol_ver.minor);
         enc.uint(params.min_utxo_value);
         enc.uint(params.min_pool_cost);
-    }
-
-    size_t state::_param_to_cbor(cbor::encoder &enc, const size_t idx, const std::optional<uint64_t> &val)
-    {
-        if (val) {
-            enc.uint(idx);
-            enc.uint(*val);
-            return 1;
-        }
-        return 0;
     }
 
     size_t state::_param_to_cbor(cbor::encoder &enc, const size_t idx, const std::optional<rational_u64> &val)
@@ -1942,7 +1930,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
 
     void state::_protocol_state_to_cbor(cbor::encoder &enc) const
     {
-        enc.array(4);
+        enc.array(5);
         enc.map(_ppups.size());
         for (const auto &[gen_deleg_id, proposal]: _ppups) {
             enc.bytes(gen_deleg_id);
@@ -1955,6 +1943,19 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         }
         _params_to_cbor(enc, _params);
         _params_to_cbor(enc, _params_prev);
+        // new in node 9+ - expected update next epoch?
+        {
+            const auto update = _prep_param_update();
+            if (update) {
+                enc.array(2);
+                enc.uint(1);
+                auto new_params = _params;
+                new_params.apply(*update);
+                _params_to_cbor(enc, new_params);
+            } else {
+                enc.array(0);
+            }
+        }
     }
 
     void state::_stake_pointers_to_cbor(cbor::encoder &enc) const
@@ -2065,16 +2066,19 @@ namespace daedalus_turbo::cardano::ledger::shelley {
 
     void state::_stake_distrib_to_cbor(cbor::encoder &enc) const
     {
+        enc.array(2);
         enc.map_compact(_operating_stake_dist.size(), [&] {
             for (const auto &[pool_id, op_info]: _operating_stake_dist) {
                 enc.bytes(pool_id);
-                enc.array(2)
+                enc.array(3)
                     .array(2)
                         .uint(op_info.rel_stake.numerator)
                         .uint(op_info.rel_stake.denominator)
+                    .uint(_set.pool_dist.get(pool_id))
                     .bytes(op_info.vrf_vkey);
             }
         });
+        enc.uint(_set.pool_dist.total_stake());
     }
 
     void state::to_cbor(parallel_serializer &ser) const
@@ -2165,7 +2169,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         v(_end_offset);
         v(_epoch_slot);
 
-        v(_reward_pulsing_snapshot_slot);
+        v(_pulsing_snapshot_slot);
         v(_reward_pulsing_snapshot);
         v(_active_pool_dist);
         v(_active_inv_delegs);
@@ -2257,5 +2261,10 @@ namespace daedalus_turbo::cardano::ledger::shelley {
                 o = 0;
             }
         });
+    }
+
+    const protocol_params &state::params() const
+    {
+        return _params;
     }
 }

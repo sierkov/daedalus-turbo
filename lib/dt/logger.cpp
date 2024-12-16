@@ -50,11 +50,11 @@ namespace daedalus_turbo::logger {
 
     static spdlog::logger create(const std::string &path)
     {
-        std::cerr << fmt::format("DT INIT: log path: {}\n", path);
+        std::cerr << fmt::format("DT_INIT: log path: {}\n", path);
         {
             std::ofstream os { path, std::ios_base::app };
             if (!os) {
-                std::cerr << fmt::format("DT INIT: Unable to write to the log file: {}; terminating.\n", path);
+                std::cerr << fmt::format("DT_INIT: Unable to write to the log file: {}; terminating.\n", path);
                 std::terminate();
             }
         }
@@ -109,7 +109,7 @@ namespace daedalus_turbo::logger {
                 break;
             }
             default:
-                throw daedalus_turbo::error("unsupported log level: {}", static_cast<int>(lev));
+                throw daedalus_turbo::error(fmt::format("unsupported log level: {}", static_cast<int>(lev)));
         }
     }
 }

@@ -19,7 +19,7 @@ namespace daedalus_turbo::crypto::sha2
     inline void digest(const std::span<uint8_t> &out, const buffer &in)
     {
         if (out.size() != sizeof(hash_256))
-            throw error("output size must be {} but got {}", sizeof(hash_256), out.size());
+            throw error(fmt::format("output size must be {} but got {}", sizeof(hash_256), out.size()));
         ed25519::ensure_initialized();
         if (crypto_hash_sha256(out.data(), in.data(), in.size()) != 0)
             throw error("sha2 computation hash failed!");

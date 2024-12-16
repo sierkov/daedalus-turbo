@@ -77,7 +77,7 @@ namespace daedalus_turbo::sync {
                         bp.slot = chain.blocks.back().blk->slot() - 1;
                         break;
                     default:
-                        throw error("unsupported failure_type: {}", static_cast<int>(mock_cfg.failure_type));
+                        throw error(fmt::format("unsupported failure_type: {}", static_cast<int>(mock_cfg.failure_type)));
                 }
             }
             block_parsed pblock {};
@@ -117,7 +117,7 @@ namespace daedalus_turbo::sync {
             if (block_epoch == epochs.size())
                 epochs.emplace_back();
             else if (block_epoch > epochs.size()) [[unlikely]]
-                throw error("nonconsecutive epochs: epoch {} came after {}", block_epoch, epochs.size());
+                throw error(fmt::format("nonconsecutive epochs: epoch {} came after {}", block_epoch, epochs.size()));
             auto &epoch_data = epochs.at(block_epoch);
             epoch_data.blocks.emplace_back(&blk);
             epoch_data.data << *blk.data;

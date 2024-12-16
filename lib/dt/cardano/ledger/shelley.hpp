@@ -131,10 +131,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         virtual void utxo_del(const tx_out_ref &txo_id);
         virtual uint64_t utxo_balance() const;
 
-        virtual void withdraw_reward(uint64_t slot, const stake_ident &stake_id, uint64_t amount);
-        virtual void register_stake(uint64_t slot, const stake_ident &stake_id, std::optional<uint64_t> deposit, size_t tx_idx=0, size_t cert_idx=0);
-        virtual void retire_stake(uint64_t slot, const stake_ident &stake_id, std::optional<uint64_t> deposit);
-        virtual void delegate_stake(const stake_ident &stake_id, const pool_hash &pool_id);
+        virtual void withdraw_reward(const stake_ident &stake_id, uint64_t amount);
         virtual void update_stake(const stake_ident &stake_id, int64_t delta);
         virtual void update_pointer(const stake_pointer &ptr, int64_t delta);
         virtual void update_stake_id_hybrid(const stake_ident_hybrid &stake_id, int64_t delta);
@@ -161,6 +158,8 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         virtual void process_cert(const pool_retire_cert &, const cert_loc_t &);
         virtual void process_cert(const genesis_deleg_cert &, const cert_loc_t &);
         virtual void process_cert(const instant_reward_cert &, const cert_loc_t &);
+
+        virtual const protocol_params &params() const;
     protected:
         using encode_cbor_func = std::function<void(cbor::encoder &)>;
 
@@ -170,7 +169,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         uint64_t _end_offset = 0;
         uint64_t _epoch_slot = 0;
         // serializable members
-        uint64_t _reward_pulsing_snapshot_slot = 0;
+        uint64_t _pulsing_snapshot_slot = 0;
         reward_distribution_copy _reward_pulsing_snapshot {};
         pool_stake_distribution _active_pool_dist {};
         inv_delegation_map _active_inv_delegs {};
@@ -235,23 +234,30 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         // non-serializable cache entries
         mutable set<pool_hash> _pbft_pools = _make_pbft_pools(_shelley_delegs);
 
+        template<std::integral T>
+        static size_t _param_to_cbor(cbor::encoder &enc, const size_t idx, const std::optional<T> &val)
+        {
+            if (val) {
+                enc.uint(idx);
+                enc.uint(narrow_cast<uint64_t>(*val));
+                return 1;
+            }
+            return 0;
+        }
+
         static uint8_vector _parse_address(buffer buf);
-        static size_t _param_to_cbor(cbor::encoder &enc, size_t idx, const std::optional<uint64_t> &val);
         static size_t _param_to_cbor(cbor::encoder &enc, size_t idx, const std::optional<rational_u64> &val);
         static size_t _param_update_common_to_cbor(cbor::encoder &enc, const param_update &upd);
 
-        template<typename T>
-        void _apply_one_param_update(T &tgt, std::string &desc, const std::optional<T> &upd, const std::string_view name)
-        {
-            if (upd) {
-                tgt = *upd;
-                desc += fmt::format("{}: {} ", name, tgt);
-            }
-        }
+        // previously public methods
+        virtual void register_stake(uint64_t slot, const stake_ident &stake_id, std::optional<uint64_t> deposit, size_t tx_idx=0, size_t cert_idx=0);
+        virtual void retire_stake(uint64_t slot, const stake_ident &stake_id, std::optional<uint64_t> deposit);
+        virtual void delegate_stake(const stake_ident &stake_id, const pool_hash &pool_id);
 
         void _apply_shelley_params(protocol_params &p) const;
         virtual void _add_encode_task(parallel_serializer &, const encode_cbor_func &) const;
         virtual void _apply_param_update(const param_update &update);
+        virtual std::optional<param_update> _prep_param_update() const;
         virtual param_update _parse_param_update(const cbor::value &proposal) const;
         virtual void _parse_protocol_params(protocol_params &params, const cbor_value &values) const;
         virtual void _compute_rewards();
@@ -266,6 +272,8 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         virtual tx_out_ref_list _process_timed_updates(timed_update_list &&);
         virtual void _process_utxo_updates(utxo_update_list &&);
         virtual void _process_collateral_use(tx_out_ref_list &&);
+        uint64_t _transfer_instant_rewards(stake_distribution &rewards);
+        virtual void _tick(uint64_t slot);
     private:
         static protocol_params _default_params(const cardano::config &cfg);
         static set<pool_hash> _make_pbft_pools(const shelley_delegate_map &delegs);
@@ -303,9 +311,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         uint64_t _compute_pool_rewards_parallel(const pool_block_dist &pools_active, uint64_t staking_reward_pot, uint64_t total_stake);
         void _clean_old_epoch_data();
         protocol_params _apply_param_updates();
-        void _tick(uint64_t slot);
         void _transfer_potential_rewards(const protocol_params &params_prev);
-        uint64_t _transfer_instant_rewards(stake_distribution &rewards);
         std::pair<uint64_t, uint64_t> _retire_pools();
     };
 }

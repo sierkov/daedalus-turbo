@@ -54,7 +54,7 @@ namespace daedalus_turbo::cardano::alonzo {
                 case 23: upd.max_collateral_pct.emplace(val.uint()); break;
                 case 24: upd.max_collateral_inputs.emplace(val.uint()); break;
                 default:
-                    throw error("unsupported parameter id: {} val: {}", idx, val);
+                    throw error(fmt::format("unsupported parameter id: {} val: {}", idx, val));
             }
         }
         return upd;
