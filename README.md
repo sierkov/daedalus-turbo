@@ -8,7 +8,7 @@
 - [Compilation](#compilation)
 
 # About
-Turbo is a high-performance C++ implementation of key Cardano Node components, originally designed to optimize full personal wallets (e.g., Daedalus). It focuses on efficient data consumption rather than data production, allowing for additional optimizations. Now, Turbo is evolving to support a broader range of use cases
+Turbo is a high-performance C++ implementation of key Cardano Node components, originally designed to optimize full personal wallets (e.g., Daedalus). It focuses on efficient data consumption rather than data production, allowing for additional optimizations. Now, the project is evolving to support a broader range of use cases.
 
 The technical approach is based on two key ideas:
 - Reducing network bandwidth usage through compression techniques.
