@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_CARDANO_LEDGER_BABBAGE_HPP
@@ -10,8 +11,8 @@
 namespace daedalus_turbo::cardano::ledger::babbage {
     struct vrf_state: alonzo::vrf_state {
         vrf_state(alonzo::vrf_state &&);
-        void from_cbor(const cbor::value &v) override;
-        void to_cbor(parallel_serializer &) const override;
+        void from_cbor(cbor::zero2::value &v) override;
+        void to_cbor(cbor_encoder &) const override;
     };
 
     struct state: alonzo::state {
@@ -19,8 +20,8 @@ namespace daedalus_turbo::cardano::ledger::babbage {
     protected:
         void _apply_babbage_params(protocol_params &p) const;
         void _apply_param_update(const param_update &update) override;
-        void _parse_protocol_params(protocol_params &params, const cbor_value &values) const override;
-        void _params_to_cbor(cbor::encoder &enc, const protocol_params &params) const override;
+        void _parse_protocol_params(protocol_params &params, cbor::zero2::value &values) const override;
+        void _params_to_cbor(era_encoder &enc, const protocol_params &params) const override;
     };
 }
 

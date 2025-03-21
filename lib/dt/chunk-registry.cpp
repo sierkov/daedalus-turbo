@@ -1,11 +1,12 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
+#include <dt/cardano.hpp>
 #include <dt/cardano/ledger/state.hpp>
 #include <dt/chunk-registry.hpp>
-#include <dt/crypto/crc32.hpp>
 
 namespace daedalus_turbo {
     chunk_registry::chunk_registry(const std::string &data_dir, const mode mode,
@@ -138,19 +139,34 @@ namespace daedalus_turbo {
         throw error("This chunk_registry does not have a validator instance!");
     }
 
+    std::optional<storage::block_info> chunk_registry::latest_block_after_or_at_slot(const uint64_t slot) const
+    {
+        for (auto chunk_it = _find_chunk_by_slot(slot); chunk_it != _chunks.end(); ++chunk_it) {
+            for (auto block_it = chunk_it->second.blocks.begin(); block_it != chunk_it->second.blocks.end(); ++block_it) {
+                if (block_it->slot >= slot)
+                    return *block_it;
+            }
+        }
+        return {};
+    }
+
     std::optional<storage::block_info> chunk_registry::latest_block_before_or_at_slot(const uint64_t slot) const
     {
-        std::optional<storage::block_info> res {};
-        for (auto chunk_it = _find_chunk_by_slot(slot); chunk_it != _chunks.end(); ) {
-            for (auto block_it = chunk_it->second.blocks.begin(); block_it != chunk_it->second.blocks.end(); ++block_it) {
-                if (block_it->slot <= slot)
-                    res = *block_it;
+        if (!_chunks.empty()) {
+            auto chunk_it = _find_chunk_by_slot(slot);
+            if (chunk_it == _chunks.end())
+                --chunk_it;
+            for (;;) {
+                for (auto block_it = chunk_it->second.blocks.rbegin(); block_it != chunk_it->second.blocks.rend(); ++block_it) {
+                    if (block_it->slot <= slot)
+                        return *block_it;
+                }
+                if (chunk_it == _chunks.begin())
+                    break;
+                --chunk_it;
             }
-            if (res || chunk_it == _chunks.begin())
-                break;
-            --chunk_it;
         }
-        return res;
+        return {};
     }
 
     void chunk_registry::_node_export_chain(const std::filesystem::path &immutable_dir, const std::filesystem::path &volatile_dir, const int prio_base) const
@@ -204,7 +220,7 @@ namespace daedalus_turbo {
                     logger::debug("writing chunk {}", data_path);
                     uint8_vector data {};
                     for (const auto &path: m_chunk.files)
-                        data << file::read(path);
+                        data << file::read_auto(path);
                     file::write(data_path, data);
                     data_size = data.size();
                 }
@@ -251,7 +267,7 @@ namespace daedalus_turbo {
             uint8_vector volatile_data {};
             vector<size_t> volatile_block_sizes {};
             for (const auto *chunk_ptr: volatile_chunks) {
-                volatile_data << file::read(full_path(chunk_ptr->rel_path()));
+                volatile_data << file::read_auto(full_path(chunk_ptr->rel_path()));
                 for (const auto &block: chunk_ptr->blocks)
                     volatile_block_sizes.emplace_back(block.size);
             }
@@ -266,7 +282,7 @@ namespace daedalus_turbo {
                 }
                 file::write(
                     (volatile_dir / fmt::format("blocks-{}.dat", volatile_file_no)).string(),
-                    volatile_data.span().subbuf(start_offset, file_size));
+                    static_cast<buffer>(volatile_data).subbuf(start_offset, file_size));
                 volatile_offset += file_size;
                 ++volatile_file_no;
                 const auto new_done_blocks = atomic_add(*done_bytes, file_size);
@@ -360,12 +376,11 @@ namespace daedalus_turbo {
         std::optional<indexer::chunk_indexer_list> chunk_indexers {};
         if (_indexer)
             chunk_indexers = _indexer->make_chunk_indexers(offset);
-        cbor_parser parser { raw_data };
-        cbor::value block_tuple {};
-        while (!parser.eof()) {
+        cbor::zero2::decoder dec { raw_data };
+        while (!dec.done()) {
             try {
-                parser.read(block_tuple);
-                auto blk_ptr = cardano::make_block(block_tuple, chunk.offset + block_tuple.data - raw_data.data(), _cardano_cfg);
+                auto &block_tuple = dec.read();
+                auto blk_ptr = cardano::make_block(block_tuple, chunk.offset + block_tuple.data_begin() - raw_data.data(), _cardano_cfg);
                 {
                     const auto &blk = *blk_ptr;
                     const auto slot = blk.slot();
@@ -376,8 +391,8 @@ namespace daedalus_turbo {
                     if (blk.era() > max_era)
                         throw error(fmt::format("block at slot {} has era {} that is outside of the supported max limit of {}", slot, blk.era(), max_era));
                     static constexpr auto max_size = std::numeric_limits<uint32_t>::max();
-                    if (blk.size() > max_size)
-                        throw error(fmt::format("block at slot {} has size {} that is outside of the supported max limit of {}", slot, blk.size(), max_size));
+                    if (blk_ptr.raw().size() > max_size)
+                        throw error(fmt::format("block at slot {} has size {} that is outside of the supported max limit of {}", slot, blk_ptr.raw().size(), max_size));
                     if (!chunk.blocks.empty()) {
                         if (_validator && blk.prev_hash() != chunk.last_block_hash)
                             throw error(fmt::format("block at slot {} has an inconsistent prev_hash {}", blk.slot(), blk.prev_hash()));
@@ -393,7 +408,7 @@ namespace daedalus_turbo {
                     chunk.last_slot = slot;
                     if (chunk_indexers) {
                         for (auto &idxr: *chunk_indexers)
-                            idxr->index(blk);
+                            idxr->index(blk_ptr);
                         blk.foreach_tx([&](const auto &tx) {
                             for (auto &idxr: *chunk_indexers)
                                 idxr->index_tx(tx);
@@ -403,8 +418,8 @@ namespace daedalus_turbo {
                                 idxr->index_invalid_tx(tx);
                         });
                     }
-                    chunk.blocks.emplace_back(storage::block_info::from_block(blk));
-                    ok_data << blk.raw_data();
+                    chunk.blocks.emplace_back(storage::block_info::from_block(blk_ptr));
+                    ok_data << blk_ptr.raw();
                 }
             } catch (...) {
                 ex_ptr = std::current_exception();

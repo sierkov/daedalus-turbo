@@ -5,43 +5,57 @@
 - [Test it yourself](#test-it-yourself)
 - [Quality](#quality)
 - [Roadmap](#roadmap)
-- [Benchmarks](#benchmarks)
-- [Compilation](#benchmarks)
+- [Compilation](#compilation)
 
 # About
-Daedalus Turbo is an open-source project that aims to improve drastically (>=10x) the blockchain synchronization performance of the Daedalus wallet, the primary fully decentralized wallet of the Cardano blockchain. The project has a two-year schedule presented in its [roadmap](#roadmap), and its technical approach is based on two key ideas: reducing the necessary network bandwidth through the use of compression and maximizing the use of parallel computation during the processing of blockchain data. These ideas are further explained in the following research reports:
-- [On the Security of Wallet Nodes in the Cardano Blockchain](./doc/2024-sierkov-on-wallet-security.pdf) explains the security approach.
-- [Parallelized Ouroboros Praos](./doc/2024-sierkov-parallelized-ouroboros-praos.pdf) explains the approach to parallelized data validation.
-- [Highly Parallel Reconstruction of Wallet History in the Cardano Blockchain](./doc/2023_Sierkov_WalletHistoryReconstruction.pdf) explains the approach to wallet history reconstruction.
-- [Scalability of Bulk Synchronization in the Cardano Blockchain](./doc/2023_Sierkov_CardanoBulkSynchronization.pdf) explains the network infrastructure requirements, the need for compressing proxies, and how the approach can be scaled to support up to a billion Cardano wallet nodes.
+Turbo is a high-performance C++ implementation of key Cardano Node components, originally designed to optimize full personal wallets (e.g., Daedalus). It focuses on efficient data consumption rather than data production, allowing for additional optimizations. Now, Turbo is evolving to support a broader range of use cases
+
+The technical approach is based on two key ideas:
+- Reducing network bandwidth usage through compression techniques.
+- Maximizing parallel computation in blockchain data processing to improve synchronization and validation speeds.
+
+These ideas are further explained in the following research reports:
+- [On the Security of Wallet Nodes in the Cardano Blockchain](./doc/2024-sierkov-on-wallet-security.pdf) - Security approach.
+- [Parallelized Ouroboros Praos](./doc/2024-sierkov-parallelized-ouroboros-praos.pdf) – Parallelized data validation.
+- [Highly Parallel Reconstruction of Wallet History in the Cardano Blockchain](./doc/2023_Sierkov_WalletHistoryReconstruction.pdf) – Wallet history reconstruction.
+- [Scalability of Bulk Synchronization in the Cardano Blockchain](./doc/2023_Sierkov_CardanoBulkSynchronization.pdf) – Infrastructure scaling and compression-based network optimization.
+
+# Status
+With the code now functionally complete, the focus has shifted to testing and integration. Key ongoing efforts include:
+- **Integration:** [Cardano Improvement Proposal 0150 - Block Data Compression](https://github.com/cardano-foundation/CIPs/pull/993) – Ensuring seamless integration of block data compression with existing infrastructure.
+- **Verification:** [Implementation-Independent Ledger Conformance Test Suite](https://github.com/IntersectMBO/cardano-ledger/issues/4892) – Validating correctness and conformance with the ledger specification.
+- **Performance:** [Cross-Implementation Benchmarking Dataset for Plutus Performance](https://github.com/IntersectMBO/plutus/issues/6626) – Measuring and optimizing Plutus script execution across implementations.
+- **Safety:** [Memory Safety Verification for critical C++ Code](./doc/memory-safety.md) – Analyzing and mitigating potential memory safety issues.
 
 # Features
-Currently supported:
-- Incremental synchronization of compressed blockchain data over the Internet (the Turbo protocol)
-- Incremental synchronization using the normal Cardano Network protocol (no compression)
-- Incremental synchronization from a local Cardano Node (immutable and volatile files)
-- Parallelized consensus validation according to Ouroboros Praos/Genesis rules
-- Parallelized transaction witness validation using the [C++ Plutus Machine](lib/dt/plutus)
-- Consensus-based transaction witness validation (the Turbo validation) as explained in [On the Security of Wallet Nodes in the Cardano Blockchain](./doc/2024-sierkov-on-wallet-security.pdf)
-- Compressed local storage of blockchain data (compression ratio ~4.5x)
-- Interactive reconstruction of balances and transaction histories of stake and payment addresses
-- Interactive search for transaction data
-- Fully Local Blockchain Explorer Desktop User Interface
-
-In active development:
-- Support for Conway governance actions
-
-As the project matures and moves through its [roadmap](#roadmap), the list of supported features will grow.
+- **Full support for all Cardano eras:** Byron, Shelley, Allegra, Mary, Alonzo, Babbage, and Conway.
+- **Efficient blockchain synchronization:**
+  - Incremental synchronization of **compressed blockchain data** over the Internet using the Turbo protocol (improves bandwidth efficiency).
+  - Incremental synchronization using the **standard Cardano Network protocol** (without compression).
+  - Incremental synchronization from a **local Cardano Node** (supports both immutable and volatile files).
+- **Parallelized validation mechanisms:**
+  - Consensus validation according to Ouroboros Praos/Genesis rules.
+  - Parallelized transaction witness validation via the [C++ Plutus Machine](lib/dt/plutus).
+  - Consensus-based witness validation ("Turbo validation"), as detailed in [On the Security of Wallet Nodes in the Cardano Blockchain](./doc/2024-sierkov-on-wallet-security.pdf)
+- **Optimized blockchain data storage:**
+  - Compressed local storage of blockchain data (**~4.5x reduction in size**).
+- **Advanced transaction and balance queying mechanisms**
+  - Interactive balance and transaction history reconstruction for both stake and payment addresses.
+  - Searchable transaction data with fast query capabilities.
+- **Standalone Desktop UI:**
+  - A **fully local** blockchain explorer with real-time transaction tracking and historical analysis.
 
 # Requirements
-- A modern CPU with 8+ physical cores. The code will refuse any CPU weaker than that of an Orange Pi 5 Plus.
-- 16 GB of RAM for 8-to-12-core CPUs. 32 GB for 16-to-24-core CPUs
+- **CPU:** A modern processor with at least 8 physical cores (minimum equivalent: Orange Pi 5 Plus or better). The software will not run on weaker CPUs.
+- **RAM:**
+  - **16 GB** for **8–12 core CPUs**.
+  - **32 GB** for **16–24 core CPUs** (*higher core counts require more RAM*).
   - The more cores a CPU has, the more RAM is needed.
-- A fast SSD with 200 GB of free space:
-  - ~70 GB for the compressed blockchain data and search indices.
-  - ~30 GB for temporary use during indexing.
-  - ~100 GB for temporary use during full transaction witness validation.
-- A fast Internet connection (250 Mbps or better).
+- **Storage:** A fast SSD with at least 200 GB of free space, allocated as follows:
+  - **70 GB** – Compressed blockchain data & search indices.
+  - **30 GB** – Temporary storage for indexing.
+  - **100 GB** – Temporary storage for full transaction witness validation.
+- **Internet:** A stable **250 Mbps or faster** connection is required for efficient incremental blockchain synchronization.
 
 # Test it yourself
 
@@ -159,29 +173,16 @@ The high-speed delivery of blockchain data depends on a network of compressing p
 to support a billion clients is presented in the [Scalability of Bulk Synchronization in the Cardano Blockchain](./doc/2023_Sierkov_CardanoBulkSynchronization.pdf) paper.
 
 # Quality
-The accuracy of the ledger state reconstruction has been tested by recreating the ledger state from raw blockchain data at the end (the presented method batches updates) of each post-Shelley epoch up to the mainnet's epoch 494, exporting it into the Cardano Node format, and comparing it with the snapshot produced by Cardano Node version 8.9.2. The source code of the tools used for the comparison is located in [lib/dt/cli-test/test-node-state.cpp](lib/dt/cli-test/test-node-state.cpp) and [lib/dt/cli-test/test-export-full.cpp](lib/dt/cli-test/test-export-full.cpp)
+The accuracy of the ledger state reconstruction has been tested by recreating the ledger state from raw blockchain data at the end (the presented method batches updates) of each post-Shelley epoch up to the mainnet's epoch 426, exporting it into the Cardano Node format, and comparing it with the snapshot produced by Cardano Node version 10.1.4. The source code of the tools used for the comparison is located in [lib/dt/cli-test/test-ledger-export.cpp](lib/dt/cli-test/test-ledger-export.cpp).
 
 The indexing and history-reconstruction code has been tested using a sample of ten thousand randomly-selected stake keys. For 100% of those, the reconstructed ADA balance (excluding rewards) precisely matched the stake recorded in the ledger snapshot produced by Cardano Node. The testing was performed with slot number 106012751 at the tip of the blockchain. The code of the test is located in the [lib/dt/cli-test/test-stake-balances.cpp](lib/dt/cli-test/test-stake-balances.cpp) file.
 
-# Roadmap
-The development of the project is organized into the following milestones:
-| Milestone | ETA | Status |
-| --------- | --- | ------ |
-| M1: Show that transaction history can be reconstructed 10x quicker | February 2023 | Ready |
-| M2: Analyze the scalability of the Cardano network protocol and prepare requirements for the accelerated one | June 2023 | Ready |
-| M3: Full POC of Daedalus Turbo: fast blockchain data delivery and transaction-history reconstruction | April 2024 | In review |
-| M4: Integrate the POC with the official Daedalus builds | March 2025 | In Progress |
-
-Due to the experimental nature of the project, the ETAs are tentative.
-The development can go both faster and slower than expected.
-
-# Benchmarks
-The [experiment](./experiment/) directory contains the source code of benchmarks and experiments discussed in the research reports.
-
 # Compilation
-The software is in its proof-of-concept stage, and only the build path with Docker described above is regularly tested.
-Nevertheless, compilation in other environments and with other compilers is possible and is tested from time to time.
-The below notes may be helpful if you decide to build the software outside of Docker.
+The **recommended build method** uses Docker and is the only approach that is regularly tested.
+
+Building in other environments and with different compilers is **possible** and is **occasionally tested**, though not officially supported.
+
+If you choose to compile the software outside of Docker, refer to the following notes for guidance.
 
 ## Necessary software packages
 - [CMake](https://cmake.org/) >= 3.28, a build system
@@ -193,7 +194,7 @@ The below notes may be helpful if you decide to build the software outside of Do
 - [zstd](https://github.com/facebook/zstd) >= 1.4.8, a compression library
 
 Additionally on Windows:
-- [mimalloc](https://github.com/microsoft/mimalloc) >= 2.0.5, a memory allocator that works well with multi-threaded workloads
+- [mimalloc](https://github.com/microsoft/mimalloc) >= 2.1.9, a memory allocator that works well with multi-threaded workloads
 
 ## Tested environments and compilers
 - Ubuntu Linux 24.04 with GCC 13.2
@@ -254,6 +255,8 @@ cmake --build cmake-build-release -j -t dt
    brew link boost@1.85
    brew install node@22
    brew link node@22
+   brewk install botan@2
+   brew link botan@2
    ```
 3. Prepare cmake build files in cmake-build-release directory (the name is used in build scripts so stay be the same):
    ```

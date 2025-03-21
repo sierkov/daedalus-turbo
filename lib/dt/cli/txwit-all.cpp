@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
@@ -27,7 +28,7 @@ namespace daedalus_turbo::cli::txwit_all {
             optional_point from {};
             if (const auto opt_it = opts.find("from-epoch"); opt_it != opts.end() && opt_it->second) {
                 const auto from_slot = slot::from_epoch(std::stoull(*opt_it->second), cr.config());
-                const auto p = cr.latest_block_before_or_at_slot(from_slot);
+                const auto p = cr.latest_block_after_or_at_slot(from_slot);
                 if (!p)
                     throw error(fmt::format("can't find data for the first-epoch: {}", *opt_it->second));
                 from.emplace(p->point());

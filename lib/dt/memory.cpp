@@ -1,9 +1,8 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
-#ifndef DAEDALUS_TURBO_MEMORY_HPP
-#define DAEDALUS_TURBO_MEMORY_HPP
 
 extern "C" {
 #ifdef __APPLE__
@@ -20,7 +19,7 @@ extern "C" {
 #   include <sys/time.h>
 #   include <sys/resource.h>
 #endif
-};
+}
 #include <fstream>
 #include <dt/file.hpp>
 #include <dt/memory.hpp>
@@ -30,7 +29,7 @@ namespace daedalus_turbo::memory {
     size_t my_usage_mb()
     {
         // Win API is not thread safe by default
-        alignas(mutex::padding) static mutex::unique_lock::mutex_type m {};
+        static mutex::unique_lock::mutex_type m alignas(mutex::alignment) {};
         mutex::scoped_lock lk { m };
 #       ifdef _WIN32
             PROCESS_MEMORY_COUNTERS_EX pmc {};
@@ -61,7 +60,7 @@ namespace daedalus_turbo::memory {
     size_t max_usage_mb()
     {
         // Win API is not thread safe by default
-        alignas(mutex::padding) static mutex::unique_lock::mutex_type m {};
+        static mutex::unique_lock::mutex_type m alignas(mutex::alignment) {};
         mutex::scoped_lock lk { m };
 #       ifdef _WIN32
             PROCESS_MEMORY_COUNTERS_EX pmc {};
@@ -82,7 +81,7 @@ namespace daedalus_turbo::memory {
     size_t physical_mb()
     {
         // Win API is not thread safe by default
-        alignas(mutex::padding) static mutex::unique_lock::mutex_type m {};
+        static mutex::unique_lock::mutex_type m alignas(mutex::alignment) {};
         mutex::scoped_lock lk { m };
 #       ifdef _WIN32
             MEMORYSTATUSEX status;
@@ -96,5 +95,3 @@ namespace daedalus_turbo::memory {
 #       endif
     }
 }
-
-#endif // !DAEDALUS_TURBO_MEMORY_HPP

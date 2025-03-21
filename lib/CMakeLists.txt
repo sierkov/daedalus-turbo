@@ -1,24 +1,46 @@
 set(Boost_NO_WARN_NEW_VERSIONS 1)
-find_package(Boost 1.83 REQUIRED COMPONENTS json url coroutine thread)
+if (WIN32)
+    find_package(Boost 1.83 REQUIRED COMPONENTS json url coroutine thread stacktrace_windbg)
+elseif(APPLE)
+    find_package(Boost 1.83 REQUIRED COMPONENTS json url coroutine thread stacktrace_noop)
+else()
+    find_package(Boost 1.83 REQUIRED COMPONENTS json url coroutine thread stacktrace_backtrace)
+endif()
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(FMT REQUIRED fmt>=8.1.1)
 pkg_check_modules(SODIUM REQUIRED libsodium>=1.0.18)
-#pkg_check_modules(SPDLOG REQUIRED spdlog>=1.9.2)
 pkg_check_modules(ZSTD REQUIRED libzstd>=1.4.8)
+pkg_check_modules(BOTAN REQUIRED botan-2>=2.19.0)
 find_library(SECP256K1_LIBRARY_PATH secp256k1)
 file(GLOB_RECURSE LIB_SRCS dt/*.cpp)
 list(FILTER LIB_SRCS EXCLUDE REGEX "\\.test\\.cpp$")
 list(FILTER LIB_SRCS EXCLUDE REGEX "\\.bench\\.cpp$")
 list(FILTER LIB_SRCS EXCLUDE REGEX "\\.fuzz\\.cpp$")
 add_library(lib OBJECT ${LIB_SRCS})
+file(GLOB_RECURSE LIB_HDRS dt/*.hpp)
+target_precompile_headers(lib PUBLIC ${LIB_HDRS})
 target_include_directories(lib PUBLIC .)
+target_include_directories(lib PUBLIC ${BOTAN_INCLUDE_DIRS})
 target_link_libraries(lib PUBLIC Boost::json Boost::coroutine Boost::url Boost::thread
         ${Boost_LIBRARIES}
+        ${BOTAN_LIBRARIES}
         ${FMT_LIBRARIES}
         ${SECP256K1_LIBRARY_PATH}
-        #${SPDLOG_LIBRARIES}
         ${ZSTD_LIBRARIES}
 )
+if (WIN32)
+    target_compile_options(lib PUBLIC "-DBOOST_STACKTRACE_USE_WINDBG")
+    target_compile_options(lib PUBLIC "-DBOOST_STACKTRACE_LINK")
+    target_link_libraries(lib PUBLIC Boost::stacktrace_windbg)
+elseif(APPLE)
+    target_compile_options(lib PUBLIC "-DBOOST_STACKTRACE_USE_NOOP")
+    target_compile_options(lib PUBLIC "-DBOOST_STACKTRACE_LINK")
+    target_link_libraries(lib PUBLIC Boost::stacktrace_noop dl)
+else()
+    target_compile_options(lib PUBLIC "-DBOOST_STACKTRACE_USE_BACKTRACE")
+    target_compile_options(lib PUBLIC "-DBOOST_STACKTRACE_LINK")
+    target_link_libraries(lib PUBLIC Boost::stacktrace_backtrace dl)
+endif()
 find_package(spdlog CONFIG REQUIRED)
 target_link_libraries(lib PUBLIC spdlog::spdlog)
 if (MSVC)
@@ -33,18 +55,16 @@ target_link_directories(lib PUBLIC
     ${FMT_LIBRARY_DIRS}
     ${SECP256K1_LIBRARY_DIRS}
     ${SODIUM_LIBRARY_DIRS}
-    #${SPDLOG_LIBRARY_DIRS}
     ${ZSTD_LIBRARY_DIRS}
 )
 if (WIN32)
-    target_compile_options(lib PUBLIC -DDT_USE_MIMALLOC=1 -DNOMINMAX=1)
-    find_package(mimalloc "2.1.7" CONFIG REQUIRED)
-    target_link_libraries(lib PUBLIC $<IF:$<TARGET_EXISTS:mimalloc-static>,mimalloc-static,mimalloc>)
+    target_compile_options(lib PUBLIC -DNOMINMAX=1)
     if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         target_link_libraries(lib PUBLIC atomic)
     endif()
 endif()
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    target_compile_options(lib PUBLIC "-D_GNU_SOURCE")
     if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 18.0)
         set(MY_CLANG_VERSION ${CMAKE_CXX_COMPILER_VERSION})
         string(REPLACE "." ";" MY_CLANG_VERSION_LIST ${MY_CLANG_VERSION})

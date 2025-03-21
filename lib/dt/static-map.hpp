@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_STATIC_MAP_HPP
@@ -20,6 +21,8 @@ namespace daedalus_turbo {
         }
 
         using value_type = std::pair<K, V>;
+        using key_type = K;
+        using mapped_type = V;
         using storage_type = std::vector<value_type>;
         using const_iterator = storage_type::const_iterator;
         using iterator = storage_type::iterator;

@@ -1,20 +1,19 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_CARDANO_LEDGER_STATE_HPP
 #define DAEDALUS_TURBO_CARDANO_LEDGER_STATE_HPP
 
-#include <ranges>
-#include <dt/cardano/conway.hpp>
-#include <dt/cardano/ledger/babbage.hpp>
 #include <dt/cardano/ledger/shelley.hpp>
 #include <dt/cardano/ledger/subchain.hpp>
-#include <dt/cbor/zero.hpp>
-#include <dt/format.hpp>
+#include <dt/common/format.hpp>
 #include <dt/mutex.hpp>
-#include <dt/scheduler.hpp>
-#include <dt/static-map.hpp>
+
+namespace daedalus_turbo {
+    struct scheduler;
+}
 
 namespace daedalus_turbo::cardano::ledger {
     struct state {
@@ -25,13 +24,13 @@ namespace daedalus_turbo::cardano::ledger {
 
         void load_zpp(const std::string &path);
         void save_zpp(const std::string &path, std::unique_ptr<subchain_list> tmp_sc={});
-        parallel_serializer serialize_node(const point &tip, int prio=1000) const;
+        cbor_encoder to_cbor(const point &tip, int prio=1000) const;
         point deserialize_node(buffer data);
         point load_node(const std::string &path);
         void save_node(const std::string &path, const point &tip, int prio=1000) const;
 
         void track_era(uint64_t era, uint64_t slot);
-        void process_cert(const cert_any_t &, const cert_loc_t &);
+        void process_cert(const cert_t &, const cert_loc_t &);
         void process_updates(updates_t &&);
 
         optional_point add_subchain(subchain &&sc)
@@ -81,7 +80,7 @@ namespace daedalus_turbo::cardano::ledger {
             _state->propose_update(slot, prop);
         }
 
-        void register_pool(const shelley::pool_reg_cert &reg)
+        void register_pool(const pool_reg_cert &reg)
         {
             _state->register_pool(reg);
         }
@@ -202,14 +201,9 @@ namespace daedalus_turbo::cardano::ledger {
             return _state->utxo_balance();
         }
 
-        void compute_rewards_if_ready()
-        {
-            _state->compute_rewards_if_ready();
-        }
-
         bool exportable() const
         {
-            if (_state->_params.protocol_ver.major >= 3 && (_state->_rewards_ready || _state->_epoch_slot < _cfg.shelley_randomness_stabilization_window))
+            if (_state->_params.protocol_ver.major >= 2 && (_state->_rewards_ready || _state->_epoch_slot < _cfg.shelley_randomness_stabilization_window))
                 return true;
             return false;
         }
@@ -243,15 +237,19 @@ namespace daedalus_turbo::cardano::ledger {
         const cardano::config &_cfg;
         scheduler &_sched;
 
-        alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _subchains_mutex {};
+        mutable mutex::unique_lock::mutex_type _subchains_mutex alignas(mutex::alignment) {};
         subchain_list _subchains{};
         /// implementation-specific fields
         era_list _eras {};
         std::unique_ptr<shelley::state> _state;
         std::unique_ptr<shelley::vrf_state> _vrf_state;
 
-        void _serialize_node_state(parallel_serializer &ser, const point &tip) const;
-        void _serialize_node_vrf_state(parallel_serializer &ser, const point &tip) const;
+        void _deserialize_node_ledger_state(cbor::zero2::value &);
+        point _deserialize_node_vrf_state(cbor::zero2::value &);
+        void _serialize_node_state(cbor_encoder &ser, const point &tip) const;
+        void _serialize_node_vrf_state(cbor_encoder &ser, const point &tip) const;
+        void _transition_ledger_era(uint64_t from_era, uint64_t to_era);
+        void _transition_vrf_era(uint64_t from_era, uint64_t to_era);
         void _transition_era(uint64_t from_era, uint64_t to_era);
 
         delegation_map_copy _filtered_delegs(const size_t idx) const

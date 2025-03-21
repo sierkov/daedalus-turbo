@@ -1,11 +1,12 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_PLUTUS_COSTS_HPP
 #define DAEDALUS_TURBO_PLUTUS_COSTS_HPP
 
-#include <dt/cardano/types.hpp>
+#include <dt/cardano/common/types.hpp>
 #include <dt/plutus/types.hpp>
 
 namespace daedalus_turbo::plutus::costs {
@@ -20,13 +21,28 @@ namespace daedalus_turbo::plutus::costs {
     };
     using cost_fun_ptr = std::shared_ptr<cost_fun>;
 
+    struct size_fun {
+        virtual ~size_fun() =default;
+        virtual arg_sizes size(const value_list &args) const =0;
+    };
+    using size_fun_ptr = std::shared_ptr<size_fun>;
+
+    struct default_size_fun: size_fun {
+        arg_sizes size(const value_list &args) const override;
+    };
+
+    struct num_bytes_as_num_words_fun: size_fun {
+        arg_sizes size(const value_list &args) const override;
+    };
+
     struct op_model {
         cost_fun_ptr cpu {};
         cost_fun_ptr mem {};
+        size_fun_ptr size {};
 
         bool operator==(const op_model &o) const
         {
-            return cpu && o.cpu && *cpu == *o.cpu && mem && o.mem && *mem == *o.mem;
+            return cpu && o.cpu && *cpu == *o.cpu && mem && o.mem && *mem == *o.mem && size.get() == o.size.get();
         }
     };
 
@@ -57,7 +73,6 @@ namespace daedalus_turbo::plutus::costs {
     const vector<std::string> &cost_arg_names_v1();
     const vector<std::string> &cost_arg_names_v2();
     const vector<std::string> &cost_arg_names_v3();
-    const vector<std::string> &cost_arg_names_v3b();
     const arg_map &default_cost_args_v1();
     const arg_map &default_cost_args_v2();
     const arg_map &default_cost_args_v3();

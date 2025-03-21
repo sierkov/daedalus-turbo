@@ -1,14 +1,16 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
+#include <dt/common/test.hpp>
 #include <dt/json.hpp>
-#include <dt/test.hpp>
 
 using namespace daedalus_turbo;
 
 suite json_suite = [] {
+    using boost::ext::ut::v2_1_0::nothrow;
     "json"_test = [] {
         "load genesis"_test = [] {
             auto genesis = json::load("./etc/mainnet/shelley-genesis.json");
@@ -21,7 +23,7 @@ suite json_suite = [] {
                 { "version", 123 }
             };
             json::save_pretty(t.path(), j);
-            auto buf = file::read(t.path());
+            auto buf = file::read<uint8_vector>(t.path());
             expect(buf == std::string_view { "{\n  \"name\": \"abc\",\n  \"version\": 123\n}" }) << std::string_view { reinterpret_cast<char *>(buf.data()), buf.size() };
         };
         "save_pretty array"_test = [] {
@@ -31,10 +33,10 @@ suite json_suite = [] {
                 123
             };
             json::save_pretty(t.path(), j);
-            auto act = file::read(t.path());
+            auto act = file::read<uint8_vector>(t.path());
             std::string_view exp { "[\n  \"name\",\n  123\n]" };
             expect(act.size() == exp.size()) << act.size() << exp.size();
-            expect(act == exp) << act.span().string_view();
+            expect(act == exp) << static_cast<buffer>(act);
         };
         "save_pretty_signed"_test = [] {
             file::tmp t { "json-save-pretty-signed-test.json" };

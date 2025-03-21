@@ -1,16 +1,17 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
+#include <dt/common/test.hpp>
 #include <dt/static-map.hpp>
-#include <dt/test.hpp>
 
 using namespace daedalus_turbo;
 
 suite static_map_suite = [] {
     "static_map"_test = [] {
-        map<uint64_t, uint64_t> src {};
+        std::map<uint64_t, uint64_t> src {};
         src.emplace(0, 5);
         src.emplace(22, 4);
         src.emplace(21, 7);

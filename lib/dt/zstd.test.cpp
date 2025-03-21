@@ -1,15 +1,17 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
-#include <dt/file.hpp>
-#include <dt/test.hpp>
+#include <dt/array.hpp>
+#include <dt/common/test.hpp>
 #include <dt/zstd.hpp>
 
 using namespace daedalus_turbo;
 
 suite zstd_suite = [] {
+    using daedalus_turbo::array;
     "zstd"_test = [] {
         static const uint8_vector orig { std::string_view { "some text\0\x11\xFE" } };
         uint8_vector compressed {};
@@ -54,9 +56,9 @@ suite zstd_suite = [] {
             *reinterpret_cast<uint64_t *>(compressed.data()) = orig.size() + 10;
             expect(throws([&] { zstd::decompress(out, compressed); }));
             *reinterpret_cast<uint64_t *>(compressed.data()) = orig.size();
-            array<uint8_t, 11> buf_too_small {};
+             byte_array<11> buf_too_small {};
             expect(throws([&] { zstd::decompress(buf_too_small, compressed); }));
-            array<uint8_t, 13> buf_too_big {};
+             byte_array<13> buf_too_big {};
             expect(throws([&] { zstd::decompress(buf_too_big, compressed); }));
         };
     };

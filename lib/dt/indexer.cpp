@@ -1,9 +1,10 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
-* Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
-#include <dt/atomic.hpp>
+#include <dt/cardano.hpp>
 #include <dt/chunk-registry.hpp>
 #include <dt/index/pay-ref.hpp>
 #include <dt/index/stake-ref.hpp>
@@ -110,10 +111,10 @@ namespace daedalus_turbo::indexer {
         const std::string _index_state_path;
         const std::string _index_state_pre_path;
         const std::set<std::string> _mergeable;
-        alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _slices_mutex {};
+        mutable mutex::unique_lock::mutex_type _slices_mutex alignas(mutex::alignment) {};
         merger::tree _slices {};
         uint64_t _merge_next_offset = 0;
-        alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _epoch_slices_mutex {};
+        mutable mutex::unique_lock::mutex_type _epoch_slices_mutex alignas(mutex::alignment) {};
         std::map<uint64_t, merger::slice> _epoch_slices {};
         // rollback tracking
         std::vector<merger::slice> _slices_truncated {};
@@ -306,14 +307,14 @@ namespace daedalus_turbo::indexer {
             _slices_added.clear();
         }
 
-        void _idx_on_chunk_add(const storage::chunk_info &chunk, const parsed_block_list &blocks) const
+        void _idx_on_chunk_add(const storage::chunk_info &chunk, const cardano::parsed_block_list &blocks) const
         {
             chunk_indexer_list chunk_indexers {};
             for (auto &[name, idxr_ptr]: _indexers)
                 chunk_indexers.emplace_back(idxr_ptr->make_chunk_indexer("update", chunk.offset));
             for (const auto &blk_ptr: blocks) {
                 for (auto &idxr: chunk_indexers)
-                    idxr->index(*blk_ptr);
+                    idxr->index(blk_ptr->blk);
             }
         }
 

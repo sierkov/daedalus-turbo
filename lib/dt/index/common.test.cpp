@@ -1,12 +1,13 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
+#include <dt/common/test.hpp>
 #include <dt/cardano.hpp>
 #include <dt/file.hpp>
 #include <dt/index/common.hpp>
-#include <dt/test.hpp>
 
 namespace {
     using namespace daedalus_turbo;
@@ -205,7 +206,7 @@ suite index_common_suite = [] {
             }
             {
                 reader_mt<index_item> reader { idx_path };
-                expect(reader.get_meta("hello") == std::string_view { "world!" });
+                expect(static_cast<std::string_view>(reader.get_meta("hello")) == std::string_view { "world!" });
                 auto offset = reader.get_meta("offset").to<uint64_t>();
                 expect(offset == 0xDEADBEAF) << offset;
             }
@@ -237,11 +238,11 @@ suite index_common_suite = [] {
             struct my_chunk_indexer: chunk_indexer_multi_part<item> {
                 using chunk_indexer_multi_part<item>::chunk_indexer_multi_part;
             protected:
-                void _index(const cardano::block_base &blk) override
+                void _index(const cardano::block_container &blk) override
                 {
-                    blk.foreach_tx([&](const auto &tx) {
+                    blk->foreach_tx([&](const auto &tx) {
                         tx.foreach_output([&](const auto &tx_out) {
-                            cardano::address addr { tx_out.address };
+                            const auto addr = tx_out.addr();
                             if (!addr.has_pay_id()) return;
                             const auto id = addr.pay_id();
                             _idx.emplace_part(id.hash.data()[0] / _part_range, id.hash.data()[0], id.hash.data()[1], blk.offset());
@@ -252,16 +253,15 @@ suite index_common_suite = [] {
             using my_indexer = indexer_offset<item, my_chunk_indexer>;
 
             file::tmp_directory tmp_idx_dir { "test-index-common" };
-            const auto raw_data = file::read("./data/chunk-registry/compressed/chunk/977E9BB3D15A5CFF5C5E48617288C5A731DB654C0B42D63627C690CEADC9E1F3.zstd");
+            const auto raw_data = zstd::read("./data/chunk-registry/compressed/chunk/977E9BB3D15A5CFF5C5E48617288C5A731DB654C0B42D63627C690CEADC9E1F3.zstd");
             my_indexer idxr { tmp_idx_dir, "myidx" };
             {
                 auto ch_idxr = idxr.make_chunk_indexer("update", 0);
-                cbor_parser p { raw_data };
-                cbor_value block_tuple {};
-                while (!p.eof()) {
-                    p.read(block_tuple);
-                    auto blk = cardano::make_block(block_tuple, block_tuple.data - raw_data.data());
-                    ch_idxr->index(*blk);
+                cbor::zero2::decoder dec { raw_data };
+                while (!dec.done()) {
+                    auto &block_tuple = dec.read();
+                    auto blk = cardano::make_block(block_tuple, block_tuple.data_begin() - raw_data.data());
+                    ch_idxr->index(blk);
                 }
             }
 

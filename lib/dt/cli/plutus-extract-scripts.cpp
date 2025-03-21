@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
@@ -70,7 +71,7 @@ namespace daedalus_turbo::cli::plutus_extract_scripts {
             }
             std::sort(paths.begin(), paths.end());
 
-            alignas(mutex::padding) mutex::unique_lock::mutex_type all_mutex {};
+            mutex::unique_lock::mutex_type all_mutex alignas(mutex::alignment) {};
             extract_res all {};
             for (size_t i = 0; i < paths.size(); ++i) {
                 if (std::filesystem::file_size(paths[i]) > 0) {
@@ -139,6 +140,7 @@ namespace daedalus_turbo::cli::plutus_extract_scripts {
                         throw error("internal error: can't find a passing epoch cost model!");
                     it = std::prev(it);
                     ctx.cost_models(it->models);
+                    size_t r_idx = 0;
                     for (const auto &[rid, r]: ctx.redeemers()) {
                         const auto ps = ctx.prepare_script(r);
                         const auto typ_s = fmt::format("{}", ps.typ);
@@ -146,7 +148,7 @@ namespace daedalus_turbo::cli::plutus_extract_scripts {
                         if (!typ_s.starts_with(exp_prefix)) [[unlikely]]
                             throw error(fmt::format("unsupported script type: {}!", typ_s));
                         const auto out_prefix = fmt::format("{}/{}/{}-{}-{}-{}",
-                            out_dir, *epoch, tx_id, r.idx, ps.hash, typ_s.substr(exp_prefix.size()));
+                            out_dir, *epoch, tx_id, r_idx++, ps.hash, typ_s.substr(exp_prefix.size()));
                         if (cfg.uplc) {
                             file::write(out_prefix + ".uplc", fmt::format("(program 0.0.0 {})", ps.expr));
                         } else {

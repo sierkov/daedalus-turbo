@@ -1,15 +1,14 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_ZSTD_HPP
 #define DAEDALUS_TURBO_ZSTD_HPP
 
-extern "C" {
-#   include <zstd.h>
-#   include <zstd_errors.h>
-};
-#include "util.hpp"
+#include <dt/common/bytes.hpp>
+#include <dt/common/file.hpp>
+#include <dt/zstd-stream.hpp>
 
 namespace daedalus_turbo::zstd {
     static constexpr size_t max_zstd_buffer = static_cast<size_t>(1) << 28;
@@ -162,6 +161,36 @@ namespace daedalus_turbo::zstd {
         uint8_vector out {};
         decompress(out, compressed);
         return out;
+    }
+
+    template<typename T=write_vector>
+    inline void read(const std::string &path, T &out)
+    {
+        const auto compressed = file::read(path);
+        decompress(out, compressed);
+    }
+
+    template<typename T=write_vector>
+    inline void read_steam(const std::string &path, T &out)
+    {
+        zstd::read_stream f { path };
+        out.resize(f.size());
+        const auto nread = f.try_read(out);
+        if (nread != f.size()) [[unlikely]]
+            throw error(fmt::format("failed to read the advertized size {}: got only {} bytes!", out.size(), nread));
+    }
+
+    template<typename T=write_vector>
+    inline T read(const std::string &path)
+    {
+        T buf {};
+        read(path, buf);
+        return buf;
+    }
+
+    inline void write(const std::string &path, const buffer &buffer, const int level=3)
+    {
+        file::write(path, compress(buffer, level));
     }
 }
 

@@ -1,18 +1,23 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_CARDANO_LEDGER_TYPES_HPP
 #define DAEDALUS_TURBO_CARDANO_LEDGER_TYPES_HPP
 
 #include <unordered_set>
-#include <dt/cardano/common.hpp>
+#include <dt/cardano/common/common.hpp>
 #include <dt/cardano/ledger/pool-rank.hpp>
+#include <dt/parallel/encoder.hpp>
 #include <dt/partitioned-map.hpp>
 #include <dt/scheduler.hpp>
 #include <dt/static-map.hpp>
 
 namespace daedalus_turbo::cardano::ledger {
+    using cbor_encoder = parallel::encoder<era_encoder>;
+    using zpp_encoder = parallel::encoder<std::monostate>;
+
     template<typename C>
     struct map_with_get: C
     {
@@ -135,7 +140,21 @@ namespace daedalus_turbo::cardano::ledger {
         uint64_t amount {};
         std::optional<pool_hash> delegated_pool_id {};
 
-        constexpr static auto serialize(auto &archive, auto &self)
+        static reward_update from_cbor(cbor::zero2::value &v)
+        {
+            auto &it = v.array();
+            return { it.read().uint() == 0 ? reward_type::member : reward_type::leader, it.read().bytes(), it.read().uint() };
+        }
+
+        void to_cbor(era_encoder &enc) const
+        {
+            enc.array(3)
+                .uint(type == reward_type::leader ? 1 : 0)
+                .bytes(pool_id)
+                .uint(amount);
+        }
+
+        static constexpr auto serialize(auto &archive, auto &self)
         {
             return archive(self.type, self.pool_id, self.amount, self.delegated_pool_id);
         }
@@ -152,92 +171,7 @@ namespace daedalus_turbo::cardano::ledger {
             return type == b.type && pool_id == b.pool_id && amount == b.amount;
         }
     };
-    using reward_update_list = std::set<reward_update>;
-
-    struct reward_update_distribution: std::unordered_map<cardano::stake_ident, reward_update_list> {
-        using std::unordered_map<cardano::stake_ident, reward_update_list>::unordered_map;
-
-        constexpr static auto serialize(auto &archive, auto &self)
-        {
-            return archive(self._total_stake, dynamic_cast<std::unordered_map<cardano::stake_ident, reward_update_list> &>(self));
-        }
-
-        void add(const cardano::stake_ident &id, const reward_update &reward)
-        {
-            auto [it, created] = try_emplace(id);
-            it->second.emplace(reward);
-            _total_stake += reward.amount;
-        }
-
-        uint64_t get(const cardano::stake_ident &id) const
-        {
-            uint64_t sum = 0;
-            auto it = find(id);
-            if (it != end()) {
-                for (const auto &upd: it->second)
-                    sum += upd.amount;
-            }
-            return sum;
-        }
-
-        void clear()
-        {
-            std::unordered_map<cardano::stake_ident, reward_update_list>::clear();
-            _total_stake = 0;
-        }
-
-        uint64_t total_stake()
-        {
-            return _total_stake;
-        }
-    protected:
-        uint64_t _total_stake = 0;
-    };
-
-    struct reward_distribution: partitioned_map<cardano::stake_ident, uint64_t> {
-        using C = partitioned_map<cardano::stake_ident, uint64_t>;
-
-        bool operator==(const auto &o) const
-        {
-            return C::operator==(o);
-        }
-
-        bool create(const C::key_type &id)
-        {
-            auto [it, created] = C::try_emplace(id);
-            return created;
-        }
-
-        void retire(const C::key_type &id)
-        {
-            auto it = C::find(id);
-            if (it == C::end())
-                throw error(fmt::format("retiring an unknown id {}", id));
-            C::erase(it);
-        }
-
-        void add(map_with_get<C>::iterator it, C::mapped_type stake)
-        {
-            if (it == C::end())
-                throw error(fmt::format("request to increase an unregistered id {} by {}", it->first, stake));
-            it->second += stake;
-        }
-
-        void add(const C::key_type &id, C::mapped_type stake)
-        {
-            add(C::find(id), stake);
-        }
-
-        void sub(const C::key_type &id, C::mapped_type stake)
-        {
-            auto it = C::find(id);
-            if (it == C::end())
-                throw error(fmt::format("request to increase an unregistered id {} by {}", it->first, stake));
-            if (it->second < stake)
-                throw error(fmt::format("request to delete more stake ({}) than id {} has: {}", stake, id, it->second));
-            it->second -= stake;
-        }
-    };
+    using reward_update_list = set_t<reward_update>;
 
     using partitioned_reward_update_dist = partitioned_map<cardano::stake_ident, reward_update_list>;
     using pool_stake_distribution = restricted_distribution<map<cardano::pool_hash, uint64_t>>;
@@ -246,7 +180,6 @@ namespace daedalus_turbo::cardano::ledger {
     using stake_distribution = distribution<map<cardano::stake_ident, uint64_t>>;
     using stake_pointer_distribution = distribution<map<cardano::stake_pointer, uint64_t>>;
     using stake_distribution_copy = static_map<cardano::stake_ident, uint64_t>;
-    //using reward_distribution = restricted_distribution<std::map<stake_ident, uint64_t>>;
     using reward_distribution_copy = static_map<cardano::stake_ident, uint64_t>;
     using delegation_map = map<cardano::stake_ident, cardano::pool_hash>;
     using delegation_map_copy = static_map<cardano::stake_ident, cardano::pool_hash>;
@@ -277,11 +210,15 @@ namespace daedalus_turbo::cardano::ledger {
 
     struct operating_pool_info {
         rational_u64 rel_stake {};
+        uint64_t active_stake = 0;
         cardano::vrf_vkey vrf_vkey {};
+
+        static operating_pool_info from_cbor(cbor::zero2::value &);
+        void to_cbor(era_encoder &) const;
 
         constexpr static auto serialize(auto &archive, auto &self)
         {
-            return archive(self.rel_stake, self.vrf_vkey);
+            return archive(self.rel_stake, self.active_stake, self.vrf_vkey);
         }
 
         bool operator==(const operating_pool_info &o) const
@@ -289,11 +226,41 @@ namespace daedalus_turbo::cardano::ledger {
             return rel_stake == o.rel_stake && vrf_vkey == o.vrf_vkey;
         }
     };
-    using operating_pool_map = map<pool_hash, operating_pool_info>;
+
+    struct operating_pool_map: std::map<pool_hash, operating_pool_info> {
+        using base_type = std::map<pool_hash, operating_pool_info>;
+        using base_type::base_type;
+
+        uint64_t total_stake = 1; // 1 instead of 0 to mitigate division by zero
+
+        constexpr static auto serialize(auto &archive, const auto &self)
+        {
+            return archive(self.total_stake, static_cast<const base_type &>(self));
+        }
+
+        constexpr static auto serialize(auto &archive, auto &self)
+        {
+            return archive(self.total_stake, static_cast<base_type &>(self));
+        }
+
+        static operating_pool_map from_cbor(cbor::zero2::value &);
+        void to_cbor(era_encoder &) const;
+        void clear();
+    };
 
     struct pool_info {
         pool_params params {};
-        rational member_reward_base {};
+        cpp_rational_storage reward_base;
+
+        pool_info();
+        pool_info(const pool_params &);
+        pool_info(pool_params &&);
+        ~pool_info();
+
+        static pool_info from_cbor(cbor::zero2::value &v)
+        {
+            return { pool_params::from_cbor(v) };
+        }
 
         static constexpr auto serialize(auto &archive, auto &self)
         {
@@ -308,7 +275,7 @@ namespace daedalus_turbo::cardano::ledger {
 
     using pool_info_map = map<pool_hash, pool_info>;
     using pool_deposit_map = map<pool_hash, uint64_t>;
-    using nonmyopic_likelihood_map = map<pool_hash, pool_rank::likelihood_list>;
+    using nonmyopic_likelihood_map = map_t<pool_hash, pool_rank::likelihood_list>;
 
     using era_list = std::vector<uint64_t>;
     using stake_update_map = std::unordered_map<stake_ident, int64_t>;
@@ -323,17 +290,19 @@ namespace daedalus_turbo::cardano::ledger {
         uint64_t go_stake = 0;
         // the presence of a stake pointer means that the account's stake address is registered currently
         std::optional<stake_pointer> ptr {};
-        std::optional<pool_hash> deleg {};
+        array_optional_t<pool_hash> deleg {};
         std::optional<pool_hash> mark_deleg {};
         std::optional<pool_hash> set_deleg {};
         std::optional<pool_hash> go_deleg {};
-        std::optional<drep_t> vote_deleg {};
+        array_optional_t<drep_t> vote_deleg {};
 
         constexpr static auto serialize(auto &archive, auto &self)
         {
             return archive(self.stake, self.reward, self.deposit, self.mark_stake, self.set_stake, self.go_stake,
                 self.ptr, self.deleg, self.mark_deleg, self.set_deleg, self.go_deleg, self.vote_deleg);
         }
+
+        static account_info from_cbor(cbor::zero2::value &v);
 
         bool operator==(const account_info &o) const
         {
@@ -426,19 +395,6 @@ namespace daedalus_turbo::cardano::ledger {
         vector<buffer> _buffers {};
         vector<decode_func> _tasks {};
         vector<done_func> _on_done {};
-    };
-
-    struct parallel_serializer {
-        using encode_func = std::function<uint8_vector()>;
-
-        [[nodiscard]] size_t size() const;
-        void add(const encode_func &t);
-        void run(scheduler &sched, const std::string &task_group, int prio=1000, bool report_progress=false);
-        void save(const std::string &path, bool headers=false) const;
-        [[nodiscard]] uint8_vector flat() const;
-    private:
-        vector<encode_func> _tasks {};
-        vector<uint8_vector> _buffers {};
     };
 }
 

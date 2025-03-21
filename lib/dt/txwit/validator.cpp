@@ -1,11 +1,14 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
-#include <dt/cardano/common.hpp>
+#include <dt/cardano/common/cert.hpp>
+#include <dt/cardano/common/common.hpp>
+#include <dt/cardano/common/native-script.hpp>
 #include <dt/cardano/ledger/state.hpp>
-#include <dt/cardano/native-script.hpp>
+#include <dt/cbor/zero2.hpp>
 #include <dt/parallel/ordered-consumer.hpp>
 #include <dt/parallel/ordered-queue.hpp>
 #include <dt/plutus/context.hpp>
@@ -26,28 +29,7 @@ namespace daedalus_turbo::txwit {
         }
     };
 
-    struct byron_witness_t {
-        enum type_t: uint8_t { vkey, redeem };
-
-        uint8_vector vk {};
-        type_t typ = vkey;
-
-        bool operator<(const byron_witness_t& o) const
-        {
-            if (typ != o.typ)
-                return typ < o.typ;
-            return vk < o.vk;
-        }
-
-        uint64_t cbor_type() const
-        {
-            switch (typ) {
-                case vkey: return 0;
-                case redeem: return 2;
-                default: throw error(fmt::format("unsupported byron_witness type: {}", static_cast<int>(typ)));
-            }
-        }
-    };
+    using byron_witness_t = std::variant<tx_wit_byron_vkey, tx_wit_byron_redeemer>;
 
     struct vkey_signer_t {
         key_hash hash {};
@@ -154,8 +136,8 @@ namespace daedalus_turbo::txwit {
     struct balances_t {
         uint64_t in_coin = 0;
         uint64_t out_coin = 0;
-        policy_map in_assets {};
-        policy_map out_assets {};
+        multi_asset_map in_assets {};
+        multi_asset_map out_assets {};
 
         bool match() const
         {
@@ -230,19 +212,6 @@ namespace fmt {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
             return fmt::format_to(ctx.out(), "script {} {}", v.tag, v.hash);
-        }
-    };
-
-    template<>
-        struct formatter<daedalus_turbo::txwit::byron_witness_t::type_t>: formatter<int> {
-        template<typename FormatContext>
-        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
-            using type_t = daedalus_turbo::txwit::byron_witness_t::type_t;
-            switch (v) {
-                case type_t::redeem: return fmt::format_to(ctx.out(), "redeem");
-                case type_t::vkey: return fmt::format_to(ctx.out(), "vkey");
-                default: throw daedalus_turbo::error(fmt::format("unsupported byron_witness type: {}", static_cast<int>(v)));
-            }
         }
     };
 
@@ -369,7 +338,7 @@ namespace daedalus_turbo::txwit {
             size_t num_simple_txs = 0;
             size_t num_plutus_txs = 0;
             size_t num_invalid_txs = 0;
-            tx::wit_cnt wit_cnts {};
+            wit_cnt wit_cnts {};
 
             batch_stats_t &operator+=(const batch_stats_t &o)
             {
@@ -383,7 +352,7 @@ namespace daedalus_turbo::txwit {
 
         struct cert_info_t {
             // default values are needed only for zpp serialization to work
-            cert_any_t cert { stake_dereg_cert { stake_ident {} } };
+            cert_t cert { stake_dereg_cert { stake_ident {} } };
             cert_loc_t loc {};
             tx_loc_t tx_loc {};
 
@@ -419,13 +388,13 @@ namespace daedalus_turbo::txwit {
                     self.native_scripts, self.byron_signers, self.plutus_ctx);
             }
 
-            static tx_context_t from_tx(const tx_loc_t &tx_loc, const tx &tx)
+            static tx_context_t from_tx(const tx_loc_t &tx_loc, const tx_base &tx)
             {
                 return {
                     .tx_id=tx.hash(),
                     .tx_loc=tx_loc,
                     .tx_size=narrow_cast<uint32_t>(tx.size()),
-                    .fee=tx.fee(),
+                    .fee=tx.block().era() > 1 ? tx.fee() : 0,
                     .slot=narrow_cast<uint32_t>(tx.block().slot()),
                     .era=narrow_cast<uint8_t>(tx.block().era())
                 };
@@ -469,41 +438,42 @@ namespace daedalus_turbo::txwit {
 
             // protocol parameter updates, UTXO data and certificates must be always processed
             // transaction data may be skipped
-            void pre_aggregate_data(batch_info &part, const block_base &blk) const
+            void pre_aggregate_data(batch_info &part, const block_container &blk) const
             {
                 auto &stats = part.stats;
                 auto &max = part.max_stats;
-                if (!max.max_block_body_size || *max.max_block_body_size < blk.body_size())
-                    max.max_block_body_size = narrow_cast<uint32_t>(blk.body_size());
-                if (!max.max_block_header_size || *max.max_block_header_size < blk.header_raw_data().size())
-                    max.max_block_header_size = narrow_cast<uint16_t>(blk.header_raw_data().size());
-                blk.foreach_update_proposal([&](const auto &prop) {
-                    part.updates.emplace_back(blk.slot(), prop);
+                if (!max.max_block_body_size || *max.max_block_body_size < blk->body_size())
+                    max.max_block_body_size = narrow_cast<uint32_t>(blk->body_size());
+                if (!max.max_block_header_size || *max.max_block_header_size < blk->header().size())
+                    max.max_block_header_size = narrow_cast<uint16_t>(blk->header().size());
+                blk->foreach_update_proposal([&](const auto &prop) {
+                    part.updates.emplace_back(blk->slot(), prop);
                 });
-                blk.foreach_update_vote([&](const auto &vote) {
-                    part.updates.emplace_back(blk.slot(), vote);
+                blk->foreach_update_vote([&](const auto &vote) {
+                    part.updates.emplace_back(blk->slot(), vote);
                 });
                 const auto block_info = storage::block_info::from_block(blk);
-                blk.foreach_tx([&](const tx &tx) {
+                blk->foreach_tx([&](const tx_base &tx) {
                     const uint8_t tx_part_idx = tx.hash()[0];
                     const size_t tx_idx = part.txs[tx_part_idx].size();
                     tx_loc_t tx_loc { tx_part_idx, tx_idx };
                     auto tx_checks = tx_context_t::from_tx(tx_loc, tx);
-                    tx_checks.balances.out_coin += tx.fee();
-                    if (!max.max_tx_size || *max.max_tx_size < tx.cbor().size)
-                        max.max_tx_size = narrow_cast<uint32_t>(tx.cbor().size);
+                    if (tx.block().era() > 1)
+                        tx_checks.balances.out_coin += tx.fee();
+                    if (!max.max_tx_size || *max.max_tx_size < tx.raw().size())
+                        max.max_tx_size = narrow_cast<uint32_t>(tx.raw().size());
                     size_t num_redeemers = 0;
                     if (const auto start_slot = tx.validity_start(); start_slot) {
-                        if (*start_slot > blk.slot()) [[unlikely]]
+                        if (*start_slot > blk->slot()) [[unlikely]]
                             throw error(fmt::format("tx {} validity start interval: {} starts after the block's slot: {}",
-                                tx.hash(), *start_slot, blk.slot()));
+                                tx.hash(), *start_slot, blk->slot()));
                     }
                     if (const auto end_slot = tx.validity_end(); end_slot) {
-                        if (*end_slot <= blk.slot()) [[unlikely]] {
+                        if (*end_slot <= blk->slot()) [[unlikely]] {
                             // when validity_start is not defined, the validity_end slot is inclusive!
-                            if (*end_slot != blk.slot() || !tx.validity_end())
+                            if (*end_slot != blk->slot() || !tx.validity_end())
                                 throw error(fmt::format("tx {} validity end interval: {} ends before the block's slot: {}",
-                                    tx.hash(), *end_slot, blk.slot()));
+                                    tx.hash(), *end_slot, blk->slot()));
                         }
                     }
                     tx.foreach_redeemer([&](const auto &) {
@@ -512,11 +482,11 @@ namespace daedalus_turbo::txwit {
                     if (num_redeemers) {
                         tx_checks.plutus_ctx.emplace(
                             tx.hash(), num_redeemers,
-                            uint8_vector { tx.cbor().raw_span() },
-                            uint8_vector { tx.witness_cbor().raw_span() }, block_info
+                            uint8_vector { tx.raw() },
+                            uint8_vector { tx.witness_raw() }, block_info
                         );
                         tx.foreach_referenced_input([&](const tx_input &txi) {
-                            auto &txo = tx_checks.ref_inputs.emplace_back(tx_out_ref::from_input(txi));
+                            auto &txo = tx_checks.ref_inputs.emplace_back(txi);
                             if (const auto txo_it = part.utxos.find(txo.id); txo_it != part.utxos.end())
                                 txo.data = txo_it->second;
                         });
@@ -525,11 +495,11 @@ namespace daedalus_turbo::txwit {
                         ++stats.num_simple_txs;
                     }
                     stats.wit_cnts += witnesses_ok_stage1(blk, tx);
-                    tx.foreach_cert([&](const cbor::value &cert_raw, const auto cert_idx) {
-                        cert_any_t cert { cert_raw };
+                    size_t cert_idx = 0;
+                    tx.foreach_cert([&](const auto &cert) {
                         if (std::holds_alternative<instant_reward_cert>(cert.val))
                             tx_checks.reqires_genesis_delegs_quorum = true;
-                        const cert_loc_t loc { blk.slot(), tx.index(), cert_idx };
+                        const cert_loc_t loc { blk->slot(), tx.index(), cert_idx++ };
                         part.certs.emplace_back(cert, loc, tx_loc);
                         if (const auto r_cred = cert.signing_cred(); r_cred)
                             tx_checks.required_signers.emplace(*r_cred);
@@ -549,28 +519,27 @@ namespace daedalus_turbo::txwit {
                                 tx_checks.required_signers.emplace(vkey_signer_t { stake_id.hash });
                         }
                     });
+                    size_t txo_idx = 0;
                     tx.foreach_output([&](const tx_output &txo) {
-                        tx_checks.balances.out_coin += txo.amount;
-                        if (!txo.address.is_byron()) {
-                            if (txo.address.network() != blk.config().shelley_network_id) [[unlikely]]
-                                throw error(fmt::format("the network id of a shelley address: {} does not match the config: {}", txo.address, blk.config().shelley_network_id));
+                        tx_checks.balances.out_coin += txo.coin;
+                        if (const auto addr = txo.addr(); !addr.is_byron()) {
+                            if (addr.network() != blk->config().shelley_network_id) [[unlikely]]
+                                throw error(fmt::format("the network id of a shelley address: {} does not match the config: {}", addr, blk->config().shelley_network_id));
                         }
-                        if (txo.assets) {
-                            for (const auto &[policy_id, assets]: txo.assets->map()) {
-                                for (const auto &[name, value]: assets.map()) {
-                                    if (const auto coin = value.uint())
-                                        tx_checks.balances.out_assets[policy_id.buf()][name.buf()] += coin;
-                                }
+                        for (const auto &[policy_id, p_assets]: txo.assets) {
+                            for (const auto &[name, coin]: p_assets) {
+                                if (coin)
+                                    tx_checks.balances.out_assets[policy_id][name] += coin;
                             }
                         }
-                        _add_utxo(part.utxos, tx, txo);
+                        _add_utxo(part.utxos, tx, txo, txo_idx++);
                     });
                     tx.foreach_required_signer([&](const auto vkey) {
                         tx_checks.required_signers.emplace(vkey_signer_t { vkey });
                     });
                     size_t num_inputs = 0;
                     tx.foreach_input([&](const tx_input &txin) {
-                        auto &txo = tx_checks.inputs.emplace_back(tx_out_ref::from_input(txin));
+                        auto &txo = tx_checks.inputs.emplace_back(txin);
                         const auto [it, created] = part.utxos.try_emplace(txo.id);
                         if (!created)
                             txo.data = it->second;
@@ -580,44 +549,32 @@ namespace daedalus_turbo::txwit {
                     if (!num_inputs) [[unlikely]]
                         throw error(fmt::format("tx {} does not have any inputs!", tx.hash()));
                     tx_checks.balances.out_coin += tx.donation();
-                    if (const auto *c_tx = dynamic_cast<const conway::tx *>(&tx); c_tx) {
-                        c_tx->foreach_proposal([&](const conway::proposal_t &p) {
+                    if (const auto *c_tx = dynamic_cast<const cardano::conway::tx *>(&tx); c_tx) {
+                        for (const auto &p: c_tx->proposals())
                             tx_checks.balances.out_coin += p.procedure.deposit;
-                        });
                     }
-                    tx.foreach_witness_vkey([&](const vkey_witness_t &vk_w) {
-                        switch (vk_w.typ) {
-                            case vkey_witness_t::vkey:
-                                tx_checks.signers.emplace(vkey_signer_t { blake2b<key_hash>(vk_w.bytes) });
-                                break;
-                            case vkey_witness_t::bootstrap: {
-                                const auto w_data = cbor::zero::parse(vk_w.bytes);
-                                uint8_vector vk_full {};
-                                vk_full << w_data.at(0).bytes() << w_data.at(2).bytes();
-                                tx_checks.signers.emplace(bootstrap_signer_t { byron_addr_root_hash(0, vk_full, w_data.at(3).bytes()) });
-                                break;
-                            }
-                            case vkey_witness_t::byron_vkey:
-                                tx_checks.byron_signers.emplace_back(vk_w.bytes, byron_witness_t::vkey);
-                                break;
-                            case vkey_witness_t::byron_redeem:
-                                tx_checks.byron_signers.emplace_back(vk_w.bytes, byron_witness_t::redeem);
-                                break;
-                            default:
-                                throw error(fmt::format("unsupported vkey_witness_type: {}", static_cast<int>(vk_w.typ)));
-                        }
+                    tx.foreach_witness_byron_vkey([&](const auto &w) {
+                        tx_checks.byron_signers.emplace_back(w);
+                    });
+                    tx.foreach_witness_shelley_vkey([&](const auto &w) {
+                        tx_checks.signers.emplace(vkey_signer_t { blake2b<key_hash>(w.vkey) });
+                    });
+                    tx.foreach_witness_shelley_bootstrap([&](const auto &w) {
+                        ed25519::vkey_full vk_full {};
+                        static_assert(sizeof(vk_full) == sizeof(w.vkey) + sizeof(w.chain_code));
+                        memcpy(vk_full.data(), w.vkey.data(), w.vkey.size());
+                        memcpy(vk_full.data() + w.vkey.size(), w.chain_code.data(), w.chain_code.size());
+                        tx_checks.signers.emplace(bootstrap_signer_t { byron_addr_root_hash(0, vk_full, w.attrs) });
                     });
                     tx.foreach_mint([&](const auto &policy_id, const auto &assets) {
                         bool minted = false;
                         for (const auto &[name, diff]: assets) {
-                            // negative mint values signify anl outflow of tokens
-                            if (diff.type == CBOR_NINT) {
-                                // guaranteed to be negative so no need to check for zero
-                                tx_checks.balances.out_assets[policy_id][name.buf()] += diff.nint();
+                            // negative mint values signify an outflow of tokens
+                            if (diff < 0) {
+                                tx_checks.balances.out_assets[policy_id][name] += -diff;
                                 minted = true;
-                            } else if (const auto coin = diff.uint(); coin) {
-                                // zeros must be ignored
-                                tx_checks.balances.in_assets[policy_id][name.buf()] += coin;
+                            } else if (diff > 0) {
+                                tx_checks.balances.in_assets[policy_id][name] += diff;
                                 minted = true;
                             }
                         }
@@ -626,19 +583,19 @@ namespace daedalus_turbo::txwit {
                     });
                     part.txs[tx_part_idx].emplace_back(std::move(tx_checks));
                 });
-                blk.foreach_invalid_tx([&](const auto &tx) {
+                blk->foreach_invalid_tx([&](const auto &tx) {
                     ++stats.num_invalid_txs;
                     tx.foreach_collateral([&](const auto &txi) {
-                        _del_utxo(part, tx_out_ref { txi.tx_hash, txi.txo_idx });
+                        _del_utxo(part, txi);
                     });
                     if (const auto *babbage_tx = dynamic_cast<const cardano::babbage::tx *>(&tx); babbage_tx) {
                         if (const auto c_ret = babbage_tx->collateral_return(); c_ret)
-                            _add_utxo(part.utxos, tx, *c_ret);
+                            _add_utxo(part.utxos, tx, *c_ret, babbage_tx->outputs().size());
                     }
                 });
             }
 
-            tx::wit_cnt witnesses_ok_stage1(const block_base &blk, const tx &tx) const
+            wit_cnt witnesses_ok_stage1(const block_container &blk, const tx_base &tx) const
             {
                 const bool first_slot_ok = !intersection || blk.offset() >= intersection->end_offset;
                 const bool last_slot_ok = !to || blk.offset() < to->end_offset;
@@ -658,7 +615,7 @@ namespace daedalus_turbo::txwit {
                             default: throw error(fmt::format("unsupported witness type: {}", static_cast<int>(typ)));
                         }
                     } catch (const std::exception &ex) {
-                        const auto msg = fmt::format("txwit: slot: {} tx: {} error: {}", blk.slot(), tx.hash(), ex.what());
+                        const auto msg = fmt::format("txwit: slot: {} tx: {} error: {}", blk->slot(), tx.hash(), ex.what());
                         logger::error("{}", msg);
                         error_handler(msg);
                     }
@@ -666,11 +623,11 @@ namespace daedalus_turbo::txwit {
                 return {};
             }
 
-            tx::wit_cnt witnesses_ok_stage2(const block_base &blk, const tx &tx, const context &ctx) const
+            wit_cnt witnesses_ok_stage2(const block_base &blk, const tx_base &tx, const context &ctx) const
             {
                 const bool first_slot_ok = !intersection || blk.offset() >= intersection->end_offset;
                 const bool last_slot_ok = !to || blk.offset() < to->end_offset;
-                tx::wit_cnt cnts {};
+                wit_cnt cnts {};
                 if (first_slot_ok && last_slot_ok) {
                     try {
                         switch (typ) {
@@ -732,7 +689,7 @@ namespace daedalus_turbo::txwit {
                 _apply_utxos(part);
             }
 
-            const tx::wit_cnt &counts() const
+            const wit_cnt &counts() const
             {
                 return _cnts;
             }
@@ -782,7 +739,7 @@ namespace daedalus_turbo::txwit {
             state _st {};
             plutus_cost_models _cost_models_raw = _st.params().plutus_cost_models;
             costs::parsed_models _cost_models = costs::parse(_cost_models_raw);
-            tx::wit_cnt _cnts {};
+            wit_cnt _cnts {};
             size_t _num_errs = 0;
 
             void _apply_epoch_update(const batch_info &part)
@@ -885,19 +842,15 @@ namespace daedalus_turbo::txwit {
                         data = it->second;
                     }
                     tx.balances.in_coin += data.coin;
-                    if (data.assets) {
-                        const auto policies = cbor::parse(*data.assets);
-                        for (const auto &[policy_id, assets]: policies.map()) {
-                            for (const auto &[name, value]: assets.map()) {
-                                if (const auto coin = value.uint(); coin)
-                                    tx.balances.in_assets[policy_id.buf()][name.buf()] += coin;
-                            }
+                    for (const auto &[policy_id, assets]: data.assets) {
+                        for (const auto &[name, coin]: assets) {
+                            if (coin)
+                                tx.balances.in_assets[policy_id][name] += coin;
                         }
                     }
                     if (data.script_ref) {
-                        auto s = script_info::from_cbor(*data.script_ref);
-                        if (s.type() == script_type::native)
-                            tx.native_script_refs.try_emplace(s.hash(), std::move(s));
+                        if (data.script_ref->type() == script_type::native)
+                            tx.native_script_refs.try_emplace(data.script_ref->hash(), *data.script_ref);
                     }
                 }
                 for (auto &[id, data]: tx.ref_inputs) {
@@ -908,9 +861,8 @@ namespace daedalus_turbo::txwit {
                         data = it->second;
                     }
                     if (data.script_ref) {
-                        auto s = script_info::from_cbor(*data.script_ref);
-                        if (s.type() == script_type::native)
-                            tx.native_script_refs.try_emplace(s.hash(), std::move(s));
+                        if (data.script_ref->type() == script_type::native)
+                            tx.native_script_refs.try_emplace(data.script_ref->hash(), *data.script_ref);
                     }
                 }
                 if (tx.plutus_ctx) {
@@ -930,11 +882,22 @@ namespace daedalus_turbo::txwit {
                 // In Byron the difference between the inputs and the outputs is the fee, so not check that
                 size_t byron_input_idx = 0;
                 for (const auto &[id, data]: tx.inputs) {
-                    const byron_addr b_addr { data.address };
-                    const auto b_wit = tx.byron_signers.at(byron_input_idx++);
-                    if (!b_addr.vkey_ok(b_wit.vk, b_wit.cbor_type())) [[unlikely]]
-                        throw error(fmt::format("epoch: {} tx {} the byron witness #{}: {} does not match the address: {}!",
-                            part.epoch, tx.tx_id, byron_input_idx, b_wit, b_addr));
+                    const auto b_addr = byron_addr::from_bytes(data.address_raw);
+                    std::visit([&](const auto &w) {
+                        using T = std::decay_t<decltype(w)>;
+                        if constexpr (std::is_same_v<T, tx_wit_byron_vkey>) {
+                            if (!b_addr.vkey_ok(w.vkey, 0)) [[unlikely]]
+                                throw error(fmt::format("epoch: {} slot: {} tx {} the byron witness #{} does not match the address: {}!",
+                                    part.epoch, tx.slot, tx.tx_id, byron_input_idx, b_addr));
+                        } else if constexpr (std::is_same_v<T, tx_wit_byron_redeemer>) {
+                            if (!b_addr.vkey_ok(w.vkey, 2)) [[unlikely]]
+                                throw error(fmt::format("epoch: {} slot: {} tx {} the byron witness #{} does not match the address: {}!",
+                                    part.epoch, tx.slot, tx.tx_id, byron_input_idx, b_addr));
+                        } else {
+                            throw error(fmt::format("unsupported byron signer type: {}", typeid(T).name()));
+                        }
+                    }, tx.byron_signers.at(byron_input_idx));
+                    ++byron_input_idx;
                 }
             }
 
@@ -968,7 +931,7 @@ namespace daedalus_turbo::txwit {
                                         vkey_signers->emplace(std::get<vkey_signer_t>(s.val).hash);
                                 }
                                 const auto &script = *s_it->second;
-                                if (const auto err = native_script::validate(cbor::parse(script.script()), tx.slot, *vkey_signers); err) [[unlikely]]
+                                if (const auto err = native_script::validate(cbor::zero2::parse(script.script()).get(), tx.slot, *vkey_signers); err) [[unlikely]]
                                     throw error(fmt::format("native script: {} failed to validate tx {}: {}", script.hash(), tx.tx_id, err));
                             }
                             s_it->second.reset();
@@ -1009,23 +972,23 @@ namespace daedalus_turbo::txwit {
                             break;
                     }
                 } catch (const std::exception &ex) {
-                    const auto msg = fmt::format("txwit epoch: {} tx: {}: ", part.epoch, tx.tx_id, ex.what());
+                    const auto msg = fmt::format("txwit epoch: {} tx: {}: {}", part.epoch, tx.tx_id, ex.what());
                     logger::error("{}", msg);
                     _cfg.error_handler(msg);
                 }
             }
 
-            tx::wit_cnt _validate_witnesses(batch_info &part) const
+            wit_cnt _validate_witnesses(batch_info &part) const
             {
                 timer t { fmt::format("txwit batch: {} epoch: {} par validate_witnesses", part.part_id, part.epoch), logger::level::debug };
                 static const std::string task_id { "validate-batch" };
                 auto &sched = _cr.sched();
-                alignas(mutex::padding) mutex::unique_lock::mutex_type part_mutex {};
-                tx::wit_cnt cnts {};
+                mutex::unique_lock::mutex_type part_mutex alignas(mutex::alignment) {};
+                wit_cnt cnts {};
                 sched.wait_all_done(task_id, batch_info::num_parts, [&] {
                     for (size_t pi = 0; pi < batch_info::num_parts; ++pi) {
                         sched.submit_void(task_id, 2000, [&, pi] {
-                            tx::wit_cnt batch_cnts {};
+                            wit_cnt batch_cnts {};
                             const auto part_path = _batch_path(_cr, part.part_id, fmt::format("txs-{:02X}", pi));
                             auto txs = zpp::load_zstd<vector<tx_context_t>>(part_path);
                             for (auto &tx_ctx: txs) {
@@ -1059,7 +1022,7 @@ namespace daedalus_turbo::txwit {
                     throw error(fmt::format("tx size of {} exceeded the limit of {}", *max.max_tx_size, _st.params().max_transaction_size));
             }
 
-            tx::wit_cnt _validate_witnesses_and_invariants(batch_info &part)
+            wit_cnt _validate_witnesses_and_invariants(batch_info &part)
             {
                 _validate_max_stats(part);
                 return _validate_witnesses(part);
@@ -1082,19 +1045,17 @@ namespace daedalus_turbo::txwit {
                     throw error(fmt::format("batch: {} contains data from multiple epochs: {}, {}, {}", batch_no, part.epoch, first_epoch, last_epoch));
 
                 const auto canon_path = cr.full_path(chunk.rel_path());
-                const auto data = file::read(canon_path);
-                cbor_parser block_parser { data };
-                cbor_value block_tuple {};
-                while (!block_parser.eof()) {
-                    block_parser.read(block_tuple);
-                    const auto blk_ptr = make_block(block_tuple, chunk.offset + block_tuple.data - data.data(), cr.config());
-                    const auto &blk = *blk_ptr;
+                const auto data = zstd::read(canon_path);
+                cbor::zero2::decoder dec { data };
+                while (!dec.done()) {
+                    auto &block_tuple = dec.read();
+                    const auto blk = make_block(block_tuple, chunk.offset + block_tuple.data_begin() - data.data(), cr.config());
                     // Byron epoch boundary blocks contain no information and therefore are skipped
-                    if (blk.era() > 0) [[likely]] {
+                    if (blk->era() > 0) [[likely]] {
                         try {
                             cfg.pre_aggregate_data(part, blk);
                         } catch (const std::exception &ex) {
-                            throw error(fmt::format("failed to parse block at slot: {} hash: {}: {}", blk.slot_object(), blk.hash(), ex.what()));
+                            throw error(fmt::format("failed to parse block at slot: {} hash: {}: {}", blk->slot_object(), blk->hash(), ex.what()));
                         }
                     }
                 }
@@ -1126,10 +1087,10 @@ namespace daedalus_turbo::txwit {
             _del_utxo(part, it, created);
         }
 
-        static void _add_utxo(txo_map &idx, const tx &tx, const tx_output &tx_out)
+        static void _add_utxo(txo_map &idx, const tx_base &tx, const tx_output &txo, const size_t txo_idx)
         {
-            if (const auto [it, created] = idx.try_emplace(tx_out_ref { tx.hash(), tx_out.idx }, tx_out_data::from_output(tx_out)); !created) [[unlikely]]
-                throw error(fmt::format("found a non-unique TXO {}#{}", tx.hash(), tx_out.idx));
+            if (const auto [it, created] = idx.try_emplace(tx_out_ref { tx.hash(), txo_idx }, txo); !created) [[unlikely]]
+                throw error(fmt::format("found a non-unique TXO {}#{}", tx.hash(), txo_idx));
         }
 
         static std::filesystem::path _batch_dir(const chunk_registry &cr, const size_t batch_id)
@@ -1144,7 +1105,7 @@ namespace daedalus_turbo::txwit {
 
         batch_stats_t _process_batches(parallel::ordered_consumer &part_c, const vector<storage::chunk_cptr_list> &batches) const
         {
-            alignas(mutex::padding) mutex::unique_lock::mutex_type all_mutex {};
+            mutex::unique_lock::mutex_type all_mutex alignas(mutex::alignment) {};
             batch_stats_t all {};
             auto &sched = _cr.sched();
             static const std::string task_id { "parse" };

@@ -1,21 +1,23 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_CARDANO_LEDGER_SHELLEY_HPP
 #define DAEDALUS_TURBO_CARDANO_LEDGER_SHELLEY_HPP
 
-#include <dt/cardano/common.hpp>
-#include <dt/cardano/cert.hpp>
-#include <dt/cardano/shelley.hpp>
+#include <dt/cardano/common/common.hpp>
+#include <dt/cardano/common/cert.hpp>
+#include <dt/cardano/shelley/block.hpp>
 #include <dt/cardano/ledger/types.hpp>
+#include <dt/parallel/encoder.hpp>
 #include <dt/index/vrf.hpp>
 
 namespace daedalus_turbo::cardano::ledger::shelley {
     using namespace cardano::shelley;
 
     struct vrf_state {
-        using pool_update_map = map<pool_hash, uint64_t>;
+        using pool_update_map = map_t<pool_hash, uint64_t>;
 
         static constexpr auto serialize(auto &archive, auto &self)
         {
@@ -28,11 +30,10 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         explicit vrf_state(const config &cfg=config::get());
         virtual ~vrf_state() =default;
 
-        [[nodiscard]] uint8_vector cbor() const;
-        virtual void from_cbor(const cbor::value &v);
-        virtual void to_cbor(parallel_serializer &) const;
+        virtual void from_cbor(cbor::zero2::value &v);
+        virtual void to_cbor(cbor_encoder &) const;
         virtual void from_zpp(parallel_decoder &);
-        virtual void to_zpp(parallel_serializer &) const;
+        virtual void to_zpp(zpp_encoder &) const;
 
         void process_updates(const vector<index::vrf::item> &updates);
         void finish_epoch(const nonce &extra_entropy);
@@ -90,7 +91,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         vrf_nonce _nonce_evolving { _nonce_genesis };
         vrf_nonce _nonce_candidate { _nonce_genesis };
         vrf_nonce _lab_prev_hash {};
-        std::optional<vrf_nonce> _prev_epoch_lab_prev_hash {};
+        cardano::nonce _prev_epoch_lab_prev_hash {};
         uint64_t _slot_last = 0;
         pool_update_map _kes_counters {};
         uint64_t _max_epoch_slot;
@@ -100,20 +101,19 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         state(const cardano::config &cfg, scheduler &sched);
         virtual ~state() =default;
 
-        [[nodiscard]] uint8_vector cbor() const;
-        virtual void from_cbor(const cbor::value &v);
-        virtual void to_cbor(parallel_serializer &) const;
+        virtual point from_cbor(cbor::zero2::value &v);
+        virtual void to_cbor(cbor_encoder &) const;
         virtual void from_zpp(parallel_decoder &);
-        virtual void to_zpp(parallel_serializer &) const;
+        virtual void to_zpp(zpp_encoder &) const;
 
         virtual bool operator==(const state &o) const;
         virtual void clear();
 
         virtual const set<key_hash> &genesis_signers() const;
 
-        virtual void compute_rewards_if_ready();
+        virtual void run_pulser_if_ready();
         virtual void process_updates(updates_t &&);
-        virtual void process_cert(const cert_any_t &, const cert_loc_t &);
+        virtual void process_cert(const cert_t &, const cert_loc_t &);
         virtual void start_epoch(std::optional<uint64_t> new_epoch);
 
         virtual void register_pool(const pool_reg_cert &reg);
@@ -161,7 +161,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
 
         virtual const protocol_params &params() const;
     protected:
-        using encode_cbor_func = std::function<void(cbor::encoder &)>;
+        using encode_cbor_func = std::function<void(era_encoder &)>;
 
         friend ledger::state;
         const cardano::config &_cfg;
@@ -235,7 +235,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         mutable set<pool_hash> _pbft_pools = _make_pbft_pools(_shelley_delegs);
 
         template<std::integral T>
-        static size_t _param_to_cbor(cbor::encoder &enc, const size_t idx, const std::optional<T> &val)
+        static size_t _param_to_cbor(era_encoder &enc, const size_t idx, const std::optional<T> &val)
         {
             if (val) {
                 enc.uint(idx);
@@ -246,8 +246,8 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         }
 
         static uint8_vector _parse_address(buffer buf);
-        static size_t _param_to_cbor(cbor::encoder &enc, size_t idx, const std::optional<rational_u64> &val);
-        static size_t _param_update_common_to_cbor(cbor::encoder &enc, const param_update &upd);
+        static size_t _param_to_cbor(era_encoder &enc, size_t idx, const std::optional<rational_u64> &val);
+        static size_t _param_update_common_to_cbor(era_encoder &enc, const param_update &upd);
 
         // previously public methods
         virtual void register_stake(uint64_t slot, const stake_ident &stake_id, std::optional<uint64_t> deposit, size_t tx_idx=0, size_t cert_idx=0);
@@ -255,18 +255,20 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         virtual void delegate_stake(const stake_ident &stake_id, const pool_hash &pool_id);
 
         void _apply_shelley_params(protocol_params &p) const;
-        virtual void _add_encode_task(parallel_serializer &, const encode_cbor_func &) const;
+        virtual void _add_encode_task(cbor_encoder &, const encode_cbor_func &) const;
         virtual void _apply_param_update(const param_update &update);
         virtual std::optional<param_update> _prep_param_update() const;
-        virtual param_update _parse_param_update(const cbor::value &proposal) const;
-        virtual void _parse_protocol_params(protocol_params &params, const cbor_value &values) const;
+        virtual void _parse_protocol_params(protocol_params &params, cbor::zero2::value &values) const;
         virtual void _compute_rewards();
-        virtual void _donations_to_cbor(cbor::encoder &) const;
-        virtual void _param_update_to_cbor(cbor::encoder &enc, const param_update &update) const;
-        virtual void _params_to_cbor(cbor::encoder &enc, const protocol_params &params) const;
-        virtual void _protocol_state_to_cbor(cbor::encoder &) const;
-        virtual void _stake_distrib_to_cbor(cbor::encoder &) const;
-        virtual void _stake_pointers_to_cbor(cbor::encoder &) const;
+
+        virtual void _account_to_cbor(const account_info &acc, era_encoder &enc) const;
+        virtual void _donations_to_cbor(era_encoder &) const;
+        virtual void _delegation_gov_to_cbor(era_encoder &enc) const;
+        virtual void _param_update_to_cbor(era_encoder &enc, const param_update &update) const;
+        virtual void _params_to_cbor(era_encoder &enc, const protocol_params &params) const;
+        virtual void _protocol_state_to_cbor(era_encoder &) const;
+        virtual void _stake_pointer_stake_to_cbor(era_encoder &) const;
+        virtual void _stake_pointers_to_cbor(era_encoder &) const;
         virtual void _process_block_updates(block_update_list &&);
         virtual void _process_timed_update(tx_out_ref_list &, timed_update_t &&);
         virtual tx_out_ref_list _process_timed_updates(timed_update_list &&);
@@ -274,6 +276,14 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         virtual void _process_collateral_use(tx_out_ref_list &&);
         uint64_t _transfer_instant_rewards(stake_distribution &rewards);
         virtual void _tick(uint64_t slot);
+
+        virtual void _decode_possible_update(cbor::zero2::value &);
+        virtual void _decode_accounts(cbor::zero2::value &);
+        virtual void _decode_lstate(cbor::zero2::value &);
+        virtual void _decode_snapshots(cbor::zero2::value &);
+        virtual void _decode_likelihoods(cbor::zero2::value &);
+        virtual void _decode_state_before(cbor::zero2::value &);
+        virtual void _decode_snapshot(cbor::zero2::value &);
     private:
         static protocol_params _default_params(const cardano::config &cfg);
         static set<pool_hash> _make_pbft_pools(const shelley_delegate_map &delegs);
@@ -281,22 +291,22 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         template<typename VISITOR>
         void _visit(const VISITOR &v) const;
 
-        void _node_load_delegation_state(const cbor::value &);
-        void _node_load_utxo_state(const cbor::value &);
-        void _node_load_vrf_state(const cbor::value &);
+        void _node_load_delegation_state(cbor::zero2::value &);
+        void _node_load_utxo_state(cbor::zero2::value &);
+        void _node_load_vrf_state(cbor::zero2::value &);
 
-        void _node_save_params(cbor::encoder &enc, const protocol_params &params) const;
-        void _node_save_params_shelley(cbor::encoder &enc, const protocol_params &params) const;
-        void _node_save_params_alonzo(cbor::encoder &enc, const protocol_params &params) const;
-        void _node_save_params_babbage(cbor::encoder &enc, const protocol_params &params) const;
-        void _node_save_eras(parallel_serializer &ser, const point &tip) const;
-        void _node_save_ledger(parallel_serializer &ser) const;
-        void _node_save_ledger_delegation(parallel_serializer &ser) const;
-        void _node_save_ledger_utxo(parallel_serializer &ser) const;
-        void _node_save_state(parallel_serializer &ser) const;
-        void _node_save_snapshots(parallel_serializer &ser) const;
-        void _node_save_state_before(parallel_serializer &ser) const;
-        void _node_save_vrf_state(parallel_serializer &ser, const point &) const;
+        void _node_save_params(era_encoder &enc, const protocol_params &params) const;
+        void _node_save_params_shelley(era_encoder &enc, const protocol_params &params) const;
+        void _node_save_params_alonzo(era_encoder &enc, const protocol_params &params) const;
+        void _node_save_params_babbage(era_encoder &enc, const protocol_params &params) const;
+        void _node_save_eras(cbor_encoder &ser, const point &tip) const;
+        void _node_save_ledger(cbor_encoder &ser) const;
+        void _node_save_ledger_delegation(cbor_encoder &ser) const;
+        void _node_save_ledger_utxo(cbor_encoder &ser) const;
+        void _node_save_state(cbor_encoder &ser) const;
+        void _node_save_snapshots(cbor_encoder &ser) const;
+        void _node_save_state_before(cbor_encoder &ser) const;
+        void _node_save_vrf_state(cbor_encoder &ser, const point &) const;
 
         uint64_t _retire_avvm_balance();
         std::optional<stake_ident> _extract_stake_id(const address &addr) const;

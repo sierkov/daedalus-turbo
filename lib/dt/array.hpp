@@ -1,126 +1,91 @@
-/* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
- * This code is distributed under the license specified in:
- * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
+#pragma once
 #ifndef DAEDALUS_TURBO_ARRAY_HPP
 #define DAEDALUS_TURBO_ARRAY_HPP
+/* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
+ * This code is distributed under the license specified in:
+ * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
 #include <array>
 #include <cstring>
 #include <span>
-#include <dt/error.hpp>
-#include <dt/format.hpp>
+#include <dt/common/error.hpp>
+#include <dt/common/format.hpp>
+#include <dt/common/bytes.hpp>
 
 namespace daedalus_turbo {
-    inline uint8_t uint_from_oct(char k)
-    {
-        switch (std::tolower(k)) {
-            case '0': return 0;
-            case '1': return 1;
-            case '2': return 2;
-            case '3': return 3;
-            case '4': return 4;
-            case '5': return 5;
-            case '6': return 6;
-            case '7': return 7;
-            default: throw error(fmt::format("unexpected character in an octal number: {}!", k));
-        }
-    }
-
-    inline uint8_t uint_from_hex(char k)
-    {
-        switch (std::tolower(k)) {
-            case '0': return 0;
-            case '1': return 1;
-            case '2': return 2;
-            case '3': return 3;
-            case '4': return 4;
-            case '5': return 5;
-            case '6': return 6;
-            case '7': return 7;
-            case '8': return 8;
-            case '9': return 9;
-            case 'a': return 10;
-            case 'b': return 11;
-            case 'c': return 12;
-            case 'd': return 13;
-            case 'e': return 14;
-            case 'f': return 15;
-            default: throw error(fmt::format("unexpected character in a hex number: {}!", k));
-        }
-    }
-
-    inline void init_from_hex(std::span<uint8_t> out, const std::string_view hex)
-    {
-        if (hex.size() != out.size() * 2)
-            throw error(fmt::format("hex string must have {} characters but got {}: {}!", out.size() * 2, hex.size(), hex));
-        for (size_t i = 0; i < out.size(); ++i)
-            out[i] = uint_from_hex(hex[i * 2]) << 4 | uint_from_hex(hex[i * 2 + 1]);
-    }
-
-    template<typename T, size_t SZ>
+    template<size_t SZ>
     struct
 #   ifndef _MSC_VER
         __attribute__((packed))
 #   endif
-    array: std::array<T, SZ> {
-        using std::array<T, SZ>::array;
+    byte_array: std::array<uint8_t, SZ> {
+        using base_type = std::array<uint8_t, SZ>;
+        using base_type::base_type;
 
-        static array<T, SZ> from_hex(const std::string_view hex)
+        static byte_array<SZ> from_hex(const std::string_view hex)
         {
-            array<T, SZ> data;
+            byte_array<SZ> data;
             init_from_hex(data, hex);
             return data;
         }
 
-        array(std::initializer_list<T> s) {
-            static_assert(sizeof(*this) == SZ * sizeof(T));
-            if (s.size() != SZ)
+        byte_array() =default;
+
+        byte_array(const std::initializer_list<uint8_t> s) {
+            if (s.size() != SZ) [[unlikely]]
                 throw error(fmt::format("span must be of size {} but got {}", SZ, s.size()));
-#if !defined(__clang__) && !defined(_MSC_VER)
-#   pragma GCC diagnostic push
-#   pragma GCC diagnostic ignored "-Wclass-memaccess"
-#endif
-            memcpy(this, std::data(s), SZ * sizeof(T));
-#if !defined(__clang__) && !defined(_MSC_VER)
-#   pragma GCC diagnostic pop
-#endif
+            size_t i = 0;
+            for (const auto b: s)
+                *(base_type::data() + i++) = b;
         }
 
-        array(const std::span<const T> &s)
+        byte_array(const buffer s)
         {
-            if (s.size() != SZ)
-                throw error(fmt::format("span must be of size {} but got {}", SZ, s.size()));
-            memcpy(this, std::data(s), SZ * sizeof(T));
+            if (s.size() != SZ) [[unlikely]]
+                throw error(fmt::format("string_view must be of size {} but got {}", SZ, s.size()));
+            memcpy(this, std::data(s), SZ);
         }
 
-        array(const std::string_view s)
+        byte_array(const std::string_view s)
         {
-            if (s.size() != SZ * sizeof(T))
-                throw error(fmt::format("string_view must be of size {} but got {}", SZ * sizeof(T), s.size()));
-            memcpy(this, std::data(s), SZ * sizeof(T));
+            if (s.size() != SZ) [[unlikely]]
+                throw error(fmt::format("string_view must be of size {} but got {}", SZ, s.size()));
+            memcpy(this, std::data(s), SZ);
         }
 
-        array &operator=(const std::span<const T> &s)
+        byte_array &operator=(const buffer s)
         {
-            if (s.size() != SZ)
-                throw error(fmt::format("span must be of size {} but got {}", SZ, s.size()));
-            memcpy(this, std::data(s), SZ * sizeof(T));
+            if (s.size() != SZ) [[unlikely]]
+                throw error(fmt::format("string_view must be of size {} but got {}", SZ, s.size()));
+            memcpy(this, std::data(s), SZ);
             return *this;
         }
 
-        array &operator=(const std::string_view s)
+        byte_array &operator=(const std::string_view s)
         {
-            if (s.size() != SZ * sizeof(T))
-                throw error(fmt::format("string_view must be of size {} but got {}", SZ * sizeof(T), s.size()));
-            memcpy(this, std::data(s), SZ * sizeof(T));
+            if (s.size() != SZ) [[unlikely]]
+                throw error(fmt::format("string_view must be of size {} but got {}", SZ, s.size()));
+            memcpy(this, std::data(s), SZ);
             return *this;
         }
 
-        const std::span<const T> span() const
+        operator buffer() const noexcept
         {
-            return std::span<const T> { *this };
+            return { base_type::data(), SZ };
+            static_assert(std::is_convertible_v<byte_array, buffer>);
         }
+
+        explicit operator std::string_view() const noexcept
+        {
+            return { reinterpret_cast<const char *>(base_type::data()), base_type::size() };
+        }
+
+        /*bool operator==(const byte_array<SZ> &o) const
+        {
+            return memcmp(base_type::data(), o.data(), base_type::size()) == 0;
+        }*/
     };
 
     extern void secure_clear(std::span<uint8_t> store);
@@ -138,19 +103,19 @@ namespace daedalus_turbo {
         std::span<uint8_t> _store;
     };
 
-    template<typename T, size_t SZ>
-    struct secure_array: array<T, SZ>
+    template<size_t SZ>
+    struct secure_byte_array: byte_array<SZ>
     {
-        using array<T, SZ>::array;
+        using byte_array<SZ>::byte_array;
 
-        static secure_array<T, SZ> from_hex(const std::string_view &hex)
+        static secure_byte_array<SZ> from_hex(const std::string_view &hex)
         {
-            secure_array<T, SZ> data;
+            secure_byte_array<SZ> data;
             init_from_hex(data, hex);
             return data;
         }
 
-        ~secure_array()
+        ~secure_byte_array()
         {
             secure_clear(*this);
         }
@@ -159,7 +124,7 @@ namespace daedalus_turbo {
 
 namespace fmt {
     template<size_t SZ>
-    struct formatter<daedalus_turbo::array<uint8_t, SZ>>: formatter<int> {
+    struct formatter<daedalus_turbo::byte_array<SZ>>: formatter<int> {
         template<typename FormatContext>
         auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out())
         {
@@ -168,7 +133,7 @@ namespace fmt {
     };
 
     template<size_t SZ>
-    struct formatter<daedalus_turbo::secure_array<uint8_t, SZ>>: formatter<daedalus_turbo::array<uint8_t, SZ>> {
+    struct formatter<daedalus_turbo::secure_byte_array<SZ>>: formatter<daedalus_turbo::byte_array<SZ>> {
     };
 }
 

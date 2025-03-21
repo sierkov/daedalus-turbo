@@ -1,22 +1,33 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
+#include <fstream>
+
+#if defined(__GNUC__) && !defined(__clang__)
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Warray-bounds"
+#   pragma GCC diagnostic ignored "-Wstringop-overflow"
+#endif
 #ifndef SPDLOG_FMT_EXTERNAL
 #   define SPDLOG_FMT_EXTERNAL 1
 #endif
-#include <fstream>
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
+#if defined(__GNUC__) && !defined(__clang__)
+#   pragma GCC diagnostic pop
+#endif
+
 #include <dt/config.hpp>
 #include <dt/file.hpp>
 #include <dt/logger.hpp>
 #include <dt/mutex.hpp>
 
 namespace daedalus_turbo::logger {
-    static mutex::unique_lock::mutex_type last_error_mutex alignas(mutex::padding) {};
+    static mutex::unique_lock::mutex_type last_error_mutex alignas(mutex::alignment) {};
     static std::shared_ptr<std::string> last_error_ptr {};
 
     std::shared_ptr<std::string> last_error()
@@ -69,7 +80,7 @@ namespace daedalus_turbo::logger {
         file_sink->set_level(spdlog::level::trace);
         file_sink->set_pattern("[%Y-%m-%d %T %z] [%P:%t] [%n] [%l] %v");
         auto logger = console_sink
-            ? spdlog::logger("dt", { console_sink, file_sink })
+            ? spdlog::logger("dt", { file_sink, console_sink })
             : spdlog::logger("dt", { file_sink });
         if (tracing_enabled()) {
             logger.set_level(spdlog::level::trace);
@@ -89,21 +100,23 @@ namespace daedalus_turbo::logger {
 
     void log(level lev, const std::string &msg)
     {
+        // A suppose bug in GCC leads to false positive warnings in several open source libraries
+        // with spdlog being one of them
         switch (lev) {
             case level::trace:
-                get().trace(msg);
+                get().trace("{}", msg);
                 break;
             case level::debug:
-                get().debug(msg);
+                get().debug("{}", msg);
                 break;
             case level::info:
-                get().info(msg);
+                get().info("{}", msg);
                 break;
             case level::warn:
-                get().warn(msg);
+                get().warn("{}", msg);
                 break;
             case level::error: {
-                get().error(msg);
+                get().error("{}", msg);
                 mutex::scoped_lock lk { last_error_mutex };
                 last_error_ptr = std::make_shared<std::string>(msg);
                 break;

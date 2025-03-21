@@ -1,25 +1,17 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_RATIONAL_HPP
 #define DAEDALUS_TURBO_RATIONAL_HPP
 
-#include <numeric>
-#include <dt/big_int.hpp>
-#include <dt/json.hpp>
+#include <dt/common/format.hpp>
+#include <dt/cbor/fwd.hpp>
+#include <dt/json-fwd.hpp>
 
 namespace daedalus_turbo {
-    using rational = boost::multiprecision::cpp_rational;
-    using boost::multiprecision::numerator;
-    using boost::multiprecision::denominator;
-
-    struct cbor_value;
-    struct cbor_array;
-
-    namespace cbor {
-        struct encoder;
-    }
+    using cpp_rational_storage = byte_array<64>;
 
     struct rational_u64 {
         uint64_t numerator = 0;
@@ -30,12 +22,11 @@ namespace daedalus_turbo {
             return archive(self.numerator, self.denominator);
         }
 
-        rational_u64() =default;
-        rational_u64(uint64_t, uint64_t);
-        rational_u64(double);
-        rational_u64(const cbor_array &);
-        rational_u64(const cbor_value &);
-        rational_u64(const json::value &v);
+        static rational_u64 from_cbor(cbor::zero2::array_reader &);
+        static rational_u64 from_cbor(cbor::zero2::value &);
+        static rational_u64 from_json(const json::value &);
+        static rational_u64 from_double(double);
+        void to_cbor(cbor::encoder &) const;
 
         bool operator==(const auto &b) const
         {
@@ -47,38 +38,11 @@ namespace daedalus_turbo {
             return static_cast<double>(numerator) / denominator;
         }
 
-        operator rational() const
-        {
-            return rational { numerator, denominator };
-        }
-
-        rational as_r() const
-        {
-            return static_cast<rational>(*this);
-        }
-
-        void normalize()
-        {
-            const auto div = std::gcd(numerator, denominator);
-            if (div != 0) {
-                numerator /= div;
-                denominator /= div;
-            }
-        }
-
-        void to_cbor(cbor::encoder &) const;
+        void normalize();
     };
 }
 
 namespace fmt {
-    template<>
-    struct formatter<daedalus_turbo::rational>: formatter<uint64_t> {
-        template<typename FormatContext>
-        auto format(const auto &v, FormatContext &ctx) const -> decltype(ctx.out()) {
-            return fmt::format_to(ctx.out(), "{} % {}", static_cast<uint64_t>(daedalus_turbo::numerator(v)), static_cast<uint64_t>(daedalus_turbo::denominator(v)));
-        }
-    };
-
     template<>
     struct formatter<daedalus_turbo::rational_u64>: formatter<uint64_t> {
         template<typename FormatContext>

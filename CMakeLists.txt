@@ -15,7 +15,6 @@ set(COVERAGE_ARGS "" CACHE STRING "select specific unit tests to run for test co
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_EXTENSIONS NO)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
-add_compile_options(-DFMT_HEADER_ONLY)
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     add_compile_options(-Wall)
     add_compile_options(-Wextra)
@@ -72,6 +71,7 @@ elseif(CMAKE_BUILD_TYPE STREQUAL Fuzzer)
 elseif(CMAKE_BUILD_TYPE STREQUAL Coverage)
     message("Coverage build")
     if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        add_compile_options("-ftime-trace")
         add_compile_options("-fprofile-instr-generate")
         add_compile_options("-fcoverage-mapping")
         add_compile_options("-g")
@@ -96,12 +96,26 @@ elseif(CMAKE_BUILD_TYPE STREQUAL Coverage)
     endif()
 endif()
 
+if (WIN32)
+    add_compile_options(-DMI_BUILD_SHARED -DMI_OVERRIDE)
+    include(FetchContent)
+    FetchContent_Declare(
+            mimalloc
+            GIT_REPOSITORY https://github.com/microsoft/mimalloc.git
+            GIT_TAG "v2.1.9" # https://github.com/ericniebler/range-v3/releases
+            GIT_SHALLOW TRUE
+            GIT_PROGRESS ON
+    )
+    FetchContent_MakeAvailable(mimalloc)
+    FetchContent_GetProperties(mimalloc)
+endif()
+
 add_subdirectory(3rdparty)
 add_subdirectory(lib)
 target_link_libraries(lib PUBLIC 3rdparty 3rdparty-cpp)
 
 add_executable(dt src/dt.cpp)
-target_link_libraries(dt PRIVATE lib 3rdparty 3rdparty-cpp)
+
 set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP TRUE)
 include(InstallRequiredSystemLibraries)
 install(PROGRAMS ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} DESTINATION bin)
@@ -139,11 +153,30 @@ endforeach()
 
 file(GLOB_RECURSE TEST_SRCS lib/dt/*.test.cpp)
 add_executable(run-test src/run-test.cpp ${TEST_SRCS})
-target_link_libraries(run-test PRIVATE lib 3rdparty 3rdparty-cpp)
 
 file(GLOB_RECURSE BENCH_SRCS lib/dt/*.bench.cpp)
 add_executable(run-bench src/run-test.cpp ${BENCH_SRCS})
-target_link_libraries(run-bench PRIVATE lib 3rdparty 3rdparty-cpp)
+
+foreach(EXE dt run-test run-bench)
+    if (WIN32)
+        if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+            set(MIMALLOC_DLLNAME "mimalloc-debug.dll")
+        else()
+            set(MIMALLOC_DLLNAME "mimalloc.dll")
+        endif()
+        message("${EXE} ${mimalloc_BINARY_DIR}/${MIMALLOC_DLLNAME}")
+        target_link_libraries(${EXE} PRIVATE mimalloc lib 3rdparty 3rdparty-cpp)
+        add_custom_command(TARGET ${EXE}
+            POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${mimalloc_BINARY_DIR}/mimalloc-redirect.dll "${CMAKE_BINARY_DIR}"
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different ${mimalloc_BINARY_DIR}/${MIMALLOC_DLLNAME} "${CMAKE_BINARY_DIR}"
+            COMMENT "Copy dll file to ${CMAKE_BINARY_DIR} directory" VERBATIM
+        )
+    else()
+        message("${EXE} no mimalloc")
+        target_link_libraries(${EXE} PRIVATE lib 3rdparty 3rdparty-cpp)
+    endif()
+endforeach()
 
 message("copying configs")
 file(COPY etc DESTINATION .)

@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #include <dt/cardano.hpp>
@@ -24,7 +25,7 @@ namespace daedalus_turbo::cli::pay_history {
                 addr_raw.insert(addr_raw.begin(), 0x61);
             chunk_registry cr { data_dir, chunk_registry::mode::index };
             reconstructor r { cr };
-            cardano::address addr { addr_raw.span() };
+            cardano::address addr { addr_raw };
             std::cout << fmt::format("{}", r.find_history(addr.pay_id()));
         }
     };

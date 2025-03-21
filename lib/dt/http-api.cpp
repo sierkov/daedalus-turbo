@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
@@ -35,7 +36,8 @@
 #include <dt/asio.hpp>
 #include <dt/cardano/ledger/state.hpp>
 #include <dt/chunk-registry.hpp>
-#include <dt/format.hpp>
+#include <dt/common/bytes.hpp>
+#include <dt/common/format.hpp>
 #include <dt/json.hpp>
 #include <dt/history.hpp>
 #include <dt/http/download-queue.hpp>
@@ -46,7 +48,6 @@
 #include <dt/requirements.hpp>
 #include <dt/sync/hybrid.hpp>
 #include <dt/sync/p2p.hpp>
-#include <dt/util.hpp>
 #include <dt/zpp.hpp>
 
 namespace daedalus_turbo::http_api {
@@ -127,7 +128,14 @@ namespace daedalus_turbo::http_api {
             void operator()(http::message<isRequest, Body, Fields>&& msg) const
             {
                 close_ = msg.need_eof();
+#if defined(__GNUC__) || defined(__clang__)
+#               pragma GCC diagnostic push
+#               pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
                 http::serializer<isRequest, Body, Fields> sr{msg};
+#if defined(__GNUC__) || defined(__clang__)
+#               pragma GCC diagnostic pop
+#endif
                 http::async_write(stream_, sr, yield_[ec_]);
             }
         };
@@ -149,16 +157,16 @@ namespace daedalus_turbo::http_api {
         sync_type _sync_type { sync_type::none };
         sync::validation_mode_t _validation_mode { sync::validation_mode_t::turbo };
         std::atomic<sync_status> _sync_status { sync_status::syncing };
-        alignas(mutex::padding) mutex::unique_lock::mutex_type _requirements_mutex {};
+        mutex::unique_lock::mutex_type _requirements_mutex alignas(mutex::alignment) {};
         requirements::check_status _requirements_status {};
         cardano::tail_relative_stake_map _tail_relative_stake {};
         json::array _j_tail_relative_stake {};
 
         // request queue
-        alignas(mutex::padding) mutex::unique_lock::mutex_type _queue_mutex {};
-        alignas(mutex::padding) std::condition_variable_any _queue_cv;
+        mutex::unique_lock::mutex_type _queue_mutex alignas(mutex::alignment) {};
+        std::condition_variable_any _queue_cv alignas(mutex::alignment);
         std::deque<std::string> _queue {};
-        alignas(mutex::padding) mutex::unique_lock::mutex_type _results_mutex {};
+        mutex::unique_lock::mutex_type _results_mutex alignas(mutex::alignment) {};
         std::map<std::string, std::optional<json::value>> _results {};
 
         static std::pair<std::string_view, std::vector<std::string_view>> _parse_target(const std::string_view &target)
@@ -320,7 +328,7 @@ namespace daedalus_turbo::http_api {
         json::object _hardware_info_cached() const
         {
             static constexpr std::chrono::seconds update_delay { 5 };
-            alignas(mutex::padding) static mutex::unique_lock::mutex_type info_mutex {};
+            static mutex::unique_lock::mutex_type info_mutex alignas(mutex::alignment) {};
             static auto info = _hardware_info();
             static std::atomic<std::chrono::time_point<std::chrono::system_clock>> next_update { std::chrono::system_clock::now() + update_delay };
             static std::atomic_bool update_in_progress { false };
@@ -543,11 +551,7 @@ namespace daedalus_turbo::http_api {
                     { "error", "transaction data have not been found!" }
                 };
             }
-            cardano::mocks::block block { tx_info.block_info, tx_info.tx_raw, tx_info.offset, _cr->config() };
-            auto tx_ptr = cardano::make_tx(tx_info.tx_raw, block);
-            auto &tx = *tx_ptr; // eliminate a clash with CLang's -Wpotentially-evaluated-expression
-            logger::info("tx: {} type: {} slot: {}", tx.hash().span(), typeid(tx).name(), tx_info.block_info.slot);
-            return tx.to_json(_tail_relative_stake);
+            return (*tx_info)->to_json(_tail_relative_stake);
         }
 
         template<typename T>
@@ -558,7 +562,7 @@ namespace daedalus_turbo::http_api {
                 cardano::block_hash last_block_hash {};
             };
             if (_cr->num_chunks() == 0)
-                return history<T> {};
+                return history<T> { _cr->config() };
             const std::string cache_meta_path = fmt::format("{}/meta-{}.bin", _cache_dir.string(), suffix);
             const std::string cache_data_path = fmt::format("{}/data-{}.bin", _cache_dir.string(), suffix);
             if (std::filesystem::exists(cache_meta_path) && std::filesystem::exists(cache_data_path)) {
@@ -566,7 +570,7 @@ namespace daedalus_turbo::http_api {
                 zpp::load(meta, cache_meta_path);
                 if (meta.id == id && meta.last_block_hash == _cr->last_chunk()->last_block_hash) {
                     timer t { fmt::format("load {} cached history for {}", suffix, id), logger::level::info };
-                    history<T> hist {};
+                    history<T> hist { _cr->config() };
                     zpp::load(hist, cache_data_path);
                     if (hist.id == id) {
                         return hist;

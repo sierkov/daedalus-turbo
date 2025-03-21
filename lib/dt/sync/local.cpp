@@ -1,22 +1,29 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
-#include <dt/cbor/zero.hpp>
+#include <dt/cardano.hpp>
+#include <dt/cbor/zero2.hpp>
 #include <dt/sync/local.hpp>
 
 namespace daedalus_turbo::sync::local {
     static cardano::point chunk_tip(const std::string &path, const uint64_t offset, const cardano::config &cfg)
     {
         const auto data = file::read(path);
-        const auto block_data = cbor::zero::parse_all(data);
-        if (!block_data.empty()) [[likely]] {
+        std::optional<buffer> last_block_data {};
+        cbor::zero2::decoder dec { data };
+        while (!dec.done()) {
+            auto &blk_tuple = dec.read();
+            last_block_data.emplace(blk_tuple.data_raw());
+        }
+        if (last_block_data) [[likely]] {
             // reparse because the cardano parsing code supports only the older cbor parser now
-            const auto last_tuple = cbor::parse(block_data.back().raw_span());
-            const auto blk = cardano::make_block(last_tuple,
-                offset + block_data.back().raw_span().data() - data.data(), cfg);
-            return { blk->hash(), blk->slot(), blk->height(), blk->end_offset() };
+            auto last_tuple = cbor::zero2::parse(*last_block_data);
+            const auto blk = cardano::make_block(last_tuple.get(),
+                offset + last_block_data->data() - data.data(), cfg);
+            return { blk->hash(), blk->slot(), blk->height(), blk.end_offset() };
         }
         throw error(fmt::format("empty chunk: {}", path));
     }
@@ -258,7 +265,7 @@ namespace daedalus_turbo::sync::local {
         }
 
         uint64_t _convert_volatile(const std::filesystem::path &converted_dir, updated_chunk_list &avail_chunks,
-            const uint64_t immutable_size, const updated_chunk_list &volatile_chunks, const uint64_t volatile_size_in,
+            const uint64_t /*immutable_size*/, const updated_chunk_list &volatile_chunks, const uint64_t volatile_size_in,
             const cardano::block_hash &volatile_prev_hash) const
         {
             timer t { "convert volatile chunks", logger::level::trace };
@@ -272,28 +279,25 @@ namespace daedalus_turbo::sync::local {
                 offset += info.data_size;
             }
 
-            cbor_parser parser { raw_data };
+            cbor::zero2::decoder dec { raw_data };
             // cardano::block_base keeps a reference to block_tuple's cbor_value, so need to keep them
-            std::vector<std::unique_ptr<cbor_value>> cbor {};
-            std::map<cardano_hash_32, std::unique_ptr<cardano::block_base>> blocks {};
+            std::map<cardano_hash_32, cardano::parsed_block_ptr_t> blocks {};
             // the first block the most recent immutable chunk
             const cardano::block_base *first_block = nullptr;
-            while (!parser.eof()) {
-                auto block_tuple_ptr = std::make_unique<cbor_value>();
-                parser.read(*block_tuple_ptr);
-                auto blk = cardano::make_block(*block_tuple_ptr, immutable_size + block_tuple_ptr->data - raw_data.data(), _parent.local_chain().config());
+            while (!dec.done()) {
+                auto &block_tuple = dec.read();
+                auto pblock = std::make_unique<cardano::parsed_block>(block_tuple.data_raw());
                 if (!first_block)
-                    first_block = blk.get();
+                    first_block = &*pblock->blk;
                 // volatile chunks can have data older than the data in the immutable ones, can simply skip those
-                if (blk->slot() >= first_block->slot()) {
-                    blocks.try_emplace(blk->hash(), std::move(blk));
-                    cbor.emplace_back(std::move(block_tuple_ptr));
+                if (pblock->blk->slot() >= first_block->slot()) {
+                    blocks.try_emplace(pblock->blk->hash(), std::move(pblock));
                 }
             }
 
             block_followers_map followers {};
             for (const auto &[hash, blk]: blocks)  {
-                auto [it, created] = followers.try_emplace(blk->prev_hash(), block_hash_list { hash });
+                auto [it, created] = followers.try_emplace(blk->blk->prev_hash(), block_hash_list { hash });
                 if (!created)
                     it->second.emplace_back(hash);
             }
@@ -303,13 +307,13 @@ namespace daedalus_turbo::sync::local {
             size_t batch_idx = 0;
             for (size_t base = 0; base < longest.size(); ) {
                 uint8_vector batch_data {};
-                const auto batch_chunk_id = blocks.at(longest.at(base))->slot_object().chunk_id();
+                const auto batch_chunk_id = blocks.at(longest.at(base))->blk->slot_object().chunk_id();
                 for (size_t batch_end = std::min(base + batch_size, longest.size()); base < batch_end; ++base) {
                     const auto *blk = blocks.at(longest.at(base)).get();
                     // ensure blocks from only the same chunk are batched
-                    if (blk->slot_object().chunk_id() != batch_chunk_id)
+                    if (blk->blk->slot_object().chunk_id() != batch_chunk_id)
                         break;
-                    batch_data << blk->raw_data();
+                    batch_data << blk->blk.raw();
                 }
                 const auto batch_hash = blake2b<cardano::block_hash>(batch_data);
                 const auto path = std::filesystem::weakly_canonical(converted_dir / fmt::format("batch-{:04}-{}.dat", batch_idx, batch_hash));

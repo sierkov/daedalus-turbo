@@ -1,16 +1,18 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
-#include <dt/cardano/config.hpp>
+#include <dt/common/test.hpp>
+#include <dt/cardano/common/config.hpp>
 #include <dt/cardano/ledger/subchain.hpp>
-#include <dt/test.hpp>
 
 using namespace daedalus_turbo;
 using namespace daedalus_turbo::cardano::ledger;
 
 suite cardano_ledger_subchain_suite = [] {
+    using boost::ext::ut::v2_1_0::nothrow;
     "cardano::ledger::subchain"_test = [] {
         const auto hash1 = blake2b<cardano::block_hash>(std::string_view { "1" });
         const auto hash2 = blake2b<cardano::block_hash>(std::string_view { "2" });

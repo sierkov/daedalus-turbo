@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
@@ -11,29 +12,23 @@ namespace daedalus_turbo::cardano::ledger::babbage {
         logger::debug("babbage::vrf_state created max_epoch_slot: {}", _max_epoch_slot);
     }
 
-    void vrf_state::from_cbor(const cbor::value &v)
+    void vrf_state::from_cbor(cbor::zero2::value &v)
     {
-        const auto &raw = v.at(1);
-        _slot_last = raw.at(0).at(1).uint();
-        _kes_counters.clear();
-        for (const auto &[pool_id, ctr]: raw.at(1).map()) {
-            const auto [it, created] = _kes_counters.try_emplace(pool_id.buf(), ctr.uint());
-            if (!created) [[unlikely]]
-                throw error(fmt::format("duplicate kes counter reported for pool: {}", pool_id));
-        }
-        _nonce_evolving = raw.at(2).at(1).buf();
-        _nonce_candidate = raw.at(3).at(1).buf();
-        _nonce_epoch = raw.at(4).at(1).buf();
-        _lab_prev_hash = raw.at(5).at(1).buf();
-        _prev_epoch_lab_prev_hash.reset();
-        if (raw.at(6).at(0).uint() == 1)
-            _prev_epoch_lab_prev_hash = raw.at(6).at(1).buf();
+        auto &vit = v.array();
+        auto &raw = vit.skip(1).read();
+        auto &rit = raw.array();
+        _slot_last = rit.read().array().skip(1).read().uint();
+        _kes_counters = decltype(_kes_counters)::from_cbor(rit.read());
+        _nonce_evolving = rit.read().at(1).bytes();
+        _nonce_candidate =rit.read().at(1).bytes();
+        _nonce_epoch = rit.read().at(1).bytes();
+        _lab_prev_hash = rit.read().at(1).bytes();
+        _prev_epoch_lab_prev_hash = decltype(_prev_epoch_lab_prev_hash)::from_cbor(rit.read());
     }
 
-    void vrf_state::to_cbor(parallel_serializer &ser) const
+    void vrf_state::to_cbor(cbor_encoder &ser) const
     {
-        ser.add([&] {
-            cbor::encoder enc {};
+        ser.add([&](auto enc) {
             enc.array(2)
                 .uint(0)
                 .array(7)
@@ -90,40 +85,38 @@ namespace daedalus_turbo::cardano::ledger::babbage {
         logger::info("epoch: {} protocol params update: [ {}]", _epoch, update_desc);
     }
 
-    void state::_parse_protocol_params(protocol_params &params, const cbor_value &val) const
+    void state::_parse_protocol_params(protocol_params &params, cbor::zero2::value &v) const
     {
         _apply_shelley_params(params);
         _apply_alonzo_params(params);
         _apply_babbage_params(params);
-        params.min_fee_a = val.at(0).uint();
-        params.min_fee_b = val.at(1).uint();
-        params.max_block_body_size = val.at(2).uint();
-        params.max_transaction_size = val.at(3).uint();
-        params.max_block_header_size = val.at(4).uint();
-        params.key_deposit = val.at(5).uint();
-        params.pool_deposit = val.at(6).uint();
-        params.e_max = val.at(7).uint();
-        params.n_opt = val.at(8).uint();
-        params.pool_pledge_influence = rational_u64 { val.at(9) };
-        params.expansion_rate = rational_u64 { val.at(10) };
-        params.treasury_growth_rate = rational_u64 { val.at(11) };
-        params.protocol_ver.major = val.at(12).uint();
-        params.protocol_ver.minor = val.at(13).uint();
-        params.min_pool_cost = val.at(14).uint();
-        params.lovelace_per_utxo_byte = val.at(15).uint();
-        params.plutus_cost_models = plutus_cost_models { val.at(16) };
-        params.ex_unit_prices = {
-            rational_u64 { val.at(17).at(0) },
-            rational_u64 { val.at(17).at(1) }
-        };
-        params.max_tx_ex_units = ex_units { val.at(18) };
-        params.max_block_ex_units = ex_units { val.at(19) };
-        params.max_value_size = val.at(20).uint();
-        params.max_collateral_pct = val.at(21).uint();
-        params.max_collateral_inputs = val.at(22).uint();
+        auto &it = v.array();
+        params.min_fee_a = it.read().uint();
+        params.min_fee_b = it.read().uint();
+        params.max_block_body_size = it.read().uint();
+        params.max_transaction_size = it.read().uint();
+        params.max_block_header_size = it.read().uint();
+        params.key_deposit = it.read().uint();
+        params.pool_deposit = it.read().uint();
+        params.e_max = it.read().uint();
+        params.n_opt = it.read().uint();
+        params.pool_pledge_influence = decltype(params.pool_pledge_influence)::from_cbor(it.read());
+        params.expansion_rate = decltype(params.expansion_rate)::from_cbor(it.read());
+        params.treasury_growth_rate = decltype(params.treasury_growth_rate)::from_cbor(it.read());
+        params.protocol_ver.major = it.read().uint();
+        params.protocol_ver.minor = it.read().uint();
+        params.min_pool_cost = it.read().uint();
+        params.lovelace_per_utxo_byte = it.read().uint();
+        params.plutus_cost_models = decltype(params.plutus_cost_models)::from_cbor(it.read());
+        params.ex_unit_prices = decltype(params.ex_unit_prices)::from_cbor(it.read());
+        params.max_tx_ex_units = decltype(params.max_tx_ex_units)::from_cbor(it.read());
+        params.max_block_ex_units = decltype(params.max_block_ex_units)::from_cbor(it.read());
+        params.max_value_size = it.read().uint();
+        params.max_collateral_pct = it.read().uint();
+        params.max_collateral_inputs = it.read().uint();
     }
 
-    void state::_params_to_cbor(cbor::encoder &enc, const protocol_params &params) const
+    void state::_params_to_cbor(era_encoder &enc, const protocol_params &params) const
     {
         enc.array(23);
         enc.uint(params.min_fee_a);
@@ -135,19 +128,17 @@ namespace daedalus_turbo::cardano::ledger::babbage {
         enc.uint(params.pool_deposit);
         enc.uint(params.e_max);
         enc.uint(params.n_opt);
-        enc.rational(params.pool_pledge_influence);
-        enc.rational(params.expansion_rate);
-        enc.rational(params.treasury_growth_rate);
+        params.pool_pledge_influence.to_cbor(enc);
+        params.expansion_rate.to_cbor(enc);
+        params.treasury_growth_rate.to_cbor(enc);
         enc.uint(params.protocol_ver.major);
         enc.uint(params.protocol_ver.minor);
         enc.uint(params.min_pool_cost);
         enc.uint(params.lovelace_per_utxo_byte);
         params.plutus_cost_models.to_cbor(enc);
-        enc.array(2)
-            .rational(params.ex_unit_prices.mem)
-            .rational(params.ex_unit_prices.steps);
-        enc.array(2).uint(params.max_tx_ex_units.mem).uint(params.max_tx_ex_units.steps);
-        enc.array(2).uint(params.max_block_ex_units.mem).uint(params.max_block_ex_units.steps);
+        params.ex_unit_prices.to_cbor(enc);
+        params.max_tx_ex_units.to_cbor(enc);
+        params.max_block_ex_units.to_cbor(enc);
         enc.uint(params.max_value_size);
         enc.uint(params.max_collateral_pct);
         enc.uint(params.max_collateral_inputs);

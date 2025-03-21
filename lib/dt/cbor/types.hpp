@@ -1,13 +1,17 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_CBOR_TYPES_HPP
 #define DAEDALUS_TURBO_CBOR_TYPES_HPP
 
 #include <cstdint>
-#include <dt/error.hpp>
-#include <dt/format.hpp>
+#include <span>
+#include <string>
+#include <string_view>
+#include <vector>
+#include <dt/common/format.hpp>
 
 namespace daedalus_turbo::cbor {
     enum class major_type: uint8_t {
@@ -53,7 +57,7 @@ namespace daedalus_turbo::cbor {
         return value_path;
     }
 
-    inline bool is_ascii(const buffer b)
+    inline bool is_ascii(const std::span<const uint8_t> b)
     {
         for (const uint8_t *p = b.data(), *end = p + b.size(); p < end; ++p) {
             if (*p < 32 || *p > 127) [[unlikely]]
@@ -98,9 +102,8 @@ namespace fmt {
                 case major_type::map: return fmt::format_to(ctx.out(), "map");
                 case major_type::tag: return fmt::format_to(ctx.out(), "tag");
                 case major_type::simple: return fmt::format_to(ctx.out(), "simple");
-                default: throw daedalus_turbo::error(fmt::format("unexpected major_type value: {}", static_cast<int>(v)));
+                default: throw fmt::format_to(ctx.out(), "major_type: {}", static_cast<int>(v));
             }
-
         }
     };
 }

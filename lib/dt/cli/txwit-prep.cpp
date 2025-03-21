@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
@@ -32,7 +33,7 @@ namespace daedalus_turbo::cli::txwit_prep {
             const auto &out_dir = args.at(1);
             std::filesystem::create_directories(out_dir);
 
-            alignas(mutex::padding) mutex::unique_lock::mutex_type done_mutex {};
+            mutex::unique_lock::mutex_type done_mutex alignas(mutex::alignment) {};
             uint64_t next_epoch = 0;
             set<uint64_t> ready_epochs {};
             vector<param_update> updates {};
@@ -41,30 +42,30 @@ namespace daedalus_turbo::cli::txwit_prep {
             storage::parse_parallel_epoch<part_info>(cr,
                 [&](auto &part, const auto &blk) {
                     const auto &block_info = cr.find_block_by_offset(blk.offset());
-                    blk.foreach_update_proposal([&](const auto &prop) {
-                        part.updates.emplace_back(blk.slot_object(), prop);
+                    blk->foreach_update_proposal([&](const auto &prop) {
+                        part.updates.emplace_back(blk->slot_object(), prop);
                     });
-                    blk.foreach_update_vote([&](const auto &vote) {
-                        part.updates.emplace_back(blk.slot_object(), vote);
+                    blk->foreach_update_vote([&](const auto &vote) {
+                        part.updates.emplace_back(blk->slot_object(), vote);
                     });
-                    blk.foreach_tx([&](const auto &tx) {
+                    blk->foreach_tx([&](const auto &tx) {
                         size_t num_redeemers = 0;
                         tx.foreach_redeemer([&](const auto &) {
                             ++num_redeemers;
                         });
                         if (num_redeemers) {
-                            stored_tx_context ctx { tx.hash(), num_redeemers, uint8_vector { tx.cbor().raw_span() },
-                                uint8_vector { tx.witness_cbor().raw_span() }, block_info };
+                            stored_tx_context ctx { tx.hash(), num_redeemers, uint8_vector { tx.raw() },
+                                uint8_vector { tx.witness_raw() }, block_info };
                             bool complete = true;
                             tx.foreach_input([&](const auto &txi) {
-                                auto &txo = ctx.inputs.emplace_back(tx_out_ref::from_input(txi));
+                                auto &txo = ctx.inputs.emplace_back(txi);
                                 if (const auto txo_it = part.utxos.find(txo.id); txo_it != part.utxos.end())
                                     txo.data = txo_it->second;
                                 else
                                     complete = false;
                             });
                             tx.foreach_referenced_input([&](const auto &txi) {
-                                auto &txo = ctx.ref_inputs.emplace_back(tx_out_ref::from_input(txi));
+                                auto &txo = ctx.ref_inputs.emplace_back(txi);
                                 if (const auto txo_it = part.utxos.find(txo.id); txo_it != part.utxos.end())
                                     txo.data = txo_it->second;
                                 else
@@ -78,22 +79,24 @@ namespace daedalus_turbo::cli::txwit_prep {
                                 ++part.num_incomplete_txs;
                             }
                         }
+                        size_t out_idx = 0;
                         tx.foreach_output([&](const auto &tx_out) {
                             ++part.num_outputs;
-                            _add_utxo(part.utxos, tx, tx_out);
+                            _add_utxo(part.utxos, tx, tx_out, out_idx++);
                         });
                         tx.foreach_input([&](const auto &txi) {
                             ++part.num_inputs;
-                            _del_utxo(part.utxos, tx_out_ref { txi.tx_hash, txi.txo_idx });
+                            _del_utxo(part.utxos, txi);
                         });
                     });
-                    blk.foreach_invalid_tx([&](const auto &tx) {
+                    blk->foreach_invalid_tx([&](const auto &tx) {
                         // UTXOs used as collaterals are processed in validator.cpp:_apply_ledger_state_updates_for_epoch
                         if (const auto *babbage_tx = dynamic_cast<const cardano::babbage::tx *>(&tx); babbage_tx) {
                             if (const auto c_ret = babbage_tx->collateral_return(); c_ret) {
-                                logger::debug("slot: {} found collateral refund {}#{}: {}", tx.block().slot(), tx.hash(), c_ret->idx, *c_ret);
+                                const auto txo_idx = babbage_tx->outputs().size();
+                                logger::debug("slot: {} found collateral refund {}#{}: {}", tx.block().slot(), tx.hash(), txo_idx, *c_ret);
                                 ++part.num_outputs;
-                                _add_utxo(part.utxos, tx, *c_ret);
+                                _add_utxo(part.utxos, tx, *c_ret, txo_idx);
                             }
                         }
                     });
@@ -222,7 +225,7 @@ namespace daedalus_turbo::cli::txwit_prep {
             const std::string _dir;
             std::atomic_uint64_t _next_epoch { 0 };
             std::atomic_bool _running { false };
-            alignas(mutex::padding) mutex::unique_lock::mutex_type _m {};
+            mutex::unique_lock::mutex_type _m alignas(mutex::alignment) {};
             txo_map _utxos { _cr.config().byron_utxos };
 
             void _apply_epoch(const uint64_t epoch)
@@ -289,7 +292,7 @@ namespace daedalus_turbo::cli::txwit_prep {
                             const auto part_path = fmt::format("{}/utxo/{}-{:02X}.zpp", _dir, epoch, pi);
                             zpp::load_zstd(ue_part, part_path);
                             for (auto &&[txo_id, txo_data]: ue_part) {
-                                if (!txo_data.address.empty()) {
+                                if (!txo_data.address_raw.empty()) {
                                     if (!txo_data.empty()) [[likely]] {
                                         if (auto [it, created] = utxo_part.try_emplace(txo_id, std::move(txo_data)); !created) [[unlikely]]
                                             logger::warn("a non-unique TXO {}!", it->first);
@@ -347,7 +350,7 @@ namespace daedalus_turbo::cli::txwit_prep {
             auto [it, created] = idx.try_emplace(txo_id);
             // If a txo is created and consumed within the same chunk, don't report it.
             if (!created) [[unlikely]] {
-                if (!it->second.address.empty()) [[likely]] {
+                if (!it->second.address_raw.empty()) [[likely]] {
                     idx.erase(it);
                 } else {
                     throw error(fmt::format("found a non-unique TXO in the same chunk {}", txo_id));
@@ -355,10 +358,10 @@ namespace daedalus_turbo::cli::txwit_prep {
             }
         }
 
-        static void _add_utxo(txo_map &idx, const cardano::tx &tx, const tx_output &tx_out)
+        static void _add_utxo(txo_map &idx, const cardano::tx_base &tx, const tx_output &txo, const size_t txo_idx)
         {
-            if (const auto [it, created] = idx.try_emplace(tx_out_ref { tx.hash(), tx_out.idx }, tx_out_data::from_output(tx_out) ); !created) [[unlikely]]
-                throw error(fmt::format("found a non-unique TXO {}#{}", tx.hash(), tx_out.idx));
+            if (const auto [it, created] = idx.try_emplace(tx_out_ref { tx.hash(), txo_idx }, txo); !created) [[unlikely]]
+                throw error(fmt::format("found a non-unique TXO {}#{}", tx.hash(), txo_idx));
         }
     };
     static auto instance = command::reg(std::make_shared<cmd>());

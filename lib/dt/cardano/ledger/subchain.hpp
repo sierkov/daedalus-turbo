@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_CARDANO_LEDGER_SUBCHAIN_HPP
@@ -7,8 +8,8 @@
 
 #include <functional>
 #include <map>
-#include <dt/cardano/types.hpp>
-#include <dt/error.hpp>
+#include <dt/cardano/common/types.hpp>
+#include <dt/common/error.hpp>
 
 namespace daedalus_turbo::cardano::ledger {
     struct subchain {
@@ -88,10 +89,10 @@ namespace daedalus_turbo::cardano::ledger {
             sc.check_coherency();
             const auto last_byte_offset = sc.offset + sc.num_bytes - 1;
             if (auto it = lower_bound(sc.offset); it != end() && it->second.offset <= last_byte_offset)
-                throw error(std::source_location::current(), "intersecting subchains: existing: {} new: {}", it->second, sc);
+                throw fmt_error(std::source_location::current(), "intersecting subchains: existing: {} new: {}", it->second, sc);
             auto [it, created] = emplace(last_byte_offset, std::move(sc));
             if (!created)
-                throw error(std::source_location::current(), "a duplicate subchain: existing: {} new: {}", it->second, sc);
+                throw fmt_error(std::source_location::current(), "a duplicate subchain: existing: {} new: {}", it->second, sc);
             if (it->second)
                 merge_valid();
         }

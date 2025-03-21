@@ -1,13 +1,128 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
-#include <dt/cardano/config.hpp>
+#include <dt/cardano/common/config.hpp>
 #include <dt/plutus/costs.hpp>
 #include <dt/plutus/machine.hpp>
 
 namespace daedalus_turbo::plutus::costs {
+    static uint64_t _mem_usage(const value::value_type &val);
+    static uint64_t _mem_usage(const data &d);
+
+    static uint64_t _mem_usage(const bint_type &i)
+    {
+        if (*i > 0)
+            return boost::multiprecision::msb(*i) / 64 + 1;
+        if (*i < 0) {
+            if (const auto i_adj = *i + 1; i_adj != 0) [[likely]]
+                return boost::multiprecision::msb(i_adj * -1) / 64 + 1;
+            return 1;
+        }
+        return 1;
+    }
+
+    static uint64_t _mem_usage(const buffer b)
+    {
+        if (!b.empty()) [[likely]]
+            return (b.size() - 1) / 8 + 1;
+        return 1;
+    }
+
+    static uint64_t _mem_usage(const std::string_view s)
+    {
+        return s.size();
+    }
+
+    static uint64_t _mem_usage(const data::list_type &l)
+    {
+        uint64_t sum = 0;
+        for (const auto &d: l)
+            sum += _mem_usage(d);
+        return sum;
+    }
+
+    static uint64_t _mem_usage(const data &d)
+    {
+        return std::visit([](const auto &v) {
+            using t = std::decay_t<decltype(v)>;
+            if constexpr (std::is_same_v<t, data_constr>) {
+                return 4 + _mem_usage(v->second);
+            } else if constexpr (std::is_same_v<t, data::map_type>) {
+                uint64_t sum = 4;
+                for (const auto &p: v)
+                    sum += _mem_usage(p->first) + _mem_usage(p->second);
+                return sum;
+            } else if constexpr (std::is_same_v<t, data::bstr_type>) {
+                return 4 + _mem_usage(*v);
+            } else {
+                return 4 + _mem_usage(v);
+            }
+        }, *d);
+    }
+
+    static uint64_t _mem_usage(const constant &c)
+    {
+        return std::visit([](const auto &v) {
+            using T = std::decay_t<decltype(v)>;
+            using T = std::decay_t<decltype(v)>;
+            if constexpr (std::is_same_v<T, std::monostate>) {
+                return static_cast<uint64_t>(1);
+            } else if constexpr (std::is_same_v<T, bool>) {
+                return static_cast<uint64_t>(1);
+            } else if constexpr (std::is_same_v<T, bstr_type>) {
+                return _mem_usage(buffer { *v });
+            } else if constexpr (std::is_same_v<T, data>) {
+                return _mem_usage(v);
+            } else if constexpr (std::is_same_v<T, str_type>) {
+                return _mem_usage(std::string_view { *v });
+            } else if constexpr (std::is_same_v<T, bls12_381_g1_element>) {
+                return static_cast<uint64_t>(sizeof(bls12_381_g1_element) / 8);
+            } else if constexpr (std::is_same_v<T, bls12_381_g2_element>) {
+                return static_cast<uint64_t>(sizeof(bls12_381_g2_element) / 8);
+            } else if constexpr (std::is_same_v<T, bls12_381_ml_result>) {
+                return static_cast<uint64_t>(sizeof(bls12_381_ml_result) / 8);
+            } else if constexpr (std::is_same_v<T, constant_list>) {
+                uint64_t sum = 0;
+                for (const auto &ci: v->vals)
+                    sum += _mem_usage(ci);
+                return sum;
+            } else if constexpr (std::is_same_v<T, constant_pair>) {
+                return _mem_usage(v->first) + _mem_usage(v->second);
+            } else {
+                return _mem_usage(v);
+            }
+        }, *c);
+    }
+
+    static uint64_t _mem_usage(const value::value_type &val)
+    {
+        if (std::holds_alternative<constant>(val))
+            return _mem_usage(std::get<constant>(val));
+        return 1;
+    }
+
+    arg_sizes default_size_fun::size(const value_list &args) const
+    {
+        arg_sizes sizes {};
+        for (const auto &arg: *args) {
+            sizes.emplace_back(_mem_usage(*arg));
+        }
+        return sizes;
+    };
+
+    arg_sizes num_bytes_as_num_words_fun::size(const value_list &args) const
+    {
+        arg_sizes sizes {};
+        for (const auto &arg: *args) {
+            const auto bytes = static_cast<size_t>(*arg.as_int());
+            sizes.emplace_back(bytes ? (bytes - 1) / 8 + 1 : 0);
+        }
+        return sizes;
+    };
+
     // the names of the classes match the names in the builtinCostModel config JSON
     struct constant_cost: cost_fun {
         constant_cost(const arg_map &args)
@@ -443,7 +558,8 @@ namespace daedalus_turbo::plutus::costs {
                 }
             }
         }
-        return { cost_fun_from_args(cpu_args), cost_fun_from_args(mem_args) };
+        static auto default_sizer = std::make_shared<default_size_fun>();
+        return { cost_fun_from_args(cpu_args), cost_fun_from_args(mem_args), default_sizer };
     }
 
     static arg_map cost_args_from_json(const std::string &prefix, const json::object &o)
@@ -598,6 +714,15 @@ namespace daedalus_turbo::plutus::costs {
                     const auto [it, created] = m.builtin_fun.try_emplace(tag, op_model_from_args(args));
                     if (!created) [[unlikely]]
                         throw error("internal error: duplicate tag in the parsed cost model!");
+                    switch (tag) {
+                        case builtin_tag::replicate_byte: {
+                            static auto custom_fun = std::make_shared<num_bytes_as_num_words_fun>();
+                            it->second.size = custom_fun;
+                            break;
+                        }
+                        default:
+                            break;
+                    }
                 } else {
                     throw error(fmt::format("unsupported tag type: {}", typeid(T).name()));
                 }
@@ -683,265 +808,6 @@ namespace daedalus_turbo::plutus::costs {
     }
 
     const vector<std::string> &cost_arg_names_v3()
-    {
-        // Plutus V3 args names are not in a sorted order, so we keep a hardcoded list here
-        static vector<std::string> names {
-            "addInteger-cpu-arguments-intercept",
-            "addInteger-cpu-arguments-slope",
-            "addInteger-memory-arguments-intercept",
-            "addInteger-memory-arguments-slope",
-            "appendByteString-cpu-arguments-intercept",
-            "appendByteString-cpu-arguments-slope",
-            "appendByteString-memory-arguments-intercept",
-            "appendByteString-memory-arguments-slope",
-            "appendString-cpu-arguments-intercept",
-            "appendString-cpu-arguments-slope",
-            "appendString-memory-arguments-intercept",
-            "appendString-memory-arguments-slope",
-            "bData-cpu-arguments",
-            "bData-memory-arguments",
-            "blake2b_256-cpu-arguments-intercept",
-            "blake2b_256-cpu-arguments-slope",
-            "blake2b_256-memory-arguments",
-            "cekApplyCost-exBudgetCPU",
-            "cekApplyCost-exBudgetMemory",
-            "cekBuiltinCost-exBudgetCPU",
-            "cekBuiltinCost-exBudgetMemory",
-            "cekConstCost-exBudgetCPU",
-            "cekConstCost-exBudgetMemory",
-            "cekDelayCost-exBudgetCPU",
-            "cekDelayCost-exBudgetMemory",
-            "cekForceCost-exBudgetCPU",
-            "cekForceCost-exBudgetMemory",
-            "cekLamCost-exBudgetCPU",
-            "cekLamCost-exBudgetMemory",
-            "cekStartupCost-exBudgetCPU",
-            "cekStartupCost-exBudgetMemory",
-            "cekVarCost-exBudgetCPU",
-            "cekVarCost-exBudgetMemory",
-            "chooseData-cpu-arguments",
-            "chooseData-memory-arguments",
-            "chooseList-cpu-arguments",
-            "chooseList-memory-arguments",
-            "chooseUnit-cpu-arguments",
-            "chooseUnit-memory-arguments",
-            "consByteString-cpu-arguments-intercept",
-            "consByteString-cpu-arguments-slope",
-            "consByteString-memory-arguments-intercept",
-            "consByteString-memory-arguments-slope",
-            "constrData-cpu-arguments",
-            "constrData-memory-arguments",
-            "decodeUtf8-cpu-arguments-intercept",
-            "decodeUtf8-cpu-arguments-slope",
-            "decodeUtf8-memory-arguments-intercept",
-            "decodeUtf8-memory-arguments-slope",
-            "divideInteger-cpu-arguments-constant",
-            "divideInteger-cpu-arguments-model-arguments-c00",
-            "divideInteger-cpu-arguments-model-arguments-c01",
-            "divideInteger-cpu-arguments-model-arguments-c02",
-            "divideInteger-cpu-arguments-model-arguments-c10",
-            "divideInteger-cpu-arguments-model-arguments-c11",
-            "divideInteger-cpu-arguments-model-arguments-c20",
-            "divideInteger-cpu-arguments-model-arguments-minimum",
-            "divideInteger-memory-arguments-intercept",
-            "divideInteger-memory-arguments-minimum",
-            "divideInteger-memory-arguments-slope",
-            "encodeUtf8-cpu-arguments-intercept",
-            "encodeUtf8-cpu-arguments-slope",
-            "encodeUtf8-memory-arguments-intercept",
-            "encodeUtf8-memory-arguments-slope",
-            "equalsByteString-cpu-arguments-constant",
-            "equalsByteString-cpu-arguments-intercept",
-            "equalsByteString-cpu-arguments-slope",
-            "equalsByteString-memory-arguments",
-            "equalsData-cpu-arguments-intercept",
-            "equalsData-cpu-arguments-slope",
-            "equalsData-memory-arguments",
-            "equalsInteger-cpu-arguments-intercept",
-            "equalsInteger-cpu-arguments-slope",
-            "equalsInteger-memory-arguments",
-            "equalsString-cpu-arguments-constant",
-            "equalsString-cpu-arguments-intercept",
-            "equalsString-cpu-arguments-slope",
-            "equalsString-memory-arguments",
-            "fstPair-cpu-arguments",
-            "fstPair-memory-arguments",
-            "headList-cpu-arguments",
-            "headList-memory-arguments",
-            "iData-cpu-arguments",
-            "iData-memory-arguments",
-            "ifThenElse-cpu-arguments",
-            "ifThenElse-memory-arguments",
-            "indexByteString-cpu-arguments",
-            "indexByteString-memory-arguments",
-            "lengthOfByteString-cpu-arguments",
-            "lengthOfByteString-memory-arguments",
-            "lessThanByteString-cpu-arguments-intercept",
-            "lessThanByteString-cpu-arguments-slope",
-            "lessThanByteString-memory-arguments",
-            "lessThanEqualsByteString-cpu-arguments-intercept",
-            "lessThanEqualsByteString-cpu-arguments-slope",
-            "lessThanEqualsByteString-memory-arguments",
-            "lessThanEqualsInteger-cpu-arguments-intercept",
-            "lessThanEqualsInteger-cpu-arguments-slope",
-            "lessThanEqualsInteger-memory-arguments",
-            "lessThanInteger-cpu-arguments-intercept",
-            "lessThanInteger-cpu-arguments-slope",
-            "lessThanInteger-memory-arguments",
-            "listData-cpu-arguments",
-            "listData-memory-arguments",
-            "mapData-cpu-arguments",
-            "mapData-memory-arguments",
-            "mkCons-cpu-arguments",
-            "mkCons-memory-arguments",
-            "mkNilData-cpu-arguments",
-            "mkNilData-memory-arguments",
-            "mkNilPairData-cpu-arguments",
-            "mkNilPairData-memory-arguments",
-            "mkPairData-cpu-arguments",
-            "mkPairData-memory-arguments",
-            "modInteger-cpu-arguments-constant",
-            "modInteger-cpu-arguments-model-arguments-c00",
-            "modInteger-cpu-arguments-model-arguments-c01",
-            "modInteger-cpu-arguments-model-arguments-c02",
-            "modInteger-cpu-arguments-model-arguments-c10",
-            "modInteger-cpu-arguments-model-arguments-c11",
-            "modInteger-cpu-arguments-model-arguments-c20",
-            "modInteger-cpu-arguments-model-arguments-minimum",
-            "modInteger-memory-arguments-intercept",
-            "modInteger-memory-arguments-slope",
-            "multiplyInteger-cpu-arguments-intercept",
-            "multiplyInteger-cpu-arguments-slope",
-            "multiplyInteger-memory-arguments-intercept",
-            "multiplyInteger-memory-arguments-slope",
-            "nullList-cpu-arguments",
-            "nullList-memory-arguments",
-            "quotientInteger-cpu-arguments-constant",
-            "quotientInteger-cpu-arguments-model-arguments-c00",
-            "quotientInteger-cpu-arguments-model-arguments-c01",
-            "quotientInteger-cpu-arguments-model-arguments-c02",
-            "quotientInteger-cpu-arguments-model-arguments-c10",
-            "quotientInteger-cpu-arguments-model-arguments-c11",
-            "quotientInteger-cpu-arguments-model-arguments-c20",
-            "quotientInteger-cpu-arguments-model-arguments-minimum",
-            "quotientInteger-memory-arguments-intercept",
-            "quotientInteger-memory-arguments-minimum",
-            "quotientInteger-memory-arguments-slope",
-            "remainderInteger-cpu-arguments-constant",
-            "remainderInteger-cpu-arguments-model-arguments-c00",
-            "remainderInteger-cpu-arguments-model-arguments-c01",
-            "remainderInteger-cpu-arguments-model-arguments-c02",
-            "remainderInteger-cpu-arguments-model-arguments-c10",
-            "remainderInteger-cpu-arguments-model-arguments-c11",
-            "remainderInteger-cpu-arguments-model-arguments-c20",
-            "remainderInteger-cpu-arguments-model-arguments-minimum",
-            "remainderInteger-memory-arguments-intercept",
-            "remainderInteger-memory-arguments-slope",
-            "serialiseData-cpu-arguments-intercept",
-            "serialiseData-cpu-arguments-slope",
-            "serialiseData-memory-arguments-intercept",
-            "serialiseData-memory-arguments-slope",
-            "sha2_256-cpu-arguments-intercept",
-            "sha2_256-cpu-arguments-slope",
-            "sha2_256-memory-arguments",
-            "sha3_256-cpu-arguments-intercept",
-            "sha3_256-cpu-arguments-slope",
-            "sha3_256-memory-arguments",
-            "sliceByteString-cpu-arguments-intercept",
-            "sliceByteString-cpu-arguments-slope",
-            "sliceByteString-memory-arguments-intercept",
-            "sliceByteString-memory-arguments-slope",
-            "sndPair-cpu-arguments",
-            "sndPair-memory-arguments",
-            "subtractInteger-cpu-arguments-intercept",
-            "subtractInteger-cpu-arguments-slope",
-            "subtractInteger-memory-arguments-intercept",
-            "subtractInteger-memory-arguments-slope",
-            "tailList-cpu-arguments",
-            "tailList-memory-arguments",
-            "trace-cpu-arguments",
-            "trace-memory-arguments",
-            "unBData-cpu-arguments",
-            "unBData-memory-arguments",
-            "unConstrData-cpu-arguments",
-            "unConstrData-memory-arguments",
-            "unIData-cpu-arguments",
-            "unIData-memory-arguments",
-            "unListData-cpu-arguments",
-            "unListData-memory-arguments",
-            "unMapData-cpu-arguments",
-            "unMapData-memory-arguments",
-            "verifyEcdsaSecp256k1Signature-cpu-arguments",
-            "verifyEcdsaSecp256k1Signature-memory-arguments",
-            "verifyEd25519Signature-cpu-arguments-intercept",
-            "verifyEd25519Signature-cpu-arguments-slope",
-            "verifyEd25519Signature-memory-arguments",
-            "verifySchnorrSecp256k1Signature-cpu-arguments-intercept",
-            "verifySchnorrSecp256k1Signature-cpu-arguments-slope",
-            "verifySchnorrSecp256k1Signature-memory-arguments",
-            "cekConstrCost-exBudgetCPU",
-            "cekConstrCost-exBudgetMemory",
-            "cekCaseCost-exBudgetCPU",
-            "cekCaseCost-exBudgetMemory",
-            "bls12_381_G1_add-cpu-arguments",
-            "bls12_381_G1_add-memory-arguments",
-            "bls12_381_G1_compress-cpu-arguments",
-            "bls12_381_G1_compress-memory-arguments",
-            "bls12_381_G1_equal-cpu-arguments",
-            "bls12_381_G1_equal-memory-arguments",
-            "bls12_381_G1_hashToGroup-cpu-arguments-intercept",
-            "bls12_381_G1_hashToGroup-cpu-arguments-slope",
-            "bls12_381_G1_hashToGroup-memory-arguments",
-            "bls12_381_G1_neg-cpu-arguments",
-            "bls12_381_G1_neg-memory-arguments",
-            "bls12_381_G1_scalarMul-cpu-arguments-intercept",
-            "bls12_381_G1_scalarMul-cpu-arguments-slope",
-            "bls12_381_G1_scalarMul-memory-arguments",
-            "bls12_381_G1_uncompress-cpu-arguments",
-            "bls12_381_G1_uncompress-memory-arguments",
-            "bls12_381_G2_add-cpu-arguments",
-            "bls12_381_G2_add-memory-arguments",
-            "bls12_381_G2_compress-cpu-arguments",
-            "bls12_381_G2_compress-memory-arguments",
-            "bls12_381_G2_equal-cpu-arguments",
-            "bls12_381_G2_equal-memory-arguments",
-            "bls12_381_G2_hashToGroup-cpu-arguments-intercept",
-            "bls12_381_G2_hashToGroup-cpu-arguments-slope",
-            "bls12_381_G2_hashToGroup-memory-arguments",
-            "bls12_381_G2_neg-cpu-arguments",
-            "bls12_381_G2_neg-memory-arguments",
-            "bls12_381_G2_scalarMul-cpu-arguments-intercept",
-            "bls12_381_G2_scalarMul-cpu-arguments-slope",
-            "bls12_381_G2_scalarMul-memory-arguments",
-            "bls12_381_G2_uncompress-cpu-arguments",
-            "bls12_381_G2_uncompress-memory-arguments",
-            "bls12_381_finalVerify-cpu-arguments",
-            "bls12_381_finalVerify-memory-arguments",
-            "bls12_381_millerLoop-cpu-arguments",
-            "bls12_381_millerLoop-memory-arguments",
-            "bls12_381_mulMlResult-cpu-arguments",
-            "bls12_381_mulMlResult-memory-arguments",
-            "keccak_256-cpu-arguments-intercept",
-            "keccak_256-cpu-arguments-slope",
-            "keccak_256-memory-arguments",
-            "blake2b_224-cpu-arguments-intercept",
-            "blake2b_224-cpu-arguments-slope",
-            "blake2b_224-memory-arguments",
-            "integerToByteString-cpu-arguments-c0",
-            "integerToByteString-cpu-arguments-c1",
-            "integerToByteString-cpu-arguments-c2",
-            "integerToByteString-memory-arguments-intercept",
-            "integerToByteString-memory-arguments-slope",
-            "byteStringToInteger-cpu-arguments-c0",
-            "byteStringToInteger-cpu-arguments-c1",
-            "byteStringToInteger-cpu-arguments-c2",
-            "byteStringToInteger-memory-arguments-intercept",
-            "byteStringToInteger-memory-arguments-slope"
-        };
-        return names;
-    }
-
-    const vector<std::string> &cost_arg_names_v3b()
     {
         // Plutus V3 args names are not in a sorted order, so we keep a hardcoded list here
         static vector<std::string> names {

@@ -1,10 +1,11 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
 #include <dt/cardano.hpp>
-#include <dt/cardano/network.hpp>
+#include <dt/cardano/common/network.hpp>
 #include <dt/chunk-registry.hpp>
 #include <dt/config.hpp>
 #include <dt/http/download-queue.hpp>
@@ -77,9 +78,9 @@ namespace daedalus_turbo::sync::turbo {
         download_queue &_dlq;
         ed25519::vkey _vk {};
         chunk_registry::file_set _deletable_chunks {};
-        alignas(mutex::padding) mutex::unique_lock::mutex_type _epoch_json_cache_mutex {};
+        mutex::unique_lock::mutex_type _epoch_json_cache_mutex alignas(mutex::alignment) {};
         mutable std::map<uint64_t, json::object> _epoch_json_cache {};
-        alignas(mutex::padding) mutex::unique_lock::mutex_type _cancel_mutex {};
+        mutex::unique_lock::mutex_type _cancel_mutex alignas(mutex::alignment) {};
         std::optional<uint64_t> _cancel_min_offset {};
 
         std::shared_ptr<sync::peer_info> _peer_find_intersection(const std::string &host, json::object &&chain) const
@@ -217,7 +218,7 @@ namespace daedalus_turbo::sync::turbo {
                             if (res) {
                                 const auto buf = file::read(save_path);
                                 mutex::scoped_lock lkw { _epoch_json_cache_mutex };
-                                _epoch_json_cache[epoch] = json::parse_signed(buf.span().string_view(), _vk).as_object();
+                                _epoch_json_cache[epoch] = json::parse_signed(buf.str(), _vk).as_object();
                             }
                         });
                     }

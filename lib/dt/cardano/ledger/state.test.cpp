@@ -1,25 +1,27 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
+#include <dt/common/test.hpp>
 #include <dt/cardano/ledger/state.hpp>
-#include <dt/test.hpp>
 
 namespace {
     using namespace daedalus_turbo;
     using namespace cardano::ledger;
 
-    static void update_params(state &st, const uint64_t slot, const cardano::param_update &update)
+    void update_params(state &st, const uint64_t slot, const cardano::param_update &update)
     {
         const cardano::slot slot_obj { slot, cardano::config::get() };
         for (const auto &[deleg_id, meta]: cardano::config::get().shelley_delegates) {
-            st.propose_update(slot, { .pool_id=deleg_id, .epoch=slot_obj.epoch(), .update=update });
+            st.propose_update(slot, { .key_id=deleg_id, .update=update, .epoch=slot_obj.epoch() });
         }
     }
 }
 
 suite cardano_ledger_state_suite = [] {
+    using boost::ext::ut::v2_1_0::nothrow;
     "cardano::ledger::state"_test = [] {
         "empty"_test = [] {
             state st {};
@@ -41,7 +43,6 @@ suite cardano_ledger_state_suite = [] {
             test_same(st.params().protocol_ver.major, 2);
             test_same(st.treasury(), 0);
             st.process_block(40000, 2, 400000, 0);
-            st.compute_rewards_if_ready();
             st.start_epoch();
             test_same(st.treasury(), 8332509153000ULL);
             st.start_epoch();

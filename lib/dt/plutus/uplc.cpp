@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
@@ -10,7 +11,7 @@
 
 namespace daedalus_turbo::plutus::uplc {
     struct script::impl {
-        impl(allocator &alloc, uint8_vector &&bytes): _alloc { alloc }, _bytes { std::move(bytes) }
+        impl(allocator &alloc, write_vector &&bytes): _alloc { alloc }, _bytes { std::move(bytes) }
         {
             _decode_program();
             if (!_term || !_version) [[unlikely]]
@@ -28,7 +29,7 @@ namespace daedalus_turbo::plutus::uplc {
         }
     private:
         allocator &_alloc;
-        uint8_vector _bytes;
+        write_vector _bytes;
         size_t _pos = 0;
         std::optional<plutus::version> _version {};
         std::optional<term> _term;
@@ -685,7 +686,7 @@ namespace daedalus_turbo::plutus::uplc {
         }
     };
 
-    script::script(allocator &alloc, uint8_vector &&bytes): _impl { std::make_unique<impl>(alloc, std::move(bytes)) }
+    script::script(allocator &alloc, write_vector &&bytes): _impl { std::make_unique<impl>(alloc, std::move(bytes)) }
     {
     }
 

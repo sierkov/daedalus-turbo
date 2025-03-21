@@ -1,11 +1,12 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
 #include <dt/blake2b.hpp>
-#include <dt/cbor/zero.hpp>
-#include <dt/cardano/types.hpp>
+#include <dt/cbor/zero2.hpp>
+#include <dt/cardano/common/types.hpp>
 #include <dt/container.hpp>
 #include <dt/util.hpp>
 #include <dt/plutus/builtins.hpp>
@@ -15,7 +16,7 @@ namespace daedalus_turbo::plutus::flat {
     struct script::impl {
         impl(allocator &alloc, uint8_vector &&bytes, const bool cbor):
             _alloc { alloc }, _bytes_raw { std::move(bytes) },
-            _bytes { cbor ? _extract_cbor_data(_bytes_raw) : _bytes_raw.span() },
+            _bytes { cbor ? _extract_cbor_data(_bytes_raw) : static_cast<buffer>(_bytes_raw) },
             _ver { _decode_version() },
             _term { _decode_term() }
         {
@@ -49,8 +50,8 @@ namespace daedalus_turbo::plutus::flat {
 
         static buffer _extract_cbor_data(const buffer bytes)
         {
-            const auto cbor_item = cbor::zero::parse(bytes);
-            const auto buf = cbor_item.bytes();
+            auto cbor_item = cbor::zero2::parse(bytes);
+            const auto buf = cbor_item.get().bytes();
             if (buf.size() <= max_script_size) [[likely]]
                 return buf;
             throw error(fmt::format("script size of {} bytes exceeds the maximum allowed size of {}", buf.size(), max_script_size));
@@ -440,6 +441,7 @@ namespace daedalus_turbo::plutus::flat {
     {
         return _impl->version();
     }
+
     term script::program() const
     {
         return _impl->program();

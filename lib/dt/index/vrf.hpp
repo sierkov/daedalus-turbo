@@ -1,11 +1,12 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_INDEX_VRF_HPP
 #define DAEDALUS_TURBO_INDEX_VRF_HPP
 
-#include <dt/cardano/types.hpp>
+#include <dt/cardano/common/types.hpp>
 #include <dt/index/common.hpp>
 
 namespace daedalus_turbo::index::vrf {
@@ -37,12 +38,12 @@ namespace daedalus_turbo::index::vrf {
     struct chunk_indexer: chunk_indexer_one_epoch<item> {
         using chunk_indexer_one_epoch::chunk_indexer_one_epoch;
     protected:
-        void _index_epoch(const cardano::block_base &blk, data_type &idx) override
+        void _index_epoch(const cardano::block_container &blk, data_type &idx) override
         {
-            if (blk.era() >= 2) {
-                const auto vrf = blk.vrf();
-                const auto kes = blk.kes();
-                idx.emplace_back(blk.slot(), blk.era(), kes.counter, blk.protocol_ver(), blk.issuer_hash(), blk.prev_hash(),
+            if (blk->era() >= 2) {
+                const auto vrf = blk->vrf();
+                const auto kes = blk->kes();
+                idx.emplace_back(blk->slot(), blk->era(), kes.counter, blk->protocol_ver(), blk->issuer_hash(), blk->prev_hash(),
                     vrf.vkey, vrf.leader_result, vrf.leader_proof, vrf.nonce_result, vrf.nonce_proof);
             }
         }

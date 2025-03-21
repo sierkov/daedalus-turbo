@@ -1,12 +1,12 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
+
+#include <dt/cbor/compare.hpp>
 #include <dt/cli.hpp>
-#include <dt/compare.hpp>
-#include <dt/requirements.hpp>
 #include <dt/sync/turbo.hpp>
-#include <dt/cardano/ledger/state-compare.hpp>
 
 namespace daedalus_turbo::cli::test_iterative_sync {
     using namespace cardano::ledger;

@@ -1,9 +1,11 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
-#include <dt/test.hpp>
+#include <dt/config.hpp>
+#include <dt/common/test.hpp>
 #include <dt/zstd-stream.hpp>
 
 using namespace daedalus_turbo;
@@ -33,9 +35,11 @@ suite zstd_stream_suite = [] {
         "decompression error"_test = [&] {
             const file::tmp tmp { "zstd-stream-err.zstd" };
             file::write(tmp.path(), uint8_vector::from_hex("DEADBEAF"));
-            zstd::read_stream s { tmp.path() };
-            uint8_vector data(0x1000);
-            expect(throws([&]{ s.try_read(data); }));
+            expect(throws([&]{
+                zstd::read_stream s { tmp.path() };
+                uint8_vector data(0x1000);
+                s.try_read(data);
+            }));
         };
     };
 };

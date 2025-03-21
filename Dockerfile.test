@@ -9,7 +9,7 @@ RUN dpkg-reconfigure --frontend noninteractive tzdata
 RUN cp /etc/sudoers /etc/sudoers.orig
 RUN awk '{ if (/^%sudo/) { print "%sudo\tALL=(ALL:ALL) NOPASSWD:ALL" } else { print } }' /etc/sudoers.orig > /etc/sudoers
 RUN useradd -m -s /bin/bash -G sudo dev
-RUN apt-get install -y build-essential cmake pkg-config gdb libboost1.83-all-dev libboost-url1.83-dev libsecp256k1-dev libsodium-dev libzstd-dev libssl-dev libfmt-dev libspdlog-dev
+RUN apt-get install -y build-essential cmake pkg-config gdb libboost1.83-all-dev libboost-url1.83-dev libsecp256k1-dev libsodium-dev libzstd-dev libssl-dev libfmt-dev libspdlog-dev libbotan-2-dev
 RUN apt-get install -y ninja-build
 RUN mkdir /home/dev/dt
 COPY 3rdparty /home/dev/dt/3rdparty

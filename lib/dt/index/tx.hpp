@@ -1,11 +1,11 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_INDEX_TX_HPP
 #define DAEDALUS_TURBO_INDEX_TX_HPP
 
-#include <dt/cardano.hpp>
 #include <dt/index/common.hpp>
 
 namespace daedalus_turbo::index::tx {
@@ -37,14 +37,14 @@ namespace daedalus_turbo::index::tx {
     struct chunk_indexer: chunk_indexer_multi_part<item> {
         using chunk_indexer_multi_part<item>::chunk_indexer_multi_part;
     protected:
-        void index_tx(const cardano::tx &tx) override
+        void index_tx(const cardano::tx_base &tx) override
         {
-            _idx.emplace_part(tx.hash().data()[0] / _part_range, tx.hash(), tx.offset(), tx.witness_cbor().data - tx.cbor().data, 0);
+            _idx.emplace_part(tx.hash().data()[0] / _part_range, tx.hash(), tx.offset(), tx.witness_raw().data() - tx.raw().data(), 0);
         }
 
-        void index_invalid_tx(const cardano::tx &tx) override
+        void index_invalid_tx(const cardano::tx_base &tx) override
         {
-            _idx.emplace_part(tx.hash().data()[0] / _part_range, tx.hash(), tx.offset(), tx.witness_cbor().data - tx.cbor().data, 1);
+            _idx.emplace_part(tx.hash().data()[0] / _part_range, tx.hash(), tx.offset(), tx.witness_raw().data() - tx.raw().data(), 1);
         }
     };
 

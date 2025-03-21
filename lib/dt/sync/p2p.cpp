@@ -1,11 +1,12 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
 #include <algorithm>
 #include <dt/cardano.hpp>
-#include <dt/cardano/network.hpp>
+#include <dt/cardano/common/network.hpp>
 #include <dt/sync/p2p.hpp>
 #include <dt/chunk-registry.hpp>
 
@@ -111,7 +112,7 @@ namespace daedalus_turbo::sync::p2p {
         uint8_vector _last_chunk {};
         std::optional<uint64_t> _last_chunk_id {};
         uint64_t _next_chunk_offset = 0;
-        alignas(mutex::padding) mutex::unique_lock::mutex_type _invalid_mutex {};
+        mutex::unique_lock::mutex_type _invalid_mutex alignas(mutex::alignment) {};
         std::atomic<std::optional<uint64_t>> _invalid_first_offset {};
 
         void _sync(peer_info &peer, const std::optional<point> &local_tip, const std::optional<uint64_t> &max_slot)
@@ -128,7 +129,7 @@ namespace daedalus_turbo::sync::p2p {
                     }
                     if (_invalid_first_offset.load() || (max_slot && resp.block->blk->slot() > *max_slot))
                         return false;
-                    _add_block(*resp.block->blk);
+                    _add_block(resp.block->blk);
                     return true;
                 });
                 peer.client().process(&_parent.local_chain().sched());
@@ -148,7 +149,7 @@ namespace daedalus_turbo::sync::p2p {
                 const auto max_valid = _invalid_first_offset.load();
                 if (!max_valid || chunk_offset + chunk_data->size() <= *max_valid) {
                     _parent.local_chain().sched().submit_void("parse", 100, [this, chunk_offset, chunk_data, chunk_path] {
-                        file::write_zstd(chunk_path, *chunk_data);
+                        zstd::write(chunk_path, *chunk_data);
                         _parent.local_chain().add(chunk_offset, chunk_path);
                     });
                     _next_chunk_offset += chunk_data->size();
@@ -156,17 +157,17 @@ namespace daedalus_turbo::sync::p2p {
             }
         }
 
-        void _add_block(const block_base &blk)
+        void _add_block(const block_container &blk)
         {
-            const auto blk_slot = _parent.local_chain().make_slot(blk.slot());
+            const auto blk_slot = _parent.local_chain().make_slot(blk->slot());
             const auto blk_chunk_id = blk_slot.chunk_id();
             _parent.local_chain().report_progress("download", { blk_slot, blk.end_offset() });
             if (!_last_chunk_id || _last_chunk_id != blk_chunk_id) {
-                logger::info("block from a new chunk: slot: {} hash: {} height: {}", blk_slot, blk.hash(), blk.height());
+                logger::info("block from a new chunk: slot: {} hash: {} height: {}", blk_slot, blk->hash(), blk->height());
                 _save_last_chunk();
                 _last_chunk_id = blk_chunk_id;
             }
-            _last_chunk << blk.raw_data();
+            _last_chunk << blk.raw();
         }
     };
 

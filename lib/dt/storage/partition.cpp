@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
@@ -72,6 +73,22 @@ namespace daedalus_turbo::storage {
         return parts;
     }
 
+    chunk_range_partition_map::storage_type chunk_range_partition_map::_make_partitions(const chunk_registry &cr,
+        const std::optional<uint64_t> from_slot, const std::optional<uint64_t> to_slot)
+    {
+        storage_type parts {};
+        for (const auto &[last_byte, chunk]: cr.chunks()) {
+            if (from_slot && *from_slot >= chunk.last_slot)
+                continue;
+            if (to_slot && *to_slot < chunk.first_slot)
+                continue;
+            partition::storage_type part {};
+            part.emplace_back(&chunk);
+            parts.emplace_back(std::move(part));
+        }
+        return parts;
+    }
+
     void parse_parallel(const chunk_registry &cr, const partition_map &pm,
         const std::function<void(std::any &, const cardano::block_base &blk)> &on_block,
         const std::function<std::any(size_t, const partition &)> &on_part_init,
@@ -91,11 +108,10 @@ namespace daedalus_turbo::storage {
                 for (const auto *chunk: part) {
                     auto canon_path = cr.full_path(chunk->rel_path());
                     const auto data = file::read(canon_path);
-                    cbor_parser block_parser { data };
-                    cbor_value block_tuple {};
-                    while (!block_parser.eof()) {
-                        block_parser.read(block_tuple);
-                        const auto blk = cardano::make_block(block_tuple, chunk->offset + block_tuple.data - data.data(), cr.config());
+                    cbor::zero2::decoder dec { data };
+                    while (!dec.done()) {
+                        auto &block_tuple = dec.read();
+                        const auto blk = cardano::make_block(block_tuple, chunk->offset + block_tuple.data_begin() - data.data(), cr.config());
                         try {
                             on_block(tmp, *blk);
                         } catch (const std::exception &ex) {

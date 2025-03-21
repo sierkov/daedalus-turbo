@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_HTTP_DOWNLOAD_QUEUE_HPP
@@ -71,8 +72,8 @@ namespace daedalus_turbo::http {
 
         std::string fetch(const std::string &url)
         {
-            mutex::unique_lock::mutex_type m alignas(mutex::padding) {};
-            std::condition_variable_any cv alignas(mutex::padding) {};
+            mutex::unique_lock::mutex_type m alignas(mutex::alignment) {};
+            std::condition_variable_any cv alignas(mutex::alignment) {};
             const auto url_hash = blake2b<blake2b_256_hash>(url);
             const file::tmp tmp { fmt::format("http-fetch-sync-{}.tmp", url_hash) };
             std::atomic_bool ready { false };
@@ -88,7 +89,7 @@ namespace daedalus_turbo::http {
             }
             if (err)
                 throw error(fmt::format("download of {} failed: {}", url, *err));
-            return std::string { file::read(tmp.path()).span().string_view() };
+            return std::string { static_cast<buffer>(file::read(tmp.path())) };
         }
 
         json::value fetch_json(const std::string &url)

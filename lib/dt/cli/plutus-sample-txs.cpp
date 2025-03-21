@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
@@ -36,12 +37,12 @@ namespace daedalus_turbo::cli::plutus_sample_txs {
             const uint32_t seed = std::stoul(*opts.at("seed"));
             const uint64_t sample_size = std::stoull(*opts.at("sample"));
 
-            alignas(mutex::padding) mutex::unique_lock::mutex_type all_mutex {};
+            mutex::unique_lock::mutex_type all_mutex alignas(mutex::alignment) {};
             vector<tx_hash> txs {};
 
             storage::parse_parallel_epoch<part_info>(cr,
                 [&](auto &part, const auto &blk) {
-                    blk.foreach_tx([&](const auto &tx) {
+                    blk->foreach_tx([&](const auto &tx) {
                         size_t num_redeemers = 0;
                         tx.foreach_redeemer([&](const auto &) {
                             ++num_redeemers;

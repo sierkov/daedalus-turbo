@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
-* Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_ZPP_HPP
@@ -13,8 +14,7 @@
 #if defined(__clang_major__) && (__clang_major__ >= 19)
 #    pragma clang diagnostic pop
 #endif
-#include <dt/file.hpp>
-#include <dt/util.hpp>
+#include <dt/zstd.hpp>
 
 namespace daedalus_turbo::zpp {
     template<typename T>
@@ -37,8 +37,8 @@ namespace daedalus_turbo::zpp {
     template<typename T>
     void load(T &v, const std::string &path)
     {
-        const auto zpp_data = file::read_raw(path);
-        ::zpp::bits::in in { zpp_data };
+        const auto zpp_data = file::read(path);
+        ::zpp::bits::in in { static_cast<buffer>(zpp_data) };
         in(v).or_throw();
     }
 
@@ -46,8 +46,8 @@ namespace daedalus_turbo::zpp {
     T load(const std::string &path)
     {
         T v;
-        const auto zpp_data = file::read_raw(path);
-        ::zpp::bits::in in { zpp_data };
+        const auto zpp_data = file::read(path);
+        ::zpp::bits::in in { static_cast<buffer>(zpp_data) };
         in(v).or_throw();
         return v;
     }
@@ -55,16 +55,16 @@ namespace daedalus_turbo::zpp {
     template<typename T>
     void load_zstd(T &v, const std::string &path)
     {
-        const auto zpp_data = file::read_zstd(path);
-        ::zpp::bits::in in { zpp_data };
+        const auto zpp_data = zstd::read(path);
+        ::zpp::bits::in in { static_cast<buffer>(zpp_data) };
         in(v).or_throw();
     }
 
     template<typename T>
     T load_zstd(const std::string &path)
     {
-        const auto zpp_data = file::read_zstd(path);
-        ::zpp::bits::in in { zpp_data };
+        const auto zpp_data = zstd::read(path);
+        ::zpp::bits::in in { static_cast<buffer>(zpp_data) };
         T v;
         in(v).or_throw();
         return v;
@@ -100,7 +100,7 @@ namespace daedalus_turbo::zpp {
         uint8_vector zpp_data {};
         ::zpp::bits::out out { zpp_data };
         out(v).or_throw();
-        file::write_zstd(path, zpp_data);
+        zstd::write(path, zpp_data);
     }
 }
 

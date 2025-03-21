@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_CARDANO_LEDGER_POOL_RANK_HPP
@@ -7,12 +8,12 @@
 
 #include <cmath>
 #include <vector>
-#include <dt/error.hpp>
-#include <dt/rational.hpp>
+#include <dt/common/error.hpp>
+#include <dt/cardano/common/types.hpp>
 
 namespace daedalus_turbo::cardano::ledger::pool_rank {
     using sample_list = std::vector<double>;
-    using likelihood_list = std::vector<float>;
+    using likelihood_list = vector_t<float>;
     using likelihood_prior = std::optional<std::reference_wrapper<const likelihood_list>>;
 
     inline const sample_list &samples()

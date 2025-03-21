@@ -1,18 +1,21 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
+#include <dt/common/test.hpp>
+#include <dt/cbor/zero2.hpp>
 #include <dt/file.hpp>
 #include <dt/plutus/flat-encoder.hpp>
 #include <dt/plutus/uplc.hpp>
-#include <dt/test.hpp>
-
-using namespace daedalus_turbo;
-using namespace daedalus_turbo::plutus;
-using namespace daedalus_turbo::plutus::flat;
 
 namespace {
+    using namespace daedalus_turbo;
+    using namespace daedalus_turbo::plutus;
+    using namespace daedalus_turbo::plutus::flat;
+    using allocator = plutus::allocator;
+
     std::string stringify_diff(const buffer b1, const buffer b2)
     {
         std::string res {};
@@ -30,11 +33,11 @@ namespace {
 
     void test_flat(const std::string &path)
     {
-        auto cbor = file::read(path);
+        auto cbor = file::read<uint8_vector>(path);
         if (path.ends_with(".hex")) {
             cbor = uint8_vector::from_hex(cbor.str());
         }
-        const uint8_vector wo_cbor { cbor::zero::parse(cbor).bytes() };
+        const uint8_vector wo_cbor { cbor::zero2::parse(cbor).get().bytes() };
         allocator alloc {};
         const script s { alloc, cbor };
         const auto new_cbor = encode(s.version(), s.program());

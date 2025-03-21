@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_ED25519_HPP
@@ -9,10 +10,11 @@
 #include <dt/util.hpp>
 
 namespace daedalus_turbo::ed25519 {
-    using vkey = array<uint8_t, 32>;
-    using skey = secure_array<uint8_t, 64>;
-    using signature = array<uint8_t, 64>;
-    using seed = secure_array<uint8_t, 32>;
+    using vkey = byte_array<32>;
+    using vkey_full = byte_array<64>;
+    using skey = secure_byte_array<64>;
+    using signature = byte_array<64>;
+    using seed = secure_byte_array<32>;
 
     extern void ensure_initialized();
     extern void create(const std::span<uint8_t> &sk, const std::span<uint8_t> &vk);

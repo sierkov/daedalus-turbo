@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+* Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE
  *
@@ -132,18 +133,22 @@ namespace daedalus_turbo::cli::test_stake_balances {
         {
             timer t { "parsing ledger state" };
             auto buf = file::read(ledger_path);
-            buf.shrink_to_fit();
             logger::debug("loaded {} size: {} MB", ledger_path, buf.size() / 1'000'000u);
-            cbor_parser parser { buf };
-            cbor_value v {};
-            parser.read(v);
-            static array<size_t, 7> last_slot_path { 1, 5, 1, 1, 0, 0, 0 };
-            const auto latest_slot = extract_value(v, last_slot_path, 0).uint();
+            auto v = cbor::zero2::parse(buf);
+            static std::array<size_t, 7> last_slot_path { 1, 5, 1, 1, 0, 0, 0 };
+            auto latest_slot = extract(v.get(), last_slot_path, 0).uint();
             stake_list latest_stake_dist {};
-            static array<size_t, 10> stake_latest_path { 1, 5, 1, 1, 1, 3, 1, 1, 4, 0 };
-            for (const auto &[id_info, balance]: extract_value(v, stake_latest_path, 0).map()) {
-                const auto &id = id_info.array();
-                latest_stake_dist.emplace_back(stake_ident { id.at(1).buf(), id.at(0).uint() == 1 }, balance.uint());
+            static std::array<size_t, 10> stake_latest_path { 1, 5, 1, 1, 1, 3, 1, 1, 4, 0 };
+            {
+                auto &mv = extract(v.get(), stake_latest_path, 0);
+                for (auto &it = mv.map(); !it.done(); ) {
+                    auto &key_v = it.read_key();
+                    auto &key_it = key_v.array();
+                    const auto id_typ = key_it.read().uint();
+                    const auto id_hash = key_it.read().bytes();
+                    const auto coin = it.read_val(std::move(key_v)).uint();
+                    latest_stake_dist.emplace_back(stake_ident { id_hash, id_typ == 1 }, coin);
+                }
             }
             return std::make_pair(std::move(latest_stake_dist), latest_slot);
         }

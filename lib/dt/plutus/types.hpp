@@ -1,21 +1,20 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_PLUTUS_TYPES_HPP
 #define DAEDALUS_TURBO_PLUTUS_TYPES_HPP
 
-#include <any>
 #include <deque>
 #include <memory_resource>
 #include <variant>
-#include <dt/big_int.hpp>
+#include <dt/big-int.hpp>
 #include <dt/container.hpp>
 #include <dt/crypto/blst.hpp>
 #include <dt/cbor/encoder.hpp>
-#include <dt/cbor/zero.hpp>
-#include <dt/error.hpp>
-#include <dt/format.hpp>
+#include <dt/common/format.hpp>
+#include <dt/logger.hpp>
 #include <dt/util.hpp>
 
 namespace daedalus_turbo::plutus {
@@ -302,7 +301,7 @@ namespace daedalus_turbo::plutus {
         };
 
         struct my_resource: std::pmr::memory_resource {
-            using my_alloc = container_allocator<std::byte>;
+            using my_alloc = std::allocator<std::byte>;
 
             static my_resource *get()
             {
@@ -335,7 +334,7 @@ namespace daedalus_turbo::plutus {
         };
 
         struct counting_resource: std::pmr::memory_resource {
-            using my_alloc = container_allocator<std::byte>;
+            using my_alloc = std::allocator<std::byte>;
 
             counting_resource(memory_resource *upstream): _upstream { upstream }
             {
@@ -771,14 +770,27 @@ namespace daedalus_turbo::plutus {
     struct bstr_type
     {
         struct value_type: std::pmr::vector<uint8_t> {
-            value_type() =delete;
-            value_type(const value_type &) =delete;
+            using base_type = std::pmr::vector<uint8_t>;
 
-            value_type(allocator &alloc): std::pmr::vector<uint8_t> { alloc.resource() }
+            //value_type(const value_type &) =delete;
+
+            value_type(allocator &alloc, value_type &&o):
+                std::pmr::vector<uint8_t> { std::move(o), alloc.resource() }
             {
             }
 
-            value_type(allocator &alloc, const buffer b): std::pmr::vector<uint8_t>(b.size(), alloc.resource())
+            value_type(allocator &alloc, base_type &&o):
+                std::pmr::vector<uint8_t> { std::move(o), alloc.resource() }
+            {
+            }
+
+            value_type(allocator &alloc):
+                std::pmr::vector<uint8_t> { alloc.resource() }
+            {
+            }
+
+            value_type(allocator &alloc, const buffer b):
+                std::pmr::vector<uint8_t>(b.size(), alloc.resource())
             {
                 memcpy(data(), b.data(), b.size());
             }
@@ -809,9 +821,9 @@ namespace daedalus_turbo::plutus {
                 return *this;
             }
 
-            buffer span() const
+            operator buffer() const
             {
-                return buffer { data(), size() };
+                return { data(), size() };
             }
 
             std::string_view str() const
@@ -830,6 +842,7 @@ namespace daedalus_turbo::plutus {
         }
 
         bstr_type() =delete;
+
         bstr_type(const bstr_type &o): _ptr { o._ptr }
         {
         }
@@ -985,6 +998,7 @@ namespace daedalus_turbo::plutus {
 
         bool operator==(const constant_list &o) const;
         const value_type *operator->() const;
+        const value_type &operator*() const;
     private:
         allocator::ptr_type<value_type> _ptr;
     };
@@ -1130,6 +1144,7 @@ namespace daedalus_turbo::plutus {
         value(allocator &, data &&);
         value(allocator &, str_type &&);
         value(allocator &, std::string_view);
+        value(allocator &, bstr_type &&);
         value(allocator &, const bstr_type &);
         value(allocator &, buffer);
         value(allocator &, const blst_p1 &);
@@ -1310,7 +1325,7 @@ namespace fmt {
         struct formatter<daedalus_turbo::plutus::bstr_type>: formatter<int> {
         template<typename FormatContext>
         auto format(const daedalus_turbo::plutus::bstr_type &v, FormatContext &ctx) const -> decltype(ctx.out()) {
-            return fmt::format_to(ctx.out(), "{}", v->span());
+            return fmt::format_to(ctx.out(), "{}", static_cast<daedalus_turbo::buffer>(*v));
         }
     };
 
@@ -1326,7 +1341,7 @@ namespace fmt {
     struct formatter<daedalus_turbo::plutus::bls12_381_g1_element>: formatter<int> {
         template<typename FormatContext>
         auto format(const daedalus_turbo::plutus::bls12_381_g1_element &v, FormatContext &ctx) const -> decltype(ctx.out()) {
-            daedalus_turbo::array<uint8_t, 48> comp {};
+            daedalus_turbo::byte_array<48> comp {};
             blst_p1_compress(reinterpret_cast<byte *>(comp.data()), &v.val);
             return fmt::format_to(ctx.out(), "0x{}", comp);
         }
@@ -1336,7 +1351,7 @@ namespace fmt {
     struct formatter<daedalus_turbo::plutus::bls12_381_g2_element>: formatter<int> {
         template<typename FormatContext>
         auto format(const daedalus_turbo::plutus::bls12_381_g2_element &v, FormatContext &ctx) const -> decltype(ctx.out()) {
-            daedalus_turbo::array<uint8_t, 96> comp {};
+            daedalus_turbo::byte_array<96> comp {};
             blst_p2_compress(reinterpret_cast<byte *>(comp.data()), &v.val);
             return fmt::format_to(ctx.out(), "0x{}", comp);
         }
@@ -1376,7 +1391,7 @@ namespace fmt {
                 } else if constexpr (std::is_same_v<T, bool>) {
                     return fmt::format_to(ctx.out(), "{}", v ? "True" : "False");
                 } else if constexpr (std::is_same_v<T, bstr_type>) {
-                    return fmt::format_to(ctx.out(), "#{}", buffer_lowercase { v->span() });
+                    return fmt::format_to(ctx.out(), "#{}", buffer_lowercase { static_cast<buffer>(*v) });
                 } else if constexpr (std::is_same_v<T, plutus::data>) {
                     return fmt::format_to(ctx.out(), "({})", v);
                 } else if constexpr (std::is_same_v<T, str_type>) {

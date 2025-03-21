@@ -1,9 +1,10 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
-#include <dt/cardano/common.hpp>
+#include <dt/cardano/common/common.hpp>
 #include <dt/cardano/ledger/state.hpp>
 #include <dt/cardano/ledger/updates.hpp>
 #include <dt/chunk-registry.hpp>
@@ -342,11 +343,16 @@ namespace daedalus_turbo::validator {
             if (const auto best_snap = _best_exportable_snapshot(immutable_tip); best_snap && best_snap->end_offset) {
                 logger::info("selected the ledger snapshot with end_offset {} last_slot {} for export",
                     best_snap->end_offset, cardano::slot { best_snap->last_slot, _cr.config() });
-                cardano::ledger::state snap_state { _cr.config(), _cr.sched() };
-                snap_state.load_zpp(_storage_path("ledger", best_snap->end_offset));
-                const auto snap_tip = _cr.find_block_by_offset(best_snap->end_offset - 1).point();
                 const auto path = (ledger_dir / fmt::format("{}_dt", best_snap->last_slot)).string();
-                snap_state.save_node(path, snap_tip, prio_base);
+                if (best_snap->end_offset == _state.end_offset() && best_snap->last_slot == _state.last_slot()) {
+                    const auto snap_tip = _cr.find_block_by_offset(best_snap->end_offset - 1).point();
+                    _state.save_node(path, snap_tip, prio_base);
+                } else {
+                    cardano::ledger::state snap_state { _cr.config(), _cr.sched() };
+                    snap_state.load_zpp(_storage_path("ledger", best_snap->end_offset));
+                    const auto snap_tip = _cr.find_block_by_offset(best_snap->end_offset - 1).point();
+                    snap_state.save_node(path, snap_tip, prio_base);
+                }
                 return path;
             }
             throw error("do not have an exportable snapshot");
@@ -384,7 +390,7 @@ namespace daedalus_turbo::validator {
         const std::string _state_pre_path;
         cardano::ledger::state _state;
         std::atomic_bool _validation_running { false };
-        alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _next_task_mutex {};
+        mutable mutex::unique_lock::mutex_type _next_task_mutex alignas(mutex::alignment) {};
         uint64_t _next_end_offset = 0;
         epoch_task_map _next_tasks {};
         snapshot_set _snapshots {};
@@ -530,15 +536,14 @@ namespace daedalus_turbo::validator {
                         indexer::chunk_indexer_list chunk_indexers {};
                         for (auto *idxr_ptr: idxrs)
                             chunk_indexers.emplace_back(idxr_ptr->make_chunk_indexer("update", chunk.offset));
-                        const auto raw_data = file::read(chunk_path);
-                        cbor_parser parser { raw_data };
-                        cbor::value block_tuple {};
-                        while (!parser.eof()) {
-                            parser.read(block_tuple);
-                            auto blk = cardano::make_block(block_tuple, chunk.offset + block_tuple.data - raw_data.data(), _cr.config());
-                            if (blk->offset() >= state_start_offset) {
+                        const auto raw_data = zstd::read(chunk_path);
+                        cbor::zero2::decoder dec { raw_data };
+                        while (!dec.done()) {
+                            auto &block_tuple = dec.read();
+                            auto blk = cardano::make_block(block_tuple, chunk.offset + block_tuple.data_begin() - raw_data.data(), _cr.config());
+                            if (blk.offset() >= state_start_offset) {
                                 for (auto &idxr: chunk_indexers)
-                                    idxr->index(*blk);
+                                    idxr->index(blk);
                                 blk->foreach_tx([&](const auto &tx) {
                                     for (auto &idxr: chunk_indexers)
                                         idxr->index_tx(tx);
@@ -689,10 +694,10 @@ namespace daedalus_turbo::validator {
                 }
             } catch (const std::exception &ex) {
                 logger::error("apply_updates for epoch: {} std::exception: {}", e, ex.what());
-                throw error(fmt::format("failed to process epoch {} updates: {}", e, ex.what()));
+                throw error(fmt::format("failed to process epoch {} updates", e), ex);
             } catch (...) {
                 logger::error("apply_updates for epoch: {} unknown exception", e);
-                throw;
+                throw error(fmt::format("failed to process epoch {} updates cased by an unknown exception", e));
             }
         }
 
@@ -741,7 +746,7 @@ namespace daedalus_turbo::validator {
                     const auto pool_it = pool_dist_ptr->find(item.pool_id);
                     if (pool_it == pool_dist_ptr->end())
                         throw error(fmt::format("epoch {} pool-stake distribution misses block-issuing pool id {}!", epoch, item.pool_id));
-                    const auto rel_stake = static_cast<rational>(pool_it->second.rel_stake);
+                    const auto &rel_stake = pool_it->second.rel_stake;
                     if (item.era < 6) {
                         if (!vrf_leader_is_eligible(item.leader_result, 0.05, rel_stake))
                             throw error(fmt::format("Leader-eligibility check failed for block at slot {} issued by {}: leader_result: {} rel_stake: {}",

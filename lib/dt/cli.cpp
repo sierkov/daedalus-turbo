@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
@@ -12,7 +13,7 @@ namespace daedalus_turbo::cli {
     int run(const int argc, const char **argv, const command::command_list &command_list)
     {
         std::set_terminate([]() {
-            std::cerr << "std::terminate called; terminating\n";
+            std::cerr << fmt::format("std::terminate called; uncaught exceptions: {} - terminating\n", std::uncaught_exceptions());
             std::abort();
         });
         std::ios_base::sync_with_stdio(false);

@@ -1,9 +1,11 @@
-/* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
- * This code is distributed under the license specified in:
- * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
+#pragma once
 #ifndef DAEDALUS_TURBO_JSON_HPP
 #define DAEDALUS_TURBO_JSON_HPP
+/* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
+ * This code is distributed under the license specified in:
+ * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
 #include <boost/json.hpp>
 #include <dt/blake2b.hpp>
@@ -40,18 +42,18 @@ namespace daedalus_turbo::json {
 
     inline json::value parse(const buffer &buf, json::storage_ptr sp={})
     {
-        return boost::json::parse(buf.string_view(), sp);
+        return boost::json::parse(static_cast<std::string_view>(buf), sp);
     }
 
     inline json::value parse_signed(const buffer &buf, const buffer &vk, json::storage_ptr sp={})
     {
-        auto j_signed = boost::json::parse(buf.string_view(), sp).as_object();
+        auto j_signed = boost::json::parse(static_cast<std::string_view>(buf), sp).as_object();
         if (!j_signed.contains("signature"))
             throw error("a signed json must contain signature!");
         const auto sig = ed25519::signature::from_hex(static_cast<std::string_view>(j_signed.at("signature").as_string()));
         j_signed.erase("signature");
         const auto content = json::serialize(j_signed);
-        const auto hash = blake2b<blake2b_256_hash>(content);
+        const auto hash = blake2b<blake2b_256_hash>(static_cast<std::string_view>(content));
         if (!ed25519::verify(sig, vk, hash))
             throw error("Verification of a signed JSON response has failed!");
         return j_signed;

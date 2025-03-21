@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
@@ -28,48 +29,34 @@ namespace daedalus_turbo::cli::txwit_stat {
         {
             const auto &data_dir = args.at(0);
             const chunk_registry cr { data_dir, chunk_registry::mode::store };
-            alignas(mutex::padding) mutex::unique_lock::mutex_type all_mutex {};
+            mutex::unique_lock::mutex_type all_mutex alignas(mutex::alignment) {};
             part_info all {};
             storage::parse_parallel<part_info>(cr, 1024,
                 [&](auto &part, const auto &blk) {
                     ++part.num_blocks;
-                    blk.foreach_tx([&](const auto &tx) {
+                    blk->foreach_tx([&](const auto &tx) {
                         ++part.num_txs;
                         tx.foreach_redeemer([&](const auto &) {
                             ++part.num_redeemers;
                         });
-                        tx.foreach_witness([&](const auto wtyp, const auto &wit) {
-                            switch (wtyp) {
-                                case 0:
-                                case 2:
-                                    if (blk.era() >= 2) {
-                                        tx.foreach_set(wit, [&](const auto &, const auto) {
-                                            ++part.num_vkey;
-                                        });
-                                    } else {
-                                        ++part.num_vkey;
-                                    }
-                                    break;
-                                case 1:
-                                    if (blk.era() >= 2) {
-                                        tx.foreach_set(wit, [&](const auto &, const auto) {
-                                            ++part.num_native;
-                                        });
-                                    } else {
+                        tx.foreach_witness([&](const auto &wit) {
+                            std::visit([&](const auto &wv) {
+                                using T = std::decay_t<decltype(wv)>;
+                                if constexpr (std::is_same_v<T, tx_wit_byron_vkey> || std::is_same_v<T, tx_wit_byron_redeemer>
+                                        || std::is_same_v<T, tx_wit_shelley_vkey> || std::is_same_v<T, tx_wit_shelley_bootstrap>) {
+                                    ++part.num_vkey;
+                                } else if constexpr (std::is_same_v<T, script_info>) {
+                                    if (wv.type() == script_type::native)
                                         ++part.num_native;
-                                    }
-                                    break;
-                                default:
-                                    break;
-                            }
+                                }
+                            }, wit);
                         });
                         tx.foreach_script([&](const auto &s) {
                             part.scripts[s.type()].emplace(s.hash());
                         });
                         tx.foreach_output([&](const auto &txo) {
                             if (txo.script_ref) {
-                                const auto s = script_info::from_cbor(txo.script_ref->tag().second->buf());
-                                part.scripts[s.type()].emplace(s.hash());
+                                part.scripts[txo.script_ref->type()].emplace(txo.script_ref->hash());
                             }
                         });
                     });

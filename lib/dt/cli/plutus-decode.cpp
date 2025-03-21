@@ -1,9 +1,10 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
-#include <dt/cardano/config.hpp>
+#include <dt/cardano/common/config.hpp>
 #include <dt/cli.hpp>
 #include <dt/plutus/flat.hpp>
 #include <dt/plutus/machine.hpp>
@@ -26,7 +27,7 @@ namespace daedalus_turbo::cli::plutus_parse {
         {
             allocator alloc {};
             flat::script s { alloc, file::read(args.at(0)), opts.contains("cbor") };
-            std::cout << fmt::format("{}", s.program());
+            fmt::print("{}\n", s.program());
         }
     };
     static auto instance = command::reg(std::make_shared<cmd>());

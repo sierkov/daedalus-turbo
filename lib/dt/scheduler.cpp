@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
@@ -296,22 +297,22 @@ namespace daedalus_turbo {
         };
         using task_stats_map = std::unordered_map<std::string, task_stat>;
 
-        alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _tasks_mutex {};
-        alignas(mutex::padding) std::condition_variable_any _tasks_cv {};
+        mutable mutex::unique_lock::mutex_type _tasks_mutex alignas(mutex::alignment) {};
+        std::condition_variable_any _tasks_cv alignas(mutex::alignment) {};
         task_queue _tasks {};
         task_stats_map _task_stats {};
 
         using observer_list = std::list<std::function<void (std::any &&)>>;
         using observer_map = std::unordered_map<std::string, observer_list>;
-        alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _observers_mutex {};
+        mutable mutex::unique_lock::mutex_type _observers_mutex alignas(mutex::alignment) {};
         observer_map _observers {};
 
-        alignas(mutex::padding) mutex::unique_lock::mutex_type _results_mutex {};
-        alignas(mutex::padding) std::condition_variable_any _results_cv {};
+        mutex::unique_lock::mutex_type _results_mutex alignas(mutex::alignment) {};
+        std::condition_variable_any _results_cv alignas(mutex::alignment) {};
         std::priority_queue<scheduled_result> _results {};
         std::atomic_bool _results_processed = false;
 
-        alignas(mutex::padding) mutex::unique_lock::mutex_type _completion_mutex {};
+        mutex::unique_lock::mutex_type _completion_mutex alignas(mutex::alignment) {};
         std::map<std::string, completion_action> _completion_actions {};
 
         std::vector<boost::thread> _workers {};

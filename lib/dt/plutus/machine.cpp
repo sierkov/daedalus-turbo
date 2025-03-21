@@ -1,20 +1,14 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
-#include <dt/config.hpp>
-#include <dt/cbor/zero.hpp>
 #include <dt/plutus/builtins.hpp>
 #include <dt/plutus/machine.hpp>
 
 namespace daedalus_turbo::plutus {
     struct machine::impl {
-        static uint64_t mem_usage(const value &v)
-        {
-            return _mem_usage(*v);
-        }
-
         impl(allocator &alloc, const costs::parsed_model &model, const builtin_map &semantics, const optional_budget &budget):
             _alloc { alloc }, _cost_model { model }, _budget { budget }, _semantics { semantics }
         {
@@ -46,105 +40,6 @@ namespace daedalus_turbo::plutus {
         cardano::ex_units _cost {};
         value_list _empty_args { _alloc };
         const builtin_map &_semantics;
-
-        static uint64_t _mem_usage(const bint_type &i)
-        {
-            if (*i > 0)
-                return boost::multiprecision::msb(*i) / 64 + 1;
-            if (*i < 0) {
-                if (const auto i_adj = *i + 1; i_adj != 0) [[likely]]
-                    return boost::multiprecision::msb(i_adj * -1) / 64 + 1;
-                return 1;
-            }
-            return 1;
-        }
-
-        static uint64_t _mem_usage(const uint64_t i)
-        {
-            if (i > 0)
-                return boost::multiprecision::msb(i) / 64 + 1;
-            return 1;
-        }
-
-        static uint64_t _mem_usage(const buffer b)
-        {
-            if (!b.empty()) [[likely]]
-                return (b.size() - 1) / 8 + 1;
-            return 1;
-        }
-
-        static uint64_t _mem_usage(const std::string_view s)
-        {
-            return s.size();
-        }
-
-        static uint64_t _mem_usage(const data::list_type &l)
-        {
-            uint64_t sum = 0;
-            for (const auto &d: l)
-                sum += _mem_usage(d);
-            return sum;
-        }
-
-        static uint64_t _mem_usage(const data &d)
-        {
-            return std::visit([](const auto &v) {
-                using t = std::decay_t<decltype(v)>;
-                if constexpr (std::is_same_v<t, data_constr>) {
-                    return 4 + _mem_usage(v->second);
-                } else if constexpr (std::is_same_v<t, data::map_type>) {
-                    uint64_t sum = 4;
-                    for (const auto &p: v)
-                        sum += _mem_usage(p->first) + _mem_usage(p->second);
-                    return sum;
-                } else if constexpr (std::is_same_v<t, data::bstr_type>) {
-                    return 4 + _mem_usage(*v);
-                } else {
-                    return 4 + _mem_usage(v);
-                }
-            }, *d);
-        }
-
-        static uint64_t _mem_usage(const constant &c)
-        {
-            return std::visit([](const auto &v) {
-                using T = std::decay_t<decltype(v)>;
-                using T = std::decay_t<decltype(v)>;
-                if constexpr (std::is_same_v<T, std::monostate>) {
-                    return static_cast<uint64_t>(1);
-                } else if constexpr (std::is_same_v<T, bool>) {
-                    return static_cast<uint64_t>(1);
-                } else if constexpr (std::is_same_v<T, bstr_type>) {
-                    return _mem_usage(buffer { *v });
-                } else if constexpr (std::is_same_v<T, data>) {
-                    return _mem_usage(v);
-                } else if constexpr (std::is_same_v<T, str_type>) {
-                    return _mem_usage(std::string_view { *v });
-                } else if constexpr (std::is_same_v<T, bls12_381_g1_element>) {
-                    return static_cast<uint64_t>(sizeof(bls12_381_g1_element) / 8);
-                } else if constexpr (std::is_same_v<T, bls12_381_g2_element>) {
-                    return static_cast<uint64_t>(sizeof(bls12_381_g2_element) / 8);
-                } else if constexpr (std::is_same_v<T, bls12_381_ml_result>) {
-                    return static_cast<uint64_t>(sizeof(bls12_381_ml_result) / 8);
-                } else if constexpr (std::is_same_v<T, constant_list>) {
-                    uint64_t sum = 0;
-                    for (const auto &ci: v->vals)
-                        sum += _mem_usage(ci);
-                    return sum;
-                } else if constexpr (std::is_same_v<T, constant_pair>) {
-                    return _mem_usage(v->first) + _mem_usage(v->second);
-                } else {
-                    return _mem_usage(v);
-                }
-            }, *c);
-        }
-
-        static uint64_t _mem_usage(const value::value_type &val)
-        {
-            if (std::holds_alternative<constant>(val))
-                return _mem_usage(std::get<constant>(val));
-            return 1;
-        }
 
         value _eval(const term &expr)
         {
@@ -179,11 +74,8 @@ namespace daedalus_turbo::plutus {
 
         void _spend(const builtin_tag tag, const value_list &args)
         {
-            costs::arg_sizes sizes {};
-            for (const auto &arg: *args) {
-                sizes.emplace_back(_mem_usage(*arg));
-            }
             const auto &op_model = _cost_model.builtin_fun.at(tag);
+            const auto sizes = op_model.size->size(args);
             const auto cpu_cost = op_model.cpu->cost(sizes, args);
             const auto mem_cost = op_model.mem->cost(sizes, args);
             _spend(mem_cost, cpu_cost);
@@ -438,11 +330,6 @@ namespace daedalus_turbo::plutus {
             }, *t);
         }
     };
-
-    uint64_t machine::mem_usage(const value &v)
-    {
-        return impl::mem_usage(v);
-    }
 
     machine::machine(allocator &alloc, const cardano::script_type typ, const optional_budget &budget)
     {

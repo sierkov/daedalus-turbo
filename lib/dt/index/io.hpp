@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_INDEX_IO_HPP
@@ -12,7 +13,7 @@
 #include <dt/container.hpp>
 #include <dt/file.hpp>
 #include <dt/mutex.hpp>
-#include <dt/util.hpp>
+#include <dt/zstd.hpp>
 
 namespace daedalus_turbo::index {
     template<typename T>
@@ -163,7 +164,7 @@ namespace daedalus_turbo::index {
         size_t _num_parts, _chunk_size;
 
         std::atomic_bool _commited = false;
-        alignas(mutex::padding) mutex::unique_lock::mutex_type _write_mutex {};
+        mutex::unique_lock::mutex_type _write_mutex alignas(mutex::alignment) {};
         file::write_stream _os;
         size_t _free_off = 0;
 
@@ -197,12 +198,12 @@ namespace daedalus_turbo::index {
                 meta_buf << buffer::from(name_size)
                     << buffer { name }
                     << buffer::from(data_size)
-                    << data.span();
+                    << data;
             }
-            meta_buf << buffer { _cnts.data(), sizeof(_cnts[0]) * _cnts.size() };
+            meta_buf << buffer { reinterpret_cast<const uint8_t *>(_cnts.data()), sizeof(_cnts[0]) * _cnts.size() };
             for (const auto &chunk_list: _parts) {
                 if (!chunk_list.empty())
-                    meta_buf << buffer { chunk_list.data(), sizeof(chunk_list[0]) * chunk_list.size() };
+                    meta_buf << buffer { reinterpret_cast<const uint8_t *>(chunk_list.data()), sizeof(chunk_list[0]) * chunk_list.size() };
             }
             _os.write(meta_buf.data(), meta_buf.size());
             auto meta_hash = blake2b<blake2b_64_hash>(meta_buf);
@@ -213,7 +214,7 @@ namespace daedalus_turbo::index {
             std::filesystem::rename(_path + ".tmp", _path);
         }
 
-        void _flush_part(size_t part_id)
+        void _flush_part(const size_t part_id)
         {
             auto &cnt = _cnts.at(part_id);
             auto &part = _parts.at(part_id);
@@ -225,7 +226,7 @@ namespace daedalus_turbo::index {
                 auto &buf = _bufs.at(part_id);
                 if (part.size() > 0 && buf.at(cnt_todo - 1) < part.back().max_item)
                     throw error(fmt::format("{} partition-{} chunks {} and {} are not ordered!", _path, part_id, part.size() - 1, part.size()));
-                std::span<uint8_t> data { reinterpret_cast<uint8_t *>(buf.data()), cnt_todo * sizeof(T) };
+                const buffer data { reinterpret_cast<uint8_t *>(buf.data()), cnt_todo * sizeof(T) };
                 thread_local uint8_vector comp_data {};
                 zstd::compress(comp_data, data, 3);
 
@@ -456,12 +457,12 @@ namespace daedalus_turbo::index {
             return find_result { match_size, match_item };
         }
 
-        const buffer get_meta(const std::string &name) const
+        buffer get_meta(const std::string &name) const
         {
             auto it = _meta.find(name);
             if (it == _meta.end())
                 throw error(fmt::format("unknown metadata item: {}!", name));
-            return it->second.span();
+            return it->second;
         }
 
         size_t num_parts() const
@@ -545,7 +546,7 @@ namespace daedalus_turbo::index {
         vector<vector<chunk_info<T>>> _chunk_lists {};
         vector<size_t> _cnts {};
         vector<T> _max_items {};
-        alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _read_mutex {};
+        mutable mutex::unique_lock::mutex_type _read_mutex alignas(mutex::alignment) {};
         mutable file::read_stream _is;
 
         static size_t _thread_part_idx(size_t part_idx, thread_data &t)

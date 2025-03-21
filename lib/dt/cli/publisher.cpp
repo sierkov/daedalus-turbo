@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #include <dt/cli.hpp>
@@ -25,7 +26,7 @@ namespace daedalus_turbo::cli::publisher {
                 repeat = false;
             const size_t zstd_max_level = std::stoull(opts.at("zstd-max-level").value());
             chunk_registry cr { www_path, chunk_registry::mode::store };
-            const auto sk = ed25519::skey::from_hex(file::read("etc/publisher-secret.txt").span().string_view());
+            const auto sk = ed25519::skey::from_hex(file::read("etc/publisher-secret.txt").str());
             daedalus_turbo::publisher p { cr, node_path, sk, zstd_max_level };
             const std::chrono::seconds update_interval { 2 };
             for (;;) {

@@ -1,36 +1,23 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_CBOR_ENCODER_HPP
 #define DAEDALUS_TURBO_CBOR_ENCODER_HPP
 
-#include <ranges>
-#include <dt/big_int.hpp>
+#include <functional>
+#include <dt/common/bytes.hpp>
 #include <dt/cbor/types.hpp>
-#include <dt/rational.hpp>
-#include <dt/util.hpp>
 
 namespace daedalus_turbo::cbor {
     struct encoder {
         using prepare_data_func = std::function<void()>;
 
-        virtual ~encoder() =default;
-
         encoder &array()
         {
             _encode_item(major_type::array, static_cast<uint8_t>(special_val::s_break));
             return *this;
-        }
-
-        virtual encoder &set(const size_t sz, const prepare_data_func &prepare_data)
-        {
-            return array_compact(sz, prepare_data);
-        }
-
-        virtual std::unique_ptr<encoder> make_sibling() const
-        {
-            return std::make_unique<encoder>();
         }
 
         encoder &array(const size_t sz)
@@ -88,43 +75,6 @@ namespace daedalus_turbo::cbor {
             return *this;
         }
 
-        encoder &bigint(cpp_int val)
-        {
-            if (val >= 0) [[likely]] {
-                if (val <= std::numeric_limits<uint64_t>::max()) {
-                    uint(static_cast<uint64_t>(val));
-                    return *this;
-                }
-                tag(2);
-            } else {
-                val *= -1;
-                --val;
-                if (val <= std::numeric_limits<uint64_t>::max()) {
-                    nint(static_cast<uint64_t>(val));
-                    return *this;
-                }
-                tag(3);
-            }
-            uint8_vector buf {};
-            while (val) {
-                buf.emplace_back(val & 0xFF);
-                val >>= 8;
-            }
-            _encode_uint_item(major_type::bytes, buf.size());
-            for (const auto b: buf | std::ranges::views::reverse)
-                _buf.emplace_back(b);
-            return *this;
-        }
-
-        encoder &rational(const rational_u64 &val)
-        {
-            tag(30);
-            array(2)
-                .uint(val.numerator)
-                .uint(val.denominator);
-            return *this;
-        }
-
         encoder &float32(const float val)
         {
             _encode_item(major_type::simple, static_cast<uint8_t>(special_val::four_bytes));
@@ -135,6 +85,14 @@ namespace daedalus_turbo::cbor {
         encoder &bytes()
         {
             _encode_item(major_type::bytes, static_cast<uint8_t>(special_val::s_break));
+            return *this;
+        }
+
+        encoder &bytes_reverse(const buffer buf)
+        {
+            _encode_uint_item(major_type::bytes, buf.size());
+            for (size_t i = 1; i <= buf.size(); ++i)
+                _buf.emplace_back(buf[buf.size() - i]);
             return *this;
         }
 
@@ -212,11 +170,11 @@ namespace daedalus_turbo::cbor {
     protected:
         void _encode_data(const buffer buf)
         {
-            std::copy(buf.begin(), buf.end(), _it);
+            for (const uint8_t *it = buf.data(), *end = buf.data() + buf.size(); it != end; ++it)
+                _buf.emplace_back(*it);
         }
     private:
         uint8_vector _buf {};
-        std::back_insert_iterator<uint8_vector> _it { std::back_inserter(_buf) };
 
         void _encode_uint_item(const major_type typ, const uint64_t val)
         {
@@ -228,16 +186,13 @@ namespace daedalus_turbo::cbor {
                 _encode_data(buffer { &h_val, sizeof(h_val) });
             } else if (val <= std::numeric_limits<uint16_t>::max()) {
                 _encode_item(typ, static_cast<uint16_t>(special_val::two_bytes));
-                const auto h_val = host_to_net<uint16_t>(val);
-                _encode_data(buffer { &h_val, sizeof(h_val) });
+                _encode_data(buffer::from(host_to_net<uint16_t>(val)));
             } else if (val <= std::numeric_limits<uint32_t>::max()) {
                 _encode_item(typ, static_cast<uint16_t>(special_val::four_bytes));
-                const auto h_val = host_to_net<uint32_t>(val);
-                _encode_data(buffer { &h_val, sizeof(h_val) });
+                _encode_data(buffer::from(host_to_net<uint32_t>(val)));
             } else {
                 _encode_item(typ, static_cast<uint16_t>(special_val::eight_bytes));
-                const auto h_val = host_to_net<uint64_t>(val);
-                _encode_data(buffer { &h_val, sizeof(h_val) });
+                _encode_data(buffer::from(host_to_net<uint64_t>(val)));
             }
         }
 

@@ -1,11 +1,12 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_INDEX_COMMON_HPP
 #define DAEDALUS_TURBO_INDEX_COMMON_HPP
 
-#include <dt/cardano/common.hpp>
+#include <dt/cardano/common/common.hpp>
 #include <dt/container.hpp>
 #include <dt/index/io.hpp>
 #include <dt/index/merge.hpp>
@@ -16,7 +17,7 @@ namespace daedalus_turbo::index {
     struct chunk_indexer_base {
         virtual ~chunk_indexer_base() =default;
 
-        void index(const cardano::block_base &blk)
+        void index(const cardano::block_container &blk)
         {
             uint64_t last_byte_offset = blk.offset();
             if (blk.size() > 0)
@@ -26,11 +27,11 @@ namespace daedalus_turbo::index {
             _index(blk);
         }
 
-        virtual void index_tx(const cardano::tx &)
+        virtual void index_tx(const cardano::tx_base &)
         {
         }
 
-        virtual void index_invalid_tx(const cardano::tx &)
+        virtual void index_invalid_tx(const cardano::tx_base &)
         {
         }
 
@@ -40,7 +41,7 @@ namespace daedalus_turbo::index {
         }
 
     protected:
-        virtual void _index(const cardano::block_base &)
+        virtual void _index(const cardano::block_container &)
         {
         }
 
@@ -104,17 +105,17 @@ namespace daedalus_turbo::index {
         data_type _data {};
         std::optional<cardano::slot_range> _slots {};
 
-        virtual void _index_epoch(const cardano::block_base &/*blk*/, data_type &/*idx*/)
+        virtual void _index_epoch(const cardano::block_container &/*blk*/, data_type &/*idx*/)
         {
         }
 
-        void _index(const cardano::block_base &blk) override
+        void _index(const cardano::block_container &blk) override
         {
             try {
                 if (_slots)
-                    _slots->update(blk.slot());
+                    _slots->update(blk->slot());
                 else {
-                    _slots.emplace(blk.slot());
+                    _slots.emplace(blk->slot());
                 }
                 _index_epoch(blk, _data);
             } catch (std::exception &ex) {
@@ -348,7 +349,7 @@ namespace daedalus_turbo::index {
             return chunks;
         }
     private:
-        alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _updated_epochs_mutex {};
+        mutable mutex::unique_lock::mutex_type _updated_epochs_mutex alignas(mutex::alignment) {};
         index::epoch_chunks _updated_epochs {};
     };
 

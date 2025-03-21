@@ -15,6 +15,6 @@ endif()
 target_include_directories(3rdparty PUBLIC .)
 set_target_properties(3rdparty PROPERTIES LINKER_LANGUAGE C)
 
-add_library(3rdparty-cpp OBJECT hash-library/sha3.cpp hash-library/crc32.cpp hash-library/keccak.cpp)
+add_library(3rdparty-cpp OBJECT hash-library/sha3.cpp hash-library/crc32.cpp hash-library/keccak.cpp nanobench.cpp)
 target_include_directories(3rdparty-cpp PUBLIC .)
 set_target_properties(3rdparty-cpp PROPERTIES LINKER_LANGUAGE CXX)

@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_HISTORY_HPP
@@ -7,9 +8,7 @@
 
 #include <string>
 #include <utility>
-#include <dt/cardano.hpp>
-#include <dt/cardano/mocks.hpp>
-#include <dt/cbor.hpp>
+#include <dt/cardano/common/mocks.hpp>
 #include <dt/index/pay-ref.hpp>
 #include <dt/index/stake-ref.hpp>
 #include <dt/index/tx.hpp>
@@ -65,15 +64,21 @@ namespace daedalus_turbo {
             return changes;
         }
 
+        template<typename IT>
+        IT to_string(IT it, const cardano::config &cfg) const
+        {
+            return fmt::format_to(it, "slot: {} tx: {} change: {}\n", cardano::slot { slot, cfg }, hash, balance_change());
+        }
+
         json::object to_json(const cardano::tail_relative_stake_map &tail_relative_stake, const cardano::config &cfg) const
         {
             json::object j {
-                { "hash", fmt::format("{}", hash.span()) },
+                { "hash", fmt::format("{}", hash) },
                 { "slot", cardano::slot { slot, cfg }.to_json() },
                 { "balanceChange", fmt::format("{}", balance_change()) },
                 { "spentInputs", inputs.size() },
                 { "newOutputs", outputs.size() },
-                { "relativeStake", cardano::tx::slot_relative_stake(tail_relative_stake, slot) }
+                { "relativeStake", cardano::tx_base::slot_relative_stake(tail_relative_stake, slot) }
             };
             return j;
         }
@@ -105,6 +110,7 @@ namespace daedalus_turbo {
 
     template<typename T>
     struct history {
+        const cardano::config &cfg;
         T id {};
         transaction_map transactions {};
         uint64_t last_slot = 0;
@@ -117,6 +123,13 @@ namespace daedalus_turbo {
         uint64_t total_withdrawals = 0;
         bool full_history = false;
 
+        static constexpr auto serialize(auto &archive, auto &self)
+        {
+            return archive(self.id, self.transactions, self.last_slot, self.num_disk_reads, self.num_idx_reads,
+                self.total_tx_outputs, self.total_tx_outputs_unspent, self.total_utxo_balance, self.balance_assets,
+                self.total_withdrawals, self.full_history);
+        }
+
         template<typename IDX>
         bool find_incoming_txos(index::reader_multi<IDX> &ref_idx)
         {
@@ -124,12 +137,12 @@ namespace daedalus_turbo {
             IDX search_item { id };
             auto [ ref_count, ref_item ] = ref_idx.find(search_item);
             for (size_t i = 0; i < ref_count; i++) {
-                auto it = transactions.emplace_hint(transactions.end(), (uint64_t)ref_item.offset, transaction { .size=ref_item.size });
+                auto it = transactions.emplace_hint(transactions.end(), static_cast<uint64_t>(ref_item.offset), transaction { .size=ref_item.size });
                 it->second.outputs.emplace_back(0, static_cast<uint16_t>(ref_item.out_idx));
                 if (i < ref_count - 1)
                     ref_idx.read(ref_item);
             }
-            return transactions.size() > 0;
+            return !transactions.empty();
         }
 
         std::vector<uint64_t> find_used_txos(scheduler &sched, const index::reader_multi_mt<index::txo_use::item> &txo_use_idx)
@@ -174,9 +187,10 @@ namespace daedalus_turbo {
             timer t { "compute account balance", logger::level::debug };
             for (const auto &[offset, tx]: transactions) {
                 for (const auto &out: tx.outputs) {
-                    total_tx_outputs++;
-                    if (out.use_offset != 0) continue;
-                    total_tx_outputs_unspent++;
+                    ++total_tx_outputs;
+                    if (out.use_offset != 0)
+                        continue;
+                    ++total_tx_outputs_unspent;
                     total_utxo_balance += out.amount;
                     for (const auto &[asset_name, amount]: out.assets) {
                         balance_assets[asset_name] += amount;
@@ -195,7 +209,7 @@ namespace daedalus_turbo {
             return total_withdrawals;
         }
 
-        inline json::object to_json(const cardano::tail_relative_stake_map &tail_relative_stake, const cardano::config &cfg, const size_t max_items=1000) const
+        json::object to_json(const cardano::tail_relative_stake_map &tail_relative_stake, const cardano::config &cfg, const size_t max_items=1000) const
         {
             return json::object {
                 { "id", id.to_json() },
@@ -239,7 +253,7 @@ namespace daedalus_turbo {
                             search_item.out_idx = out.out_idx;
                             const auto [ use_count, use_item ] = txo_use_idx.find(search_item, txo_use_data);
                             if (use_count > 0) {
-                                if (use_count > 1)
+                                if (use_count > 1) [[unlikely]]
                                     throw error(fmt::format("internal error: multiple txo-use entries for the same tx offset {}!", txo_tasks[j]));
                                 out.use_offset = use_item.offset;
                                 out.use_size = use_item.size;
@@ -293,24 +307,14 @@ namespace daedalus_turbo {
     };
 
     struct reconstructor {
-        struct find_tx_res {
-            uint64_t offset = 0;
-            uint64_t invalid = 0;
-            cbor_value tx_raw {};
-            storage::block_info block_info {};
+        using find_tx_res = cardano::tx_container;
 
-            explicit operator bool() const
-            {
-                return offset > 0;
-            }
-        };
-
-        reconstructor(chunk_registry &cr)
-            : _cr { cr },
-                _stake_ref_idx { _cr.indexer().reader_paths("stake-ref") },
-                _pay_ref_idx { _cr.indexer().reader_paths("pay-ref") },
-                _tx_idx { _cr.indexer().reader_paths("tx") },
-                _txo_use_idx { _cr.indexer().reader_paths("txo-use") }
+        reconstructor(chunk_registry &cr):
+            _cr { cr },
+            _stake_ref_idx { _cr.indexer().reader_paths("stake-ref") },
+            _pay_ref_idx { _cr.indexer().reader_paths("pay-ref") },
+            _tx_idx { _cr.indexer().reader_paths("tx") },
+            _txo_use_idx { _cr.indexer().reader_paths("txo-use") }
         {
         }
 
@@ -319,15 +323,11 @@ namespace daedalus_turbo {
             return _cr.max_slot();
         }
 
-        find_tx_res find_tx(const buffer &tx_hash)
+        std::optional<find_tx_res> find_tx(const buffer &tx_hash)
         {
-            find_tx_res res {};
-            auto [ tx_count, tx_item ] = _tx_idx.find(index::tx::item { tx_hash });
-            if (tx_count > 0) {
-                res.offset = tx_item.offset;
-                res.invalid = tx_item.invalid;
-                res.block_info = _cr.find_block_by_offset(tx_item.offset);
-                _cr.read(tx_item.offset, res.tx_raw);
+            std::optional<find_tx_res> res {};
+            if (const auto [tx_count, tx_item] = _tx_idx.find(index::tx::item { tx_hash }); tx_count > 0) {
+                res.emplace(_cr.find_block_by_offset(tx_item.offset), tx_item.offset, _cr.read(tx_item.offset).get(), 0, _cr.config());
             }
             return res;
         }
@@ -358,7 +358,7 @@ namespace daedalus_turbo {
         {
             timer t { "history reconstruction", logger::level::debug };
             progress_guard pg { "fetch incoming txos", "find spent txos", "load spent txo data" };
-            history<ID> hist { id };
+            history<ID> hist { _cr.config(), id };
             if (_cr.num_chunks() == 0)
                 return hist;
             hist.last_slot = _cr.max_slot();
@@ -379,7 +379,7 @@ namespace daedalus_turbo {
     template<typename T>
     void history<T>::fill_raw_tx_data(scheduler &sched, chunk_registry &cr, const reconstructor &r, const bool spending_only)
     {
-        timer t1 { "fill_raw_tx_data - full", logger::level::debug };
+        const timer t1 { "fill_raw_tx_data - full", logger::level::debug };
         const std::string progress_id { spending_only ? "load spent txo data" : "fetch incoming txos" };
         // group txos by their chunk based on their offsets
         parse_tasks chunk_tasks {};
@@ -387,12 +387,11 @@ namespace daedalus_turbo {
             if (spending_only && !tx_it.second.outputs.empty())
                 continue;
             const auto &chunk = cr.find_offset(tx_it.first);
-            const auto [task_it, created] = chunk_tasks.emplace(chunk.offset, parse_task {});
-            if (created) task_it->second.chunk = chunk;
+            const auto [task_it, created] = chunk_tasks.emplace(chunk.offset, parse_task { chunk });
             task_it->second.tasks.emplace_back(&tx_it);
         }
 
-        timer t2 { fmt::format("fill_raw_tx_data - {} load and parse tasks", chunk_tasks.size()), logger::level::debug };
+        const timer t2 { fmt::format("fill_raw_tx_data - {} load and parse tasks", chunk_tasks.size()), logger::level::debug };
         // extract transaction data
         auto &p = progress::get();
         if (!chunk_tasks.empty()) {
@@ -402,9 +401,8 @@ namespace daedalus_turbo {
             });
             for (auto &[chunk_offset, chunk_info]: chunk_tasks) {
                 sched.submit_void("parse-chunk", 100, [&]() {
-                    const auto data = file::read(cr.full_path(chunk_info.chunk.rel_path()));
+                    const auto data = zstd::read(cr.full_path(chunk_info.chunk.rel_path()));
                     const buffer buf { data };
-                    cbor_value tx_raw {};
                     for (auto tx_ptr: chunk_info.tasks) {
                         auto &[tx_offset, tx_item] = *tx_ptr;
                         if (tx_offset < chunk_offset)
@@ -415,31 +413,23 @@ namespace daedalus_turbo {
                         if (tx_size > buf.size() - tx_chunk_offset)
                             tx_size = buf.size() - tx_chunk_offset;
                         const auto tx_buf = buf.subbuf(tx_chunk_offset, tx_size);
-                        cbor_parser tx_parser { tx_buf };
                         try {
-                            tx_parser.read(tx_raw);
+                            auto tx_raw = cbor::zero2::parse(tx_buf);
                             const auto block_meta = r.find_block(tx_offset);
-                            cardano::mocks::block mock_blk { block_meta, tx_raw, tx_offset, cr.config() };
-                            auto tx = cardano::make_tx(tx_raw, mock_blk);
+                            const auto tx = cardano::tx_container(block_meta, tx_offset, tx_raw.get(), 0, cr.config());
                             tx_item.hash = tx->hash();
                             tx_item.slot = cr.make_slot(block_meta.slot);
-                            if (tx_item.outputs.size() > 0) {
-                                tx->foreach_output([&](const auto &out) {
-                                    auto tx_out_it = std::lower_bound(tx_item.outputs.begin(), tx_item.outputs.end(), out.idx, [&](const auto &el, const auto &v) { return el.out_idx < v; });
-                                    if (tx_out_it == tx_item.outputs.end() || tx_out_it->out_idx != out.idx)
-                                        return;
-                                    tx_out_it->amount = out.amount;
-                                    if (out.assets != nullptr) {
-                                        for (const auto &[policy_id, policy_assets]: out.assets->map()) {
-                                            for (const auto &[asset_name, amount]: policy_assets.map()) {
-                                                tx_out_it->assets[cardano::asset_name(policy_id.buf(), asset_name.buf())] = amount.uint();
-                                            }
-                                        }
+                            for (auto &txo_req: tx_item.outputs) {
+                                const auto &txo = tx->outputs().at(txo_req.out_idx);
+                                txo_req.amount = txo.coin;
+                                for (const auto &[policy_id, policy_assets]: txo.assets) {
+                                    for (const auto &[asset_name, coin]: policy_assets) {
+                                        txo_req.assets[asset_name.to_string(policy_id)] = coin;
                                     }
-                                });
+                                }
                             }
                         } catch (const std::exception &ex) {
-                            throw error(fmt::format("cannot parse tx at offset {} size {}: {}", tx_offset, (size_t)tx_item.size, ex.what()));
+                            throw error(fmt::format("cannot parse tx at offset {} size {}: {}", tx_offset, static_cast<size_t>(tx_item.size), ex.what()));
                         }
                     }
                 });
@@ -458,7 +448,7 @@ namespace fmt {
     struct formatter<daedalus_turbo::transaction>: formatter<size_t> {
         template<typename FormatContext>
         auto format(const auto &tx, FormatContext &ctx) const -> decltype(ctx.out()) {
-            return fmt::format_to(ctx.out(), "slot: {} hash: {} balance change: {}\n", tx.slot, tx.hash.span(), tx.balance_change());
+            return tx.to_string(ctx.out(), daedalus_turbo::cardano::config::get());
         }
     };
 
@@ -469,7 +459,7 @@ namespace fmt {
             auto out_it = ctx.out();
             if (h.full_history) {
                 for (const auto &[offset, tx]: h.transactions)
-                   out_it = fmt::format_to(out_it, "{}", tx);
+                   out_it = tx.to_string(out_it, h.cfg);
             }
             out_it = fmt::format_to(out_it, "transaction outputs affecting {}: {} of them unspent: {}\n",
                 h.id, h.total_tx_outputs, h.total_tx_outputs_unspent);

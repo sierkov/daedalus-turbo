@@ -1,16 +1,16 @@
 {
   "dependencies": [
     "boost",
+    "botan",
     "fmt",
     "libsodium",
-    {
-      "name": "mimalloc",
-      "version>=": "2.1.7"
-    },
     "pkgconf",
     "secp256k1",
     "spdlog",
     "zstd"
   ],
-  "builtin-baseline": "7adc2e4d49e8d0efc07a369079faa6bc3dbb90f3"
+  "builtin-baseline": "7adc2e4d49e8d0efc07a369079faa6bc3dbb90f3",
+  "overrides": [
+    { "name": "botan", "version": "2.19.3#2" }
+  ]
 }

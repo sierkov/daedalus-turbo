@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_KES_HPP
@@ -35,11 +36,10 @@ namespace daedalus_turbo {
 
         [[nodiscard]] bool verify(size_t period, const kes_vkey_span &vkey, const buffer &msg) const
         {
-            blake2b_256_hash computed_vkey;
-            blake2b(computed_vkey, buffer { &_lhs_vk, sizeof(_lhs_vk) + sizeof(_rhs_vk) });
-            if (span_memcmp(computed_vkey, vkey) != 0)
+            const auto computed_vkey = blake2b<blake2b_256_hash>(buffer { _lhs_vk.data(), sizeof(_lhs_vk) + sizeof(_rhs_vk) });
+            if (span_memcmp(computed_vkey, vkey) != 0) [[unlikely]]
                 return false;
-            if (period >= period_max)
+            if (period >= period_max) [[unlikely]]
                 throw error(fmt::format("KES period out of range: {}!", period));
             if (period < period_split_point)
                 return _signature.verify(period, _lhs_vk, msg);
@@ -101,7 +101,7 @@ namespace daedalus_turbo {
             static constexpr size_t period_split_point = 1 << (DEPTH - 1);
             static constexpr size_t signature_size = sizeof(ed25519::signature) + DEPTH * 2 * sizeof(ed25519::vkey);
 
-            using signature = array<uint8_t, signature_size>;
+            using signature = byte_array<signature_size>;
 
             explicit secret(const buffer &bytes)
                 : _seed { bytes }, _left { _seed.left }, _right { _seed.right }
@@ -145,7 +145,7 @@ namespace daedalus_turbo {
         template <>
         struct secret<0> {
             static constexpr size_t signature_size = sizeof(ed25519::signature);
-            using signature = array<uint8_t, signature_size>;
+            using signature = byte_array<signature_size>;
 
             explicit secret(const buffer &seed)
             {

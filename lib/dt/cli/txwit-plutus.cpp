@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
@@ -49,8 +50,8 @@ namespace daedalus_turbo::cli::txwit_plutus {
                 paths.emplace_back(std::move(p));
             }
             std::sort(paths.begin(), paths.end());
-            alignas(mutex::padding) mutex::unique_lock::mutex_type wits_mutex {};
-            tx::wit_cnt wits {};
+            mutex::unique_lock::mutex_type wits_mutex alignas(mutex::alignment) {};
+            wit_cnt wits {};
             std::atomic_size_t ok = 0;
             std::atomic_size_t err = 0;
             for (size_t i = 0; i < paths.size(); ++i) {
@@ -94,7 +95,7 @@ namespace daedalus_turbo::cli::txwit_plutus {
         struct eval_result {
             size_t tx_ok = 0;
             size_t tx_err = 0;
-            tx::wit_cnt wits {};
+            wit_cnt wits {};
         };
 
         struct parsed_models_update {

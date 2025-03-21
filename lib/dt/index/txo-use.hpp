@@ -1,11 +1,11 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_INDEX_TXO_USE_HPP
 #define DAEDALUS_TURBO_INDEX_TXO_USE_HPP
 
-#include <dt/cardano.hpp>
 #include <dt/index/common.hpp>
 
 namespace daedalus_turbo::index::txo_use {
@@ -42,27 +42,18 @@ namespace daedalus_turbo::index::txo_use {
     struct chunk_indexer: chunk_indexer_multi_part<item> {
         using chunk_indexer_multi_part<item>::chunk_indexer_multi_part;
     protected:
-        void index_tx(const cardano::tx &tx) override
+        void index_tx(const cardano::tx_base &tx) override
         {
-            // necessary since some transactions contain duplicate inputs and Cardano Node allows it!
-            std::set<std::pair<cardano_hash_32, cardano::tx_out_idx>> inputs {};
-            tx.foreach_input([&](const auto &tx_in) {
-                inputs.emplace(tx_in.tx_hash, tx_in.txo_idx);
+            tx.foreach_input([&](const auto &txi) {
+                _idx.emplace_part(txi.hash[0] / _part_range, txi.hash, txi.idx, tx.offset(), tx.size());
             });
-            for (const auto &[tx_hash, txo_idx]: inputs) {
-                _idx.emplace_part(tx_hash[0] / _part_range, tx_hash, txo_idx, tx.offset(), tx.size());
-            }
         }
 
-        void index_invalid_tx(const cardano::tx &tx) override
+        void index_invalid_tx(const cardano::tx_base &tx) override
         {
-            std::set<std::pair<cardano_hash_32, cardano::tx_out_idx>> inputs {};
-            tx.foreach_collateral([&](const auto &tx_in) {
-                inputs.emplace(tx_in.tx_hash, tx_in.txo_idx);
+            tx.foreach_collateral([&](const auto &txi) {
+                _idx.emplace_part(txi.hash[0] / _part_range, txi.hash, txi.idx, tx.offset(), tx.size());
             });
-            for (const auto &[tx_hash, txo_idx]: inputs) {
-                _idx.emplace_part(tx_hash[0] / _part_range, tx_hash, txo_idx, tx.offset(), tx.size());
-            }
         }
     };
 

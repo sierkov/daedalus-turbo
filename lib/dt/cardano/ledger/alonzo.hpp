@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_CARDANO_LEDGER_ALONZO_HPP
@@ -16,11 +17,10 @@ namespace daedalus_turbo::cardano::ledger::alonzo {
         state(shelley::state &&);
     protected:
         void _apply_alonzo_params(protocol_params &p) const;
-        param_update _parse_param_update(const cbor::value &proposal) const override;
         void _apply_param_update(const param_update &update) override;
-        void _parse_protocol_params(protocol_params &params, const cbor_value &values) const override;
-        void _params_to_cbor(cbor::encoder &enc, const protocol_params &params) const override;
-        void _param_update_to_cbor(cbor::encoder &enc, const param_update &update) const override;
+        void _parse_protocol_params(protocol_params &params, cbor::zero2::value &values) const override;
+        void _params_to_cbor(era_encoder &enc, const protocol_params &params) const override;
+        void _param_update_to_cbor(era_encoder &enc, const param_update &update) const override;
     };
 }
 

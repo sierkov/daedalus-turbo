@@ -1,47 +1,23 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_STORAGE_CHUNK_INFO_HPP
 #define DAEDALUS_TURBO_STORAGE_CHUNK_INFO_HPP
 
 #include <string>
-#include <dt/cardano/common.hpp>
-#include <dt/format.hpp>
+#include <dt/cardano/common/common.hpp>
+#include <dt/common/format.hpp>
+
+namespace daedalus_turbo::cardano {
+    struct block_container;
+}
 
 namespace daedalus_turbo::storage {
-    struct block_info {
-        cardano::block_hash hash {};
-        uint64_t offset = 0;
-        uint32_t size = 0;
-        uint32_t slot = 0;
-        uint32_t height = 0;
-        uint32_t chk_sum = 0;
-        cardano::pool_hash pool_id {};
-        uint16_t header_size = 0;
-        uint8_t header_offset = 0;
-        uint8_t era = 0; // necessary to exclude boundary blocks (era=0) during density estimation, etc.
-
-        static block_info from_block(const cardano::block_base &blk);
-
-        constexpr static auto serialize(auto &archive, auto &self)
-        {
-            return archive(self.hash, self.offset, self.size, self.slot, self.height, self.chk_sum,
-                self.header_offset, self.header_size, self.pool_id, self.era);
-        }
-
-        [[nodiscard]] uint64_t end_offset() const
-        {
-            return offset + size;
-        }
-
-        [[nodiscard]] cardano::point point() const
-        {
-            return { hash, slot, height, end_offset() };
-        }
-    };
-    using block_list = std::vector<block_info>;
+    using block_info = cardano::block_info;
     static_assert(sizeof(block_info) == 88);
+    using block_list = vector<block_info>;
 
     struct chunk_info {
         size_t data_size = 0;
@@ -68,7 +44,7 @@ namespace daedalus_turbo::storage {
 
         static std::string rel_path_from_hash(const cardano::block_hash &data_hash)
         {
-            return fmt::format("chunk/{}.zstd", data_hash.span());
+            return fmt::format("chunk/{}.zstd", data_hash);
         }
 
         [[nodiscard]] std::string rel_path() const
@@ -118,9 +94,9 @@ namespace daedalus_turbo::storage {
             chunk.num_blocks = json::value_to<size_t>(j.at("numBlocks"));
             chunk.first_slot = json::value_to<uint64_t>(j.at("firstSlot"));
             chunk.last_slot = json::value_to<uint64_t>(j.at("lastSlot"));
-            chunk.data_hash = bytes_from_hex(json::value_to<std::string_view>(j.at("hash")));
-            chunk.prev_block_hash = bytes_from_hex(json::value_to<std::string_view>(j.at("prevBlockHash")));
-            chunk.last_block_hash = bytes_from_hex(json::value_to<std::string_view>(j.at("lastBlockHash")));
+            chunk.data_hash = decltype(chunk.data_hash)::from_hex(json::value_to<std::string_view>(j.at("hash")));
+            chunk.prev_block_hash = decltype(chunk.prev_block_hash)::from_hex(json::value_to<std::string_view>(j.at("prevBlockHash")));
+            chunk.last_block_hash = decltype(chunk.last_block_hash)::from_hex(json::value_to<std::string_view>(j.at("lastBlockHash")));
             return chunk;
         }
 
@@ -132,9 +108,9 @@ namespace daedalus_turbo::storage {
                 { "numBlocks", num_blocks },
                 { "firstSlot", static_cast<uint64_t>(first_slot) },
                 { "lastSlot", static_cast<uint64_t>(last_slot) },
-                { "hash", fmt::format("{}", data_hash.span()) },
-                { "prevBlockHash", fmt::format("{}", prev_block_hash.span()) },
-                { "lastBlockHash", fmt::format("{}", last_block_hash.span()) }
+                { "hash", fmt::format("{}", data_hash) },
+                { "prevBlockHash", fmt::format("{}", prev_block_hash) },
+                { "lastBlockHash", fmt::format("{}", last_block_hash) }
             };
         }
     };

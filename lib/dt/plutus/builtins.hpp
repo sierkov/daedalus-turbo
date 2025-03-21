@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_PLUTUS_BUILTINS_HPP
@@ -108,6 +109,19 @@ namespace daedalus_turbo::plutus {
         extern value bls12_381_miller_loop(allocator &, const value &, const value &);
         extern value bls12_381_mul_ml_result(allocator &, const value &, const value &);
         extern value bls12_381_final_verify(allocator &, const value &, const value &);
+        extern value and_byte_string(allocator &, const value &, const value &, const value &);
+        extern value or_byte_string(allocator &, const value &, const value &, const value &);
+        extern value xor_byte_string(allocator &, const value &, const value &, const value &);
+        extern value complement_byte_string(allocator &, const value &);
+        extern value shift_byte_string(allocator &, const value &, const value &);
+        extern value rotate_byte_string(allocator &, const value &, const value &);
+        extern value count_set_bits(allocator &, const value &);
+        extern value find_first_set_bit(allocator &, const value &);
+        extern value read_bit(allocator &, const value &, const value &);
+        extern value write_bits(allocator &, const value &, const value &, const value &);
+        extern value replicate_byte(allocator &, const value &, const value &);
+        extern value ripemd_160(allocator &, const value &);
+        extern value exp_mod_integer(allocator &, const value &, const value &, const value &);
 
         extern const builtin_map &semantics_v1();
         extern const builtin_map &semantics_v2();

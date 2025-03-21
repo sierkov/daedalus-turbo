@@ -1,14 +1,16 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
+#include <dt/common/test.hpp>
 #include <dt/chunk-registry.hpp>
 #include <dt/json.hpp>
-#include <dt/test.hpp>
 
 namespace {
     using namespace daedalus_turbo;
+    using boost::ext::ut::v2_1_0::nothrow;
 
     static void copy_chunk(chunk_registry &dst_cr, const chunk_registry &src_cr, const storage::chunk_info &chunk)
     {
@@ -21,6 +23,7 @@ namespace {
 }
 
 suite chunk_registry_suite = [] {
+    using boost::ext::ut::v2_1_0::nothrow;
     "chunk_registry"_test = [] {
         static std::string data_dir = install_path("./data/chunk-registry");
         static std::string tmp_data_dir = install_path("./tmp/chunk-registry");
@@ -98,6 +101,24 @@ suite chunk_registry_suite = [] {
                 expect(cr.find_data_hash_it(cardano::block_hash::from_hex("47F62675C9B0161211B9261B7BB1CF801EDD4B9C0728D9A6C7A910A1581EED41"))->second.offset == 84'430'954_ull);
                 expect(cr.find_data_hash_it(cardano::block_hash {}) == cr.chunks().end());
             };
+            "latest_block_after_slot"_test = [&] {
+                if (const auto blk = cr.latest_block_after_or_at_slot(0); blk) {
+                    test_same(0, blk->slot);
+                } else {
+                    expect(false);
+                }
+                if (const auto blk = cr.latest_block_after_or_at_slot(cr.max_slot()); blk) {
+                    test_same(cr.max_slot(), blk->slot );
+                } else {
+                    expect(false);
+                }
+                const uint64_t mid_slot = cr.max_slot() / 2;
+                if (const auto blk = cr.latest_block_after_or_at_slot(mid_slot); blk) {
+                    expect(blk->slot >= mid_slot) << fmt::format("{}", blk->point()) << mid_slot;
+                } else {
+                    expect(false);
+                }
+            };
             "latest_block_before_slot"_test = [&] {
                 if (const auto blk = cr.latest_block_before_or_at_slot(0); blk) {
                     test_same(0, blk->slot);
@@ -120,10 +141,11 @@ suite chunk_registry_suite = [] {
                 }
             };
             "read"_test = [&cr] {
-                cbor_value block_tuple {};
-                cr.read(28'762'567, block_tuple);
-                expect(block_tuple.type == CBOR_ARRAY) << block_tuple.type;
-                expect(block_tuple.array().size() == 2_u);
+                auto block_tuple_pv = cr.read(28'762'567);
+                auto &block_tuple = block_tuple_pv.get();
+                test_same(cbor::major_type::array, block_tuple.type());
+                test_same(false, block_tuple.indefinite());
+                test_same(2, block_tuple.special_uint());
             };
         }
         {
@@ -174,7 +196,7 @@ suite chunk_registry_suite = [] {
             const auto before_slot = cr.max_slot();
             const auto before_chunks = cr.num_chunks();
             const auto before_blocks = cr.num_blocks();
-            expect(before_size == 175115499_ull);
+            test_same(175115499, before_size);
             const auto last_chunk = cr.last_chunk();
             expect(!!last_chunk);
             if (last_chunk) {
@@ -184,7 +206,7 @@ suite chunk_registry_suite = [] {
                 test_same(cr.tip(), new_tip);
                 expect(cr.num_blocks() == before_blocks - 1);
                 expect(cr.num_chunks() == before_chunks);
-                expect(cr.max_slot() == 74044763_ull);
+                test_same(74044763, cr.max_slot());
                 expect(cr.max_slot() != before_slot);
             }
         };
@@ -206,7 +228,7 @@ suite chunk_registry_suite = [] {
             std::set<uint64_t> epochs {};
             size_t num_bytes = 0;
             static const std::string src_dir { "./data/chunk-registry-new" };
-            auto j_chunks = json::load(src_dir + "/epoch-merge.json").as_array();
+            auto j_chunks = daedalus_turbo::json::load(src_dir + "/epoch-merge.json").as_array();
             chunk_processor proc {
                 .on_epoch_update = [&](const auto epoch, const auto &info) {
                     epochs.emplace(epoch);
@@ -234,13 +256,13 @@ suite chunk_registry_suite = [] {
                 for (const auto &j_chunk: j_chunks) {
                     std::string orig_rel_path { static_cast<std::string_view>(j_chunk.at("relPath").as_string()) };
                     const auto src_path = fmt::format("{}/{}", src_dir, orig_rel_path);
-                    const auto offset = json::value_to<uint64_t>(j_chunk.at("offset"));
+                    const auto offset = daedalus_turbo::json::value_to<uint64_t>(j_chunk.at("offset"));
                     const auto local_path = cr.full_path(orig_rel_path);
                     const auto data = file::read(src_path);
                     const auto compressed = zstd::compress(data);
                     file::write(local_path, compressed);
                     cr.add(offset, local_path);
-                    auto exp_max_epoch = json::value_to<uint64_t>(j_chunk.at("expMaxEpoch"));
+                    auto exp_max_epoch = daedalus_turbo::json::value_to<uint64_t>(j_chunk.at("expMaxEpoch"));
                     auto act_max_epoch = epochs.empty() ? 0 : *epochs.rbegin();
                     test_same(act_max_epoch, exp_max_epoch);
                 }
@@ -250,28 +272,6 @@ suite chunk_registry_suite = [] {
             test_same(2602139, num_bytes);
             if (!epochs.empty())
                 expect(3 == *epochs.rbegin()) << fmt::format("{}", epochs);
-        };
-        "parse_parallel"_test = [&] {
-            struct res_t {
-                size_t num_txs = 0;
-                res_t &operator+=(const res_t &v)
-                {
-                    num_txs += v.num_txs;
-                    return *this;
-                }
-            };
-            chunk_registry cr { data_dir, chunk_registry::mode::store };
-            res_t agg_res {};
-            auto ok = cr.parse_parallel<res_t>(
-                [&](auto &res, const auto &, auto &blk) {
-                    res.num_txs += blk.tx_count();
-                },
-                [&](auto &&, auto &&res) {
-                    agg_res += res;
-                }
-            );
-            expect(ok);
-            expect(agg_res.num_txs == 90'455_ull);
         };
         "epoch info"_test = [&] {
             expect(throws([]{

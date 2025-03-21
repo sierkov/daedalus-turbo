@@ -1,11 +1,11 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_INDEX_TIMED_UPDATE_HPP
 #define DAEDALUS_TURBO_INDEX_TIMED_UPDATE_HPP
 
-#include <dt/cardano.hpp>
 #include <dt/index/common.hpp>
 
 namespace daedalus_turbo::index::timed_update {
@@ -35,31 +35,31 @@ namespace daedalus_turbo::index::timed_update {
         uint64_t coin = 0;
     };
     using variant = std::variant<
-        cardano::shelley::stake_reg_cert,
-        cardano::conway::reg_cert,
-        cardano::conway::stake_reg_deleg_cert,
-        cardano::conway::vote_reg_deleg_cert,
-        cardano::conway::stake_vote_reg_deleg_cert,
-        cardano::conway::reg_drep_cert,
-        cardano::shelley::pool_reg_cert,
-        cardano::shelley::genesis_deleg_cert,
-        cardano::shelley::instant_reward_cert,
-        cardano::shelley::stake_deleg_cert,
-        cardano::conway::vote_deleg_cert,
-        cardano::conway::stake_vote_deleg_cert,
-        cardano::conway::auth_committee_hot_cert,
-        cardano::conway::resign_committee_cold_cert,
-        cardano::conway::update_drep_cert,
+        cardano::stake_reg_cert,
+        cardano::reg_cert,
+        cardano::stake_reg_deleg_cert,
+        cardano::vote_reg_deleg_cert,
+        cardano::stake_vote_reg_deleg_cert,
+        cardano::reg_drep_cert,
+        cardano::pool_reg_cert,
+        cardano::genesis_deleg_cert,
+        cardano::instant_reward_cert,
+        cardano::stake_deleg_cert,
+        cardano::vote_deleg_cert,
+        cardano::stake_vote_deleg_cert,
+        cardano::auth_committee_hot_cert,
+        cardano::resign_committee_cold_cert,
+        cardano::update_drep_cert,
         stake_withdraw,
-        cardano::shelley::stake_dereg_cert,
-        cardano::shelley::pool_retire_cert,
-        cardano::conway::unreg_cert,
-        cardano::conway::unreg_drep_cert,
+        cardano::stake_dereg_cert,
+        cardano::pool_retire_cert,
+        cardano::unreg_cert,
+        cardano::unreg_drep_cert,
         cardano::param_update_proposal,
         cardano::param_update_vote,
         collected_collateral_input,
         collected_collateral_refund,
-        cardano::conway::proposal_t,
+        cardano::proposal_t,
         cardano::conway::vote_info_t
     >;
     struct item {
@@ -82,33 +82,31 @@ namespace daedalus_turbo::index::timed_update {
     struct chunk_indexer: chunk_indexer_one_epoch<item> {
         using chunk_indexer_one_epoch::chunk_indexer_one_epoch;
     protected:
-        void index_tx(const cardano::tx &tx) override
+        void index_tx(const cardano::tx_base &tx) override
         {
             const auto slot = tx.block().slot();
             if (const auto *c_tx = dynamic_cast<const cardano::conway::tx *>(&tx); c_tx) {
-                c_tx->foreach_cert([&](const auto &v, const auto cert_idx) {
-                    cardano::conway::cert_t cert { v };
+                size_t cert_idx = 0;
+                c_tx->foreach_cert([&](const auto &cert) {
                     std::visit([&](const auto &c) {
-                        _data.emplace_back(cardano::cert_loc_t { slot, tx.index(), cert_idx }, c);
+                        _data.emplace_back(cardano::cert_loc_t { slot, tx.index(), cert_idx++ }, c);
                     }, cert.val);
                 });
                 {
                     size_t prop_idx = 0;
-                    c_tx->foreach_proposal([&](const auto &p) {
+                    for (const auto &p: c_tx->proposals())
                         _data.emplace_back(cardano::cert_loc_t { slot, tx.index(), prop_idx++ }, p);
-                    });
                 }
                 {
                     size_t vote_idx = 0;
-                    c_tx->foreach_vote([&](const auto &p) {
-                        _data.emplace_back(cardano::cert_loc_t { slot, tx.index(), vote_idx++ }, p);
-                    });
+                    for (const auto &v: c_tx->votes())
+                        _data.emplace_back(cardano::cert_loc_t { slot, tx.index(), vote_idx++ }, v);
                 }
             } else {
-                tx.foreach_cert([&](const auto &v, const auto cert_idx) {
-                    cardano::shelley::cert_t cert { v };
+                size_t cert_idx = 0;
+                tx.foreach_cert([&](const auto &cert) {
                     std::visit([&](const auto &c) {
-                        _data.emplace_back(cardano::cert_loc_t { slot, tx.index(), cert_idx }, c);
+                        _data.emplace_back(cardano::cert_loc_t { slot, tx.index(), cert_idx++ }, c);
                     }, cert.val);
                 });
             }
@@ -117,26 +115,26 @@ namespace daedalus_turbo::index::timed_update {
             });
         }
 
-        void index_invalid_tx(const cardano::tx &tx) override
+        void index_invalid_tx(const cardano::tx_base &tx) override
         {
             const auto slot = tx.block().slot();
             if (const auto *babbage_tx = dynamic_cast<const cardano::babbage::tx *>(&tx); babbage_tx) {
                 if (const auto c_ret = babbage_tx->collateral_return(); c_ret)
-                    _data.emplace_back(cardano::cert_loc_t { slot, tx.index(), 0 }, collected_collateral_refund { c_ret->amount });
+                    _data.emplace_back(cardano::cert_loc_t { slot, tx.index(), 0 }, collected_collateral_refund { c_ret->coin });
             }
             tx.foreach_collateral([&](const auto &tx_in) {
-                logger::debug("collect collateral {}#{}", tx_in.tx_hash, tx_in.txo_idx);
-                _data.emplace_back(cardano::cert_loc_t { slot, tx.index(), 0 }, collected_collateral_input { tx_in.tx_hash, tx_in.txo_idx });
+                logger::debug("collect collateral {}", tx_in);
+                _data.emplace_back(cardano::cert_loc_t { slot, tx.index(), 0 }, collected_collateral_input { tx_in.hash, tx_in.idx });
             });
         }
 
-        void _index_epoch(const cardano::block_base &blk, data_type &idx) override
+        void _index_epoch(const cardano::block_container &blk, data_type &idx) override
         {
-            blk.foreach_update_proposal([&](const auto &prop) {
-                idx.emplace_back(cardano::cert_loc_t { blk.slot(), 0, 0 }, prop);
+            blk->foreach_update_proposal([&](const auto &prop) {
+                idx.emplace_back(cardano::cert_loc_t { blk->slot(), 0, 0 }, prop);
             });
-            blk.foreach_update_vote([&](const auto &vote) {
-                idx.emplace_back(cardano::cert_loc_t { blk.slot(), 0, 0 }, vote);
+            blk->foreach_update_vote([&](const auto &vote) {
+                idx.emplace_back(cardano::cert_loc_t { blk->slot(), 0, 0 }, vote);
             });
         }
     };

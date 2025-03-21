@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_PARALLEL_ORDERED_QUEUE_HPP
@@ -7,7 +8,7 @@
 
 #include <atomic>
 #include <dt/container.hpp>
-#include <dt/error.hpp>
+#include <dt/common/error.hpp>
 #include <dt/mutex.hpp>
 
 namespace daedalus_turbo::parallel {
@@ -63,7 +64,7 @@ namespace daedalus_turbo::parallel {
     private:
         std::atomic<index_type> _next_take { 0 };
         std::atomic<index_type> _next_ordered { 0 };
-        alignas(mutex::padding) mutex::unique_lock::mutex_type _put_mutex {};
+        mutex::unique_lock::mutex_type _put_mutex alignas(mutex::alignment) {};
         set<index_type> _unordered {};
     };
 }

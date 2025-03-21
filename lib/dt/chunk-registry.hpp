@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_CHUNK_REGISTRY_HPP
@@ -10,8 +11,7 @@
 #include <set>
 #include <string>
 #include <dt/atomic.hpp>
-#include <dt/cardano.hpp>
-#include <dt/cardano/config.hpp>
+#include <dt/cardano/common/config.hpp>
 #include <dt/file.hpp>
 #include <dt/file-remover.hpp>
 #include <dt/indexer.hpp>
@@ -100,7 +100,6 @@ namespace daedalus_turbo {
         chunk_list _chunks;
     };
     using epoch_map = map<size_t, epoch_info>;
-    using parsed_block_list = vector<std::unique_ptr<cardano::block_base>>;
 
     struct progress_point {
         uint64_t slot = 0; // required to be correct
@@ -526,7 +525,8 @@ namespace daedalus_turbo {
             return chunk_it->second;
         }
 
-        std::optional<storage::block_info> latest_block_before_or_at_slot(const uint64_t slot) const;
+        std::optional<storage::block_info> latest_block_after_or_at_slot(uint64_t slot) const;
+        std::optional<storage::block_info> latest_block_before_or_at_slot(uint64_t slot) const;
 
         std::optional<storage::block_info> find_block_by_slot_no_throw(const uint64_t slot, const cardano::block_hash &hash) const
         {
@@ -640,11 +640,11 @@ namespace daedalus_turbo {
             const auto &chunk = find_offset(offset);
             if (offset >= chunk.offset + chunk.data_size)
                 throw error("the requested chunk segment is too small to parse it");
-            file::read(full_path(chunk.rel_path()), chunk_data);
+            file::read_auto(full_path(chunk.rel_path()), chunk_data);
             return chunk.offset;
         }
 
-        void read_from_chunk_buffer(cbor_value &value, const uint64_t value_offset, const buffer &chunk_data, const uint64_t chunk_offset) const
+        cbor::zero2::parsed_value read_from_chunk_buffer(const uint64_t value_offset, const buffer &chunk_data, const uint64_t chunk_offset) const
         {
             if (value_offset < chunk_offset) [[unlikely]]
                 throw error("the requested value offset is outside of the chunk's data range!");
@@ -652,68 +652,13 @@ namespace daedalus_turbo {
                 throw error("the requested chunk segment is too small to parse it");
             const size_t read_offset = value_offset - chunk_offset;
             const size_t read_size = chunk_data.size() - read_offset;
-            cbor_parser parser(chunk_data.subbuf(read_offset, read_size));
-            parser.read(value);
+            return cbor::zero2::parse(chunk_data.subbuf(read_offset, read_size));
         }
 
-        void read(const uint64_t offset, cbor_value &value) const
+        cbor::zero2::parsed_value read(const uint64_t offset) const
         {
             const auto chunk_offset = read_holding_chunk(_read_buffer, offset);;
-            read_from_chunk_buffer(value, offset, _read_buffer, chunk_offset);
-        }
-
-        cbor::value read(const uint64_t offset) const
-        {
-            cbor::value item;
-            read(offset, item);
-            return item;
-        }
-
-        // assumes no concurrent modifications to chunk_registry data
-        template<typename T>
-        bool parse_parallel(
-            const std::function<void(T &res, const std::string &chunk_path, cardano::block_base &blk)> &act,
-            const std::optional<std::function<void(std::string &&chunk_path, T &&res)>> &aggregate={},
-            const std::optional<std::function<void(const std::string &chunk_path, T &res)>> &finalize={},
-            const bool progress=true) const
-        {
-            progress_guard pg { "parse" };
-            uint64_t total_size = num_bytes();
-            std::atomic_size_t parsed_size { 0 };
-            alignas(mutex::padding) mutex::unique_lock::mutex_type agg_mutex {};
-            for (const auto &[chunk_last_byte, chunk_info]: _chunks) {
-                const auto chunk_offset = chunk_info.offset;
-                const auto chunk_size = chunk_info.data_size;
-                const auto chunk_rel_path = chunk_info.rel_path();
-                _sched.submit_void("parse-chunk", -static_cast<int64_t>(chunk_last_byte), [&, chunk_offset, chunk_size, chunk_rel_path]() {
-                    T res {};
-                    auto canon_path = full_path(chunk_rel_path);
-                    const auto data = file::read(canon_path);
-                    cbor_parser block_parser { data };
-                    cbor_value block_tuple {};
-                    while (!block_parser.eof()) {
-                        block_parser.read(block_tuple);
-                        if (block_tuple.at(0).uint()) [[likely]] {
-                            const auto blk = cardano::make_block(block_tuple, chunk_offset + block_tuple.data - data.data(), config());
-                            //logger::debug("block slot: {} chunk.offset: {} block_data_offset: {}", blk->slot(), chunk_offset, block_tuple.data - data.data());
-                            try {
-                                act(res, canon_path, *blk);
-                            } catch (const std::exception &ex) {
-                                throw error(fmt::format("failed to parse block at slot: {} hash: {}: {}", blk->slot(), blk->hash(), ex.what()));
-                            }
-                        }
-                    }
-                    if (finalize)
-                        (*finalize)(canon_path, res);
-                    if (aggregate) {
-                        mutex::scoped_lock lk { agg_mutex };
-                        (*aggregate)(std::move(canon_path), std::move(res));
-                    }
-                    const auto done = parsed_size.fetch_add(chunk_size, std::memory_order::relaxed) + chunk_size;
-                    progress::get().update("parse", done, total_size);
-                });
-            }
-            return _sched.process_ok(progress);
+            return read_from_chunk_buffer(offset, _read_buffer, chunk_offset);
         }
 
         // state modifying methods
@@ -736,7 +681,7 @@ namespace daedalus_turbo {
         {
             if (!_transaction)
                 throw error("add can be executed only inside of a transaction!");
-            const auto compressed = file::read_raw(local_path);
+            const auto compressed = file::read(local_path);
             const auto data = zstd::decompress(compressed);
             auto [parsed_chunk, ex_ptr] = _parse(offset, data, compressed.size());
             const auto final_path = full_path(parsed_chunk.rel_path());
@@ -745,7 +690,7 @@ namespace daedalus_turbo {
                     if (local_path != final_path)
                         std::filesystem::rename(local_path, final_path);
                 } else {
-                    file::write_zstd(final_path, data.span().subbuf(0, parsed_chunk.block_data_size()));
+                    zstd::write(final_path, static_cast<buffer>(data).subbuf(0, parsed_chunk.block_data_size()));
                 }
                 _add(std::move(parsed_chunk));
             }
@@ -825,12 +770,12 @@ namespace daedalus_turbo {
         std::unique_ptr<indexer::incremental> _indexer {};
         std::unique_ptr<validator::incremental> _validator {};
         std::optional<active_transaction> _transaction {};
-        alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _tx_progress_mutex {};
+        mutable mutex::unique_lock::mutex_type _tx_progress_mutex alignas(mutex::alignment) {};
         mutable map<std::string, uint64_t> _tx_progress_max {};
         mutable std::atomic_size_t _tx_progress_parse { 0 };
         const std::string _state_path;
         const std::string _state_path_pre;
-        alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _update_mutex {};
+        mutable mutex::unique_lock::mutex_type _update_mutex alignas(mutex::alignment) {};
         chunk_map _chunks {};
         // Active transaction data
         chunk_map _unmerged_chunks {};
@@ -861,7 +806,7 @@ namespace daedalus_turbo {
                     chunk.num_blocks = chunk.blocks.size();
                     chunk.data_size = chunk.blocks.back().end_offset() - chunk.offset;
                     const auto old_path = full_path(chunk.rel_path());
-                    auto chunk_data = file::read(old_path);
+                    auto chunk_data = file::read_auto(old_path);
                     chunk_data.resize(chunk.data_size);
                     blake2b(chunk.data_hash, chunk_data);
                     const auto compressed = zstd::compress(chunk_data);

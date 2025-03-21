@@ -1,11 +1,13 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
-#include <utfcpp/utf8.h>
-#include <dt/plutus/types.hpp>
+#include <dt/cbor/zero2.hpp>
 #include <dt/plutus/builtins.hpp>
+#include <dt/plutus/types.hpp>
+#include <utfcpp/utf8.h>
 
 namespace daedalus_turbo::plutus {
     using builtin_name_map = unordered_map<std::string_view, builtin_tag>;
@@ -160,6 +162,11 @@ namespace daedalus_turbo::plutus {
         return _ptr.get();
     }
 
+    const constant_list::value_type &constant_list::operator*() const
+    {
+        return *_ptr;
+    }
+
     bool constant_list::operator==(const constant_list &o) const
     {
         return _ptr->typ == o._ptr->typ && _ptr->vals == o._ptr->vals;
@@ -309,75 +316,82 @@ namespace daedalus_turbo::plutus {
         return { alloc, map_type { alloc, std::move(m) } };
     }
 
-    static data _from_cbor(allocator &alloc, cbor::zero::value item);
+    static data _from_cbor(allocator &alloc, cbor::zero2::value &item);
 
-    static data::list_type _from_cbor(allocator &alloc, cbor::zero::value::array_iterator it)
+    static data::list_type _from_cbor(allocator &alloc, cbor::zero2::array_reader &it)
     {
         data::list_type dl { alloc };
         while (!it.done()) {
-            dl.emplace_back(_from_cbor(alloc, it.next()));
+            dl.emplace_back(_from_cbor(alloc, it.read()));
         }
         return dl;
     }
 
-    static data _from_cbor(allocator &alloc, const cbor::zero::value v)
+    static data _from_cbor(allocator &alloc, cbor::zero2::value &v)
     {
         switch (const auto typ = v.type(); typ) {
             case cbor::major_type::tag: {
-                auto [id, val] = v.tag();
-                switch (id) {
+                auto &tag = v.tag();
+                switch (auto id = tag.id(); id) {
                     case 2:
+                        return { alloc, bint_type { alloc, big_uint_from_cbor(tag.read()) } };
                     case 3:
-                        return { alloc, bint_type { alloc, v.big_int() } };
+                        return { alloc, bint_type { alloc, big_nint_from_cbor(tag.read()) } };
                     default: {
                         if (id >= 121 && id < 128) {
                             id -= 121;
-                        } else if (id >= 1280 && id < 1280 + 128) {
-                            id -= 1280 - 7;
-                        } else if (id == 102) {
-                            auto it = val.array();
-                            id = it.next().uint();
-                            val = it.next();
-                        } else {
-                            throw error(fmt::format("unsupported tag id: {}", id));
+                            return { alloc, data_constr { alloc, bint_type { alloc, id }, _from_cbor(alloc, tag.read().array()) } };
                         }
-                        return { alloc, data_constr { alloc, bint_type { alloc, id }, _from_cbor(alloc, val.array()) } };
+                        if (id >= 1280 && id < 1280 + 128) {
+                            id -= 1280 - 7;
+                            return { alloc, data_constr { alloc, bint_type { alloc, id }, _from_cbor(alloc, tag.read().array()) } };
+                        }
+                        if (id == 102) {
+                            auto &val = tag.read();
+                            auto &it = val.array();
+                            id = it.read().uint();
+                            auto &array_val = it.read();
+                            return { alloc, data_constr { alloc, bint_type { alloc, id }, _from_cbor(alloc, array_val.array()) } };
+                        }
+                        throw error(fmt::format("unsupported tag id: {}", id));
                     }
                 }
             }
             case cbor::major_type::array: return { alloc, _from_cbor(alloc, v.array()) };
             case cbor::major_type::map: {
                 data::map_type m { alloc };
-                auto it = v.map();
+                auto &it = v.map();
                 while (!it.done()) {
-                    auto [k, v] = it.next();
-                    auto kd = _from_cbor(alloc, k);
-                    auto vd = _from_cbor(alloc, v);
+                    auto &mk = it.read_key();
+                    auto kd = _from_cbor(alloc, mk);
+                    auto &mv = it.read_val(std::move(mk));
+                    auto vd = _from_cbor(alloc, mv);
                     m.emplace_back(alloc, std::move(kd), std::move(vd));
                 }
                 return { alloc, std::move(m) };
             }
             case cbor::major_type::bytes: {
                 bstr_type::value_type buf { alloc };
-                v.bytes_alloc(buf);
+                v.to_bytes(buf);
                 return { alloc, bstr_type { alloc, std::move(buf) } };
             }
-            case cbor::major_type::uint: return { alloc, bint_type { alloc, v.big_int() } };
-            case cbor::major_type::nint: return { alloc, bint_type { alloc, v.big_int() } };
+            case cbor::major_type::uint:
+            case cbor::major_type::nint:
+                return { alloc, bint_type { alloc, big_int_from_cbor(v) } };
             default: throw error(fmt::format("unsupported CBOR type {}!", typ));
         }
     }
 
     data data::from_cbor(allocator &alloc, const buffer bytes)
     {
-        return _from_cbor(alloc, cbor::zero::parse(bytes));
+        return _from_cbor(alloc, cbor::zero2::parse(bytes).get());
     }
 
     static void _to_cbor(cbor::encoder &enc, const data &c, size_t level=0);
 
     static void _to_cbor(cbor::encoder &enc, const bint_type &i, const size_t)
     {
-        enc.bigint(*i);
+        big_int_to_cbor(enc, *i);
     }
 
     static void _to_cbor(cbor::encoder &enc, const bstr_type &b, const size_t)
@@ -569,6 +583,10 @@ namespace daedalus_turbo::plutus {
     {
     }
 
+    value::value(allocator &alloc, bstr_type &&b): value { alloc, constant { alloc, std::move(b) } }
+    {
+    }
+
     value::value(allocator &alloc, const buffer b): value { alloc, bstr_type { alloc, b } }
     {
     }
@@ -599,12 +617,12 @@ namespace daedalus_turbo::plutus {
 
     const constant &value::as_const() const
     {
-        return std::get<constant>(*_ptr);
+        return variant::get_nice<constant>(*_ptr);
     }
 
     const v_constr &value::as_constr() const
     {
-        return std::get<v_constr>(*_ptr);
+        return variant::get_nice<v_constr>(*_ptr);
     }
 
     void value::as_unit() const
@@ -636,17 +654,17 @@ namespace daedalus_turbo::plutus {
 
     const bls12_381_g1_element &value::as_bls_g1() const
     {
-        return std::get<bls12_381_g1_element>(*as_const());
+        return variant::get_nice<bls12_381_g1_element>(*as_const());
     }
 
     const bls12_381_g2_element &value::as_bls_g2() const
     {
-        return std::get<bls12_381_g2_element>(*as_const());
+        return variant::get_nice<bls12_381_g2_element>(*as_const());
     }
 
     const bls12_381_ml_result &value::as_bls_ml_res() const
     {
-        return std::get<bls12_381_ml_result>(*as_const());
+        return variant::get_nice<bls12_381_ml_result>(*as_const());
     }
 
     const data &value::as_data() const
@@ -822,7 +840,7 @@ namespace daedalus_turbo::plutus {
         if (bytes.size() != 48) [[unlikely]]
             throw error(fmt::format("bls12_381_g1 elements must provide 48 bytes but got: {}", bytes.size()));
         blst_p1_affine out_a;
-        if (const auto err = blst_p1_uncompress(&out_a, reinterpret_cast<const byte *>(bytes.data())); err != BLST_SUCCESS) [[unlikely]]
+        if (const auto err = blst_p1_uncompress(&out_a, reinterpret_cast<const ::byte *>(bytes.data())); err != BLST_SUCCESS) [[unlikely]]
             throw error(fmt::format("blst12_381_g1 element decoding failed for 0x{}", bytes));
         if (!blst_p1_affine_in_g1(&out_a)) [[unlikely]]
             throw error(fmt::format("blst12_381_g1 element is invalid 0x{}", bytes));
@@ -836,7 +854,7 @@ namespace daedalus_turbo::plutus {
         if (bytes.size() != 96) [[unlikely]]
             throw error(fmt::format("bls12_381_g2 elements must provide 86 bytes but got: {}", bytes.size()));
         blst_p2_affine out_a;
-        if (const auto err = blst_p2_uncompress(&out_a, reinterpret_cast<const byte *>(bytes.data())); err != BLST_SUCCESS) [[unlikely]]
+        if (const auto err = blst_p2_uncompress(&out_a, reinterpret_cast<const ::byte *>(bytes.data())); err != BLST_SUCCESS) [[unlikely]]
             throw error(fmt::format("blst12_381_g2 element decoding failed at for 0x{}", bytes));
         if (!blst_p2_affine_in_g2(&out_a)) [[unlikely]]
             throw error(fmt::format("blst12_381_g2 element is invalid 0x{}", bytes));

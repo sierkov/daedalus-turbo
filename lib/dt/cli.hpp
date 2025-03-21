@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_CLI_HPP
@@ -44,13 +45,21 @@ namespace daedalus_turbo::cli {
             size_t req = 0;
             size_t opt = 0;
             for (const auto &a: args) {
-                if (a.at(0) == '[')
-                    ++opt;
-                else
+                if (a.at(0) == '[') {
+                    if (a.ends_with("...]"))
+                        opt = std::numeric_limits<size_t>::max();
+                    if (opt < std::numeric_limits<size_t>::max())
+                        ++opt;
+                } else {
                     ++req;
+                }
             }
             min = req;
-            max = req + opt;
+            max = req;
+            if (opt == std::numeric_limits<size_t>::max())
+                *max = opt;
+            else
+                *max += opt;
         }
     };
 

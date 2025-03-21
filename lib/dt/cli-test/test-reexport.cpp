@@ -1,10 +1,12 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
+
+#include <dt/cbor/compare.hpp>
 #include <dt/cli.hpp>
 #include <dt/cardano/ledger/state.hpp>
-#include <dt/cardano/ledger/state-compare.hpp>
 
 namespace daedalus_turbo::cli::test_reexport {
     using namespace cardano::ledger;
@@ -28,9 +30,10 @@ namespace daedalus_turbo::cli::test_reexport {
             const auto tip = st.deserialize_node(orig_data);
             t2.stop_and_print();
             timer t3 { "reserialize", logger::level::info };
-            const auto own_data = st.serialize_node(tip).flat();
+            const auto own_data = st.to_cbor(tip).flat();
             t3.stop_and_print();
-            compare_node_state(orig_data, own_data);
+            const auto diff = cbor::compare(orig_data, own_data);
+            logger::info("compare result: {}", diff);
         }
     };
     static auto instance = command::reg(std::make_shared<cmd>());

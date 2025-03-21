@@ -1,11 +1,13 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
+#include <dt/cardano.hpp>
+#include <dt/common/test.hpp>
 #include <dt/sync/mocks.hpp>
 #include <dt/sync/hybrid.hpp>
-#include <dt/test.hpp>
 
 namespace {
     using namespace daedalus_turbo;
@@ -13,11 +15,12 @@ namespace {
 }
 
 suite sync_hybrid_suite = [] {
+    using boost::ext::ut::v2_1_0::nothrow;
     "sync::hybrid"_test = [] {
         const auto [turbo_sk, turbo_vk] = ed25519::create_from_seed(blake2b<ed25519::seed>(std::string_view { "turbo-test" }));
         mock_chain_config mock_cfg {};
-        mock_cfg.cfg.emplace("turbo", json::object {
-            { "hosts", json::array { "turbo1.daedalusturbo.org", "turbo2.daedalusturbo.org" } },
+        mock_cfg.cfg.emplace("turbo", daedalus_turbo::json::object {
+            { "hosts", daedalus_turbo::json::array { "turbo1.daedalusturbo.org", "turbo2.daedalusturbo.org" } },
             { "vkey", fmt::format("{}", turbo_vk) }
         });
         mock_cfg.height = 19;

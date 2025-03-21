@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
@@ -54,7 +55,7 @@ namespace daedalus_turbo {
                 if (!entry.is_regular_file())
                     continue;
                 if (entry.path().extension() == ".html") {
-                    std::string html { file::read(entry.path().string()).span().string_view() };
+                    std::string html { file::read(entry.path().string()).str() };
                     cardano::block_hash last_block_hash {};
                     auto last_block_slot = _cr.make_slot(0);
                     auto last_chunk_first_slot = _cr.make_slot(0);

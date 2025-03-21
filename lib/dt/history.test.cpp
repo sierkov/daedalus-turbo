@@ -1,11 +1,12 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
-#include <dt/cardano/types.hpp>
+#include <dt/common/test.hpp>
+#include <dt/cardano/common/types.hpp>
 #include <dt/history.hpp>
-#include <dt/test.hpp>
 
 using namespace daedalus_turbo;
 
@@ -35,17 +36,17 @@ suite history_suite = [] {
 
             // known-item search
             {
-                cardano::address_buf addr_buf { "stake1uxw70wgydj63u4faymujuunnu9w2976pfeh89lnqcw03pksulgcrg" };
-                cardano::address addr { addr_buf };
+                const cardano::address_buf addr_buf { "stake1uxw70wgydj63u4faymujuunnu9w2976pfeh89lnqcw03pksulgcrg" };
+                const cardano::address addr { addr_buf };
                 const history hist = r.find_history(addr.stake_id());
-                expect(hist.utxo_balance() == 32'476'258'673_ull) << hist.utxo_balance();
-                expect(hist.transactions.size() == 2_u) << hist.transactions.size();
+                test_same(2, hist.transactions.size());
+                test_same(cardano::amount { 32476258673 }, hist.utxo_balance());
             }
             
             // missing-item search
             {
                 const history hist = r.find_history(cardano::address { cardano::address_buf { "0xE10001020304050607080910111213141516171819202122232425262728" } }.stake_id());
-                expect(hist.transactions.size() == 0_u) << hist.transactions.size();
+                test_same(0, hist.transactions.size());
             }
         };
     };

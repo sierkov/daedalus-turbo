@@ -1,19 +1,20 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
 #include <chrono>
-#include <dt/benchmark.hpp>
+#include <dt/common/benchmark.hpp>
 #include <dt/blake2b.hpp>
-#include <dt/file.hpp>
 #include <dt/scheduler.hpp>
+#include <dt/zstd.hpp>
 
 using namespace daedalus_turbo;
 
 suite blake2b_bench_suite = [] {
     "blake2b"_test = [&] {
-        auto in = file::read("./data/chunk-registry/compressed/chunk/47F62675C9B0161211B9261B7BB1CF801EDD4B9C0728D9A6C7A910A1581EED41.zstd");
+        auto in = zstd::read("./data/chunk-registry/compressed/chunk/47F62675C9B0161211B9261B7BB1CF801EDD4B9C0728D9A6C7A910A1581EED41.zstd");
         scheduler sched {};
         for (const auto &[name, func]: { std::make_pair("blake2b-sodium", blake2b_sodium) }) {
             size_t num_evals = (1 << 30) / in.size();

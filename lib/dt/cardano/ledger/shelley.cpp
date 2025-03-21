@@ -1,19 +1,21 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
 #include <dt/atomic.hpp>
 #include <dt/cardano/ledger/shelley.hpp>
 #include <dt/cardano/ledger/updates.hpp>
-#include <dt/cardano/shelley.hpp>
-#include <dt/cbor/zero.hpp>
+#include <dt/cardano/shelley/block.hpp>
+#include <dt/cbor/zero2.hpp>
+#include <dt/big-int.hpp>
 #include <dt/timer.hpp>
 #include <dt/zpp.hpp>
 
 namespace daedalus_turbo::cardano::ledger::shelley {
     template<typename T>
-        concept Clearable = requires(T a)
+    concept Clearable = requires(T a)
     {
         a.clear();
     };
@@ -32,23 +34,40 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         logger::debug("sheley::vrf_state created nonce_genesis: {} max_epoch_slot: {}", _nonce_genesis, _max_epoch_slot);
     }
 
-    void vrf_state::from_cbor(const cbor::value &v)
+    void vrf_state::from_cbor(cbor::zero2::value &v)
     {
-        const auto &raw = v.at(1);
-        _slot_last = raw.at(0).at(1).uint();
-        _kes_counters.clear();
-        for (const auto &[pool_id, ctr]: raw.at(1).at(0).at(0).map()) {
-            const auto [it, created] = _kes_counters.try_emplace(pool_id.buf(), ctr.uint());
-            if (!created) [[unlikely]]
-                throw error(fmt::format("duplicate kes counter reported for pool: {}", pool_id));
-        }
-        _nonce_evolving = raw.at(1).at(0).at(1).at(1).buf();
-        _nonce_candidate = raw.at(1).at(0).at(2).at(1).buf();
-        _nonce_epoch = raw.at(1).at(1).at(0).at(1).buf();
-        _prev_epoch_lab_prev_hash.reset();
-        if (raw.at(1).at(1).at(1).at(0).uint() == 1)
-            _prev_epoch_lab_prev_hash = raw.at(1).at(1).at(1).at(1).buf();
-        _lab_prev_hash = raw.at(1).at(2).at(1).buf();
+        decode_versioned(v, [&](auto &dv1) {
+            auto &it = dv1.array();
+            _slot_last = decode_versioned(it.read(), [](auto &dv) {
+                return dv.uint();
+            });
+            {
+                auto &state = it.read();
+                auto &state_it = state.array();
+                {
+                    auto &part1 = state_it.read();
+                    auto &p1_it = part1.array();
+                    _kes_counters = decltype(_kes_counters)::from_cbor(p1_it.read());
+                    _nonce_evolving = decode_versioned(p1_it.read(), [](auto &dv) {
+                        return dv.bytes();
+                    });
+                    _nonce_candidate = decode_versioned(p1_it.read(), [](auto &dv) {
+                        return dv.bytes();
+                    });
+                }
+                {
+                    auto &part2 = state_it.read();
+                    auto &p2_it = part2.array();
+                    _nonce_epoch = decode_versioned(p2_it.read(), [](auto &dv) {
+                        return dv.bytes();
+                    });
+                    _prev_epoch_lab_prev_hash = decltype(_prev_epoch_lab_prev_hash)::from_cbor(p2_it.read());
+                }
+                _lab_prev_hash = decode_versioned(state_it.read(), [](auto &dv) {
+                    return dv.bytes();
+                });
+            }
+        });
     }
 
     void vrf_state::from_zpp(parallel_decoder &dec)
@@ -58,9 +77,9 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         });
     }
 
-    void vrf_state::to_zpp(parallel_serializer &ser) const
+    void vrf_state::to_zpp(zpp_encoder &ser) const
     {
-        ser.add([&] {
+        ser.add([&](auto) {
             return zpp::serialize(*this);
         });
     }
@@ -108,16 +127,15 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         } else {
             _nonce_epoch = _nonce_candidate;
         }
-        logger::debug("VRF finish_epoch last_slot: {} prev nonce_epoch: {} new nonce_epoch: {} prev_lab_prev_hash: {} extra_entropy: {}",
-            _slot_last, prev_epoch_nonce, _nonce_epoch, _prev_epoch_lab_prev_hash, extra_entropy);
+        logger::debug("VRF finish_epoch last_slot: {} prev nonce_epoch: {} new nonce_epoch: {} nonce_evolving: {} prev_lab_prev_hash: {} new prev_lab_prev_hash: {} extra_entropy: {}",
+            _slot_last, prev_epoch_nonce, _nonce_epoch, _nonce_evolving, _prev_epoch_lab_prev_hash, _lab_prev_hash, extra_entropy);
         _nonce_candidate = _nonce_evolving;
         _prev_epoch_lab_prev_hash = _lab_prev_hash;
     }
 
-    void vrf_state::to_cbor(parallel_serializer &ser) const
+    void vrf_state::to_cbor(cbor_encoder &ser) const
     {
-        ser.add([&] {
-            cbor::encoder enc {};
+        ser.add([&](auto enc) {
             enc.array(2)
                 .uint(1)
                 .array(2)
@@ -139,10 +157,10 @@ namespace daedalus_turbo::cardano::ledger::shelley {
                             .array(2)
                                 .uint(1)
                                 .bytes(_nonce_candidate)
-                        .array(2)
                             .array(2)
-                                .uint(1)
-                                .bytes(_nonce_epoch)
+                                .array(2)
+                                    .uint(1)
+                                    .bytes(_nonce_epoch)
                             .custom([this](auto &enc) {
                                 if (_prev_epoch_lab_prev_hash) {
                                     enc.array(2)
@@ -159,116 +177,136 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         });
     }
 
-    uint8_vector vrf_state::cbor() const
-    {
-        parallel_serializer ser {};
-        to_cbor(ser);
-        ser.run(scheduler::get(), "vrf_state::to_cbor");
-        return ser.flat();
-    }
-
     state::state(const cardano::config &cfg, scheduler &sched):
         _cfg { cfg }, _sched { sched }, _utxo { _cfg.byron_utxos }
     {
     }
 
-    void state::_add_encode_task(parallel_serializer &ser, const encode_cbor_func &t) const
+    void state::_add_encode_task(cbor_encoder &ser, const encode_cbor_func &t) const
     {
-        ser.add([t] {
-            cbor::encoder enc {};
+        ser.add([t](auto enc) {
             t(enc);
-            return enc.cbor();
+            return std::move(enc.cbor());
         });
     }
 
-    void state::from_cbor(const cbor::value &v)
+    void state::_decode_accounts(cbor::zero2::value &v)
     {
-        const auto &snap = v.at(1);
-        _epoch = snap.at(0).uint();
-        for (const auto &[pool_hash, block_count]: snap.at(1).map()) {
-            _blocks_before.add(pool_hash.buf(), block_count.uint());
-        }
-        for (const auto &[pool_hash, block_count]: snap.at(2).map()) {
-            _blocks_current.add(pool_hash.buf(), block_count.uint());
-        }
-        {
-            const auto &state_before = snap.at(3);
+        auto &it = v.array();
+        _treasury = it.read().uint();
+        _reserves = it.read().uint();
+    }
+
+    void state::_decode_lstate(cbor::zero2::value &v)
+    {
+        auto &it = v.array();
+        _node_load_delegation_state(it.read());
+        _node_load_utxo_state(it.read());
+    }
+
+    void state::_decode_snapshots(cbor::zero2::value &v)
+    {
+        auto &it = v.array();
+        struct snapshot_copy {
+            size_t idx;
+            ledger_copy &dst_copy;
+        };
+        for (const auto &[idx, dst]: { snapshot_copy { 0, _mark }, snapshot_copy { 1, _set }, snapshot_copy { 2, _go } }) {
+            auto &snap = it.read();
+            auto &snap_it = snap.array();
             {
-                const auto &accounts = state_before.at(0).array();
-                _treasury = accounts.at(0).uint();
-                _reserves = accounts.at(1).uint();
+                auto &stake_v = snap_it.read();
+                auto &stake_it = stake_v.map();
+                while (!stake_it.done()) {
+                    auto &k = stake_it.read_key();
+                    const auto stake_id = stake_ident::from_cbor(k);
+                    auto &acc =_accounts[stake_id];
+                    acc.stake_copy(idx) = stake_it.read_val(std::move(k)).uint();
+                }
             }
             {
-                const auto &lstate = state_before.at(1);
-                _node_load_delegation_state(lstate.at(0));
-                _node_load_utxo_state(lstate.at(1));
+                auto &deleg_v = snap_it.read();
+                auto &deleg_it = deleg_v.map();
+                while (!deleg_it.done()) {
+                    auto &k = deleg_it.read_key();
+                    const auto stake_id = stake_ident::from_cbor(k);
+                    auto &acc =_accounts[stake_id];
+                    acc.deleg_copy(idx) = deleg_it.read_val(std::move(k)).bytes();
+                }
             }
             {
-                const auto &snapshots = state_before.at(2).array();
-                struct snapshot_copy {
-                    size_t idx;
-                    ledger_copy &dst_copy;
-                };
-                for (const auto &[idx, dst]: { snapshot_copy { 0, _mark }, snapshot_copy { 1, _set }, snapshot_copy { 2, _go } }) {
-                    const auto &src = snapshots.at(idx).array();
-                    const auto &stake = src.at(0).map();
-                    for (const auto &[stake_id, coin]: stake) {
-                        auto &acc = _accounts[cardano::stake_ident {stake_id.array().at(1).buf(), stake_id.array().at(0).uint() == 1 }];
-                        acc.stake_copy(idx) = coin.uint();
-                    }
-                    for (const auto &[stake_id, pool_id]: src.at(1).map()) {
-                        auto &acc = _accounts[cardano::stake_ident {stake_id.array().at(1).buf(), stake_id.array().at(0).uint() == 1 }];
-                        acc.deleg_copy(idx) = pool_id.buf();
-                    }
-                    for (const auto &[id, params]: src.at(2).map()) {
-                        dst.pool_params.try_emplace(id.buf(), params);
-                    }
+                dst.pool_params = map_from_cbor<decltype(dst.pool_params)>(snap_it.read());
+                /*auto &pool_v = snap_it.read();
+                auto &pool_it = pool_v.map();
+                while (!pool_it.done()) {
+                    auto &k = pool_it.read_key();
+                    const auto pool_id = k.bytes();
+                    auto &v = pool_it.read_val(std::move(k));
+                    dst.pool_params.try_emplace(pool_id, pool_info { cardano::pool_params::from_cbor(v.array()) });
+                }*/
+            }
+        }
+        //_fees_next_reward = snapshots.at(3).uint();
+    }
+
+    void state::_decode_likelihoods(cbor::zero2::value &v)
+    {
+        auto &it = v.array();
+        _nonmyopic = decltype(_nonmyopic)::from_cbor(it.read());
+        _nonmyopic_reward_pot = it.read().uint();
+    }
+
+    void state::_decode_state_before(cbor::zero2::value &v)
+    {
+        auto &it = v.array();
+        _decode_accounts(it.read());
+        _decode_lstate(it.read());
+        _decode_snapshots(it.read());
+        _decode_likelihoods(it.read());
+    }
+
+    void state::_decode_possible_update(cbor::zero2::value &v)
+    {
+        auto &v_it = v.array();
+        if (!v_it.done()) {
+            decode_versioned(v.at(0), [&](auto &dv) {
+                auto &it = dv.array();
+                _delta_treasury = it.read().uint();
+                _delta_reserves = it.read().uint();
+                _potential_rewards = map_from_cbor<decltype(_potential_rewards)>(it.read());
+                if (!_potential_rewards.empty())
+                    _rewards_ready = true;
+                _delta_fees = it.read().uint();
+                {
+                    auto &nm_v = it.read();
+                    auto &nm_it = nm_v.array();
+                    _nonmyopic_next = decltype(_nonmyopic_next)::from_cbor(nm_it.read());
+                    _reward_pot = nm_it.read().uint();
                 }
-                //_fees_next_reward = snapshots.at(3).uint();
-            }
-            for (const auto &[pool_id, c_likelihoods]: state_before.at(3).at(0).map()) {
-                pool_rank::likelihood_list likelihoods {};
-                likelihoods.reserve(c_likelihoods.array().size());
-                for (const auto &c_like: c_likelihoods.array())
-                    likelihoods.emplace_back(c_like.float32());
-                _nonmyopic.try_emplace(pool_id.buf(), std::move(likelihoods));
-            }
-            _nonmyopic_reward_pot = state_before.at(3).at(1).uint();
+            });
         }
-        if (const auto &possible_update_raw = snap.at(4).array(); !possible_update_raw.empty()) {
-            if (possible_update_raw.at(0).at(0).uint() == 1) {
-                const auto &possible_update = possible_update_raw.at(0).at(1).array();
-                _delta_treasury = possible_update.at(0).uint();
-                _delta_reserves = possible_update.at(1).uint();
-                _delta_fees = possible_update.at(3).uint();
-                for (const auto &[id, reward_list]: possible_update.at(2).map()) {
-                    reward_update_list rl {};
-                    for (const auto &reward: reward_list.array()) {
-                        rl.emplace(reward.at(0).uint() == 0 ? reward_type::member : reward_type::leader, reward.at(1).buf(),  reward.at(2).uint());
-                    }
-                    _potential_rewards.try_emplace(cardano::stake_ident { id.array().at(1).buf(), id.array().at(0).uint() == 1 }, std::move(rl));
-                }
-                for (const auto &[pool_id, c_likelihoods]: possible_update.at(4).at(0).map()) {
-                    pool_rank::likelihood_list likelihoods {};
-                    likelihoods.reserve(c_likelihoods.array().size());
-                    for (const auto &c_like: c_likelihoods.array())
-                        likelihoods.emplace_back(c_like.float32());
-                    _nonmyopic_next.try_emplace(pool_id.buf(), std::move(likelihoods));
-                }
-                _reward_pot = possible_update.at(4).at(1).uint();
-            }
-        }
-        {
-            for (const auto &[pool_id, info]: snap.at(5).at(0).map()) {
-                _operating_stake_dist.try_emplace(pool_id.buf(), info.at(0).array(), info.at(1).buf());
-            }
-        }
-        {
-            // const auto &tbd = snap.at(6); NULL
-        }
-        _blocks_past_voting_deadline = v.at(2).uint();
+    }
+
+    void state::_decode_snapshot(cbor::zero2::value &snap)
+    {
+        auto &it = snap.array();
+        _epoch = it.read().uint();
+        _blocks_before = map_from_cbor<decltype(_blocks_before)>(it.read());
+        _blocks_current = map_from_cbor<decltype(_blocks_current)>(it.read());
+        _decode_state_before(it.read());
+        _decode_possible_update(it.read());
+        _operating_stake_dist = decltype(_operating_stake_dist)::from_cbor(it.read());
+    }
+
+    point state::from_cbor(cbor::zero2::value &v)
+    {
+        auto &it = v.array();
+        auto tip = point::from_ledger_cbor(it.read().array().read());
+        _decode_snapshot(it.read());
+        _blocks_past_voting_deadline = it.read().uint();
         _pulsing_snapshot_slot = slot::from_epoch(_epoch, _cfg) + _cfg.shelley_randomness_stabilization_window;
         _recompute_caches();
+        return tip;
     }
 
     bool state::operator==(const state &o) const
@@ -447,7 +485,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
             add_pool_blocks(pool_id, num_blocks);
     }
 
-    void state::process_cert(const cert_any_t &cert, const cert_loc_t &loc)
+    void state::process_cert(const cert_t &cert, const cert_loc_t &loc)
     {
         _tick(loc.slot);
         std::visit([&](const auto &c) {
@@ -530,7 +568,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
                 || std::is_same_v<T, pool_retire_cert>
                 || std::is_same_v<T, genesis_deleg_cert>
                 || std::is_same_v<T, instant_reward_cert>) {
-                process_cert(cert_any_t { u }, upd.loc);
+                process_cert(cert_t { u }, upd.loc);
             } else {
                 throw error(fmt::format("unsupported timed update: {}", typeid(u).name()));
             }
@@ -550,7 +588,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
     void state::_process_utxo_updates(utxo_update_list &&utxo_updates)
     {
         const std::string task_group = fmt::format("ledger-state:apply-utxo-updates:epoch-{}", _epoch);
-        alignas(mutex::padding) mutex::unique_lock::mutex_type all_mutex {};
+        mutex::unique_lock::mutex_type all_mutex alignas(mutex::alignment) {};
         stake_update_map all_deltas {};
         pointer_update_map all_pointer_deltas {};
         _sched.wait_all_done(task_group, txo_map::num_parts,
@@ -563,8 +601,8 @@ namespace daedalus_turbo::cardano::ledger::shelley {
                             auto &upd_part = update_batch.partition(part_idx);
                             auto &utxo_part = _utxo.partition(part_idx);
                             for (auto &&[txo_id, txo_data]: upd_part) {
-                                if (!txo_data.address.empty()) {
-                                    const cardano::address addr { txo_data.address };
+                                if (!txo_data.address_raw.empty()) {
+                                    const auto addr = txo_data.addr();
                                     if (addr.has_stake_id()) [[likely]]
                                         _update_stake_delta(deltas, addr.stake_id(), static_cast<int64_t>(txo_data.coin));
                                     else if (addr.has_pointer()) [[unlikely]]
@@ -575,7 +613,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
                                     }
                                 } else {
                                     if (auto it = utxo_part.find(txo_id); it != utxo_part.end()) [[likely]] {
-                                        const cardano::address addr { it->second.address };
+                                        const auto addr = it->second.addr();
                                         if (addr.has_stake_id()) [[likely]]
                                             _update_stake_delta(deltas, addr.stake_id(), -static_cast<int64_t>(it->second.coin));
                                         else if (addr.has_pointer()) [[unlikely]]
@@ -616,7 +654,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
                 throw error(fmt::format("epoch {}: cannot find data about a TXO used as a collateral input: {}", _epoch, txo_id));
             logger::debug("fees from used collateral {}: {}", txo_id, txo_data->coin);
             add_fees(txo_data->coin);
-            if (const address addr { txo_data->address }; addr.has_stake_id_hybrid()) [[likely]]
+            if (const auto addr = txo_data->addr(); addr.has_stake_id_hybrid()) [[likely]]
                 update_stake_id_hybrid(addr.stake_id_hybrid(), -static_cast<int64_t>(txo_data->coin));
             utxo_del(txo_id);
         }
@@ -628,10 +666,10 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         auto collected_collateral = _process_timed_updates(std::move(updates.timed));
         _process_utxo_updates(std::move(updates.utxos));
         _process_collateral_use(std::move(collected_collateral));
-        compute_rewards_if_ready();
+        run_pulser_if_ready();
     }
 
-    void state::compute_rewards_if_ready()
+    void state::run_pulser_if_ready()
     {
         if (_params.protocol_ver.major >= 2 && _epoch_slot >= _cfg.shelley_rewards_ready_slot && !_rewards_ready)
             _compute_rewards();
@@ -668,6 +706,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
 
     void state::register_stake(const uint64_t slot, const stake_ident &stake_id, const std::optional<uint64_t> deposit, const size_t tx_idx, const size_t cert_idx)
     {
+        //logger::debug("slot: {} shelley::register_stake {} deposit: {}", cardano::slot { slot, _cfg }, stake_id, deposit);
         const auto deposit_size = deposit ? *deposit : _params.key_deposit;
         auto [acc_it, acc_created] = _accounts.try_emplace(stake_id);
         if (acc_created || !acc_it->second.ptr) {
@@ -681,6 +720,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
 
     void state::retire_stake(const uint64_t slot, const stake_ident &stake_id, const std::optional<uint64_t> deposit)
     {
+        //logger::debug("slot: {} shelley::retire_stake id: {} deposit: {}", slot, stake_id, deposit);
         const auto deposit_size = deposit ? *deposit : _params.key_deposit;
         auto &acc = _accounts.at(stake_id);
         if (acc.ptr) {
@@ -782,7 +822,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         logger::debug("slot: {}: proposal_vote: {}", slot, vote);
         for (const auto &[pool_id, prop]: _ppups) {
             if (prop.hash == vote.proposal_id) {
-                _ppups[vote.pool_id] = prop;
+                _ppups[vote.key_id] = prop;
                 break;
             }
         }
@@ -793,22 +833,22 @@ namespace daedalus_turbo::cardano::ledger::shelley {
     {
         logger::debug("slot: {} proposal: {}", slot, prop);
         if (_params.protocol_ver.major >= 2) {
-            if (!_cfg.shelley_delegates.contains(prop.pool_id))
-                throw error(fmt::format("protocol update proposal from a key not in the shelley genesis delegate list: {}!", prop.pool_id));
+            if (!_cfg.shelley_delegates.contains(prop.key_id))
+                throw error(fmt::format("protocol update proposal from a key not in the shelley genesis delegate list: {}!", prop.key_id));
             if (!prop.epoch || *prop.epoch == _epoch) {
                 const auto too_late = cardano::slot::from_epoch(_epoch + 1, _cfg) - 2 * _cfg.shelley_stability_window;
                 if (slot < too_late) {
-                    _ppups[prop.pool_id] = prop.update;
+                    _ppups[prop.key_id] = prop.update;
                 } else {
                     logger::warn("epoch: {} slot: {} ignoring an update proposal since its too late in the epoch", _epoch, slot);
                 }
             } else if (*prop.epoch == _epoch + 1) {
-                _ppups_future[prop.pool_id] = prop.update;
+                _ppups_future[prop.key_id] = prop.update;
             } else {
                 logger::warn("epoch: {} slot: {} ignoring an update proposal for an unexpected epoch: {}", _epoch, slot, *prop.epoch);
             }
         } else {
-            _ppups[prop.pool_id] = prop.update;
+            _ppups[prop.key_id] = prop.update;
         }
         logger::debug("ppups: {}", _ppups);
     }
@@ -910,8 +950,8 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         if (_params.protocol_ver.keep_pointers()) {
             for (const auto &[stake_ptr, coin]: _stake_pointers) {
                 if (const auto ptr_it = _ptr_to_stake.find(stake_ptr); ptr_it != _ptr_to_stake.end()) {
-                    logger::debug("rotate_snapshots epoch: {} pointer {} adds: {} to stake_id: {}",
-                        _epoch, stake_ptr, cardano::amount { coin }, ptr_it->second);
+                    //logger::debug("rotate_snapshots epoch: {} pointer {} adds: {} to stake_id: {}",
+                    //  _epoch, stake_ptr, cardano::amount { coin }, ptr_it->second);
                     auto &acc = _accounts.at(ptr_it->second);
                     acc.mark_stake += coin;
                     if (acc.mark_deleg)
@@ -923,6 +963,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
 
     void state::start_epoch(std::optional<uint64_t> new_epoch)
     {
+        run_pulser_if_ready();
         if (!new_epoch) {
             // increment the epoch only if seen some data
             if (_end_offset)
@@ -1019,10 +1060,10 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         p.pool_deposit = json::value_to<uint64_t>(shelley_params.at("poolDeposit"));
         p.e_max = json::value_to<uint64_t>(shelley_params.at("eMax"));
         p.n_opt = json::value_to<uint64_t>(shelley_params.at("nOpt"));
-        p.expansion_rate = rational_u64 { json::value_to<double>(shelley_params.at("rho")) };
-        p.treasury_growth_rate = rational_u64 { json::value_to<double>(shelley_params.at("tau")) };
-        p.pool_pledge_influence = rational_u64 { json::value_to<double>(shelley_params.at("a0")) };
-        p.decentralization = rational_u64 { json::value_to<double>(shelley_params.at("decentralisationParam")) };
+        p.expansion_rate = rational_u64::from_double(json::value_to<double>(shelley_params.at("rho")));
+        p.treasury_growth_rate = rational_u64::from_double(json::value_to<double>(shelley_params.at("tau")));
+        p.pool_pledge_influence = rational_u64::from_double(json::value_to<double>(shelley_params.at("a0")));
+        p.decentralization = rational_u64::from_double(json::value_to<double>(shelley_params.at("decentralisationParam")));
         p.min_utxo_value = json::value_to<uint64_t>(shelley_params.at("minUTxOValue"));
         p.min_pool_cost = json::value_to<uint64_t>(shelley_params.at("minPoolCost"));
     }
@@ -1042,58 +1083,35 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         return pools;
     }
 
-    uint8_vector state::_parse_address(const buffer buf)
+    /*uint8_vector state::_parse_address(const buffer buf)
     {
         address addr { buf };
         if (addr.bytes()[0] == 0x82)
             return cbor::parse(addr.bytes()).at(0).tag().second->buf();
         return buf;
-    }
+    }*/
 
-    void state::_parse_protocol_params(protocol_params &params, const cbor_value &val) const
+    void state::_parse_protocol_params(protocol_params &params, cbor::zero2::value &v) const
     {
         _apply_shelley_params(params);
-        params.min_fee_a = val.at(0).uint();
-        params.min_fee_b = val.at(1).uint();
-        params.max_block_body_size = val.at(2).uint();
-        params.max_transaction_size = val.at(3).uint();
-        params.max_block_header_size = val.at(4).uint();
-        params.key_deposit = val.at(5).uint();
-        params.pool_deposit = val.at(6).uint();
-        params.e_max = val.at(7).uint();
-        params.n_opt = val.at(8).uint();
-        params.pool_pledge_influence = rational_u64 { val.at(9) };
-        params.expansion_rate = rational_u64 { val.at(10) };
-        params.treasury_growth_rate = rational_u64 { val.at(11) };
-        params.decentralization = rational_u64 { val.at(12) };
-        switch (val.at(13).at(0).uint()) {
-            case 0: params.extra_entropy.reset(); break;
-            case 1: params.extra_entropy.emplace(val.at(13).at(1).buf()); break;
-            default: throw error(fmt::format("unexpected value for extra_entropy: {}", val.at(13)));
-        }
-        params.protocol_ver.major = val.at(14).uint();
-        params.protocol_ver.minor = val.at(15).uint();
-        params.min_utxo_value = val.at(16).uint();
-    }
-
-    static void _parse_assets(cardano::tx_out_data &data, const cardano::tx_out_ref &id, const cbor_value &val)
-    {
-        switch (val.type) {
-            case CBOR_UINT:
-                data.coin = val.uint();
-            break;
-            case CBOR_ARRAY:
-                data.coin = val.at(0).uint();
-            data.assets.emplace(val.at(1).raw_span());
-            break;
-            default:
-                throw error(fmt::format("unexpected type of txo_data amount: {} in {}", val, id));
-        }
-    }
-
-    static cardano::stake_ident _parse_stake_ident(const cbor_value &id)
-    {
-        return { id.at(1).buf(), id.at(0).uint() == 1 };
+        auto &it = v.array();
+        params.min_fee_a = it.read().uint();
+        params.min_fee_b = it.read().uint();
+        params.max_block_body_size = it.read().uint();
+        params.max_transaction_size = it.read().uint();
+        params.max_block_header_size = it.read().uint();
+        params.key_deposit = it.read().uint();
+        params.pool_deposit = it.read().uint();
+        params.e_max = it.read().uint();
+        params.n_opt = it.read().uint();
+        params.pool_pledge_influence = decltype(params.pool_pledge_influence)::from_cbor(it.read());
+        params.expansion_rate = decltype(params.expansion_rate)::from_cbor(it.read());
+        params.treasury_growth_rate = decltype(params.treasury_growth_rate)::from_cbor(it.read());
+        params.decentralization = decltype(params.decentralization)::from_cbor(it.read());
+        params.extra_entropy = decltype(params.extra_entropy)::from_cbor(it.read());
+        params.protocol_ver.major = it.read().uint();
+        params.protocol_ver.minor = it.read().uint();
+        params.min_utxo_value = it.read().uint();
     }
 
     uint64_t state::_retire_avvm_balance()
@@ -1107,10 +1125,14 @@ namespace daedalus_turbo::cardano::ledger::shelley {
                     auto &part = _utxo.partition(pi);
                     for (auto it = part.begin(), end = part.end(); it != end; ) {
                         const auto &txo_data = it->second;
-                        if (txo_data.address.at(0) == 0x82) {
-                            const auto crc_v = cbor::zero::parse(txo_data.address);
-                            const auto addr_v = cbor::zero::parse(crc_v.at(0).tag().second.bytes());
-                            if (addr_v.at(2).uint() == 2) {
+                        if (txo_data.address_raw.at(0) == 0x82) {
+                            auto crc_v = cbor::zero2::parse(txo_data.address_raw);
+                            auto &crc_v_it = crc_v.get().array();
+                            auto &addr_v_tag = crc_v_it.read();
+                            auto addr_v = cbor::zero2::parse(addr_v_tag.tag().read().bytes());
+                            auto &addr_v_it = addr_v.get().array();
+                            addr_v_it.skip(2);
+                            if (addr_v_it.read().uint() == 2) {
                                 part_balance += txo_data.coin;
                                 it = part.erase(it);
                                 continue;
@@ -1141,12 +1163,13 @@ namespace daedalus_turbo::cardano::ledger::shelley {
     void state::_prep_op_stake_dist()
     {
         _operating_stake_dist.clear();
+        _operating_stake_dist.total_stake = _set.pool_dist.total_stake();
         for (const auto &[pool_id, coin]: _set.pool_dist) {
             if (!_set.inv_delegs.at(pool_id).empty()) {
                 const auto &params = _set.pool_params.at(pool_id).params;
                 rational_u64 rel_stake { coin, _set.pool_dist.total_stake() };
                 rel_stake.normalize();
-                _operating_stake_dist.try_emplace(pool_id, std::move(rel_stake), params.vrf_vkey);
+                _operating_stake_dist.try_emplace(pool_id, std::move(rel_stake), coin, params.vrf_vkey);
             }
         }
     }
@@ -1174,17 +1197,17 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         timer t { fmt::format("compute rewards for epoch {}", _epoch), logger::level::debug };
         _rewards_ready = true;
         uint64_t expansion = 0;
-        if (_params_prev.decentralization.as_r() < _params_prev.decentralizationThreshold.as_r() && _epoch > 0) {
-            rational perf = std::min(rational { 1 }, rational { _blocks_before.total_stake() } / ((1 - _params_prev.decentralization.as_r()) * _cfg.shelley_epoch_blocks));
-            expansion = static_cast<uint64_t>(_params_prev.expansion_rate.as_r() * _reserves * perf);
+        if (rational_from_r64(_params_prev.decentralization) < rational_from_r64(_params_prev.decentralizationThreshold) && _epoch > 0) {
+            cpp_rational perf = std::min(cpp_rational { 1 }, cpp_rational { _blocks_before.total_stake() } / ((1 - rational_from_r64(_params_prev.decentralization)) * _cfg.shelley_epoch_blocks));
+            expansion = static_cast<uint64_t>(rational_from_r64(_params_prev.expansion_rate) * _reserves * perf);
             logger::trace("epoch: {} performance-adjusted expansion: {} perf: {} d: {} blocks: {}",
                 _epoch, expansion, perf, _params_prev.decentralization, _blocks_before.total_stake());
         } else {
-            expansion = static_cast<uint64_t>(_params_prev.expansion_rate.as_r() * _reserves);
+            expansion = static_cast<uint64_t>(rational_from_r64(_params_prev.expansion_rate) * _reserves);
             logger::trace("epoch: {} simple expansion: {}", _epoch, expansion);
         }
         const uint64_t total_reward_pool = expansion + _delta_fees;
-        const uint64_t treasury_rewards = static_cast<uint64_t>(_params_prev.treasury_growth_rate.as_r() * total_reward_pool);
+        const uint64_t treasury_rewards = static_cast<uint64_t>(rational_from_r64(_params_prev.treasury_growth_rate) * total_reward_pool);
         _reward_pot = total_reward_pool - treasury_rewards;
         uint64_t pool_rewards_filtered = 0;
         const uint64_t total_stake = _total_stake(_reserves);
@@ -1214,7 +1237,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
             uint64_t leader_reward = 0;
             uint64_t owner_stake = 0;
             for (const auto &stake_id: info.params.owners) {
-                if (const auto acc_it = _accounts.find(stake_id); acc_it != _accounts.end() && acc_it->second.go_deleg && *acc_it->second.go_deleg == pool_id)
+                if (const auto acc_it = _accounts.find(stake_id); acc_it != _accounts.end() && acc_it->second.go_deleg == pool_id)
                     owner_stake += acc_it->second.go_stake;
             }
             if (owner_stake >= info.params.pledge) {
@@ -1225,28 +1248,33 @@ namespace daedalus_turbo::cardano::ledger::shelley {
                 if (pool_rel_total_stake < pledge_rel_total_stake)
                     throw error(fmt::format("internal error: pledged stake: {} of pool {} is larger than the pool's total stake: {}", info.params.pledge, pool_id, pool_stake));
                 double s_mark = std::min(pledge_rel_total_stake, z0);
-                uint64_t optimal_reward = static_cast<uint64_t>(staking_reward_pot / (1 + _params_prev.pool_pledge_influence.as_r()) *
-                    (sigma_mark + s_mark * _params_prev.pool_pledge_influence.as_r() * (sigma_mark - s_mark * (z0 - sigma_mark) / (z0)) / z0));
+                uint64_t optimal_reward = static_cast<uint64_t>(staking_reward_pot / (1 + rational_from_r64(_params_prev.pool_pledge_influence)) *
+                    (sigma_mark + s_mark * rational_from_r64(_params_prev.pool_pledge_influence) * (sigma_mark - s_mark * (z0 - sigma_mark) / (z0)) / z0));
                 pool_reward_pot = optimal_reward;
                 double beta = static_cast<double>(pool_blocks) / std::max(static_cast<uint64_t>(1), _blocks_before.total_stake());
                 double pool_performance = pool_rel_active_stake != 0 ? beta / pool_rel_active_stake : 0;
-                if (_params_prev.decentralization.as_r() < _params_prev.decentralizationThreshold.as_r())
+                if (rational_from_r64(_params_prev.decentralization) < rational_from_r64(_params_prev.decentralizationThreshold))
                     pool_reward_pot = optimal_reward * pool_performance;
                 if (pool_reward_pot > info.params.cost && owner_stake < pool_stake) {
-                    auto pool_margin = info.params.margin.as_r();
-                    info.member_reward_base = (pool_reward_pot - info.params.cost) * (1 - pool_margin) / pool_stake;
+                    cpp_rational &base = rational_from_storage(info.reward_base);
+                    base = pool_reward_pot - info.params.cost;
+                    base /= pool_stake;
+                    base *= info.params.margin.denominator - info.params.margin.numerator;
+                    base /= info.params.margin.denominator;
+                    auto pool_margin = rational_from_r64(info.params.margin);
                     leader_reward = static_cast<uint64_t>(info.params.cost + (pool_reward_pot - info.params.cost) * (pool_margin + (1 - pool_margin) * owner_stake / pool_stake));
                 } else {
                     leader_reward = pool_reward_pot;
                 }
             }
-            const bool leader_active = _params_prev.protocol_ver.forgo_reward_prefilter() || _reward_pulsing_snapshot.contains(info.params.reward_id);
+            const stake_ident reward_stake_id = info.params.reward_id;
+            const bool leader_active = _params_prev.protocol_ver.forgo_reward_prefilter() || _reward_pulsing_snapshot.contains(reward_stake_id);
             if (leader_active) {
-                auto &reward_list = _potential_rewards[info.params.reward_id];
+                auto &reward_list = _potential_rewards[reward_stake_id];
                 total += leader_reward;
                 if (!reward_list.empty())
                     filtered -= reward_list.begin()->amount;
-                if (const auto acc_it = _accounts.find(info.params.reward_id); acc_it != _accounts.end() && acc_it->second.deleg)
+                if (const auto acc_it = _accounts.find(reward_stake_id); acc_it != _accounts.end() && acc_it->second.deleg)
                     reward_list.emplace(reward_type::leader, pool_id, leader_reward, *acc_it->second.deleg);
                 else
                     reward_list.emplace(reward_type::leader, pool_id, leader_reward);
@@ -1259,7 +1287,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
     {
         uint64_t total = 0;
         uint64_t filtered = 0;
-        const rational z0 { 1, _params_prev.n_opt };
+        const cpp_rational z0 { 1, _params_prev.n_opt };
         const auto z0_d = static_cast<double>(z0);
         _nonmyopic_next.clear();
         for (auto &[pool_id, pool_info]: _go.pool_params) {
@@ -1267,7 +1295,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
                 const uint64_t pool_blocks = pools_active.get(pool_id);
                 if (pool_blocks > 0)
                     _rewards_prepare_pool_params(total, filtered, z0_d, staking_reward_pot, total_stake, pool_id, pool_info, pool_blocks);
-                const rational rel_stake { _go.pool_dist.get(pool_id), total_stake };
+                const cpp_rational rel_stake { _go.pool_dist.get(pool_id), total_stake };
                 const auto rel_stake_bounded = std::min(z0, rel_stake);
                 //logger::debug("estimating hit-rate likelihood epoch: {} pool: {} blocks: {} d: {} rel_stake: {} rel_stake_bounded: {}", _epoch, pool_id, pool_blocks, _params_prev.decentralization, rel_stake, rel_stake_bounded);
                 pool_rank::likelihood_prior prior {};
@@ -1291,7 +1319,8 @@ namespace daedalus_turbo::cardano::ledger::shelley {
                 const auto &pool_info = _go.pool_params.at(*acc.go_deleg);
                 if (std::find(pool_info.params.owners.begin(), pool_info.params.owners.end(), stake_id) == pool_info.params.owners.end()) {
                     const uint64_t deleg_stake = acc.go_stake;
-                    const uint64_t member_reward = static_cast<uint64_t>(pool_info.member_reward_base * deleg_stake);
+                    const auto &reward_base = rational_from_storage(pool_info.reward_base);
+                    const uint64_t member_reward = static_cast<uint64_t>(reward_base * deleg_stake);
                     if (member_reward > 0) {
                         const bool active = _params_prev.protocol_ver.forgo_reward_prefilter() || _reward_pulsing_snapshot.contains(stake_id);
                         if (active) {
@@ -1542,9 +1571,10 @@ namespace daedalus_turbo::cardano::ledger::shelley {
                 for (const auto &stake_id: _active_inv_delegs.at(pool_id))
                     _accounts.at(stake_id).deleg.reset();
                 _active_inv_delegs.erase(pool_id);
-                if (auto acc_it = _accounts.find(pool_info.params.reward_id); acc_it != _accounts.end() && acc_it->second.ptr) {
+                const stake_ident reward_stake_id = pool_info.params.reward_id;
+                if (auto acc_it = _accounts.find(reward_stake_id); acc_it != _accounts.end() && acc_it->second.ptr) {
                     acc_it->second.reward += pool_deposit;
-                    if (const auto rew_acc_it = _accounts.find(pool_info.params.reward_id); rew_acc_it != _accounts.end() && rew_acc_it->second.deleg) {
+                    if (const auto rew_acc_it = _accounts.find(reward_stake_id); rew_acc_it != _accounts.end() && rew_acc_it->second.deleg) {
                         if (_active_pool_params.contains(*rew_acc_it->second.deleg)) {
                             _active_pool_dist.add(*rew_acc_it->second.deleg, pool_deposit);
                             refunds_user += pool_deposit;
@@ -1569,135 +1599,99 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         return std::make_pair(refunds_user, refunds_treasury);
     }
 
-    void state::_node_load_delegation_state(const cbor::value &s)
+    void state::_node_load_delegation_state(cbor::zero2::value &v)
     {
+        auto &it = v.array();
+        it.skip(1);
         {
-            const auto &dstate = s.at(2).array();
-            for (const auto &[id, cred]: dstate.at(0).at(0).map()) {
-                const cardano::stake_ident stake_id = _parse_stake_ident(id);
-                // credential.deposit 0.1
-                auto &acc = _accounts[stake_id];
-                acc.reward = cred.at(0).at(0).at(0).uint();
-                acc.deposit = cred.at(0).at(0).at(1).uint();
-                const auto &cred_ptr = cred.at(1).at(0).array();
-                cardano::stake_pointer stake_ptr { cred_ptr.at(0).uint(), cred_ptr.at(1).uint(), cred_ptr.at(2).uint() };
-                acc.ptr = stake_ptr;
-                _ptr_to_stake.try_emplace(stake_ptr, stake_id);
-                const auto &deleg_ptr = cred.at(2).array();
-                if (!deleg_ptr.empty())
-                    _accounts[stake_id].deleg = deleg_ptr.at(0).buf();
-            }
-            // pointers - contains a reverse map already read
-            for (const auto &[id, meta]: dstate.at(1).map()) {
-                _future_shelley_delegs[id.buf()] = cardano::shelley_delegate {
-                    meta.at(0).buf(),
-                    meta.at(1).buf()
-                };
-            }
-            for (const auto &[id, meta]: dstate.at(2).map()) {
-                _shelley_delegs[id.buf()] = cardano::shelley_delegate {
-                    meta.at(0).buf(),
-                    meta.at(1).buf()
-                };
-            }
-            for (const auto &[id, coin]: dstate.at(3).at(0).map()) {
-                _instant_rewards_reserves.try_emplace(_parse_stake_ident(id), coin.uint());
-            }
-            for (const auto &[id, coin]: dstate.at(3).at(1).map()) {
-                _instant_rewards_treasury.try_emplace(_parse_stake_ident(id), coin.uint());
-            }
+            auto &pstate_v = it.read();
+            auto &pstate_it = pstate_v.array();
+            _active_pool_params = map_from_cbor<decltype(_active_pool_params)>(pstate_it.read());
+            _future_pool_params = map_from_cbor<decltype(_future_pool_params)>(pstate_it.read());
+            _pools_retiring = map_from_cbor<decltype(_pools_retiring)>(pstate_it.read());
+            _pool_deposits = map_from_cbor<decltype(_pool_deposits)>(pstate_it.read());
         }
         {
-            const auto &pstate = s.at(1).array();
-            for (const auto &[id, params]: pstate.at(0).map()) {
-                _active_pool_params.try_emplace(id.buf(), params);
-            }
-            for (const auto &[id, params]: pstate.at(1).map()) {
-                _future_pool_params[id.buf()] = pool_info { params };
-            }
-            for (const auto &[id, epoch]: pstate.at(2).map()) {
-                _pools_retiring.try_emplace(id.buf(), epoch.uint());
-            }
-            for (const auto &[id, deposit]: pstate.at(3).map()) {
-                const cardano::pool_hash pool_id = id.buf();
-                _pool_deposits[pool_id] = deposit.uint();
-            }
-        }
-    }
-
-    param_update state::_parse_param_update(const cbor::value &proposal) const
-    {
-        param_update upd = cardano::shelley::parse_shelley_param_update(proposal);
-        upd.rehash();
-        return upd;
-    }
-
-    void state::_node_load_utxo_state(const cbor::value &utxo_state)
-    {
-        _utxo.clear();
-        for (const auto &[txo_id, txo_data]: utxo_state.at(0).map()) {
-            tx_out_ref id { txo_id.at(0).buf(), txo_id.at(1).uint() };
-            tx_out_data data {};
-            switch (txo_data.type) {
-                case CBOR_ARRAY:
-                    data.address = _parse_address(txo_data.at(0).buf());
-                    _parse_assets(data, id, txo_data.at(1));
-                    if (txo_data.array().size() > 2)
-                        data.datum.emplace(datum_hash { txo_data.at(2).buf() });
-                    break;
-                case CBOR_MAP:
-                    for (const auto &[val_id, val]: txo_data.map()) {
-                        switch (val_id.uint()) {
-                            case 0:
-                                data.address = _parse_address(val.buf());
-                                break;
-                            case 1:
-                                _parse_assets(data, id, val);
-                                break;
-                            case 2:
-                                switch (val.at(0).uint()) {
-                                    case 0:
-                                        data.datum.emplace(datum_hash { val.at(1).buf() });
-                                        break;
-                                    case 1:
-                                        data.datum.emplace(uint8_vector { val.at(1).tag().second->buf() });
-                                        break;
-                                    default:
-                                        throw error(fmt::format("unexpected format of datum_option in {}: {}", id, val));
-                                }
-                                break;
-                            case 3:
-                                data.script_ref.emplace(val.tag().second->buf());
-                                break;
-                            default:
-                                throw error(fmt::format("unexpected value of txo_data map {} in {} {}", val_id, id, txo_data));
-                        }
+            auto &dstate_v = it.read();
+            auto &dstate_it = dstate_v.array();
+            // #0 - reward accounts and pointers - contains a reverse map already read
+            {
+                // #0 - reward accounts
+                _accounts = map_from_cbor<decltype(_accounts)>(dstate_it.read().array().read());
+                _ptr_to_stake.clear();
+                for (const auto &[stake_id, acc]: _accounts) {
+                    _ptr_to_stake[acc.ptr.value()] = stake_id;
+                }
+                /*auto &stake_it = dstate_it.read().array().read().map();
+                while (!stake_it.done()) {
+                    auto &key = stake_it.read_key();
+                    const auto stake_id = stake_ident::from_cbor(key);
+                    auto &acc = _accounts[stake_id];
+                    auto &val = stake_it.read_val(std::move(key));
+                    auto &v_it = val.array();
+                    {
+                        auto &cred = v_it.read();
+                        auto &c_it = cred.array();
+                        auto &cred2 = c_it.read();
+                        auto &c2_it = cred2.array();
+                        auto &cred3 = c2_it.read();
+                        auto &c3_it = cred3.array();
+                        acc.reward = c3_it.read().uint();
+                        acc.deposit = c3_it.read().uint();
                     }
-                    break;
-                default:
-                    throw error(fmt::format("unexpected txo_data value: {}", txo_data));
+                    const auto stake_ptr = stake_pointer::from_cbor(v_it.read());
+                    acc.ptr = stake_ptr;
+                    _ptr_to_stake.try_emplace(stake_ptr, stake_id);
+                    _accounts[stake_id].deleg = decltype(_accounts[stake_id].deleg)::from_cbor(v_it.read());
+                }*/
+                // #1 - pointer accounts - redundant, ignoring
             }
-            utxo_add(id, std::move(data));
-        }
-        _deposited = utxo_state.at(1).uint();
-        _fees_utxo = utxo_state.at(2).uint();
-        for (const auto &[gen_deleg_id, proposal]: utxo_state.at(3).at(0).map()) {
-            _ppups[gen_deleg_id.buf()] = _parse_param_update(proposal);
-        }
-        for (const auto &[gen_deleg_id, proposal]: utxo_state.at(3).at(1).map()) {
-            _ppups_future[gen_deleg_id.buf()] = _parse_param_update(proposal);
-        }
-        _parse_protocol_params(_params, utxo_state.at(3).at(2));
-        _parse_protocol_params(_params_prev, utxo_state.at(3).at(3));
-        for (const auto &[id_raw, coin]: utxo_state.at(4).at(0).map()) {
-            _accounts[_parse_stake_ident(id_raw)].stake = coin.uint();
-        }
-        for (const auto &[ptr_raw, coin]: utxo_state.at(4).at(1).map()) {
-            _stake_pointers.try_emplace(ptr_raw, coin.uint());
+            // #1
+            _future_shelley_delegs = map_from_cbor<decltype(_future_shelley_delegs)>(dstate_it.read());
+            // #2
+            _shelley_delegs = map_from_cbor<decltype(_shelley_delegs)>(dstate_it.read());
+            // #3 irwd
+            {
+                auto &rewards_v = dstate_it.read();
+                auto &r_it = rewards_v.array();
+                _instant_rewards_reserves = map_from_cbor<decltype(_instant_rewards_reserves)>(r_it.read());
+                _instant_rewards_treasury = map_from_cbor<decltype(_instant_rewards_treasury)>(r_it.read());
+            }
         }
     }
 
-    void state::_params_to_cbor(cbor::encoder &enc, const protocol_params &params) const
+    void state::_node_load_utxo_state(cbor::zero2::value &v)
+    {
+        auto &it = v.array();
+        _utxo.clear();
+        _utxo = map_from_cbor<decltype(_utxo)>(it.read());
+        _deposited = it.read().uint();
+        _fees_utxo = it.read().uint();
+        {
+            auto &props_v = it.read();
+            auto &props_it = props_v.array();
+            _ppups = map_from_cbor<decltype(_ppups)>(props_it.read());
+            _ppups_future = map_from_cbor<decltype(_ppups_future)>(props_it.read());
+            _parse_protocol_params(_params, props_it.read());
+            _parse_protocol_params(_params_prev, props_it.read());
+        }
+        {
+            auto &acc_v = it.read();
+            auto &acc_it = acc_v.array();
+            {
+                auto &stake_v = acc_it.read();
+                auto &stake_it = stake_v.map();
+                while (!stake_it.done()) {
+                    auto &key = stake_it.read_key();
+                    const auto stake_id = stake_ident::from_cbor(key);
+                    _accounts[stake_id].stake = stake_it.read_val(std::move(key)).uint();
+                }
+            }
+            _stake_pointers = map_from_cbor<decltype(_stake_pointers)>(acc_it.read());
+        }
+    }
+
+    void state::_params_to_cbor(era_encoder &enc, const protocol_params &params) const
     {
         enc.array(18);
         enc.uint(params.min_fee_a);
@@ -1709,10 +1703,10 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         enc.uint(params.pool_deposit);
         enc.uint(params.e_max);
         enc.uint(params.n_opt);
-        enc.rational(params.pool_pledge_influence);
-        enc.rational(params.expansion_rate);
-        enc.rational(params.treasury_growth_rate);
-        enc.rational(params.decentralization);
+        params.pool_pledge_influence.to_cbor(enc);
+        params.expansion_rate.to_cbor(enc);
+        params.treasury_growth_rate.to_cbor(enc);
+        params.decentralization.to_cbor(enc);
         if (!params.extra_entropy)
             enc.array(1).uint(0);
         else
@@ -1723,17 +1717,17 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         enc.uint(params.min_pool_cost);
     }
 
-    size_t state::_param_to_cbor(cbor::encoder &enc, const size_t idx, const std::optional<rational_u64> &val)
+    size_t state::_param_to_cbor(era_encoder &enc, const size_t idx, const std::optional<rational_u64> &val)
     {
         if (val) {
             enc.uint(idx);
-            enc.rational(*val);
+            val->to_cbor(enc);
             return 1;
         }
         return 0;
     }
 
-    size_t state::_param_update_common_to_cbor(cbor::encoder &enc, const param_update &upd)
+    size_t state::_param_update_common_to_cbor(era_encoder &enc, const param_update &upd)
     {
         size_t cnt = 0;
         cnt += _param_to_cbor(enc, 0, upd.min_fee_a);
@@ -1769,16 +1763,16 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         return cnt;
     }
 
-    void state::_param_update_to_cbor(cbor::encoder &enc, const param_update &upd) const
+    void state::_param_update_to_cbor(era_encoder &enc, const param_update &upd) const
     {
-        cbor::encoder my_enc {};
+        auto my_enc { enc };
         size_t cnt = _param_update_common_to_cbor(my_enc, upd);
         cnt += _param_to_cbor(my_enc, 15, upd.min_utxo_value);
         enc.map(cnt);
         enc << my_enc;
     }
 
-    void state::_node_save_snapshots(parallel_serializer &ser) const
+    void state::_node_save_snapshots(cbor_encoder &ser) const
     {
         const vector<std::reference_wrapper<const ledger_copy>> snaps { _mark, _set, _go };
         _add_encode_task(ser, [snaps] (auto &enc) {
@@ -1790,7 +1784,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
                 enc.array(3);
                 // Only the stake of delegated stake_ids is of interest
                 size_t num_delegs = 0;
-                cbor::encoder enc_deleg_s {}, enc_deleg_k {}, enc_stake_s {}, enc_stake_k {};
+                auto enc_deleg_s { enc }, enc_deleg_k { enc }, enc_stake_s { enc }, enc_stake_k { enc };
                 for (const auto &[stake_id, acc]: _accounts) {
                     const auto &deleg = acc.deleg_copy(idx);
                     if (deleg) {
@@ -1826,12 +1820,37 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         });
     }
 
-    void state::_node_save_ledger_delegation(parallel_serializer &ser) const
+    void state::_delegation_gov_to_cbor(era_encoder &enc) const
+    {
+        enc.array(3).map(0).map(0).uint(0);
+    }
+
+    void state::_account_to_cbor(const account_info &acc, era_encoder &enc) const
+    {
+        enc.array(4);
+        enc.array(1).array(2).uint(acc.reward).uint(acc.deposit);
+        enc.array(1);
+        acc.ptr->to_cbor(enc);
+        acc.deleg.to_cbor(enc);
+        acc.vote_deleg.to_cbor(enc);
+    }
+
+    void state::_stake_pointer_stake_to_cbor(era_encoder &enc) const
+    {
+        enc.map_compact(_ptr_to_stake.size(), [&] {
+            for (const auto &[ptr, stake_id]: _ptr_to_stake) {
+                ptr.to_cbor(enc);
+                stake_id.to_cbor(enc);
+            }
+        });
+    }
+
+    void state::_node_save_ledger_delegation(cbor_encoder &ser) const
     {
         _add_encode_task(ser, [this] (auto &enc) {
             enc.array(3);
-            // unidentified - always empty??
-            enc.array(3).map(0).map(0).uint(0);
+            // governance / protocol update state??
+            _delegation_gov_to_cbor(enc);
             // poolState
             enc.array(4);
             enc.map_compact(_active_pool_params.size(), [&] {
@@ -1864,24 +1883,14 @@ namespace daedalus_turbo::cardano::ledger::shelley {
             // delegationState
             enc.array(4);
             enc.array(2);
-            cbor::encoder s_enc {}, k_enc {};
+            auto s_enc { enc }, k_enc { enc };
             size_t num_creds = 0;
             for (const auto &[stake_id, acc]: _accounts) {
                 if (acc.ptr) {
                     ++num_creds;
                     auto &i_enc = stake_id.script ? s_enc : k_enc;
                     stake_id.to_cbor(i_enc);
-                    i_enc.array(4);
-                    i_enc.array(1).array(2).uint(acc.reward).uint(acc.deposit);
-                    i_enc.array(1);
-                    acc.ptr->to_cbor(i_enc);
-                    if (acc.deleg) {
-                        i_enc.array(1).bytes(*acc.deleg);
-                    } else {
-                        i_enc.array(0);
-                    }
-                    // DRep
-                    i_enc.array(0);
+                    _account_to_cbor(acc, i_enc);
                 }
             }
             enc.map_compact(num_creds, [&] {
@@ -1889,12 +1898,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
             });
         });
         _add_encode_task(ser, [this] (auto &enc) {
-            enc.map_compact(_ptr_to_stake.size(), [&] {
-                for (const auto &[ptr, stake_id]: _ptr_to_stake) {
-                    ptr.to_cbor(enc);
-                    stake_id.to_cbor(enc);
-                }
-            });
+            _stake_pointer_stake_to_cbor(enc);
         });
         _add_encode_task(ser, [this] (auto &enc) {
             enc.map_compact(_future_shelley_delegs.size(), [&] {
@@ -1928,7 +1932,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         });
     }
 
-    void state::_protocol_state_to_cbor(cbor::encoder &enc) const
+    void state::_protocol_state_to_cbor(era_encoder &enc) const
     {
         enc.array(5);
         enc.map(_ppups.size());
@@ -1953,12 +1957,12 @@ namespace daedalus_turbo::cardano::ledger::shelley {
                 new_params.apply(*update);
                 _params_to_cbor(enc, new_params);
             } else {
-                enc.array(0);
+                enc.array(1).uint(0);
             }
         }
     }
 
-    void state::_stake_pointers_to_cbor(cbor::encoder &enc) const
+    void state::_stake_pointers_to_cbor(era_encoder &enc) const
     {
         enc.map_compact(_stake_pointers.size(), [&] {
             for (const auto &[ptr, coin]: _stake_pointers) {
@@ -1968,12 +1972,12 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         });
     }
 
-    void state::_donations_to_cbor(cbor::encoder &enc) const
+    void state::_donations_to_cbor(era_encoder &enc) const
     {
         enc.uint(0);
     }
 
-    void state::_node_save_ledger_utxo(parallel_serializer &ser) const
+    void state::_node_save_ledger_utxo(cbor_encoder &ser) const
     {
         _add_encode_task(ser, [](auto &enc) {
             enc.array(6);
@@ -1999,8 +2003,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         _add_encode_task(ser, [this] (auto &enc) {
             enc.array(2);
             // Cardano Node puts script keys first, so mimic that
-            cbor::encoder s_enc {};
-            cbor::encoder k_enc {};
+            auto s_enc { enc }, k_enc { enc };
             size_t num_accounts = 0;
             for (const auto &[stake_id, acc]: _accounts) {
                 if (acc.stake) {
@@ -2020,7 +2023,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         });
     }
 
-    void state::_node_save_ledger(parallel_serializer &ser) const
+    void state::_node_save_ledger(cbor_encoder &ser) const
     {
         _add_encode_task(ser, [](auto &enc) {
             enc.array(2);
@@ -2029,7 +2032,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         _node_save_ledger_utxo(ser);
     }
 
-    void state::_node_save_state_before(parallel_serializer &ser) const
+    void state::_node_save_state_before(cbor_encoder &ser) const
     {
         _add_encode_task(ser, [this] (auto &enc) {
             enc.array(4);
@@ -2056,32 +2059,7 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         });
     }
 
-    uint8_vector state::cbor() const
-    {
-        parallel_serializer ser {};
-        to_cbor(ser);
-        ser.run(scheduler::get(), "state::to_cbor");
-        return ser.flat();
-    }
-
-    void state::_stake_distrib_to_cbor(cbor::encoder &enc) const
-    {
-        enc.array(2);
-        enc.map_compact(_operating_stake_dist.size(), [&] {
-            for (const auto &[pool_id, op_info]: _operating_stake_dist) {
-                enc.bytes(pool_id);
-                enc.array(3)
-                    .array(2)
-                        .uint(op_info.rel_stake.numerator)
-                        .uint(op_info.rel_stake.denominator)
-                    .uint(_set.pool_dist.get(pool_id))
-                    .bytes(op_info.vrf_vkey);
-            }
-        });
-        enc.uint(_set.pool_dist.total_stake());
-    }
-
-    void state::to_cbor(parallel_serializer &ser) const
+    void state::to_cbor(cbor_encoder &ser) const
     {
         _add_encode_task(ser, [this](auto &enc) {
             enc.array(7);
@@ -2107,18 +2085,13 @@ namespace daedalus_turbo::cardano::ledger::shelley {
             });
             _add_encode_task(ser, [this](auto &enc) {
                 enc.map_compact(_potential_rewards.size(), [&] {
-                    auto s_enc = enc.make_sibling();
-                    auto k_enc = enc.make_sibling();
+                    auto s_enc { enc }, k_enc { enc };
                     for (const auto &[stake_id, rewards]: _potential_rewards) {
-                        auto &i_enc = stake_id.script ? *s_enc : *k_enc;
+                        auto &i_enc = stake_id.script ? s_enc : k_enc;
                         stake_id.to_cbor(i_enc);
-                        i_enc.set(rewards.size(), [&] {
-                            for (const auto &ru: rewards) {
-                                i_enc.array(3).uint(ru.type == reward_type::leader ? 1 : 0).bytes(ru.pool_id).uint(ru.amount);
-                            }
-                        });
+                        rewards.to_cbor(i_enc);
                     }
-                    enc << *s_enc << *k_enc;
+                    enc << s_enc << k_enc;
                 });
             });
             _add_encode_task(ser, [this](auto &enc) {
@@ -2153,8 +2126,9 @@ namespace daedalus_turbo::cardano::ledger::shelley {
             });
         }
         _add_encode_task(ser, [this](auto &enc) {
-            _stake_distrib_to_cbor(enc);
+            _operating_stake_dist.to_cbor(enc);
         });
+        // redeemed byron AVVM addresses?
         _add_encode_task(ser, [](auto &enc) {
             enc.s_null();
         });
@@ -2226,10 +2200,10 @@ namespace daedalus_turbo::cardano::ledger::shelley {
         v(_blocks_past_voting_deadline);
     }
 
-    void state::to_zpp(parallel_serializer &sec) const
+    void state::to_zpp(zpp_encoder &sec) const
     {
         _visit([&](const auto &obj) {
-           sec.add([&] {
+           sec.add([&](auto) {
                return zpp::serialize(obj);
            });
         });

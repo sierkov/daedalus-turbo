@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_PARTITIONED_MAP_HPP
@@ -8,7 +9,7 @@
 #include <array>
 #include <ranges>
 #include <dt/container.hpp>
-#include <dt/error.hpp>
+#include <dt/common/error.hpp>
 
 namespace daedalus_turbo {
     template<typename K, typename V>
@@ -16,12 +17,12 @@ namespace daedalus_turbo {
         static constexpr size_t num_parts = 256;
 
         using self_type = partitioned_map<K, V>;
+        using key_type = K;
+        using mapped_type = V;
         using partition_type = map<K, V>;
-        using key_type = partition_type::key_type;
-        using value_type = partition_type::value_type;
-        using mapped_type = partition_type::mapped_type;
+        using value_type = typename partition_type::value_type;
         using storage_type = std::array<partition_type, num_parts>;
-        using size_type = partition_type::size_type;
+        using size_type = typename partition_type::size_type;
 
         struct const_iterator {
             using difference_type = std::ptrdiff_t;
@@ -184,7 +185,7 @@ namespace daedalus_turbo {
             return *this;
         }
 
-        bool operator==(const auto &o) const
+        bool operator==(const partitioned_map &o) const
         {
             return _parts == o._parts;
         }

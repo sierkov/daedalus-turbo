@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
  * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
@@ -34,7 +35,7 @@ namespace daedalus_turbo::cli::plutus_benchmark {
             static constexpr size_t batch_size = 1024;
             const auto num_batches = (paths.size() + batch_size - 1) / batch_size;
             scheduler sched { num_workers };
-            alignas(mutex::padding) mutex::unique_lock::mutex_type all_mutex {};
+            mutex::unique_lock::mutex_type all_mutex alignas(mutex::alignment) {};
             script_res_map all {};
             std::atomic_size_t done = 0;
             for (size_t i = 0; i < paths.size(); i += batch_size) {

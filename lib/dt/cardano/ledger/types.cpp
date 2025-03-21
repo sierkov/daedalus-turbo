@@ -1,22 +1,24 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
 #include <dt/cardano/ledger/types.hpp>
-#include <dt/cardano/shelley.hpp>
+#include <dt/cardano/shelley/block.hpp>
 #include <dt/progress.hpp>
 #include <dt/scheduler.hpp>
 #include <dt/timer.hpp>
 
 namespace daedalus_turbo::cardano::ledger {
-    parallel_decoder::parallel_decoder(const std::string &path): _data { file::read_raw(path) }
+    parallel_decoder::parallel_decoder(const std::string &path): _data { file::read(path) }
     {
-        const auto num_bufs = _data.span().subbuf(0, sizeof(size_t)).to<size_t>();
+        const auto data = static_cast<buffer>(_data);
+        const auto num_bufs = data.subbuf(0, sizeof(size_t)).to<size_t>();
         size_t next_offset = (num_bufs + 1) * sizeof(size_t);
         for (size_t i = 0; i < num_bufs; ++i) {
-            const auto buf_size = _data.span().subbuf((i + 1) * sizeof(size_t), sizeof(size_t)).to<size_t>();
-            _buffers.emplace_back(_data.span().subbuf(next_offset, buf_size));
+            const auto buf_size = data.subbuf((i + 1) * sizeof(size_t), sizeof(size_t)).to<size_t>();
+            _buffers.emplace_back(data.subbuf(next_offset, buf_size));
             next_offset += buf_size;
         }
     }
@@ -60,59 +62,80 @@ namespace daedalus_turbo::cardano::ledger {
             f();
     }
 
-    size_t parallel_serializer::size() const
+    pool_info::pool_info()
     {
-        return _tasks.size();
+        new (&rational_from_storage(reward_base)) cpp_rational {};
     }
 
-    void parallel_serializer::add(const encode_func &t)
+    pool_info::pool_info(const pool_params &p):
+        params { p }
     {
-        _tasks.emplace_back(t);
-        _buffers.emplace_back();
+        new (&rational_from_storage(reward_base)) cpp_rational {};
     }
 
-    void parallel_serializer::run(scheduler &sched, const std::string &task_group, const int prio, const bool report_progress)
+    pool_info::pool_info(pool_params &&p):
+    params { std::move(p) }
     {
-        sched.wait_all_done(task_group, _tasks.size(),
-            [&] {
-                for (size_t i = 0; i < _tasks.size(); ++i) {
-                    sched.submit_void(task_group, prio, [this, i] {
-                        _buffers[i] = _tasks[i]();
-                    });
-                }
-            },
-            [this, &task_group, report_progress](auto &&, auto done, auto errs) {
-                if (report_progress)
-                    progress::get().update(task_group, done - errs, _tasks.size());
-            }
-        );
     }
 
-    void parallel_serializer::save(const std::string &path, const bool headers) const
+    pool_info::~pool_info()
     {
-        const auto tmp_path = fmt::format("{}.tmp", path);
-        timer t { fmt::format("writing serialized data to {}", path), logger::level::debug };
-        {
-            file::write_stream ws { tmp_path };
-            // first write the block sizes to allow parallel load
-            if (headers) {
-                ws.write(buffer::from<size_t>(_buffers.size()));
-                for (const auto &buf: _buffers)
-                    ws.write(buffer::from<size_t>(buf.size()));
-            }
-            // then write the actual data
-            for (const auto &buf: _buffers)
-                ws.write(buf);
+        rational_from_storage(reward_base).~cpp_rational();
+    }
+
+    operating_pool_info operating_pool_info::from_cbor(cbor::zero2::value &v)
+    {
+        auto &it = v.array();
+        return { decltype(rel_stake)::from_cbor(it.read()), it.read().uint(), it.read().bytes() };
+    }
+
+    void operating_pool_info::to_cbor(era_encoder &enc) const
+    {
+        enc.array(3);
+        switch (enc.era()) {
+            case era_t::conway:
+                rel_stake.to_cbor(enc);
+                break;
+            default:
+                enc.array(2)
+                    .uint(rel_stake.numerator)
+                    .uint(rel_stake.denominator);
+                break;
         }
-        // ensures the correct file exists only if the whole saving procedure is successful
-        std::filesystem::rename(tmp_path, path);
+        enc.uint(active_stake);
+        enc.bytes(vrf_vkey);
     }
 
-    uint8_vector parallel_serializer::flat() const
+    operating_pool_map operating_pool_map::from_cbor(cbor::zero2::value &v)
     {
-        uint8_vector res {};
-        for (const auto &buf: _buffers)
-            res << buf;
+        auto &it = v.array();
+        auto res = map_from_cbor<operating_pool_map>(it.read());
+        res.total_stake = it.read().uint();
         return res;
+    }
+
+    void operating_pool_map::to_cbor(era_encoder &enc) const
+    {
+        enc.array(2);
+        map_to_cbor(enc, *this);
+        enc.uint(total_stake);
+    }
+
+    void operating_pool_map::clear()
+    {
+        base_type::clear();
+        total_stake = 1; // 1 instead of 0 to mitigate division by zero
+    }
+
+    account_info account_info::from_cbor(cbor::zero2::value &v)
+    {
+        auto &it = v.array();
+        auto &p1_it = it.read().at(0).array();
+        return {
+            .reward = p1_it.read().uint(),
+            .deposit = p1_it.read().uint(),
+            .ptr = stake_pointer::from_cbor(it.read().at(0)),
+            .deleg = decltype(deleg)::from_cbor(it.read())
+        };
     }
 }

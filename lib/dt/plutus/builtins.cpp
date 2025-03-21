@@ -1,14 +1,18 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
+#include <bit>
+#include <ranges>
 #include <utfcpp/utf8.h>
 #include <dt/crypto/secp256k1.hpp>
 #include <dt/plutus/builtins.hpp>
 #include <dt/blake2b.hpp>
 #include <dt/ed25519.hpp>
 #include <dt/crypto/keccak.hpp>
+#include <dt/crypto/ripemd-160.hpp>
 #include <dt/crypto/sha2.hpp>
 #include <dt/crypto/sha3.hpp>
 
@@ -136,7 +140,7 @@ namespace daedalus_turbo::plutus::builtins {
             sz = s_sz - pos;
         if (pos + sz < pos)
             sz = 0;
-        return { alloc, s->span().subspan(pos, sz) };
+        return { alloc, static_cast<buffer>(*s).subspan(pos, sz) };
     }
 
     value length_of_byte_string(allocator &alloc, const value &s)
@@ -463,7 +467,7 @@ namespace daedalus_turbo::plutus::builtins {
             throw error(fmt::format("integer_to_byte_string requires non-negative integers but got: {}", v));
         if (*v >= max_val) [[unlikely]]
             throw error(fmt::format("integer_to_byte_string allows only values less than 2^65536 but got: {}", v));
-        std::pmr::vector<uint8_t> bytes { alloc.resource() };
+        bstr_type::value_type::base_type bytes { alloc.resource() };
         if (*v > 0) [[likely]]
             boost::multiprecision::export_bits(*val.as_int(), std::back_inserter(bytes), 8, msb);
         if (w) {
@@ -483,7 +487,7 @@ namespace daedalus_turbo::plutus::builtins {
                 }
             }
         }
-        return { alloc, std::move(bytes) };
+        return { alloc, bstr_type { alloc, bstr_type::value_type { alloc, std::move(bytes) } } };
     }
 
     value byte_string_to_integer(allocator &alloc, const value &msb_t, const value &b)
@@ -531,7 +535,7 @@ namespace daedalus_turbo::plutus::builtins {
     {
         blst_p1 out;
         const auto k_s = bls12_381_make_scalar(k_t);
-        blst_p1_mult(&out, &v_t.as_bls_g1().val, reinterpret_cast<const byte *>(&k_s), sizeof(k_s) * 8);
+        blst_p1_mult(&out, &v_t.as_bls_g1().val, reinterpret_cast<const ::byte *>(&k_s), sizeof(k_s) * 8);
         return { alloc, out };
     }
 
@@ -579,7 +583,7 @@ namespace daedalus_turbo::plutus::builtins {
     {
         blst_p2 out;
         const auto k_s = bls12_381_make_scalar(k_t);
-        blst_p2_mult(&out, &v_t.as_bls_g2().val, reinterpret_cast<const byte *>(&k_s), sizeof(k_s) * 8);
+        blst_p2_mult(&out, &v_t.as_bls_g2().val, reinterpret_cast<const ::byte *>(&k_s), sizeof(k_s) * 8);
         return { alloc, out };
     }
 
@@ -630,6 +634,298 @@ namespace daedalus_turbo::plutus::builtins {
     value bls12_381_final_verify(allocator &alloc, const value &a, const value &b)
     {
         return value::boolean(alloc, blst_fp12_finalverify(&a.as_bls_ml_res().val, &b.as_bls_ml_res().val));
+    }
+
+    value and_byte_string(allocator &alloc, const value &extend_v, const value &a_v, const value &b_v)
+    {
+        const auto &a = a_v.as_bstr();
+        const auto &b = b_v.as_bstr();
+        const auto min_sz = std::min(a->size(), b->size());
+        const auto max_sz = std::max(a->size(), b->size());
+        const auto extend = extend_v.as_bool() & (min_sz < max_sz);
+        bstr_type::value_type res { alloc };
+        res.reserve(extend ? max_sz : min_sz);
+        for (size_t i = 0; i < min_sz; i++)
+            res.emplace_back((*a)[i] & (*b)[i]);
+        if (extend) {
+            const auto &longer = a->size() == max_sz ? a : b;
+            for (size_t i = min_sz; i < max_sz; i++)
+                res.emplace_back((*longer)[i]);
+        }
+        return { alloc, std::move(res) };
+    }
+
+    value or_byte_string(allocator &alloc, const value &extend_v, const value &a_v, const value &b_v)
+    {
+        const auto &a = a_v.as_bstr();
+        const auto &b = b_v.as_bstr();
+        const auto min_sz = std::min(a->size(), b->size());
+        const auto max_sz = std::max(a->size(), b->size());
+        const auto extend = extend_v.as_bool() & (min_sz < max_sz);
+        bstr_type::value_type res { alloc };
+        res.reserve(extend ? max_sz : min_sz);
+        for (size_t i = 0; i < min_sz; i++)
+            res.emplace_back((*a)[i] | (*b)[i]);
+        if (extend) {
+            const auto &longer = a->size() == max_sz ? a : b;
+            for (size_t i = min_sz; i < max_sz; i++)
+                res.emplace_back((*longer)[i]);
+        }
+        return { alloc, std::move(res) };
+    }
+
+    value xor_byte_string(allocator &alloc, const value &extend_v, const value &a_v, const value &b_v)
+    {
+        const auto &a = a_v.as_bstr();
+        const auto &b = b_v.as_bstr();
+        const auto min_sz = std::min(a->size(), b->size());
+        const auto max_sz = std::max(a->size(), b->size());
+        const auto extend = extend_v.as_bool() & (min_sz < max_sz);
+        bstr_type::value_type res { alloc };
+        res.reserve(extend ? max_sz : min_sz);
+        for (size_t i = 0; i < min_sz; i++)
+            res.emplace_back((*a)[i] ^ (*b)[i]);
+        if (extend) {
+            const auto &longer = a->size() == max_sz ? a : b;
+            for (size_t i = min_sz; i < max_sz; i++)
+                res.emplace_back((*longer)[i] ^ 0x00);
+        }
+        return { alloc, std::move(res) };
+    }
+
+    value complement_byte_string(allocator &alloc, const value &s_v)
+    {
+        const auto &s = s_v.as_bstr();
+        bstr_type::value_type res { alloc };
+        res.reserve(s->size());
+        for (auto k: *s)
+            res.emplace_back(~k);
+        return { alloc, std::move(res) };
+    }
+
+    value shift_byte_string(allocator &alloc, const value &b_v, const value &n_v)
+    {
+        const auto &b = b_v.as_bstr();
+        const auto &n = n_v.as_int();
+        const int n_bits = b->size() << 3;
+        bstr_type::value_type res { alloc };
+        if (b->empty()) {
+            return { alloc, std::move(res) };
+        }
+        if (*n == 0) {
+            res = *b;
+            return { alloc, std::move(res) };
+        }
+        res.reserve(b->size());
+        while (res.size() < b->size())
+            res.emplace_back(0);
+        if (boost::multiprecision::abs(*n) < n_bits) {
+            const int shift = static_cast<int>(*n);
+            size_t tgt_byte = res.size() - 1;
+            uint8_t tgt_mask = 0x01;
+            for (int tgt_idx = 0, src_idx = tgt_idx - shift; tgt_idx < n_bits; ++tgt_idx, ++src_idx) {
+                bool bit = false;
+                if (src_idx >= 0 && src_idx < n_bits) {
+                    const auto src_byte = b->size() - (src_idx >> 3) - 1;
+                    uint8_t src_mask = 1;
+                    for (auto bit_pos = src_idx & 0x7; bit_pos; --bit_pos) {
+                        src_mask <<= 1;
+                    }
+                    bit = ((*b)[src_byte] & src_mask) > 0;
+                }
+                if (bit)
+                    res[tgt_byte] |= tgt_mask;
+                if (tgt_mask == 0x80) {
+                    tgt_mask = 0x01;
+                    --tgt_byte;
+                } else {
+                    tgt_mask <<= 1;
+                }
+            }
+        }
+        return { alloc, std::move(res) };
+    }
+
+    value rotate_byte_string(allocator &alloc, const value &b_v, const value &n_v)
+    {
+        const auto &b = b_v.as_bstr();
+        const auto &n = n_v.as_int();
+        const int n_bits = b->size() << 3;
+        bstr_type::value_type res { alloc };
+        if (b->empty()) {
+            return { alloc, std::move(res) };
+        }
+        if (*n % n_bits == 0) {
+            res = *b;
+            return { alloc, std::move(res) };
+        }
+        res.reserve(b->size());
+        while (res.size() < b->size()) {
+            res.emplace_back(0);
+        }
+        const int shift = static_cast<int>(*n % n_bits);
+        size_t tgt_byte = res.size() - 1;
+        uint8_t tgt_mask = 0x01;
+        int src_idx = -shift % n_bits;
+        if (src_idx < 0)
+            src_idx += n_bits;
+        auto src_byte = b->size() - (src_idx >> 3) - 1;
+        uint8_t src_mask = 1;
+        for (auto bit_pos = src_idx & 0x7; bit_pos; --bit_pos) {
+            src_mask <<= 1;
+        }
+        for (;;) {
+            if (const bool bit = ((*b)[src_byte] & src_mask) > 0; bit)
+                res[tgt_byte] |= tgt_mask;
+            if (src_mask == 0x80) {
+                src_mask = 0x01;
+                if (src_byte == 0)
+                    src_byte = b->size() - 1;
+                else
+                    --src_byte;
+            } else {
+                src_mask <<= 1;
+            }
+            if (tgt_mask == 0x80) {
+                tgt_mask = 0x01;
+                if (tgt_byte == 0)
+                    break;
+                --tgt_byte;
+            } else {
+                tgt_mask <<= 1;
+            }
+        }
+        return { alloc, std::move(res) };
+    }
+
+    value count_set_bits(allocator &alloc, const value &b_v)
+    {
+        const auto &b = b_v.as_bstr();
+        int cnt = 0;
+        for (auto k: *b)
+            cnt += std::popcount(k);
+        return { alloc, bint_type { alloc, cnt } };
+    }
+
+    value find_first_set_bit(allocator &alloc, const value &b_v)
+    {
+        // position is counted from the right!
+        const auto &b = b_v.as_bstr();
+        int cnt = 0;
+        for (auto k: std::ranges::views::reverse(*b)) {
+            const auto k_cnt = std::countr_zero(k);
+            cnt += k_cnt;
+            if (k_cnt != 8)
+                break;
+        }
+        if (cnt == static_cast<int>(b->size() << 3))
+            cnt = -1;
+        return { alloc, bint_type { alloc, cnt } };
+    }
+
+    value read_bit(allocator &alloc, const value &b_v, const value &pos_v)
+    {
+        // position is counted from the right!
+        const auto &b = b_v.as_bstr();
+        const auto &pos = pos_v.as_int();
+        const auto n_bits = b->size() << 3;
+        if (*pos < 0 || *pos >= n_bits) [[unlikely]]
+            throw error(fmt::format("readBit: the bit position out of range: {}", *pos));
+        // convert into the position from the left
+        const auto idx = static_cast<size_t>(*pos);
+        const auto byte_idx = b->size() - (idx >> 3) - 1;
+        uint8_t mask = 1;
+        for (auto bit_pos = idx & 0x7; bit_pos; --bit_pos) {
+            mask <<= 1;
+        }
+        const bool res = ((*b)[byte_idx] & mask) > 0;
+        return value::boolean(alloc, res);
+    }
+
+    value write_bits(allocator &alloc, const value &b_v, const value &indices_v, const value &bit_v)
+    {
+        const auto &b = b_v.as_bstr();
+        const auto n_bits = b->size() << 3;
+        const auto bit = bit_v.as_bool();
+        const auto &indices = indices_v.as_list();
+        bstr_type::value_type res { alloc };
+        res = *b;
+        for (const auto &idx_v: indices->vals) {
+            const auto &idx = idx_v.as_int();
+            if (*idx < 0 || *idx >= n_bits) [[unlikely]]
+                throw error(fmt::format("writeBits: the bit position out of range: {}", *idx));
+            const auto pos = static_cast<size_t>(*idx);
+            const auto byte_idx = b->size() - (pos >> 3) - 1;
+            uint8_t mask = 1;
+            for (auto bit_pos = pos & 0x7; bit_pos; --bit_pos) {
+                mask <<= 1;
+            }
+            if (bit)
+                res[byte_idx] |= mask;
+            else
+                res[byte_idx] &= ~mask;
+        }
+        return { alloc, std::move(res) };
+    }
+
+    value replicate_byte(allocator &alloc, const value &len_v, const value &b_v)
+    {
+        const auto &len = len_v.as_int();
+        if (*len < 0 || *len > 8192) [[unlikely]]
+            throw error(fmt::format("replicateByte: the length is out of range: {}", *len));
+        const auto &b = b_v.as_int();
+        if (*b < 0 || *b > 255) [[unlikely]]
+            throw error(fmt::format("replicateByte: the byte is out of range: {}", *b));
+        const auto k = static_cast<uint8_t>(*b);
+        const auto sz = static_cast<size_t>(*len);
+        bstr_type::value_type res { alloc };
+        res.reserve(sz);
+        while (res.size() < sz)
+            res.emplace_back(k);
+        return { alloc, std::move(res) };
+    }
+
+    value ripemd_160(allocator &alloc, const value &b)
+    {
+        bstr_type::value_type res { alloc, sizeof(ripemd_160::hash_t) };
+        ripemd_160::digest(res, *b.as_bstr());
+        return { alloc, std::move(res) };
+    }
+
+    static cpp_int gcd_extended(const cpp_int &a, const cpp_int &b, cpp_int &x, cpp_int &y)
+    {
+        if (a == 0) {
+            x = 0;
+            y = 1;
+            return b;
+        }
+        cpp_int x1, y1;
+        const auto gcd = gcd_extended(b % a, a, x1, y1);
+        x = y1 - (b / a) * x1;
+        y = x1;
+        return gcd;
+    }
+
+    value exp_mod_integer(allocator &alloc, const value &a_v, const value &e_v, const value &m_v)
+    {
+        const auto &a = a_v.as_int();
+        const auto &e = e_v.as_int();
+        const auto &m = m_v.as_int();
+        if (*m <= 0) [[unlikely]]
+            throw error(fmt::format("the modulo cannot be 0 or negative but got: {}!", *m));
+        if (*e >= std::numeric_limits<int64_t>::max()) [[unlikely]]
+            throw error(fmt::format("the exponent is too big: {}!", *e));
+        if (*e < std::numeric_limits<int64_t>::min()) [[unlikely]]
+            throw error(fmt::format("the exponent is too small: {}!", *e));
+        if (*e < 0) {
+            cpp_int x, y;
+            const cpp_int base = boost::multiprecision::pow(*a, -static_cast<int64_t>(*e));
+            if (const auto gcd = gcd_extended(base, *m, x, y); gcd != 1) [[unlikely]]
+                throw error(fmt::format("expect gcd of a and m of 1 for a: {} and m: {}!", *a, *m));
+            return { alloc, (x % *m + *m) % *m };
+        }
+        const cpp_int res = boost::multiprecision::pow(*a, static_cast<int64_t>(*e));
+        return { alloc, res % *m };
     }
 
     static void init_builtin_map(builtin_map &m)
@@ -709,6 +1005,19 @@ namespace daedalus_turbo::plutus::builtins {
         m.try_emplace(builtin_tag::bls12_381_miller_loop, 2, bls12_381_miller_loop, "bls12_381_millerLoop", 0, 4);
         m.try_emplace(builtin_tag::bls12_381_mul_ml_result, 2, bls12_381_mul_ml_result, "bls12_381_mulMlResult", 0, 4);
         m.try_emplace(builtin_tag::bls12_381_final_verify, 2, bls12_381_final_verify, "bls12_381_finalVerify", 0, 4);
+        m.try_emplace(builtin_tag::and_byte_string, 3, and_byte_string, "andByteString", 0, 5);
+        m.try_emplace(builtin_tag::or_byte_string, 3, or_byte_string, "orByteString", 0, 5);
+        m.try_emplace(builtin_tag::xor_byte_string, 3, xor_byte_string, "xorByteString", 0, 5);
+        m.try_emplace(builtin_tag::complement_byte_string, 1, complement_byte_string, "complementByteString", 0, 5);
+        m.try_emplace(builtin_tag::shift_byte_string, 2, shift_byte_string, "shiftByteString", 0, 5);
+        m.try_emplace(builtin_tag::rotate_byte_string, 2, rotate_byte_string, "rotateByteString", 0, 5);
+        m.try_emplace(builtin_tag::count_set_bits, 1, count_set_bits, "countSetBits", 0, 5);
+        m.try_emplace(builtin_tag::find_first_set_bit, 1, find_first_set_bit, "findFirstSetBit", 0, 5);
+        m.try_emplace(builtin_tag::read_bit, 2, read_bit, "readBit", 0, 5);
+        m.try_emplace(builtin_tag::write_bits, 3, write_bits, "writeBits", 0, 5);
+        m.try_emplace(builtin_tag::replicate_byte, 2, replicate_byte, "replicateByte", 0, 5);
+        m.try_emplace(builtin_tag::ripemd_160, 1, ripemd_160, "ripemd_160", 0, 5);
+        m.try_emplace(builtin_tag::exp_mod_integer, 3, exp_mod_integer, "expModInteger", 0, 6);
     }
 
     static builtin_map make_semantics_v1()

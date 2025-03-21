@@ -1,8 +1,11 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
-#include <dt/benchmark.hpp>
+
+#include <dt/common/benchmark.hpp>
+#include <dt/big-int.hpp>
 #include <dt/rational.hpp>
 
 using namespace boost::ut;
@@ -21,12 +24,12 @@ namespace {
 
     uint64_t max_pool_rat(uint64_t reward_pot, uint64_t total_stake, uint64_t pledge, uint64_t pool_stake, uint64_t n_opt, double a0)
     {
-        rational z0 = 1;
+        cpp_rational z0 = 1;
         z0 /= n_opt;
-        rational pool_s = pool_stake;
+        cpp_rational pool_s = pool_stake;
         pool_s /= total_stake;
         pool_s = std::min(pool_s, z0);
-        rational pledge_s = pledge;
+        cpp_rational pledge_s = pledge;
         pledge_s /= total_stake;
         pledge_s = std::min(pledge_s, z0);
         auto y = (z0 - pool_s) / z0;
@@ -34,15 +37,15 @@ namespace {
         return static_cast<uint64_t>(reward_pot / (1.0 + a0) * (pool_s + pledge_s * a0 * x));
     }
 
-    uint64_t member_reward_f64(uint64_t max_reward, uint64_t pool_stake, uint64_t deleg_stake, uint64_t cost, const rational &margin)
+    uint64_t member_reward_f64(uint64_t max_reward, uint64_t pool_stake, uint64_t deleg_stake, uint64_t cost, const cpp_rational &margin)
     {
         return static_cast<uint64_t>((max_reward - cost) * (1 - static_cast<double>(margin)) * deleg_stake / pool_stake);
     }
 
-    uint64_t member_reward_rat(uint64_t max_reward, uint64_t pool_stake, uint64_t deleg_stake, uint64_t cost, const rational & margin)
+    uint64_t member_reward_rat(uint64_t max_reward, uint64_t pool_stake, uint64_t deleg_stake, uint64_t cost, const cpp_rational & margin)
     {
-        rational reward = max_reward - cost;
-        reward *= (1 - static_cast<rational>(margin));
+        cpp_rational reward = max_reward - cost;
+        reward *= (1 - margin);
         reward *= deleg_stake;
         reward /= pool_stake;
         return static_cast<uint64_t>(reward);
@@ -73,7 +76,7 @@ suite rational_bench_suite = [] {
             uint64_t deleg_stake = 8642660310954;
             uint64_t pool_stake = 61139181786687;
             uint64_t pool_reward_pot = 43128231125;
-            rational margin { 1, 100 };
+            cpp_rational margin { 1, 100 };
             benchmark_r("member_reward_fp64", 1e5, 1e5, [&] {
                 member_reward_f64(pool_reward_pot, pool_stake, deleg_stake, cost, margin);
                 return 1;

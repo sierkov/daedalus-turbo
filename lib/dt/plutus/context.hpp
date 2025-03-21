@@ -1,12 +1,12 @@
+#pragma once
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
-#ifndef DAEDALUS_TURBO_PLUTUS_CONTEXT_HPP
-#define DAEDALUS_TURBO_PLUTUS_CONTEXT_HPP
 
-#include <dt/cardano/conway.hpp>
-#include <dt/cardano/mocks.hpp>
+#include <dt/cardano/conway/block.hpp>
+#include <dt/cardano/common/mocks.hpp>
 #include <dt/plutus/types.hpp>
 #include <dt/plutus/costs.hpp>
 
@@ -46,12 +46,8 @@ namespace daedalus_turbo::plutus {
     struct context {
         using datum_map = map<datum_hash, data>;
         using policy_list = vector<script_hash>;
-        using cert_list = vector<conway::cert_t>;
+        using cert_list = vector<cert_t>;
         using redeemer_map = map<redeemer_id, tx_redeemer>;
-        using vote_map = map<conway::gov_action_id_t, conway::voting_procedure_t>;
-        using voter_map = map<conway::voter_t, vote_map>;
-        using proposal_list = vector<conway::proposal_t>;
-        using stake_list = vector<stake_ident_hybrid>;
 
         context(const std::string &, const cardano::config &c_cfg=cardano::config::get());
         context(stored_tx_context &&, const cardano::config &c_cfg=cardano::config::get());
@@ -61,48 +57,17 @@ namespace daedalus_turbo::plutus {
 
         void set_inputs(stored_txo_list &&inputs_, stored_txo_list &&ref_inputs_);
 
-        const cardano::tx &tx() const;
-        const credential_t &cert_cred_at(uint64_t) const;
-        const conway::cert_t &cert_at(uint64_t) const;
-        buffer mint_at(uint64_t r_idx) const;
-        const stake_ident_hybrid &withdraw_at(uint64_t r_idx) const;
-        const stored_txo &input_at(uint64_t r_idx) const;
-        term data(allocator &script_allocator, script_type typ, const tx_redeemer &) const;
-        const conway::proposal_t &proposal_at(uint64_t r_idx) const;
-        const conway::voter_t &voter_at(uint64_t r_idx) const;
-        const proposal_list &proposals() const;
-        const voter_map &votes() const;
+        void cost_models(const costs::parsed_models &models)
+        {
+            _cost_models = models;
+        }
+
+        const tx_base &tx() const;
         script_hash redeemer_script(const redeemer_id &) const;
 
         prepared_script apply_script(allocator &&script_alloc, const script_info &script, std::initializer_list<term> args, const std::optional<ex_units> &budget) const;
         prepared_script prepare_script(const tx_redeemer &r) const;
         void eval_script(prepared_script &ps) const;
-
-        const cardano::config &config() const
-        {
-            return _cfg;
-        }
-
-        void cost_models(const costs::parsed_models &models) {
-            _cost_models = models;
-        }
-
-        const costs::parsed_models &cost_models() const
-        {
-            return _cost_models;
-        }
-
-        const datum_map &datums() const
-        {
-            return _datums;
-        }
-
-        allocator &alloc() const
-        {
-            if (!_alloc)
-                _alloc.emplace();
-            return *_alloc;
-        }
 
         cardano::slot slot() const
         {
@@ -134,27 +99,59 @@ namespace daedalus_turbo::plutus {
             version ver;
         };
 
+        struct data_encoder;
+        friend data_encoder;
+
         const cardano::config &_cfg;
         uint8_vector _tx_body_bytes;
-        cbor::value _tx_body_cbor;
         uint8_vector _tx_wits_bytes;
-        cbor::value _tx_wits_cbor;
         storage::block_info _block_info;
-        mocks::block _block;
-        std::unique_ptr<cardano::tx> _tx;
+        tx_container _tx;
         stored_txo_list _inputs {};
         stored_txo_list _ref_inputs {};
         datum_map _datums {};
-        policy_list _mints {};
-        stake_list _withdraws {};
-        cert_list _certs {};
         script_info_map _scripts {};
         redeemer_map _redeemers {};
-        proposal_list _proposals {};
-        voter_map _votes {};
         std::reference_wrapper<const costs::parsed_models> _cost_models = costs::defaults();
         mutable std::optional<allocator> _alloc {};
         mutable map<script_type, plutus::data> _shared {};
+
+        allocator &alloc() const
+        {
+            if (!_alloc)
+                _alloc.emplace();
+            return *_alloc;
+        }
+
+        const cardano::config &config() const
+        {
+            return _cfg;
+        }
+
+        const costs::parsed_models &cost_models() const
+        {
+            return _cost_models;
+        }
+
+        term data(allocator &script_allocator, script_type typ, const tx_redeemer &) const;
+
+        const datum_map &datums() const
+        {
+            return _datums;
+        }
+
+        term term_from_datum(allocator &, const datum_hash &hash) const;
+        term term_from_datum(allocator &, const uint8_vector &datum) const;
+
+        credential_t cert_cred_at(uint64_t) const;
+        const cert_t &cert_at(uint64_t) const;
+        buffer mint_at(uint64_t r_idx) const;
+        const reward_id_t &withdraw_at(uint64_t r_idx) const;
+        const stored_txo &input_at(uint64_t r_idx) const;
+        const proposal_t &proposal_at(uint64_t r_idx) const;
+        const voter_t &voter_at(uint64_t r_idx) const;
+        const conway::proposal_set &proposals() const;
+        const conway::vote_set &votes() const;
     };
 }
 
@@ -179,5 +176,3 @@ namespace fmt {
         }
     };
 }
-
-#endif //DAEDALUS_TURBO_PLUTUS_CONTEXT_HPP

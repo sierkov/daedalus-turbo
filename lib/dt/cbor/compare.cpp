@@ -1,5 +1,6 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
@@ -10,214 +11,221 @@
 namespace daedalus_turbo::cbor {
     using namespace zero2;
 
-    struct path_t {
-        vector<size_t> items {};
+    void diff_list::add(diff_t &&d)
+    {
+        emplace_back(std::move(d));
+        if (size() >= 100) [[unlikely]]
+            throw error(fmt::format("terminating the comparison early - too many differences: {}", *this));
+    }
 
-        void push(const size_t v)
+    static diff_list compare_uint(const uint64_t v1, const uint64_t v2, path_t &path)
+    {
+        diff_list diffs {};
+        if (v1 != v2) [[unlikely]]
+            diffs.add(path, "expected: {} actual: {}", v1, v2);
+        return diffs;
+    }
+
+    static diff_list compare_nint(const uint64_t v1, const uint64_t v2, path_t &path)
+    {
+        diff_list diffs {};
+        if (v1 != v2) [[unlikely]]
+            diffs.add(path, "expected: -({}) actual: -({})", v1, v2);
+        return diffs;
+    }
+
+    static diff_list compare_text(value &v1, value &v2, path_t &path)
+    {
+        diff_list diffs {};
+        if (v1.indefinite() != v2.indefinite()) [[unlikely]] {
+            diffs.add(path, "expected: {} text actual {} text",
+                                                    v1.indefinite() ? "chunked" : "normal", v2.indefinite() ? "chunked" : "normal");
+        } else {
+            if (!v1.indefinite()) [[likely]] {
+                if (v1.text() != v2.text()) [[unlikely]]
+                    diffs.add(path, "expected: {} actual: {}", v1.to_string(), v2.to_string());
+            } else {
+                std::string t1 {}, t2 {};
+                v1.to_text(t1);
+                v2.to_text(t2);
+                if (t1 != t2) [[unlikely]]
+                    diffs.add(path, "expected: T '{}' actual: T '{}'", t1, t2);
+            }
+        }
+        return diffs;
+    }
+
+    static diff_list compare_bytes(value &v1, value &v2, path_t &path)
+    {
+        diff_list diffs {};
+        if (v1.indefinite() != v2.indefinite()) [[unlikely]] {
+            diffs.add(path, "expected: {} bytes actual {} bytes",
+                                                    v1.indefinite() ? "chunked" : "normal", v2.indefinite() ? "chunked" : "normal");
+        } else {
+            if (!v1.indefinite()) [[likely]] {
+                if (v1.bytes() != v2.bytes()) [[unlikely]]
+                    diffs.add(path, "expected: {} actual: {}", v1.to_string(), v2.to_string());
+            } else {
+                write_vector b1 {}, b2 {};
+                v1.to_bytes(b1);
+                v2.to_bytes(b2);
+                if (b1 != b2) [[unlikely]]
+                    diffs.add(path, "expected: B #{} actual: B #{}'", b1, b2);
+            }
+        }
+        return diffs;
+    }
+
+    static diff_list compare(value &v1, value &v2, path_t &path);
+
+    template<typename T>
+    struct value_stream {
+        const char *name;
+        T &it;
+        bool empty = false;
+
+        T *operator->()
         {
-            items.emplace_back(v);
+            return &it;
         }
 
-        void pop()
+        value &read()
         {
-            items.pop_back();
+            return it.read();
         }
 
-        std::string str() const
+        bool done()
         {
-            return fmt::format("{}", items);
+            if (!empty) {
+                empty = it.done();
+            }
+            return empty;
         }
     };
 
-    static bool compare_uint(const uint64_t v1, const uint64_t v2, path_t &path)
+    static diff_list compare_array(value &v1, value &v2, path_t &path)
     {
-        if (v1 != v2) [[unlikely]] {
-            logger::warn("{}: expected: {} actual: {}", path.str(), v1, v2);
-            return false;
-        }
-        return true;
-    }
 
-    static bool compare_nint(const uint64_t v1, const uint64_t v2, path_t &path)
-    {
-        if (v1 != v2) [[unlikely]] {
-            logger::warn("{}: expected: -({} + 1) actual: -({} + 1)", path.str(), v1, v2);
-            return false;
-        }
-        return true;
-    }
-
-    static bool compare_text(const value &v1, const value &v2, path_t &path)
-    {
-        if (v1.indefinite() != v2.indefinite()) [[unlikely]] {
-            logger::warn("{}: expected: {} text actual {} text",
-                path.str(), v1.indefinite() ? "chunked" : "normal", v2.indefinite() ? "chunked" : "normal");
-            return false;
-        }
-        if (!v1.indefinite()) [[likely]] {
-            if (v1.text() != v2.text()) [[unlikely]] {
-                logger::warn("{}: expected: {} actual: {}", path.str(), v1.stringify(), v2.stringify());
-                return false;
-            }
-        } else {
-            std::string t1 {}, t2 {};
-            v1.to_text(t1);
-            v2.to_text(t2);
-            if (t1 != t2) [[unlikely]] {
-                logger::warn("{}: expected: T '{}' actual: T '{}'", path.str(), t1, t2);
-                return false;
-            }
-        }
-        return true;
-    }
-
-    static bool compare_bytes(const value &v1, const value &v2, path_t &path)
-    {
-        if (v1.indefinite() != v2.indefinite()) [[unlikely]] {
-            logger::warn("{}: expected: {} text actual {} text",
-                path.str(), v1.indefinite() ? "chunked" : "normal", v2.indefinite() ? "chunked" : "normal");
-            return false;
-        }
-        if (!v1.indefinite()) [[likely]] {
-            if (v1.bytes() != v2.bytes()) [[unlikely]] {
-                logger::warn("{}: expected: {} actual: {}", path.str(), v1.stringify(), v2.stringify());
-                return false;
-            }
-        } else {
-            uint8_vector b1 {}, b2 {};
-            v1.to_bytes(b1);
-            v2.to_bytes(b2);
-            if (b1 != b2) [[unlikely]] {
-                logger::warn("{}: expected: B #{} actual: B #{}", path.str(), b1, b2);
-                return false;
-            }
-        }
-        return true;
-    }
-
-    static bool compare(const value &v1, const value &v2, path_t &path);
-
-    static bool compare_array(const value &v1, const value &v2, path_t &path)
-    {
-        auto &it1 = v1.array();
-        auto &it2 = v2.array();
+        value_stream s1 { "missing", v1.array() };
+        value_stream s2 { "extra", v2.array() };
+        diff_list diffs {};
         size_t i = 0;
-        while (!it1.done() && !it2.done()) {
+        while (!s1.done() && !s2.done()) {
             path.push(i);
-            if (!compare(it1.read(), it2.read(), path)) [[unlikely]]
-                return false;
+            if (auto diff = compare(s1->read(), s2->read(), path); !diff.empty()) [[unlikely]] {
+                for (auto &&d: diff)
+                    diffs.add(std::move(d));
+            }
+            path.pop();
+            ++i;
+        }
+        for (auto *s: std::initializer_list<value_stream<array_reader> *> { &s1, &s2 }) {
+            size_t cnt = 0;
+            while (!s->done()) {
+                s->read();
+                ++cnt;
+            }
+            if (cnt) [[unlikely]]
+                diffs.add(path, "{} items: {} after #{}", s->name, cnt, i);
+        }
+        return diffs;
+    }
+
+    static diff_list compare_map(value &v1, value &v2, path_t &path)
+    {
+        diff_list diffs {};
+        value_stream s1 { "missing", v1.map() };
+        value_stream s2 { "extra", v2.map() };
+        size_t i = 0;
+        while (!s1.done() && !s2.done()) {
+            auto &k1 = s1->read_key();
+            auto &k2 = s2->read_key();
+            path.push(i);
+            if (auto diff = compare(k1, k2, path); !diff.empty()) [[unlikely]] {
+                for (auto &&d: diff)
+                    diffs.add(std::move(d));
+            }
+            auto &v1 = s1->read_val(std::move(k1));
+            auto &v2 = s2->read_val(std::move(k2));
+            if (auto diff = compare(v1, v2, path); !diff.empty()) [[unlikely]] {
+                for (auto &&d: diff)
+                    diffs.add(std::move(d));
+            }
             path.pop();
             ++i;
         }
         struct it_info {
             std::string_view name;
-            value::array_reader &it;
+            map_reader &it;
         };
-        for (const auto &it: std::initializer_list<it_info> { { "missing", it1 }, { "extra", it2 } }) {
+        for (auto *s: std::initializer_list<value_stream<map_reader> *> { &s1, &s2 }) {
             size_t cnt = 0;
-            while (!it.it.done()) {
-                auto val = it.it.read();
-                logger::debug("missing array item #{}: {}", cnt, val);
+            while (!s->done()) {
+                auto &k = (*s)->read_key();
+                (*s)->read_val(std::move(k));
                 ++cnt;
             }
-            if (cnt) [[unlikely]] {
-                logger::warn("{}: {} items: {}", path.str(), it.name, cnt);
-                return false;
-            }
+            if (cnt) [[unlikely]]
+                diffs.add(path, "{} items: {} after #{}", s->name, cnt, i);
         }
-        return true;
+        return diffs;
     }
 
-    static bool compare_map(const value &v1, const value &v2, path_t &path)
+    static diff_list compare_tag(value &v1, value &v2, path_t &path)
     {
-        auto &it1 = v1.map();
-        auto &it2 = v2.map();
-        size_t i = 0;
-        while (!it1.done() && !it2.done()) {
-            auto k1 = it1.read_key();
-            auto k2 = it2.read_key();
-            path.push(i);
-            if (!compare(k1, k2, path)) [[unlikely]]
-                return false;
-            auto v1 = it1.read_val(k1);
-            auto v2 = it2.read_val(k2);
-            if (!compare(v1, v2, path)) [[unlikely]]
-                return false;
-            path.pop();
-            ++i;
-        }
-        struct it_info {
-            std::string_view name;
-            value::map_reader &it;
-        };
-        for (const auto &it: std::initializer_list<it_info> { { "missing", it1 }, { "extra", it2 } }) {
-            size_t cnt = 0;
-            while (!it.it.done()) {
-                auto k = it.it.read_key();
-                auto val = it.it.read_val(k);
-                logger::debug("missing map item #{}: {}={}", cnt, k.clone().stringify(), val.stringify());
-                ++cnt;
-            }
-            if (cnt) [[unlikely]] {
-                logger::warn("{}: {} items: {}", path.str(), it.name, cnt);
-                return false;
-            }
-        }
-        return true;
-    }
-
-    static bool compare_tag(const value &v1, const value &v2, path_t &path)
-    {
+        diff_list diffs {};
         auto &t1 = v1.tag();
         auto &t2 = v2.tag();
-        if (t1.id() != t2.id()) [[unlikely]] {
-            logger::warn("{}: expected id: {} actual id: {}", path.str(), t1.id(), t2.id());
-            return false;
+        if (t1.id() != t2.id()) [[unlikely]]
+            diffs.add(path, "expected id: {} actual id: {}", t1.id(), t2.id());
+        auto &c1 = t1.read();
+        auto &c2 = t2.read();
+        if (auto diff = compare(c1, c2, path); !diff.empty()) [[unlikely]] {
+            for (auto &&d: diff)
+                diffs.add(std::move(d));
         }
-        auto c1 = t1.read();
-        auto c2 = t2.read();
-        return compare(c1, c2, path);
+        return diffs;
     }
 
-    static bool compare_simple(const value &v1, const value &v2, path_t &path)
+    static diff_list compare_simple(value &v1, value &v2, path_t &path)
     {
-        if (v1.special() != v2.special()) [[unlikely]] {
-            logger::warn("{}: expected simple: {} actual simple: {}",
-                path.str(), static_cast<int>(v1.special()), static_cast<int>(v2.special()));
-            return false;
-        }
-        return true;
+        if (v1.special() != v2.special()) [[unlikely]]
+            return diff_list { diff_t { path, "expected simple: {} actual simple: {}",
+                                                    static_cast<int>(v1.special()), static_cast<int>(v2.special()) } };
+        return {};
     }
 
-    static bool compare(const value &v1, const value &v2, path_t &path)
+    static diff_list compare(value &v1, value &v2, path_t &path)
     {
         if (v1.type() != v2.type()) [[unlikely]] {
-            logger::warn("{}: types do not match: expected: {} actual: {}", path.str(), v1.type(), v2.type());
-            return false;
+            return diff_list { diff_t { path, "types do not match: expected: {} actual: {}", v1.type(), v2.type() } };
         }
         switch (const auto typ = v1.type(); typ) {
-            case cbor::major_type::uint: return compare_uint(v1.uint(), v2.uint(), path);
-            case cbor::major_type::nint: return compare_nint(v1.uint(), v2.uint(), path);
-            case cbor::major_type::text: return compare_text(v1, v2, path);
-            case cbor::major_type::bytes: return compare_bytes(v1, v2, path);
-            case cbor::major_type::array: return compare_array(v1, v2, path);
-            case cbor::major_type::map: return compare_map(v1, v2, path);
-            case cbor::major_type::tag: return compare_tag(v1, v2, path);
-            case cbor::major_type::simple: return compare_simple(v1, v2, path);
-            default: throw error(fmt::format("can't compare cbor type: {}", typ));
+            case major_type::uint: return compare_uint(v1.uint(), v2.uint(), path);
+            case major_type::nint: return compare_nint(v1.nint(), v2.nint(), path);
+            case major_type::text: return compare_text(v1, v2, path);
+            case major_type::bytes: return compare_bytes(v1, v2, path);
+            case major_type::array: return compare_array(v1, v2, path);
+            case major_type::map: return compare_map(v1, v2, path);
+            case major_type::tag: return compare_tag(v1, v2, path);
+            case major_type::simple: return compare_simple(v1, v2, path);
+            [[unlikely]] default: throw error(fmt::format("can't compare cbor type: {}", typ));
         }
     }
 
-    bool compare(const buffer &bytes1, const buffer &bytes2)
+    diff_list compare(const buffer &expected, const buffer &actual)
     {
+        diff_list diffs {};
         path_t path {};
-        decoder it1 { bytes1 };
-        decoder it2 { bytes2 };
+        decoder it1 { expected };
+        decoder it2 { actual };
         size_t i = 0;
         while (!it1.done() && !it2.done()) {
             path.push(i);
-            if (!compare(it1.read(), it2.read(), path)) [[unlikely]]
-                return false;
+            if (auto diff = compare(it1.read(), it2.read(), path); !diff.empty()) [[unlikely]] {
+                for (auto &&d: diff)
+                    diffs.add(std::move(d));
+            }
             path.pop();
             ++i;
         }
@@ -225,17 +233,15 @@ namespace daedalus_turbo::cbor {
             std::string_view name;
             decoder &it;
         };
-        for (const auto &it: std::initializer_list<it_info> { { "missing", it1 }, { "extra", it2 } }) {
+        for (const auto &it: std::initializer_list<it_info>{ { "missing", it1 }, { "extra", it2 } }) {
             size_t cnt = 0;
             while (!it.it.done()) {
-                ++cnt;
                 it.it.read();
+                ++cnt;
             }
-            if (cnt) [[unlikely]] {
-                logger::warn("{}: {} items: {}", path.str(), it.name, cnt);
-                return false;
-            }
+            if (cnt) [[unlikely]]
+                diffs.add(path, "{} items: {} after #{}", it.name, cnt, i);
         }
-        return true;
+        return diffs;
     }
 }

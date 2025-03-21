@@ -1,10 +1,11 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
+#include <dt/common/test.hpp>
 #include <dt/plutus/builtins.hpp>
-#include <dt/test.hpp>
 #include <dt/blake2b.hpp>
 #include <dt/crypto/sha2.hpp>
 #include <dt/crypto/sha3.hpp>
@@ -17,6 +18,8 @@ using namespace daedalus_turbo::plutus::builtins;
 
 suite plutus_builtins_suite = [] {
     using constant = plutus::constant;
+    using plutus::allocator;
+    using plutus::data;
     "plutus::builtins"_test = [] {
         "v1"_test = [] {
             allocator alloc {};
@@ -195,7 +198,7 @@ suite plutus_builtins_suite = [] {
                         0xdb, 0xcb, 0xe7, 0x10, 0xb6, 0x29, 0x76, 0x55, 0x35, 0x59, 0x11, 0x33, 0xb4, 0xf2, 0xb6, 0xe6,
                         0xad, 0xfa, 0xb9, 0x33, 0xa8, 0x96, 0xda, 0x75, 0xf2, 0xcd, 0x5d, 0xb3, 0xa3, 0x35, 0x4a, 0x27,
                         0x3d, 0x3e, 0x37, 0xc7, 0x28, 0xca, 0x98, 0x07, 0x53, 0x8d, 0x83, 0x8f, 0xef, 0xbb, 0x2f, 0x00 };
-                static const std::array<uint8_t, 84> msg {
+                static const byte_array<84> msg {
                         0xa3, 0x00, 0x81, 0x82, 0x58, 0x20, 0xc1, 0xa1, 0xff, 0x8e, 0x54, 0x99, 0xc3, 0x9f, 0xfa, 0x4c,
                         0x70, 0x67, 0x43, 0x78, 0x5e, 0x62, 0x17, 0xa3, 0x3d, 0xf4, 0x8c, 0xef, 0x73, 0x42, 0xd0, 0xc4,
                         0x52, 0x60, 0x51, 0x58, 0x50, 0xa1, 0x00, 0x01, 0x81, 0x82, 0x58, 0x1d, 0x61, 0xc2, 0x6a, 0xc0,
@@ -494,10 +497,10 @@ suite plutus_builtins_suite = [] {
             };
             "b_data/un_b_data"_test = [&] {
                 {
-                    bstr_type::value_type exp { alloc, 65 };
+                    bstr_type exp { alloc, uint8_vector(65) };
                     const value val { alloc, exp };
                     const auto res = b_data(alloc, val);
-                    test_same(data { alloc, bstr_type { alloc, std::move(exp) } }, res.as_data());
+                    test_same(data { alloc, exp }, res.as_data());
                 }
                 {
                     const auto exp = bstr_type::from_hex(alloc, "001122");

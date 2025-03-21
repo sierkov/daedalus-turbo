@@ -1,9 +1,10 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 
-#include <dt/benchmark.hpp>
+#include <dt/common/benchmark.hpp>
 #include <dt/file.hpp>
 #include <dt/kes.hpp>
 #include <dt/util.hpp>
@@ -18,7 +19,7 @@ suite kes_bench_suite = [] {
         benchmark_r("kes/create+verify", 2000.0, 50000,
             [&] {
                 kes_signature<6> sig { sig_data };
-                return sig.verify(34, kes_vkey_span(vkey_data), msg_data);
+                return sig.verify(34, kes_vkey_span(static_cast<buffer>(vkey_data)), msg_data);
             }
         );
     };

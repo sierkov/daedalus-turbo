@@ -1,11 +1,12 @@
 /* This file is part of Daedalus Turbo project: https://github.com/sierkov/daedalus-turbo/
- * Copyright (c) 2022-2024 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2022-2023 Alex Sierkov (alex dot sierkov at gmail dot com)
+ * Copyright (c) 2024-2025 R2 Rationality OÜ (info at r2rationality dot com)
  * This code is distributed under the license specified in:
  * https://github.com/sierkov/daedalus-turbo/blob/main/LICENSE */
 #ifndef DAEDALUS_TURBO_PROGRESS_HPP
 #define DAEDALUS_TURBO_PROGRESS_HPP
 
-#include <dt/format.hpp>
+#include <dt/common/format.hpp>
 #include <dt/logger.hpp>
 #include <dt/mutex.hpp>
 #include <map>
@@ -100,7 +101,7 @@ namespace daedalus_turbo {
             return state_copy;
         }
     private:
-        alignas(mutex::padding) mutable mutex::unique_lock::mutex_type _state_mutex {};
+        mutable mutex::unique_lock::mutex_type _state_mutex alignas(mutex::alignment) {};
         progress_state _state {};
         std::atomic<std::chrono::system_clock::time_point> _next_inform {};
 
