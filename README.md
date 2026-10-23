@@ -36,6 +36,8 @@ These ideas are further explained in the following research reports:
 > 
 > If you experience issues or have questions, please [open a GitHub issue](#).
 
+![Unit tests](https://github.com/r2rationality/turbocardano/actions/workflows/ci.yml/badge.svg)
+
 With the core functionally mostly complete now, the focus has shifted to testing and integration. Key ongoing efforts include:
 - **Integration:** [Cardano Improvement Proposal 0150 - Block Data Compression](https://github.com/cardano-foundation/CIPs/tree/master/CIP-0150) – Ensuring seamless integration of block data compression with existing infrastructure.
 - **Integration:** [Integration of an Alternative Node Implementation into Cardano Wallet](https://github.com/cardano-foundation/cardano-wallet/discussions/5072) – Enabling fast synchronization and wallet-history reconstruction for client software, such as Daedalus.

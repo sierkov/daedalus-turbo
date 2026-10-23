@@ -33,5 +33,5 @@ int main(const int argc, const char **argv)
     }
     const bool res = boost::ut::cfg<boost::ut::override>.run();
     logger::info("run-test finished with {}", res ? "failures" : "success");
-    return 0;
+    return res ? 1 : 0;
 }

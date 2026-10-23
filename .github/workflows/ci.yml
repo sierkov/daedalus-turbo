@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: self-hosted
+    defaults:
+      run:
+        shell: bash
+    env:
+      CI_TEST_IMAGE: turbocardano:test-${{ github.run_id }}-${{ github.run_attempt }}
+      CI_CONTAINER: turbocardano-test-${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Build docker image
+        run: docker build -t "$CI_TEST_IMAGE" -f .github/docker/Dockerfile.ci .
+
+      - name: Run unit tests
+        id: tests
+        run: docker run --name "$CI_CONTAINER" "$CI_TEST_IMAGE"
+
+      - name: Copy coverage
+        if: ${{ always() && (steps.tests.outcome == 'success' || steps.tests.outcome == 'failure') }}
+        run: docker cp "$CI_CONTAINER:/home/dev/tada/tmp/coverage" ./coverage-html
+
+      - name: Upload coverage HTML
+        if: ${{ always() && (steps.tests.outcome == 'success' || steps.tests.outcome == 'failure') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-html
+          path: ./coverage-html
+          if-no-files-found: error
+
+      - name: Delete the test container and image
+        if: always()
+        run: |
+          docker rm -f "$CI_CONTAINER" 2>/dev/null || true
+          docker image rm "$CI_TEST_IMAGE" 2>/dev/null || true

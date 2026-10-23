@@ -1,0 +1,41 @@
+FROM ubuntu:26.04
+LABEL maintainer="R2 Rationality <info@r2rationality.com>"
+ARG DEBIAN_FRONTEND=noninteractive
+
+# Install dependencies before copying sources so code changes reuse this layer.
+# Match Dockerfile.test's Boost version while installing only the required components.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential ca-certificates cmake ninja-build pkg-config \
+    libboost-json1.83-dev libboost-url1.83-dev libboost-coroutine1.83-dev \
+    libboost-thread1.83-dev libboost-stacktrace1.83-dev \
+    libbotan-3-dev libfmt-dev libsecp256k1-dev libsodium-dev \
+    libspdlog-dev libssl-dev libzstd-dev \
+    clang-21 clang-tools-21 llvm-21 libclang-rt-21-dev libstdc++-15-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN useradd --create-home --shell /bin/bash --home-dir /home/dev dev \
+    && install -d -o dev -g dev /home/dev/tada /home/dev/tada/log
+USER dev
+
+# Keep sources and fixtures at their build-time paths for LLVM coverage and
+# the Plutus conformance tests, without depending on a runner-specific volume.
+COPY --chown=dev:dev 3rdparty /home/dev/tada/3rdparty
+COPY --chown=dev:dev lib /home/dev/tada/lib
+COPY --chown=dev:dev src /home/dev/tada/src
+COPY --chown=dev:dev etc /home/dev/tada/etc
+COPY --chown=dev:dev data /home/dev/tada/data
+COPY --chown=dev:dev test /home/dev/tada/test
+COPY --chown=dev:dev CMakeLists.txt /home/dev/tada/CMakeLists.txt
+
+WORKDIR /home/dev/tada
+RUN cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Coverage \
+        -DCMAKE_C_COMPILER=clang-21 -DCMAKE_CXX_COMPILER=clang++-21 \
+        -DSANITIZER=address,undefined \
+    && cmake --build build -t tada-test
+
+ENV LLVM_PROFDATA=llvm-profdata-21 \
+    LLVM_COV=llvm-cov-21 \
+    ASAN_OPTIONS=halt_on_error=1:detect_leaks=1:malloc_context_size=100:fast_unwind_on_malloc=0:fast_unwind_on_fatal=0 \
+    UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1
+
+CMD ["bash", "test/gen-coverage.sh", "--scope=all", "--out-dir=tmp/coverage", "--build-dir=build", "test"]
