@@ -50,26 +50,14 @@ namespace turbo::cardano {
         prev_action_id.to_cbor(enc);
         enc.tag(258);
         enc.array_compact(members_to_remove.size(), [&] {
-            const auto encode_removals = [&](const bool script) {
-                for (const auto &id: members_to_remove) {
-                    if (id.script == script)
-                        id.to_cbor(enc);
-                }
-            };
-            encode_removals(true);
-            encode_removals(false);
+            for (const auto &id: members_to_remove)
+                id.to_cbor(enc);
         });
         enc.map_compact(members_to_add.size(), [&] {
-            const auto encode_additions = [&](const bool script) {
-                for (const auto &[id, epoch]: members_to_add) {
-                    if (id.script == script) {
-                        id.to_cbor(enc);
-                        enc.uint(epoch);
-                    }
-                }
-            };
-            encode_additions(true);
-            encode_additions(false);
+            for (const auto &[id, epoch]: members_to_add) {
+                id.to_cbor(enc);
+                enc.uint(epoch);
+            }
         });
         new_threshold.to_cbor(enc);
     }
@@ -95,4 +83,3 @@ namespace turbo::cardano {
         }, val);
     }
 }
-

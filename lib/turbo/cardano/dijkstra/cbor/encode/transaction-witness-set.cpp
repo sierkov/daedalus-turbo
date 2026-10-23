@@ -4,24 +4,11 @@
 
 #include <turbo/cardano/dijkstra/cbor/encode/transaction-witness-set.hpp>
 #include <turbo/cardano/dijkstra/transaction.hpp>
-#include <turbo/plutus/types.hpp>
 
 namespace turbo::cardano::dijkstra {
     namespace {
-        void plutus_data_to_cbor(
-            era_encoder &enc, plutus::allocator &alloc, const buffer raw)
-        {
-            plutus::data::from_cbor(alloc, raw).to_cbor(enc);
-        }
-
-        void native_script_to_cbor(era_encoder &enc, const buffer raw)
-        {
-            const auto script = native_script_t::from_cbor(raw);
-            script.to_cbor(enc);
-        }
-
         void redeemers_to_cbor(
-            era_encoder &enc, plutus::allocator &alloc, const tx_redeemer_map &redeemers)
+            era_encoder &enc, const tx_redeemer_map &redeemers)
         {
             if (redeemers.empty()) [[unlikely]]
                 throw error("Dijkstra redeemers must be nonempty");
@@ -29,7 +16,7 @@ namespace turbo::cardano::dijkstra {
                 for (const auto &[id, redeemer]: redeemers) {
                     enc.array(2).uint(static_cast<uint8_t>(id.tag)).uint(id.ref_idx);
                     enc.array(2);
-                    plutus_data_to_cbor(enc, alloc, redeemer.data);
+                    enc.raw_cbor(redeemer.data);
                     redeemer.budget.to_cbor(enc);
                 }
             });
@@ -38,8 +25,7 @@ namespace turbo::cardano::dijkstra {
 
     void redeemers_t::to_cbor(era_encoder &enc) const
     {
-        plutus::allocator alloc {};
-        redeemers_to_cbor(enc, alloc, items);
+        redeemers_to_cbor(enc, items);
     }
 
     void detail::transaction_witness_set_to_cbor(
@@ -69,9 +55,6 @@ namespace turbo::cardano::dijkstra {
         };
         for (const auto &witness: items)
             ++counts[field(witness)];
-        std::optional<plutus::allocator> alloc {};
-        if (counts[4] || !redeemers.empty())
-            alloc.emplace();
         const size_t map_size = std::count_if(counts.begin(), counts.end(), [](const auto count) { return count; })
             + !redeemers.empty();
         enc.map_compact(map_size, [&] {
@@ -79,7 +62,7 @@ namespace turbo::cardano::dijkstra {
             for (const auto key: field_order) {
                 if (key == 5 && !redeemers.empty()) {
                     enc.uint(5);
-                    redeemers_to_cbor(enc, *alloc, redeemers);
+                    redeemers_to_cbor(enc, redeemers);
                 }
                 if (!counts[key])
                     continue;
@@ -97,10 +80,10 @@ namespace turbo::cardano::dijkstra {
                                     throw error("Dijkstra bootstrap witness chain code must be 32 bytes");
                                 enc.array(4).bytes(value.vkey).bytes(value.sig).bytes(value.chain_code).bytes(value.attrs);
                             } else if constexpr (std::is_same_v<T, tx_wit_datum>) {
-                                plutus_data_to_cbor(enc, *alloc, value.data);
+                                enc.raw_cbor(value.data);
                             } else if constexpr (std::is_same_v<T, script_info>) {
                                 if (value.type() == script_type::native)
-                                    native_script_to_cbor(enc, value.script());
+                                    enc.raw_cbor(value.script());
                                 else
                                     enc.bytes(value.script());
                             }

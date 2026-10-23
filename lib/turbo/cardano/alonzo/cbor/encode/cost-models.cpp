@@ -25,11 +25,8 @@ namespace turbo::cardano {
             l_enc.uint(id);
             m.to_cbor(l_enc);
         }
-        if (items.empty()) [[unlikely]]
-            throw error("a plutus_cost_model structure must have at least one model defined!");
         enc.map_compact(items.size(), [&] {
             enc << l_enc;
         });
     }
 }
-

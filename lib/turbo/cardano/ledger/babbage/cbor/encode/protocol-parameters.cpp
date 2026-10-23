@@ -6,9 +6,9 @@
 #include <turbo/cardano/ledger/babbage.hpp>
 
 namespace turbo::cardano::ledger::babbage {
-    void state::_params_to_cbor(era_encoder &enc, const protocol_params &params) const
+    void state::_params_to_cbor(era_encoder &enc, const protocol_params &params, const node_format format) const
     {
-        enc.array(23);
+        enc.array(format == node_format::v11_1_3 ? 22 : 23);
         enc.uint(params.min_fee_a);
         enc.uint(params.min_fee_b);
         enc.uint(params.max_block_body_size);
@@ -21,6 +21,8 @@ namespace turbo::cardano::ledger::babbage {
         params.pool_pledge_influence.to_cbor(enc);
         params.expansion_rate.to_cbor(enc);
         params.treasury_growth_rate.to_cbor(enc);
+        if (format == node_format::v11_1_3)
+            enc.array(2);
         enc.uint(params.protocol_ver.major);
         enc.uint(params.protocol_ver.minor);
         enc.uint(params.min_pool_cost);
@@ -34,4 +36,3 @@ namespace turbo::cardano::ledger::babbage {
         enc.uint(params.max_collateral_inputs);
     }
 }
-

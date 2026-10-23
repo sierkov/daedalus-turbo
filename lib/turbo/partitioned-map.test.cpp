@@ -14,6 +14,84 @@ using namespace cardano::ledger;
 
 suite partitioned_map_suite = [] {
     "partitioned_map"_test = [] {
+        "credential groups preserve global order"_test = [] {
+            const auto check = []<typename Map>() {
+                using credential = cardano::credential_t;
+                Map actual;
+                std::map<credential, int> expected;
+                expect(actual.begin() == actual.end());
+                for (const uint8_t prefix: { uint8_t { 0 }, uint8_t { 255 } }) {
+                    for (const bool script: { false, true }) {
+                        credential id { {}, script };
+                        id.hash[0] = prefix;
+                        actual.try_emplace(id, prefix);
+                        expected.try_emplace(id, prefix);
+                    }
+                }
+                // Exercise advancement within a group in the same partition.
+                credential local_successor { {}, true };
+                local_successor.hash.back() = 1;
+                actual.try_emplace(local_successor, 1);
+                expected.try_emplace(local_successor, 1);
+                expect(actual.size() == 5_ul);
+                const auto check_order = [&] {
+                    const auto &view = actual;
+                    auto it = view.begin();
+                    for (const auto &[id, value]: expected) {
+                        expect(fatal(it != view.end()));
+                        expect(it->first == id);
+                        expect(it->second == value);
+                        expect(view.find(id) == it);
+                        typename Map::const_iterator found = actual.find(id);
+                        expect(found == it);
+                        ++it;
+                    }
+                    expect(it == view.end());
+                };
+                check_order();
+                auto mutable_it = actual.begin();
+                for (const auto &[id, value]: expected) {
+                    expect(fatal(mutable_it != actual.end()));
+                    expect(mutable_it->first == id);
+                    expect(mutable_it->second == value);
+                    ++mutable_it;
+                }
+                expect(mutable_it == actual.end());
+                static_map<credential, int> snapshot;
+                snapshot = actual;
+                for (const auto &[id, value]: expected)
+                    expect(snapshot.at(id) == value);
+                const auto restored = turbo::zpp::deserialize<Map>(turbo::zpp::serialize(actual));
+                expect(restored == actual);
+                expect(std::is_sorted(restored.begin(), restored.end(), [](const auto &a, const auto &b) {
+                    return a.first < b.first;
+                }));
+                while (!expected.empty()) {
+                    // The successor of a script can be in another partition,
+                    // even when a key follows it in its local map.
+                    const auto id = expected.begin()->first;
+                    typename Map::const_iterator found = actual.find(id);
+                    auto next = actual.erase(found);
+                    expected.erase(expected.begin());
+                    expect(next == actual.begin());
+                    check_order();
+                }
+            };
+            check.template operator()<partitioned_map<cardano::credential_t, int>>();
+            check.template operator()<partitioned_map<cardano::credential_t, int,
+                boost::container::flat_map<cardano::credential_t, int>>>();
+        };
+        "partition selection depends only on the hash prefix"_test = [] {
+            using map_type = partitioned_map<cardano::credential_t, int>;
+            for (size_t prefix = 0; prefix < map_type::num_parts; ++prefix) {
+                for (const bool script: { false, true }) {
+                    cardano::credential_t id { {}, script };
+                    id.hash.fill(0xff);
+                    id.hash[0] = static_cast<uint8_t>(prefix);
+                    expect(map_type::partition_idx(id) == prefix);
+                }
+            }
+        };
         using my_pmap = partitioned_map<cardano::stake_ident, reward_update_list>;
         using std_partition = std::map<cardano::stake_ident, reward_update_list>;
         using std_pmap = partitioned_map<cardano::stake_ident, reward_update_list, std_partition>;

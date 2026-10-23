@@ -41,7 +41,8 @@ std::string hmac(const void* data, size_t numDataBytes, const void* key, size_t 
   if (numKeyBytes <= HashMethod::BlockSize)
   {
     // copy key
-    memcpy(usedKey, key, numKeyBytes);
+    if (numKeyBytes > 0)
+      memcpy(usedKey, key, numKeyBytes);
   }
   else
   {

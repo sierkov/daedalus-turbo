@@ -1,0 +1,338 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O    PIDS
+a6d659dfc972   charming_clarke   6326.72%   6.659GiB / 755.1GiB   0.88%     736B / 0B   934MB / 0B   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   6443.44%   7.626GiB / 755.1GiB   1.01%     736B / 0B   1.91GB / 158MB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   6414.84%   7.844GiB / 755.1GiB   1.04%     806B / 0B   3.21GB / 276MB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   6361.83%   8.077GiB / 755.1GiB   1.07%     806B / 0B   6.02GB / 808MB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+a6d659dfc972   charming_clarke   6339.28%   8.149GiB / 755.1GiB   1.08%     876B / 0B   10.9GB / 2.83GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   6424.09%   9.161GiB / 755.1GiB   1.21%     876B / 0B   16.9GB / 7.1GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+a6d659dfc972   charming_clarke   6368.70%   11.17GiB / 755.1GiB   1.48%     876B / 0B   23.1GB / 12.6GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+a6d659dfc972   charming_clarke   6322.38%   13.45GiB / 755.1GiB   1.78%     876B / 0B   28.9GB / 18.4GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+a6d659dfc972   charming_clarke   6169.63%   12.94GiB / 755.1GiB   1.71%     876B / 0B   33.8GB / 23.4GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+a6d659dfc972   charming_clarke   6272.67%   12.84GiB / 755.1GiB   1.70%     876B / 0B   38.4GB / 27.9GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+a6d659dfc972   charming_clarke   6347.56%   12.03GiB / 755.1GiB   1.59%     946B / 0B   43.2GB / 32.3GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+a6d659dfc972   charming_clarke   6306.51%   11.52GiB / 755.1GiB   1.53%     946B / 0B   47.7GB / 36.1GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+a6d659dfc972   charming_clarke   6333.04%   11.54GiB / 755.1GiB   1.53%     946B / 0B   52.3GB / 40GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+a6d659dfc972   charming_clarke   6399.33%   11.99GiB / 755.1GiB   1.59%     946B / 0B   57.1GB / 44GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+a6d659dfc972   charming_clarke   6356.10%   11.32GiB / 755.1GiB   1.50%     946B / 0B   61.5GB / 47.7GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+a6d659dfc972   charming_clarke   6334.75%   12.63GiB / 755.1GiB   1.67%     946B / 0B   65.9GB / 52.5GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+a6d659dfc972   charming_clarke   6335.77%   11.82GiB / 755.1GiB   1.57%     946B / 0B   69.6GB / 56.2GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+a6d659dfc972   charming_clarke   6336.42%   11.86GiB / 755.1GiB   1.57%     946B / 0B   74.1GB / 60.4GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+a6d659dfc972   charming_clarke   6331.26%   12.97GiB / 755.1GiB   1.72%     946B / 0B   78GB / 63.8GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+a6d659dfc972   charming_clarke   5139.20%   12.44GiB / 755.1GiB   1.65%     946B / 0B   79.7GB / 66.7GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+a6d659dfc972   charming_clarke   3535.63%   14.58GiB / 755.1GiB   1.93%     946B / 0B   79.7GB / 67.1GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+a6d659dfc972   charming_clarke   3993.46%   16.79GiB / 755.1GiB   2.22%     946B / 0B   79.7GB / 67.5GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+a6d659dfc972   charming_clarke   4503.90%   20.59GiB / 755.1GiB   2.73%     946B / 0B   79.7GB / 67.8GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+a6d659dfc972   charming_clarke   4681.41%   24.89GiB / 755.1GiB   3.30%     1.02kB / 0B   79.7GB / 68GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6d659dfc972   charming_clarke   4484.36%   29.73GiB / 755.1GiB   3.94%     1.02kB / 0B   79.7GB / 68.3GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6d659dfc972   charming_clarke   99.83%    31.07GiB / 755.1GiB   4.11%     1.02kB / 0B   79.7GB / 68.6GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6d659dfc972   charming_clarke   99.80%    30.96GiB / 755.1GiB   4.10%     1.02kB / 0B   79.7GB / 69.1GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6d659dfc972   charming_clarke   100.24%   30.87GiB / 755.1GiB   4.09%     1.02kB / 0B   79.7GB / 69.4GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6d659dfc972   charming_clarke   99.83%    30.77GiB / 755.1GiB   4.08%     1.02kB / 0B   79.7GB / 69.8GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6d659dfc972   charming_clarke   99.88%    30.69GiB / 755.1GiB   4.06%     1.02kB / 0B   79.7GB / 70.3GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+a6d659dfc972   charming_clarke   100.17%   30.6GiB / 755.1GiB   4.05%     1.02kB / 0B   79.7GB / 70.6GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+a6d659dfc972   charming_clarke   99.89%    30.49GiB / 755.1GiB   4.04%     1.02kB / 0B   79.7GB / 71GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6d659dfc972   charming_clarke   99.84%    30.38GiB / 755.1GiB   4.02%     1.02kB / 0B   79.7GB / 71.5GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6d659dfc972   charming_clarke   99.89%    30.27GiB / 755.1GiB   4.01%     1.02kB / 0B   79.7GB / 83.8GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6d659dfc972   charming_clarke   99.84%    30.15GiB / 755.1GiB   3.99%     1.02kB / 0B   79.7GB / 84.1GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6d659dfc972   charming_clarke   99.90%    30.03GiB / 755.1GiB   3.98%     1.02kB / 0B   79.7GB / 97.9GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6d659dfc972   charming_clarke   100.23%   29.88GiB / 755.1GiB   3.96%     1.02kB / 0B   79.7GB / 98.6GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6d659dfc972   charming_clarke   100.23%   29.76GiB / 755.1GiB   3.94%     1.02kB / 0B   79.7GB / 99.3GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   99.76%    29.63GiB / 755.1GiB   3.92%     1.02kB / 0B   79.7GB / 104GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   99.82%    29.51GiB / 755.1GiB   3.91%     1.02kB / 0B   79.7GB / 104GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   99.86%    29.38GiB / 755.1GiB   3.89%     1.02kB / 0B   79.7GB / 105GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   100.18%   29.26GiB / 755.1GiB   3.87%     1.02kB / 0B   79.7GB / 105GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   100.24%   29.13GiB / 755.1GiB   3.86%     1.02kB / 0B   79.7GB / 105GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   99.80%    28.99GiB / 755.1GiB   3.84%     1.02kB / 0B   79.7GB / 106GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   99.82%    28.84GiB / 755.1GiB   3.82%     1.02kB / 0B   79.7GB / 106GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   99.83%    28.67GiB / 755.1GiB   3.80%     1.02kB / 0B   79.7GB / 106GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   100.24%   28.51GiB / 755.1GiB   3.78%     1.02kB / 0B   79.7GB / 107GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   100.23%   28.34GiB / 755.1GiB   3.75%     1.02kB / 0B   79.7GB / 107GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   99.82%    28.16GiB / 755.1GiB   3.73%     1.02kB / 0B   79.7GB / 107GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   99.82%    27.99GiB / 755.1GiB   3.71%     1.09kB / 0B   79.7GB / 108GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   99.78%    27.81GiB / 755.1GiB   3.68%     1.09kB / 0B   79.7GB / 108GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   99.83%    27.64GiB / 755.1GiB   3.66%     1.09kB / 0B   79.7GB / 108GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   99.82%    27.5GiB / 755.1GiB   3.64%     1.09kB / 0B   79.7GB / 109GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   100.25%   27.35GiB / 755.1GiB   3.62%     1.09kB / 0B   79.7GB / 109GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   100.16%   27.16GiB / 755.1GiB   3.60%     1.09kB / 0B   79.7GB / 109GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   99.77%    26.95GiB / 755.1GiB   3.57%     1.09kB / 0B   79.7GB / 110GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   99.84%    26.8GiB / 755.1GiB   3.55%     1.09kB / 0B   79.7GB / 110GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   99.84%    26.65GiB / 755.1GiB   3.53%     1.09kB / 0B   79.7GB / 110GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   99.83%    26.49GiB / 755.1GiB   3.51%     1.09kB / 0B   79.7GB / 111GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   99.82%    26.31GiB / 755.1GiB   3.48%     1.09kB / 0B   79.7GB / 111GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   100.26%   26.14GiB / 755.1GiB   3.46%     1.09kB / 0B   79.7GB / 111GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   3700.11%   24.27GiB / 755.1GiB   3.21%     1.09kB / 0B   79.7GB / 112GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   3753.76%   24.17GiB / 755.1GiB   3.20%     1.09kB / 0B   79.7GB / 112GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   3833.70%   23.78GiB / 755.1GiB   3.15%     1.09kB / 0B   79.7GB / 112GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   4433.18%   23.58GiB / 755.1GiB   3.12%     1.09kB / 0B   79.7GB / 112GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   3838.27%   23.56GiB / 755.1GiB   3.12%     1.09kB / 0B   79.7GB / 112GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   3732.16%   23.57GiB / 755.1GiB   3.12%     1.09kB / 0B   79.7GB / 112GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   410.59%   23.51GiB / 755.1GiB   3.11%     1.09kB / 0B   79.7GB / 112GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2910.20%   23.12GiB / 755.1GiB   3.06%     1.09kB / 0B   79.7GB / 115GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   3753.06%   23.15GiB / 755.1GiB   3.07%     1.09kB / 0B   79.7GB / 124GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   4655.02%   23.13GiB / 755.1GiB   3.06%     1.09kB / 0B   79.7GB / 136GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   3540.09%   23.07GiB / 755.1GiB   3.06%     1.09kB / 0B   79.7GB / 146GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2446.41%   23.09GiB / 755.1GiB   3.06%     1.09kB / 0B   79.7GB / 152GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   4294.58%   23.06GiB / 755.1GiB   3.05%     1.09kB / 0B   80.8GB / 158GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   6363.52%   23.32GiB / 755.1GiB   3.09%     1.09kB / 0B   83.2GB / 158GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   5512.31%   23.62GiB / 755.1GiB   3.13%     1.09kB / 0B   83.5GB / 158GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   6151.94%   23.67GiB / 755.1GiB   3.13%     1.09kB / 0B   83.5GB / 158GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   6398.67%   23.62GiB / 755.1GiB   3.13%     1.09kB / 0B   83.5GB / 158GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   6324.18%   23.62GiB / 755.1GiB   3.13%     1.09kB / 0B   83.5GB / 158GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   6394.98%   23.62GiB / 755.1GiB   3.13%     1.09kB / 0B   83.5GB / 158GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   6323.40%   23.62GiB / 755.1GiB   3.13%     1.09kB / 0B   83.5GB / 158GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   6393.39%   23.64GiB / 755.1GiB   3.13%     1.09kB / 0B   83.5GB / 158GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   6362.84%   23.66GiB / 755.1GiB   3.13%     1.09kB / 0B   83.5GB / 158GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   6420.98%   23.66GiB / 755.1GiB   3.13%     1.09kB / 0B   83.5GB / 158GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   6360.58%   23.68GiB / 755.1GiB   3.14%     1.09kB / 0B   83.5GB / 158GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   6374.87%   23.37GiB / 755.1GiB   3.10%     1.09kB / 0B   83.5GB / 158GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   6422.14%   23.4GiB / 755.1GiB   3.10%     1.09kB / 0B   83.5GB / 158GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   5317.45%   23.4GiB / 755.1GiB   3.10%     1.09kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   3009.36%   23.4GiB / 755.1GiB   3.10%     1.09kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   3123.89%   23.4GiB / 755.1GiB   3.10%     1.09kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   3100.43%   23.47GiB / 755.1GiB   3.11%     1.09kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2812.93%   23.43GiB / 755.1GiB   3.10%     1.09kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2972.37%   23.43GiB / 755.1GiB   3.10%     1.09kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2928.93%   23.45GiB / 755.1GiB   3.11%     1.09kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2967.18%   23.56GiB / 755.1GiB   3.12%     1.09kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2244.85%   23.56GiB / 755.1GiB   3.12%     1.09kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2580.92%   23.56GiB / 755.1GiB   3.12%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2963.80%   23.65GiB / 755.1GiB   3.13%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   3008.68%   23.62GiB / 755.1GiB   3.13%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2975.38%   23.57GiB / 755.1GiB   3.12%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   3054.74%   23.58GiB / 755.1GiB   3.12%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   3031.29%   23.49GiB / 755.1GiB   3.11%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   3021.27%   23.49GiB / 755.1GiB   3.11%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   3056.01%   23.53GiB / 755.1GiB   3.12%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   3044.11%   23.58GiB / 755.1GiB   3.12%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   3034.55%   23.5GiB / 755.1GiB   3.11%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   3056.43%   23.62GiB / 755.1GiB   3.13%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   483.91%   23.64GiB / 755.1GiB   3.13%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2969.33%   23.55GiB / 755.1GiB   3.12%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   3045.81%   23.58GiB / 755.1GiB   3.12%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2966.77%   23.63GiB / 755.1GiB   3.13%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2660.27%   23.69GiB / 755.1GiB   3.14%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2095.21%   23.68GiB / 755.1GiB   3.14%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   1472.93%   23.58GiB / 755.1GiB   3.12%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   1095.98%   23.75GiB / 755.1GiB   3.15%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   1573.13%   23.76GiB / 755.1GiB   3.15%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   1539.89%   23.78GiB / 755.1GiB   3.15%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   1628.61%   23.78GiB / 755.1GiB   3.15%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   1897.87%   23.78GiB / 755.1GiB   3.15%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2071.52%   23.94GiB / 755.1GiB   3.17%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2530.59%   23.84GiB / 755.1GiB   3.16%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2767.57%   23.78GiB / 755.1GiB   3.15%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   3091.93%   23.87GiB / 755.1GiB   3.16%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2961.85%   23.91GiB / 755.1GiB   3.17%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   3116.79%   23.77GiB / 755.1GiB   3.15%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2005.38%   23.9GiB / 755.1GiB   3.17%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2142.92%   23.91GiB / 755.1GiB   3.17%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2728.62%   23.8GiB / 755.1GiB   3.15%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   3043.07%   23.78GiB / 755.1GiB   3.15%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   3117.66%   23.87GiB / 755.1GiB   3.16%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   3152.54%   23.91GiB / 755.1GiB   3.17%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   1940.83%   23.81GiB / 755.1GiB   3.15%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2039.45%   23.79GiB / 755.1GiB   3.15%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   1882.63%   23.88GiB / 755.1GiB   3.16%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   1797.48%   23.99GiB / 755.1GiB   3.18%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   1991.50%   23.99GiB / 755.1GiB   3.18%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2046.98%   24.01GiB / 755.1GiB   3.18%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   1998.88%   24.05GiB / 755.1GiB   3.18%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2027.61%   24.03GiB / 755.1GiB   3.18%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2026.51%   24GiB / 755.1GiB    3.18%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2019.09%   24.04GiB / 755.1GiB   3.18%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   1974.45%   24.03GiB / 755.1GiB   3.18%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   1958.94%   24.05GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2032.52%   24.04GiB / 755.1GiB   3.18%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   1957.09%   24.05GiB / 755.1GiB   3.18%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2018.31%   24.11GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   1866.15%   24.13GiB / 755.1GiB   3.20%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   1756.75%   24.09GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   1796.23%   24.09GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   1860.25%   24.09GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   1805.07%   24.15GiB / 755.1GiB   3.20%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   1788.38%   24.1GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   1770.32%   24.1GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   1776.22%   24.11GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   1816.34%   24.11GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   1803.20%   24.17GiB / 755.1GiB   3.20%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2025.79%   24.13GiB / 755.1GiB   3.20%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   1901.51%   24.13GiB / 755.1GiB   3.20%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   1814.09%   24.18GiB / 755.1GiB   3.20%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   1782.94%   24.19GiB / 755.1GiB   3.20%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   1819.58%   24.19GiB / 755.1GiB   3.20%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2052.51%   24.1GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2429.14%   24.15GiB / 755.1GiB   3.20%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   2100.35%   24.25GiB / 755.1GiB   3.21%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   1762.07%   24.15GiB / 755.1GiB   3.20%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   99.91%    25.16GiB / 755.1GiB   3.33%     1.16kB / 0B   83.5GB / 166GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   97.13%    24.05GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 168GB   66
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6d659dfc972   charming_clarke   100.27%   23.61GiB / 755.1GiB   3.13%     1.16kB / 0B   83.5GB / 168GB   66

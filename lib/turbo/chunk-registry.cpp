@@ -465,8 +465,11 @@ namespace turbo {
                 tail.emplace_back(chunk.without_blocks());
             }
         }
-        logger::info("replaying stored blocks from {} to {}", start, stored_tip);
-        const auto previous_mode = validation(validator::validation_mode::full);
+        logger::info("replaying stored blocks from {} to {} with turbo validation", start, stored_tip);
+        // Reconstruct the certified prefix and validate the remaining tail at
+        // commit, just as a turbo import does. Local recovery need not verify
+        // every transaction witness in the certified prefix again.
+        const auto previous_mode = validation(validator::validation_mode::turbo);
         scope_exit restore_settings { [&] {
             if (!tx()) [[likely]] {
                 validation(previous_mode);
@@ -1595,12 +1598,13 @@ namespace turbo {
             std::rethrow_exception(ex_ptr);
     }
 
-    std::string chunk_registry::node_export_ledger(const std::filesystem::path &ledger_dir, const cardano::optional_point &imm_tip, const int prio) const
+    std::string chunk_registry::node_export_ledger(const std::filesystem::path &ledger_dir, const cardano::optional_point &imm_tip,
+        const int prio, const cardano::ledger::node_format format) const
     {
         if (_validator) [[likely]] {
             if (imm_tip && _validator->can_export(imm_tip)) {
                 std::filesystem::create_directories(ledger_dir);
-                return _validator->node_export(ledger_dir, imm_tip, prio);
+                return _validator->node_export(ledger_dir, imm_tip, prio, format);
             }
             throw error("no Shelley-or-later ledger snapshot is available at or before the immutable tip");
         }

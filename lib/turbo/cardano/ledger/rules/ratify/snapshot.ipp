@@ -23,8 +23,10 @@
                                         info.vote_deleg->val)
                                     || _drep_state.contains(
                                         std::get<credential_t>(info.vote_deleg->val)))) {
-                            // SNAP captured input Rewards before POOLREAP and governance payouts.
-                            part_stake[*info.vote_deleg] += info.mark_stake;
+                            // Conway (including PV11) freezes balances after pool and
+                            // governance payouts. mark_stake predates those refunds.
+                            part_stake[*info.vote_deleg] += _params.protocol_ver.major <= 11
+                                ? info.stake + info.reward : info.mark_stake;
                         }
                     }
                     mutex::scoped_lock lock { drep_mutex };

@@ -14,8 +14,11 @@
  */
 
 #include <array>
+#include <boost/container/static_vector.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <optional>
+#include <memory>
+#include <memory_resource>
 #include <utility>
 #include <turbo/common/bytes.hpp>
 #include <turbo/common/error.hpp>
@@ -63,6 +66,14 @@ namespace turbo::cbor::zero2 {
                 "CBOR chunked values may not have more than {} chunks!",
                 max_indefinite_string_chunks));
         }
+    private:
+        friend struct chunked_bytes_reader;
+        friend struct chunked_text_reader;
+
+        template<typename FUNC>
+        size_t _for_each_chunk(value &, major_type, FUNC &&);
+
+        buffer _read_chunked(value &, major_type);
     };
 
     struct simple_reader: reader {
@@ -450,17 +461,23 @@ namespace turbo::cbor::zero2 {
         }
     protected:
         static constexpr size_t reader_offset = 16;
-        decoder & _dec; // keep it the last since it is referenced in the last
+        decoder & _dec;
     };
     static_assert(sizeof(value) <= 64); // Ensure each value fits into a single cache line
 
     struct decoder {
         static constexpr size_t max_depth = 64;
 
-        explicit decoder(const buffer data):
+        static std::shared_ptr<std::pmr::memory_resource> create_chunk_storage(const size_t initial_size = 65536)
+        {
+            return std::make_shared<std::pmr::monotonic_buffer_resource>(initial_size);
+        }
+
+        explicit decoder(const buffer data, std::shared_ptr<std::pmr::memory_resource> storage = {}):
             _ptr { data.data() },
             _end { data.data() + data.size() },
-            _current { &_val_at(0) }
+            _current { &_val_at(0) },
+            _chunk_storage { std::move(storage) }
         {
             for (size_t i = 0; i < max_depth; ++i) {
                 new (&_val_at(i)) value { *this };
@@ -476,6 +493,7 @@ namespace turbo::cbor::zero2 {
         {
             return read(_val_at(0));
         }
+
     protected:
         friend value;
         friend reader;
@@ -491,6 +509,7 @@ namespace turbo::cbor::zero2 {
         const uint8_t *_end;
         alignas(value) std::array<uint8_t, sizeof(value) * max_depth> _val_storage {};
         value *_current;
+        std::shared_ptr<std::pmr::memory_resource> _chunk_storage;
 
         bool done(value &v)
         {
@@ -998,6 +1017,52 @@ namespace turbo::cbor::zero2 {
         return nullptr;
     }
 
+    template<typename FUNC>
+    size_t reader::_for_each_chunk(value &level, const major_type type, FUNC &&func)
+    {
+        size_t total_sz = 0;
+        for (size_t i = 0;; ++i) {
+            auto *chunk = next_chunk(level);
+            if (!chunk)
+                break;
+            if (i >= max_indefinite_string_chunks) [[unlikely]]
+                throw_chunk_limit_error();
+            if (chunk->type() != type || chunk->indefinite()) [[unlikely]]
+                throw error{"CBOR chunked strings require definite chunks of the same type"};
+            const auto bytes = chunk->data_special();
+            if (bytes.size() > std::numeric_limits<size_t>::max() - total_sz) [[unlikely]]
+                throw error{"CBOR chunked string is too large"};
+            total_sz += bytes.size();
+            func(bytes);
+        }
+        if (_parent(this)._dec.empty()) [[unlikely]]
+            throw incomplete_error();
+        return total_sz;
+    }
+
+    inline buffer reader::_read_chunked(value &level, const major_type type)
+    {
+        auto &dec = _parent(this)._dec;
+        if (!dec._chunk_storage) [[unlikely]]
+            throw error{"conversion of a chunked string or bytestring requires a dedicated storage"};
+        boost::container::static_vector<buffer, max_indefinite_string_chunks> chunks{};
+        const auto total_sz = _for_each_chunk(level, type, [&](const buffer bytes) {
+            if (!bytes.empty())
+                chunks.emplace_back(bytes);
+        });
+        if (total_sz == 0)
+            return {};
+        if (chunks.size() == 1)
+            return chunks.front();
+        auto *result = static_cast<uint8_t *>(dec._chunk_storage->allocate(total_sz, alignof(uint8_t)));
+        auto *out = result;
+        for (const auto bytes: chunks) {
+            memcpy(out, bytes.data(), bytes.size());
+            out += bytes.size();
+        }
+        return {result, total_sz};
+    }
+
     inline special_val special_reader::read()
     {
         return _parent(this).special_tag();
@@ -1048,41 +1113,23 @@ namespace turbo::cbor::zero2 {
 
     inline std::string_view chunked_text_reader::read()
     {
-        throw error{"conversion of a chunked string requires a dedicated buffer"};
+        return static_cast<std::string_view>(_read_chunked(_dec_level, major_type::text));
     }
 
     inline void chunked_text_reader::read(std::pmr::string &s)
     {
         s.clear();
-        for (size_t i = 0; i < max_indefinite_string_chunks; ++i) {
-            auto *chunk = next_chunk(_dec_level);
-            if (!chunk)
-                return;
-            if (chunk->type() != major_type::text || chunk->indefinite()) [[unlikely]]
-                throw error("CBOR chunked text strings require definite text-string chunks");
-            const auto text = chunk->text();
-            s.insert(s.end(), text.begin(), text.end());
-        }
-        if (!next_chunk(_dec_level))
-            return;
-        throw_chunk_limit_error();
+        _for_each_chunk(_dec_level, major_type::text, [&](const buffer bytes) {
+            s.append(static_cast<std::string_view>(bytes));
+        });
     }
 
     inline void chunked_text_reader::read(std::string &s)
     {
         s.clear();
-        for (size_t i = 0; i < max_indefinite_string_chunks; ++i) {
-            auto *chunk = next_chunk(_dec_level);
-            if (!chunk)
-                return;
-            if (chunk->type() != major_type::text || chunk->indefinite()) [[unlikely]]
-                throw error("CBOR chunked text strings require definite text-string chunks");
-            const auto text = chunk->text();
-            s.insert(s.end(), text.begin(), text.end());
-        }
-        if (!next_chunk(_dec_level))
-            return;
-        throw_chunk_limit_error();
+        _for_each_chunk(_dec_level, major_type::text, [&](const buffer bytes) {
+            s.append(static_cast<std::string_view>(bytes));
+        });
     }
 
     inline void chunked_text_reader::consume()
@@ -1127,7 +1174,7 @@ namespace turbo::cbor::zero2 {
 
     inline buffer chunked_bytes_reader::read()
     {
-        throw error{"conversion of a chunked byte string requires a dedicated buffer"};
+        return _read_chunked(_dec_level, major_type::bytes);
     }
 
     inline void chunked_bytes_reader::read(std::pmr::vector<uint8_t> &b)
@@ -1145,20 +1192,7 @@ namespace turbo::cbor::zero2 {
     template<typename FUNC>
     inline size_t chunked_bytes_reader::for_each_chunk(FUNC &&func)
     {
-        size_t total = 0;
-        for (size_t i = 0; i < max_indefinite_string_chunks; ++i) {
-            auto *chunk = next_chunk(_dec_level);
-            if (!chunk)
-                return total;
-            if (chunk->type() != major_type::bytes || chunk->indefinite()) [[unlikely]]
-                throw error("CBOR chunked byte strings require definite byte-string chunks");
-            const auto data = chunk->bytes();
-            func(data);
-            total += data.size();
-        }
-        if (!next_chunk(_dec_level))
-            return total;
-        throw_chunk_limit_error();
+        return _for_each_chunk(_dec_level, major_type::bytes, std::forward<FUNC>(func));
     }
 
     inline void chunked_bytes_reader::consume()
@@ -1241,9 +1275,11 @@ namespace turbo::cbor::zero2 {
 
     inline bool array_reader_sized::done()
     {
-        if (!_parent(this)._dec.done(_dec_level)) {
-            if (_pos < _parent(this).special_uint())
-                return false;
+        const bool eof = _parent(this)._dec.done(_dec_level);
+        if (_pos < _parent(this).special_uint()) {
+            if (eof) [[unlikely]]
+                throw incomplete_error();
+            return false;
         }
         return true;
     }
@@ -1305,9 +1341,10 @@ namespace turbo::cbor::zero2 {
 
     inline bool map_reader_sized::done()
     {
-        if (!_parent(this)._dec.done(_dec_level)) {
-            if (_pos < _parent(this).special_uint())
-                return false;
+        const bool eof = _parent(this)._dec.done(_dec_level);
+        if (_pos < _parent(this).special_uint()) {
+            if (eof) [[unlikely]] throw incomplete_error();
+            return false;
         }
         return true;
     }

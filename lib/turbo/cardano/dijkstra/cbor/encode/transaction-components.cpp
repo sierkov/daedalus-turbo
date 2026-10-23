@@ -3,24 +3,8 @@
  * License: https://github.com/r2rationality/turbocardano/blob/main/LICENSE */
 
 #include <turbo/cardano/dijkstra/transaction.hpp>
-#include <turbo/cardano/babbage/cbor/encode/transaction-output.hpp>
-#include <turbo/plutus/types.hpp>
 
 namespace turbo::cardano::dijkstra {
-    namespace {
-        void native_script_to_cbor(era_encoder &enc, const buffer raw)
-        {
-            native_script_t::from_cbor(raw).to_cbor(enc);
-        }
-
-        void transaction_output_to_cbor(
-            era_encoder &enc, plutus::allocator &alloc, const tx_out_data &output)
-        {
-            babbage::detail::transaction_output_to_cbor_semantic(
-                enc, output, alloc, native_script_to_cbor);
-        }
-    }
-
     void value_t::to_cbor(era_encoder &enc) const
     {
         if (value.assets.empty()) {
@@ -59,8 +43,7 @@ namespace turbo::cardano::dijkstra {
     {
         enc.array(2).uint(static_cast<uint8_t>(value.type()));
         if (value.type() == script_type::native) {
-            const auto script = native_script_t::from_cbor(value.script());
-            script.to_cbor(enc);
+            enc.raw_cbor(value.script());
         } else {
             enc.bytes(value.script());
         }
@@ -68,16 +51,14 @@ namespace turbo::cardano::dijkstra {
 
     void transaction_output_t::to_cbor(era_encoder &enc) const
     {
-        plutus::allocator alloc {};
-        transaction_output_to_cbor(enc, alloc, value);
+        value.to_cbor(enc);
     }
 
     void transaction_outputs_t::to_cbor(era_encoder &enc) const
     {
-        plutus::allocator alloc {};
         enc.array_compact(value.size(), [&] {
             for (const auto &output: value)
-                transaction_output_to_cbor(enc, alloc, output);
+                output.to_cbor(enc);
         });
     }
 
@@ -86,8 +67,9 @@ namespace turbo::cardano::dijkstra {
         if (empty()) [[unlikely]]
             throw error("Dijkstra direct deposits must be nonempty");
         enc.map_compact(size(), [&] {
-            for (const auto &[account, amount]: *this)
+            for (const auto &[account, amount]: *this) {
                 enc.bytes(account).uint(amount);
+            }
         });
     }
 

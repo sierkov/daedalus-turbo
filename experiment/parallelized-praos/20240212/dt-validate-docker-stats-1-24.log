@@ -1,0 +1,315 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O    PIDS
+027309711ae2   laughing_brattain   2395.57%   1.422GiB / 251.3GiB   0.57%     736B / 0B   615MB / 0B   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O     PIDS
+027309711ae2   laughing_brattain   2393.46%   1.752GiB / 251.3GiB   0.70%     736B / 0B   1.19GB / 0B   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+027309711ae2   laughing_brattain   2400.31%   3.006GiB / 251.3GiB   1.20%     806B / 0B   1.96GB / 152MB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+027309711ae2   laughing_brattain   2405.27%   2.867GiB / 251.3GiB   1.14%     806B / 0B   2.42GB / 152MB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+027309711ae2   laughing_brattain   2377.67%   4.192GiB / 251.3GiB   1.67%     806B / 0B   3.52GB / 152MB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+027309711ae2   laughing_brattain   2406.81%   4.477GiB / 251.3GiB   1.78%     876B / 0B   4.5GB / 152MB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+027309711ae2   laughing_brattain   2400.27%   4.513GiB / 251.3GiB   1.80%     876B / 0B   5.67GB / 152MB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O        PIDS
+027309711ae2   laughing_brattain   2395.00%   5.04GiB / 251.3GiB   2.01%     876B / 0B   7.55GB / 152MB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+027309711ae2   laughing_brattain   2403.62%   5.198GiB / 251.3GiB   2.07%     876B / 0B   9.24GB / 152MB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+027309711ae2   laughing_brattain   2369.89%   5.607GiB / 251.3GiB   2.23%     876B / 0B   10.8GB / 152MB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2308.14%   5.679GiB / 251.3GiB   2.26%     876B / 0B   11.7GB / 2.84GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2326.78%   6.351GiB / 251.3GiB   2.53%     946B / 0B   13.5GB / 2.84GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2330.98%   6.757GiB / 251.3GiB   2.69%     946B / 0B   15.5GB / 2.84GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2331.54%   7.091GiB / 251.3GiB   2.82%     946B / 0B   17.2GB / 2.84GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2320.76%   7.539GiB / 251.3GiB   3.00%     946B / 0B   18.9GB / 2.86GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2224.48%   7.202GiB / 251.3GiB   2.87%     946B / 0B   19.5GB / 2.87GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2291.87%   7.869GiB / 251.3GiB   3.13%     946B / 0B   20.5GB / 8.73GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2340.26%   7.463GiB / 251.3GiB   2.97%     946B / 0B   21.5GB / 8.73GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2312.80%   8.337GiB / 251.3GiB   3.32%     946B / 0B   23.4GB / 9.18GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2347.39%   9.246GiB / 251.3GiB   3.68%     946B / 0B   25.1GB / 9.18GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2089.72%   7.863GiB / 251.3GiB   3.13%     946B / 0B   25.5GB / 9.85GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2332.71%   9.23GiB / 251.3GiB   3.67%     946B / 0B   26.7GB / 14.5GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2313.26%   8.912GiB / 251.3GiB   3.55%     946B / 0B   28.1GB / 15.4GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2169.30%   8.05GiB / 251.3GiB   3.20%     946B / 0B   29.1GB / 15.4GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2351.94%   8.075GiB / 251.3GiB   3.21%     946B / 0B   30.1GB / 18.5GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2311.12%   9.026GiB / 251.3GiB   3.59%     1.02kB / 0B   31.9GB / 18.5GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2261.23%   8.347GiB / 251.3GiB   3.32%     1.02kB / 0B   32.4GB / 20.8GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2300.32%   9.692GiB / 251.3GiB   3.86%     1.02kB / 0B   34.1GB / 21.1GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2308.44%   8.477GiB / 251.3GiB   3.37%     1.02kB / 0B   35.1GB / 21.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2345.49%   9.146GiB / 251.3GiB   3.64%     1.02kB / 0B   36.2GB / 23.4GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2327.10%   9.683GiB / 251.3GiB   3.85%     1.02kB / 0B   37.7GB / 23.6GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2263.86%   8.88GiB / 251.3GiB   3.53%     1.02kB / 0B   38.7GB / 23.6GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+027309711ae2   laughing_brattain   2322.29%   9.604GiB / 251.3GiB   3.82%     1.02kB / 0B   38.8GB / 26GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+027309711ae2   laughing_brattain   2304.65%   10.81GiB / 251.3GiB   4.30%     1.02kB / 0B   39.2GB / 26GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2294.96%   9.964GiB / 251.3GiB   3.96%     1.02kB / 0B   39.9GB / 26.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2326.84%   10.68GiB / 251.3GiB   4.25%     1.02kB / 0B   41.2GB / 26.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+027309711ae2   laughing_brattain   2260.52%   10.73GiB / 251.3GiB   4.27%     1.02kB / 0B   41.9GB / 28GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2357.52%   10.28GiB / 251.3GiB   4.09%     1.02kB / 0B   43.1GB / 28.5GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2316.55%   11.01GiB / 251.3GiB   4.38%     1.02kB / 0B   44.6GB / 28.5GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2268.40%   11.25GiB / 251.3GiB   4.48%     1.02kB / 0B   45.4GB / 30.7GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2338.22%   11.35GiB / 251.3GiB   4.51%     1.02kB / 0B   46.7GB / 30.7GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O     PIDS
+027309711ae2   laughing_brattain   2344.71%   11.37GiB / 251.3GiB   4.52%     1.02kB / 0B   48GB / 31GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+027309711ae2   laughing_brattain   2209.28%   10.97GiB / 251.3GiB   4.37%     1.02kB / 0B   48.7GB / 31GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2322.93%   11.62GiB / 251.3GiB   4.62%     1.02kB / 0B   49.9GB / 33.6GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2311.64%   11.7GiB / 251.3GiB   4.66%     1.02kB / 0B   51.3GB / 33.6GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2297.21%   11.61GiB / 251.3GiB   4.62%     1.02kB / 0B   52.4GB / 33.7GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2307.59%   11.86GiB / 251.3GiB   4.72%     1.02kB / 0B   53.1GB / 36.3GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2355.97%   11.92GiB / 251.3GiB   4.74%     1.02kB / 0B   54.3GB / 39.1GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2357.44%   11.86GiB / 251.3GiB   4.72%     1.02kB / 0B   55.6GB / 39.1GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2323.63%   11.8GiB / 251.3GiB   4.70%     1.02kB / 0B   56.1GB / 41.6GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2376.31%   12.25GiB / 251.3GiB   4.87%     1.02kB / 0B   57.5GB / 41.6GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2316.78%   12.75GiB / 251.3GiB   5.07%     1.02kB / 0B   58.8GB / 41.8GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+027309711ae2   laughing_brattain   2354.25%   11.96GiB / 251.3GiB   4.76%     1.09kB / 0B   59.4GB / 42GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2335.18%   12.78GiB / 251.3GiB   5.09%     1.09kB / 0B   60.5GB / 44.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2338.43%   12.88GiB / 251.3GiB   5.13%     1.09kB / 0B   61.6GB / 44.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2235.66%   13.07GiB / 251.3GiB   5.20%     1.09kB / 0B   62.3GB / 46.1GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2311.33%   12.99GiB / 251.3GiB   5.17%     1.09kB / 0B   63.5GB / 46.3GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2315.93%   12.74GiB / 251.3GiB   5.07%     1.09kB / 0B   64.5GB / 46.4GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2357.35%   12.85GiB / 251.3GiB   5.11%     1.09kB / 0B   65.1GB / 48.4GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2350.01%   13.05GiB / 251.3GiB   5.19%     1.09kB / 0B   66.4GB / 48.4GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2293.98%   13.41GiB / 251.3GiB   5.33%     1.09kB / 0B   67.5GB / 48.5GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2266.71%   12.78GiB / 251.3GiB   5.09%     1.09kB / 0B   67.9GB / 50.4GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2312.33%   13.84GiB / 251.3GiB   5.51%     1.09kB / 0B   69.3GB / 50.8GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2330.00%   14.38GiB / 251.3GiB   5.72%     1.09kB / 0B   70.5GB / 50.8GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2238.40%   13.08GiB / 251.3GiB   5.20%     1.09kB / 0B   71.1GB / 51.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+027309711ae2   laughing_brattain   2367.79%   13.47GiB / 251.3GiB   5.36%     1.09kB / 0B   72.1GB / 53GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2331.65%   13.66GiB / 251.3GiB   5.44%     1.09kB / 0B   73.3GB / 53.1GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2285.97%   13.33GiB / 251.3GiB   5.31%     1.09kB / 0B   73.8GB / 54.8GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2334.82%   13.26GiB / 251.3GiB   5.28%     1.09kB / 0B   73.8GB / 55.9GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2353.75%   13.13GiB / 251.3GiB   5.23%     1.09kB / 0B   73.8GB / 55.9GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2377.99%   13.31GiB / 251.3GiB   5.30%     1.09kB / 0B   73.8GB / 56.1GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2379.77%   13.44GiB / 251.3GiB   5.35%     1.09kB / 0B   73.8GB / 56.1GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2392.74%   13.38GiB / 251.3GiB   5.32%     1.09kB / 0B   73.8GB / 56.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2365.53%   13.25GiB / 251.3GiB   5.27%     1.09kB / 0B   73.8GB / 56.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2355.69%   13.46GiB / 251.3GiB   5.36%     1.09kB / 0B   73.8GB / 56.4GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2360.43%   13.31GiB / 251.3GiB   5.30%     1.09kB / 0B   73.8GB / 56.4GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2348.89%   13.46GiB / 251.3GiB   5.36%     1.09kB / 0B   73.8GB / 56.6GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2355.81%   13.48GiB / 251.3GiB   5.36%     1.09kB / 0B   73.8GB / 56.6GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2333.02%   13.45GiB / 251.3GiB   5.35%     1.09kB / 0B   73.8GB / 56.7GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2357.65%   13.31GiB / 251.3GiB   5.30%     1.09kB / 0B   73.8GB / 56.7GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2371.81%   13.51GiB / 251.3GiB   5.38%     1.09kB / 0B   73.8GB / 56.8GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2325.66%   13.47GiB / 251.3GiB   5.36%     1.09kB / 0B   73.8GB / 56.8GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2360.36%   13.54GiB / 251.3GiB   5.39%     1.09kB / 0B   73.8GB / 56.8GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2336.58%   13.6GiB / 251.3GiB   5.41%     1.09kB / 0B   73.8GB / 56.8GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2349.86%   13.48GiB / 251.3GiB   5.37%     1.09kB / 0B   73.8GB / 56.8GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2363.01%   13.69GiB / 251.3GiB   5.45%     1.09kB / 0B   73.8GB / 56.8GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2302.91%   15.12GiB / 251.3GiB   6.01%     1.09kB / 0B   73.8GB / 56.8GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2306.22%   16.74GiB / 251.3GiB   6.66%     1.09kB / 0B   73.8GB / 56.8GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2293.15%   18.38GiB / 251.3GiB   7.32%     1.09kB / 0B   73.8GB / 56.8GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2299.50%   19.92GiB / 251.3GiB   7.93%     1.09kB / 0B   73.8GB / 56.8GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2295.28%   20.27GiB / 251.3GiB   8.06%     1.09kB / 0B   73.8GB / 57.7GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2346.02%   20.13GiB / 251.3GiB   8.01%     1.09kB / 0B   73.8GB / 57.7GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2340.53%   19.92GiB / 251.3GiB   7.93%     1.09kB / 0B   73.8GB / 59.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2365.04%   20.05GiB / 251.3GiB   7.98%     1.09kB / 0B   73.8GB / 59.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2343.44%   19.95GiB / 251.3GiB   7.94%     1.09kB / 0B   73.8GB / 59.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2337.89%   19.88GiB / 251.3GiB   7.91%     1.09kB / 0B   73.8GB / 59.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2357.89%   20.15GiB / 251.3GiB   8.02%     1.09kB / 0B   73.8GB / 59.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2329.96%   20GiB / 251.3GiB    7.96%     1.09kB / 0B   73.8GB / 59.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2333.44%   19.89GiB / 251.3GiB   7.91%     1.09kB / 0B   73.8GB / 59.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2356.78%   19.92GiB / 251.3GiB   7.93%     1.09kB / 0B   73.8GB / 59.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2347.54%   20.02GiB / 251.3GiB   7.97%     1.09kB / 0B   73.8GB / 59.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2327.10%   19.86GiB / 251.3GiB   7.90%     1.09kB / 0B   73.8GB / 59.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2366.40%   19.86GiB / 251.3GiB   7.90%     1.09kB / 0B   73.8GB / 59.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2347.23%   19.86GiB / 251.3GiB   7.90%     1.09kB / 0B   73.8GB / 59.4GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2328.19%   19.77GiB / 251.3GiB   7.87%     1.09kB / 0B   73.8GB / 59.4GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2358.20%   19.9GiB / 251.3GiB   7.92%     1.09kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2347.73%   19.87GiB / 251.3GiB   7.91%     1.09kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2335.81%   19.78GiB / 251.3GiB   7.87%     1.09kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2363.40%   19.82GiB / 251.3GiB   7.89%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2340.58%   19.97GiB / 251.3GiB   7.95%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2355.00%   19.86GiB / 251.3GiB   7.90%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2353.37%   19.94GiB / 251.3GiB   7.93%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2345.05%   20GiB / 251.3GiB    7.96%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2338.23%   20.05GiB / 251.3GiB   7.98%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2323.34%   20.12GiB / 251.3GiB   8.01%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2316.60%   20.08GiB / 251.3GiB   7.99%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2325.70%   20.04GiB / 251.3GiB   7.97%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2326.99%   19.99GiB / 251.3GiB   7.95%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2331.93%   19.96GiB / 251.3GiB   7.94%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2334.78%   19.84GiB / 251.3GiB   7.89%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2347.33%   19.84GiB / 251.3GiB   7.90%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2337.40%   19.98GiB / 251.3GiB   7.95%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2354.16%   19.97GiB / 251.3GiB   7.95%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2341.73%   19.94GiB / 251.3GiB   7.93%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2354.45%   19.92GiB / 251.3GiB   7.93%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2339.21%   19.94GiB / 251.3GiB   7.93%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2348.92%   19.8GiB / 251.3GiB   7.88%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2352.09%   19.89GiB / 251.3GiB   7.92%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2346.94%   19.9GiB / 251.3GiB   7.92%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   2344.23%   19.96GiB / 251.3GiB   7.94%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   1242.72%   19.91GiB / 251.3GiB   7.92%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   1254.82%   19.97GiB / 251.3GiB   7.95%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   1067.94%   19.97GiB / 251.3GiB   7.95%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   1248.37%   20.08GiB / 251.3GiB   7.99%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   1219.32%   20.03GiB / 251.3GiB   7.97%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   1261.92%   20.02GiB / 251.3GiB   7.97%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   1141.71%   19.98GiB / 251.3GiB   7.95%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   1254.26%   19.99GiB / 251.3GiB   7.95%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   1264.48%   20.03GiB / 251.3GiB   7.97%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   1228.78%   19.82GiB / 251.3GiB   7.89%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   1289.80%   20.05GiB / 251.3GiB   7.98%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   1162.30%   20.05GiB / 251.3GiB   7.98%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   1274.47%   20.05GiB / 251.3GiB   7.98%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   1133.66%   20GiB / 251.3GiB    7.96%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   1239.43%   19.97GiB / 251.3GiB   7.94%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   1276.47%   20GiB / 251.3GiB    7.96%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   1099.77%   20.01GiB / 251.3GiB   7.96%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   915.00%   19.95GiB / 251.3GiB   7.94%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   1277.08%   19.99GiB / 251.3GiB   7.95%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   1304.95%   19.95GiB / 251.3GiB   7.94%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   955.54%   19.89GiB / 251.3GiB   7.91%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   1071.26%   19.89GiB / 251.3GiB   7.91%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   1261.46%   19.84GiB / 251.3GiB   7.90%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   420.57%   20.7GiB / 251.3GiB   8.24%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   98.74%    21.19GiB / 251.3GiB   8.43%     1.16kB / 0B   73.8GB / 60.7GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+027309711ae2   laughing_brattain   99.82%    19.47GiB / 251.3GiB   7.75%     1.16kB / 0B   73.8GB / 62.5GB   26
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS

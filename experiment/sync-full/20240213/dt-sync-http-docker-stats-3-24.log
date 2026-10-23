@@ -1,0 +1,406 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O     PIDS
+2bf40cf3dcb9   peaceful_benz   1.91%     9.258MiB / 251.3GiB   0.00%     101kB / 21.8kB   16.8MB / 0B   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O     PIDS
+2bf40cf3dcb9   peaceful_benz   3.84%     10.99MiB / 251.3GiB   0.00%     1.83MB / 120kB   16.8MB / 0B   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   1484.57%   985.6MiB / 251.3GiB   0.38%     155MB / 1.05MB   17.7MB / 6.91MB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2218.48%   1.352GiB / 251.3GiB   0.54%     425MB / 3.13MB   17.7MB / 6.91MB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   2421.63%   1.432GiB / 251.3GiB   0.57%     688MB / 5.13MB   17.7MB / 895MB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   1385.50%   1.744GiB / 251.3GiB   0.69%     949MB / 7.21MB   17.7MB / 895MB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2115.12%   1.609GiB / 251.3GiB   0.64%     1.21GB / 9.25MB   17.7MB / 1.07GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   1358.06%   1.823GiB / 251.3GiB   0.73%     1.47GB / 11.5MB   17.7MB / 1.07GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   1432.53%   1.621GiB / 251.3GiB   0.65%     1.69GB / 13MB   17.7MB / 1.07GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   1196.87%   1.631GiB / 251.3GiB   0.65%     1.87GB / 14.3MB   17.8MB / 1.07GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   1062.06%   1.644GiB / 251.3GiB   0.65%     2.07GB / 15.5MB   17.8MB / 1.07GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   1003.23%   1.669GiB / 251.3GiB   0.66%     2.29GB / 17MB   17.8MB / 1.07GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   969.10%   1.716GiB / 251.3GiB   0.68%     2.53GB / 18.7MB   17.8MB / 1.07GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   825.58%   1.81GiB / 251.3GiB   0.72%     2.79GB / 20.8MB   17.8MB / 1.07GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   722.57%   1.901GiB / 251.3GiB   0.76%     3.06GB / 22.9MB   17.8MB / 1.07GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   603.34%   1.976GiB / 251.3GiB   0.79%     3.32GB / 25MB   17.8MB / 1.07GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   640.22%   2.002GiB / 251.3GiB   0.80%     3.58GB / 27.1MB   17.8MB / 1.27GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   656.30%   2.11GiB / 251.3GiB   0.84%     3.84GB / 29.2MB   17.8MB / 1.27GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   650.94%   2.198GiB / 251.3GiB   0.87%     4.11GB / 31.3MB   17.8MB / 2.54GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   193.03%   2.23GiB / 251.3GiB   0.89%     4.18GB / 31.7MB   17.8MB / 2.54GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   140.79%   2.236GiB / 251.3GiB   0.89%     4.22GB / 31.9MB   17.8MB / 3.91GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   172.46%   2.278GiB / 251.3GiB   0.91%     4.32GB / 32.2MB   17.8MB / 3.91GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   176.43%   2.335GiB / 251.3GiB   0.93%     4.41GB / 32.5MB   17.8MB / 5.36GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   168.00%   2.378GiB / 251.3GiB   0.95%     4.51GB / 32.8MB   17.8MB / 5.36GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   174.82%   2.391GiB / 251.3GiB   0.95%     4.6GB / 33.1MB   17.8MB / 6.94GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   188.52%   2.405GiB / 251.3GiB   0.96%     4.69GB / 33.4MB   17.8MB / 6.94GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   183.57%   2.423GiB / 251.3GiB   0.96%     4.78GB / 33.7MB   17.8MB / 6.94GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   213.07%   2.426GiB / 251.3GiB   0.97%     4.87GB / 34.1MB   17.8MB / 8.74GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   230.28%   2.432GiB / 251.3GiB   0.97%     4.96GB / 34.4MB   17.8MB / 8.74GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   201.74%   2.441GiB / 251.3GiB   0.97%     5.05GB / 34.7MB   17.8MB / 10.6GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   206.19%   2.445GiB / 251.3GiB   0.97%     5.14GB / 35MB   17.8MB / 10.6GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   705.43%   2.462GiB / 251.3GiB   0.98%     5.4GB / 36.5MB   17.8MB / 12.2GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   663.68%   2.471GiB / 251.3GiB   0.98%     5.69GB / 38.6MB   17.8MB / 12.2GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   526.33%   2.536GiB / 251.3GiB   1.01%     5.96GB / 40.8MB   17.8MB / 12.7GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   509.65%   2.691GiB / 251.3GiB   1.07%     6.23GB / 43MB   17.8MB / 12.7GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   488.02%   2.834GiB / 251.3GiB   1.13%     6.49GB / 45.2MB   17.8MB / 13.4GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   570.52%   2.974GiB / 251.3GiB   1.18%     6.75GB / 47.5MB   17.8MB / 13.4GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+2bf40cf3dcb9   peaceful_benz   532.66%   3.121GiB / 251.3GiB   1.24%     7.01GB / 49.8MB   17.8MB / 14GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O       PIDS
+2bf40cf3dcb9   peaceful_benz   498.54%   3.134GiB / 251.3GiB   1.25%     7.28GB / 52MB   17.8MB / 14GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   457.68%   3.192GiB / 251.3GiB   1.27%     7.54GB / 54.3MB   17.8MB / 14.7GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   533.53%   3.156GiB / 251.3GiB   1.26%     7.8GB / 56.5MB   17.8MB / 14.7GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   463.93%   3.235GiB / 251.3GiB   1.29%     8.07GB / 58.7MB   17.8MB / 15.3GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   581.40%   3.328GiB / 251.3GiB   1.32%     8.33GB / 60.8MB   17.8MB / 15.3GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   724.14%   3.374GiB / 251.3GiB   1.34%     8.6GB / 63.1MB   17.8MB / 16.3GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2033.25%   3.399GiB / 251.3GiB   1.35%     8.86GB / 65.4MB   17.8MB / 16.3GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2400.43%   3.471GiB / 251.3GiB   1.38%     9.12GB / 67.5MB   17.8MB / 17.7GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2419.50%   4.103GiB / 251.3GiB   1.63%     9.38GB / 69.7MB   17.8MB / 17.7GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+2bf40cf3dcb9   peaceful_benz   2428.33%   4.779GiB / 251.3GiB   1.90%     9.65GB / 71.9MB   18MB / 18.9GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT   MEM %     NET I/O           BLOCK I/O       PIDS
+2bf40cf3dcb9   peaceful_benz   2213.81%   4.5GiB / 251.3GiB   1.79%     9.91GB / 74.1MB   18MB / 18.9GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+2bf40cf3dcb9   peaceful_benz   2416.29%   4.915GiB / 251.3GiB   1.96%     10.2GB / 76.3MB   18MB / 20.1GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2404.99%   4.683GiB / 251.3GiB   1.86%     10.4GB / 78.4MB   18.3MB / 20.1GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2404.90%   4.768GiB / 251.3GiB   1.90%     10.7GB / 80.5MB   18.3MB / 20.1GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2419.63%   4.872GiB / 251.3GiB   1.94%     11GB / 82.6MB   18.3MB / 21.3GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2409.40%   4.991GiB / 251.3GiB   1.99%     11.2GB / 84.6MB   18.3MB / 21.3GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2413.10%   5.125GiB / 251.3GiB   2.04%     11.5GB / 86.7MB   18.3MB / 22.6GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2417.85%   5.266GiB / 251.3GiB   2.10%     11.7GB / 88.7MB   18.3MB / 22.6GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2409.70%   5.577GiB / 251.3GiB   2.22%     12GB / 90.9MB   18.3MB / 23.8GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2414.44%   5.698GiB / 251.3GiB   2.27%     12.3GB / 93.1MB   18.3MB / 23.8GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2420.02%   5.992GiB / 251.3GiB   2.38%     12.5GB / 95.2MB   18.3MB / 28.6GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2410.97%   5.959GiB / 251.3GiB   2.37%     12.8GB / 97.2MB   18.3MB / 28.6GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2249.01%   5.619GiB / 251.3GiB   2.24%     13.1GB / 99.3MB   18.3MB / 34.1GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2308.02%   6.118GiB / 251.3GiB   2.43%     13.1GB / 99.7MB   18.3MB / 34.1GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2308.67%   6.673GiB / 251.3GiB   2.66%     13.1GB / 99.7MB   18.3MB / 36.7GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2369.17%   6.738GiB / 251.3GiB   2.68%     13.1GB / 99.7MB   18.3MB / 36.7GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2379.36%   6.771GiB / 251.3GiB   2.69%     13.1GB / 99.7MB   18.3MB / 37.9GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2378.86%   6.81GiB / 251.3GiB   2.71%     13.1GB / 99.7MB   18.3MB / 37.9GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2363.62%   6.933GiB / 251.3GiB   2.76%     13.1GB / 99.7MB   18.3MB / 39.1GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2385.93%   6.788GiB / 251.3GiB   2.70%     13.1GB / 99.7MB   18.3MB / 39.1GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2384.13%   6.824GiB / 251.3GiB   2.72%     13.1GB / 99.7MB   18.3MB / 39.1GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2383.77%   6.835GiB / 251.3GiB   2.72%     13.1GB / 99.7MB   18.3MB / 40.2GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2365.16%   7.049GiB / 251.3GiB   2.80%     13.1GB / 99.7MB   18.3MB / 40.2GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2370.47%   6.931GiB / 251.3GiB   2.76%     13.1GB / 99.7MB   18.3MB / 41.5GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2403.55%   7.132GiB / 251.3GiB   2.84%     13.2GB / 100MB   18.3MB / 41.5GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2413.18%   7.439GiB / 251.3GiB   2.96%     13.5GB / 102MB   18.3MB / 48.3GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2408.72%   7.532GiB / 251.3GiB   3.00%     13.7GB / 104MB   18.3MB / 48.3GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2404.40%   7.342GiB / 251.3GiB   2.92%     14GB / 107MB   18.3MB / 49.7GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2414.66%   7.312GiB / 251.3GiB   2.91%     14.3GB / 109MB   18.3MB / 49.7GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2407.22%   7.285GiB / 251.3GiB   2.90%     14.5GB / 111MB   18.3MB / 49.7GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2414.31%   7.412GiB / 251.3GiB   2.95%     14.8GB / 113MB   18.3MB / 49.7GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2418.23%   7.607GiB / 251.3GiB   3.03%     15GB / 115MB   18.3MB / 49.7GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2413.10%   7.58GiB / 251.3GiB   3.02%     15.3GB / 117MB   18.3MB / 49.7GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2399.12%   7.651GiB / 251.3GiB   3.04%     15.6GB / 119MB   18.3MB / 49.7GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2405.54%   7.678GiB / 251.3GiB   3.06%     15.8GB / 121MB   18.3MB / 49.7GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2409.60%   7.626GiB / 251.3GiB   3.03%     16.1GB / 124MB   18.3MB / 49.7GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2403.10%   7.942GiB / 251.3GiB   3.16%     16.4GB / 126MB   18.3MB / 49.7GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2401.73%   7.964GiB / 251.3GiB   3.17%     16.6GB / 128MB   18.3MB / 50.8GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2409.70%   8.103GiB / 251.3GiB   3.22%     16.9GB / 130MB   18.3MB / 50.8GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2414.20%   8.111GiB / 251.3GiB   3.23%     17.2GB / 132MB   18.3MB / 50.8GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2404.15%   8.027GiB / 251.3GiB   3.19%     17.4GB / 134MB   18.3MB / 52.9GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2413.93%   8.012GiB / 251.3GiB   3.19%     17.7GB / 136MB   18.3MB / 52.9GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2414.40%   8.122GiB / 251.3GiB   3.23%     18GB / 138MB   18.3MB / 55.1GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2399.13%   8.13GiB / 251.3GiB   3.24%     18.2GB / 140MB   18.3MB / 55.1GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O       PIDS
+2bf40cf3dcb9   peaceful_benz   2417.21%   7.992GiB / 251.3GiB   3.18%     18.5GB / 143MB   18.3MB / 57GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O       PIDS
+2bf40cf3dcb9   peaceful_benz   2407.00%   8.081GiB / 251.3GiB   3.22%     18.8GB / 145MB   18.3MB / 57GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2415.24%   8.207GiB / 251.3GiB   3.27%     19GB / 147MB   18.3MB / 59.2GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2282.49%   7.805GiB / 251.3GiB   3.11%     19.3GB / 149MB   18.3MB / 59.2GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2391.73%   10.56GiB / 251.3GiB   4.20%     19.5GB / 151MB   18.3MB / 61.2GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2405.55%   10.58GiB / 251.3GiB   4.21%     19.8GB / 153MB   18.3MB / 61.2GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2423.49%   10.59GiB / 251.3GiB   4.21%     20.1GB / 155MB   18.3MB / 62.5GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2416.25%   11.35GiB / 251.3GiB   4.51%     20.3GB / 157MB   18.3MB / 62.5GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2395.71%   11.81GiB / 251.3GiB   4.70%     20.6GB / 159MB   18.3MB / 63.7GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2412.49%   12.09GiB / 251.3GiB   4.81%     20.8GB / 161MB   18.3MB / 63.7GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2385.08%   11.2GiB / 251.3GiB   4.46%     21.1GB / 163MB   18.3MB / 64.9GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2385.87%   12.13GiB / 251.3GiB   4.83%     21.3GB / 165MB   18.3MB / 64.9GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2413.13%   12.88GiB / 251.3GiB   5.12%     21.6GB / 168MB   18.3MB / 64.9GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2414.75%   12.15GiB / 251.3GiB   4.83%     21.9GB / 170MB   18.3MB / 66.1GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2415.88%   12.24GiB / 251.3GiB   4.87%     22.1GB / 172MB   18.3MB / 66.1GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2411.70%   12.45GiB / 251.3GiB   4.95%     22.4GB / 174MB   18.3MB / 67.3GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2413.97%   12.32GiB / 251.3GiB   4.90%     22.6GB / 176MB   18.3MB / 67.3GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2405.43%   12.64GiB / 251.3GiB   5.03%     22.9GB / 178MB   18.3MB / 73.5GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2406.00%   12.58GiB / 251.3GiB   5.01%     23.2GB / 180MB   18.3MB / 73.5GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2411.43%   12.58GiB / 251.3GiB   5.01%     23.4GB / 182MB   18.3MB / 76.8GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2416.45%   12.87GiB / 251.3GiB   5.12%     23.7GB / 184MB   18.3MB / 76.8GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2410.22%   12.66GiB / 251.3GiB   5.04%     24GB / 186MB   18.3MB / 80.2GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2401.44%   12.81GiB / 251.3GiB   5.10%     24.2GB / 188MB   18.3MB / 80.2GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2422.10%   12.83GiB / 251.3GiB   5.11%     24.5GB / 190MB   18.3MB / 82.8GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2350.58%   12.75GiB / 251.3GiB   5.07%     24.7GB / 193MB   18.3MB / 83.5GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2411.43%   12.92GiB / 251.3GiB   5.14%     25GB / 195MB   18.3MB / 83.5GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2409.81%   13.16GiB / 251.3GiB   5.24%     25.3GB / 197MB   18.3MB / 85.7GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2418.43%   13.05GiB / 251.3GiB   5.19%     25.5GB / 199MB   18.3MB / 85.7GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2414.73%   13.22GiB / 251.3GiB   5.26%     25.8GB / 201MB   18.3MB / 86.9GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT    MEM %     NET I/O        BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2364.93%   14.5GiB / 251.3GiB   5.77%     26GB / 203MB   18.3MB / 86.9GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2374.65%   14.92GiB / 251.3GiB   5.94%     26.3GB / 205MB   18.3MB / 90.2GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2393.75%   15.01GiB / 251.3GiB   5.97%     26.6GB / 207MB   18.3MB / 90.2GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2408.76%   15.09GiB / 251.3GiB   6.00%     26.8GB / 209MB   18.3MB / 91.4GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2418.04%   15.13GiB / 251.3GiB   6.02%     27.1GB / 211MB   18.3MB / 91.4GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2410.19%   15.08GiB / 251.3GiB   6.00%     27.3GB / 213MB   18.3MB / 92.6GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2409.71%   15.39GiB / 251.3GiB   6.12%     27.6GB / 215MB   18.3MB / 92.6GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2417.79%   15.34GiB / 251.3GiB   6.10%     27.8GB / 217MB   18.3MB / 95.8GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2409.19%   15.32GiB / 251.3GiB   6.09%     28.1GB / 219MB   18.3MB / 96.3GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2400.41%   15.39GiB / 251.3GiB   6.13%     28.4GB / 222MB   18.3MB / 96.3GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2404.06%   15.52GiB / 251.3GiB   6.18%     28.6GB / 223MB   18.3MB / 97.6GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2413.04%   15.46GiB / 251.3GiB   6.15%     28.9GB / 225MB   18.3MB / 97.6GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2397.16%   15.75GiB / 251.3GiB   6.27%     29.1GB / 227MB   18.3MB / 98.8GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+2bf40cf3dcb9   peaceful_benz   2393.13%   15.81GiB / 251.3GiB   6.29%     29.4GB / 230MB   18.3MB / 98.8GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   2407.22%   16.02GiB / 251.3GiB   6.37%     29.7GB / 232MB   18.3MB / 101GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   2415.52%   16.08GiB / 251.3GiB   6.40%     29.9GB / 234MB   18.3MB / 101GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   2402.67%   16.48GiB / 251.3GiB   6.56%     30.2GB / 236MB   18.3MB / 105GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   2409.52%   15.99GiB / 251.3GiB   6.36%     30.4GB / 238MB   18.3MB / 105GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   2405.01%   16.16GiB / 251.3GiB   6.43%     30.7GB / 240MB   18.3MB / 106GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   2395.12%   16.21GiB / 251.3GiB   6.45%     31GB / 242MB   18.3MB / 106GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   2415.49%   16.29GiB / 251.3GiB   6.48%     31.2GB / 244MB   18.3MB / 107GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   2423.20%   16.41GiB / 251.3GiB   6.53%     31.5GB / 246MB   18.3MB / 107GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   2409.40%   16.21GiB / 251.3GiB   6.45%     31.7GB / 249MB   18.3MB / 110GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   2381.30%   16.84GiB / 251.3GiB   6.70%     32GB / 251MB   18.3MB / 110GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   2370.37%   17.9GiB / 251.3GiB   7.12%     32.3GB / 253MB   18.3MB / 110GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   2383.51%   18.18GiB / 251.3GiB   7.23%     32.5GB / 255MB   18.3MB / 112GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   2378.12%   18.1GiB / 251.3GiB   7.20%     32.8GB / 257MB   18.3MB / 112GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   2403.51%   18.19GiB / 251.3GiB   7.24%     33.1GB / 259MB   18.3MB / 113GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   2420.02%   18.23GiB / 251.3GiB   7.26%     33.3GB / 261MB   18.3MB / 113GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   2405.03%   18.22GiB / 251.3GiB   7.25%     33.6GB / 263MB   18.3MB / 116GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   1899.68%   18.52GiB / 251.3GiB   7.37%     33.9GB / 265MB   18.3MB / 116GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   2119.69%   18.48GiB / 251.3GiB   7.35%     34.1GB / 267MB   18.3MB / 117GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   1762.77%   18.45GiB / 251.3GiB   7.34%     34.4GB / 270MB   18.3MB / 117GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   2412.80%   18.74GiB / 251.3GiB   7.46%     34.6GB / 272MB   18.3MB / 120GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   2404.25%   18.73GiB / 251.3GiB   7.45%     34.9GB / 274MB   18.3MB / 120GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   2058.88%   18.82GiB / 251.3GiB   7.49%     35.2GB / 276MB   18.3MB / 122GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   1757.31%   19.01GiB / 251.3GiB   7.56%     35.4GB / 278MB   18.3MB / 122GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   1979.34%   19.15GiB / 251.3GiB   7.62%     35.7GB / 280MB   18.3MB / 122GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   2388.86%   18.82GiB / 251.3GiB   7.49%     36GB / 282MB   18.3MB / 124GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   2405.57%   19.13GiB / 251.3GiB   7.61%     36.2GB / 284MB   18.3MB / 124GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   2393.17%   19.21GiB / 251.3GiB   7.64%     36.5GB / 286MB   18.3MB / 127GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   2037.79%   19.08GiB / 251.3GiB   7.59%     36.7GB / 288MB   18.3MB / 127GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT    MEM %     NET I/O        BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   2082.12%   19.1GiB / 251.3GiB   7.60%     37GB / 291MB   18.3MB / 128GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   2332.67%   19.14GiB / 251.3GiB   7.62%     37.2GB / 293MB   18.3MB / 128GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   2395.72%   19.1GiB / 251.3GiB   7.60%     37.3GB / 293MB   18.3MB / 129GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   1392.89%   19.03GiB / 251.3GiB   7.57%     37.3GB / 293MB   18.3MB / 129GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   1335.61%   18.96GiB / 251.3GiB   7.54%     37.3GB / 293MB   18.3MB / 133GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   1289.08%   19.1GiB / 251.3GiB   7.60%     37.3GB / 293MB   18.3MB / 133GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   1224.35%   19.1GiB / 251.3GiB   7.60%     37.3GB / 293MB   18.3MB / 134GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   927.28%   19.11GiB / 251.3GiB   7.60%     37.3GB / 293MB   18.3MB / 134GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   2040.04%   19.64GiB / 251.3GiB   7.82%     37.3GB / 293MB   18.3MB / 137GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   1702.09%   20.64GiB / 251.3GiB   8.21%     37.3GB / 293MB   18.3MB / 137GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   1704.91%   21.62GiB / 251.3GiB   8.60%     37.3GB / 293MB   18.3MB / 137GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   357.43%   21.66GiB / 251.3GiB   8.62%     37.3GB / 293MB   18.3MB / 138GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   878.99%   21.66GiB / 251.3GiB   8.62%     37.3GB / 293MB   18.3MB / 138GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   1024.18%   21.66GiB / 251.3GiB   8.62%     37.3GB / 293MB   18.3MB / 139GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   1283.42%   21.71GiB / 251.3GiB   8.64%     37.3GB / 293MB   18.3MB / 139GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   1378.50%   21.68GiB / 251.3GiB   8.63%     37.3GB / 293MB   18.3MB / 143GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   1312.51%   21.53GiB / 251.3GiB   8.57%     37.3GB / 293MB   18.3MB / 143GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   1311.23%   21.72GiB / 251.3GiB   8.64%     37.3GB / 293MB   18.3MB / 143GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   1299.02%   21.67GiB / 251.3GiB   8.62%     37.3GB / 293MB   18.3MB / 143GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   950.47%   21.69GiB / 251.3GiB   8.63%     37.3GB / 293MB   18.3MB / 143GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   585.82%   21.69GiB / 251.3GiB   8.63%     37.3GB / 293MB   18.3MB / 143GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   735.25%   21.67GiB / 251.3GiB   8.62%     37.3GB / 293MB   18.3MB / 143GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   1194.56%   21.72GiB / 251.3GiB   8.64%     37.3GB / 293MB   18.3MB / 143GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   1368.40%   21.58GiB / 251.3GiB   8.59%     37.3GB / 293MB   18.3MB / 144GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   1320.58%   21.77GiB / 251.3GiB   8.66%     37.3GB / 293MB   18.3MB / 144GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   665.80%   21.77GiB / 251.3GiB   8.66%     37.3GB / 293MB   18.3MB / 144GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   720.95%   21.77GiB / 251.3GiB   8.66%     37.3GB / 293MB   18.3MB / 144GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   1365.30%   21.77GiB / 251.3GiB   8.66%     37.3GB / 293MB   18.3MB / 144GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   1356.30%   21.78GiB / 251.3GiB   8.67%     37.3GB / 293MB   18.3MB / 144GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   558.35%   21.86GiB / 251.3GiB   8.70%     37.3GB / 293MB   18.3MB / 144GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   959.16%   21.86GiB / 251.3GiB   8.70%     37.3GB / 293MB   18.3MB / 144GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   1315.34%   21.66GiB / 251.3GiB   8.62%     37.3GB / 293MB   18.3MB / 144GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   1002.72%   21.86GiB / 251.3GiB   8.70%     37.3GB / 293MB   18.3MB / 144GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   383.67%   21.87GiB / 251.3GiB   8.70%     37.3GB / 293MB   18.3MB / 144GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   1268.94%   21.87GiB / 251.3GiB   8.70%     37.3GB / 293MB   18.3MB / 144GB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   1325.39%   21.87GiB / 251.3GiB   8.70%     37.3GB / 293MB   18.3MB / 144GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   199.71%   22.82GiB / 251.3GiB   9.08%     37.3GB / 293MB   18.3MB / 144GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   200.39%   21.8GiB / 251.3GiB   8.67%     37.3GB / 293MB   18.3MB / 146GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+2bf40cf3dcb9   peaceful_benz   99.94%    21.54GiB / 251.3GiB   8.57%     37.3GB / 293MB   18.3MB / 146GB   26

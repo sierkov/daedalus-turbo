@@ -1,0 +1,120 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O     PIDS
+d501163f2559   agitated_mendeleev   199.74%   2.105GiB / 251.3GiB   0.84%     646B / 0B   2.27GB / 0B   27
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O     PIDS
+d501163f2559   agitated_mendeleev   7.43%     1.531GiB / 251.3GiB   0.61%     216kB / 10.6kB   2.27GB / 0B   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O         BLOCK I/O        PIDS
+d501163f2559   agitated_mendeleev   733.77%   2.52GiB / 251.3GiB   1.00%     157MB / 1.1MB   2.27GB / 606kB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+d501163f2559   agitated_mendeleev   917.39%   3.31GiB / 251.3GiB   1.32%     434MB / 3.43MB   2.27GB / 606kB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+d501163f2559   agitated_mendeleev   791.75%   3.237GiB / 251.3GiB   1.29%     697MB / 5.57MB   2.27GB / 1.3GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+d501163f2559   agitated_mendeleev   988.03%   3.265GiB / 251.3GiB   1.30%     953MB / 7.64MB   2.27GB / 1.3GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   997.20%   3.546GiB / 251.3GiB   1.41%     1.21GB / 9.86MB   2.27GB / 1.62GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   46.47%    3.317GiB / 251.3GiB   1.32%     1.23GB / 9.97MB   2.27GB / 1.62GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   0.15%     3.317GiB / 251.3GiB   1.32%     1.23GB / 9.97MB   2.27GB / 1.62GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   0.16%     3.317GiB / 251.3GiB   1.32%     1.23GB / 9.97MB   2.27GB / 1.62GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   0.16%     3.317GiB / 251.3GiB   1.32%     1.23GB / 9.97MB   2.27GB / 1.62GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   0.16%     3.317GiB / 251.3GiB   1.32%     1.23GB / 9.97MB   2.27GB / 1.62GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   0.16%     3.317GiB / 251.3GiB   1.32%     1.23GB / 9.97MB   2.27GB / 1.62GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   0.17%     3.317GiB / 251.3GiB   1.32%     1.23GB / 9.97MB   2.27GB / 1.62GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   0.16%     3.317GiB / 251.3GiB   1.32%     1.23GB / 9.97MB   2.27GB / 1.62GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   0.17%     3.317GiB / 251.3GiB   1.32%     1.23GB / 9.97MB   2.27GB / 1.62GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   0.17%     3.317GiB / 251.3GiB   1.32%     1.23GB / 9.97MB   2.27GB / 2.02GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   0.16%     3.317GiB / 251.3GiB   1.32%     1.23GB / 9.97MB   2.27GB / 2.02GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   136.21%   3.381GiB / 251.3GiB   1.35%     1.26GB / 10.1MB   2.27GB / 4.01GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   852.80%   3.571GiB / 251.3GiB   1.42%     1.54GB / 12.3MB   2.27GB / 4.01GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   814.74%   3.506GiB / 251.3GiB   1.39%     1.82GB / 14.5MB   2.27GB / 4.81GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   756.95%   3.579GiB / 251.3GiB   1.42%     2.09GB / 16.8MB   2.27GB / 4.81GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   803.86%   3.591GiB / 251.3GiB   1.43%     2.36GB / 19.1MB   2.27GB / 4.81GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   741.72%   3.577GiB / 251.3GiB   1.42%     2.62GB / 21.3MB   2.27GB / 4.81GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   655.85%   3.799GiB / 251.3GiB   1.51%     2.89GB / 23.7MB   2.27GB / 4.81GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   647.45%   3.972GiB / 251.3GiB   1.58%     3.16GB / 25.9MB   2.27GB / 4.81GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   810.12%   3.995GiB / 251.3GiB   1.59%     3.43GB / 28.3MB   2.27GB / 4.81GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   815.77%   3.911GiB / 251.3GiB   1.56%     3.7GB / 30.6MB   2.27GB / 4.81GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   820.27%   3.874GiB / 251.3GiB   1.54%     3.97GB / 33.1MB   2.27GB / 4.81GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   816.61%   3.966GiB / 251.3GiB   1.58%     4.24GB / 35.4MB   2.27GB / 4.81GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   829.85%   3.891GiB / 251.3GiB   1.55%     4.51GB / 37.7MB   2.27GB / 4.81GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   762.85%   3.822GiB / 251.3GiB   1.52%     4.78GB / 40MB   2.27GB / 4.81GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   798.04%   3.621GiB / 251.3GiB   1.44%     4.95GB / 41.4MB   2.27GB / 7.03GB   28
+CONTAINER ID   NAME                 CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O        PIDS
+d501163f2559   agitated_mendeleev   2397.94%   3.625GiB / 251.3GiB   1.44%     4.95GB / 41.4MB   3.1GB / 7.03GB   28
+CONTAINER ID   NAME                 CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   2194.56%   3.743GiB / 251.3GiB   1.49%     4.95GB / 41.4MB   15.9GB / 8.48GB   28
+CONTAINER ID   NAME                 CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   2285.51%   3.919GiB / 251.3GiB   1.56%     4.95GB / 41.4MB   26.9GB / 8.48GB   28
+CONTAINER ID   NAME                 CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   2418.16%   5.521GiB / 251.3GiB   2.20%     4.95GB / 41.4MB   28.2GB / 8.48GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   208.86%   4.07GiB / 251.3GiB   1.62%     4.95GB / 41.4MB   28.2GB / 12.3GB   28
+CONTAINER ID   NAME                 CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   1314.70%   4.187GiB / 251.3GiB   1.67%     4.95GB / 41.4MB   28.2GB / 12.3GB   28
+CONTAINER ID   NAME                 CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   1470.62%   4.284GiB / 251.3GiB   1.70%     4.95GB / 41.4MB   28.2GB / 13.6GB   28
+CONTAINER ID   NAME                 CPU %      MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   1319.50%   4.39GiB / 251.3GiB   1.75%     4.95GB / 41.4MB   28.2GB / 13.6GB   28
+CONTAINER ID   NAME                 CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   1266.96%   4.503GiB / 251.3GiB   1.79%     4.95GB / 41.4MB   28.2GB / 14.9GB   28
+CONTAINER ID   NAME                 CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   1304.47%   4.507GiB / 251.3GiB   1.79%     4.95GB / 41.4MB   28.2GB / 14.9GB   28
+CONTAINER ID   NAME                 CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   2144.79%   7.126GiB / 251.3GiB   2.84%     4.95GB / 41.4MB   28.2GB / 16.7GB   28
+CONTAINER ID   NAME                 CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   1706.44%   12.27GiB / 251.3GiB   4.88%     4.95GB / 41.4MB   28.2GB / 16.7GB   28
+CONTAINER ID   NAME                 CPU %      MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   1536.84%   15.9GiB / 251.3GiB   6.33%     4.95GB / 41.4MB   28.2GB / 19.5GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   200.48%   17.22GiB / 251.3GiB   6.85%     4.95GB / 41.4MB   28.2GB / 19.5GB   28
+CONTAINER ID   NAME                 CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   1331.03%   16.03GiB / 251.3GiB   6.38%     4.95GB / 41.4MB   28.2GB / 20.5GB   28
+CONTAINER ID   NAME                 CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   1352.81%   16.13GiB / 251.3GiB   6.42%     4.95GB / 41.4MB   28.2GB / 21.7GB   28
+CONTAINER ID   NAME                 CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   1343.71%   16.21GiB / 251.3GiB   6.45%     4.95GB / 41.4MB   28.2GB / 21.7GB   28
+CONTAINER ID   NAME                 CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   1159.62%   16.19GiB / 251.3GiB   6.44%     4.95GB / 41.4MB   28.2GB / 24.4GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   423.28%   17.94GiB / 251.3GiB   7.14%     4.95GB / 41.4MB   28.2GB / 24.4GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   619.59%   16.36GiB / 251.3GiB   6.51%     4.95GB / 41.4MB   28.2GB / 24.4GB   28
+CONTAINER ID   NAME                 CPU %      MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   1292.42%   16.4GiB / 251.3GiB   6.52%     4.95GB / 41.4MB   28.2GB / 24.4GB   28
+CONTAINER ID   NAME                 CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   1314.56%   16.45GiB / 251.3GiB   6.55%     4.95GB / 41.4MB   28.2GB / 24.4GB   28
+CONTAINER ID   NAME                 CPU %      MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   1172.53%   16.44GiB / 251.3GiB   6.54%     4.95GB / 41.4MB   28.2GB / 24.4GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   200.68%   17.5GiB / 251.3GiB   6.96%     4.95GB / 41.4MB   28.2GB / 24.4GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+d501163f2559   agitated_mendeleev   970.97%   16.58GiB / 251.3GiB   6.60%     4.95GB / 41.4MB   28.2GB / 24.4GB   28
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+d501163f2559   agitated_mendeleev   199.84%   18.12GiB / 251.3GiB   7.21%     4.95GB / 41.4MB   28.2GB / 25GB   28

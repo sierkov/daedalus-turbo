@@ -1,0 +1,18 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O     PIDS
+518cfbb16064   dreamy_diffie   199.86%   2.071GiB / 251.3GiB   0.82%     646B / 0B   2.35GB / 0B   27
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+518cfbb16064   dreamy_diffie   21.00%    1.587GiB / 251.3GiB   0.63%     143kB / 6.33kB   2.35GB / 16.4kB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+518cfbb16064   dreamy_diffie   802.30%   2.515GiB / 251.3GiB   1.00%     147MB / 912kB   2.36GB / 37.5MB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+518cfbb16064   dreamy_diffie   1483.66%   2.717GiB / 251.3GiB   1.08%     147MB / 912kB   17.3GB / 37.5MB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+518cfbb16064   dreamy_diffie   1549.91%   2.907GiB / 251.3GiB   1.16%     147MB / 912kB   30.3GB / 37.5MB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+518cfbb16064   dreamy_diffie   199.88%   4.516GiB / 251.3GiB   1.80%     147MB / 912kB   32.6GB / 37.5MB   28
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O        PIDS
+518cfbb16064   dreamy_diffie   1058.65%   3.115GiB / 251.3GiB   1.24%     147MB / 912kB   32.6GB / 2.6GB   28
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+518cfbb16064   dreamy_diffie   194.49%   3.146GiB / 251.3GiB   1.25%     147MB / 912kB   32.6GB / 2.61GB   26

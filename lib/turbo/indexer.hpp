@@ -14,6 +14,7 @@
 #include <turbo/common/scheduler.hpp>
 #include <turbo/common/logger.hpp>
 #include <turbo/index/common.hpp>
+#include <turbo/index/stake-ref.hpp>
 #include <turbo/indexer/merger.hpp>
 
 namespace turbo {
@@ -22,7 +23,8 @@ namespace turbo {
 
 namespace turbo::indexer {
     struct index_layout_t {
-        static constexpr const char *stake_ref = "stake-ref";
+        static constexpr const char *stake_ref_script = index::stake_ref::script_index_name;
+        static constexpr const char *stake_ref_key = index::stake_ref::key_index_name;
         static constexpr const char *pay_ref = "pay-ref";
         static constexpr const char *tx = "tx";
         static constexpr const char *txo_use = "txo-use";
@@ -30,7 +32,7 @@ namespace turbo::indexer {
         static constexpr const char *timed_update = "timed-update";
         static constexpr const char *vrf = "vrf";
         static constexpr const char *utxo = "utxo";
-        static constexpr std::array query { stake_ref, pay_ref, tx, txo_use };
+        static constexpr std::array query { stake_ref_script, stake_ref_key, pay_ref, tx, txo_use };
         static constexpr std::array ledger { block_fees, timed_update, vrf, utxo };
         static constexpr std::array auxiliary { "epoch-delta", "outflow" };
     };

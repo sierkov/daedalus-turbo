@@ -1,0 +1,40 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME                    CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O     PIDS
+f9eb20237a61   distracted_sutherland   199.73%   2.156GiB / 251.3GiB   0.86%     736B / 0B   2.34GB / 0B   11
+CONTAINER ID   NAME                    CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+f9eb20237a61   distracted_sutherland   9.21%     1.587GiB / 251.3GiB   0.63%     7.6MB / 66kB   2.34GB / 98.3kB   12
+CONTAINER ID   NAME                    CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+f9eb20237a61   distracted_sutherland   811.42%   2.518GiB / 251.3GiB   1.00%     290MB / 2.01MB   2.34GB / 46.2MB   12
+CONTAINER ID   NAME                    CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+f9eb20237a61   distracted_sutherland   806.45%   2.496GiB / 251.3GiB   0.99%     562MB / 4.18MB   2.34GB / 46.2MB   12
+CONTAINER ID   NAME                    CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+f9eb20237a61   distracted_sutherland   803.18%   2.575GiB / 251.3GiB   1.02%     822MB / 6.18MB   2.34GB / 46.2MB   12
+CONTAINER ID   NAME                    CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+f9eb20237a61   distracted_sutherland   806.59%   2.616GiB / 251.3GiB   1.04%     903MB / 6.85MB   2.34GB / 46.2MB   12
+CONTAINER ID   NAME                    CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+f9eb20237a61   distracted_sutherland   798.72%   2.234GiB / 251.3GiB   0.89%     903MB / 6.85MB   2.34GB / 1.32GB   12
+CONTAINER ID   NAME                    CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+f9eb20237a61   distracted_sutherland   780.89%   2.254GiB / 251.3GiB   0.90%     903MB / 6.85MB   7.83GB / 1.32GB   12
+CONTAINER ID   NAME                    CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+f9eb20237a61   distracted_sutherland   787.86%   2.301GiB / 251.3GiB   0.92%     903MB / 6.85MB   15.7GB / 2.46GB   12
+CONTAINER ID   NAME                    CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O         PIDS
+f9eb20237a61   distracted_sutherland   805.50%   2.37GiB / 251.3GiB   0.94%     903MB / 6.85MB   23.4GB / 2.46GB   12
+CONTAINER ID   NAME                    CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+f9eb20237a61   distracted_sutherland   804.92%   2.478GiB / 251.3GiB   0.99%     903MB / 6.85MB   28.6GB / 2.46GB   12
+CONTAINER ID   NAME                    CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+f9eb20237a61   distracted_sutherland   803.62%   2.605GiB / 251.3GiB   1.04%     903MB / 6.85MB   31.8GB / 2.46GB   12
+CONTAINER ID   NAME                    CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+f9eb20237a61   distracted_sutherland   199.85%   5.134GiB / 251.3GiB   2.04%     903MB / 6.85MB   31.8GB / 2.46GB   12
+CONTAINER ID   NAME                    CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+f9eb20237a61   distracted_sutherland   641.93%   2.739GiB / 251.3GiB   1.09%     903MB / 6.85MB   31.8GB / 5.01GB   12
+CONTAINER ID   NAME                    CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+f9eb20237a61   distracted_sutherland   811.93%   2.865GiB / 251.3GiB   1.14%     903MB / 6.85MB   31.8GB / 5.01GB   12
+CONTAINER ID   NAME                    CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+f9eb20237a61   distracted_sutherland   805.75%   2.941GiB / 251.3GiB   1.17%     903MB / 6.85MB   31.8GB / 5.01GB   12
+CONTAINER ID   NAME                    CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+f9eb20237a61   distracted_sutherland   799.70%   3.001GiB / 251.3GiB   1.19%     903MB / 6.85MB   31.8GB / 5.01GB   12
+CONTAINER ID   NAME                    CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+f9eb20237a61   distracted_sutherland   200.09%   4.165GiB / 251.3GiB   1.66%     903MB / 6.85MB   31.8GB / 5.02GB   12
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0

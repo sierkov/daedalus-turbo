@@ -1,1 +1,0 @@
-(program 1.0.0 [(con integer 3) (con integer 4)])

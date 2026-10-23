@@ -120,8 +120,18 @@
                     throw error("unexpected GOVCERT-deregdrep failure");
             }
         }
-        // POST-CERT and rmOrphanDRepVotes use the final certificate state.
-        _pending_drep_removals[c.drep_id] = std::move(it->second.delegs);
+        if (_params.protocol_ver.major < 11) {
+            // Conway GOVCERT clears these immediately, even stale PV9 reverse
+            // links. Later certificates may delegate again to the removed DRep.
+            for (const auto &id: it->second.delegs) {
+                if (auto acc = _accounts.find(id); acc != _accounts.end())
+                    acc->second.vote_deleg.reset();
+            }
+            _pending_drep_removals[c.drep_id] = {};
+        } else {
+            // PV11 POST-CERT uses the final certificate state.
+            _pending_drep_removals[c.drep_id] = std::move(it->second.delegs);
+        }
         _deposited -= c.deposit;
         _drep_state.erase(it);
     }

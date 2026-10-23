@@ -1,0 +1,775 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O   PIDS
+ee674661e8a0   pedantic_taussig   798.15%   432.5MiB / 251.3GiB   0.17%     736B / 0B   1GB / 0B    10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O     PIDS
+ee674661e8a0   pedantic_taussig   799.69%   517.1MiB / 251.3GiB   0.20%     736B / 0B   2.43GB / 0B   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   796.53%   604.6MiB / 251.3GiB   0.23%     806B / 0B   3.52GB / 564MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   799.62%   613.9MiB / 251.3GiB   0.24%     806B / 0B   4.23GB / 564MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   799.20%   622.6MiB / 251.3GiB   0.24%     806B / 0B   4.84GB / 564MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   800.49%   631.6MiB / 251.3GiB   0.25%     876B / 0B   5.41GB / 564MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   799.87%   639.2MiB / 251.3GiB   0.25%     876B / 0B   5.89GB / 564MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   799.22%   662.9MiB / 251.3GiB   0.26%     876B / 0B   6.44GB / 564MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   795.35%   767.3MiB / 251.3GiB   0.30%     876B / 0B   7.46GB / 564MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   795.88%   823.7MiB / 251.3GiB   0.32%     876B / 0B   8.52GB / 564MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   798.84%   894.5MiB / 251.3GiB   0.35%     876B / 0B   9.47GB / 564MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   799.50%   1.111GiB / 251.3GiB   0.44%     876B / 0B   10.6GB / 564MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   795.84%   1.257GiB / 251.3GiB   0.50%     946B / 0B   11.7GB / 564MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   796.18%   1.387GiB / 251.3GiB   0.55%     946B / 0B   12.6GB / 564MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   798.21%   1.425GiB / 251.3GiB   0.57%     946B / 0B   13.5GB / 675MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   798.62%   1.622GiB / 251.3GiB   0.65%     946B / 0B   14.5GB / 675MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   794.56%   1.72GiB / 251.3GiB   0.68%     946B / 0B   15.6GB / 675MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   797.39%   1.857GiB / 251.3GiB   0.74%     946B / 0B   16.5GB / 675MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   797.39%   1.969GiB / 251.3GiB   0.78%     946B / 0B   17.5GB / 2.09GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   797.70%   2.016GiB / 251.3GiB   0.80%     946B / 0B   18.6GB / 2.09GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   801.23%   2.019GiB / 251.3GiB   0.80%     946B / 0B   19.5GB / 2.86GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   798.46%   2.554GiB / 251.3GiB   1.02%     946B / 0B   20.7GB / 2.86GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   797.89%   2.35GiB / 251.3GiB   0.94%     946B / 0B   21.6GB / 4.23GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   797.67%   2.315GiB / 251.3GiB   0.92%     946B / 0B   22.5GB / 4.23GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   798.15%   2.347GiB / 251.3GiB   0.93%     946B / 0B   23.4GB / 5.73GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   800.65%   2.606GiB / 251.3GiB   1.04%     946B / 0B   24.4GB / 5.73GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   800.62%   2.728GiB / 251.3GiB   1.09%     1.02kB / 0B   25.3GB / 7.07GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   800.41%   2.968GiB / 251.3GiB   1.18%     1.02kB / 0B   26.2GB / 7.07GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   799.44%   3.06GiB / 251.3GiB   1.22%     1.02kB / 0B   27.1GB / 8.78GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+ee674661e8a0   pedantic_taussig   797.77%   3.048GiB / 251.3GiB   1.21%     1.02kB / 0B   28GB / 8.78GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   797.06%   2.978GiB / 251.3GiB   1.18%     1.02kB / 0B   28.9GB / 10.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   800.89%   3.029GiB / 251.3GiB   1.21%     1.02kB / 0B   29.8GB / 10.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   799.97%   3.064GiB / 251.3GiB   1.22%     1.02kB / 0B   30.7GB / 12.6GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   800.87%   3.05GiB / 251.3GiB   1.21%     1.02kB / 0B   31.5GB / 12.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   797.69%   3.101GiB / 251.3GiB   1.23%     1.02kB / 0B   32.4GB / 12.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   801.23%   3.202GiB / 251.3GiB   1.27%     1.02kB / 0B   33.2GB / 14.9GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+ee674661e8a0   pedantic_taussig   799.82%   3.214GiB / 251.3GiB   1.28%     1.02kB / 0B   34GB / 14.9GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   800.34%   3.299GiB / 251.3GiB   1.31%     1.02kB / 0B   34.8GB / 16.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   797.40%   3.309GiB / 251.3GiB   1.32%     1.02kB / 0B   35.6GB / 16.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   798.61%   3.325GiB / 251.3GiB   1.32%     1.02kB / 0B   36.3GB / 18.6GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   800.24%   3.266GiB / 251.3GiB   1.30%     1.02kB / 0B   37.1GB / 18.6GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   800.21%   3.349GiB / 251.3GiB   1.33%     1.02kB / 0B   37.9GB / 20.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   795.67%   3.429GiB / 251.3GiB   1.36%     1.02kB / 0B   38.8GB / 20.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   797.45%   3.364GiB / 251.3GiB   1.34%     1.02kB / 0B   39.6GB / 22.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   797.15%   3.214GiB / 251.3GiB   1.28%     1.02kB / 0B   40.3GB / 22.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   798.02%   3.258GiB / 251.3GiB   1.30%     1.02kB / 0B   41.1GB / 23.9GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   799.86%   3.229GiB / 251.3GiB   1.28%     1.02kB / 0B   41.9GB / 23.9GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   800.11%   3.388GiB / 251.3GiB   1.35%     1.02kB / 0B   42.7GB / 25.5GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   800.45%   3.364GiB / 251.3GiB   1.34%     1.02kB / 0B   43.6GB / 25.5GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   796.99%   3.479GiB / 251.3GiB   1.38%     1.02kB / 0B   44.4GB / 25.5GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+ee674661e8a0   pedantic_taussig   797.41%   3.385GiB / 251.3GiB   1.35%     1.02kB / 0B   45.1GB / 27GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+ee674661e8a0   pedantic_taussig   800.94%   3.411GiB / 251.3GiB   1.36%     1.02kB / 0B   45.9GB / 27GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   797.61%   3.284GiB / 251.3GiB   1.31%     1.02kB / 0B   46.6GB / 28.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   800.84%   3.332GiB / 251.3GiB   1.33%     1.09kB / 0B   47.4GB / 28.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+ee674661e8a0   pedantic_taussig   801.23%   3.47GiB / 251.3GiB   1.38%     1.09kB / 0B   48.2GB / 30GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+ee674661e8a0   pedantic_taussig   799.74%   3.442GiB / 251.3GiB   1.37%     1.09kB / 0B   48.9GB / 30GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   797.46%   3.583GiB / 251.3GiB   1.43%     1.09kB / 0B   49.7GB / 31.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   797.60%   3.502GiB / 251.3GiB   1.39%     1.09kB / 0B   50.4GB / 31.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   800.04%   3.558GiB / 251.3GiB   1.42%     1.09kB / 0B   51.2GB / 32.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   800.10%   3.639GiB / 251.3GiB   1.45%     1.09kB / 0B   51.9GB / 32.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+ee674661e8a0   pedantic_taussig   796.83%   3.574GiB / 251.3GiB   1.42%     1.09kB / 0B   52.6GB / 34GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+ee674661e8a0   pedantic_taussig   796.94%   3.673GiB / 251.3GiB   1.46%     1.09kB / 0B   53.4GB / 34GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   799.80%   3.673GiB / 251.3GiB   1.46%     1.09kB / 0B   54.2GB / 35.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+ee674661e8a0   pedantic_taussig   798.39%   3.775GiB / 251.3GiB   1.50%     1.09kB / 0B   55GB / 35.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   800.49%   3.651GiB / 251.3GiB   1.45%     1.09kB / 0B   55.7GB / 36.6GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   799.42%   3.743GiB / 251.3GiB   1.49%     1.09kB / 0B   56.4GB / 36.6GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   800.66%   3.802GiB / 251.3GiB   1.51%     1.09kB / 0B   57.2GB / 37.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   800.90%   3.804GiB / 251.3GiB   1.51%     1.09kB / 0B   57.9GB / 37.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+ee674661e8a0   pedantic_taussig   796.92%   3.792GiB / 251.3GiB   1.51%     1.09kB / 0B   58.7GB / 39GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+ee674661e8a0   pedantic_taussig   800.93%   3.839GiB / 251.3GiB   1.53%     1.09kB / 0B   59.5GB / 39GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   800.36%   3.935GiB / 251.3GiB   1.57%     1.09kB / 0B   60.2GB / 40.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+ee674661e8a0   pedantic_taussig   797.76%   3.905GiB / 251.3GiB   1.55%     1.09kB / 0B   61GB / 40.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   801.33%   3.975GiB / 251.3GiB   1.58%     1.09kB / 0B   61.7GB / 41.7GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   799.84%   4.156GiB / 251.3GiB   1.65%     1.09kB / 0B   62.5GB / 41.7GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+ee674661e8a0   pedantic_taussig   800.17%   4.189GiB / 251.3GiB   1.67%     1.09kB / 0B   63.2GB / 43GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+ee674661e8a0   pedantic_taussig   797.72%   4.24GiB / 251.3GiB   1.69%     1.09kB / 0B   63.9GB / 43GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   801.28%   4.448GiB / 251.3GiB   1.77%     1.09kB / 0B   64.5GB / 44.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   798.32%   4.132GiB / 251.3GiB   1.64%     1.09kB / 0B   65.2GB / 44.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   800.47%   4.253GiB / 251.3GiB   1.69%     1.09kB / 0B   65.9GB / 45.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   800.46%   4.338GiB / 251.3GiB   1.73%     1.09kB / 0B   66.6GB / 45.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   796.72%   4.447GiB / 251.3GiB   1.77%     1.09kB / 0B   67.3GB / 46.7GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   796.23%   4.381GiB / 251.3GiB   1.74%     1.09kB / 0B   67.9GB / 46.7GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   797.84%   4.284GiB / 251.3GiB   1.70%     1.09kB / 0B   68.6GB / 47.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   800.26%   4.352GiB / 251.3GiB   1.73%     1.09kB / 0B   69.2GB / 47.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O     PIDS
+ee674661e8a0   pedantic_taussig   796.62%   4.272GiB / 251.3GiB   1.70%     1.09kB / 0B   70GB / 49GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+ee674661e8a0   pedantic_taussig   797.42%   4.228GiB / 251.3GiB   1.68%     1.09kB / 0B   70.7GB / 49GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   797.06%   4.391GiB / 251.3GiB   1.75%     1.09kB / 0B   71.4GB / 50.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   797.37%   4.366GiB / 251.3GiB   1.74%     1.09kB / 0B   72.1GB / 50.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   795.77%   4.418GiB / 251.3GiB   1.76%     1.09kB / 0B   72.8GB / 51.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   799.74%   4.477GiB / 251.3GiB   1.78%     1.09kB / 0B   73.4GB / 51.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   796.52%   4.426GiB / 251.3GiB   1.76%     1.09kB / 0B   74.2GB / 52.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   796.83%   4.56GiB / 251.3GiB   1.81%     1.09kB / 0B   74.9GB / 52.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   800.33%   4.926GiB / 251.3GiB   1.96%     1.09kB / 0B   75.6GB / 53.6GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   800.63%   4.902GiB / 251.3GiB   1.95%     1.09kB / 0B   76.3GB / 53.6GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+ee674661e8a0   pedantic_taussig   800.05%   4.96GiB / 251.3GiB   1.97%     1.09kB / 0B   77GB / 54.7GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   797.30%   4.907GiB / 251.3GiB   1.95%     1.09kB / 0B   77.6GB / 54.7GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   798.16%   4.967GiB / 251.3GiB   1.98%     1.09kB / 0B   78.3GB / 55.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   801.01%   4.956GiB / 251.3GiB   1.97%     1.09kB / 0B   78.9GB / 55.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   828.45%   4.647GiB / 251.3GiB   1.85%     1.09kB / 0B   79.2GB / 56.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   850.82%   4.591GiB / 251.3GiB   1.83%     1.09kB / 0B   79.2GB / 56.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+ee674661e8a0   pedantic_taussig   818.93%   4.587GiB / 251.3GiB   1.83%     1.09kB / 0B   79.2GB / 58GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+ee674661e8a0   pedantic_taussig   818.88%   4.58GiB / 251.3GiB   1.82%     1.09kB / 0B   79.2GB / 58GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+ee674661e8a0   pedantic_taussig   803.02%   4.581GiB / 251.3GiB   1.82%     1.09kB / 0B   79.2GB / 59GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+ee674661e8a0   pedantic_taussig   808.92%   4.576GiB / 251.3GiB   1.82%     1.09kB / 0B   79.2GB / 59GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   807.38%   4.574GiB / 251.3GiB   1.82%     1.09kB / 0B   79.2GB / 60.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   806.35%   4.568GiB / 251.3GiB   1.82%     1.09kB / 0B   79.2GB / 60.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   807.87%   4.565GiB / 251.3GiB   1.82%     1.09kB / 0B   79.2GB / 61.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   811.00%   4.561GiB / 251.3GiB   1.81%     1.09kB / 0B   79.2GB / 61.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   812.72%   4.558GiB / 251.3GiB   1.81%     1.09kB / 0B   79.2GB / 62.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   805.86%   4.555GiB / 251.3GiB   1.81%     1.16kB / 0B   79.2GB / 62.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+ee674661e8a0   pedantic_taussig   811.31%   4.551GiB / 251.3GiB   1.81%     1.16kB / 0B   79.2GB / 63GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+ee674661e8a0   pedantic_taussig   811.35%   4.547GiB / 251.3GiB   1.81%     1.16kB / 0B   79.2GB / 65GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+ee674661e8a0   pedantic_taussig   809.44%   4.543GiB / 251.3GiB   1.81%     1.16kB / 0B   79.2GB / 65GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   812.44%   4.541GiB / 251.3GiB   1.81%     1.16kB / 0B   79.2GB / 70.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   811.98%   4.537GiB / 251.3GiB   1.81%     1.16kB / 0B   79.2GB / 70.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   812.76%   4.532GiB / 251.3GiB   1.80%     1.16kB / 0B   79.2GB / 74.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   821.44%   4.528GiB / 251.3GiB   1.80%     1.16kB / 0B   79.2GB / 74.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   813.07%   4.526GiB / 251.3GiB   1.80%     1.16kB / 0B   79.2GB / 78.5GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   804.12%   4.527GiB / 251.3GiB   1.80%     1.16kB / 0B   79.2GB / 78.5GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   817.56%   4.517GiB / 251.3GiB   1.80%     1.16kB / 0B   79.2GB / 82.5GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   813.95%   4.516GiB / 251.3GiB   1.80%     1.16kB / 0B   79.2GB / 82.5GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   810.87%   4.513GiB / 251.3GiB   1.80%     1.16kB / 0B   79.2GB / 86.5GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   811.95%   4.507GiB / 251.3GiB   1.79%     1.16kB / 0B   79.2GB / 86.5GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   799.29%   4.746GiB / 251.3GiB   1.89%     1.16kB / 0B   79.2GB / 86.7GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   801.39%   4.734GiB / 251.3GiB   1.88%     1.16kB / 0B   79.2GB / 90.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   794.27%   4.75GiB / 251.3GiB   1.89%     1.16kB / 0B   79.2GB / 90.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   797.40%   4.74GiB / 251.3GiB   1.89%     1.16kB / 0B   79.2GB / 94.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   795.90%   4.752GiB / 251.3GiB   1.89%     1.16kB / 0B   79.2GB / 94.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   794.67%   4.8GiB / 251.3GiB   1.91%     1.16kB / 0B   79.2GB / 98.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+ee674661e8a0   pedantic_taussig   808.81%   4.82GiB / 251.3GiB   1.92%     1.16kB / 0B   79.2GB / 98.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   803.67%   4.781GiB / 251.3GiB   1.90%     1.16kB / 0B   79.2GB / 102GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   799.63%   4.753GiB / 251.3GiB   1.89%     1.16kB / 0B   79.2GB / 102GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   812.07%   4.722GiB / 251.3GiB   1.88%     1.16kB / 0B   79.2GB / 106GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   796.18%   4.762GiB / 251.3GiB   1.90%     1.16kB / 0B   79.2GB / 106GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   811.23%   4.748GiB / 251.3GiB   1.89%     1.16kB / 0B   79.2GB / 110GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   798.51%   4.731GiB / 251.3GiB   1.88%     1.16kB / 0B   79.2GB / 110GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   803.92%   4.733GiB / 251.3GiB   1.88%     1.16kB / 0B   79.2GB / 114GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   800.92%   4.734GiB / 251.3GiB   1.88%     1.16kB / 0B   79.2GB / 114GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   799.60%   4.738GiB / 251.3GiB   1.89%     1.16kB / 0B   79.2GB / 114GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   805.11%   4.729GiB / 251.3GiB   1.88%     1.16kB / 0B   79.2GB / 121GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   793.99%   4.752GiB / 251.3GiB   1.89%     1.16kB / 0B   79.2GB / 121GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   798.75%   4.74GiB / 251.3GiB   1.89%     1.16kB / 0B   79.2GB / 123GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   799.78%   4.726GiB / 251.3GiB   1.88%     1.16kB / 0B   79.2GB / 123GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   803.87%   4.755GiB / 251.3GiB   1.89%     1.16kB / 0B   79.2GB / 126GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   793.37%   4.755GiB / 251.3GiB   1.89%     1.16kB / 0B   79.2GB / 126GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   810.32%   4.735GiB / 251.3GiB   1.88%     1.16kB / 0B   79.2GB / 132GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   793.65%   4.709GiB / 251.3GiB   1.87%     1.16kB / 0B   79.2GB / 132GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   794.49%   4.73GiB / 251.3GiB   1.88%     1.16kB / 0B   79.2GB / 134GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   786.28%   4.779GiB / 251.3GiB   1.90%     1.16kB / 0B   79.2GB / 134GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   811.20%   4.78GiB / 251.3GiB   1.90%     1.16kB / 0B   79.2GB / 134GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   808.79%   4.771GiB / 251.3GiB   1.90%     1.16kB / 0B   79.2GB / 138GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   791.60%   4.742GiB / 251.3GiB   1.89%     1.16kB / 0B   79.2GB / 138GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   798.42%   4.702GiB / 251.3GiB   1.87%     1.16kB / 0B   79.2GB / 141GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   799.45%   4.709GiB / 251.3GiB   1.87%     1.16kB / 0B   79.2GB / 141GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   596.71%   4.705GiB / 251.3GiB   1.87%     1.16kB / 0B   79.2GB / 144GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   801.64%   5.07GiB / 251.3GiB   2.02%     1.16kB / 0B   79.2GB / 144GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   800.68%   5.506GiB / 251.3GiB   2.19%     1.16kB / 0B   79.2GB / 145GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   801.35%   5.949GiB / 251.3GiB   2.37%     1.16kB / 0B   79.2GB / 145GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   797.96%   6.356GiB / 251.3GiB   2.53%     1.16kB / 0B   79.2GB / 145GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   798.94%   6.724GiB / 251.3GiB   2.68%     1.16kB / 0B   79.2GB / 145GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   802.49%   7.067GiB / 251.3GiB   2.81%     1.16kB / 0B   79.2GB / 153GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   798.30%   7.386GiB / 251.3GiB   2.94%     1.16kB / 0B   79.2GB / 153GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   798.97%   7.693GiB / 251.3GiB   3.06%     1.16kB / 0B   79.2GB / 155GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   801.82%   7.987GiB / 251.3GiB   3.18%     1.16kB / 0B   79.2GB / 155GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   797.79%   8.271GiB / 251.3GiB   3.29%     1.16kB / 0B   79.2GB / 157GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   799.32%   8.502GiB / 251.3GiB   3.38%     1.16kB / 0B   79.2GB / 159GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   801.68%   8.538GiB / 251.3GiB   3.40%     1.16kB / 0B   79.2GB / 159GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   697.37%   8.549GiB / 251.3GiB   3.40%     1.16kB / 0B   79.2GB / 161GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   798.35%   8.568GiB / 251.3GiB   3.41%     1.16kB / 0B   79.2GB / 161GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   720.90%   8.637GiB / 251.3GiB   3.44%     1.16kB / 0B   79.2GB / 161GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   835.42%   8.646GiB / 251.3GiB   3.44%     1.16kB / 0B   79.2GB / 161GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   838.09%   8.708GiB / 251.3GiB   3.47%     1.16kB / 0B   79.2GB / 161GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   837.83%   8.777GiB / 251.3GiB   3.49%     1.16kB / 0B   79.2GB / 161GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   844.89%   8.853GiB / 251.3GiB   3.52%     1.16kB / 0B   79.2GB / 161GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   864.02%   8.935GiB / 251.3GiB   3.56%     1.16kB / 0B   79.2GB / 161GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   846.25%   9.006GiB / 251.3GiB   3.58%     1.16kB / 0B   79.2GB / 161GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   862.30%   9.057GiB / 251.3GiB   3.60%     1.16kB / 0B   79.2GB / 161GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   878.74%   9.148GiB / 251.3GiB   3.64%     1.16kB / 0B   79.2GB / 161GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   841.66%   9.203GiB / 251.3GiB   3.66%     1.16kB / 0B   79.2GB / 161GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   883.38%   9.278GiB / 251.3GiB   3.69%     1.16kB / 0B   79.2GB / 166GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   816.87%   9.3GiB / 251.3GiB   3.70%     1.16kB / 0B   79.2GB / 166GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   889.90%   9.346GiB / 251.3GiB   3.72%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   823.26%   9.37GiB / 251.3GiB   3.73%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   893.74%   9.42GiB / 251.3GiB   3.75%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   834.00%   9.446GiB / 251.3GiB   3.76%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   892.72%   9.51GiB / 251.3GiB   3.78%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   841.45%   9.539GiB / 251.3GiB   3.80%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   878.52%   9.602GiB / 251.3GiB   3.82%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   866.15%   9.602GiB / 251.3GiB   3.82%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   847.80%   9.604GiB / 251.3GiB   3.82%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   886.12%   9.659GiB / 251.3GiB   3.84%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   834.88%   9.69GiB / 251.3GiB   3.86%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   897.71%   9.756GiB / 251.3GiB   3.88%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   863.23%   9.788GiB / 251.3GiB   3.89%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   861.72%   9.826GiB / 251.3GiB   3.91%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   893.56%   9.89GiB / 251.3GiB   3.94%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   851.60%   9.922GiB / 251.3GiB   3.95%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   890.09%   9.983GiB / 251.3GiB   3.97%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   890.64%   10.01GiB / 251.3GiB   3.98%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   855.60%   10.08GiB / 251.3GiB   4.01%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   845.92%   10.07GiB / 251.3GiB   4.01%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   852.97%   10.07GiB / 251.3GiB   4.01%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   862.92%   10.11GiB / 251.3GiB   4.02%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   866.98%   10.11GiB / 251.3GiB   4.02%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   863.41%   10.1GiB / 251.3GiB   4.02%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   870.24%   10.11GiB / 251.3GiB   4.02%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   874.69%   10.15GiB / 251.3GiB   4.04%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   886.20%   10.2GiB / 251.3GiB   4.06%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   897.42%   10.23GiB / 251.3GiB   4.07%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   901.72%   10.27GiB / 251.3GiB   4.09%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   897.56%   10.28GiB / 251.3GiB   4.09%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   899.43%   10.29GiB / 251.3GiB   4.09%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   899.62%   10.32GiB / 251.3GiB   4.11%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   901.72%   10.33GiB / 251.3GiB   4.11%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   900.17%   10.33GiB / 251.3GiB   4.11%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   884.94%   10.26GiB / 251.3GiB   4.08%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   871.59%   10.29GiB / 251.3GiB   4.10%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   853.35%   10.26GiB / 251.3GiB   4.08%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   836.91%   10.37GiB / 251.3GiB   4.13%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   831.80%   10.38GiB / 251.3GiB   4.13%     1.16kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   822.89%   10.38GiB / 251.3GiB   4.13%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   848.24%   10.39GiB / 251.3GiB   4.13%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   862.60%   10.39GiB / 251.3GiB   4.14%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   881.59%   10.4GiB / 251.3GiB   4.14%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   898.81%   10.4GiB / 251.3GiB   4.14%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   899.05%   10.4GiB / 251.3GiB   4.14%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   902.46%   10.41GiB / 251.3GiB   4.14%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   902.09%   10.41GiB / 251.3GiB   4.14%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   902.09%   10.41GiB / 251.3GiB   4.14%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   878.86%   10.33GiB / 251.3GiB   4.11%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   853.13%   10.41GiB / 251.3GiB   4.14%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   862.56%   10.44GiB / 251.3GiB   4.15%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   901.34%   10.45GiB / 251.3GiB   4.16%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   901.53%   10.46GiB / 251.3GiB   4.16%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   898.30%   10.46GiB / 251.3GiB   4.16%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   870.65%   10.36GiB / 251.3GiB   4.12%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   850.22%   10.48GiB / 251.3GiB   4.17%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   842.37%   10.48GiB / 251.3GiB   4.17%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   876.93%   10.48GiB / 251.3GiB   4.17%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   894.58%   10.49GiB / 251.3GiB   4.17%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   898.20%   10.49GiB / 251.3GiB   4.17%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   902.28%   10.49GiB / 251.3GiB   4.17%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   889.32%   10.39GiB / 251.3GiB   4.14%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   863.61%   10.33GiB / 251.3GiB   4.11%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   841.32%   10.49GiB / 251.3GiB   4.18%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   854.68%   10.49GiB / 251.3GiB   4.18%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   899.15%   10.5GiB / 251.3GiB   4.18%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   898.31%   10.5GiB / 251.3GiB   4.18%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   897.94%   10.43GiB / 251.3GiB   4.15%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   873.32%   10.36GiB / 251.3GiB   4.12%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   844.19%   10.5GiB / 251.3GiB   4.18%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   841.82%   10.5GiB / 251.3GiB   4.18%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   854.48%   10.5GiB / 251.3GiB   4.18%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   879.87%   10.5GiB / 251.3GiB   4.18%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   890.13%   10.51GiB / 251.3GiB   4.18%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   897.26%   10.51GiB / 251.3GiB   4.18%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   899.06%   10.51GiB / 251.3GiB   4.18%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   899.25%   10.51GiB / 251.3GiB   4.18%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   896.87%   10.4GiB / 251.3GiB   4.14%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   867.40%   10.36GiB / 251.3GiB   4.12%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   840.73%   10.51GiB / 251.3GiB   4.18%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   846.07%   10.51GiB / 251.3GiB   4.18%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   857.19%   10.51GiB / 251.3GiB   4.18%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   883.31%   10.51GiB / 251.3GiB   4.18%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   897.15%   10.51GiB / 251.3GiB   4.18%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   898.49%   10.51GiB / 251.3GiB   4.18%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   898.69%   10.51GiB / 251.3GiB   4.18%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   902.85%   10.49GiB / 251.3GiB   4.17%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   885.12%   10.41GiB / 251.3GiB   4.14%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   854.81%   10.51GiB / 251.3GiB   4.18%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   839.59%   10.52GiB / 251.3GiB   4.18%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   838.21%   10.52GiB / 251.3GiB   4.19%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   871.25%   10.52GiB / 251.3GiB   4.19%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   901.52%   10.52GiB / 251.3GiB   4.19%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   899.25%   10.52GiB / 251.3GiB   4.19%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   898.69%   10.52GiB / 251.3GiB   4.19%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   898.50%   10.52GiB / 251.3GiB   4.19%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   895.02%   10.42GiB / 251.3GiB   4.14%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   869.01%   10.37GiB / 251.3GiB   4.13%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   836.00%   10.52GiB / 251.3GiB   4.19%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   840.19%   10.52GiB / 251.3GiB   4.19%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   859.98%   10.52GiB / 251.3GiB   4.19%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   893.09%   10.53GiB / 251.3GiB   4.19%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   898.87%   10.53GiB / 251.3GiB   4.19%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   899.24%   10.53GiB / 251.3GiB   4.19%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   901.33%   10.53GiB / 251.3GiB   4.19%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   885.47%   10.42GiB / 251.3GiB   4.15%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   856.95%   10.53GiB / 251.3GiB   4.19%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   844.23%   10.53GiB / 251.3GiB   4.19%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   816.26%   10.53GiB / 251.3GiB   4.19%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   809.66%   10.53GiB / 251.3GiB   4.19%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   826.44%   10.53GiB / 251.3GiB   4.19%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   839.09%   10.53GiB / 251.3GiB   4.19%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   863.05%   10.53GiB / 251.3GiB   4.19%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   882.98%   10.53GiB / 251.3GiB   4.19%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   896.64%   10.53GiB / 251.3GiB   4.19%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   898.86%   10.53GiB / 251.3GiB   4.19%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   899.43%   10.53GiB / 251.3GiB   4.19%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   898.31%   10.5GiB / 251.3GiB   4.18%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   884.12%   10.43GiB / 251.3GiB   4.15%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   865.09%   10.39GiB / 251.3GiB   4.13%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   848.69%   10.54GiB / 251.3GiB   4.19%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   827.48%   10.54GiB / 251.3GiB   4.20%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   806.05%   10.55GiB / 251.3GiB   4.20%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   816.52%   10.55GiB / 251.3GiB   4.20%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   841.78%   10.55GiB / 251.3GiB   4.20%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   858.66%   10.55GiB / 251.3GiB   4.20%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   878.63%   10.55GiB / 251.3GiB   4.20%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   901.19%   10.56GiB / 251.3GiB   4.20%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   898.31%   10.56GiB / 251.3GiB   4.20%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   898.50%   10.56GiB / 251.3GiB   4.20%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   899.61%   10.52GiB / 251.3GiB   4.19%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   882.41%   10.44GiB / 251.3GiB   4.16%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   872.54%   10.44GiB / 251.3GiB   4.15%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   857.73%   10.38GiB / 251.3GiB   4.13%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   837.41%   10.56GiB / 251.3GiB   4.20%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   818.68%   10.56GiB / 251.3GiB   4.20%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   840.42%   10.56GiB / 251.3GiB   4.20%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   849.22%   10.57GiB / 251.3GiB   4.20%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   858.93%   10.38GiB / 251.3GiB   4.13%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   873.16%   10.44GiB / 251.3GiB   4.15%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   883.22%   10.45GiB / 251.3GiB   4.16%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   898.68%   10.5GiB / 251.3GiB   4.18%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   899.43%   10.55GiB / 251.3GiB   4.20%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   897.94%   10.57GiB / 251.3GiB   4.21%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   899.25%   10.57GiB / 251.3GiB   4.21%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   899.44%   10.57GiB / 251.3GiB   4.21%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   898.16%   10.57GiB / 251.3GiB   4.21%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   880.57%   10.57GiB / 251.3GiB   4.21%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   872.79%   10.57GiB / 251.3GiB   4.21%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   851.20%   10.57GiB / 251.3GiB   4.21%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   838.20%   10.58GiB / 251.3GiB   4.21%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   838.19%   10.58GiB / 251.3GiB   4.21%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   835.38%   10.58GiB / 251.3GiB   4.21%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   847.87%   10.58GiB / 251.3GiB   4.21%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   856.70%   10.39GiB / 251.3GiB   4.14%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   871.51%   10.45GiB / 251.3GiB   4.16%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   894.80%   10.46GiB / 251.3GiB   4.16%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   902.85%   10.5GiB / 251.3GiB   4.18%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   901.72%   10.55GiB / 251.3GiB   4.20%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   898.67%   10.58GiB / 251.3GiB   4.21%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   899.25%   10.58GiB / 251.3GiB   4.21%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   902.09%   10.58GiB / 251.3GiB   4.21%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   426.27%   10.58GiB / 251.3GiB   4.21%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   334.99%   10.58GiB / 251.3GiB   4.21%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   411.81%   10.58GiB / 251.3GiB   4.21%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   492.71%   10.59GiB / 251.3GiB   4.21%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   580.78%   10.59GiB / 251.3GiB   4.21%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   677.12%   10.59GiB / 251.3GiB   4.21%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   787.36%   10.59GiB / 251.3GiB   4.21%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   834.20%   10.59GiB / 251.3GiB   4.21%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   836.03%   10.59GiB / 251.3GiB   4.21%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   820.61%   10.59GiB / 251.3GiB   4.21%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   798.53%   10.41GiB / 251.3GiB   4.14%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   775.96%   10.45GiB / 251.3GiB   4.16%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   705.07%   10.47GiB / 251.3GiB   4.16%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   620.03%   10.47GiB / 251.3GiB   4.16%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   567.94%   10.52GiB / 251.3GiB   4.19%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   449.47%   10.57GiB / 251.3GiB   4.20%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   370.37%   10.59GiB / 251.3GiB   4.22%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   293.46%   10.59GiB / 251.3GiB   4.22%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   222.56%   10.59GiB / 251.3GiB   4.22%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   222.98%   10.6GiB / 251.3GiB   4.22%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   256.23%   10.6GiB / 251.3GiB   4.22%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   318.43%   10.6GiB / 251.3GiB   4.22%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   388.39%   10.6GiB / 251.3GiB   4.22%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   439.63%   10.6GiB / 251.3GiB   4.22%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   528.94%   10.6GiB / 251.3GiB   4.22%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   597.23%   10.6GiB / 251.3GiB   4.22%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   654.57%   10.6GiB / 251.3GiB   4.22%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   695.11%   10.6GiB / 251.3GiB   4.22%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   761.96%   10.6GiB / 251.3GiB   4.22%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   819.25%   10.6GiB / 251.3GiB   4.22%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   834.24%   10.6GiB / 251.3GiB   4.22%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   839.64%   10.6GiB / 251.3GiB   4.22%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   843.46%   10.6GiB / 251.3GiB   4.22%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   825.45%   10.6GiB / 251.3GiB   4.22%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   817.38%   10.6GiB / 251.3GiB   4.22%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   811.27%   10.41GiB / 251.3GiB   4.14%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   791.17%   10.42GiB / 251.3GiB   4.14%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   796.28%   10.43GiB / 251.3GiB   4.15%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   775.35%   10.45GiB / 251.3GiB   4.16%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   769.71%   10.46GiB / 251.3GiB   4.16%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   747.10%   10.48GiB / 251.3GiB   4.17%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   726.85%   10.48GiB / 251.3GiB   4.17%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+ee674661e8a0   pedantic_taussig   119.74%   10.49GiB / 251.3GiB   4.18%     1.23kB / 0B   79.2GB / 168GB   10
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS

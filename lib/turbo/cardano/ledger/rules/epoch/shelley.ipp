@@ -61,7 +61,12 @@
     {
         for (auto &&[pool_id, params]: _future_pool_params) {
             auto &active = _active_pool_params.at(pool_id);
-            if (_params.protocol_ver.major >= 11)
+            if (_params.protocol_ver.major == 11) {
+                // Conway POOLREAP deletes superseded keys outright, but leaves
+                // the map unchanged when the active and future keys are equal.
+                if (active.params.vrf_vkey != params.params.vrf_vkey)
+                    _pool_vrf_key_hashes.erase(active.params.vrf_vkey);
+            } else if (_params.protocol_ver.major > 11)
                 _remove_pool_vrf_key_hash(active.params.vrf_vkey);
             active = std::move(params);
         }

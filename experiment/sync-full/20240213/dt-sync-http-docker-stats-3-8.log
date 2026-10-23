@@ -1,0 +1,933 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O     PIDS
+19264e60bfe7   boring_banzai   3.01%     9.062MiB / 251.3GiB   0.00%     204kB / 44.1kB   16.8MB / 0B   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O     PIDS
+19264e60bfe7   boring_banzai   17.21%    18.53MiB / 251.3GiB   0.01%     2.44MB / 146kB   16.8MB / 0B   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   803.32%   514.7MiB / 251.3GiB   0.20%     240MB / 1.41MB   17.7MB / 6.93MB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   806.30%   558.9MiB / 251.3GiB   0.22%     511MB / 3.15MB   17.7MB / 6.93MB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   802.73%   587.3MiB / 251.3GiB   0.23%     774MB / 4.99MB   17.7MB / 6.93MB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   803.10%   598.2MiB / 251.3GiB   0.23%     1.04GB / 6.82MB   17.7MB / 6.93MB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   802.77%   630.2MiB / 251.3GiB   0.24%     1.3GB / 8.59MB   17.7MB / 6.93MB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT   MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   799.30%   706MiB / 251.3GiB   0.27%     1.56GB / 10.3MB   17.7MB / 6.93MB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   800.72%   711.9MiB / 251.3GiB   0.28%     1.75GB / 11.4MB   17.7MB / 6.93MB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   800.80%   723.1MiB / 251.3GiB   0.28%     1.93GB / 12.4MB   17.7MB / 6.93MB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   801.07%   672.1MiB / 251.3GiB   0.26%     2.13GB / 13.6MB   17.7MB / 6.93MB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   803.19%   730.2MiB / 251.3GiB   0.28%     2.34GB / 14.9MB   17.7MB / 6.93MB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   801.56%   771.2MiB / 251.3GiB   0.30%     2.59GB / 16.4MB   17.7MB / 6.93MB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   805.86%   804.7MiB / 251.3GiB   0.31%     2.85GB / 18.1MB   17.7MB / 6.93MB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+19264e60bfe7   boring_banzai   804.67%   772.9MiB / 251.3GiB   0.30%     3.12GB / 19.9MB   17.7MB / 98MB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+19264e60bfe7   boring_banzai   804.16%   819.9MiB / 251.3GiB   0.32%     3.38GB / 21.6MB   17.7MB / 98MB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   805.29%   793.4MiB / 251.3GiB   0.31%     3.64GB / 23.3MB   17.7MB / 1.3GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   806.21%   911.2MiB / 251.3GiB   0.35%     3.91GB / 25.1MB   17.7MB / 1.3GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   811.30%   847.1MiB / 251.3GiB   0.33%     4.12GB / 26.5MB   17.8MB / 2.49GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT   MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   801.52%   827MiB / 251.3GiB   0.32%     4.13GB / 26.6MB   17.8MB / 2.49GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   802.07%   839.8MiB / 251.3GiB   0.33%     4.13GB / 26.6MB   17.8MB / 3.54GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   793.74%   873.6MiB / 251.3GiB   0.34%     4.13GB / 26.6MB   17.8MB / 3.54GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   804.79%   890.7MiB / 251.3GiB   0.35%     4.13GB / 26.6MB   17.8MB / 4.39GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   798.99%   1.355GiB / 251.3GiB   0.54%     4.13GB / 26.6MB   17.8MB / 4.39GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   797.89%   1.355GiB / 251.3GiB   0.54%     4.13GB / 26.6MB   17.8MB / 5.39GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   798.68%   1.373GiB / 251.3GiB   0.55%     4.13GB / 26.6MB   17.8MB / 5.39GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   405.74%   1.431GiB / 251.3GiB   0.57%     4.13GB / 26.6MB   17.8MB / 6.69GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   0.15%     1.43GiB / 251.3GiB   0.57%     4.13GB / 26.6MB   17.8MB / 6.69GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   0.14%     1.43GiB / 251.3GiB   0.57%     4.13GB / 26.6MB   17.8MB / 7.95GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   0.14%     1.43GiB / 251.3GiB   0.57%     4.13GB / 26.6MB   17.8MB / 7.95GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   170.02%   1.461GiB / 251.3GiB   0.58%     4.19GB / 27.1MB   17.8MB / 8.45GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   503.17%   1.613GiB / 251.3GiB   0.64%     4.48GB / 29.3MB   17.8MB / 9.23GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   591.24%   1.628GiB / 251.3GiB   0.65%     4.74GB / 31.4MB   17.8MB / 9.23GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   668.39%   1.643GiB / 251.3GiB   0.65%     5.01GB / 33.4MB   17.8MB / 9.57GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   638.56%   1.656GiB / 251.3GiB   0.66%     5.26GB / 35.4MB   17.8MB / 9.57GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   633.55%   1.67GiB / 251.3GiB   0.66%     5.51GB / 37.3MB   17.8MB / 10.3GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   567.73%   1.736GiB / 251.3GiB   0.69%     5.78GB / 39.4MB   17.8MB / 10.3GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   517.02%   1.751GiB / 251.3GiB   0.70%     6.05GB / 41.6MB   17.8MB / 10.9GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   528.82%   1.845GiB / 251.3GiB   0.73%     6.32GB / 43.9MB   17.8MB / 10.9GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   470.79%   1.916GiB / 251.3GiB   0.76%     6.58GB / 46.2MB   17.8MB / 12.2GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   498.73%   1.893GiB / 251.3GiB   0.75%     6.85GB / 48.4MB   17.8MB / 12.2GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   588.47%   1.921GiB / 251.3GiB   0.76%     7.11GB / 50.6MB   17.8MB / 12.2GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   535.28%   2.004GiB / 251.3GiB   0.80%     7.38GB / 52.8MB   17.8MB / 12.2GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   574.08%   2.008GiB / 251.3GiB   0.80%     7.64GB / 55.1MB   17.8MB / 12.8GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   551.39%   1.969GiB / 251.3GiB   0.78%     7.91GB / 57.2MB   17.8MB / 12.8GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   520.51%   2.09GiB / 251.3GiB   0.83%     8.17GB / 59.4MB   17.8MB / 14.8GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   563.27%   2.178GiB / 251.3GiB   0.87%     8.44GB / 61.5MB   17.8MB / 14.8GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   719.84%   2.098GiB / 251.3GiB   0.83%     8.7GB / 63.6MB   17.8MB / 16.7GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   808.27%   2.205GiB / 251.3GiB   0.88%     8.96GB / 65.7MB   17.8MB / 16.7GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   805.62%   2.135GiB / 251.3GiB   0.85%     9.22GB / 67.8MB   17.8MB / 18.6GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   802.09%   2.289GiB / 251.3GiB   0.91%     9.49GB / 69.9MB   17.8MB / 18.6GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   810.22%   2.525GiB / 251.3GiB   1.00%     9.75GB / 72MB   17.9MB / 20.1GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   803.86%   2.533GiB / 251.3GiB   1.01%     10GB / 74MB   17.9MB / 20.1GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   803.93%   3.125GiB / 251.3GiB   1.24%     10.3GB / 76.1MB   17.9MB / 21.4GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   804.26%   3.35GiB / 251.3GiB   1.33%     10.5GB / 78.2MB   17.9MB / 21.4GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   802.99%   3.568GiB / 251.3GiB   1.42%     10.8GB / 80.3MB   17.9MB / 21.4GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   801.46%   3.584GiB / 251.3GiB   1.43%     11.1GB / 82.4MB   17.9MB / 22.6GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   803.51%   3.632GiB / 251.3GiB   1.45%     11.3GB / 84.6MB   17.9MB / 22.6GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   804.82%   3.775GiB / 251.3GiB   1.50%     11.6GB / 86.8MB   17.9MB / 23.8GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   806.42%   3.817GiB / 251.3GiB   1.52%     11.9GB / 89MB   17.9MB / 23.8GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+19264e60bfe7   boring_banzai   806.83%   4.204GiB / 251.3GiB   1.67%     12.1GB / 90.9MB   17.9MB / 25GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+19264e60bfe7   boring_banzai   801.70%   4.199GiB / 251.3GiB   1.67%     12.1GB / 90.9MB   17.9MB / 25GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   798.77%   4.244GiB / 251.3GiB   1.69%     12.1GB / 90.9MB   17.9MB / 28.9GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   797.47%   4.275GiB / 251.3GiB   1.70%     12.1GB / 90.9MB   17.9MB / 28.9GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   799.94%   4.307GiB / 251.3GiB   1.71%     12.1GB / 90.9MB   17.9MB / 30.3GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   800.91%   4.871GiB / 251.3GiB   1.94%     12.1GB / 90.9MB   17.9MB / 30.3GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   797.29%   5.09GiB / 251.3GiB   2.03%     12.1GB / 90.9MB   17.9MB / 31.6GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   798.05%   5.151GiB / 251.3GiB   2.05%     12.1GB / 90.9MB   17.9MB / 31.6GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   799.96%   5.404GiB / 251.3GiB   2.15%     12.1GB / 90.9MB   17.9MB / 36.7GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   802.66%   5.463GiB / 251.3GiB   2.17%     12.1GB / 90.9MB   17.9MB / 37.8GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   800.07%   5.531GiB / 251.3GiB   2.20%     12.1GB / 90.9MB   17.9MB / 37.8GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+19264e60bfe7   boring_banzai   801.24%   5.315GiB / 251.3GiB   2.11%     12.1GB / 90.9MB   18MB / 39.7GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+19264e60bfe7   boring_banzai   809.78%   5.468GiB / 251.3GiB   2.18%     12.2GB / 91.6MB   18MB / 39.7GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+19264e60bfe7   boring_banzai   805.66%   6.052GiB / 251.3GiB   2.41%     12.5GB / 93.8MB   18MB / 40.9GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+19264e60bfe7   boring_banzai   802.02%   5.967GiB / 251.3GiB   2.37%     12.8GB / 96.1MB   18MB / 40.9GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O       PIDS
+19264e60bfe7   boring_banzai   804.74%   6.157GiB / 251.3GiB   2.45%     13GB / 98.4MB   18MB / 42.2GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O       PIDS
+19264e60bfe7   boring_banzai   804.58%   6.221GiB / 251.3GiB   2.48%     13.3GB / 101MB   18MB / 42.2GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O       PIDS
+19264e60bfe7   boring_banzai   803.67%   6.006GiB / 251.3GiB   2.39%     13.6GB / 103MB   18MB / 43.2GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O       PIDS
+19264e60bfe7   boring_banzai   807.77%   5.983GiB / 251.3GiB   2.38%     13.9GB / 105MB   18MB / 43.2GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O       PIDS
+19264e60bfe7   boring_banzai   802.95%   6.153GiB / 251.3GiB   2.45%     14.1GB / 108MB   18MB / 44.2GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O       PIDS
+19264e60bfe7   boring_banzai   801.42%   6.19GiB / 251.3GiB   2.46%     14.4GB / 110MB   18MB / 44.2GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O       PIDS
+19264e60bfe7   boring_banzai   802.78%   6.347GiB / 251.3GiB   2.53%     14.7GB / 112MB   18MB / 45.4GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   802.52%   6.244GiB / 251.3GiB   2.48%     14.9GB / 115MB   18.3MB / 45.4GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   801.86%   6.471GiB / 251.3GiB   2.57%     15.2GB / 117MB   18.3MB / 46.6GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   801.70%   6.309GiB / 251.3GiB   2.51%     15.5GB / 119MB   18.3MB / 46.6GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   803.12%   6.493GiB / 251.3GiB   2.58%     15.8GB / 121MB   18.3MB / 47.4GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   801.99%   6.223GiB / 251.3GiB   2.48%     16GB / 123MB   18.3MB / 47.4GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   802.35%   6.367GiB / 251.3GiB   2.53%     16.3GB / 126MB   18.3MB / 49.6GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   806.15%   6.482GiB / 251.3GiB   2.58%     16.6GB / 128MB   18.3MB / 49.6GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   803.70%   6.559GiB / 251.3GiB   2.61%     16.8GB / 130MB   18.3MB / 51.8GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   801.64%   6.827GiB / 251.3GiB   2.72%     17.1GB / 133MB   18.3MB / 51.8GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   804.88%   6.735GiB / 251.3GiB   2.68%     17.4GB / 135MB   18.3MB / 52.8GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   804.67%   6.722GiB / 251.3GiB   2.67%     17.7GB / 137MB   18.3MB / 54.1GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   801.01%   6.373GiB / 251.3GiB   2.54%     17.9GB / 139MB   18.3MB / 54.1GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   802.50%   6.339GiB / 251.3GiB   2.52%     18.2GB / 142MB   18.3MB / 56.2GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   801.01%   6.309GiB / 251.3GiB   2.51%     18.5GB / 144MB   18.3MB / 56.2GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   805.28%   6.269GiB / 251.3GiB   2.49%     18.7GB / 146MB   18.3MB / 58.3GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   800.94%   6.434GiB / 251.3GiB   2.56%     19GB / 148MB   18.3MB / 58.3GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   800.03%   6.62GiB / 251.3GiB   2.63%     19.3GB / 150MB   18.3MB / 60.5GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   804.39%   7.807GiB / 251.3GiB   3.11%     19.6GB / 153MB   18.3MB / 60.5GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   803.00%   7.937GiB / 251.3GiB   3.16%     19.8GB / 155MB   18.3MB / 62.6GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   807.84%   8.037GiB / 251.3GiB   3.20%     20.1GB / 157MB   18.3MB / 62.6GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   803.08%   8.074GiB / 251.3GiB   3.21%     20.4GB / 159MB   18.3MB / 64.9GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   805.49%   8.096GiB / 251.3GiB   3.22%     20.6GB / 161MB   18.3MB / 64.9GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   804.58%   8.121GiB / 251.3GiB   3.23%     20.9GB / 164MB   18.3MB / 66.9GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   801.63%   8.201GiB / 251.3GiB   3.26%     21.2GB / 166MB   18.3MB / 66.9GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   801.73%   8.141GiB / 251.3GiB   3.24%     21.4GB / 168MB   18.3MB / 69.9GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   800.27%   8.73GiB / 251.3GiB   3.47%     21.7GB / 170MB   18.3MB / 72.6GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   801.30%   8.401GiB / 251.3GiB   3.34%     22GB / 172MB   18.3MB / 72.6GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O       PIDS
+19264e60bfe7   boring_banzai   803.48%   8.388GiB / 251.3GiB   3.34%     22.3GB / 174MB   18.3MB / 74GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O       PIDS
+19264e60bfe7   boring_banzai   802.53%   8.973GiB / 251.3GiB   3.57%     22.5GB / 176MB   18.3MB / 74GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   803.79%   8.978GiB / 251.3GiB   3.57%     22.8GB / 179MB   18.3MB / 75.2GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   804.88%   8.821GiB / 251.3GiB   3.51%     23.1GB / 181MB   18.3MB / 75.2GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   807.98%   9.327GiB / 251.3GiB   3.71%     23.4GB / 183MB   18.3MB / 79.5GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   806.33%   9.88GiB / 251.3GiB   3.93%     23.6GB / 185MB   18.3MB / 79.5GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O       PIDS
+19264e60bfe7   boring_banzai   802.33%   10.01GiB / 251.3GiB   3.98%     23.9GB / 187MB   18.3MB / 81GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O       PIDS
+19264e60bfe7   boring_banzai   803.84%   10.45GiB / 251.3GiB   4.16%     24.2GB / 190MB   18.3MB / 81GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   806.72%   10.18GiB / 251.3GiB   4.05%     24.4GB / 192MB   18.3MB / 84.3GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   804.46%   10.41GiB / 251.3GiB   4.14%     24.7GB / 194MB   18.3MB / 84.3GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   805.72%   10.54GiB / 251.3GiB   4.19%     25GB / 196MB   18.3MB / 85.4GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   806.46%   10.35GiB / 251.3GiB   4.12%     25.3GB / 198MB   18.3MB / 85.4GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   803.49%   10.37GiB / 251.3GiB   4.13%     25.5GB / 201MB   18.3MB / 87.5GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   801.83%   10.46GiB / 251.3GiB   4.16%     25.8GB / 203MB   18.3MB / 88.8GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   806.14%   10.72GiB / 251.3GiB   4.27%     26.1GB / 205MB   18.3MB / 88.8GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O       PIDS
+19264e60bfe7   boring_banzai   801.99%   10.7GiB / 251.3GiB   4.26%     26.3GB / 207MB   18.3MB / 90GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O       PIDS
+19264e60bfe7   boring_banzai   802.77%   10.82GiB / 251.3GiB   4.30%     26.6GB / 209MB   18.3MB / 90GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   803.22%   10.48GiB / 251.3GiB   4.17%     26.9GB / 211MB   18.3MB / 91.6GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   807.11%   10.54GiB / 251.3GiB   4.19%     27.1GB / 214MB   18.3MB / 91.6GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   805.18%   10.83GiB / 251.3GiB   4.31%     27.4GB / 216MB   18.3MB / 93.5GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   800.77%   10.93GiB / 251.3GiB   4.35%     27.7GB / 218MB   18.3MB / 93.5GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   802.92%   10.67GiB / 251.3GiB   4.24%     28GB / 220MB   18.3MB / 94.7GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   803.92%   10.89GiB / 251.3GiB   4.33%     28.2GB / 222MB   18.3MB / 94.7GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   803.03%   10.77GiB / 251.3GiB   4.29%     28.5GB / 224MB   18.3MB / 95.9GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   804.63%   11.2GiB / 251.3GiB   4.46%     28.8GB / 226MB   18.3MB / 95.9GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   800.12%   11.13GiB / 251.3GiB   4.43%     29GB / 228MB   18.3MB / 99.2GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+19264e60bfe7   boring_banzai   802.81%   11.25GiB / 251.3GiB   4.47%     29.3GB / 230MB   18.3MB / 99.2GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.98%   11.3GiB / 251.3GiB   4.50%     29.6GB / 233MB   18.3MB / 100GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   803.35%   11.31GiB / 251.3GiB   4.50%     29.8GB / 235MB   18.3MB / 100GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   803.44%   11.33GiB / 251.3GiB   4.51%     30.1GB / 237MB   18.3MB / 100GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   803.02%   11.57GiB / 251.3GiB   4.61%     30.4GB / 239MB   18.3MB / 102GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   803.12%   12.42GiB / 251.3GiB   4.94%     30.7GB / 242MB   18.3MB / 102GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   805.99%   13.41GiB / 251.3GiB   5.34%     30.9GB / 244MB   18.3MB / 103GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   804.19%   13.2GiB / 251.3GiB   5.25%     31.2GB / 246MB   18.3MB / 103GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   804.48%   13.2GiB / 251.3GiB   5.25%     31.5GB / 248MB   18.3MB / 106GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   808.04%   13.63GiB / 251.3GiB   5.42%     31.8GB / 250MB   18.3MB / 106GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   805.29%   13.51GiB / 251.3GiB   5.38%     32GB / 252MB   18.3MB / 107GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   804.37%   13.82GiB / 251.3GiB   5.50%     32.3GB / 254MB   18.3MB / 107GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   807.51%   13.47GiB / 251.3GiB   5.36%     32.5GB / 256MB   18.3MB / 108GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   804.31%   13.73GiB / 251.3GiB   5.46%     32.8GB / 258MB   18.3MB / 108GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.60%   13.44GiB / 251.3GiB   5.35%     33GB / 260MB   18.3MB / 110GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   804.26%   13.79GiB / 251.3GiB   5.49%     33.3GB / 262MB   18.3MB / 110GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.23%   13.63GiB / 251.3GiB   5.42%     33.6GB / 264MB   18.3MB / 111GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.99%   13.82GiB / 251.3GiB   5.50%     33.8GB / 266MB   18.3MB / 111GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.81%   13.73GiB / 251.3GiB   5.46%     34.1GB / 268MB   18.3MB / 112GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.88%   13.84GiB / 251.3GiB   5.51%     34.4GB / 270MB   18.3MB / 112GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   803.41%   13.91GiB / 251.3GiB   5.53%     34.6GB / 273MB   18.3MB / 116GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   800.56%   13.97GiB / 251.3GiB   5.56%     34.9GB / 275MB   18.3MB / 116GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.49%   14.11GiB / 251.3GiB   5.61%     35.2GB / 277MB   18.3MB / 116GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   806.00%   14.09GiB / 251.3GiB   5.61%     35.4GB / 279MB   18.3MB / 117GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   803.46%   14.26GiB / 251.3GiB   5.68%     35.7GB / 281MB   18.3MB / 117GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   803.31%   14.37GiB / 251.3GiB   5.72%     36GB / 283MB   18.3MB / 118GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   805.65%   14.75GiB / 251.3GiB   5.87%     36.3GB / 286MB   18.3MB / 118GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   808.14%   15.19GiB / 251.3GiB   6.05%     36.5GB / 288MB   18.3MB / 119GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   807.17%   15.31GiB / 251.3GiB   6.09%     36.8GB / 290MB   18.3MB / 119GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   805.42%   15.59GiB / 251.3GiB   6.20%     37.1GB / 292MB   18.3MB / 120GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.18%   15.41GiB / 251.3GiB   6.13%     37.3GB / 294MB   18.3MB / 121GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.86%   15.69GiB / 251.3GiB   6.24%     37.3GB / 294MB   18.3MB / 121GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.72%   15.53GiB / 251.3GiB   6.18%     37.3GB / 294MB   18.3MB / 124GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.92%   15.68GiB / 251.3GiB   6.24%     37.3GB / 294MB   18.3MB / 124GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.80%   15.51GiB / 251.3GiB   6.17%     37.3GB / 294MB   18.3MB / 126GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   797.43%   15.47GiB / 251.3GiB   6.16%     37.3GB / 294MB   18.3MB / 126GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.69%   15.57GiB / 251.3GiB   6.20%     37.3GB / 294MB   18.3MB / 127GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.21%   15.58GiB / 251.3GiB   6.20%     37.3GB / 294MB   18.3MB / 127GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.68%   15.64GiB / 251.3GiB   6.22%     37.3GB / 294MB   18.3MB / 129GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   797.65%   15.53GiB / 251.3GiB   6.18%     37.3GB / 294MB   18.3MB / 129GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.43%   15.63GiB / 251.3GiB   6.22%     37.3GB / 294MB   18.3MB / 130GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.05%   15.7GiB / 251.3GiB   6.25%     37.3GB / 294MB   18.3MB / 130GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   797.92%   15.77GiB / 251.3GiB   6.27%     37.3GB / 294MB   18.3MB / 132GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.98%   15.73GiB / 251.3GiB   6.26%     37.3GB / 294MB   18.3MB / 132GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.63%   15.98GiB / 251.3GiB   6.36%     37.3GB / 294MB   18.3MB / 132GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.18%   15.74GiB / 251.3GiB   6.26%     37.3GB / 294MB   18.3MB / 132GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.43%   15.74GiB / 251.3GiB   6.26%     37.3GB / 294MB   18.3MB / 133GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   804.19%   15.77GiB / 251.3GiB   6.27%     37.3GB / 294MB   18.3MB / 133GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.15%   15.84GiB / 251.3GiB   6.30%     37.3GB / 294MB   18.3MB / 133GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.79%   15.96GiB / 251.3GiB   6.35%     37.3GB / 294MB   18.3MB / 134GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.47%   16.08GiB / 251.3GiB   6.40%     37.3GB / 294MB   18.3MB / 134GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.13%   16.46GiB / 251.3GiB   6.55%     37.3GB / 294MB   18.3MB / 134GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.86%   16.8GiB / 251.3GiB   6.68%     37.3GB / 294MB   18.3MB / 134GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.26%   17.18GiB / 251.3GiB   6.84%     37.3GB / 294MB   18.3MB / 134GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.34%   17.4GiB / 251.3GiB   6.92%     37.3GB / 294MB   18.3MB / 134GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.41%   17.39GiB / 251.3GiB   6.92%     37.3GB / 294MB   18.3MB / 134GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.95%   17.42GiB / 251.3GiB   6.93%     37.3GB / 294MB   18.3MB / 134GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   804.08%   17.4GiB / 251.3GiB   6.93%     37.3GB / 294MB   18.3MB / 135GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.54%   17.7GiB / 251.3GiB   7.04%     37.3GB / 294MB   18.3MB / 135GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   797.50%   17.72GiB / 251.3GiB   7.05%     37.3GB / 294MB   18.3MB / 137GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.56%   17.75GiB / 251.3GiB   7.06%     37.3GB / 294MB   18.3MB / 137GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.39%   17.54GiB / 251.3GiB   6.98%     37.3GB / 294MB   18.3MB / 137GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.41%   17.32GiB / 251.3GiB   6.89%     37.3GB / 294MB   18.3MB / 137GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.27%   17.94GiB / 251.3GiB   7.14%     37.3GB / 294MB   18.3MB / 137GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.08%   17.99GiB / 251.3GiB   7.16%     37.3GB / 294MB   18.3MB / 137GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   797.81%   17.56GiB / 251.3GiB   6.99%     37.3GB / 294MB   18.3MB / 138GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.56%   17.57GiB / 251.3GiB   6.99%     37.3GB / 294MB   18.3MB / 138GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.79%   17.96GiB / 251.3GiB   7.14%     37.3GB / 294MB   18.3MB / 138GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.00%   17.84GiB / 251.3GiB   7.10%     37.3GB / 294MB   18.3MB / 138GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.37%   18.01GiB / 251.3GiB   7.17%     37.3GB / 294MB   18.3MB / 138GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.33%   17.99GiB / 251.3GiB   7.16%     37.3GB / 294MB   18.3MB / 138GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.94%   17.93GiB / 251.3GiB   7.13%     37.3GB / 294MB   18.3MB / 138GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.65%   17.74GiB / 251.3GiB   7.06%     37.3GB / 294MB   18.3MB / 138GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.30%   18.14GiB / 251.3GiB   7.22%     37.3GB / 294MB   18.3MB / 138GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.30%   17.94GiB / 251.3GiB   7.14%     37.3GB / 294MB   18.3MB / 138GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   797.44%   17.84GiB / 251.3GiB   7.10%     37.3GB / 294MB   18.3MB / 140GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.67%   18.16GiB / 251.3GiB   7.23%     37.3GB / 294MB   18.3MB / 140GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.97%   17.79GiB / 251.3GiB   7.08%     37.3GB / 294MB   18.3MB / 140GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.10%   18.17GiB / 251.3GiB   7.23%     37.3GB / 294MB   18.3MB / 140GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.29%   18.53GiB / 251.3GiB   7.37%     37.3GB / 294MB   18.3MB / 140GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.75%   18.87GiB / 251.3GiB   7.51%     37.3GB / 294MB   18.3MB / 140GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   797.88%   19.23GiB / 251.3GiB   7.65%     37.3GB / 294MB   18.3MB / 140GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.91%   19.37GiB / 251.3GiB   7.71%     37.3GB / 294MB   18.3MB / 140GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   803.26%   19.47GiB / 251.3GiB   7.75%     37.3GB / 294MB   18.3MB / 140GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.68%   19.61GiB / 251.3GiB   7.80%     37.3GB / 294MB   18.3MB / 140GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.53%   19.56GiB / 251.3GiB   7.78%     37.3GB / 294MB   18.3MB / 142GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   803.88%   19.38GiB / 251.3GiB   7.71%     37.3GB / 294MB   18.3MB / 142GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.69%   19.54GiB / 251.3GiB   7.77%     37.3GB / 294MB   18.3MB / 142GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.30%   19.67GiB / 251.3GiB   7.83%     37.3GB / 294MB   18.3MB / 142GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.13%   19.83GiB / 251.3GiB   7.89%     37.3GB / 294MB   18.3MB / 142GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.51%   19.77GiB / 251.3GiB   7.87%     37.3GB / 294MB   18.3MB / 142GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   797.80%   19.92GiB / 251.3GiB   7.93%     37.3GB / 294MB   18.3MB / 142GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.33%   19.95GiB / 251.3GiB   7.94%     37.3GB / 294MB   18.3MB / 142GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.97%   20.04GiB / 251.3GiB   7.97%     37.3GB / 294MB   18.3MB / 142GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.67%   19.97GiB / 251.3GiB   7.95%     37.3GB / 294MB   18.3MB / 143GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.99%   20.08GiB / 251.3GiB   7.99%     37.3GB / 294MB   18.3MB / 143GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.73%   19.91GiB / 251.3GiB   7.92%     37.3GB / 294MB   18.3MB / 143GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   797.83%   19.94GiB / 251.3GiB   7.93%     37.3GB / 294MB   18.3MB / 143GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT   MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   803.39%   20GiB / 251.3GiB    7.96%     37.3GB / 294MB   18.3MB / 145GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.32%   20.08GiB / 251.3GiB   7.99%     37.3GB / 294MB   18.3MB / 145GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.49%   20.07GiB / 251.3GiB   7.99%     37.3GB / 294MB   18.3MB / 145GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.81%   20.15GiB / 251.3GiB   8.02%     37.3GB / 294MB   18.3MB / 145GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.56%   20.42GiB / 251.3GiB   8.12%     37.3GB / 294MB   18.3MB / 145GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.05%   20.67GiB / 251.3GiB   8.22%     37.3GB / 294MB   18.3MB / 145GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   797.91%   20.93GiB / 251.3GiB   8.33%     37.3GB / 294MB   18.3MB / 145GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   800.86%   21.19GiB / 251.3GiB   8.43%     37.3GB / 294MB   18.3MB / 145GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   800.41%   21.25GiB / 251.3GiB   8.46%     37.3GB / 294MB   18.3MB / 145GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.02%   21.42GiB / 251.3GiB   8.52%     37.3GB / 294MB   18.3MB / 145GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   803.49%   21.31GiB / 251.3GiB   8.48%     37.3GB / 294MB   18.3MB / 145GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.10%   21.73GiB / 251.3GiB   8.65%     37.3GB / 294MB   18.3MB / 145GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.19%   21.59GiB / 251.3GiB   8.59%     37.3GB / 294MB   18.3MB / 145GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   803.53%   21.19GiB / 251.3GiB   8.43%     37.3GB / 294MB   18.3MB / 145GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.55%   21.85GiB / 251.3GiB   8.69%     37.3GB / 294MB   18.3MB / 147GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   803.52%   21.85GiB / 251.3GiB   8.69%     37.3GB / 294MB   18.3MB / 147GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.84%   21.51GiB / 251.3GiB   8.56%     37.3GB / 294MB   18.3MB / 147GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   800.24%   21.77GiB / 251.3GiB   8.66%     37.3GB / 294MB   18.3MB / 147GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.59%   21.8GiB / 251.3GiB   8.68%     37.3GB / 294MB   18.3MB / 148GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.41%   21.54GiB / 251.3GiB   8.57%     37.3GB / 294MB   18.3MB / 148GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.22%   21.92GiB / 251.3GiB   8.72%     37.3GB / 294MB   18.3MB / 148GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.24%   21.68GiB / 251.3GiB   8.63%     37.3GB / 294MB   18.3MB / 148GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.16%   21.74GiB / 251.3GiB   8.65%     37.3GB / 294MB   18.3MB / 148GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.02%   21.87GiB / 251.3GiB   8.70%     37.3GB / 294MB   18.3MB / 148GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.11%   21.88GiB / 251.3GiB   8.71%     37.3GB / 294MB   18.3MB / 148GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.63%   21.96GiB / 251.3GiB   8.74%     37.3GB / 294MB   18.3MB / 148GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.96%   22.01GiB / 251.3GiB   8.76%     37.3GB / 294MB   18.3MB / 148GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.44%   21.83GiB / 251.3GiB   8.69%     37.3GB / 294MB   18.3MB / 148GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.59%   21.82GiB / 251.3GiB   8.68%     37.3GB / 294MB   18.3MB / 150GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.04%   21.76GiB / 251.3GiB   8.66%     37.3GB / 294MB   18.3MB / 150GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.93%   21.62GiB / 251.3GiB   8.60%     37.3GB / 294MB   18.3MB / 150GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.73%   21.92GiB / 251.3GiB   8.72%     37.3GB / 294MB   18.3MB / 150GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.21%   22.16GiB / 251.3GiB   8.82%     37.3GB / 294MB   18.3MB / 150GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.92%   22.37GiB / 251.3GiB   8.90%     37.3GB / 294MB   18.3MB / 150GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.85%   22.62GiB / 251.3GiB   9.00%     37.3GB / 294MB   18.3MB / 150GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.47%   22.86GiB / 251.3GiB   9.10%     37.3GB / 294MB   18.3MB / 150GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.86%   22.96GiB / 251.3GiB   9.14%     37.3GB / 294MB   18.3MB / 150GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.69%   23.03GiB / 251.3GiB   9.16%     37.3GB / 294MB   18.3MB / 150GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.44%   23.03GiB / 251.3GiB   9.16%     37.3GB / 294MB   18.3MB / 150GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.28%   23.03GiB / 251.3GiB   9.16%     37.3GB / 294MB   18.3MB / 150GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.34%   22.98GiB / 251.3GiB   9.14%     37.3GB / 294MB   18.3MB / 150GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.36%   22.98GiB / 251.3GiB   9.14%     37.3GB / 294MB   18.3MB / 152GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   803.51%   22.99GiB / 251.3GiB   9.15%     37.3GB / 294MB   18.3MB / 152GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.29%   23.06GiB / 251.3GiB   9.18%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.55%   23.01GiB / 251.3GiB   9.16%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.50%   23.04GiB / 251.3GiB   9.17%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.02%   23.05GiB / 251.3GiB   9.17%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.24%   22.86GiB / 251.3GiB   9.10%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.27%   22.97GiB / 251.3GiB   9.14%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.59%   23.18GiB / 251.3GiB   9.22%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.05%   23.2GiB / 251.3GiB   9.23%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.13%   23.2GiB / 251.3GiB   9.23%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   800.36%   23.2GiB / 251.3GiB   9.23%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.37%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.69%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.26%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.85%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.41%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.59%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   803.21%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.44%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.56%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.27%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.89%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.94%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.19%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   797.94%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.33%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.61%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.58%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.53%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.05%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.09%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.77%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.60%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.92%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.54%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.27%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.37%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.22%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.53%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.27%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.94%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.09%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.26%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.94%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.61%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.94%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.87%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.11%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   800.22%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.36%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.02%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   800.59%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   797.94%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.10%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.69%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.60%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.28%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.76%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.28%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.09%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.75%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.27%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.00%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.27%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.78%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   803.02%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.27%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.43%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.93%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.34%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.71%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.53%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.12%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.69%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.63%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.89%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.86%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.05%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.09%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.11%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.84%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.44%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.78%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   803.14%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.09%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.26%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.62%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.09%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.66%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.60%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.10%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.60%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.27%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.26%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.77%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.44%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.18%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.27%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.26%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.20%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.21%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.27%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   803.03%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.26%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.10%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.59%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.60%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.62%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.44%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.99%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.21%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.60%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.45%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.27%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.86%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.20%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.94%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.28%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.60%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.25%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.87%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.27%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.59%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   803.26%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.85%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.70%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.22%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.74%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.83%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.16%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.10%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.09%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.83%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.76%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.80%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.26%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.26%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.80%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.10%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.27%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.88%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.95%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.47%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   800.50%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.09%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.51%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.37%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.61%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.30%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.11%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.54%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.11%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.28%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.67%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   797.62%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.88%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.28%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.78%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.72%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   800.28%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.14%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.16%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.69%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.45%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.53%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.37%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   801.97%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.85%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.45%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.45%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.85%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.71%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.28%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   803.27%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.13%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.25%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.12%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   803.02%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.45%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.38%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.61%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.11%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.54%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.19%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   799.47%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   802.19%   23.16GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   798.78%   23.15GiB / 251.3GiB   9.21%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   478.22%   23.01GiB / 251.3GiB   9.16%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT   MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   199.60%   24GiB / 251.3GiB    9.55%     37.3GB / 294MB   18.3MB / 153GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+19264e60bfe7   boring_banzai   99.93%    22.29GiB / 251.3GiB   8.87%     37.3GB / 294MB   18.3MB / 153GB   10
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS

@@ -688,6 +688,24 @@ namespace turbo::cardano {
         key_hash hash {};
         bool script { false };
 
+        // Standalone index keys sort scripts before keys. This tag is not the CBOR tag.
+        using index_key_type = byte_array<29>;
+
+        index_key_type index_key() const noexcept
+        {
+            index_key_type bytes;
+            bytes[0] = script ? 0 : 1;
+            std::copy(hash.begin(), hash.end(), bytes.begin() + 1);
+            return bytes;
+        }
+
+        static credential_t from_index_key(const buffer bytes)
+        {
+            if (bytes.size() != 29 || bytes[0] > 1) [[unlikely]]
+                throw error("invalid credential index key");
+            return { bytes.subbuf(1), bytes[0] == 0 };
+        }
+
         static constexpr auto serialize(auto &archive, auto &self)
         {
             return archive(self.hash, self.script);
@@ -699,14 +717,16 @@ namespace turbo::cardano {
 
         bool operator<(const credential_t &b) const
         {
-            // compares the hash and the script in a single operation
-            static_assert(sizeof(*this) == 29);
-            return memcmp(this, &b, sizeof(*this)) < 0;
+            // Ledger Credential constructor order: ScriptHashObj, then KeyHashObj.
+            // The CBOR tags have the opposite order.
+            if (script != b.script)
+                return script;
+            return memcmp(hash.data(), b.hash.data(), hash.size()) < 0;
         }
 
         bool operator==(const credential_t &b) const
         {
-            return memcmp(this, &b, sizeof(*this)) == 0 && script == b.script;
+            return hash == b.hash && script == b.script;
         }
 
         bool operator!=(const credential_t &b) const
@@ -723,6 +743,21 @@ namespace turbo::cardano {
         }
     };
     using stake_ident = credential_t;
+
+}
+
+namespace turbo {
+    template<>
+    struct partitioned_map_key_traits<cardano::credential_t> {
+        static constexpr size_t num_groups = 2;
+
+        static size_t partition_idx(const cardano::credential_t &key) { return key.hash[0]; }
+        static size_t iteration_group(const cardano::credential_t &key) { return key.script ? 0 : 1; }
+        static cardano::credential_t group_begin(const size_t group) { return { {}, group == 0 }; }
+    };
+}
+
+namespace turbo::cardano {
 
     struct pay_ident {
         enum class ident_type: uint8_t {
@@ -1583,6 +1618,7 @@ namespace turbo::cardano {
         }
 
         static ex_units from_cbor(cbor::zero2::value &);
+        static ex_units from_cbor(cbor::zero2::array_reader &);
         static ex_units from_json(const json::value &);
         void to_cbor(era_encoder &) const;
 
@@ -1607,6 +1643,7 @@ namespace turbo::cardano {
         }
 
         static ex_unit_prices from_cbor(cbor::zero2::value &v);
+        static ex_unit_prices from_cbor(cbor::zero2::array_reader &);
         static ex_unit_prices from_json(const json::value &v);
         void to_cbor(era_encoder &) const;
 
@@ -1834,6 +1871,11 @@ namespace turbo::cardano {
                 self.max_value_size,
                 self.max_collateral_pct, self.max_collateral_inputs,
                 self.plutus_cost_models,
+                self.pool_voting_thresholds, self.drep_voting_thresholds,
+                self.committee_min_size, self.committee_max_term_length,
+                self.gov_action_lifetime, self.gov_action_deposit,
+                self.drep_deposit, self.drep_activity,
+                self.min_fee_ref_script_cost_per_byte,
                 self.max_ref_script_size_per_block,
                 self.max_ref_script_size_per_tx,
                 self.ref_script_cost_stride,
@@ -1861,6 +1903,15 @@ namespace turbo::cardano {
                 && max_collateral_pct == o.max_collateral_pct
                 && max_collateral_inputs == o.max_collateral_inputs
                 && plutus_cost_models == o.plutus_cost_models
+                && pool_voting_thresholds == o.pool_voting_thresholds
+                && drep_voting_thresholds == o.drep_voting_thresholds
+                && committee_min_size == o.committee_min_size
+                && committee_max_term_length == o.committee_max_term_length
+                && gov_action_lifetime == o.gov_action_lifetime
+                && gov_action_deposit == o.gov_action_deposit
+                && drep_deposit == o.drep_deposit
+                && drep_activity == o.drep_activity
+                && min_fee_ref_script_cost_per_byte == o.min_fee_ref_script_cost_per_byte
                 && max_ref_script_size_per_block == o.max_ref_script_size_per_block
                 && max_ref_script_size_per_tx == o.max_ref_script_size_per_tx
                 && ref_script_cost_stride == o.ref_script_cost_stride
@@ -1931,6 +1982,7 @@ namespace turbo::cardano {
             if (val.index() != o.val.index())
                 return val.index() < o.val.index();
             if (std::holds_alternative<credential_t>(val)) {
+                // DRep has its own constructor order: keys, scripts, abstain, no confidence.
                 const auto &cred = std::get<credential_t>(val);
                 const auto &o_cred = std::get<credential_t>(o.val);
                 if (cred.script != o_cred.script)
@@ -2152,15 +2204,22 @@ namespace turbo::cardano {
             return at(0) & 0xF;
         }
 
-        bool operator==(const reward_id_t &o) const noexcept
+        std::strong_ordering operator<=>(const reward_id_t &b) const noexcept
         {
-            return memcmp(data(), o.data(), size()) == 0;
+            // Ledger account order: network, scripts before keys, then hash.
+            if (network_id() != b.network_id())
+                return network_id() <=> b.network_id();
+            if (script() != b.script())
+                return b.script() <=> script();
+            return hash() <=> b.hash();
         }
+
+        bool operator==(const reward_id_t &) const noexcept =default;
 
         bool operator==(const credential_t &id) const noexcept
         {
-            // use the bitwise and to eliminate an unnecessary branch
-            return static_cast<int>(static_cast<buffer>(id.hash) == hash()) & static_cast<int>(id.script == script());
+            // Credential identity excludes the reward address's network.
+            return script() == id.script && hash() == id.hash;
         }
     };
 

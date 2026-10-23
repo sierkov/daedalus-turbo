@@ -69,7 +69,7 @@ namespace turbo::cbor {
         }
     };
 
-    extern diff_list compare(const buffer &buf1, const buffer &buf2);
+    extern diff_list compare(const buffer &buf1, const buffer &buf2, bool first_difference=false);
 }
 
 namespace fmt {

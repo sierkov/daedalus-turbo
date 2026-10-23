@@ -1,0 +1,1689 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O    PIDS
+01970295b056   bold_montalcini   401.11%   261.7MiB / 251.3GiB   0.10%     736B / 0B   109MB / 0B   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O    PIDS
+01970295b056   bold_montalcini   398.51%   320.7MiB / 251.3GiB   0.12%     736B / 0B   223MB / 0B   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+01970295b056   bold_montalcini   400.65%   333.7MiB / 251.3GiB   0.13%     806B / 0B   320MB / 20.7MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+01970295b056   bold_montalcini   400.70%   364.9MiB / 251.3GiB   0.14%     806B / 0B   431MB / 20.7MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+01970295b056   bold_montalcini   400.46%   335.2MiB / 251.3GiB   0.13%     806B / 0B   526MB / 20.7MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT   MEM %     NET I/O     BLOCK I/O        PIDS
+01970295b056   bold_montalcini   399.65%   360MiB / 251.3GiB   0.14%     806B / 0B   637MB / 20.7MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+01970295b056   bold_montalcini   398.98%   405.3MiB / 251.3GiB   0.16%     876B / 0B   726MB / 20.7MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+01970295b056   bold_montalcini   398.08%   449.2MiB / 251.3GiB   0.17%     876B / 0B   825MB / 20.7MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+01970295b056   bold_montalcini   398.81%   455.8MiB / 251.3GiB   0.18%     876B / 0B   917MB / 20.7MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.76%   606.7MiB / 251.3GiB   0.24%     876B / 0B   1.02GB / 20.7MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+01970295b056   bold_montalcini   394.02%   869.6MiB / 251.3GiB   0.34%     876B / 0B   1.11GB / 175MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O        PIDS
+01970295b056   bold_montalcini   398.10%   1.68GiB / 251.3GiB   0.67%     876B / 0B   1.24GB / 175MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+01970295b056   bold_montalcini   399.35%   1.677GiB / 251.3GiB   0.67%     876B / 0B   1.39GB / 175MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O        PIDS
+01970295b056   bold_montalcini   399.42%   1.71GiB / 251.3GiB   0.68%     946B / 0B   1.52GB / 175MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+01970295b056   bold_montalcini   399.04%   1.673GiB / 251.3GiB   0.67%     946B / 0B   1.62GB / 175MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+01970295b056   bold_montalcini   399.60%   1.675GiB / 251.3GiB   0.67%     946B / 0B   1.72GB / 175MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+01970295b056   bold_montalcini   400.66%   1.675GiB / 251.3GiB   0.67%     946B / 0B   1.81GB / 175MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O        PIDS
+01970295b056   bold_montalcini   390.91%   2.45GiB / 251.3GiB   0.97%     946B / 0B   1.91GB / 175MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O        PIDS
+01970295b056   bold_montalcini   400.25%   2.44GiB / 251.3GiB   0.97%     946B / 0B   2.01GB / 175MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+01970295b056   bold_montalcini   399.54%   2.445GiB / 251.3GiB   0.97%     946B / 0B   2.11GB / 175MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+01970295b056   bold_montalcini   398.66%   2.451GiB / 251.3GiB   0.98%     946B / 0B   2.23GB / 175MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+01970295b056   bold_montalcini   392.81%   2.782GiB / 251.3GiB   1.11%     946B / 0B   2.35GB / 175MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+01970295b056   bold_montalcini   398.12%   2.827GiB / 251.3GiB   1.13%     946B / 0B   2.57GB / 209MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O        PIDS
+01970295b056   bold_montalcini   397.64%   2.91GiB / 251.3GiB   1.16%     946B / 0B   2.72GB / 209MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+01970295b056   bold_montalcini   398.85%   2.896GiB / 251.3GiB   1.15%     946B / 0B   2.9GB / 326MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+01970295b056   bold_montalcini   398.91%   2.813GiB / 251.3GiB   1.12%     946B / 0B   3.05GB / 326MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.76%   2.823GiB / 251.3GiB   1.12%     946B / 0B   3.2GB / 327MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+01970295b056   bold_montalcini   400.25%   2.848GiB / 251.3GiB   1.13%     1.02kB / 0B   3.33GB / 327MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+01970295b056   bold_montalcini   400.75%   2.852GiB / 251.3GiB   1.13%     1.02kB / 0B   3.46GB / 330MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+01970295b056   bold_montalcini   398.77%   2.853GiB / 251.3GiB   1.14%     1.02kB / 0B   3.57GB / 330MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+01970295b056   bold_montalcini   399.11%   3.548GiB / 251.3GiB   1.41%     1.02kB / 0B   3.66GB / 464MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+01970295b056   bold_montalcini   393.89%   3.648GiB / 251.3GiB   1.45%     1.02kB / 0B   3.89GB / 464MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+01970295b056   bold_montalcini   399.55%   3.662GiB / 251.3GiB   1.46%     1.02kB / 0B   4.21GB / 464MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+01970295b056   bold_montalcini   397.79%   3.675GiB / 251.3GiB   1.46%     1.02kB / 0B   4.45GB / 464MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+01970295b056   bold_montalcini   397.64%   3.68GiB / 251.3GiB   1.46%     1.02kB / 0B   4.74GB / 637MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+01970295b056   bold_montalcini   399.76%   3.684GiB / 251.3GiB   1.47%     1.02kB / 0B   4.97GB / 637MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+01970295b056   bold_montalcini   399.65%   3.687GiB / 251.3GiB   1.47%     1.02kB / 0B   5.16GB / 664MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+01970295b056   bold_montalcini   399.68%   3.691GiB / 251.3GiB   1.47%     1.02kB / 0B   5.34GB / 664MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+01970295b056   bold_montalcini   400.55%   3.694GiB / 251.3GiB   1.47%     1.02kB / 0B   5.51GB / 691MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+01970295b056   bold_montalcini   397.76%   3.712GiB / 251.3GiB   1.48%     1.02kB / 0B   5.79GB / 691MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.97%   3.848GiB / 251.3GiB   1.53%     1.02kB / 0B   5.9GB / 708MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+01970295b056   bold_montalcini   394.78%   4.204GiB / 251.3GiB   1.67%     1.02kB / 0B   6.22GB / 708MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+01970295b056   bold_montalcini   397.94%   4.21GiB / 251.3GiB   1.68%     1.02kB / 0B   6.67GB / 965MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+01970295b056   bold_montalcini   399.06%   4.215GiB / 251.3GiB   1.68%     1.02kB / 0B   7.07GB / 965MB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.76%   4.22GiB / 251.3GiB   1.68%     1.02kB / 0B   7.48GB / 1.24GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.73%   4.226GiB / 251.3GiB   1.68%     1.02kB / 0B   7.89GB / 1.24GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+01970295b056   bold_montalcini   401.00%   4.231GiB / 251.3GiB   1.68%     1.02kB / 0B   8.14GB / 1.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+01970295b056   bold_montalcini   397.13%   4.322GiB / 251.3GiB   1.72%     1.02kB / 0B   8.23GB / 1.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.38%   4.303GiB / 251.3GiB   1.71%     1.02kB / 0B   8.57GB / 1.53GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.10%   4.333GiB / 251.3GiB   1.72%     1.02kB / 0B   8.97GB / 1.53GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+01970295b056   bold_montalcini   398.34%   4.368GiB / 251.3GiB   1.74%     1.02kB / 0B   9.4GB / 1.67GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.62%   4.408GiB / 251.3GiB   1.75%     1.02kB / 0B   9.89GB / 1.67GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   403.63%   4.422GiB / 251.3GiB   1.76%     1.02kB / 0B   10.3GB / 2.38GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+01970295b056   bold_montalcini   399.45%   4.453GiB / 251.3GiB   1.77%     1.09kB / 0B   10.3GB / 2.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.06%   4.589GiB / 251.3GiB   1.83%     1.09kB / 0B   10.3GB / 2.47GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.64%   4.622GiB / 251.3GiB   1.84%     1.09kB / 0B   10.3GB / 2.73GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   396.68%   4.609GiB / 251.3GiB   1.83%     1.09kB / 0B   10.3GB / 3.74GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.68%   4.583GiB / 251.3GiB   1.82%     1.09kB / 0B   10.3GB / 5.78GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.21%   4.608GiB / 251.3GiB   1.83%     1.09kB / 0B   10.4GB / 6.21GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.73%   4.658GiB / 251.3GiB   1.85%     1.09kB / 0B   10.6GB / 6.33GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.41%   4.691GiB / 251.3GiB   1.87%     1.09kB / 0B   11.1GB / 6.33GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.18%   4.768GiB / 251.3GiB   1.90%     1.09kB / 0B   11.4GB / 6.45GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.41%   4.83GiB / 251.3GiB   1.92%     1.09kB / 0B   11.7GB / 6.45GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.57%   4.864GiB / 251.3GiB   1.94%     1.09kB / 0B   12.1GB / 6.58GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   405.87%   4.95GiB / 251.3GiB   1.97%     1.09kB / 0B   12.2GB / 6.58GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.86%   5.083GiB / 251.3GiB   2.02%     1.09kB / 0B   12.4GB / 6.72GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.96%   5.144GiB / 251.3GiB   2.05%     1.09kB / 0B   12.9GB / 6.72GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.57%   5.26GiB / 251.3GiB   2.09%     1.09kB / 0B   13.3GB / 6.75GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.82%   5.222GiB / 251.3GiB   2.08%     1.09kB / 0B   13.6GB / 6.75GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.12%   5.288GiB / 251.3GiB   2.10%     1.09kB / 0B   13.7GB / 6.75GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.99%   5.336GiB / 251.3GiB   2.12%     1.09kB / 0B   14.1GB / 6.75GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.22%   5.385GiB / 251.3GiB   2.14%     1.09kB / 0B   14.5GB / 7.18GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   403.96%   5.441GiB / 251.3GiB   2.17%     1.09kB / 0B   14.8GB / 7.18GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.79%   5.493GiB / 251.3GiB   2.19%     1.09kB / 0B   15.1GB / 7.47GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.03%   5.558GiB / 251.3GiB   2.21%     1.09kB / 0B   15.3GB / 7.47GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+01970295b056   bold_montalcini   399.74%   5.626GiB / 251.3GiB   2.24%     1.09kB / 0B   15.6GB / 7.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+01970295b056   bold_montalcini   398.48%   5.74GiB / 251.3GiB   2.28%     1.09kB / 0B   16.1GB / 7.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.99%   5.751GiB / 251.3GiB   2.29%     1.09kB / 0B   16.5GB / 8.58GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   403.67%   5.727GiB / 251.3GiB   2.28%     1.09kB / 0B   16.7GB / 8.58GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.15%   5.769GiB / 251.3GiB   2.30%     1.09kB / 0B   16.9GB / 8.79GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.39%   6.005GiB / 251.3GiB   2.39%     1.09kB / 0B   17.3GB / 8.79GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.58%   5.977GiB / 251.3GiB   2.38%     1.09kB / 0B   17.5GB / 9.49GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.32%   6.155GiB / 251.3GiB   2.45%     1.09kB / 0B   17.9GB / 9.49GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.89%   6.216GiB / 251.3GiB   2.47%     1.09kB / 0B   18.3GB / 9.84GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   395.84%   6.117GiB / 251.3GiB   2.43%     1.09kB / 0B   18.4GB / 9.84GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   396.58%   6.178GiB / 251.3GiB   2.46%     1.09kB / 0B   18.6GB / 10.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.75%   6.357GiB / 251.3GiB   2.53%     1.09kB / 0B   19.1GB / 10.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.96%   6.472GiB / 251.3GiB   2.58%     1.09kB / 0B   19.5GB / 11.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.46%   6.362GiB / 251.3GiB   2.53%     1.09kB / 0B   19.9GB / 11.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   403.20%   6.323GiB / 251.3GiB   2.52%     1.09kB / 0B   19.9GB / 11.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   398.43%   6.346GiB / 251.3GiB   2.53%     1.09kB / 0B   20GB / 11.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   398.64%   6.365GiB / 251.3GiB   2.53%     1.09kB / 0B   20GB / 11.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.87%   6.394GiB / 251.3GiB   2.54%     1.09kB / 0B   20GB / 11.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   397.35%   6.372GiB / 251.3GiB   2.54%     1.09kB / 0B   20GB / 13.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   408.23%   6.351GiB / 251.3GiB   2.53%     1.09kB / 0B   20GB / 16.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   401.02%   6.353GiB / 251.3GiB   2.53%     1.09kB / 0B   20GB / 17.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   395.72%   6.359GiB / 251.3GiB   2.53%     1.09kB / 0B   20GB / 17.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.48%   6.376GiB / 251.3GiB   2.54%     1.09kB / 0B   20.3GB / 18.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.56%   6.48GiB / 251.3GiB   2.58%     1.09kB / 0B   20.6GB / 18.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O     PIDS
+01970295b056   bold_montalcini   398.70%   6.419GiB / 251.3GiB   2.55%     1.09kB / 0B   21GB / 19GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.19%   6.507GiB / 251.3GiB   2.59%     1.09kB / 0B   21.2GB / 19GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   400.74%   6.51GiB / 251.3GiB   2.59%     1.09kB / 0B   21.2GB / 19GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   398.66%   6.639GiB / 251.3GiB   2.64%     1.09kB / 0B   21.6GB / 19GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   398.76%   6.614GiB / 251.3GiB   2.63%     1.09kB / 0B   21.9GB / 19GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   398.68%   6.681GiB / 251.3GiB   2.66%     1.16kB / 0B   22.2GB / 19GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   400.68%   6.684GiB / 251.3GiB   2.66%     1.16kB / 0B   22.3GB / 19GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   398.77%   6.815GiB / 251.3GiB   2.71%     1.16kB / 0B   22.6GB / 19GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.21%   6.877GiB / 251.3GiB   2.74%     1.16kB / 0B   22.9GB / 19GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   400.45%   6.997GiB / 251.3GiB   2.78%     1.16kB / 0B   23.3GB / 19GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   402.07%   6.837GiB / 251.3GiB   2.72%     1.16kB / 0B   23.3GB / 19GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.55%   7.047GiB / 251.3GiB   2.80%     1.16kB / 0B   23.6GB / 19GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   398.08%   7.112GiB / 251.3GiB   2.83%     1.16kB / 0B   24GB / 19.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   394.34%   7.094GiB / 251.3GiB   2.82%     1.16kB / 0B   24.2GB / 19.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.67%   7.264GiB / 251.3GiB   2.89%     1.16kB / 0B   24.6GB / 20.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.03%   7.272GiB / 251.3GiB   2.89%     1.16kB / 0B   24.7GB / 20.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.19%   7.197GiB / 251.3GiB   2.86%     1.16kB / 0B   25GB / 20.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   398.80%   7.568GiB / 251.3GiB   3.01%     1.16kB / 0B   25GB / 20.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   398.48%   7.968GiB / 251.3GiB   3.17%     1.16kB / 0B   25GB / 20.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   396.87%   8.239GiB / 251.3GiB   3.28%     1.16kB / 0B   25.2GB / 21.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.63%   7.994GiB / 251.3GiB   3.18%     1.16kB / 0B   25.4GB / 21.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.09%   8.007GiB / 251.3GiB   3.19%     1.16kB / 0B   25.4GB / 21.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   396.33%   8.03GiB / 251.3GiB   3.20%     1.16kB / 0B   25.4GB / 21.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   395.80%   8.025GiB / 251.3GiB   3.19%     1.16kB / 0B   25.4GB / 23.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.95%   8.014GiB / 251.3GiB   3.19%     1.16kB / 0B   25.4GB / 25.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.74%   8.157GiB / 251.3GiB   3.25%     1.16kB / 0B   25.6GB / 26.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.08%   8.389GiB / 251.3GiB   3.34%     1.16kB / 0B   25.8GB / 26.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.95%   8.401GiB / 251.3GiB   3.34%     1.16kB / 0B   26.2GB / 26.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.44%   8.143GiB / 251.3GiB   3.24%     1.16kB / 0B   26.3GB / 26.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.94%   8.367GiB / 251.3GiB   3.33%     1.16kB / 0B   26.6GB / 26.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.90%   8.294GiB / 251.3GiB   3.30%     1.16kB / 0B   26.9GB / 26.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   400.08%   8.606GiB / 251.3GiB   3.42%     1.16kB / 0B   27.2GB / 27GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   401.82%   8.594GiB / 251.3GiB   3.42%     1.16kB / 0B   27.5GB / 27GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.79%   8.418GiB / 251.3GiB   3.35%     1.16kB / 0B   27.6GB / 27.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   398.50%   8.564GiB / 251.3GiB   3.41%     1.16kB / 0B   28GB / 27.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   403.07%   8.418GiB / 251.3GiB   3.35%     1.16kB / 0B   28.2GB / 27.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.63%   8.489GiB / 251.3GiB   3.38%     1.16kB / 0B   28.3GB / 27.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.93%   8.681GiB / 251.3GiB   3.45%     1.16kB / 0B   28.6GB / 27.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.45%   8.585GiB / 251.3GiB   3.42%     1.16kB / 0B   28.8GB / 27.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.66%   8.552GiB / 251.3GiB   3.40%     1.16kB / 0B   28.8GB / 27.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.51%   8.557GiB / 251.3GiB   3.40%     1.16kB / 0B   28.8GB / 28.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   404.05%   8.56GiB / 251.3GiB   3.41%     1.16kB / 0B   28.8GB / 30.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.58%   8.797GiB / 251.3GiB   3.50%     1.16kB / 0B   29.1GB / 30.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.51%   8.813GiB / 251.3GiB   3.51%     1.16kB / 0B   29.4GB / 30.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.11%   8.983GiB / 251.3GiB   3.57%     1.16kB / 0B   29.6GB / 30.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.00%   9.042GiB / 251.3GiB   3.60%     1.16kB / 0B   29.9GB / 30.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.57%   8.771GiB / 251.3GiB   3.49%     1.16kB / 0B   30.1GB / 30.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.66%   8.926GiB / 251.3GiB   3.55%     1.16kB / 0B   30.3GB / 30.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.86%   9.034GiB / 251.3GiB   3.59%     1.16kB / 0B   30.6GB / 30.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.06%   8.742GiB / 251.3GiB   3.48%     1.16kB / 0B   30.7GB / 30.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   398.71%   9.018GiB / 251.3GiB   3.59%     1.16kB / 0B   31GB / 30.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.64%   8.921GiB / 251.3GiB   3.55%     1.16kB / 0B   31.3GB / 30.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.01%   8.999GiB / 251.3GiB   3.58%     1.16kB / 0B   31.4GB / 30.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.26%   9.075GiB / 251.3GiB   3.61%     1.16kB / 0B   31.7GB / 30.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.99%   9.108GiB / 251.3GiB   3.62%     1.16kB / 0B   31.9GB / 30.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.11%   9.026GiB / 251.3GiB   3.59%     1.16kB / 0B   32.1GB / 30.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.05%   8.961GiB / 251.3GiB   3.57%     1.16kB / 0B   32.3GB / 30.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.31%   8.958GiB / 251.3GiB   3.56%     1.16kB / 0B   32.3GB / 31.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   402.61%   8.951GiB / 251.3GiB   3.56%     1.16kB / 0B   32.3GB / 32.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.00%   9.197GiB / 251.3GiB   3.66%     1.16kB / 0B   32.4GB / 33.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.75%   8.947GiB / 251.3GiB   3.56%     1.16kB / 0B   32.7GB / 33.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.43%   9.003GiB / 251.3GiB   3.58%     1.16kB / 0B   32.9GB / 33.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.39%   9.259GiB / 251.3GiB   3.68%     1.16kB / 0B   33.1GB / 33.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.11%   9.159GiB / 251.3GiB   3.64%     1.16kB / 0B   33.4GB / 33.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.35%   9.295GiB / 251.3GiB   3.70%     1.16kB / 0B   33.5GB / 33.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.02%   9.271GiB / 251.3GiB   3.69%     1.16kB / 0B   33.8GB / 33.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   398.82%   9.051GiB / 251.3GiB   3.60%     1.16kB / 0B   34GB / 33.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   396.94%   9.354GiB / 251.3GiB   3.72%     1.16kB / 0B   34.2GB / 33.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.82%   9.227GiB / 251.3GiB   3.67%     1.16kB / 0B   34.4GB / 33.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.77%   9.585GiB / 251.3GiB   3.81%     1.16kB / 0B   34.4GB / 33.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.83%   9.979GiB / 251.3GiB   3.97%     1.16kB / 0B   34.4GB / 33.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.74%   10.36GiB / 251.3GiB   4.12%     1.16kB / 0B   34.4GB / 33.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.49%   10.72GiB / 251.3GiB   4.27%     1.16kB / 0B   34.4GB / 33.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.23%   10.86GiB / 251.3GiB   4.32%     1.16kB / 0B   34.4GB / 34.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.31%   11.12GiB / 251.3GiB   4.43%     1.16kB / 0B   34.5GB / 34.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.82%   10.99GiB / 251.3GiB   4.37%     1.16kB / 0B   34.7GB / 34.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   400.30%   11.03GiB / 251.3GiB   4.39%     1.16kB / 0B   35GB / 34.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   400.46%   10.98GiB / 251.3GiB   4.37%     1.16kB / 0B   35GB / 34.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   397.69%   11GiB / 251.3GiB    4.38%     1.16kB / 0B   35GB / 34.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.34%   10.99GiB / 251.3GiB   4.37%     1.16kB / 0B   35GB / 36.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.52%   11.18GiB / 251.3GiB   4.45%     1.16kB / 0B   35.3GB / 36.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.24%   11.08GiB / 251.3GiB   4.41%     1.16kB / 0B   35.6GB / 37.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.68%   11.02GiB / 251.3GiB   4.38%     1.16kB / 0B   35.7GB / 37.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   398.77%   11.23GiB / 251.3GiB   4.47%     1.16kB / 0B   36GB / 37.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.77%   11.04GiB / 251.3GiB   4.39%     1.16kB / 0B   36.2GB / 37.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.35%   11.33GiB / 251.3GiB   4.51%     1.16kB / 0B   36.4GB / 37.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   398.68%   11.34GiB / 251.3GiB   4.51%     1.16kB / 0B   36.6GB / 38GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   400.18%   11.16GiB / 251.3GiB   4.44%     1.16kB / 0B   36.8GB / 38GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   398.21%   11.37GiB / 251.3GiB   4.52%     1.16kB / 0B   37GB / 38.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.83%   11.42GiB / 251.3GiB   4.54%     1.16kB / 0B   37.3GB / 38.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.01%   11.41GiB / 251.3GiB   4.54%     1.16kB / 0B   37.4GB / 38.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.87%   11.33GiB / 251.3GiB   4.51%     1.16kB / 0B   37.6GB / 38.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.71%   11.4GiB / 251.3GiB   4.54%     1.16kB / 0B   37.8GB / 38.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.81%   11.36GiB / 251.3GiB   4.52%     1.16kB / 0B   37.9GB / 38.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.06%   11.27GiB / 251.3GiB   4.48%     1.16kB / 0B   38.1GB / 38.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.65%   11.37GiB / 251.3GiB   4.52%     1.16kB / 0B   38.4GB / 38.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.36%   11.35GiB / 251.3GiB   4.52%     1.16kB / 0B   38.4GB / 38.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   396.47%   11.36GiB / 251.3GiB   4.52%     1.16kB / 0B   38.4GB / 39.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.35%   11.5GiB / 251.3GiB   4.58%     1.16kB / 0B   38.5GB / 40.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.71%   11.55GiB / 251.3GiB   4.60%     1.16kB / 0B   38.7GB / 40.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.31%   11.46GiB / 251.3GiB   4.56%     1.16kB / 0B   38.9GB / 40.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.12%   11.5GiB / 251.3GiB   4.57%     1.16kB / 0B   39GB / 40.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.47%   11.52GiB / 251.3GiB   4.58%     1.16kB / 0B   39.3GB / 40.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.80%   11.72GiB / 251.3GiB   4.66%     1.16kB / 0B   39.5GB / 40.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.09%   11.57GiB / 251.3GiB   4.60%     1.16kB / 0B   39.6GB / 40.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.85%   11.72GiB / 251.3GiB   4.67%     1.16kB / 0B   39.8GB / 40.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   401.29%   11.84GiB / 251.3GiB   4.71%     1.23kB / 0B   40.1GB / 41GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   401.87%   11.71GiB / 251.3GiB   4.66%     1.23kB / 0B   40.2GB / 41GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.58%   11.81GiB / 251.3GiB   4.70%     1.23kB / 0B   40.4GB / 41.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.56%   11.86GiB / 251.3GiB   4.72%     1.23kB / 0B   40.7GB / 41.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.44%   11.79GiB / 251.3GiB   4.69%     1.23kB / 0B   40.8GB / 41.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.14%   12.05GiB / 251.3GiB   4.79%     1.23kB / 0B   41GB / 41.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.49%   11.88GiB / 251.3GiB   4.73%     1.23kB / 0B   41.2GB / 41.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   402.10%   11.91GiB / 251.3GiB   4.74%     1.23kB / 0B   41.2GB / 41.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.92%   12.49GiB / 251.3GiB   4.97%     1.23kB / 0B   41.2GB / 41.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.75%   13.08GiB / 251.3GiB   5.20%     1.23kB / 0B   41.2GB / 41.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.56%   13.68GiB / 251.3GiB   5.44%     1.23kB / 0B   41.2GB / 41.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.56%   14.28GiB / 251.3GiB   5.68%     1.23kB / 0B   41.2GB / 41.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.26%   14.29GiB / 251.3GiB   5.69%     1.23kB / 0B   41.3GB / 42.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.12%   14.32GiB / 251.3GiB   5.70%     1.23kB / 0B   41.3GB / 42.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   401.83%   14.31GiB / 251.3GiB   5.70%     1.23kB / 0B   41.3GB / 44GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.78%   14.43GiB / 251.3GiB   5.74%     1.23kB / 0B   41.5GB / 44.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.95%   14.52GiB / 251.3GiB   5.78%     1.23kB / 0B   41.8GB / 44.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   394.29%   14.5GiB / 251.3GiB   5.77%     1.23kB / 0B   41.9GB / 44.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.74%   14.37GiB / 251.3GiB   5.72%     1.23kB / 0B   42.1GB / 44.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.67%   14.49GiB / 251.3GiB   5.76%     1.23kB / 0B   42.4GB / 44.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   396.60%   14.65GiB / 251.3GiB   5.83%     1.23kB / 0B   42.5GB / 44.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.26%   14.65GiB / 251.3GiB   5.83%     1.23kB / 0B   42.7GB / 44.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.77%   14.54GiB / 251.3GiB   5.78%     1.23kB / 0B   42.9GB / 44.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   403.42%   14.52GiB / 251.3GiB   5.78%     1.23kB / 0B   43GB / 44.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   400.43%   14.72GiB / 251.3GiB   5.86%     1.23kB / 0B   43.2GB / 45GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   398.80%   14.69GiB / 251.3GiB   5.84%     1.23kB / 0B   43.5GB / 45GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.27%   14.68GiB / 251.3GiB   5.84%     1.23kB / 0B   43.6GB / 45GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   400.35%   14.57GiB / 251.3GiB   5.80%     1.23kB / 0B   43.7GB / 45GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   402.62%   14.77GiB / 251.3GiB   5.88%     1.23kB / 0B   43.9GB / 45GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   398.91%   14.73GiB / 251.3GiB   5.86%     1.23kB / 0B   44.1GB / 45GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.71%   14.81GiB / 251.3GiB   5.89%     1.23kB / 0B   44.2GB / 45.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.74%   14.82GiB / 251.3GiB   5.90%     1.23kB / 0B   44.5GB / 45.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.91%   14.76GiB / 251.3GiB   5.87%     1.23kB / 0B   44.7GB / 45.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.81%   14.94GiB / 251.3GiB   5.95%     1.23kB / 0B   44.8GB / 45.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.58%   15.26GiB / 251.3GiB   6.07%     1.23kB / 0B   44.8GB / 45.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.15%   15.57GiB / 251.3GiB   6.20%     1.23kB / 0B   44.8GB / 45.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.16%   15.89GiB / 251.3GiB   6.32%     1.23kB / 0B   44.8GB / 46.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.80%   16GiB / 251.3GiB    6.37%     1.23kB / 0B   44.8GB / 46.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.74%   16.02GiB / 251.3GiB   6.37%     1.23kB / 0B   44.8GB / 46.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   395.71%   16.01GiB / 251.3GiB   6.37%     1.23kB / 0B   44.8GB / 48.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.48%   16.03GiB / 251.3GiB   6.38%     1.23kB / 0B   44.9GB / 48.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.76%   15.97GiB / 251.3GiB   6.35%     1.23kB / 0B   45.2GB / 48.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.01%   16.11GiB / 251.3GiB   6.41%     1.23kB / 0B   45.4GB / 48.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   393.78%   16GiB / 251.3GiB    6.37%     1.23kB / 0B   45.6GB / 48.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.41%   16.03GiB / 251.3GiB   6.38%     1.23kB / 0B   45.7GB / 48.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   400.80%   16.33GiB / 251.3GiB   6.50%     1.23kB / 0B   46GB / 48.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.19%   16.29GiB / 251.3GiB   6.48%     1.23kB / 0B   46.2GB / 48.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   396.24%   16.16GiB / 251.3GiB   6.43%     1.23kB / 0B   46.4GB / 48.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.30%   16.27GiB / 251.3GiB   6.47%     1.23kB / 0B   46.7GB / 48.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.67%   16.18GiB / 251.3GiB   6.44%     1.23kB / 0B   46.7GB / 48.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   398.81%   16.26GiB / 251.3GiB   6.47%     1.23kB / 0B   47GB / 48.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   398.42%   16.27GiB / 251.3GiB   6.47%     1.23kB / 0B   47.2GB / 49GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   400.35%   16.19GiB / 251.3GiB   6.44%     1.23kB / 0B   47.4GB / 49GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.07%   16.32GiB / 251.3GiB   6.49%     1.23kB / 0B   47.5GB / 49.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.48%   16.32GiB / 251.3GiB   6.49%     1.23kB / 0B   47.6GB / 49.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.67%   16.45GiB / 251.3GiB   6.55%     1.23kB / 0B   47.6GB / 49.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.23%   16.59GiB / 251.3GiB   6.60%     1.23kB / 0B   47.6GB / 49.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.13%   16.73GiB / 251.3GiB   6.66%     1.23kB / 0B   47.6GB / 49.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.66%   16.99GiB / 251.3GiB   6.76%     1.23kB / 0B   47.7GB / 49.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   400.10%   16.9GiB / 251.3GiB   6.73%     1.23kB / 0B   47.8GB / 50GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.74%   16.98GiB / 251.3GiB   6.76%     1.23kB / 0B   48.1GB / 50GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.54%   16.94GiB / 251.3GiB   6.74%     1.23kB / 0B   48.3GB / 50.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.04%   17.05GiB / 251.3GiB   6.79%     1.23kB / 0B   48.4GB / 50.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.15%   16.87GiB / 251.3GiB   6.71%     1.23kB / 0B   48.7GB / 50.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   402.80%   16.99GiB / 251.3GiB   6.76%     1.23kB / 0B   48.8GB / 50.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.55%   17.01GiB / 251.3GiB   6.77%     1.23kB / 0B   48.8GB / 50.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.93%   17.01GiB / 251.3GiB   6.77%     1.23kB / 0B   48.8GB / 51.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   404.20%   16.87GiB / 251.3GiB   6.71%     1.23kB / 0B   48.8GB / 53.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.38%   16.99GiB / 251.3GiB   6.76%     1.23kB / 0B   48.9GB / 53.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.77%   17.1GiB / 251.3GiB   6.80%     1.23kB / 0B   49.1GB / 53.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.34%   17.02GiB / 251.3GiB   6.77%     1.23kB / 0B   49.4GB / 53.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.23%   17.03GiB / 251.3GiB   6.78%     1.23kB / 0B   49.6GB / 53.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.54%   17.03GiB / 251.3GiB   6.78%     1.23kB / 0B   49.6GB / 53.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.37%   17.07GiB / 251.3GiB   6.79%     1.23kB / 0B   49.9GB / 53.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.12%   17.23GiB / 251.3GiB   6.86%     1.23kB / 0B   50.1GB / 53.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.56%   17.15GiB / 251.3GiB   6.83%     1.23kB / 0B   50.3GB / 53.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.35%   17.2GiB / 251.3GiB   6.84%     1.23kB / 0B   50.5GB / 53.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   400.52%   17.22GiB / 251.3GiB   6.85%     1.23kB / 0B   50.5GB / 54GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   401.00%   17.34GiB / 251.3GiB   6.90%     1.23kB / 0B   50.5GB / 54GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   400.83%   17.46GiB / 251.3GiB   6.95%     1.23kB / 0B   50.5GB / 54GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   400.87%   17.59GiB / 251.3GiB   7.00%     1.23kB / 0B   50.5GB / 54GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.14%   17.78GiB / 251.3GiB   7.08%     1.23kB / 0B   50.5GB / 54.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.14%   17.86GiB / 251.3GiB   7.11%     1.23kB / 0B   50.7GB / 54.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.88%   17.73GiB / 251.3GiB   7.05%     1.23kB / 0B   51GB / 54.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   392.88%   17.76GiB / 251.3GiB   7.07%     1.23kB / 0B   51.1GB / 54.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.16%   17.92GiB / 251.3GiB   7.13%     1.23kB / 0B   51.3GB / 54.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.05%   17.77GiB / 251.3GiB   7.07%     1.23kB / 0B   51.5GB / 54.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   398.71%   17.81GiB / 251.3GiB   7.08%     1.23kB / 0B   51.7GB / 55GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.20%   17.93GiB / 251.3GiB   7.13%     1.23kB / 0B   51.9GB / 55GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.13%   17.88GiB / 251.3GiB   7.11%     1.23kB / 0B   52.1GB / 55.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.18%   18.06GiB / 251.3GiB   7.19%     1.23kB / 0B   52.3GB / 55.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.11%   17.9GiB / 251.3GiB   7.12%     1.23kB / 0B   52.3GB / 55.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.50%   17.92GiB / 251.3GiB   7.13%     1.23kB / 0B   52.3GB / 55.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.44%   17.91GiB / 251.3GiB   7.13%     1.23kB / 0B   52.3GB / 57.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.77%   18.07GiB / 251.3GiB   7.19%     1.23kB / 0B   52.5GB / 58.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.94%   18.06GiB / 251.3GiB   7.19%     1.23kB / 0B   52.7GB / 58.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.71%   18.01GiB / 251.3GiB   7.17%     1.23kB / 0B   52.9GB / 58.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.83%   18.04GiB / 251.3GiB   7.18%     1.23kB / 0B   53.1GB / 58.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.32%   18.17GiB / 251.3GiB   7.23%     1.23kB / 0B   53.3GB / 58.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.18%   18.13GiB / 251.3GiB   7.21%     1.23kB / 0B   53.5GB / 58.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.83%   18.08GiB / 251.3GiB   7.19%     1.23kB / 0B   53.6GB / 58.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.17%   18.22GiB / 251.3GiB   7.25%     1.23kB / 0B   53.6GB / 58.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.91%   18.36GiB / 251.3GiB   7.31%     1.23kB / 0B   53.6GB / 58.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.57%   18.5GiB / 251.3GiB   7.36%     1.23kB / 0B   53.6GB / 58.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.58%   18.64GiB / 251.3GiB   7.42%     1.23kB / 0B   53.6GB / 58.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.80%   18.76GiB / 251.3GiB   7.47%     1.23kB / 0B   53.6GB / 58.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.07%   18.87GiB / 251.3GiB   7.51%     1.23kB / 0B   53.7GB / 58.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.59%   18.89GiB / 251.3GiB   7.52%     1.23kB / 0B   53.9GB / 58.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.46%   18.82GiB / 251.3GiB   7.49%     1.23kB / 0B   54.1GB / 58.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.87%   18.82GiB / 251.3GiB   7.49%     1.23kB / 0B   54.3GB / 58.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   396.80%   18.93GiB / 251.3GiB   7.53%     1.23kB / 0B   54.4GB / 59GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.46%   18.85GiB / 251.3GiB   7.50%     1.23kB / 0B   54.6GB / 59GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   400.02%   18.92GiB / 251.3GiB   7.53%     1.23kB / 0B   54.9GB / 59GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O     PIDS
+01970295b056   bold_montalcini   403.48%   18.89GiB / 251.3GiB   7.52%     1.23kB / 0B   55GB / 59GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.90%   18.99GiB / 251.3GiB   7.56%     1.23kB / 0B   55.2GB / 59.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.72%   19.13GiB / 251.3GiB   7.61%     1.23kB / 0B   55.4GB / 59.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.67%   18.93GiB / 251.3GiB   7.53%     1.23kB / 0B   55.7GB / 59.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.54%   19.02GiB / 251.3GiB   7.57%     1.23kB / 0B   55.7GB / 59.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.07%   19.04GiB / 251.3GiB   7.58%     1.23kB / 0B   55.7GB / 59.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   400.24%   19.03GiB / 251.3GiB   7.57%     1.23kB / 0B   55.7GB / 61GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   393.63%   19.04GiB / 251.3GiB   7.58%     1.23kB / 0B   55.8GB / 61.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   401.60%   19GiB / 251.3GiB    7.56%     1.23kB / 0B   56GB / 61.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   400.96%   19.03GiB / 251.3GiB   7.57%     1.23kB / 0B   56.2GB / 62GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   400.83%   19.09GiB / 251.3GiB   7.59%     1.23kB / 0B   56.3GB / 62GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   401.01%   19.21GiB / 251.3GiB   7.65%     1.23kB / 0B   56.3GB / 62GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   400.18%   19.35GiB / 251.3GiB   7.70%     1.23kB / 0B   56.3GB / 62GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   400.76%   19.48GiB / 251.3GiB   7.75%     1.23kB / 0B   56.3GB / 62GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   400.76%   19.61GiB / 251.3GiB   7.80%     1.23kB / 0B   56.3GB / 62GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.67%   19.74GiB / 251.3GiB   7.86%     1.23kB / 0B   56.3GB / 62.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   402.60%   19.77GiB / 251.3GiB   7.86%     1.23kB / 0B   56.4GB / 62.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.40%   19.8GiB / 251.3GiB   7.88%     1.23kB / 0B   56.6GB / 62.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.00%   19.88GiB / 251.3GiB   7.91%     1.23kB / 0B   56.8GB / 62.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   398.87%   19.85GiB / 251.3GiB   7.90%     1.23kB / 0B   57GB / 62.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   396.03%   19.64GiB / 251.3GiB   7.82%     1.23kB / 0B   57.1GB / 62.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.80%   19.93GiB / 251.3GiB   7.93%     1.23kB / 0B   57.3GB / 62.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.92%   19.87GiB / 251.3GiB   7.90%     1.23kB / 0B   57.5GB / 62.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.49%   20.05GiB / 251.3GiB   7.98%     1.23kB / 0B   57.7GB / 62.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.55%   20.13GiB / 251.3GiB   8.01%     1.23kB / 0B   57.8GB / 62.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   400.35%   20.19GiB / 251.3GiB   8.04%     1.23kB / 0B   58GB / 62.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.14%   20.09GiB / 251.3GiB   7.99%     1.23kB / 0B   58.2GB / 62.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.63%   20.22GiB / 251.3GiB   8.04%     1.23kB / 0B   58.3GB / 62.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.07%   20.27GiB / 251.3GiB   8.06%     1.23kB / 0B   58.5GB / 62.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.58%   20.07GiB / 251.3GiB   7.99%     1.23kB / 0B   58.7GB / 63GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.78%   20.31GiB / 251.3GiB   8.08%     1.23kB / 0B   58.8GB / 63GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   400.11%   20.18GiB / 251.3GiB   8.03%     1.23kB / 0B   59.1GB / 63GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.57%   20.12GiB / 251.3GiB   8.01%     1.23kB / 0B   59.2GB / 63GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   396.84%   20.13GiB / 251.3GiB   8.01%     1.23kB / 0B   59.2GB / 63.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.24%   20.39GiB / 251.3GiB   8.11%     1.23kB / 0B   59.2GB / 65.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.76%   20.2GiB / 251.3GiB   8.04%     1.23kB / 0B   59.3GB / 65.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.92%   20.31GiB / 251.3GiB   8.08%     1.23kB / 0B   59.3GB / 65.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.92%   20.42GiB / 251.3GiB   8.13%     1.23kB / 0B   59.3GB / 65.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.16%   20.53GiB / 251.3GiB   8.17%     1.23kB / 0B   59.3GB / 65.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.66%   20.64GiB / 251.3GiB   8.21%     1.23kB / 0B   59.3GB / 65.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.01%   20.75GiB / 251.3GiB   8.26%     1.23kB / 0B   59.3GB / 65.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.49%   21.06GiB / 251.3GiB   8.38%     1.23kB / 0B   59.5GB / 65.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   396.17%   20.86GiB / 251.3GiB   8.30%     1.23kB / 0B   59.6GB / 65.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.72%   20.99GiB / 251.3GiB   8.35%     1.23kB / 0B   59.8GB / 65.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.01%   20.81GiB / 251.3GiB   8.28%     1.23kB / 0B   59.9GB / 65.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.00%   20.93GiB / 251.3GiB   8.33%     1.23kB / 0B   60.1GB / 65.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.48%   20.89GiB / 251.3GiB   8.31%     1.23kB / 0B   60.2GB / 65.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.73%   20.82GiB / 251.3GiB   8.28%     1.23kB / 0B   60.4GB / 65.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.96%   21GiB / 251.3GiB    8.36%     1.23kB / 0B   60.6GB / 65.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.51%   21.04GiB / 251.3GiB   8.37%     1.23kB / 0B   60.7GB / 65.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.73%   20.87GiB / 251.3GiB   8.30%     1.23kB / 0B   60.8GB / 65.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.87%   21.04GiB / 251.3GiB   8.37%     1.23kB / 0B   61.1GB / 65.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   396.91%   20.89GiB / 251.3GiB   8.31%     1.23kB / 0B   61.2GB / 65.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.57%   21.15GiB / 251.3GiB   8.41%     1.23kB / 0B   61.5GB / 65.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.10%   20.92GiB / 251.3GiB   8.32%     1.23kB / 0B   61.6GB / 65.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.15%   20.93GiB / 251.3GiB   8.33%     1.23kB / 0B   61.6GB / 65.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.61%   20.94GiB / 251.3GiB   8.33%     1.23kB / 0B   61.6GB / 66.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.09%   21.18GiB / 251.3GiB   8.43%     1.23kB / 0B   61.7GB / 67.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.48%   21.21GiB / 251.3GiB   8.44%     1.23kB / 0B   61.9GB / 67.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.67%   21.14GiB / 251.3GiB   8.41%     1.23kB / 0B   62.1GB / 67.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.32%   21.24GiB / 251.3GiB   8.45%     1.23kB / 0B   62.1GB / 67.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.50%   21.34GiB / 251.3GiB   8.49%     1.23kB / 0B   62.1GB / 67.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.50%   21.43GiB / 251.3GiB   8.53%     1.23kB / 0B   62.1GB / 67.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.01%   21.53GiB / 251.3GiB   8.57%     1.23kB / 0B   62.1GB / 67.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.97%   21.62GiB / 251.3GiB   8.60%     1.23kB / 0B   62.1GB / 68GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   401.23%   21.71GiB / 251.3GiB   8.64%     1.23kB / 0B   62.1GB / 68GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.53%   21.86GiB / 251.3GiB   8.70%     1.23kB / 0B   62.3GB / 68.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.61%   21.91GiB / 251.3GiB   8.72%     1.23kB / 0B   62.5GB / 68.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.54%   21.93GiB / 251.3GiB   8.73%     1.23kB / 0B   62.6GB / 68.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.41%   21.95GiB / 251.3GiB   8.73%     1.23kB / 0B   62.7GB / 68.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.60%   21.96GiB / 251.3GiB   8.74%     1.23kB / 0B   62.9GB / 68.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.24%   21.84GiB / 251.3GiB   8.69%     1.23kB / 0B   63.1GB / 68.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.56%   22.05GiB / 251.3GiB   8.77%     1.23kB / 0B   63.2GB / 68.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.43%   21.91GiB / 251.3GiB   8.72%     1.23kB / 0B   63.4GB / 68.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.20%   21.95GiB / 251.3GiB   8.73%     1.23kB / 0B   63.6GB / 68.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.12%   21.95GiB / 251.3GiB   8.74%     1.23kB / 0B   63.8GB / 68.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.06%   22.12GiB / 251.3GiB   8.80%     1.23kB / 0B   63.9GB / 68.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.31%   22.05GiB / 251.3GiB   8.77%     1.23kB / 0B   64.2GB / 68.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.98%   22.05GiB / 251.3GiB   8.78%     1.23kB / 0B   64.4GB / 68.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.80%   22.1GiB / 251.3GiB   8.80%     1.23kB / 0B   64.6GB / 68.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.30%   22.06GiB / 251.3GiB   8.78%     1.23kB / 0B   64.9GB / 68.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.78%   22.05GiB / 251.3GiB   8.77%     1.23kB / 0B   64.9GB / 68.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.73%   22.03GiB / 251.3GiB   8.77%     1.23kB / 0B   64.9GB / 70.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.00%   22.07GiB / 251.3GiB   8.78%     1.23kB / 0B   64.9GB / 71GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   398.85%   22.15GiB / 251.3GiB   8.81%     1.23kB / 0B   64.9GB / 71GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   398.92%   22.23GiB / 251.3GiB   8.85%     1.23kB / 0B   64.9GB / 71GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.50%   22.31GiB / 251.3GiB   8.88%     1.23kB / 0B   64.9GB / 71GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.09%   22.39GiB / 251.3GiB   8.91%     1.23kB / 0B   64.9GB / 71GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.33%   22.47GiB / 251.3GiB   8.94%     1.23kB / 0B   64.9GB / 71.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.16%   22.56GiB / 251.3GiB   8.98%     1.3kB / 0B   64.9GB / 71.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.36%   22.57GiB / 251.3GiB   8.98%     1.3kB / 0B   64.9GB / 71.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.80%   22.59GiB / 251.3GiB   8.99%     1.3kB / 0B   65.2GB / 71.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.82%   22.55GiB / 251.3GiB   8.97%     1.3kB / 0B   65.3GB / 71.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.39%   22.57GiB / 251.3GiB   8.98%     1.3kB / 0B   65.5GB / 71.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.76%   22.61GiB / 251.3GiB   9.00%     1.3kB / 0B   65.6GB / 71.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.04%   22.73GiB / 251.3GiB   9.04%     1.3kB / 0B   65.8GB / 71.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O       PIDS
+01970295b056   bold_montalcini   400.23%   22.68GiB / 251.3GiB   9.02%     1.3kB / 0B   66GB / 71.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.71%   22.66GiB / 251.3GiB   9.02%     1.3kB / 0B   66.2GB / 71.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.60%   22.78GiB / 251.3GiB   9.06%     1.3kB / 0B   66.4GB / 71.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.75%   22.76GiB / 251.3GiB   9.05%     1.3kB / 0B   66.5GB / 71.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.93%   22.79GiB / 251.3GiB   9.07%     1.3kB / 0B   66.6GB / 71.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.60%   22.75GiB / 251.3GiB   9.05%     1.3kB / 0B   66.7GB / 71.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O       PIDS
+01970295b056   bold_montalcini   398.37%   22.83GiB / 251.3GiB   9.08%     1.3kB / 0B   67GB / 71.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.00%   22.87GiB / 251.3GiB   9.10%     1.3kB / 0B   67.2GB / 71.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.01%   22.78GiB / 251.3GiB   9.06%     1.3kB / 0B   67.4GB / 71.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.82%   22.8GiB / 251.3GiB   9.07%     1.3kB / 0B   67.7GB / 71.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   402.06%   22.75GiB / 251.3GiB   9.05%     1.3kB / 0B   67.9GB / 72.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.98%   22.77GiB / 251.3GiB   9.06%     1.3kB / 0B   67.9GB / 72.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.16%   22.77GiB / 251.3GiB   9.06%     1.3kB / 0B   67.9GB / 72.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O       PIDS
+01970295b056   bold_montalcini   398.54%   22.76GiB / 251.3GiB   9.06%     1.3kB / 0B   68GB / 74.3GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.40%   22.84GiB / 251.3GiB   9.09%     1.3kB / 0B   68GB / 74.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.49%   22.92GiB / 251.3GiB   9.12%     1.3kB / 0B   68GB / 74.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT   MEM %     NET I/O      BLOCK I/O       PIDS
+01970295b056   bold_montalcini   400.29%   23GiB / 251.3GiB    9.15%     1.3kB / 0B   68GB / 74.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.05%   23.08GiB / 251.3GiB   9.18%     1.3kB / 0B   68GB / 74.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O       PIDS
+01970295b056   bold_montalcini   400.61%   23.17GiB / 251.3GiB   9.22%     1.3kB / 0B   68GB / 74.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.79%   23.25GiB / 251.3GiB   9.25%     1.3kB / 0B   68GB / 74.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O       PIDS
+01970295b056   bold_montalcini   400.60%   23.4GiB / 251.3GiB   9.31%     1.3kB / 0B   68GB / 74.4GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.86%   23.46GiB / 251.3GiB   9.34%     1.3kB / 0B   68.2GB / 74.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.09%   23.43GiB / 251.3GiB   9.32%     1.3kB / 0B   68.4GB / 74.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.56%   23.43GiB / 251.3GiB   9.32%     1.3kB / 0B   68.5GB / 74.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.08%   23.58GiB / 251.3GiB   9.38%     1.3kB / 0B   68.6GB / 74.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.19%   23.57GiB / 251.3GiB   9.38%     1.3kB / 0B   68.8GB / 74.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.07%   23.59GiB / 251.3GiB   9.38%     1.3kB / 0B   69GB / 74.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   404.04%   23.57GiB / 251.3GiB   9.38%     1.3kB / 0B   69.1GB / 74.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.18%   23.58GiB / 251.3GiB   9.38%     1.3kB / 0B   69.3GB / 74.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.57%   23.73GiB / 251.3GiB   9.44%     1.3kB / 0B   69.5GB / 74.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.43%   23.58GiB / 251.3GiB   9.38%     1.3kB / 0B   69.6GB / 74.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.15%   23.82GiB / 251.3GiB   9.48%     1.3kB / 0B   69.8GB / 74.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.67%   23.59GiB / 251.3GiB   9.39%     1.3kB / 0B   70GB / 74.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O       PIDS
+01970295b056   bold_montalcini   403.83%   23.65GiB / 251.3GiB   9.41%     1.3kB / 0B   70.1GB / 75GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O       PIDS
+01970295b056   bold_montalcini   400.00%   23.84GiB / 251.3GiB   9.48%     1.3kB / 0B   70.3GB / 75GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.21%   23.69GiB / 251.3GiB   9.43%     1.3kB / 0B   70.5GB / 75.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.73%   23.73GiB / 251.3GiB   9.44%     1.3kB / 0B   70.6GB / 75.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.79%   23.72GiB / 251.3GiB   9.44%     1.3kB / 0B   70.6GB / 75.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   396.82%   23.73GiB / 251.3GiB   9.44%     1.3kB / 0B   70.6GB / 76.1GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.41%   23.82GiB / 251.3GiB   9.48%     1.3kB / 0B   70.7GB / 77.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.15%   23.82GiB / 251.3GiB   9.48%     1.3kB / 0B   70.8GB / 77.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.49%   23.9GiB / 251.3GiB   9.51%     1.3kB / 0B   70.8GB / 77.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.07%   23.98GiB / 251.3GiB   9.54%     1.3kB / 0B   70.8GB / 77.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.91%   24.06GiB / 251.3GiB   9.57%     1.3kB / 0B   70.8GB / 77.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.84%   24.14GiB / 251.3GiB   9.61%     1.3kB / 0B   70.8GB / 77.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.76%   24.23GiB / 251.3GiB   9.64%     1.3kB / 0B   70.8GB / 77.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.22%   24.31GiB / 251.3GiB   9.67%     1.3kB / 0B   70.8GB / 77.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.86%   24.45GiB / 251.3GiB   9.73%     1.3kB / 0B   70.8GB / 77.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O       PIDS
+01970295b056   bold_montalcini   398.74%   24.41GiB / 251.3GiB   9.71%     1.3kB / 0B   71GB / 77.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.77%   24.49GiB / 251.3GiB   9.74%     1.3kB / 0B   71.1GB / 77.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.41%   24.77GiB / 251.3GiB   9.86%     1.3kB / 0B   71.3GB / 77.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.25%   24.62GiB / 251.3GiB   9.80%     1.3kB / 0B   71.4GB / 77.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.56%   24.63GiB / 251.3GiB   9.80%     1.3kB / 0B   71.6GB / 77.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.38%   24.71GiB / 251.3GiB   9.83%     1.3kB / 0B   71.8GB / 77.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O       PIDS
+01970295b056   bold_montalcini   400.69%   24.79GiB / 251.3GiB   9.87%     1.3kB / 0B   72GB / 77.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.53%   24.59GiB / 251.3GiB   9.78%     1.3kB / 0B   72.2GB / 77.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.15%   24.78GiB / 251.3GiB   9.86%     1.3kB / 0B   72.3GB / 77.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.81%   24.69GiB / 251.3GiB   9.82%     1.3kB / 0B   72.5GB / 77.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.52%   24.67GiB / 251.3GiB   9.82%     1.3kB / 0B   72.6GB / 77.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.43%   24.84GiB / 251.3GiB   9.88%     1.3kB / 0B   72.8GB / 77.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.45%   24.81GiB / 251.3GiB   9.87%     1.3kB / 0B   72.9GB / 77.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.12%   24.81GiB / 251.3GiB   9.87%     1.3kB / 0B   73.1GB / 78.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.38%   24.84GiB / 251.3GiB   9.88%     1.3kB / 0B   73.3GB / 78.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.41%   24.85GiB / 251.3GiB   9.89%     1.3kB / 0B   73.6GB / 78.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   403.45%   24.72GiB / 251.3GiB   9.84%     1.3kB / 0B   73.8GB / 78.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   396.91%   24.74GiB / 251.3GiB   9.85%     1.3kB / 0B   73.8GB / 78.9GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.22%   24.73GiB / 251.3GiB   9.84%     1.3kB / 0B   73.8GB / 80.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.17%   24.76GiB / 251.3GiB   9.85%     1.3kB / 0B   73.8GB / 81GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.32%   24.83GiB / 251.3GiB   9.88%     1.3kB / 0B   73.8GB / 81GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.57%   24.9GiB / 251.3GiB   9.91%     1.3kB / 0B   73.8GB / 81GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.49%   24.98GiB / 251.3GiB   9.94%     1.3kB / 0B   73.8GB / 81GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.66%   25.05GiB / 251.3GiB   9.97%     1.3kB / 0B   73.8GB / 81GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.32%   25.12GiB / 251.3GiB   10.00%    1.3kB / 0B   73.8GB / 81GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O       PIDS
+01970295b056   bold_montalcini   398.11%   25.2GiB / 251.3GiB   10.03%    1.3kB / 0B   73.8GB / 81GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O       PIDS
+01970295b056   bold_montalcini   399.07%   25.27GiB / 251.3GiB   10.06%    1.3kB / 0B   73.8GB / 81GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.26%   25.34GiB / 251.3GiB   10.08%    1.3kB / 0B   73.8GB / 81.2GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.23%   25.34GiB / 251.3GiB   10.08%    1.3kB / 0B   73.8GB / 81.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.62%   25.34GiB / 251.3GiB   10.08%    1.3kB / 0B   73.8GB / 81.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.09%   25.34GiB / 251.3GiB   10.08%    1.3kB / 0B   73.8GB / 81.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.85%   25.34GiB / 251.3GiB   10.08%    1.3kB / 0B   73.8GB / 81.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.00%   25.34GiB / 251.3GiB   10.08%    1.3kB / 0B   73.8GB / 81.5GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.51%   25.34GiB / 251.3GiB   10.08%    1.3kB / 0B   73.8GB / 81.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.30%   25.35GiB / 251.3GiB   10.09%    1.3kB / 0B   73.8GB / 81.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.53%   25.42GiB / 251.3GiB   10.11%    1.3kB / 0B   73.8GB / 81.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.27%   25.5GiB / 251.3GiB   10.15%    1.3kB / 0B   73.8GB / 81.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.42%   25.58GiB / 251.3GiB   10.18%    1.3kB / 0B   73.8GB / 81.6GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.60%   25.65GiB / 251.3GiB   10.21%    1.3kB / 0B   73.8GB / 81.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.25%   25.73GiB / 251.3GiB   10.24%    1.3kB / 0B   73.8GB / 81.7GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.75%   25.81GiB / 251.3GiB   10.27%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.04%   25.89GiB / 251.3GiB   10.30%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.83%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.55%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.30%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.86%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.11%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.79%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.26%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.27%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.38%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.76%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.79%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.35%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.68%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.94%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.18%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.86%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.03%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.02%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.28%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.19%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.51%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.54%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.77%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.68%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.78%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.28%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.86%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.51%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.27%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.11%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.34%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.18%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.59%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.78%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.62%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.15%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.14%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.59%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.94%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.86%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.69%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.35%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.34%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.11%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.86%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.54%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.18%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.34%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.99%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.34%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.52%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.78%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.51%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.26%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.95%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.68%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.23%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.68%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.68%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.65%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.59%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.59%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.11%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.86%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.06%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.85%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.59%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.42%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.02%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.46%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.51%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.27%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.29%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.51%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.43%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.74%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.26%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.67%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.51%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.02%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.31%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.68%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.02%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.74%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.93%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.51%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.14%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.02%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.36%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.43%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.86%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.94%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.51%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.94%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.51%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.51%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.86%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.78%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.43%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.14%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.85%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.86%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.86%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.77%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.51%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.19%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.86%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.86%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.09%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.76%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.27%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.45%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.67%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.19%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.10%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.42%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.59%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.28%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.37%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.85%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.94%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.63%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.94%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.19%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.03%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.88%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.79%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.85%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.26%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.46%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.42%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.62%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.18%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.59%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.82%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.85%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.85%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.62%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.09%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.11%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.71%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.02%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.29%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.46%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.26%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.95%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.62%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.26%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.31%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.51%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.53%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.71%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.86%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.14%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.34%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.94%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.19%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.85%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.86%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.34%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.86%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.71%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.11%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.34%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.68%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.82%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.02%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.39%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.10%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.45%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.62%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.43%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.11%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.87%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.19%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.86%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.11%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.94%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.51%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.68%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.97%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.34%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.66%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.86%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.59%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.94%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.26%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.51%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.93%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.17%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.34%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.19%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.58%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.85%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.93%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.86%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.87%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.77%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.51%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.22%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.34%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.62%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.54%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.77%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.51%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.60%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.61%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.01%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.50%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.35%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.46%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.51%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.58%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.93%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.52%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.77%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.02%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.51%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.15%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.02%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.85%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.14%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.18%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.02%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.50%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.53%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.38%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.37%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.01%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.70%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.34%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.59%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.60%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.43%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.26%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.19%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.34%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.69%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.02%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.77%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.39%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.51%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.77%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.86%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.77%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.51%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.85%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.77%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.28%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.26%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.77%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.50%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.03%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.03%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.35%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.55%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.55%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.77%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.63%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.18%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.71%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.95%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.81%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.47%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.55%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.83%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.03%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.03%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.95%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.72%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.43%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.95%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.78%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.52%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.95%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.35%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.12%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.40%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.18%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.95%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.72%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.03%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.57%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.37%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.03%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.03%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.38%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.12%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.40%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.72%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.98%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.03%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.46%   25.94GiB / 251.3GiB   10.32%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.87%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.60%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.12%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.37%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.03%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.77%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.71%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.27%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.60%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.26%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.04%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.00%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.17%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.03%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.68%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.26%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.71%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.66%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.10%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.99%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.95%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.23%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.40%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.55%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   401.20%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.15%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.81%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.52%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.80%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.90%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.66%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.55%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.44%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.31%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.12%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.80%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.23%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.79%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   397.92%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.27%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.63%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   400.31%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   399.51%   25.94GiB / 251.3GiB   10.32%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   398.55%   25.66GiB / 251.3GiB   10.21%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   100.01%   27.09GiB / 251.3GiB   10.78%    1.37kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+01970295b056   bold_montalcini   99.83%    25.4GiB / 251.3GiB   10.11%    1.37kB / 0B   73.8GB / 84.1GB   6
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS

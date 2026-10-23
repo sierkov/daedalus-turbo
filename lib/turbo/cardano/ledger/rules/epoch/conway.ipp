@@ -154,8 +154,14 @@
             }
         }
 
-        // EPOCH uses emptiness after removals, not the expiry of retained actions.
-        if (_proposals.empty())
+        // PV9/10 count dormancy once no unexpired proposals remain. PV11 uses
+        // emptiness after removals, including proposals still awaiting cleanup.
+        const bool dormant = _params.protocol_ver.major < 11
+            ? std::none_of(_proposals.begin(), _proposals.end(), [this](const auto &entry) {
+                return _epoch <= entry.second.expires_after;
+            })
+            : _proposals.empty();
+        if (dormant)
             ++_num_dormant_epochs;
 
         _gov_make_pulsing_snapshot(true);

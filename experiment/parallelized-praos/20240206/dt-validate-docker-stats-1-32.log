@@ -1,0 +1,370 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O    PIDS
+a6ed0eb3c943   objective_varahamihira   3170.71%   3.648GiB / 755.1GiB   0.48%     646B / 0B   852MB / 0B   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O     PIDS
+a6ed0eb3c943   objective_varahamihira   3198.54%   3.893GiB / 755.1GiB   0.52%     736B / 0B   1.63GB / 0B   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+a6ed0eb3c943   objective_varahamihira   3201.55%   4.071GiB / 755.1GiB   0.54%     806B / 0B   2.4GB / 217MB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3189.06%   4.187GiB / 755.1GiB   0.55%     806B / 0B   3.85GB / 217MB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3178.61%   4.209GiB / 755.1GiB   0.56%     806B / 0B   5.86GB / 217MB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3175.38%   4.247GiB / 755.1GiB   0.56%     876B / 0B   8.97GB / 217MB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3174.17%   4.385GiB / 755.1GiB   0.58%     876B / 0B   12.8GB / 217MB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O      PIDS
+a6ed0eb3c943   objective_varahamihira   3190.22%   5.121GiB / 755.1GiB   0.68%     876B / 0B   17GB / 217MB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3187.79%   6.001GiB / 755.1GiB   0.79%     876B / 0B   21.4GB / 217MB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3198.89%   6.138GiB / 755.1GiB   0.81%     876B / 0B   24.8GB / 217MB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3195.42%   7.096GiB / 755.1GiB   0.94%     876B / 0B   28.4GB / 217MB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3189.10%   6.971GiB / 755.1GiB   0.92%     876B / 0B   31.7GB / 217MB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O      PIDS
+a6ed0eb3c943   objective_varahamihira   3176.84%   7.091GiB / 755.1GiB   0.94%     946B / 0B   35GB / 217MB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3184.14%   7.084GiB / 755.1GiB   0.94%     946B / 0B   38.1GB / 217MB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3187.23%   6.389GiB / 755.1GiB   0.85%     946B / 0B   41.2GB / 293MB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3189.11%   6.652GiB / 755.1GiB   0.88%     946B / 0B   44.4GB / 293MB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   3192.80%   6.147GiB / 755.1GiB   0.81%     946B / 0B   47.4GB / 1.78GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   3186.76%   6.477GiB / 755.1GiB   0.86%     946B / 0B   50.5GB / 1.78GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   3177.16%   6.345GiB / 755.1GiB   0.84%     946B / 0B   53.7GB / 6.32GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   3197.80%   6.537GiB / 755.1GiB   0.87%     946B / 0B   56.7GB / 6.32GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   3189.57%   6.381GiB / 755.1GiB   0.85%     946B / 0B   59.7GB / 13.8GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   3181.72%   6.877GiB / 755.1GiB   0.91%     946B / 0B   62.8GB / 13.8GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O       PIDS
+a6ed0eb3c943   objective_varahamihira   3195.37%   7.16GiB / 755.1GiB   0.95%     946B / 0B   65.5GB / 15GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O       PIDS
+a6ed0eb3c943   objective_varahamihira   3188.81%   7.29GiB / 755.1GiB   0.97%     946B / 0B   68GB / 21.9GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   3181.34%   6.249GiB / 755.1GiB   0.83%     946B / 0B   70.7GB / 21.9GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   3180.02%   6.346GiB / 755.1GiB   0.84%     946B / 0B   73.6GB / 28.8GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   3182.30%   7.589GiB / 755.1GiB   1.01%     946B / 0B   76.4GB / 28.8GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   3180.08%   7.23GiB / 755.1GiB   0.96%     1.02kB / 0B   78.8GB / 35.2GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   2935.19%   10GiB / 755.1GiB    1.32%     1.02kB / 0B   79.6GB / 35.2GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   2566.40%   12.92GiB / 755.1GiB   1.71%     1.02kB / 0B   79.6GB / 40.6GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   2550.68%   14.73GiB / 755.1GiB   1.95%     1.02kB / 0B   79.6GB / 40.6GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   2647.43%   16.52GiB / 755.1GiB   2.19%     1.02kB / 0B   79.6GB / 46.4GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   2852.99%   19.68GiB / 755.1GiB   2.61%     1.02kB / 0B   79.6GB / 46.4GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   2801.45%   22.66GiB / 755.1GiB   3.00%     1.02kB / 0B   79.6GB / 51.3GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   2826.44%   26.14GiB / 755.1GiB   3.46%     1.02kB / 0B   79.6GB / 51.3GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   2849.46%   29.98GiB / 755.1GiB   3.97%     1.02kB / 0B   79.6GB / 53.1GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   100.27%   30.42GiB / 755.1GiB   4.03%     1.02kB / 0B   79.6GB / 56.5GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   99.86%    30.33GiB / 755.1GiB   4.02%     1.02kB / 0B   79.6GB / 56.5GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   99.83%    30.24GiB / 755.1GiB   4.00%     1.02kB / 0B   79.6GB / 61.2GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   99.87%    30.13GiB / 755.1GiB   3.99%     1.02kB / 0B   79.6GB / 61.2GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   100.24%   30.02GiB / 755.1GiB   3.98%     1.02kB / 0B   79.6GB / 66.5GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   99.86%    29.89GiB / 755.1GiB   3.96%     1.02kB / 0B   79.6GB / 66.5GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   99.85%    29.78GiB / 755.1GiB   3.94%     1.02kB / 0B   79.6GB / 77.9GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   100.21%   29.64GiB / 755.1GiB   3.93%     1.02kB / 0B   79.6GB / 77.9GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   99.80%    29.51GiB / 755.1GiB   3.91%     1.02kB / 0B   79.6GB / 88.1GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   99.85%    29.37GiB / 755.1GiB   3.89%     1.02kB / 0B   79.6GB / 88.1GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   99.84%    29.23GiB / 755.1GiB   3.87%     1.02kB / 0B   79.6GB / 96.6GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   100.24%   29.1GiB / 755.1GiB   3.85%     1.02kB / 0B   79.6GB / 98.3GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+a6ed0eb3c943   objective_varahamihira   100.25%   28.98GiB / 755.1GiB   3.84%     1.02kB / 0B   79.6GB / 98.3GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   99.83%    28.87GiB / 755.1GiB   3.82%     1.02kB / 0B   79.6GB / 103GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   99.82%    28.71GiB / 755.1GiB   3.80%     1.02kB / 0B   79.6GB / 103GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   99.85%    28.55GiB / 755.1GiB   3.78%     1.02kB / 0B   79.6GB / 104GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   99.84%    28.4GiB / 755.1GiB   3.76%     1.02kB / 0B   79.6GB / 104GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   99.83%    28.21GiB / 755.1GiB   3.74%     1.02kB / 0B   79.6GB / 104GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   100.27%   28.07GiB / 755.1GiB   3.72%     1.02kB / 0B   79.6GB / 104GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   100.21%   27.89GiB / 755.1GiB   3.69%     1.09kB / 0B   79.6GB / 105GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   99.80%    27.71GiB / 755.1GiB   3.67%     1.09kB / 0B   79.6GB / 105GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   99.83%    27.54GiB / 755.1GiB   3.65%     1.09kB / 0B   79.6GB / 105GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   100.26%   27.39GiB / 755.1GiB   3.63%     1.09kB / 0B   79.6GB / 105GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   99.87%    27.23GiB / 755.1GiB   3.61%     1.09kB / 0B   79.6GB / 106GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   99.81%    27.09GiB / 755.1GiB   3.59%     1.09kB / 0B   79.6GB / 106GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   99.83%    26.9GiB / 755.1GiB   3.56%     1.09kB / 0B   79.6GB / 106GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   100.23%   26.7GiB / 755.1GiB   3.54%     1.09kB / 0B   79.6GB / 106GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   100.22%   26.55GiB / 755.1GiB   3.52%     1.09kB / 0B   79.6GB / 107GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   99.79%    26.38GiB / 755.1GiB   3.49%     1.09kB / 0B   79.6GB / 107GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   99.85%    26.22GiB / 755.1GiB   3.47%     1.09kB / 0B   79.6GB / 108GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   99.82%    26.07GiB / 755.1GiB   3.45%     1.09kB / 0B   79.6GB / 108GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   100.17%   25.81GiB / 755.1GiB   3.42%     1.09kB / 0B   79.6GB / 109GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   2708.10%   25.82GiB / 755.1GiB   3.42%     1.09kB / 0B   79.7GB / 109GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   2830.85%   25.77GiB / 755.1GiB   3.41%     1.09kB / 0B   79.7GB / 109GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   2046.66%   25.79GiB / 755.1GiB   3.42%     1.09kB / 0B   79.7GB / 109GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   2548.42%   25.75GiB / 755.1GiB   3.41%     1.09kB / 0B   79.7GB / 110GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   2590.82%   25.71GiB / 755.1GiB   3.41%     1.09kB / 0B   79.7GB / 110GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   2725.44%   25.51GiB / 755.1GiB   3.38%     1.09kB / 0B   79.7GB / 111GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   2968.92%   25.51GiB / 755.1GiB   3.38%     1.09kB / 0B   79.7GB / 111GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   2491.30%   25.5GiB / 755.1GiB   3.38%     1.09kB / 0B   79.7GB / 111GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1383.72%   25.39GiB / 755.1GiB   3.36%     1.09kB / 0B   79.7GB / 111GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   2497.61%   25.45GiB / 755.1GiB   3.37%     1.09kB / 0B   79.7GB / 114GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1485.82%   25.38GiB / 755.1GiB   3.36%     1.09kB / 0B   79.7GB / 118GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   2059.87%   25.36GiB / 755.1GiB   3.36%     1.09kB / 0B   79.7GB / 126GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   2783.82%   25.36GiB / 755.1GiB   3.36%     1.09kB / 0B   79.7GB / 134GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1734.61%   25.35GiB / 755.1GiB   3.36%     1.09kB / 0B   79.7GB / 140GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   2104.12%   25.36GiB / 755.1GiB   3.36%     1.09kB / 0B   79.7GB / 145GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   2133.51%   25.33GiB / 755.1GiB   3.35%     1.09kB / 0B   79.7GB / 150GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   2006.94%   25.32GiB / 755.1GiB   3.35%     1.09kB / 0B   79.7GB / 155GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3130.03%   25.39GiB / 755.1GiB   3.36%     1.09kB / 0B   81.5GB / 156GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3172.53%   25.54GiB / 755.1GiB   3.38%     1.09kB / 0B   82.5GB / 156GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3203.55%   25.76GiB / 755.1GiB   3.41%     1.09kB / 0B   83.5GB / 156GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   2698.05%   25.91GiB / 755.1GiB   3.43%     1.09kB / 0B   83.5GB / 156GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3211.95%   25.83GiB / 755.1GiB   3.42%     1.09kB / 0B   83.5GB / 156GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3205.47%   25.64GiB / 755.1GiB   3.40%     1.09kB / 0B   83.5GB / 156GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3209.36%   25.64GiB / 755.1GiB   3.40%     1.09kB / 0B   83.5GB / 156GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3207.09%   25.65GiB / 755.1GiB   3.40%     1.09kB / 0B   83.5GB / 156GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3189.34%   25.58GiB / 755.1GiB   3.39%     1.09kB / 0B   83.5GB / 156GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3190.08%   25.58GiB / 755.1GiB   3.39%     1.09kB / 0B   83.5GB / 156GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3204.56%   25.58GiB / 755.1GiB   3.39%     1.09kB / 0B   83.5GB / 156GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3198.75%   25.58GiB / 755.1GiB   3.39%     1.09kB / 0B   83.5GB / 156GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3210.03%   25.46GiB / 755.1GiB   3.37%     1.09kB / 0B   83.5GB / 156GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3209.71%   25.46GiB / 755.1GiB   3.37%     1.09kB / 0B   83.5GB / 157GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3198.14%   25.15GiB / 755.1GiB   3.33%     1.09kB / 0B   83.5GB / 157GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3199.38%   25.15GiB / 755.1GiB   3.33%     1.09kB / 0B   83.5GB / 162GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3199.20%   25.15GiB / 755.1GiB   3.33%     1.09kB / 0B   83.5GB / 162GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3194.67%   25.15GiB / 755.1GiB   3.33%     1.09kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3200.32%   24.65GiB / 755.1GiB   3.26%     1.09kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3202.71%   24.65GiB / 755.1GiB   3.26%     1.09kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3205.55%   24.65GiB / 755.1GiB   3.26%     1.09kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3210.72%   24.65GiB / 755.1GiB   3.26%     1.09kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   3096.47%   24.65GiB / 755.1GiB   3.26%     1.09kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1686.19%   24.65GiB / 755.1GiB   3.26%     1.09kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1327.59%   24.65GiB / 755.1GiB   3.26%     1.09kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1229.79%   24.65GiB / 755.1GiB   3.26%     1.09kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1146.18%   24.65GiB / 755.1GiB   3.26%     1.09kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1126.70%   24.65GiB / 755.1GiB   3.26%     1.09kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   912.36%   24.65GiB / 755.1GiB   3.26%     1.09kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1231.45%   24.65GiB / 755.1GiB   3.26%     1.09kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1519.60%   24.65GiB / 755.1GiB   3.26%     1.09kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1837.48%   24.7GiB / 755.1GiB   3.27%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1827.06%   24.7GiB / 755.1GiB   3.27%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1590.57%   24.65GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1923.90%   24.65GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   356.76%   24.65GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1940.15%   24.71GiB / 755.1GiB   3.27%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1943.52%   24.71GiB / 755.1GiB   3.27%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1016.44%   24.65GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   906.29%   24.65GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1454.75%   24.71GiB / 755.1GiB   3.27%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1800.05%   24.71GiB / 755.1GiB   3.27%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1968.36%   24.19GiB / 755.1GiB   3.20%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1789.62%   24.28GiB / 755.1GiB   3.22%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1711.21%   24.33GiB / 755.1GiB   3.22%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1615.71%   24.37GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1382.30%   24.38GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1161.16%   24.38GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1294.76%   24.38GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1237.82%   24.38GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1252.74%   24.38GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1319.57%   24.38GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1351.93%   24.38GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1477.00%   24.38GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1364.33%   24.39GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1557.82%   24.39GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1624.39%   24.39GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1773.64%   24.34GiB / 755.1GiB   3.22%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1950.39%   24.36GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   2044.26%   24.38GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   2018.22%   24.39GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1617.68%   24.32GiB / 755.1GiB   3.22%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1644.63%   24.39GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1632.16%   24.39GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1169.63%   24.52GiB / 755.1GiB   3.25%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1182.45%   24.59GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1193.48%   24.59GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1360.59%   24.51GiB / 755.1GiB   3.25%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1353.37%   24.6GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1210.23%   24.6GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1187.13%   24.6GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1231.91%   24.6GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1242.94%   24.61GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1449.78%   24.5GiB / 755.1GiB   3.24%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1676.55%   24.61GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1637.68%   24.61GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1533.69%   24.61GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1418.38%   24.61GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1189.36%   24.61GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1227.30%   24.62GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1207.82%   24.62GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1296.19%   24.61GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1375.81%   24.03GiB / 755.1GiB   3.18%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1510.36%   23.97GiB / 755.1GiB   3.17%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1557.97%   23.94GiB / 755.1GiB   3.17%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1712.13%   24.08GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1564.08%   24.09GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1805.07%   24.09GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1457.07%   24.09GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1279.05%   24.09GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1199.85%   24.09GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1250.97%   23.95GiB / 755.1GiB   3.17%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1247.80%   24.09GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1211.25%   24.1GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1356.93%   23.95GiB / 755.1GiB   3.17%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   1186.25%   23.56GiB / 755.1GiB   3.12%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   99.89%    24.51GiB / 755.1GiB   3.25%     1.16kB / 0B   83.5GB / 164GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   100.05%   23.39GiB / 755.1GiB   3.10%     1.16kB / 0B   83.5GB / 167GB   34
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+a6ed0eb3c943   objective_varahamihira   105.48%   21.5GiB / 755.1GiB   2.85%     1.16kB / 0B   83.5GB / 167GB   34

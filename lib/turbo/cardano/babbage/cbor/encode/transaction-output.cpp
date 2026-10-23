@@ -3,7 +3,7 @@
  * Copyright (c) 2024-2026 R2 Rationality OÜ (info at r2rationality dot com)
  * License: https://github.com/r2rationality/turbocardano/blob/main/LICENSE */
 
-#include <turbo/cardano/babbage/cbor/encode/transaction-output.hpp>
+#include <turbo/cardano/common/types.hpp>
 
 namespace turbo::cardano {
     namespace {
@@ -18,13 +18,9 @@ namespace turbo::cardano {
             }
         }
 
-        template<typename DATUM_ENCODER, typename SCRIPT_ENCODER>
-        void transaction_output_to_cbor(
-            era_encoder &enc, const tx_out_data &data,
-            DATUM_ENCODER &&encode_datum, SCRIPT_ENCODER &&encode_script,
-            const bool force_map)
+        void transaction_output_to_cbor(era_encoder &enc, const tx_out_data &data)
         {
-            if (force_map || data.script_ref || (data.datum && data.datum->val.index() != 0)) {
+            if (data.script_ref || (data.datum && data.datum->val.index() != 0)) {
                 enc.map(2 + (data.datum ? 1 : 0) + (data.script_ref ? 1 : 0));
                 enc.uint(0);
                 data.addr().to_cbor(enc);
@@ -32,11 +28,11 @@ namespace turbo::cardano {
                 assets_to_cbor(enc, data);
                 if (data.datum) {
                     enc.uint(2);
-                    encode_datum(*data.datum);
+                    data.datum->to_cbor(enc);
                 }
                 if (data.script_ref) {
                     enc.uint(3);
-                    encode_script(*data.script_ref);
+                    data.script_ref->to_cbor(enc);
                 }
             } else {
                 enc.array(2 + (data.datum ? 1 : 0));
@@ -50,29 +46,6 @@ namespace turbo::cardano {
 
     void tx_out_data::to_cbor(era_encoder &enc) const
     {
-        transaction_output_to_cbor(
-            enc,
-            *this,
-            [&](const datum_option_t &datum) { datum.to_cbor(enc); },
-            [&](const script_info &script) { script.to_cbor(enc); },
-            false);
-    }
-}
-
-namespace turbo::cardano::babbage::detail {
-    void transaction_output_to_cbor_semantic(
-        era_encoder &enc, const tx_out_data &data, plutus::allocator &alloc,
-        const native_script_encoder_t encode_native)
-    {
-        transaction_output_to_cbor(
-            enc,
-            data,
-            [&](const datum_option_t &datum) {
-                datum_option_to_cbor_semantic(enc, datum, alloc);
-            },
-            [&](const script_info &script) {
-                script_info_to_cbor_semantic(enc, script, encode_native);
-            },
-            true);
+        transaction_output_to_cbor(enc, *this);
     }
 }

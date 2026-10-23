@@ -9,6 +9,7 @@
 #include <turbo/common/scheduler.hpp>
 #include <turbo/common/test.hpp>
 #include <turbo/json.hpp>
+#include <turbo/math/big-int.hpp>
 
 namespace {
     using namespace turbo;
@@ -17,7 +18,10 @@ namespace {
 
     struct reward_test_state: ledger::shelley::state {
         using state::_accounts;
+        using state::_blocks_before;
         using state::_epoch_slot;
+        using state::_go;
+        using state::_nonmyopic_next;
         using state::_potential_rewards;
         using state::_reward_pulsing_snapshot;
         using state::_rewards_ready;
@@ -108,6 +112,45 @@ suite cardano_ledger_shelley_suite = [] {
                 expect(early == normal);
                 expect(restored == normal);
                 expect(early._accounts.begin()->second.reward > 0);
+            }
+        };
+        "zero-block epochs retain pool likelihoods and repair saved updates"_test = [] {
+            cardano::config cfg { cardano::config::get() };
+            cfg.shelley_start_epoch(0);
+            for (const uint64_t major: { 2, 8 }) {
+                reward_test_state st { cfg, major };
+                st._blocks_before.clear();
+                st._epoch_slot = cfg.shelley_randomness_stabilization_window + 1;
+                rational_from_storage(st._go.pool_params.begin()->second.reward_base) = 42;
+                st.complete_pulsers();
+                expect(st._rewards_ready);
+                expect(st._potential_rewards.empty());
+                expect_equal(st._accounts.begin()->second.reward, 0);
+                expect_equal(st._nonmyopic_next.size(), 1);
+                expect_equal(st._nonmyopic_next.at(pool_hash {}).size(), 100);
+                expect(rational_from_storage(st._go.pool_params.begin()->second.reward_base) == 0);
+                st.complete_pulsers();
+                expect_equal(st.computations, 1);
+
+                // Persist the precise old bug: completed rewards, missing likelihoods.
+                const auto expected = st._nonmyopic_next;
+                st._nonmyopic_next.clear();
+                const file::tmp path { "shelley-zero-block-rewards" };
+                zpp_encoder enc {};
+                st.to_zpp(enc);
+                enc.run(scheduler::get(), "encode-zero-block-rewards");
+                enc.save(path.path(), true);
+                st._nonmyopic_next = expected;
+                reward_test_state restored { cfg, major };
+                parallel_decoder dec { path.path() };
+                restored.from_zpp(dec);
+                dec.run(scheduler::get(), "decode-zero-block-rewards");
+                expect(restored._rewards_ready);
+                expect(restored._nonmyopic_next.empty());
+                restored.complete_pulsers();
+                expect(restored == st);
+                restored.complete_pulsers();
+                expect_equal(restored.computations, 1);
             }
         };
         "an empty reward eligibility snapshot stays frozen"_test = [] {

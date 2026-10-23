@@ -1,0 +1,491 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O    PIDS
+dff81eff51c3   exciting_carson   3204.16%   4.067GiB / 251.3GiB   1.62%     646B / 0B   1.8GB / 0B   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O     PIDS
+dff81eff51c3   exciting_carson   4812.78%   4.553GiB / 251.3GiB   1.81%     736B / 0B   4.86GB / 0B   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   4809.26%   4.64GiB / 251.3GiB   1.85%     806B / 0B   7.27GB / 685MB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O      PIDS
+dff81eff51c3   exciting_carson   4787.60%   4.919GiB / 251.3GiB   1.96%     806B / 0B   11GB / 685MB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   4810.51%   6.024GiB / 251.3GiB   2.40%     806B / 0B   14.8GB / 1.77GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   4774.96%   6.781GiB / 251.3GiB   2.70%     876B / 0B   18.8GB / 1.77GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   4742.73%   8.49GiB / 251.3GiB   3.38%     876B / 0B   22.5GB / 1.77GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   4809.27%   9.98GiB / 251.3GiB   3.97%     876B / 0B   26.6GB / 1.77GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+dff81eff51c3   exciting_carson   4715.12%   10.27GiB / 251.3GiB   4.09%     876B / 0B   30GB / 1.77GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   4752.78%   10.34GiB / 251.3GiB   4.12%     876B / 0B   33.3GB / 1.77GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   4782.44%   10.76GiB / 251.3GiB   4.28%     946B / 0B   36.2GB / 1.77GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   4786.95%   10.47GiB / 251.3GiB   4.16%     946B / 0B   39.4GB / 1.77GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   4796.06%   9.766GiB / 251.3GiB   3.89%     946B / 0B   42.5GB / 1.77GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   4762.51%   9.785GiB / 251.3GiB   3.89%     946B / 0B   45.5GB / 2.23GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   4782.67%   9.837GiB / 251.3GiB   3.91%     946B / 0B   48.5GB / 2.23GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   4693.01%   9.805GiB / 251.3GiB   3.90%     946B / 0B   51.5GB / 6.74GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   4796.79%   9.892GiB / 251.3GiB   3.94%     946B / 0B   54.6GB / 6.74GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   4760.43%   9.99GiB / 251.3GiB   3.98%     946B / 0B   57.4GB / 10.2GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   4796.31%   9.541GiB / 251.3GiB   3.80%     946B / 0B   60.2GB / 13.5GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   4779.67%   10.73GiB / 251.3GiB   4.27%     946B / 0B   63.1GB / 13.5GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   4741.89%   10.73GiB / 251.3GiB   4.27%     946B / 0B   65.9GB / 21.5GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   4772.86%   10.7GiB / 251.3GiB   4.26%     1.02kB / 0B   68.4GB / 21.5GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   4772.68%   9.656GiB / 251.3GiB   3.84%     1.02kB / 0B   70.9GB / 27.8GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   4807.98%   10.11GiB / 251.3GiB   4.02%     1.02kB / 0B   73.7GB / 27.8GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   4754.69%   11.72GiB / 251.3GiB   4.66%     1.02kB / 0B   76.5GB / 33.4GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   4766.87%   11.32GiB / 251.3GiB   4.50%     1.02kB / 0B   79.1GB / 33.4GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   3678.99%   10.48GiB / 251.3GiB   4.17%     1.02kB / 0B   79.2GB / 38.3GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   3447.59%   11.43GiB / 251.3GiB   4.55%     1.02kB / 0B   79.2GB / 38.3GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   3185.31%   12.19GiB / 251.3GiB   4.85%     1.02kB / 0B   79.2GB / 43.4GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   3562.01%   13.34GiB / 251.3GiB   5.31%     1.02kB / 0B   79.2GB / 43.4GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   3688.32%   14.88GiB / 251.3GiB   5.92%     1.02kB / 0B   79.2GB / 44.5GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   3860.07%   16.74GiB / 251.3GiB   6.66%     1.02kB / 0B   79.2GB / 48.3GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   3875.41%   18.79GiB / 251.3GiB   7.48%     1.02kB / 0B   79.2GB / 48.3GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   99.78%    19.69GiB / 251.3GiB   7.84%     1.02kB / 0B   79.2GB / 52.6GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   99.71%    19.55GiB / 251.3GiB   7.78%     1.02kB / 0B   79.2GB / 52.6GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   99.79%    19.39GiB / 251.3GiB   7.71%     1.02kB / 0B   79.2GB / 56.7GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   100.18%   19.2GiB / 251.3GiB   7.64%     1.02kB / 0B   79.2GB / 56.7GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   100.07%   19.04GiB / 251.3GiB   7.58%     1.02kB / 0B   79.2GB / 60.9GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   99.75%    18.87GiB / 251.3GiB   7.51%     1.02kB / 0B   79.2GB / 60.9GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   99.94%    18.68GiB / 251.3GiB   7.43%     1.02kB / 0B   79.2GB / 72.3GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+dff81eff51c3   exciting_carson   100.23%   18.51GiB / 251.3GiB   7.36%     1.02kB / 0B   79.2GB / 75GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+dff81eff51c3   exciting_carson   99.81%    18.33GiB / 251.3GiB   7.30%     1.02kB / 0B   79.2GB / 75GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   99.82%    18.16GiB / 251.3GiB   7.23%     1.02kB / 0B   79.2GB / 88.3GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   100.06%   17.93GiB / 251.3GiB   7.14%     1.02kB / 0B   79.2GB / 88.3GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+dff81eff51c3   exciting_carson   100.12%   17.72GiB / 251.3GiB   7.05%     1.02kB / 0B   79.2GB / 97.2GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   100.10%   17.53GiB / 251.3GiB   6.97%     1.02kB / 0B   79.2GB / 100GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   100.11%   17.3GiB / 251.3GiB   6.88%     1.09kB / 0B   79.2GB / 100GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   99.78%    17.08GiB / 251.3GiB   6.80%     1.09kB / 0B   79.2GB / 102GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   99.72%    16.86GiB / 251.3GiB   6.71%     1.09kB / 0B   79.2GB / 102GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   99.68%    16.65GiB / 251.3GiB   6.63%     1.09kB / 0B   79.2GB / 102GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   2696.53%   11.51GiB / 251.3GiB   4.58%     1.09kB / 0B   79.2GB / 102GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   2656.38%   11.56GiB / 251.3GiB   4.60%     1.09kB / 0B   79.2GB / 102GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   4048.24%   11.52GiB / 251.3GiB   4.58%     1.09kB / 0B   79.2GB / 102GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   3890.10%   11.55GiB / 251.3GiB   4.60%     1.09kB / 0B   79.2GB / 102GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   3996.15%   11.52GiB / 251.3GiB   4.58%     1.09kB / 0B   79.2GB / 102GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   3838.92%   11.56GiB / 251.3GiB   4.60%     1.09kB / 0B   79.2GB / 102GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   3055.53%   11.5GiB / 251.3GiB   4.58%     1.09kB / 0B   79.2GB / 102GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   3123.10%   11.44GiB / 251.3GiB   4.55%     1.09kB / 0B   79.2GB / 102GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   3259.39%   11.36GiB / 251.3GiB   4.52%     1.09kB / 0B   79.2GB / 102GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   3690.31%   11.28GiB / 251.3GiB   4.49%     1.09kB / 0B   79.2GB / 102GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   2975.83%   10.93GiB / 251.3GiB   4.35%     1.09kB / 0B   79.2GB / 102GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   4282.02%   11.15GiB / 251.3GiB   4.44%     1.09kB / 0B   79.2GB / 102GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   4270.59%   12.56GiB / 251.3GiB   5.00%     1.09kB / 0B   79.2GB / 102GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   3703.70%   13.16GiB / 251.3GiB   5.24%     1.09kB / 0B   79.2GB / 109GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   3314.55%   13.23GiB / 251.3GiB   5.26%     1.09kB / 0B   79.2GB / 109GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   4741.30%   13.23GiB / 251.3GiB   5.26%     1.09kB / 0B   79.2GB / 118GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   4819.06%   13.23GiB / 251.3GiB   5.26%     1.09kB / 0B   79.2GB / 118GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   4659.52%   13.23GiB / 251.3GiB   5.26%     1.09kB / 0B   79.2GB / 128GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   4778.90%   13.23GiB / 251.3GiB   5.26%     1.09kB / 0B   79.2GB / 128GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   4687.08%   13.23GiB / 251.3GiB   5.26%     1.09kB / 0B   79.2GB / 135GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   4818.35%   13.23GiB / 251.3GiB   5.26%     1.09kB / 0B   79.2GB / 135GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   4754.08%   13.23GiB / 251.3GiB   5.26%     1.09kB / 0B   79.2GB / 140GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   4725.04%   13.23GiB / 251.3GiB   5.26%     1.09kB / 0B   79.2GB / 144GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   4776.31%   13.23GiB / 251.3GiB   5.26%     1.09kB / 0B   79.2GB / 145GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   4760.60%   13.23GiB / 251.3GiB   5.26%     1.09kB / 0B   79.2GB / 145GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   4686.73%   13.25GiB / 251.3GiB   5.27%     1.09kB / 0B   79.2GB / 150GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   2226.47%   13.28GiB / 251.3GiB   5.28%     1.09kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1919.46%   13.32GiB / 251.3GiB   5.30%     1.09kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1878.42%   13.37GiB / 251.3GiB   5.32%     1.09kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1467.48%   13.43GiB / 251.3GiB   5.34%     1.09kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1803.03%   13.45GiB / 251.3GiB   5.35%     1.09kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   2030.91%   13.51GiB / 251.3GiB   5.38%     1.09kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1713.10%   13.58GiB / 251.3GiB   5.40%     1.09kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1200.79%   13.61GiB / 251.3GiB   5.42%     1.09kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1234.41%   13.68GiB / 251.3GiB   5.44%     1.09kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1103.23%   13.74GiB / 251.3GiB   5.47%     1.09kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   2062.17%   13.77GiB / 251.3GiB   5.48%     1.09kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   932.76%   13.84GiB / 251.3GiB   5.51%     1.09kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1349.74%   13.9GiB / 251.3GiB   5.53%     1.09kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1484.06%   13.93GiB / 251.3GiB   5.54%     1.09kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1168.17%   13.94GiB / 251.3GiB   5.55%     1.09kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   944.92%   13.99GiB / 251.3GiB   5.57%     1.09kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1871.55%   14.03GiB / 251.3GiB   5.58%     1.09kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   170.02%   14.05GiB / 251.3GiB   5.59%     1.09kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1294.42%   14.09GiB / 251.3GiB   5.61%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1682.49%   14.08GiB / 251.3GiB   5.60%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   111.03%   14.09GiB / 251.3GiB   5.61%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1230.60%   14.1GiB / 251.3GiB   5.61%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1776.76%   14.14GiB / 251.3GiB   5.62%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   305.77%   14.17GiB / 251.3GiB   5.64%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   760.32%   14.17GiB / 251.3GiB   5.64%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1643.02%   14.18GiB / 251.3GiB   5.64%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1756.98%   14.19GiB / 251.3GiB   5.64%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1038.29%   14.11GiB / 251.3GiB   5.61%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   99.90%    14.19GiB / 251.3GiB   5.65%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   657.20%   14.2GiB / 251.3GiB   5.65%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1363.03%   14.2GiB / 251.3GiB   5.65%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   2127.48%   14.21GiB / 251.3GiB   5.65%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1735.40%   14.21GiB / 251.3GiB   5.65%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1235.71%   14.14GiB / 251.3GiB   5.62%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   229.92%   14.14GiB / 251.3GiB   5.63%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   119.23%   14.22GiB / 251.3GiB   5.66%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   509.26%   14.22GiB / 251.3GiB   5.66%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1045.65%   14.23GiB / 251.3GiB   5.66%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1330.71%   14.23GiB / 251.3GiB   5.66%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1736.48%   14.25GiB / 251.3GiB   5.67%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1080.68%   14.26GiB / 251.3GiB   5.68%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   792.89%   14.27GiB / 251.3GiB   5.68%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1038.96%   14.29GiB / 251.3GiB   5.69%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1192.21%   14.3GiB / 251.3GiB   5.69%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1326.86%   14.3GiB / 251.3GiB   5.69%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1576.50%   14.3GiB / 251.3GiB   5.69%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1344.95%   14.31GiB / 251.3GiB   5.69%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1378.62%   14.31GiB / 251.3GiB   5.69%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1398.68%   14.31GiB / 251.3GiB   5.69%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1415.29%   14.31GiB / 251.3GiB   5.69%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1549.05%   14.31GiB / 251.3GiB   5.70%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1643.22%   14.31GiB / 251.3GiB   5.70%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1663.58%   14.31GiB / 251.3GiB   5.70%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1669.31%   14.31GiB / 251.3GiB   5.70%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1617.75%   14.31GiB / 251.3GiB   5.70%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1927.03%   14.32GiB / 251.3GiB   5.70%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   2149.03%   14.32GiB / 251.3GiB   5.70%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   2135.37%   14.32GiB / 251.3GiB   5.70%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   2180.09%   14.32GiB / 251.3GiB   5.70%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   2141.54%   14.32GiB / 251.3GiB   5.70%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   2165.38%   14.32GiB / 251.3GiB   5.70%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   2177.03%   14.32GiB / 251.3GiB   5.70%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   2126.46%   14.33GiB / 251.3GiB   5.70%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   2091.18%   14.33GiB / 251.3GiB   5.70%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   2056.52%   14.33GiB / 251.3GiB   5.70%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1961.63%   14.33GiB / 251.3GiB   5.70%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1865.77%   14.33GiB / 251.3GiB   5.70%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1708.76%   14.33GiB / 251.3GiB   5.70%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1628.13%   14.33GiB / 251.3GiB   5.70%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1262.88%   14.33GiB / 251.3GiB   5.70%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1167.57%   14.16GiB / 251.3GiB   5.63%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1034.08%   14.22GiB / 251.3GiB   5.66%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   678.50%   14.21GiB / 251.3GiB   5.65%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   143.33%   14.23GiB / 251.3GiB   5.66%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   106.37%   14.27GiB / 251.3GiB   5.68%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   99.79%    14.27GiB / 251.3GiB   5.68%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   99.90%    14.3GiB / 251.3GiB   5.69%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   99.88%    14.34GiB / 251.3GiB   5.71%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   99.77%    14.34GiB / 251.3GiB   5.71%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   99.77%    14.34GiB / 251.3GiB   5.71%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   100.13%   14.34GiB / 251.3GiB   5.71%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   100.23%   14.34GiB / 251.3GiB   5.71%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   100.21%   14.34GiB / 251.3GiB   5.71%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   189.28%   14.34GiB / 251.3GiB   5.71%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   249.23%   14.34GiB / 251.3GiB   5.71%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   322.71%   14.34GiB / 251.3GiB   5.71%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   486.40%   14.34GiB / 251.3GiB   5.71%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   566.81%   14.34GiB / 251.3GiB   5.71%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   604.42%   14.34GiB / 251.3GiB   5.71%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   742.40%   14.35GiB / 251.3GiB   5.71%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1426.65%   14.35GiB / 251.3GiB   5.71%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   124.05%   14.31GiB / 251.3GiB   5.70%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   381.77%   14.35GiB / 251.3GiB   5.71%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1408.20%   14.35GiB / 251.3GiB   5.71%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   315.37%   14.24GiB / 251.3GiB   5.67%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   258.74%   14.35GiB / 251.3GiB   5.71%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1365.90%   14.35GiB / 251.3GiB   5.71%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1253.14%   14.18GiB / 251.3GiB   5.64%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   99.73%    14.36GiB / 251.3GiB   5.71%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   453.71%   14.36GiB / 251.3GiB   5.71%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1394.64%   14.36GiB / 251.3GiB   5.72%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   250.86%   14.25GiB / 251.3GiB   5.67%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   100.23%   14.37GiB / 251.3GiB   5.72%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1327.46%   14.37GiB / 251.3GiB   5.72%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1430.97%   14.37GiB / 251.3GiB   5.72%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   100.51%   14.33GiB / 251.3GiB   5.70%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   100.30%   14.42GiB / 251.3GiB   5.74%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1316.07%   14.43GiB / 251.3GiB   5.74%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1405.15%   14.43GiB / 251.3GiB   5.74%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   108.43%   14.33GiB / 251.3GiB   5.70%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   99.79%    14.43GiB / 251.3GiB   5.74%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1418.66%   14.43GiB / 251.3GiB   5.74%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1381.77%   14.24GiB / 251.3GiB   5.67%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   100.13%   14.38GiB / 251.3GiB   5.72%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   347.83%   14.43GiB / 251.3GiB   5.74%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1410.01%   14.43GiB / 251.3GiB   5.74%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1081.07%   14.29GiB / 251.3GiB   5.69%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   100.17%   14.43GiB / 251.3GiB   5.74%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   667.08%   14.44GiB / 251.3GiB   5.74%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1445.53%   14.44GiB / 251.3GiB   5.74%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   350.77%   14.32GiB / 251.3GiB   5.70%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   99.81%    14.44GiB / 251.3GiB   5.74%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1327.46%   14.44GiB / 251.3GiB   5.75%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1416.37%   14.44GiB / 251.3GiB   5.75%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   175.63%   14.33GiB / 251.3GiB   5.70%     1.16kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   100.25%   14.44GiB / 251.3GiB   5.75%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1400.75%   14.44GiB / 251.3GiB   5.75%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1423.42%   14.25GiB / 251.3GiB   5.67%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   106.88%   14.35GiB / 251.3GiB   5.71%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   100.17%   14.44GiB / 251.3GiB   5.75%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1385.63%   14.44GiB / 251.3GiB   5.75%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1443.81%   14.45GiB / 251.3GiB   5.75%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   260.96%   14.32GiB / 251.3GiB   5.70%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   100.32%   14.45GiB / 251.3GiB   5.75%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1203.76%   14.45GiB / 251.3GiB   5.75%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1413.68%   14.45GiB / 251.3GiB   5.75%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   348.69%   14.33GiB / 251.3GiB   5.70%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   99.86%    14.45GiB / 251.3GiB   5.75%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1203.60%   14.45GiB / 251.3GiB   5.75%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1432.64%   14.45GiB / 251.3GiB   5.75%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   171.24%   14.33GiB / 251.3GiB   5.70%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   99.85%    14.45GiB / 251.3GiB   5.75%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1381.08%   14.45GiB / 251.3GiB   5.75%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1449.39%   14.26GiB / 251.3GiB   5.68%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   123.95%   14.37GiB / 251.3GiB   5.72%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   100.19%   14.46GiB / 251.3GiB   5.75%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1268.50%   14.46GiB / 251.3GiB   5.75%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1426.56%   14.46GiB / 251.3GiB   5.75%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   387.59%   14.33GiB / 251.3GiB   5.70%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   100.28%   14.46GiB / 251.3GiB   5.75%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   628.77%   14.46GiB / 251.3GiB   5.75%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1437.12%   14.46GiB / 251.3GiB   5.75%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1223.99%   14.29GiB / 251.3GiB   5.69%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   99.87%    14.38GiB / 251.3GiB   5.72%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   99.73%    14.46GiB / 251.3GiB   5.75%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   932.37%   14.46GiB / 251.3GiB   5.76%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1440.33%   14.46GiB / 251.3GiB   5.76%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1175.90%   14.3GiB / 251.3GiB   5.69%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   100.16%   14.37GiB / 251.3GiB   5.72%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   100.17%   14.47GiB / 251.3GiB   5.76%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   489.93%   14.47GiB / 251.3GiB   5.76%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1529.55%   14.47GiB / 251.3GiB   5.76%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1469.23%   14.47GiB / 251.3GiB   5.76%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   263.19%   14.34GiB / 251.3GiB   5.71%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   99.79%    14.47GiB / 251.3GiB   5.76%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   304.04%   14.47GiB / 251.3GiB   5.76%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   1423.76%   14.47GiB / 251.3GiB   5.76%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+dff81eff51c3   exciting_carson   501.59%   14.36GiB / 251.3GiB   5.71%     1.23kB / 0B   79.2GB / 152GB   50
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS

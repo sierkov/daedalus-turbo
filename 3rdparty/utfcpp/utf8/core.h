@@ -101,17 +101,20 @@ namespace internal
 
     inline bool is_lead_surrogate(utfchar32_t cp)
     {
-        return (cp >= LEAD_SURROGATE_MIN && cp <= LEAD_SURROGATE_MAX);
+        return (cp >= static_cast<utfchar32_t>(LEAD_SURROGATE_MIN) &&
+                cp <= static_cast<utfchar32_t>(LEAD_SURROGATE_MAX));
     }
 
     inline bool is_trail_surrogate(utfchar32_t cp)
     {
-        return (cp >= TRAIL_SURROGATE_MIN && cp <= TRAIL_SURROGATE_MAX);
+        return (cp >= static_cast<utfchar32_t>(TRAIL_SURROGATE_MIN) &&
+                cp <= static_cast<utfchar32_t>(TRAIL_SURROGATE_MAX));
     }
 
     inline bool is_surrogate(utfchar32_t cp)
     {
-        return (cp >= LEAD_SURROGATE_MIN && cp <= TRAIL_SURROGATE_MAX);
+        return (cp >= static_cast<utfchar32_t>(LEAD_SURROGATE_MIN) &&
+                cp <= static_cast<utfchar32_t>(TRAIL_SURROGATE_MAX));
     }
 
     inline bool is_code_point_valid(utfchar32_t cp)
@@ -181,7 +184,7 @@ namespace internal
         if (it == end)
             return NOT_ENOUGH_ROOM;
 
-        code_point = utf8::internal::mask8(*it);
+        code_point = static_cast<utfchar32_t>(utf8::internal::mask8(*it));
 
         return UTF8_OK;
     }
@@ -192,7 +195,7 @@ namespace internal
         if (it == end) 
             return NOT_ENOUGH_ROOM;
 
-        code_point = utf8::internal::mask8(*it);
+        code_point = static_cast<utfchar32_t>(utf8::internal::mask8(*it));
 
         UTF8_CPP_INCREASE_AND_RETURN_ON_ERROR(it, end)
 
@@ -207,7 +210,7 @@ namespace internal
         if (it == end)
             return NOT_ENOUGH_ROOM;
             
-        code_point = utf8::internal::mask8(*it);
+        code_point = static_cast<utfchar32_t>(utf8::internal::mask8(*it));
 
         UTF8_CPP_INCREASE_AND_RETURN_ON_ERROR(it, end)
 
@@ -215,7 +218,7 @@ namespace internal
 
         UTF8_CPP_INCREASE_AND_RETURN_ON_ERROR(it, end)
 
-        code_point += (*it) & 0x3f;
+        code_point = static_cast<utfchar32_t>(code_point + ((*it) & 0x3f));
 
         return UTF8_OK;
     }
@@ -226,7 +229,7 @@ namespace internal
         if (it == end)
            return NOT_ENOUGH_ROOM;
 
-        code_point = utf8::internal::mask8(*it);
+        code_point = static_cast<utfchar32_t>(utf8::internal::mask8(*it));
 
         UTF8_CPP_INCREASE_AND_RETURN_ON_ERROR(it, end)
 
@@ -234,11 +237,11 @@ namespace internal
 
         UTF8_CPP_INCREASE_AND_RETURN_ON_ERROR(it, end)
 
-        code_point += (utf8::internal::mask8(*it) << 6) & 0xfff;
+        code_point = static_cast<utfchar32_t>(code_point + ((utf8::internal::mask8(*it) << 6) & 0xfff));
 
         UTF8_CPP_INCREASE_AND_RETURN_ON_ERROR(it, end)
 
-        code_point += (*it) & 0x3f;
+        code_point = static_cast<utfchar32_t>(code_point + ((*it) & 0x3f));
 
         return UTF8_OK;
     }

@@ -5,6 +5,16 @@
 #include <turbo/cardano/dijkstra/transaction.hpp>
 
 namespace turbo::cardano::dijkstra {
+    ex_units ex_units::from_cbor(cbor::zero2::value &v)
+    {
+        return { cardano::ex_units::from_cbor(v.array()) };
+    }
+
+    ex_unit_prices ex_unit_prices::from_cbor(cbor::zero2::value &v)
+    {
+        return { cardano::ex_unit_prices::from_cbor(v.array()) };
+    }
+
     namespace {
         rational_u64 interval_from_cbor(cbor::zero2::value &v, const bool unit, const bool positive_numerator)
         {

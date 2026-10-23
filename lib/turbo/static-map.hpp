@@ -65,10 +65,8 @@ namespace turbo {
             _data.clear();
             _data.reserve(src.size());
             // relies on the fact that partitioned_map keeps elements in a sorted order, so there no need to re-sort the data for binary search
-            for (size_t part_idx = 0; part_idx < src.num_parts; ++part_idx) {
-                for (const auto &[k, v]: src.partition(part_idx))
-                    _data.emplace_back(k, v);
-            }
+            for (const auto &[k, v]: src)
+                _data.emplace_back(k, v);
             return *this;
         }
 

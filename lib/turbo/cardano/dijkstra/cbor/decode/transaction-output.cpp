@@ -12,7 +12,7 @@ namespace turbo::cardano::dijkstra {
             auto &it = v.array();
             auto address = it.read().bytes();
             auto value = value_t::from_cbor(it.read()).value;
-            std::optional<datum_option_t> datum {};
+            decltype(tx_out_data::datum) datum {};
             if (!it.done())
                 datum.emplace(datum_hash { it.read().bytes() });
             if (!it.done()) [[unlikely]]
@@ -25,7 +25,7 @@ namespace turbo::cardano::dijkstra {
     {
         if (v.type() == cbor::major_type::array)
             return from_array(v);
-        return { babbage::detail::transaction_output_map_from_cbor(
+        return { babbage::detail::transaction_output_map_from_cbor<datum_option_t>(
             v,
             [](auto &value) { return std::move(value_t::from_cbor(value).value); },
             [](auto &script) { return std::move(script_t::from_cbor(script).value); }) };

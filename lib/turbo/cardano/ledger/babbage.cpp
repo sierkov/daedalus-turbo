@@ -15,12 +15,16 @@ namespace turbo::cardano::ledger::babbage {
     {
         auto &vit = v.array();
         auto &raw = vit.skip(1).read();
+        const bool has_previous_nonce = raw.special_uint() == 8;
         auto &rit = raw.array();
         _slot_last = rit.read().array().skip(1).read().uint();
         _kes_counters = decltype(_kes_counters)::from_cbor(rit.read());
         _nonce_evolving = rit.read().at(1).bytes();
         _nonce_candidate =rit.read().at(1).bytes();
         _nonce_epoch = rit.read().at(1).bytes();
+        _nonce_previous_epoch.reset();
+        if (has_previous_nonce)
+            _nonce_previous_epoch.emplace(rit.read().at(1).bytes());
         _lab_prev_hash = rit.read().at(1).bytes();
         _prev_epoch_lab_prev_hash = decltype(_prev_epoch_lab_prev_hash)::from_cbor(rit.read());
     }

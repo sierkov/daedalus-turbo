@@ -300,15 +300,15 @@ namespace turbo::cardano::ledger::conway {
         void _prune_committee_hot_keys();
         void _process_tx_prelude(const index::timed_update::conway_tx_prelude &, const cert_loc_t &);
 
-        void _account_to_cbor(const account_info &acc, era_encoder &enc) const override;
+        void _account_to_cbor(const account_info &acc, era_encoder &enc, node_format format) const override;
         void _delegation_gov_to_cbor(era_encoder &enc) const override;
         void _donations_to_cbor(era_encoder &) const override;
         void _decode_donations(cbor::zero2::value &) override;
         void _decode_protocol_state(cbor::zero2::value &) override;
         void _parse_protocol_params(protocol_params &, cbor::zero2::value &) const override;
-        void _params_to_cbor(era_encoder &enc, const protocol_params &params) const override;
-        void _protocol_state_to_cbor(era_encoder &) const override;
-        void _stake_pointers_to_cbor(era_encoder &) const override;
+        void _params_to_cbor(era_encoder &enc, const protocol_params &params, node_format format) const override;
+        void _protocol_state_to_cbor(era_encoder &, node_format format) const override;
+        void _stake_pointers_to_cbor(era_encoder &, node_format format) const override;
         void _stake_pointer_stake_to_cbor(era_encoder &) const override;
 
         void _process_block_updates(block_update_list &&) override;

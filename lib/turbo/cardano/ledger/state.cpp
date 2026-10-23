@@ -6,10 +6,12 @@
 #include <turbo/cardano/ledger/babbage.hpp>
 #include <turbo/cardano/ledger/conway.hpp>
 #include <turbo/cardano/ledger/state.hpp>
+#include <turbo/cardano/ledger/node-snapshot.hpp>
 #include <turbo/cardano/ledger/updates.hpp>
 #include <turbo/common/progress.hpp>
 #include <turbo/common/scheduler.hpp>
 #include <turbo/common/timer.hpp>
+#include <turbo/crypto/crc32.hpp>
 #include <turbo/zpp.hpp>
 
 // Disable a windows macro
@@ -92,11 +94,31 @@ namespace turbo::cardano::ledger {
         return deserialize_node(buf);
     }
 
-    void state::save_node(const std::string &path, const point &tip, const int prio)
+    void state::save_node(const std::string &path, const point &tip, const int prio, const node_format format)
     {
-        const auto ser = to_cbor(tip, prio);
+        if (format == node_format::v11_1_3 && std::filesystem::exists(path))
+            throw error(fmt::format("snapshot output already exists: {}", path));
+        const auto ser = to_cbor(tip, prio, format);
         timer t { "write the serialized node state to a file", logger::level::info };
-        ser.save(path, false);
+        if (format == node_format::legacy) {
+            ser.save(path, false);
+        } else {
+            const std::filesystem::path dir { path };
+            // Preserve an earlier diagnostic artifact until explicitly removed.
+            if (!std::filesystem::create_directory(dir))
+                throw error(fmt::format("snapshot output already exists: {}", path));
+            file::write_stream out { (dir / "state").string(), 1024 * 1024 };
+            CRC32 crc;
+            ser.for_each_buffer([&](const buffer b) {
+                out.write(b);
+                crc.add(b.data(), b.size());
+            });
+            out.close();
+            uint32_t state_crc;
+            crc.getHash(&state_crc);
+            const auto tables_crc = node_snapshot::write_tables(dir / "tables", utxos());
+            node_snapshot::write_meta(dir, state_crc, tables_crc);
+        }
         progress::get().update("ledger-export", 1, 1);
     }
 

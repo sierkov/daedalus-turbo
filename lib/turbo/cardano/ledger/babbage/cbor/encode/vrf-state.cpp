@@ -6,15 +6,16 @@
 #include <turbo/cardano/ledger/babbage.hpp>
 
 namespace turbo::cardano::ledger::babbage {
-    void vrf_state::to_cbor(cbor_encoder &ser) const
+    void vrf_state::to_cbor(cbor_encoder &ser, const node_format format) const
     {
-        ser.add([&](auto enc) {
+        if (format == node_format::v11_1_3 && !_nonce_previous_epoch)
+            throw error("previous epoch nonce is missing from this old snapshot; replay from the preceding epoch");
+        ser.add([this, format](auto enc) {
             enc.array(2)
                 .uint(0)
-                .array(7)
-                    .array(2)
-                        .uint(1)
-                        .uint(_slot_last)
+                .array(format == node_format::v11_1_3 ? 8 : 7)
+                    // Praos uses Serialise WithOrigin: [1, slot], unlike TPraos.
+                    .array(2).uint(1).uint(_slot_last)
                     .custom([this] (auto &enc) {
                         enc.map(_kes_counters.size());
                         for (const auto &[pool_id, cnt]: _kes_counters) {
@@ -31,6 +32,10 @@ namespace turbo::cardano::ledger::babbage {
                     .array(2)
                         .uint(1)
                         .bytes(_nonce_epoch)
+                    .custom([this, format](auto &enc) {
+                        if (format == node_format::v11_1_3)
+                            enc.array(2).uint(1).bytes(*_nonce_previous_epoch);
+                    })
                     .array(2)
                         .uint(1)
                         .bytes(_lab_prev_hash)
@@ -47,4 +52,3 @@ namespace turbo::cardano::ledger::babbage {
         });
     }
 }
-

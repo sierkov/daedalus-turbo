@@ -5,6 +5,7 @@
 //
 
 #include "crc32.h"
+#include "unaligned.h"
 
 // big endian architectures need #define __BYTE_ORDER __BIG_ENDIAN
 #if !defined(_MSC_VER) && !defined(__APPLE__)
@@ -340,15 +341,15 @@ namespace
 /// add arbitrary number of bytes
 void CRC32::add(const void* data, size_t numBytes)
 {
-  uint32_t* current = (uint32_t*) data;
+  const uint8_t* current = (const uint8_t*) data;
   uint32_t crc = ~m_hash;
 
   // process eight bytes at once
   while (numBytes >= 8)
   {
 #if defined(__BYTE_ORDER) && (__BYTE_ORDER != 0) && (__BYTE_ORDER == __BIG_ENDIAN)
-    uint32_t one = *current++ ^ swap(crc);
-    uint32_t two = *current++;
+    uint32_t one = hash_library_detail::loadUnaligned<uint32_t>(current) ^ swap(crc);
+    uint32_t two = hash_library_detail::loadUnaligned<uint32_t>(current + sizeof(uint32_t));
     crc  = crc32Lookup[7][ one>>24        ] ^
            crc32Lookup[6][(one>>16) & 0xFF] ^
            crc32Lookup[5][(one>> 8) & 0xFF] ^
@@ -358,8 +359,8 @@ void CRC32::add(const void* data, size_t numBytes)
            crc32Lookup[1][(two>> 8) & 0xFF] ^
            crc32Lookup[0][ two      & 0xFF];
 #else
-    uint32_t one = *current++ ^ crc;
-    uint32_t two = *current++;
+    uint32_t one = hash_library_detail::loadUnaligned<uint32_t>(current) ^ crc;
+    uint32_t two = hash_library_detail::loadUnaligned<uint32_t>(current + sizeof(uint32_t));
     crc  = crc32Lookup[7][ one      & 0xFF] ^
            crc32Lookup[6][(one>> 8) & 0xFF] ^
            crc32Lookup[5][(one>>16) & 0xFF] ^
@@ -369,13 +370,13 @@ void CRC32::add(const void* data, size_t numBytes)
            crc32Lookup[1][(two>>16) & 0xFF] ^
            crc32Lookup[0][ two>>24        ];
 #endif
+    current += 2 * sizeof(uint32_t);
     numBytes -= 8;
   }
 
-  unsigned char* currentChar = (unsigned char*) current;
   // remaining 1 to 7 bytes (standard CRC table-based algorithm)
   while (numBytes--)
-    crc = (crc >> 8) ^ crc32Lookup[0][(crc & 0xFF) ^ *currentChar++];
+    crc = (crc >> 8) ^ crc32Lookup[0][(crc & 0xFF) ^ *current++];
 
   m_hash = ~crc;
 }

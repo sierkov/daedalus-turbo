@@ -13,7 +13,6 @@
 !test/
 !test/**
 !CMakeLists.txt
-!docker-dev.sh
 !docker-test.sh
 
 # Exclude Git metadata, including submodule .git files.

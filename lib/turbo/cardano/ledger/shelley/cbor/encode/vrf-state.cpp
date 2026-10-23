@@ -7,15 +7,19 @@
 #include <turbo/cardano/ledger/shelley.hpp>
 
 namespace turbo::cardano::ledger::shelley {
-    void vrf_state::to_cbor(cbor_encoder &ser) const
+    void vrf_state::to_cbor(cbor_encoder &ser, const node_format format) const
     {
-        ser.add([&](auto enc) {
+        ser.add([this, format](auto enc) {
             enc.array(2)
                 .uint(1)
                 .array(2)
-                    .array(2)
-                        .uint(1)
-                        .uint(_slot_last)
+                    .custom([this, format](auto &enc) {
+                        if (format == node_format::v11_1_3)
+                            enc.array(1);
+                        else
+                            enc.array(2).uint(1);
+                        enc.uint(_slot_last);
+                    })
                     .array(3)
                         .array(3)
                             .custom([this] (auto &enc) {
@@ -51,4 +55,3 @@ namespace turbo::cardano::ledger::shelley {
         });
     }
 }
-

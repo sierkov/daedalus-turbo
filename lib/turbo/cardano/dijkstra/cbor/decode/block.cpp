@@ -35,8 +35,11 @@ namespace turbo::cardano::dijkstra {
     leios_certificate_t leios_certificate_t::from_cbor(cbor::zero2::value &v)
     {
         auto &it = v.array();
+        const auto signers = it.read().bytes();
+        if (signers.size() > 8192) [[unlikely]]
+            throw error("Leios signer bitfield cannot exceed 8192 bytes");
         leios_certificate_t res {
-            it.read().bytes(),
+            signers,
             it.read().bytes()
         };
         if (!it.done()) [[unlikely]]

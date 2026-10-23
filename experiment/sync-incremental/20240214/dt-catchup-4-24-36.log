@@ -1,0 +1,64 @@
+[2024-02-14 18:25:53 +01:00] [1:1] [dt] [debug] run sync-http
+[2024-02-14 18:25:53 +01:00] [1:1] [dt] [debug] detected CPU cores: 48
+[2024-02-14 18:25:53 +01:00] [1:1] [dt] [debug] detected physical RAM: 257341 MiB
+[2024-02-14 18:25:53 +01:00] [1:1] [dt] [debug] storage capacity: 3779046793216 free: 3698129260544 available: 3506087706624 checked: 3265 GiB
+[2024-02-14 18:25:53 +01:00] [1:1] [dt] [info] scheduler started, worker count: 24
+[2024-02-14 18:25:53 +01:00] [1:1] [dt] [trace] before RLIMIT_NOFILE to cur: 1048576 max: 1048576
+[2024-02-14 18:25:53 +01:00] [1:1] [dt] [info] chunk_registry has data up to offset 136706595920
+[2024-02-14 18:25:53 +01:00] [1:1] [dt] [debug] timer 'chunk-registry load state from /data/cardano/compressed/state.json' finished in 0.107 secs
+[2024-02-14 18:25:53 +01:00] [1:1] [dt] [info] indices have data up to offset 136706595920
+[2024-02-14 18:25:56 +01:00] [1:1] [dt] [info] validator snapshot has data up to offset: 136706595920
+[2024-02-14 18:25:56 +01:00] [1:1] [dt] [debug] scheduler process_ok started tasks: 0
+[2024-02-14 18:25:56 +01:00] [1:1] [dt] [debug] scheduler process_ok done remaining tasks: 0 success: true
+[2024-02-14 18:25:56 +01:00] [1:1] [dt] [debug] timer 'truncate indices to max offset 136706595920' finished in 0.000 secs
+[2024-02-14 18:25:56 +01:00] [1:1] [dt] [debug] timer 'validator::truncate' finished in 0.000 secs
+[2024-02-14 18:25:56 +01:00] [1:1] [dt] [debug] chunk-registry data size: 136706595920 num chunks: 4648 num deletable chunks: 0
+[2024-02-14 18:25:56 +01:00] [1:1] [dt] [trace] timer 'chunk-registry init state' finished in 3.552 secs
+[2024-02-14 18:25:56 +01:00] [1:1] [dt] [trace] progress download: 0.000%
+[2024-02-14 18:25:56 +01:00] [1:1] [dt] [trace] progress parse: 0.000%
+[2024-02-14 18:25:56 +01:00] [1:1] [dt] [trace] progress merge: 0.000%
+[2024-02-14 18:25:56 +01:00] [1:34] [dt] [debug] download_queue::_take_request begin wait for the mutex
+[2024-02-14 18:25:56 +01:00] [1:34] [dt] [debug] download_queue::_take_request released mutex and returning: true
+[2024-02-14 18:25:56 +01:00] [1:34] [dt] [trace] http://turbo1.daedalusturbo.org/chain.json: resolving turbo1.daedalusturbo.org:
+[2024-02-14 18:25:56 +01:00] [1:34] [dt] [trace] created new connection instance use_count: 2
+[2024-02-14 18:25:56 +01:00] [1:34] [dt] [trace] http://turbo1.daedalusturbo.org/chain.json: connecting to turbo1.daedalusturbo.org:
+[2024-02-14 18:25:56 +01:00] [1:34] [dt] [trace] http://turbo1.daedalusturbo.org/chain.json: sending HTTP request
+[2024-02-14 18:25:56 +01:00] [1:34] [dt] [trace] http://turbo1.daedalusturbo.org/chain.json: waiting for HTTP response
+[2024-02-14 18:25:56 +01:00] [1:34] [dt] [trace] downloaded http://turbo1.daedalusturbo.org/chain.json
+[2024-02-14 18:25:56 +01:00] [1:34] [dt] [debug] download_queue::_take_request begin wait for the mutex
+[2024-02-14 18:25:56 +01:00] [1:34] [dt] [debug] download_queue::_take_request released mutex and returning: false
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [trace] progress download-metadata: 0.000%
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [debug] download_queue::process_ok queue_size: 0 active_conns: 0
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [info] remote chain size: 166420887175 latest epoch: 466 slot: 466/116365262/416462
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [debug] timer 'find first epoch to sync' finished in 0.301 secs
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [info] user override max synced epoch: 429 max synced offset: 136706595920
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [info] synchronization starts from chain offset 136706595920 in epoch 430
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [debug] scheduler process_ok started tasks: 0
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [debug] scheduler process_ok done remaining tasks: 0 success: true
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [debug] timer 'truncate indices to max offset 136706595920' finished in 0.000 secs
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [debug] timer 'validator::truncate' finished in 0.000 secs
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [info] downloading metadata about the synchronized epochs
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [debug] download_queue::process_ok queue_size: 0 active_conns: 0
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [debug] scheduler process_ok started tasks: 0
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [debug] scheduler process_ok done remaining tasks: 0 success: true
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [info] downloading and parsing the differing chunks: 0
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [debug] download_queue::process_ok queue_size: 0 active_conns: 0
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [debug] scheduler process_ok started tasks: 0
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [debug] scheduler process_ok done remaining tasks: 0 success: true
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [debug] timer 'download all chunks and parse immutable ones' finished in 0.000 secs
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [debug] timer 'download chunks: 0' finished in 0.000 secs
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [debug] timer 'download data' finished in 0.000 secs
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [debug] timer 'chunk_registry::save_state' finished in 0.024 secs
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [debug] scheduler process_ok started tasks: 0
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [debug] scheduler process_ok done remaining tasks: 0 success: true
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [trace] _schedule_final_merge force: true epoch_slices: 0 _merge_next_offset: 136706595920 _target_offset: 136706595920
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [debug] scheduler process_ok started tasks: 0
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [debug] scheduler process_ok done remaining tasks: 0 success: true
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [debug] timer 'indexer::save_state' finished in 0.024 secs
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [debug] timer 'validator::remove_updated_chunks' finished in 0.000 secs
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [debug] timer 'validator::save_state' finished in 0.024 secs
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [info] synced last_slot: 103852735 last_block: B047C700CB13397FAE7E443D9C656A73720A48DBBB9E93228D95FED2AC0056D1 took: 0.3 secs
+[2024-02-14 18:25:57 +01:00] [1:34] [dt] [trace] download-queue size: 0 active connections: 0
+[2024-02-14 18:25:57 +01:00] [1:34] [dt] [debug] download-queue performance over the last reporting period: download speed: 0.0 MB/sec, requests: 1, error rate: 0.00%
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [debug] timer 'sync-http turbo1.daedalusturbo.org -> /data/cardano' finished in 4.407 secs
+[2024-02-14 18:25:57 +01:00] [1:1] [dt] [debug] timer 'run sync-http' finished in 4.407 secs

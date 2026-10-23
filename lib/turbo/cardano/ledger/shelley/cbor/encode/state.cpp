@@ -5,11 +5,12 @@
 
 #include <algorithm>
 #include <turbo/cardano/ledger/shelley.hpp>
+#include <turbo/cardano/ledger/node-output.hpp>
 
 namespace turbo::cardano::ledger::shelley {
-    void state::_params_to_cbor(era_encoder &enc, const protocol_params &params) const
+    void state::_params_to_cbor(era_encoder &enc, const protocol_params &params, const node_format format) const
     {
-        enc.array(18);
+        enc.array(format == node_format::v11_1_3 ? 17 : 18);
         enc.uint(params.min_fee_a);
         enc.uint(params.min_fee_b);
         enc.uint(params.max_block_body_size);
@@ -27,6 +28,8 @@ namespace turbo::cardano::ledger::shelley {
             enc.array(1).uint(0);
         else
             enc.array(2).uint(1).bytes(*params.extra_entropy);
+        if (format == node_format::v11_1_3)
+            enc.array(2);
         enc.uint(params.protocol_ver.major);
         enc.uint(params.protocol_ver.minor);
         enc.uint(params.min_utxo_value);
@@ -88,7 +91,7 @@ namespace turbo::cardano::ledger::shelley {
         enc << my_enc;
     }
 
-    void state::_node_save_snapshots(cbor_encoder &ser) const
+    void state::_node_save_snapshots(cbor_encoder &ser, const node_format format) const
     {
         const std::vector<std::reference_wrapper<const ledger_copy>> snaps { _mark, _set, _go };
         _add_encode_task(ser, [snaps] (auto &enc) {
@@ -96,32 +99,79 @@ namespace turbo::cardano::ledger::shelley {
         });
         for (size_t idx = 0; idx < snaps.size(); ++idx) {
             const auto &snap = snaps.at(idx).get();
-            _add_encode_task(ser, [this, snap, idx] (auto &enc) {
+            _add_encode_task(ser, [this, &snap, idx, format] (auto &enc) {
+                if (format == node_format::v11_1_3) {
+                    // ActiveStake combines each nonzero stake with its delegation.
+                    enc.array(2);
+                    auto stakes { enc };
+                    size_t num_stakes = 0;
+                    uint64_t total_stake = 0;
+                    struct pool_totals { uint64_t stake = 0; size_t delegators = 0; };
+                    std::map<pool_hash, pool_totals> totals;
+                    for (const auto &[stake_id, acc]: _accounts) {
+                        if (const auto &deleg = acc.deleg_copy(idx); deleg) {
+                            const auto stake = acc.stake_copy(idx);
+                            auto &pool = totals[*deleg];
+                            pool.stake += stake;
+                            ++pool.delegators;
+                            total_stake += stake;
+                            if (stake) {
+                                ++num_stakes;
+                                stake_id.to_cbor(stakes);
+                                stakes.array(2).uint(stake).bytes(*deleg);
+                            }
+                        }
+                    }
+                    enc.map_compact(num_stakes, [&] { enc << stakes; });
+                    enc.map_compact(snap.pool_params.size(), [&] {
+                        for (const auto &[pool_id, info]: snap.pool_params) {
+                            const auto &p = info.params;
+                            const auto it = totals.find(pool_id);
+                            const auto pool = it != totals.end() ? it->second : pool_totals {};
+                            set_t<key_hash> owners;
+                            uint64_t owners_stake = 0;
+                            for (const auto &owner: p.owners) {
+                                const auto acc = _accounts.find(stake_ident { owner, false });
+                                if (acc != _accounts.end() && acc->second.deleg_copy(idx) == pool_id) {
+                                    owners.insert(owner);
+                                    owners_stake += acc->second.stake_copy(idx);
+                                }
+                            }
+                            enc.bytes(pool_id).array(10).uint(pool.stake);
+                            rational_u64 ratio { pool.stake, std::max(uint64_t { 1 }, total_stake) };
+                            ratio.normalize();
+                            if (enc.era() >= era_t::conway)
+                                ratio.to_cbor(enc);
+                            else
+                                enc.array(2).uint(ratio.numerator).uint(ratio.denominator);
+                            owners.to_cbor(enc);
+                            enc.uint(owners_stake).bytes(p.vrf_vkey).uint(p.pledge).uint(p.cost);
+                            p.margin.to_cbor(enc);
+                            enc.uint(pool.delegators);
+                            static_cast<stake_ident>(p.reward_id).to_cbor(enc);
+                        }
+                    });
+                    return;
+                }
                 enc.array(3);
                 // Only the stake of delegated stake_ids is of interest
                 size_t num_delegs = 0;
-                auto enc_deleg_s { enc }, enc_deleg_k { enc }, enc_stake_s { enc }, enc_stake_k { enc };
+                auto delegations { enc }, stakes { enc };
                 for (const auto &[stake_id, acc]: _accounts) {
                     const auto &deleg = acc.deleg_copy(idx);
                     if (deleg) {
                         ++num_delegs;
-                        {
-                            auto &i_enc = stake_id.script ? enc_stake_s : enc_stake_k;
-                            stake_id.to_cbor(i_enc);
-                            i_enc.uint(acc.stake_copy(idx));
-                        }
-                        {
-                            auto &i_enc = stake_id.script ? enc_deleg_s : enc_deleg_k;
-                            stake_id.to_cbor(i_enc);
-                            i_enc.bytes(*deleg);
-                        }
+                        stake_id.to_cbor(stakes);
+                        stakes.uint(acc.stake_copy(idx));
+                        stake_id.to_cbor(delegations);
+                        delegations.bytes(*deleg);
                     }
                 }
                 enc.map_compact(num_delegs, [&] {
-                    enc << enc_stake_s << enc_stake_k;
+                    enc << stakes;
                 });
                 enc.map_compact(num_delegs, [&] {
-                    enc << enc_deleg_s << enc_deleg_k;
+                    enc << delegations;
                 });
                 enc.map_compact(snap.pool_params.size(), [&] {
                     for (const auto &[pool_id, params]: snap.pool_params) {
@@ -141,9 +191,18 @@ namespace turbo::cardano::ledger::shelley {
         enc.array(3).map(0).map(0).uint(0);
     }
 
-    void state::_account_to_cbor(const account_info &acc, era_encoder &enc) const
+    void state::_account_to_cbor(const account_info &acc, era_encoder &enc, const node_format format) const
     {
         enc.array(4);
+        if (format == node_format::v11_1_3) {
+            acc.ptr->to_cbor(enc);
+            enc.uint(acc.reward).uint(acc.deposit);
+            if (acc.deleg)
+                enc.bytes(*acc.deleg);
+            else
+                enc.s_null();
+            return;
+        }
         enc.array(1).array(2).uint(acc.reward).uint(acc.deposit);
         enc.array(1);
         acc.ptr->to_cbor(enc);
@@ -161,22 +220,27 @@ namespace turbo::cardano::ledger::shelley {
         });
     }
 
-    void state::_node_save_ledger_delegation(cbor_encoder &ser) const
+    void state::_node_save_ledger_delegation(cbor_encoder &ser, const node_format format) const
     {
-        _add_encode_task(ser, [this] (auto &enc) {
-            enc.array(3);
-            // governance / protocol update state??
-            _delegation_gov_to_cbor(enc);
+        _add_encode_task(ser, [this, format] (auto &enc) {
+            // Node 11 removed the placeholder VState from pre-Conway eras.
+            if (format == node_format::v11_1_3 && enc.era() < era_t::conway) {
+                enc.array(2);
+            } else {
+                enc.array(3);
+                _delegation_gov_to_cbor(enc);
+            }
             // poolState
             enc.array(4);
-            if (_params.protocol_ver.major >= 11) {
+            // The wire layout follows the node version, not the historical protocol.
+            if (format == node_format::v11_1_3 || _params.protocol_ver.major >= 11) {
                 enc.map_compact(_pool_vrf_key_hashes.size(), [&] {
                     for (const auto &[vrf, occurrences]: _pool_vrf_key_hashes) {
                         enc.bytes(vrf);
                         enc.uint(occurrences);
                     }
                 });
-                const auto encode_pool_states = [this, &enc](const pool_info_map &pools) {
+                const auto encode_pool_states = [this, &enc, format](const pool_info_map &pools) {
                     enc.map_compact(pools.size(), [&] {
                         for (const auto &[pool_id, info]: pools) {
                             const auto &p = info.params;
@@ -189,7 +253,14 @@ namespace turbo::cardano::ledger::shelley {
                             static_cast<stake_ident>(p.reward_id).to_cbor(enc);
                             p.owners.to_cbor(enc);
                             p.relays.to_cbor(enc);
-                            p.metadata.to_cbor(enc);
+                            // StakePoolState uses StrictMaybe; PoolParams uses null.
+                            if (format == node_format::v11_1_3) {
+                                enc.array(p.metadata ? 1 : 0);
+                                if (p.metadata)
+                                    p.metadata->to_cbor(enc);
+                            } else {
+                                p.metadata.to_cbor(enc);
+                            }
                             enc.uint(_pool_deposits.at(pool_id));
                             set_t<stake_ident> delegators {};
                             if (const auto it = _active_inv_delegs.find(pool_id); it != _active_inv_delegs.end())
@@ -239,26 +310,27 @@ namespace turbo::cardano::ledger::shelley {
             }
 
         });
-        _add_encode_task(ser, [this] (auto &enc) {
+        _add_encode_task(ser, [this, format] (auto &enc) {
             // delegationState
             enc.array(4);
-            enc.array(2);
-            auto s_enc { enc }, k_enc { enc };
+            if (format == node_format::legacy || enc.era() < era_t::conway)
+                enc.array(2);
+            auto registrations { enc };
             size_t num_creds = 0;
             for (const auto &[stake_id, acc]: _accounts) {
                 if (acc.ptr) {
                     ++num_creds;
-                    auto &i_enc = stake_id.script ? s_enc : k_enc;
-                    stake_id.to_cbor(i_enc);
-                    _account_to_cbor(acc, i_enc);
+                    stake_id.to_cbor(registrations);
+                    _account_to_cbor(acc, registrations, format);
                 }
             }
             enc.map_compact(num_creds, [&] {
-                enc << s_enc << k_enc;
+                enc << registrations;
             });
         });
-        _add_encode_task(ser, [this] (auto &enc) {
-            _stake_pointer_stake_to_cbor(enc);
+        _add_encode_task(ser, [this, format] (auto &enc) {
+            if (format == node_format::legacy || enc.era() < era_t::conway)
+                _stake_pointer_stake_to_cbor(enc);
         });
         _add_encode_task(ser, [this] (auto &enc) {
             map_to_cbor(enc, _future_shelley_delegs);
@@ -287,7 +359,7 @@ namespace turbo::cardano::ledger::shelley {
         });
     }
 
-    void state::_protocol_state_to_cbor(era_encoder &enc) const
+    void state::_protocol_state_to_cbor(era_encoder &enc, const node_format format) const
     {
         enc.array(5);
         enc.map(_ppups.size());
@@ -300,8 +372,8 @@ namespace turbo::cardano::ledger::shelley {
             enc.bytes(gen_deleg_id);
             _param_update_to_cbor(enc, proposal);
         }
-        _params_to_cbor(enc, _params);
-        _params_to_cbor(enc, _params_prev);
+        _params_to_cbor(enc, _params, format);
+        _params_to_cbor(enc, _params_prev, format);
         // new in node 9+ - expected update next epoch?
         {
             const auto update = _prep_param_update();
@@ -310,17 +382,25 @@ namespace turbo::cardano::ledger::shelley {
                 enc.uint(1);
                 auto new_params = _params;
                 new_params.apply(*update);
-                _params_to_cbor(enc, new_params);
+                _params_to_cbor(enc, new_params, format);
             } else {
                 enc.array(1).uint(0);
             }
         }
     }
 
-    void state::_stake_pointers_to_cbor(era_encoder &enc) const
+    void state::_stake_pointers_to_cbor(era_encoder &enc, const node_format format) const
     {
-        enc.map_compact(_stake_pointers.size(), [&] {
-            for (const auto &[ptr, coin]: _stake_pointers) {
+        stake_pointer_distribution normalized;
+        if (format == node_format::v11_1_3) {
+            // Several historical pointers can collapse to (0,0,0). Sum their
+            // balances and restore map ordering without changing cached state.
+            for (const auto &[ptr, coin]: _stake_pointers)
+                normalized.add(node_snapshot::normalize_pointer(ptr), coin);
+        }
+        const auto &pointers = format == node_format::v11_1_3 ? normalized : _stake_pointers;
+        enc.map_compact(pointers.size(), [&] {
+            for (const auto &[ptr, coin]: pointers) {
                 ptr.to_cbor(enc);
                 enc.uint(coin);
             }
@@ -332,13 +412,13 @@ namespace turbo::cardano::ledger::shelley {
         enc.uint(0);
     }
 
-    void state::_node_save_ledger_utxo(cbor_encoder &ser) const
+    void state::_node_save_ledger_utxo(cbor_encoder &ser, const node_format format) const
     {
         _add_encode_task(ser, [](auto &enc) {
             enc.array(6);
             enc.map();
         });
-        for (size_t pi = 0; pi < _utxo.num_parts; ++pi) {
+        for (size_t pi = 0; format == node_format::legacy && pi < _utxo.num_parts; ++pi) {
             _add_encode_task(ser, [this, pi](auto &enc) {
                 const auto &part = _utxo.partition(pi);
                 for (const auto &[txo_id, txo_data]: part) {
@@ -349,45 +429,46 @@ namespace turbo::cardano::ledger::shelley {
                 }
             });
         }
-        _add_encode_task(ser, [this] (auto &enc) {
+        _add_encode_task(ser, [this, format] (auto &enc) {
             enc.s_break();
             enc.uint(_deposited);
             enc.uint(_fees_utxo);
-            _protocol_state_to_cbor(enc);
+            _protocol_state_to_cbor(enc, format);
         });
-        _add_encode_task(ser, [this] (auto &enc) {
-            enc.array(2);
-            // Cardano Node puts script keys first, so mimic that
-            auto s_enc { enc }, k_enc { enc };
+        _add_encode_task(ser, [this, format] (auto &enc) {
+            // Node 11 Conway InstantStake contains only the credential map.
+            if (format == node_format::legacy || enc.era() < era_t::conway)
+                enc.array(2);
+            auto stakes { enc };
             size_t num_accounts = 0;
             for (const auto &[stake_id, acc]: _accounts) {
                 if (acc.stake) {
                     ++num_accounts;
-                    auto &i_enc = stake_id.script ? s_enc : k_enc;
-                    stake_id.to_cbor(i_enc);
-                    i_enc.uint(acc.stake);
+                    stake_id.to_cbor(stakes);
+                    stakes.uint(acc.stake);
                 }
             }
             enc.map_compact(num_accounts, [&] {
-                enc << s_enc << k_enc;
+                enc << stakes;
             });
         });
-        _add_encode_task(ser, [this] (auto &enc) {
-            _stake_pointers_to_cbor(enc);
+        _add_encode_task(ser, [this, format] (auto &enc) {
+            if (format == node_format::legacy || enc.era() < era_t::conway)
+                _stake_pointers_to_cbor(enc, format);
             _donations_to_cbor(enc);
         });
     }
 
-    void state::_node_save_ledger(cbor_encoder &ser) const
+    void state::_node_save_ledger(cbor_encoder &ser, const node_format format) const
     {
         _add_encode_task(ser, [](auto &enc) {
             enc.array(2);
         });
-        _node_save_ledger_delegation(ser);
-        _node_save_ledger_utxo(ser);
+        _node_save_ledger_delegation(ser, format);
+        _node_save_ledger_utxo(ser, format);
     }
 
-    void state::_node_save_state_before(cbor_encoder &ser) const
+    void state::_node_save_state_before(cbor_encoder &ser, const node_format format) const
     {
         _add_encode_task(ser, [this] (auto &enc) {
             enc.array(4);
@@ -395,9 +476,9 @@ namespace turbo::cardano::ledger::shelley {
             enc.array(2).uint(_treasury).uint(_reserves);
         });
         // esLState
-        _node_save_ledger(ser);
+        _node_save_ledger(ser, format);
         // esSnapshots
-        _node_save_snapshots(ser);
+        _node_save_snapshots(ser, format);
         // esNonmyopic
         _add_encode_task(ser, [this] (auto &enc) {
             enc.array(2);
@@ -414,7 +495,7 @@ namespace turbo::cardano::ledger::shelley {
         });
     }
 
-    void state::to_cbor(cbor_encoder &ser) const
+    void state::to_cbor(cbor_encoder &ser, const node_format format) const
     {
         if (_params.protocol_ver.major >= 2 && !_rewards_ready
                 && _epoch_slot > _cfg.shelley_randomness_stabilization_window)
@@ -433,7 +514,7 @@ namespace turbo::cardano::ledger::shelley {
         });
 
         // stateBefore
-        _node_save_state_before(ser);
+        _node_save_state_before(ser, format);
         // possibleUpdate
         if (_rewards_ready) {
             _add_encode_task(ser, [this](auto &enc) {
@@ -443,13 +524,10 @@ namespace turbo::cardano::ledger::shelley {
             });
             _add_encode_task(ser, [this](auto &enc) {
                 enc.map_compact(_potential_rewards.size(), [&] {
-                    auto s_enc { enc }, k_enc { enc };
                     for (const auto &[stake_id, rewards]: _potential_rewards) {
-                        auto &i_enc = stake_id.script ? s_enc : k_enc;
-                        stake_id.to_cbor(i_enc);
-                        rewards.to_cbor(i_enc);
+                        stake_id.to_cbor(enc);
+                        rewards.to_cbor(enc);
                     }
-                    enc << s_enc << k_enc;
                 });
             });
             _add_encode_task(ser, [this](auto &enc) {
@@ -471,12 +549,31 @@ namespace turbo::cardano::ledger::shelley {
                 enc.array(0);
             });
         }
-        _add_encode_task(ser, [this](auto &enc) {
-            _operating_stake_dist.to_cbor(enc);
+        _add_encode_task(ser, [this, format](auto &enc) {
+            if (format == node_format::v11_1_3) {
+                enc.array(2);
+                map_to_cbor(enc, _operating_stake_dist);
+                enc.uint(std::max(uint64_t { 1 }, _operating_stake_dist.total_stake));
+            } else {
+                _operating_stake_dist.to_cbor(enc);
+            }
         });
-        // redeemed byron AVVM addresses?
-        _add_encode_task(ser, [](auto &enc) {
-            enc.s_null();
+        _add_encode_task(ser, [this, format](auto &enc) {
+            // Unclaimed redeem outputs cannot be spent in Shelley. Node 11 keeps
+            // them here until the Allegra transition removes them from the UTxO.
+            if (format == node_format::v11_1_3 && enc.era() == era_t::shelley) {
+                enc.map();
+                for (const auto &[ref, output]: _utxo) {
+                    const address addr { output.address_raw };
+                    if (addr.is_byron() && addr.byron().type() == 2) {
+                        enc.array(2).bytes(ref.hash).uint(ref.idx);
+                        output.to_cbor(enc);
+                    }
+                }
+                enc.s_break();
+            } else {
+                enc.s_null();
+            }
         });
         _add_encode_task(ser, [this](auto &enc) {
            enc.uint(_blocks_past_voting_deadline);

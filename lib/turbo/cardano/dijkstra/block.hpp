@@ -50,32 +50,22 @@ namespace turbo::cardano::dijkstra {
         bool body_contains_leios_certificate() const;
         const std::optional<eb_announcement_t> &eb_announcement() const;
     private:
-        struct body_t {
-            uint64_t block_number = 0;
-            uint64_t slot = 0;
-            block_hash prev_hash {};
-            bool prev_hash_is_null = false;
-            vkey issuer_vkey {};
-            cardano::vrf_vkey vrf_vkey {};
-            vrf_cert nonce_vrf {};
-            uint32_t body_size = 0;
-            block_hash body_hash {};
-            operational_cert op_cert {};
-            protocol_version node_ver {};
-            bool contains_leios_certificate = false;
-            std::optional<eb_announcement_t> eb_announcement {};
-            buffer raw {};
-
-            body_t(cbor::zero2::value &, const cardano::config &);
-        };
-
-        body_t _body;
-        byte_array<448> _signature {};
-        buffer _raw {};
-        mutable std::optional<block_hash> _hash {};
-
-        block_header(uint64_t era, cbor::zero2::array_reader &, cbor::zero2::value &,
-            const cardano::config &);
+        uint64_t _block_number = 0;
+        uint64_t _slot = 0;
+        std::optional<block_hash> _prev_hash{};
+        vkey _issuer_vkey{};
+        cardano::vrf_vkey _vrf_vkey{};
+        vrf_cert _nonce_vrf{};
+        uint32_t _body_size = 0;
+        block_hash _body_hash{};
+        operational_cert _op_cert{};
+        protocol_version _node_ver{};
+        bool _contains_leios_certificate = false;
+        std::optional<eb_announcement_t> _eb_announcement{};
+        buffer _body_raw{};
+        byte_array<448> _signature{};
+        buffer _raw{};
+        mutable std::optional<block_hash> _hash{};
     };
 
     struct block_base: babbage::block_base {
@@ -98,6 +88,9 @@ namespace turbo::cardano::dijkstra {
         const block_hash &body_hash() const override;
         const tx_list &txs() const override;
         const invalid_tx_set &invalid_txs() const override;
+        // Standalone BlockBody encoding replays its memoized bytes. The enclosing
+        // block uses the ledger's group encoding, which rebuilds the body fields.
+        void body_to_cbor(era_encoder &) const;
         void to_cbor(era_encoder &) const;
     private:
         block_header _header;

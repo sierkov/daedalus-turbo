@@ -99,10 +99,19 @@ namespace turbo::cardano::dijkstra {
                 case 14: return {{ auth_committee_hot_cert {
                     credential_t::from_cbor(it.read()), credential_t::from_cbor(it.read())
                 } }};
-                case 15: return {{ resign_committee_cold_cert::from_cbor(it) }};
-                case 16: return {{ reg_drep_cert::from_cbor(it) }};
+                case 15: return {{ resign_committee_cold_cert {
+                    decltype(resign_committee_cold_cert::cold_id)::from_cbor(it.read()),
+                    optional_anchor_t::from_cbor(it.read())
+                } }};
+                case 16: return {{ reg_drep_cert {
+                    decltype(reg_drep_cert::drep_id)::from_cbor(it.read()), it.read().uint(),
+                    optional_anchor_t::from_cbor(it.read())
+                } }};
                 case 17: return {{ unreg_drep_cert { credential_t::from_cbor(it.read()), it.read().uint() } }};
-                case 18: return {{ update_drep_cert::from_cbor(it) }};
+                case 18: return {{ update_drep_cert {
+                    decltype(update_drep_cert::drep_id)::from_cbor(it.read()),
+                    optional_anchor_t::from_cbor(it.read())
+                } }};
                 [[unlikely]] default:
                     throw error(fmt::format("unsupported Dijkstra certificate type: {}", type));
             }

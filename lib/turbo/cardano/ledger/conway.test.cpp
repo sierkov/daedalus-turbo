@@ -14,6 +14,38 @@ namespace {
     using namespace ledger::conway;
 
     struct test_state: state {
+        void prepare_credential_order(const std::initializer_list<credential_t> ids)
+        {
+            _utxo.clear();
+            _accounts.clear();
+            _potential_rewards.clear();
+            _drep_state.clear();
+            _committee_hot_keys.clear();
+            _proposals.clear();
+            auto &action = _proposals[gov_action_id_t {}];
+            for (const auto &id: ids) {
+                auto &account = _accounts[id];
+                account.ptr.emplace(0, 0, 0);
+                account.stake = 1;
+                for (size_t i = 0; i < 3; ++i) {
+                    account.deleg_copy(i) = pool_hash {};
+                    account.stake_copy(i) = 1;
+                }
+                _potential_rewards[id].emplace(ledger::reward_type::member, pool_hash {}, 1, pool_hash {});
+                _drep_state.try_emplace(id);
+                _committee_hot_keys[id].val = id;
+                action.committee_votes.emplace(id, voting_procedure_t {});
+                action.drep_votes.emplace(id, voting_procedure_t {});
+            }
+            _pulsing_data.drep_state = _drep_state;
+            // This account must be excluded from registrations, stakes, and snapshots.
+            credential_t ignored {};
+            ignored.hash.back() = 1;
+            _accounts.try_emplace(ignored);
+            _rewards_ready = true;
+            _ratify_ready = true;
+        }
+
         void protocol_ver(const protocol_version &pv)
         {
             _params.protocol_ver = pv;
@@ -79,6 +111,97 @@ namespace {
 
 suite cardano_ledger_conway_suite = [] {
     using boost::ext::ut::v2_1_0::nothrow;
+    "cardano::ledger::conway::governance_vote_cbor"_test = [] {
+        for (const auto choice: { vote_t::no, vote_t::yes, vote_t::abstain }) {
+            for (const bool anchored: { false, true }) {
+                voting_procedure_t vote { choice };
+                if (anchored)
+                    vote.anchor.emplace(anchor_t { "https://example.com/vote", {} });
+                gov_action_state_t action {};
+                action.proposal.action.val = gov_action_t::info_action_t {};
+                action.committee_votes.emplace(credential_t {}, vote);
+                action.drep_votes.emplace(credential_t {}, vote);
+                action.pool_votes.emplace(pool_hash {}, vote);
+                era_encoder enc { era_t::conway };
+                action.to_cbor(enc, gov_action_id_t {});
+                auto parsed = cbor::zero2::parse(enc.cbor());
+                auto &fields = parsed.get().array();
+                fields.skip(1); // Governance action ID.
+                for (size_t i = 0; i < 3; ++i) {
+                    auto &votes = fields.read().map();
+                    auto &key = votes.read_key();
+                    expect_equal(votes.read_val(std::move(key)).uint(), static_cast<uint8_t>(choice));
+                    expect(votes.done());
+                }
+                // Transaction encoding must still retain its optional anchor.
+                era_encoder tx { era_t::conway };
+                vote.to_cbor(tx);
+                auto tx_parsed = cbor::zero2::parse(tx.cbor());
+                const auto restored = voting_procedure_t::from_cbor(tx_parsed.get());
+                expect(restored.vote == choice);
+                expect(restored.anchor == vote.anchor);
+            }
+        }
+    };
+    "cardano::ledger::conway::credential_cbor_order"_test = [] {
+        const credential_t script_low { {}, true }, key { {}, false };
+        credential_t script_high { {}, true };
+        script_high.hash.fill(0xff);
+        const auto low_bytes = "8201581C" + std::string(56, '0');
+        const auto high_bytes = "8201581C" + std::string(56, 'F');
+        const auto key_bytes = "8200581C" + std::string(56, '0');
+        const auto ordered_map = "A3" + low_bytes + "01" + high_bytes + "02" + key_bytes + "03";
+        committee_t committee {};
+        committee.members.emplace(key, 3);
+        committee.members.emplace(script_high, 2);
+        committee.members.emplace(script_low, 1);
+        era_encoder committee_enc { era_t::conway };
+        committee.to_cbor(committee_enc);
+        expect_equal(committee_enc.cbor(), uint8_vector::from_hex("82" + ordered_map + "D81E820203"));
+
+        drep_info_t info {};
+        info.delegs.emplace(key);
+        info.delegs.emplace(script_high);
+        info.delegs.emplace(script_low);
+        era_encoder info_enc { era_t::conway };
+        info.to_cbor(info_enc);
+        expect_equal(info_enc.cbor(), uint8_vector::from_hex(
+            "84008000D9010283" + low_bytes + high_bytes + key_bytes));
+
+        test_state st {};
+        st.prepare_credential_order({ key, script_high, script_low });
+        ledger::cbor_encoder enc { [] { return era_encoder { era_t::conway }; } };
+        st.to_cbor(enc);
+        enc.run(scheduler::get(), "credential-order");
+        const auto bytes = enc.flat();
+        // Array paths identify each changed map in the node's ledger-state format.
+        const auto check_map = [&](const char *name, const std::initializer_list<size_t> path) {
+            auto parsed = cbor::zero2::parse(bytes);
+            auto *value = &parsed.get();
+            for (const auto idx: path)
+                value = &value->at(idx);
+            auto &map = value->map();
+            for (const auto &id: { script_low, script_high, key }) {
+                expect(fatal(!map.done())) << name;
+                auto &encoded_key = map.read_key();
+                expect(credential_t::from_cbor(encoded_key) == id) << name;
+                map.read_val(std::move(encoded_key));
+            }
+            expect(map.done()) << name;
+        };
+        check_map("DRep state", { 3, 1, 0, 0, 0 });
+        check_map("committee hot keys", { 3, 1, 0, 0, 1 });
+        check_map("registrations", { 3, 1, 0, 2, 0, 0 });
+        check_map("stakes", { 3, 1, 1, 4, 0 });
+        check_map("committee votes", { 3, 1, 1, 3, 0, 1, 0, 1 });
+        check_map("DRep votes", { 3, 1, 1, 3, 0, 1, 0, 2 });
+        check_map("pulsing DRep state", { 3, 1, 1, 3, 6, 0, 2 });
+        for (size_t i = 0; i < 3; ++i) {
+            check_map("snapshot stakes", { 3, 2, i, 0 });
+            check_map("snapshot delegations", { 3, 2, i, 1 });
+        }
+        check_map("potential rewards", { 4, 0, 1, 2 });
+    };
     "cardano::ledger::conway::timed_update_order"_test = [] {
         using turbo::index::timed_update::item;
         std::vector<item> updates {
@@ -122,13 +245,36 @@ suite cardano_ledger_conway_suite = [] {
             expect(throws([&] { st.register_pool({ pool_b, params }); }));
             expect_equal(1, st.pool_vrf_key_occurrences(params.vrf_vkey));
             expect(nothrow([&] { st.register_pool({ pool_a, params }); }));
-            expect_equal(2, st.pool_vrf_key_occurrences(params.vrf_vkey));
+            expect_equal(1, st.pool_vrf_key_occurrences(params.vrf_vkey));
             expect(nothrow([&] { st.register_pool({ pool_a, params }); }));
-            expect_equal(2, st.pool_vrf_key_occurrences(params.vrf_vkey));
+            expect_equal(1, st.pool_vrf_key_occurrences(params.vrf_vkey));
+            st.start_epoch({ 1 });
+            expect_equal(1, st.pool_vrf_key_occurrences(params.vrf_vkey));
             const auto original_vrf = params.vrf_vkey;
             params.vrf_vkey = crypto::blake2b::digest<vrf_vkey>(std::string_view { "replacement-vrf" });
             expect(nothrow([&] { st.register_pool({ pool_a, params }); }));
             expect_equal(1, st.pool_vrf_key_occurrences(original_vrf));
+            expect_equal(1, st.pool_vrf_key_occurrences(params.vrf_vkey));
+            // PV11 only exempts the active key, not a previously staged key.
+            expect(throws([&] { st.register_pool({ pool_a, params }); }));
+            st.start_epoch({ 2 });
+            expect_equal(0, st.pool_vrf_key_occurrences(original_vrf));
+            expect_equal(1, st.pool_vrf_key_occurrences(params.vrf_vkey));
+        };
+        "protocol version 11 replaces staged VRF keys with map semantics"_test = [] {
+            test_state st {};
+            st.protocol_ver({ 11, 0 });
+            const auto pool = crypto::blake2b::digest<pool_hash>(std::string_view { "pool" });
+            pool_params params {};
+            const auto original = params.vrf_vkey;
+            st.register_pool({ pool, params });
+            st.register_pool({ pool, params });
+            params.vrf_vkey = crypto::blake2b::digest<vrf_vkey>(std::string_view { "new-vrf" });
+            st.register_pool({ pool, params });
+            // Replacing the staged active key deletes it, rather than decrementing it.
+            expect_equal(0, st.pool_vrf_key_occurrences(original));
+            expect_equal(1, st.pool_vrf_key_occurrences(params.vrf_vkey));
+            st.start_epoch({ 1 });
             expect_equal(1, st.pool_vrf_key_occurrences(params.vrf_vkey));
         };
         "protocol version 11 migration counts existing pool VRF keys"_test = [] {
@@ -142,6 +288,52 @@ suite cardano_ledger_conway_suite = [] {
             st.register_pool({ pool_b, params });
             st.populate_pool_vrf_key_hashes();
             expect_equal(2, st.pool_vrf_key_occurrences(params.vrf_vkey));
+            st.protocol_ver({ 11, 0 });
+            const auto shared = params.vrf_vkey;
+            params.vrf_vkey = crypto::blake2b::digest<vrf_vkey>(std::string_view { "replacement" });
+            st.register_pool({ pool_a, params });
+            st.start_epoch({ 1 });
+            // Preserve Conway's historical deletion even though pool_b still uses it.
+            expect_equal(0, st.pool_vrf_key_occurrences(shared));
+            expect_equal(1, st.pool_vrf_key_occurrences(params.vrf_vkey));
+        };
+        "Conway snapshot marker preserves pre-PV11 replay bases"_test = [] {
+            // Expected decoder failures must not poison the shared scheduler's status.
+            scheduler sched { 4 }; // wait_all requires at least four workers.
+            for (const uint64_t major: { 10, 11 }) {
+                test_state original {};
+                original.protocol_ver({ major, 0 });
+                ledger::zpp_encoder enc {};
+                original.to_zpp(enc);
+                enc.run(sched, "encode-vrf-snapshot-test");
+                for (const uint8_t version: { 0, 1, 2 }) {
+                    ledger::zpp_encoder fixture {};
+                    size_t index = 0;
+                    enc.for_each_buffer([&](const buffer bytes) {
+                        uint8_vector copy {};
+                        copy << bytes;
+                        if (index == 0) {
+                            if (version == 0)
+                                copy.pop_back(); // Original snapshots had no marker.
+                            else
+                                copy.back() = version;
+                        }
+                        ++index;
+                        fixture.add([copy = std::move(copy)](auto) { return copy; });
+                    });
+                    fixture.run(sched, "encode-vrf-snapshot-fixture");
+                    const file::tmp path { "pool-vrf-snapshot.zpp" };
+                    fixture.save(path.path(), true);
+                    test_state restored {};
+                    ledger::parallel_decoder dec { path.path() };
+                    restored.from_zpp(dec);
+                    const auto load = [&] { dec.run(sched, "decode-vrf-snapshot-test"); };
+                    if (version < 2 && major == 11)
+                        expect(throws(load));
+                    else
+                        expect(nothrow(load));
+                }
+            }
         };
         "protocol version 11 updates dormant DReps in the transaction prelude"_test = [&] {
             const auto &cfg = cardano::config::get();
@@ -165,6 +357,37 @@ suite cardano_ledger_conway_suite = [] {
             ledger::babbage::state babbage_st { std::move(alonzo_st) };
             ledger::conway::state st { std::move(babbage_st) };
             expect_equal(1, st.num_dormant_epochs());
+        };
+        "babbage transition preserves previous protocol parameters"_test = [] {
+            struct source_state: ledger::babbage::state {
+                using ledger::babbage::state::state;
+                using ledger::babbage::state::_params;
+                using ledger::babbage::state::_params_prev;
+            };
+            struct target_state: ledger::conway::state {
+                using ledger::conway::state::state;
+                using ledger::conway::state::_params_prev;
+                using ledger::conway::state::_enact_state;
+                using ledger::conway::state::_ratify_state;
+            };
+            source_state source { ledger::alonzo::state {
+                ledger::shelley::state { cardano::config::get(), scheduler::get() } } };
+            // The Babbage epoch boundary has applied the upgrade before translation.
+            source._params_prev = source._params;
+            source._params_prev.protocol_ver = { 8, 0 };
+            source._params_prev.min_fee_a = 44;
+            source._params.protocol_ver = { 9, 0 };
+            source._params.min_fee_a = 45;
+            target_state st { std::move(source) };
+            expect_equal(st.params().protocol_ver.major, 9);
+            expect_equal(st._params_prev.protocol_ver.major, 8);
+            expect_equal(st.params().min_fee_a, 45);
+            expect_equal(st._params_prev.min_fee_a, 44);
+            const auto &initial = cardano::config::get().conway_protocol_params;
+            expect_equal(st._params_prev.drep_deposit, initial.drep_deposit);
+            expect(st._params_prev.plutus_cost_models.at(2) == initial.plutus_cost_models.at(2));
+            expect(st._enact_state.prev_params == st._params_prev);
+            expect(st._ratify_state.new_state.prev_params == st._params_prev);
         };
         "rewards follow the delegation at the epoch boundary"_test = [] {
             test_state st {};

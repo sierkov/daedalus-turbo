@@ -1,0 +1,928 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O     PIDS
+5ac58e682683   magical_mclaren   2.85%     9.105MiB / 251.3GiB   0.00%     185kB / 40kB   16.8MB / 0B   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O     PIDS
+5ac58e682683   magical_mclaren   15.72%    17.44MiB / 251.3GiB   0.01%     2.4MB / 145kB   16.8MB / 0B   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   800.57%   553.5MiB / 251.3GiB   0.22%     227MB / 1.49MB   17.7MB / 11.6MB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   803.21%   563.4MiB / 251.3GiB   0.22%     504MB / 3.33MB   17.7MB / 11.6MB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT   MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   802.98%   619MiB / 251.3GiB   0.24%     779MB / 5.28MB   17.7MB / 11.6MB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT   MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   805.79%   642MiB / 251.3GiB   0.25%     1.04GB / 7.05MB   17.7MB / 11.6MB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   804.12%   669.3MiB / 251.3GiB   0.26%     1.32GB / 8.99MB   17.7MB / 11.6MB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT   MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   801.50%   715MiB / 251.3GiB   0.28%     1.58GB / 10.8MB   17.7MB / 11.6MB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   802.52%   744.6MiB / 251.3GiB   0.29%     1.79GB / 12MB   17.7MB / 11.6MB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   801.10%   734.9MiB / 251.3GiB   0.29%     2GB / 13.1MB   17.7MB / 11.6MB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   799.97%   767.5MiB / 251.3GiB   0.30%     2.21GB / 14.3MB   17.7MB / 11.6MB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT   MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   800.23%   724MiB / 251.3GiB   0.28%     2.46GB / 15.8MB   17.7MB / 11.6MB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT   MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   801.15%   779MiB / 251.3GiB   0.30%     2.73GB / 17.5MB   17.7MB / 11.6MB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   802.27%   876.9MiB / 251.3GiB   0.34%     3GB / 19.3MB   17.7MB / 11.6MB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.88%   866.5MiB / 251.3GiB   0.34%     3.28GB / 21.1MB   17.7MB / 105MB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT   MEM %     NET I/O           BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.54%   917MiB / 251.3GiB   0.36%     3.55GB / 22.9MB   17.7MB / 105MB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   803.89%   906.7MiB / 251.3GiB   0.35%     3.82GB / 24.8MB   17.7MB / 1.37GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   801.40%   871.7MiB / 251.3GiB   0.34%     4.09GB / 26.6MB   17.7MB / 1.37GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   802.17%   852.9MiB / 251.3GiB   0.33%     4.3GB / 28MB   17.8MB / 2.54GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   795.32%   932.1MiB / 251.3GiB   0.36%     4.3GB / 28MB   17.8MB / 2.54GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   797.49%   944.4MiB / 251.3GiB   0.37%     4.3GB / 28MB   17.8MB / 3.72GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   799.44%   966.7MiB / 251.3GiB   0.38%     4.3GB / 28MB   17.8MB / 3.72GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   798.74%   971.5MiB / 251.3GiB   0.38%     4.3GB / 28MB   17.8MB / 4.66GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   799.64%   1.449GiB / 251.3GiB   0.58%     4.3GB / 28MB   17.8MB / 4.66GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   801.26%   1.463GiB / 251.3GiB   0.58%     4.3GB / 28MB   17.8MB / 5.76GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O        BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   798.69%   1.46GiB / 251.3GiB   0.58%     4.3GB / 28MB   17.8MB / 5.76GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   797.02%   1.564GiB / 251.3GiB   0.62%     4.3GB / 28MB   17.8MB / 7.09GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O        BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   0.28%     1.59GiB / 251.3GiB   0.63%     4.3GB / 28MB   17.8MB / 7.09GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   0.12%     1.589GiB / 251.3GiB   0.63%     4.3GB / 28MB   17.8MB / 7.09GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   0.13%     1.589GiB / 251.3GiB   0.63%     4.3GB / 28MB   17.8MB / 8.41GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   189.54%   1.625GiB / 251.3GiB   0.65%     4.39GB / 28.7MB   17.8MB / 8.41GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   581.00%   1.689GiB / 251.3GiB   0.67%     4.67GB / 30.7MB   17.8MB / 9.59GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   654.92%   1.672GiB / 251.3GiB   0.67%     4.94GB / 32.6MB   17.8MB / 9.59GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   651.41%   1.686GiB / 251.3GiB   0.67%     5.2GB / 34.5MB   17.8MB / 9.92GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT   MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   658.12%   1.7GiB / 251.3GiB   0.68%     5.46GB / 36.2MB   17.8MB / 9.92GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   621.21%   1.673GiB / 251.3GiB   0.67%     5.72GB / 38.1MB   17.8MB / 10.8GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   468.82%   1.726GiB / 251.3GiB   0.69%     6GB / 40.1MB   17.8MB / 10.8GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   490.44%   1.848GiB / 251.3GiB   0.74%     6.26GB / 42.1MB   17.8MB / 11.2GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   507.47%   1.892GiB / 251.3GiB   0.75%     6.53GB / 44.1MB   17.8MB / 11.2GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   587.09%   1.928GiB / 251.3GiB   0.77%     6.8GB / 46.1MB   17.8MB / 12.7GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   587.10%   2.022GiB / 251.3GiB   0.80%     7.07GB / 48.1MB   17.8MB / 12.7GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   634.45%   2.023GiB / 251.3GiB   0.80%     7.35GB / 50.2MB   17.8MB / 12.7GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   513.38%   2.011GiB / 251.3GiB   0.80%     7.6GB / 52MB   17.8MB / 12.7GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   548.41%   2.067GiB / 251.3GiB   0.82%     7.87GB / 53.9MB   17.8MB / 13.7GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   562.06%   2.102GiB / 251.3GiB   0.84%     8.13GB / 55.8MB   17.8MB / 13.7GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   494.38%   2.266GiB / 251.3GiB   0.90%     8.41GB / 57.7MB   17.8MB / 15.7GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   518.40%   2.206GiB / 251.3GiB   0.88%     8.68GB / 59.7MB   17.8MB / 15.7GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   633.17%   2.238GiB / 251.3GiB   0.89%     8.95GB / 61.7MB   17.8MB / 17.6GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   807.23%   2.256GiB / 251.3GiB   0.90%     9.22GB / 63.6MB   17.8MB / 17.6GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   803.66%   2.399GiB / 251.3GiB   0.95%     9.5GB / 65.7MB   17.8MB / 18.1GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   805.05%   2.45GiB / 251.3GiB   0.97%     9.77GB / 67.6MB   17.8MB / 19.5GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O         BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   804.18%   2.57GiB / 251.3GiB   1.02%     10GB / 69.4MB   17.9MB / 19.5GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   802.05%   2.729GiB / 251.3GiB   1.09%     10.3GB / 71.3MB   17.9MB / 21.1GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   798.02%   3.31GiB / 251.3GiB   1.32%     10.6GB / 73.2MB   17.9MB / 21.1GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   801.34%   3.633GiB / 251.3GiB   1.45%     10.9GB / 75.1MB   17.9MB / 22.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   803.19%   3.805GiB / 251.3GiB   1.51%     11.1GB / 77.1MB   17.9MB / 22.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   805.19%   3.766GiB / 251.3GiB   1.50%     11.4GB / 78.9MB   17.9MB / 23.6GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   802.94%   3.717GiB / 251.3GiB   1.48%     11.7GB / 80.9MB   17.9MB / 23.6GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   794.25%   3.824GiB / 251.3GiB   1.52%     12GB / 82.9MB   17.9MB / 24.8GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   802.90%   3.858GiB / 251.3GiB   1.54%     12.2GB / 84.8MB   17.9MB / 24.8GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   805.94%   4.261GiB / 251.3GiB   1.70%     12.4GB / 86.1MB   17.9MB / 28.7GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   801.85%   3.926GiB / 251.3GiB   1.56%     12.4GB / 86.1MB   17.9MB / 28.7GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   801.37%   4.103GiB / 251.3GiB   1.63%     12.4GB / 86.1MB   17.9MB / 30.9GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   802.53%   4.166GiB / 251.3GiB   1.66%     12.4GB / 86.1MB   17.9MB / 30.9GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   800.14%   4.326GiB / 251.3GiB   1.72%     12.4GB / 86.1MB   17.9MB / 30.9GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   799.65%   4.48GiB / 251.3GiB   1.78%     12.4GB / 86.1MB   17.9MB / 32.1GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   797.88%   4.809GiB / 251.3GiB   1.91%     12.4GB / 86.1MB   17.9MB / 32.1GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   800.52%   4.523GiB / 251.3GiB   1.80%     12.4GB / 86.1MB   17.9MB / 33.4GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   801.55%   5.128GiB / 251.3GiB   2.04%     12.4GB / 86.1MB   17.9MB / 33.4GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   802.35%   5.159GiB / 251.3GiB   2.05%     12.4GB / 86.1MB   17.9MB / 37.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   803.78%   6.01GiB / 251.3GiB   2.39%     12.4GB / 86.1MB   17.9MB / 37.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+5ac58e682683   magical_mclaren   799.77%   5.523GiB / 251.3GiB   2.20%     12.4GB / 86.1MB   18MB / 41.4GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+5ac58e682683   magical_mclaren   805.63%   5.889GiB / 251.3GiB   2.34%     12.6GB / 87.3MB   18MB / 41.4GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+5ac58e682683   magical_mclaren   804.99%   5.863GiB / 251.3GiB   2.33%     12.8GB / 89.3MB   18MB / 42.7GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+5ac58e682683   magical_mclaren   801.83%   6.049GiB / 251.3GiB   2.41%     13.1GB / 91.2MB   18MB / 42.7GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+5ac58e682683   magical_mclaren   801.39%   6.193GiB / 251.3GiB   2.46%     13.4GB / 93.3MB   18MB / 43.5GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+5ac58e682683   magical_mclaren   805.69%   6.161GiB / 251.3GiB   2.45%     13.6GB / 95.4MB   18MB / 43.5GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O       PIDS
+5ac58e682683   magical_mclaren   806.15%   6.33GiB / 251.3GiB   2.52%     13.9GB / 97.6MB   18MB / 44.5GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+5ac58e682683   magical_mclaren   806.78%   6.367GiB / 251.3GiB   2.53%     14.2GB / 99.9MB   18MB / 44.5GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O       PIDS
+5ac58e682683   magical_mclaren   807.13%   6.411GiB / 251.3GiB   2.55%     14.5GB / 102MB   18MB / 45.7GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O       PIDS
+5ac58e682683   magical_mclaren   805.27%   6.443GiB / 251.3GiB   2.56%     14.7GB / 104MB   18MB / 45.8GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O       PIDS
+5ac58e682683   magical_mclaren   803.65%   6.423GiB / 251.3GiB   2.56%     15GB / 106MB   18MB / 45.8GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O       PIDS
+5ac58e682683   magical_mclaren   805.59%   6.698GiB / 251.3GiB   2.67%     15.3GB / 109MB   18MB / 46.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O       PIDS
+5ac58e682683   magical_mclaren   801.70%   6.567GiB / 251.3GiB   2.61%     15.5GB / 111MB   18MB / 46.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O       PIDS
+5ac58e682683   magical_mclaren   803.27%   6.583GiB / 251.3GiB   2.62%     15.8GB / 113MB   18MB / 47.9GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O       PIDS
+5ac58e682683   magical_mclaren   801.14%   6.62GiB / 251.3GiB   2.63%     16.1GB / 115MB   18MB / 47.9GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O       PIDS
+5ac58e682683   magical_mclaren   803.65%   6.809GiB / 251.3GiB   2.71%     16.3GB / 118MB   18MB / 49.7GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   802.93%   6.878GiB / 251.3GiB   2.74%     16.6GB / 120MB   18.3MB / 49.7GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   801.95%   6.981GiB / 251.3GiB   2.78%     16.9GB / 122MB   18.3MB / 51.8GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   802.60%   7.012GiB / 251.3GiB   2.79%     17.2GB / 124MB   18.3MB / 51.8GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O       PIDS
+5ac58e682683   magical_mclaren   806.75%   7.005GiB / 251.3GiB   2.79%     17.4GB / 127MB   18.3MB / 54GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O       PIDS
+5ac58e682683   magical_mclaren   802.08%   7.059GiB / 251.3GiB   2.81%     17.7GB / 129MB   18.3MB / 54GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   803.98%   6.598GiB / 251.3GiB   2.63%     18GB / 131MB   18.3MB / 56.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   800.28%   6.615GiB / 251.3GiB   2.63%     18.3GB / 134MB   18.3MB / 56.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   804.26%   6.692GiB / 251.3GiB   2.66%     18.5GB / 136MB   18.3MB / 58.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   803.91%   6.702GiB / 251.3GiB   2.67%     18.8GB / 138MB   18.3MB / 58.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT   MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   806.03%   6.7GiB / 251.3GiB   2.67%     19.1GB / 140MB   18.3MB / 60.4GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   798.88%   6.689GiB / 251.3GiB   2.66%     19.4GB / 143MB   18.3MB / 60.5GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   804.81%   6.743GiB / 251.3GiB   2.68%     19.6GB / 145MB   18.3MB / 60.5GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   801.03%   6.699GiB / 251.3GiB   2.67%     19.9GB / 147MB   18.3MB / 62.7GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   804.43%   6.688GiB / 251.3GiB   2.66%     20.2GB / 149MB   18.3MB / 62.7GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   806.70%   7.361GiB / 251.3GiB   2.93%     20.5GB / 152MB   18.3MB / 64.9GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   805.45%   8.081GiB / 251.3GiB   3.22%     20.7GB / 154MB   18.3MB / 64.9GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   802.38%   8.355GiB / 251.3GiB   3.32%     21GB / 156MB   18.3MB / 67.1GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   808.87%   8.383GiB / 251.3GiB   3.34%     21.3GB / 158MB   18.3MB / 67.1GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   802.86%   8.432GiB / 251.3GiB   3.36%     21.5GB / 160MB   18.3MB / 72.2GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   804.66%   8.518GiB / 251.3GiB   3.39%     21.8GB / 162MB   18.3MB / 72.2GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   801.55%   8.542GiB / 251.3GiB   3.40%     22.1GB / 165MB   18.3MB / 74.8GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   802.52%   8.611GiB / 251.3GiB   3.43%     22.4GB / 167MB   18.3MB / 74.8GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   804.11%   8.863GiB / 251.3GiB   3.53%     22.6GB / 169MB   18.3MB / 75.9GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   804.60%   9.116GiB / 251.3GiB   3.63%     22.9GB / 171MB   18.3MB / 75.9GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O       PIDS
+5ac58e682683   magical_mclaren   805.01%   8.815GiB / 251.3GiB   3.51%     23.2GB / 173MB   18.3MB / 77GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   806.10%   9.352GiB / 251.3GiB   3.72%     23.5GB / 175MB   18.3MB / 79.6GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   804.87%   9.21GiB / 251.3GiB   3.66%     23.7GB / 178MB   18.3MB / 79.6GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O       PIDS
+5ac58e682683   magical_mclaren   797.32%   9.345GiB / 251.3GiB   3.72%     24GB / 180MB   18.3MB / 81GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O       PIDS
+5ac58e682683   magical_mclaren   804.71%   9.163GiB / 251.3GiB   3.65%     24.3GB / 182MB   18.3MB / 81GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   801.15%   9.377GiB / 251.3GiB   3.73%     24.6GB / 184MB   18.3MB / 84.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   801.87%   9.255GiB / 251.3GiB   3.68%     24.8GB / 187MB   18.3MB / 84.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   800.97%   9.473GiB / 251.3GiB   3.77%     25.1GB / 189MB   18.3MB / 86.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   801.87%   9.674GiB / 251.3GiB   3.85%     25.4GB / 191MB   18.3MB / 86.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   802.78%   9.688GiB / 251.3GiB   3.85%     25.6GB / 193MB   18.3MB / 89.5GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   801.39%   9.766GiB / 251.3GiB   3.89%     25.9GB / 195MB   18.3MB / 89.5GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   803.34%   9.692GiB / 251.3GiB   3.86%     26.2GB / 197MB   18.3MB / 90.8GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   801.21%   9.921GiB / 251.3GiB   3.95%     26.5GB / 200MB   18.3MB / 90.8GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O       PIDS
+5ac58e682683   magical_mclaren   803.40%   10.16GiB / 251.3GiB   4.04%     26.7GB / 202MB   18.3MB / 92GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O       PIDS
+5ac58e682683   magical_mclaren   806.82%   10.87GiB / 251.3GiB   4.33%     27GB / 204MB   18.3MB / 92GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O       PIDS
+5ac58e682683   magical_mclaren   805.30%   11.67GiB / 251.3GiB   4.64%     27.3GB / 207MB   18.3MB / 92GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   802.06%   11.86GiB / 251.3GiB   4.72%     27.6GB / 209MB   18.3MB / 93.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   804.89%   12.03GiB / 251.3GiB   4.79%     27.8GB / 211MB   18.3MB / 93.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   801.67%   11.78GiB / 251.3GiB   4.69%     28.1GB / 213MB   18.3MB / 95.1GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   803.02%   11.93GiB / 251.3GiB   4.75%     28.4GB / 215MB   18.3MB / 95.1GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   802.38%   11.98GiB / 251.3GiB   4.77%     28.6GB / 217MB   18.3MB / 97.9GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   802.13%   12.11GiB / 251.3GiB   4.82%     28.9GB / 219MB   18.3MB / 97.9GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   802.61%   12.18GiB / 251.3GiB   4.85%     29.2GB / 221MB   18.3MB / 99.1GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5ac58e682683   magical_mclaren   800.90%   12.27GiB / 251.3GiB   4.88%     29.5GB / 223MB   18.3MB / 99.1GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.33%   12.33GiB / 251.3GiB   4.90%     29.7GB / 226MB   18.3MB / 100GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   804.22%   12.32GiB / 251.3GiB   4.90%     30GB / 228MB   18.3MB / 100GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   807.79%   12.32GiB / 251.3GiB   4.90%     30.3GB / 230MB   18.3MB / 102GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   804.59%   12.62GiB / 251.3GiB   5.02%     30.6GB / 232MB   18.3MB / 102GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   808.77%   12.36GiB / 251.3GiB   4.92%     30.8GB / 235MB   18.3MB / 104GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   805.68%   12.37GiB / 251.3GiB   4.92%     31.1GB / 237MB   18.3MB / 104GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   805.48%   12.52GiB / 251.3GiB   4.98%     31.4GB / 239MB   18.3MB / 106GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   805.35%   12.71GiB / 251.3GiB   5.06%     31.6GB / 241MB   18.3MB / 107GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   800.31%   12.41GiB / 251.3GiB   4.94%     31.9GB / 244MB   18.3MB / 107GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.56%   12.63GiB / 251.3GiB   5.03%     32.2GB / 246MB   18.3MB / 108GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.73%   12.5GiB / 251.3GiB   4.97%     32.5GB / 248MB   18.3MB / 108GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   803.45%   12.61GiB / 251.3GiB   5.02%     32.7GB / 250MB   18.3MB / 109GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   803.39%   12.61GiB / 251.3GiB   5.02%     33GB / 252MB   18.3MB / 109GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   806.10%   12.91GiB / 251.3GiB   5.14%     33.3GB / 254MB   18.3MB / 110GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.59%   12.69GiB / 251.3GiB   5.05%     33.6GB / 257MB   18.3MB / 110GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.51%   12.85GiB / 251.3GiB   5.12%     33.8GB / 259MB   18.3MB / 112GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.52%   13.57GiB / 251.3GiB   5.40%     34.1GB / 261MB   18.3MB / 112GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   805.53%   14.25GiB / 251.3GiB   5.67%     34.4GB / 263MB   18.3MB / 115GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   806.64%   14.53GiB / 251.3GiB   5.78%     34.7GB / 265MB   18.3MB / 115GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   803.07%   14.78GiB / 251.3GiB   5.88%     34.9GB / 267MB   18.3MB / 116GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   806.01%   14.68GiB / 251.3GiB   5.84%     35.2GB / 270MB   18.3MB / 116GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.86%   14.81GiB / 251.3GiB   5.89%     35.5GB / 272MB   18.3MB / 118GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   805.95%   14.64GiB / 251.3GiB   5.82%     35.8GB / 274MB   18.3MB / 118GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   803.54%   14.93GiB / 251.3GiB   5.94%     36GB / 276MB   18.3MB / 118GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   804.28%   14.72GiB / 251.3GiB   5.86%     36.3GB / 279MB   18.3MB / 119GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   805.02%   15.02GiB / 251.3GiB   5.98%     36.6GB / 281MB   18.3MB / 119GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT   MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   804.58%   15GiB / 251.3GiB    5.97%     36.9GB / 283MB   18.3MB / 120GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   806.25%   15.1GiB / 251.3GiB   6.01%     37.1GB / 285MB   18.3MB / 120GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   805.59%   15.03GiB / 251.3GiB   5.98%     37.3GB / 287MB   18.3MB / 124GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.87%   14.97GiB / 251.3GiB   5.96%     37.3GB / 287MB   18.3MB / 124GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   800.19%   15.04GiB / 251.3GiB   5.99%     37.3GB / 287MB   18.3MB / 125GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.02%   15.03GiB / 251.3GiB   5.98%     37.3GB / 287MB   18.3MB / 125GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.51%   15.44GiB / 251.3GiB   6.14%     37.3GB / 287MB   18.3MB / 127GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.43%   15.25GiB / 251.3GiB   6.07%     37.3GB / 287MB   18.3MB / 127GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.06%   15.47GiB / 251.3GiB   6.16%     37.3GB / 287MB   18.3MB / 128GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.22%   15.2GiB / 251.3GiB   6.05%     37.3GB / 287MB   18.3MB / 128GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   803.17%   15.3GiB / 251.3GiB   6.09%     37.3GB / 287MB   18.3MB / 129GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.41%   15.27GiB / 251.3GiB   6.07%     37.3GB / 287MB   18.3MB / 129GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.32%   15.38GiB / 251.3GiB   6.12%     37.3GB / 287MB   18.3MB / 130GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   804.25%   15.19GiB / 251.3GiB   6.04%     37.3GB / 287MB   18.3MB / 130GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.08%   15.53GiB / 251.3GiB   6.18%     37.3GB / 287MB   18.3MB / 131GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.51%   15.6GiB / 251.3GiB   6.21%     37.3GB / 287MB   18.3MB / 131GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.36%   15.95GiB / 251.3GiB   6.35%     37.3GB / 287MB   18.3MB / 132GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.86%   16.27GiB / 251.3GiB   6.47%     37.3GB / 287MB   18.3MB / 133GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.42%   16.61GiB / 251.3GiB   6.61%     37.3GB / 287MB   18.3MB / 133GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.44%   16.65GiB / 251.3GiB   6.62%     37.3GB / 287MB   18.3MB / 134GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   800.14%   16.67GiB / 251.3GiB   6.63%     37.3GB / 287MB   18.3MB / 134GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   797.28%   16.73GiB / 251.3GiB   6.66%     37.3GB / 287MB   18.3MB / 134GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.91%   16.91GiB / 251.3GiB   6.73%     37.3GB / 287MB   18.3MB / 134GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   796.07%   16.7GiB / 251.3GiB   6.65%     37.3GB / 287MB   18.3MB / 134GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.46%   16.68GiB / 251.3GiB   6.64%     37.3GB / 287MB   18.3MB / 134GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.86%   16.83GiB / 251.3GiB   6.70%     37.3GB / 287MB   18.3MB / 134GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.56%   16.91GiB / 251.3GiB   6.73%     37.3GB / 287MB   18.3MB / 134GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.44%   17.19GiB / 251.3GiB   6.84%     37.3GB / 287MB   18.3MB / 134GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   797.18%   17.22GiB / 251.3GiB   6.85%     37.3GB / 287MB   18.3MB / 134GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.29%   17.11GiB / 251.3GiB   6.81%     37.3GB / 287MB   18.3MB / 134GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.68%   17.49GiB / 251.3GiB   6.96%     37.3GB / 287MB   18.3MB / 135GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.95%   16.97GiB / 251.3GiB   6.75%     37.3GB / 287MB   18.3MB / 135GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.50%   16.96GiB / 251.3GiB   6.75%     37.3GB / 287MB   18.3MB / 137GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   797.84%   17.51GiB / 251.3GiB   6.97%     37.3GB / 287MB   18.3MB / 137GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.68%   17.32GiB / 251.3GiB   6.89%     37.3GB / 287MB   18.3MB / 137GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.35%   17.01GiB / 251.3GiB   6.77%     37.3GB / 287MB   18.3MB / 137GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.84%   17.28GiB / 251.3GiB   6.87%     37.3GB / 287MB   18.3MB / 138GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.61%   17.41GiB / 251.3GiB   6.93%     37.3GB / 287MB   18.3MB / 138GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.20%   17.08GiB / 251.3GiB   6.80%     37.3GB / 287MB   18.3MB / 138GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.17%   17.28GiB / 251.3GiB   6.87%     37.3GB / 287MB   18.3MB / 138GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   800.92%   17.47GiB / 251.3GiB   6.95%     37.3GB / 287MB   18.3MB / 138GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.84%   17.11GiB / 251.3GiB   6.81%     37.3GB / 287MB   18.3MB / 138GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.62%   17.44GiB / 251.3GiB   6.94%     37.3GB / 287MB   18.3MB / 138GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.01%   17.53GiB / 251.3GiB   6.97%     37.3GB / 287MB   18.3MB / 138GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   797.88%   17.89GiB / 251.3GiB   7.12%     37.3GB / 287MB   18.3MB / 140GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.26%   18.28GiB / 251.3GiB   7.27%     37.3GB / 287MB   18.3MB / 140GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.33%   18.87GiB / 251.3GiB   7.51%     37.3GB / 287MB   18.3MB / 140GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.27%   18.73GiB / 251.3GiB   7.45%     37.3GB / 287MB   18.3MB / 140GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   800.23%   18.86GiB / 251.3GiB   7.50%     37.3GB / 287MB   18.3MB / 140GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.72%   18.81GiB / 251.3GiB   7.48%     37.3GB / 287MB   18.3MB / 140GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   800.19%   18.69GiB / 251.3GiB   7.44%     37.3GB / 287MB   18.3MB / 140GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.73%   18.96GiB / 251.3GiB   7.54%     37.3GB / 287MB   18.3MB / 140GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.67%   18.75GiB / 251.3GiB   7.46%     37.3GB / 287MB   18.3MB / 140GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.69%   18.73GiB / 251.3GiB   7.45%     37.3GB / 287MB   18.3MB / 140GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.02%   18.97GiB / 251.3GiB   7.55%     37.3GB / 287MB   18.3MB / 142GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.84%   18.9GiB / 251.3GiB   7.52%     37.3GB / 287MB   18.3MB / 142GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   797.13%   18.93GiB / 251.3GiB   7.53%     37.3GB / 287MB   18.3MB / 142GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.30%   18.9GiB / 251.3GiB   7.52%     37.3GB / 287MB   18.3MB / 142GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.87%   19.03GiB / 251.3GiB   7.57%     37.3GB / 287MB   18.3MB / 142GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.33%   19.07GiB / 251.3GiB   7.59%     37.3GB / 287MB   18.3MB / 142GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.97%   19.08GiB / 251.3GiB   7.59%     37.3GB / 287MB   18.3MB / 142GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   800.26%   19.12GiB / 251.3GiB   7.61%     37.3GB / 287MB   18.3MB / 142GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.75%   19.26GiB / 251.3GiB   7.66%     37.3GB / 287MB   18.3MB / 142GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.01%   19.19GiB / 251.3GiB   7.63%     37.3GB / 287MB   18.3MB / 142GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.21%   19.25GiB / 251.3GiB   7.66%     37.3GB / 287MB   18.3MB / 142GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.08%   19.26GiB / 251.3GiB   7.66%     37.3GB / 287MB   18.3MB / 143GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.00%   19.51GiB / 251.3GiB   7.76%     37.3GB / 287MB   18.3MB / 143GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.65%   19.3GiB / 251.3GiB   7.68%     37.3GB / 287MB   18.3MB / 143GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.82%   19.38GiB / 251.3GiB   7.71%     37.3GB / 287MB   18.3MB / 143GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   797.02%   19.2GiB / 251.3GiB   7.64%     37.3GB / 287MB   18.3MB / 145GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.59%   19.53GiB / 251.3GiB   7.77%     37.3GB / 287MB   18.3MB / 145GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.25%   19.79GiB / 251.3GiB   7.88%     37.3GB / 287MB   18.3MB / 145GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.89%   20.03GiB / 251.3GiB   7.97%     37.3GB / 287MB   18.3MB / 145GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.51%   20.31GiB / 251.3GiB   8.08%     37.3GB / 287MB   18.3MB / 145GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.00%   20.58GiB / 251.3GiB   8.19%     37.3GB / 287MB   18.3MB / 145GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.71%   20.76GiB / 251.3GiB   8.26%     37.3GB / 287MB   18.3MB / 145GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.69%   20.88GiB / 251.3GiB   8.31%     37.3GB / 287MB   18.3MB / 145GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.17%   20.96GiB / 251.3GiB   8.34%     37.3GB / 287MB   18.3MB / 145GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.45%   21.01GiB / 251.3GiB   8.36%     37.3GB / 287MB   18.3MB / 145GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   797.75%   20.99GiB / 251.3GiB   8.35%     37.3GB / 287MB   18.3MB / 145GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.69%   21.08GiB / 251.3GiB   8.39%     37.3GB / 287MB   18.3MB / 145GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.28%   21.44GiB / 251.3GiB   8.53%     37.3GB / 287MB   18.3MB / 147GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.28%   21.09GiB / 251.3GiB   8.39%     37.3GB / 287MB   18.3MB / 147GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.53%   21.22GiB / 251.3GiB   8.44%     37.3GB / 287MB   18.3MB / 147GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.51%   21.08GiB / 251.3GiB   8.39%     37.3GB / 287MB   18.3MB / 147GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.19%   20.98GiB / 251.3GiB   8.35%     37.3GB / 287MB   18.3MB / 147GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.59%   21.23GiB / 251.3GiB   8.45%     37.3GB / 287MB   18.3MB / 147GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.30%   21.05GiB / 251.3GiB   8.38%     37.3GB / 287MB   18.3MB / 148GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.49%   21.38GiB / 251.3GiB   8.51%     37.3GB / 287MB   18.3MB / 148GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.53%   21.18GiB / 251.3GiB   8.43%     37.3GB / 287MB   18.3MB / 148GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.98%   21.45GiB / 251.3GiB   8.53%     37.3GB / 287MB   18.3MB / 148GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.92%   21.42GiB / 251.3GiB   8.52%     37.3GB / 287MB   18.3MB / 148GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.49%   21.54GiB / 251.3GiB   8.57%     37.3GB / 287MB   18.3MB / 148GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.26%   21.51GiB / 251.3GiB   8.56%     37.3GB / 287MB   18.3MB / 148GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.50%   21.34GiB / 251.3GiB   8.49%     37.3GB / 287MB   18.3MB / 148GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.87%   21.36GiB / 251.3GiB   8.50%     37.3GB / 287MB   18.3MB / 148GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.44%   21.18GiB / 251.3GiB   8.43%     37.3GB / 287MB   18.3MB / 148GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   803.34%   21.33GiB / 251.3GiB   8.49%     37.3GB / 287MB   18.3MB / 150GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.39%   21.4GiB / 251.3GiB   8.52%     37.3GB / 287MB   18.3MB / 150GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.64%   21.41GiB / 251.3GiB   8.52%     37.3GB / 287MB   18.3MB / 150GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.17%   21.47GiB / 251.3GiB   8.54%     37.3GB / 287MB   18.3MB / 150GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.96%   21.24GiB / 251.3GiB   8.45%     37.3GB / 287MB   18.3MB / 150GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.81%   21.44GiB / 251.3GiB   8.53%     37.3GB / 287MB   18.3MB / 150GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.46%   21.44GiB / 251.3GiB   8.53%     37.3GB / 287MB   18.3MB / 150GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.86%   21.44GiB / 251.3GiB   8.53%     37.3GB / 287MB   18.3MB / 150GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.50%   21.44GiB / 251.3GiB   8.53%     37.3GB / 287MB   18.3MB / 150GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.90%   21.57GiB / 251.3GiB   8.58%     37.3GB / 287MB   18.3MB / 150GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.20%   21.93GiB / 251.3GiB   8.73%     37.3GB / 287MB   18.3MB / 150GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.14%   22.28GiB / 251.3GiB   8.86%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.45%   22.61GiB / 251.3GiB   9.00%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   797.92%   22.97GiB / 251.3GiB   9.14%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.02%   23.21GiB / 251.3GiB   9.23%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.07%   23.21GiB / 251.3GiB   9.24%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   797.87%   23.06GiB / 251.3GiB   9.18%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.77%   23.22GiB / 251.3GiB   9.24%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.07%   23.22GiB / 251.3GiB   9.24%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.43%   23.22GiB / 251.3GiB   9.24%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.02%   23.22GiB / 251.3GiB   9.24%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.95%   23.22GiB / 251.3GiB   9.24%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.05%   23.23GiB / 251.3GiB   9.24%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.62%   23.18GiB / 251.3GiB   9.22%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.58%   23.24GiB / 251.3GiB   9.25%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.81%   23.25GiB / 251.3GiB   9.25%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.48%   23.31GiB / 251.3GiB   9.27%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   797.95%   23.2GiB / 251.3GiB   9.23%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.24%   23.21GiB / 251.3GiB   9.23%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.69%   23.25GiB / 251.3GiB   9.25%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.59%   23.12GiB / 251.3GiB   9.20%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   800.66%   23.35GiB / 251.3GiB   9.29%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   803.20%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.37%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.24%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.27%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.16%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.85%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.09%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.93%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.74%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.70%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.26%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.09%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.11%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.94%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.86%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.33%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.36%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.11%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.26%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.27%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.83%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.08%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.18%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.93%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.19%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   800.15%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.93%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.69%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.93%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.94%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.76%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.17%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.60%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.19%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.86%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   800.67%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.34%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.94%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.87%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.03%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.11%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.44%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.53%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.36%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.61%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.94%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.67%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.92%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.03%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.43%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.27%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.68%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.10%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.11%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   803.01%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.86%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.77%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.27%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.88%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.04%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.52%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.11%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.93%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.37%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.44%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.00%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.95%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.28%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.70%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.71%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.95%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.12%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.12%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.94%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.17%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.04%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.11%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.34%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.26%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.11%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.95%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.36%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.00%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.86%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.36%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.68%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.94%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.87%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.77%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.35%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.06%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.87%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.78%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.28%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.86%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.76%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.43%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.44%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.09%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.37%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.55%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.11%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.27%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.73%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.93%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.20%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.95%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.10%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.53%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.43%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.11%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   803.04%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.53%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.63%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.26%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.87%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.50%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.53%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.70%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.60%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.19%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.70%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.44%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   797.78%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.78%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.29%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.62%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.68%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.14%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   800.61%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.87%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.72%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.72%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   797.95%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.18%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.51%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.54%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.45%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.45%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.89%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.02%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.12%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.96%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.46%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.72%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.62%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.09%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.11%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.20%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.25%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   800.29%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.01%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.96%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.43%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.62%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.95%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   803.25%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   799.40%   23.36GiB / 251.3GiB   9.30%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.74%   23.31GiB / 251.3GiB   9.27%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.54%   23.31GiB / 251.3GiB   9.27%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.05%   23.31GiB / 251.3GiB   9.27%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.44%   23.31GiB / 251.3GiB   9.27%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.96%   23.31GiB / 251.3GiB   9.27%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.39%   23.31GiB / 251.3GiB   9.27%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   802.73%   23.31GiB / 251.3GiB   9.27%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   797.97%   23.31GiB / 251.3GiB   9.27%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.12%   23.31GiB / 251.3GiB   9.27%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.63%   23.13GiB / 251.3GiB   9.20%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   798.62%   23.13GiB / 251.3GiB   9.20%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   801.70%   23.13GiB / 251.3GiB   9.20%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   200.48%   23.83GiB / 251.3GiB   9.48%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   199.58%   22.77GiB / 251.3GiB   9.06%     37.3GB / 287MB   18.3MB / 153GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+5ac58e682683   magical_mclaren   99.93%    22.5GiB / 251.3GiB   8.95%     37.3GB / 287MB   18.3MB / 153GB   10

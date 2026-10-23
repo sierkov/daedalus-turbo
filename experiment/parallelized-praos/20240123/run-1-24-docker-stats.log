@@ -1,0 +1,518 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O    PIDS
+577f8d84e417   eloquent_einstein   2368.37%   1.603GiB / 251.3GiB   0.64%     736B / 0B   2.3GB / 0B   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O     PIDS
+577f8d84e417   eloquent_einstein   2396.19%   1.789GiB / 251.3GiB   0.71%     806B / 0B   4.61GB / 0B   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+577f8d84e417   eloquent_einstein   2387.98%   1.813GiB / 251.3GiB   0.72%     806B / 0B   6.1GB / 928MB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2393.81%   2.003GiB / 251.3GiB   0.80%     806B / 0B   8.88GB / 928MB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2389.81%   2.476GiB / 251.3GiB   0.99%     876B / 0B   11.9GB / 1.69GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2394.19%   3.158GiB / 251.3GiB   1.26%     876B / 0B   14.7GB / 1.69GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2398.61%   3.489GiB / 251.3GiB   1.39%     876B / 0B   17.5GB / 1.69GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2385.76%   4.545GiB / 251.3GiB   1.81%     876B / 0B   20.9GB / 1.69GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2402.50%   4.147GiB / 251.3GiB   1.65%     876B / 0B   23.2GB / 1.69GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2390.66%   5.346GiB / 251.3GiB   2.13%     876B / 0B   25.8GB / 1.69GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2402.02%   5.813GiB / 251.3GiB   2.31%     946B / 0B   28.4GB / 1.69GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2391.12%   5.699GiB / 251.3GiB   2.27%     946B / 0B   30.9GB / 1.69GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2398.90%   5.803GiB / 251.3GiB   2.31%     946B / 0B   33.3GB / 1.69GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2398.98%   5.918GiB / 251.3GiB   2.35%     946B / 0B   35.5GB / 1.69GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2396.53%   5.827GiB / 251.3GiB   2.32%     946B / 0B   37.6GB / 2.01GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2390.17%   5.843GiB / 251.3GiB   2.33%     946B / 0B   39.9GB / 2.01GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2399.63%   5.643GiB / 251.3GiB   2.25%     946B / 0B   42.2GB / 5.35GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT   MEM %     NET I/O     BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2385.77%   5.7GiB / 251.3GiB   2.27%     946B / 0B   44.5GB / 5.35GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2396.01%   5.511GiB / 251.3GiB   2.19%     946B / 0B   46.6GB / 9.93GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2400.71%   5.671GiB / 251.3GiB   2.26%     946B / 0B   48.8GB / 9.93GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2395.47%   5.632GiB / 251.3GiB   2.24%     946B / 0B   50.9GB / 15.8GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+577f8d84e417   eloquent_einstein   2398.45%   5.521GiB / 251.3GiB   2.20%     1.02kB / 0B   53GB / 15.8GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+577f8d84e417   eloquent_einstein   2397.13%   5.83GiB / 251.3GiB   2.32%     1.02kB / 0B   55.1GB / 17GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2396.90%   5.904GiB / 251.3GiB   2.35%     1.02kB / 0B   57.2GB / 21.1GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2403.86%   5.98GiB / 251.3GiB   2.38%     1.02kB / 0B   59.3GB / 21.1GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2403.52%   5.79GiB / 251.3GiB   2.30%     1.02kB / 0B   61.4GB / 25.8GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2388.01%   6.319GiB / 251.3GiB   2.51%     1.02kB / 0B   63.5GB / 25.8GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2384.49%   6.606GiB / 251.3GiB   2.63%     1.02kB / 0B   65.3GB / 25.8GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2395.95%   6.652GiB / 251.3GiB   2.65%     1.02kB / 0B   67.3GB / 31.7GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2397.24%   6.275GiB / 251.3GiB   2.50%     1.02kB / 0B   69.1GB / 31.7GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2398.40%   5.951GiB / 251.3GiB   2.37%     1.02kB / 0B   71.1GB / 35.6GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+577f8d84e417   eloquent_einstein   2402.51%   6.488GiB / 251.3GiB   2.58%     1.02kB / 0B   73GB / 35.6GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+577f8d84e417   eloquent_einstein   2388.56%   6.42GiB / 251.3GiB   2.55%     1.02kB / 0B   75GB / 39.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2400.86%   7.328GiB / 251.3GiB   2.92%     1.02kB / 0B   77.1GB / 39.2GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2388.23%   7.131GiB / 251.3GiB   2.84%     1.02kB / 0B   78.8GB / 43.1GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2268.65%   6.746GiB / 251.3GiB   2.68%     1.02kB / 0B   79.2GB / 43.1GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2297.06%   7.429GiB / 251.3GiB   2.96%     1.02kB / 0B   79.2GB / 46.7GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2125.04%   7.833GiB / 251.3GiB   3.12%     1.02kB / 0B   79.2GB / 46.7GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+577f8d84e417   eloquent_einstein   2096.97%   8.039GiB / 251.3GiB   3.20%     1.02kB / 0B   79.2GB / 50GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+577f8d84e417   eloquent_einstein   2197.48%   8.376GiB / 251.3GiB   3.33%     1.02kB / 0B   79.2GB / 50GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2209.00%   8.78GiB / 251.3GiB   3.49%     1.02kB / 0B   79.2GB / 52.9GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2242.99%   9.2GiB / 251.3GiB   3.66%     1.02kB / 0B   79.2GB / 53.5GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2233.23%   9.661GiB / 251.3GiB   3.84%     1.02kB / 0B   79.2GB / 53.5GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2328.57%   10.17GiB / 251.3GiB   4.05%     1.02kB / 0B   79.2GB / 56.7GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2349.48%   10.84GiB / 251.3GiB   4.31%     1.09kB / 0B   79.2GB / 56.7GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   99.96%    11.09GiB / 251.3GiB   4.41%     1.09kB / 0B   79.2GB / 59.8GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   100.10%   10.9GiB / 251.3GiB   4.34%     1.09kB / 0B   79.2GB / 59.8GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   99.85%    10.68GiB / 251.3GiB   4.25%     1.09kB / 0B   79.2GB / 64.4GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   99.76%    10.46GiB / 251.3GiB   4.16%     1.09kB / 0B   79.2GB / 64.4GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   1561.69%   8.376GiB / 251.3GiB   3.33%     1.09kB / 0B   79.2GB / 76.6GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2327.82%   7.878GiB / 251.3GiB   3.13%     1.09kB / 0B   79.2GB / 76.6GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2197.95%   7.924GiB / 251.3GiB   3.15%     1.09kB / 0B   79.2GB / 80.4GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2412.92%   7.874GiB / 251.3GiB   3.13%     1.09kB / 0B   79.2GB / 85.8GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2332.10%   7.88GiB / 251.3GiB   3.14%     1.09kB / 0B   79.2GB / 85.8GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   2321.84%   7.854GiB / 251.3GiB   3.13%     1.09kB / 0B   79.2GB / 95.8GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+577f8d84e417   eloquent_einstein   1684.13%   7.723GiB / 251.3GiB   3.07%     1.09kB / 0B   79.2GB / 95.8GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1839.85%   7.717GiB / 251.3GiB   3.07%     1.09kB / 0B   79.2GB / 106GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2138.14%   7.631GiB / 251.3GiB   3.04%     1.09kB / 0B   79.2GB / 106GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1945.86%   7.65GiB / 251.3GiB   3.04%     1.09kB / 0B   79.2GB / 108GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2010.82%   7.281GiB / 251.3GiB   2.90%     1.09kB / 0B   79.2GB / 108GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2341.99%   7.268GiB / 251.3GiB   2.89%     1.09kB / 0B   79.2GB / 108GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2361.21%   7.283GiB / 251.3GiB   2.90%     1.09kB / 0B   79.2GB / 108GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1777.99%   7.23GiB / 251.3GiB   2.88%     1.09kB / 0B   79.2GB / 108GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2401.27%   7.754GiB / 251.3GiB   3.09%     1.09kB / 0B   79.2GB / 108GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2305.65%   8.749GiB / 251.3GiB   3.48%     1.09kB / 0B   79.2GB / 108GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2297.76%   9.713GiB / 251.3GiB   3.86%     1.09kB / 0B   79.2GB / 119GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2307.00%   10.59GiB / 251.3GiB   4.21%     1.09kB / 0B   79.2GB / 119GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1731.32%   10.65GiB / 251.3GiB   4.24%     1.09kB / 0B   79.2GB / 131GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2007.94%   10.75GiB / 251.3GiB   4.28%     1.09kB / 0B   79.2GB / 131GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2450.32%   10.75GiB / 251.3GiB   4.28%     1.09kB / 0B   79.2GB / 133GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2470.16%   10.75GiB / 251.3GiB   4.28%     1.09kB / 0B   79.2GB / 134GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2476.37%   10.75GiB / 251.3GiB   4.28%     1.09kB / 0B   79.2GB / 134GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2474.57%   10.8GiB / 251.3GiB   4.30%     1.09kB / 0B   79.2GB / 141GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2461.12%   10.87GiB / 251.3GiB   4.32%     1.09kB / 0B   79.2GB / 141GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2480.65%   10.91GiB / 251.3GiB   4.34%     1.09kB / 0B   79.2GB / 151GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2481.76%   10.99GiB / 251.3GiB   4.37%     1.09kB / 0B   79.2GB / 151GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2480.67%   11GiB / 251.3GiB    4.38%     1.09kB / 0B   79.2GB / 151GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2468.26%   11.04GiB / 251.3GiB   4.39%     1.09kB / 0B   79.2GB / 151GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2465.49%   11.07GiB / 251.3GiB   4.40%     1.09kB / 0B   79.2GB / 152GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2490.80%   11.11GiB / 251.3GiB   4.42%     1.09kB / 0B   79.2GB / 152GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2483.50%   11.15GiB / 251.3GiB   4.44%     1.09kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2493.30%   11.15GiB / 251.3GiB   4.44%     1.09kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2481.39%   11.19GiB / 251.3GiB   4.45%     1.09kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2481.06%   11.19GiB / 251.3GiB   4.45%     1.09kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2473.91%   11.24GiB / 251.3GiB   4.47%     1.09kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2485.27%   11.27GiB / 251.3GiB   4.48%     1.09kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2460.64%   11.33GiB / 251.3GiB   4.51%     1.09kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1756.99%   11.35GiB / 251.3GiB   4.52%     1.09kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   851.82%   11.4GiB / 251.3GiB   4.54%     1.09kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1617.11%   11.44GiB / 251.3GiB   4.55%     1.09kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   824.79%   11.44GiB / 251.3GiB   4.55%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1364.99%   11.46GiB / 251.3GiB   4.56%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1318.22%   11.5GiB / 251.3GiB   4.58%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   729.02%   11.48GiB / 251.3GiB   4.57%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1973.70%   11.52GiB / 251.3GiB   4.58%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   413.34%   11.49GiB / 251.3GiB   4.57%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1246.95%   11.56GiB / 251.3GiB   4.60%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1774.08%   11.59GiB / 251.3GiB   4.61%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   453.88%   11.61GiB / 251.3GiB   4.62%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   884.31%   11.66GiB / 251.3GiB   4.64%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2015.97%   11.66GiB / 251.3GiB   4.64%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1029.44%   11.66GiB / 251.3GiB   4.64%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   100.19%   11.76GiB / 251.3GiB   4.68%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1064.99%   11.76GiB / 251.3GiB   4.68%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1994.32%   11.8GiB / 251.3GiB   4.69%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1300.59%   11.84GiB / 251.3GiB   4.71%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   411.55%   11.78GiB / 251.3GiB   4.69%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   99.83%    11.88GiB / 251.3GiB   4.73%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   912.48%   11.85GiB / 251.3GiB   4.71%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1490.69%   11.85GiB / 251.3GiB   4.72%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2044.32%   11.85GiB / 251.3GiB   4.72%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1393.34%   11.86GiB / 251.3GiB   4.72%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   776.06%   11.77GiB / 251.3GiB   4.68%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   288.93%   11.83GiB / 251.3GiB   4.71%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   100.28%   11.92GiB / 251.3GiB   4.74%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   366.44%   11.92GiB / 251.3GiB   4.74%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   924.89%   11.92GiB / 251.3GiB   4.74%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1392.60%   11.93GiB / 251.3GiB   4.75%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1841.49%   11.93GiB / 251.3GiB   4.75%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2014.09%   11.93GiB / 251.3GiB   4.75%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1533.23%   11.93GiB / 251.3GiB   4.75%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1161.18%   11.94GiB / 251.3GiB   4.75%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   821.54%   11.96GiB / 251.3GiB   4.76%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1562.68%   11.97GiB / 251.3GiB   4.76%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2005.50%   11.98GiB / 251.3GiB   4.77%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   2031.29%   11.99GiB / 251.3GiB   4.77%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1998.46%   12GiB / 251.3GiB    4.78%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1986.99%   12.01GiB / 251.3GiB   4.78%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1721.40%   12.01GiB / 251.3GiB   4.78%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1386.61%   12.01GiB / 251.3GiB   4.78%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1329.90%   12.01GiB / 251.3GiB   4.78%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1361.08%   12.02GiB / 251.3GiB   4.78%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1206.83%   12.02GiB / 251.3GiB   4.78%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1233.51%   12.02GiB / 251.3GiB   4.78%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1264.64%   12.02GiB / 251.3GiB   4.78%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1226.32%   12.02GiB / 251.3GiB   4.78%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1072.76%   12.02GiB / 251.3GiB   4.78%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1007.19%   12.02GiB / 251.3GiB   4.78%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1037.16%   12.02GiB / 251.3GiB   4.78%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1056.69%   12.02GiB / 251.3GiB   4.78%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1027.65%   12.02GiB / 251.3GiB   4.78%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   933.04%   12.03GiB / 251.3GiB   4.79%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   860.15%   12.03GiB / 251.3GiB   4.79%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   829.52%   12.03GiB / 251.3GiB   4.79%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   807.53%   12.03GiB / 251.3GiB   4.79%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   723.75%   12.03GiB / 251.3GiB   4.79%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   596.12%   12.03GiB / 251.3GiB   4.79%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   565.59%   12.03GiB / 251.3GiB   4.79%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   494.35%   12.03GiB / 251.3GiB   4.79%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   399.27%   12.03GiB / 251.3GiB   4.79%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   353.91%   12.03GiB / 251.3GiB   4.79%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   294.97%   12.03GiB / 251.3GiB   4.79%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   240.85%   12.03GiB / 251.3GiB   4.79%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   256.23%   12.03GiB / 251.3GiB   4.79%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   247.96%   12.04GiB / 251.3GiB   4.79%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   229.69%   12.04GiB / 251.3GiB   4.79%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   101.64%   12.04GiB / 251.3GiB   4.79%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   99.88%    12.04GiB / 251.3GiB   4.79%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   100.19%   12.04GiB / 251.3GiB   4.79%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   99.79%    12.04GiB / 251.3GiB   4.79%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   99.90%    12.04GiB / 251.3GiB   4.79%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   99.77%    12.04GiB / 251.3GiB   4.79%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   99.83%    12.05GiB / 251.3GiB   4.79%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   100.15%   12.04GiB / 251.3GiB   4.79%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   100.21%   12.04GiB / 251.3GiB   4.79%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   99.88%    12.03GiB / 251.3GiB   4.79%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   99.90%    12.03GiB / 251.3GiB   4.79%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   100.13%   12.03GiB / 251.3GiB   4.79%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   100.25%   12.02GiB / 251.3GiB   4.78%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   100.30%   12.01GiB / 251.3GiB   4.78%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   100.15%   11.97GiB / 251.3GiB   4.76%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   100.21%   11.94GiB / 251.3GiB   4.75%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   110.45%   11.94GiB / 251.3GiB   4.75%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   215.66%   11.94GiB / 251.3GiB   4.75%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   99.90%    12.05GiB / 251.3GiB   4.80%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   605.06%   12.05GiB / 251.3GiB   4.80%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1239.90%   12.05GiB / 251.3GiB   4.80%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   971.76%   11.89GiB / 251.3GiB   4.73%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   100.17%   12.01GiB / 251.3GiB   4.78%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   230.36%   12.06GiB / 251.3GiB   4.80%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1233.01%   12.06GiB / 251.3GiB   4.80%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1241.76%   12.06GiB / 251.3GiB   4.80%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   316.99%   11.95GiB / 251.3GiB   4.76%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   100.30%   12.07GiB / 251.3GiB   4.80%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   648.09%   12.07GiB / 251.3GiB   4.80%     1.16kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1239.45%   12.07GiB / 251.3GiB   4.80%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   915.69%   11.9GiB / 251.3GiB   4.74%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   99.79%    12.01GiB / 251.3GiB   4.78%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   100.13%   12.08GiB / 251.3GiB   4.81%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   857.91%   12.08GiB / 251.3GiB   4.81%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1260.26%   12.08GiB / 251.3GiB   4.81%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   840.60%   11.92GiB / 251.3GiB   4.74%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   100.27%   12.02GiB / 251.3GiB   4.78%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   100.25%   12.09GiB / 251.3GiB   4.81%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   811.09%   12.09GiB / 251.3GiB   4.81%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1261.41%   12.09GiB / 251.3GiB   4.81%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1035.09%   11.97GiB / 251.3GiB   4.76%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   114.39%   11.97GiB / 251.3GiB   4.76%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   99.90%    12.09GiB / 251.3GiB   4.81%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   684.50%   12.09GiB / 251.3GiB   4.81%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1236.46%   12.09GiB / 251.3GiB   4.81%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1119.74%   12.09GiB / 251.3GiB   4.81%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   354.41%   11.97GiB / 251.3GiB   4.77%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   99.81%    12.07GiB / 251.3GiB   4.80%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   99.87%    12.1GiB / 251.3GiB   4.81%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   885.82%   12.1GiB / 251.3GiB   4.81%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1227.54%   12.1GiB / 251.3GiB   4.81%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1034.71%   12.1GiB / 251.3GiB   4.81%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   190.13%   11.98GiB / 251.3GiB   4.77%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   100.15%   12.1GiB / 251.3GiB   4.81%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   354.56%   12.1GiB / 251.3GiB   4.81%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1241.24%   12.1GiB / 251.3GiB   4.81%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1265.78%   12.1GiB / 251.3GiB   4.82%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   684.19%   11.95GiB / 251.3GiB   4.76%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   99.87%    12.04GiB / 251.3GiB   4.79%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   99.75%    12.1GiB / 251.3GiB   4.82%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   626.04%   12.1GiB / 251.3GiB   4.82%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1253.65%   12.11GiB / 251.3GiB   4.82%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1249.06%   12.11GiB / 251.3GiB   4.82%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   635.01%   11.96GiB / 251.3GiB   4.76%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   99.86%    12.05GiB / 251.3GiB   4.80%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   99.85%    12.11GiB / 251.3GiB   4.82%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   518.03%   12.11GiB / 251.3GiB   4.82%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1241.71%   12.11GiB / 251.3GiB   4.82%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1268.37%   12.11GiB / 251.3GiB   4.82%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   727.97%   11.95GiB / 251.3GiB   4.76%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   100.19%   12.03GiB / 251.3GiB   4.79%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   100.27%   12.12GiB / 251.3GiB   4.82%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   369.49%   12.12GiB / 251.3GiB   4.82%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1128.15%   12.12GiB / 251.3GiB   4.82%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1238.71%   12.12GiB / 251.3GiB   4.82%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   986.13%   11.93GiB / 251.3GiB   4.75%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   231.38%   12GiB / 251.3GiB    4.77%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   100.15%   12.1GiB / 251.3GiB   4.82%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   99.77%    12.13GiB / 251.3GiB   4.83%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   702.32%   12.13GiB / 251.3GiB   4.83%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1269.93%   12.13GiB / 251.3GiB   4.83%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1269.74%   12.13GiB / 251.3GiB   4.83%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   762.78%   11.96GiB / 251.3GiB   4.76%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   110.37%   12.01GiB / 251.3GiB   4.78%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   100.05%   12.12GiB / 251.3GiB   4.82%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   100.23%   12.14GiB / 251.3GiB   4.83%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   686.87%   12.14GiB / 251.3GiB   4.83%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1271.14%   12.14GiB / 251.3GiB   4.83%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1292.69%   12.14GiB / 251.3GiB   4.83%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   906.08%   11.95GiB / 251.3GiB   4.75%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   267.12%   12.02GiB / 251.3GiB   4.78%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   99.77%    12.1GiB / 251.3GiB   4.82%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   100.30%   12.16GiB / 251.3GiB   4.84%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   286.74%   12.16GiB / 251.3GiB   4.84%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   942.76%   12.16GiB / 251.3GiB   4.84%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1265.50%   12.16GiB / 251.3GiB   4.84%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   1284.53%   12.16GiB / 251.3GiB   4.84%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   725.46%   11.99GiB / 251.3GiB   4.77%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   114.77%   12.04GiB / 251.3GiB   4.79%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   99.77%    12.15GiB / 251.3GiB   4.83%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   100.19%   12.17GiB / 251.3GiB   4.84%     1.23kB / 0B   79.2GB / 159GB   26
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+577f8d84e417   eloquent_einstein   99.90%    12.05GiB / 251.3GiB   4.80%     1.23kB / 0B   79.2GB / 159GB   26

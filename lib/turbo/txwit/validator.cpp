@@ -580,6 +580,9 @@ namespace turbo::txwit {
             std::vector<uint8_vector> input_bytes {};
             std::vector<std::unique_ptr<block_container>> input_blocks {};
             std::vector<std::pair<const block_container *, const tx_base *>> signature_checks {};
+            // Large batches retain raw bytes, not decoded block/transaction
+            // graphs. Signature workers decode these independent block views.
+            std::vector<std::pair<uint64_t, buffer>> signature_blocks {};
 
             void reset()
             {
@@ -602,6 +605,7 @@ namespace turbo::txwit {
                 ref_script_sizes.clear();
                 collateral_fees = {};
                 signature_checks.clear();
+                signature_blocks.clear();
                 input_blocks.clear();
                 input_bytes.clear();
             }
@@ -731,24 +735,43 @@ namespace turbo::txwit {
 
             void _validate_signatures(batch_info &part) const
             {
-                if (part.signature_checks.empty())
+                const auto num_checks = part.signature_checks.size() + part.signature_blocks.size();
+                if (!num_checks)
                     return;
+                timer t { fmt::format("txwit batch: {} epoch: {} par validate_signatures", part.part_id, part.epoch), logger::level::debug };
                 const std::string task_id { "validate-signatures" };
                 const auto workers = _cr.sched().num_workers();
-                const auto step = (part.signature_checks.size() + workers - 1) / workers;
-                std::vector<wit_cnt> counts((part.signature_checks.size() + step - 1) / step);
+                const auto step = (num_checks + workers - 1) / workers;
+                std::vector<wit_cnt> counts((num_checks + step - 1) / step);
                 _cr.sched().wait_all(task_id, [&](const auto &, const auto &submit) {
-                    for (size_t start = 0; start < part.signature_checks.size(); start += step)
+                    for (size_t start = 0; start < num_checks; start += step)
                         submit({ 2000, task_id, [&, start] {
-                            for (size_t i = start; i < std::min(start + step, part.signature_checks.size()); ++i) {
-                                const auto &[block, tx] = part.signature_checks[i];
-                                counts[start / step] += _cfg.witnesses_ok_stage1(*block, *tx);
+                            auto &count = counts[start / step];
+                            for (size_t i = start; i < std::min(start + step, num_checks); ++i) {
+                                if (i < part.signature_checks.size()) {
+                                    const auto &[block, tx] = part.signature_checks[i];
+                                    count += _cfg.witnesses_ok_stage1(*block, *tx);
+                                } else {
+                                    const auto &[offset, raw] = part.signature_blocks[i - part.signature_checks.size()];
+                                    cbor::zero2::decoder dec { raw };
+                                    const block_container block { offset, dec.read(), _cr.config() };
+                                    for (const auto *tx: block->txs()) {
+                                        if (!tx->invalid() || block->era() == 7)
+                                            count += _cfg.witnesses_ok_stage1(block, *tx);
+                                    }
+                                }
                             }
                         }});
                 });
                 for (const auto &count: counts)
                     part.stats.wit_cnts += count;
                 part.signature_checks.clear();
+                part.signature_blocks.clear();
+                // Compressed batches no longer need their raw chunk bytes once
+                // the workers have finished. Direct batches still own blocks
+                // referring to those bytes until ledger application completes.
+                if (part.input_blocks.empty())
+                    part.input_bytes.clear();
             }
 
             wit_cnt _validate_witnesses(batch_info &part) const
@@ -959,8 +982,7 @@ namespace turbo::txwit {
                 if (first_epoch != part.epoch || last_epoch != part.epoch) [[unlikely]]
                     throw error(fmt::format("batch: {} contains data from multiple epochs: {}, {}, {}", batch_no, part.epoch, first_epoch, last_epoch));
 
-                auto bytes = _read(chunk, diag);
-                const auto &data = compress ? bytes : part.input_bytes.emplace_back(std::move(bytes));
+                const auto &data = part.input_bytes.emplace_back(_read(chunk, diag));
                 diag.input_serialized_bytes += data.size();
 
                 const auto parse_start = diagnostic_clock::now();
@@ -975,9 +997,21 @@ namespace turbo::txwit {
                     }
                     const auto prepare = [&](const block_container &blk) {
                         if (blk->era() > 0)
-                            cfg.pre_aggregate_data(part, blk, !compress);
+                            cfg.pre_aggregate_data(part, blk);
                         else
                             part.block_updates.push_back({ blk->slot(), blk->issuer_hash(), 0, 0, blk.end_offset(), 0 });
+                        if ((cfg.typ == witness_type::all || cfg.typ == witness_type::vkey)
+                                && (!cfg.intersection || offset >= cfg.intersection->end_offset)
+                                && !blk->txs().empty()) {
+                            if (compress) {
+                                part.signature_blocks.emplace_back(offset, blk.raw());
+                            } else {
+                                for (const auto *tx: blk->txs()) {
+                                    if (!tx->invalid() || blk->era() == 7)
+                                        part.signature_checks.emplace_back(&blk, tx);
+                                }
+                            }
+                        }
                     };
                     if (compress) {
                         const block_container blk { offset, block_tuple, cr.config() };
@@ -1019,6 +1053,8 @@ namespace turbo::txwit {
                     diag.tx_compress_ns += tx_io_diag.compress_ns;
                     std::vector<tx_context_t> {}.swap(part.txs[pi]);
                 }
+                if (part.signature_blocks.empty())
+                    part.input_bytes.clear();
             }
             diag.rss_after_tx_frames_mb = memory::my_usage_mb();
             diag.complete = true;

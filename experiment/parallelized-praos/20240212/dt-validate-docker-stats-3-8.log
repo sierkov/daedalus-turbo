@@ -1,0 +1,810 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O    PIDS
+d6405d485039   quizzical_panini   797.50%   542.1MiB / 251.3GiB   0.21%     736B / 0B   198MB / 0B   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O    PIDS
+d6405d485039   quizzical_panini   795.56%   586.3MiB / 251.3GiB   0.23%     736B / 0B   402MB / 0B   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O      PIDS
+d6405d485039   quizzical_panini   799.48%   643.3MiB / 251.3GiB   0.25%     806B / 0B   597MB / 41MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O      PIDS
+d6405d485039   quizzical_panini   797.40%   693.4MiB / 251.3GiB   0.27%     806B / 0B   817MB / 41MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   798.95%   885.5MiB / 251.3GiB   0.34%     806B / 0B   1.02GB / 41MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   801.91%   1.999GiB / 251.3GiB   0.80%     876B / 0B   1.26GB / 41MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   800.03%   1.993GiB / 251.3GiB   0.79%     876B / 0B   1.57GB / 41MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   800.80%   1.996GiB / 251.3GiB   0.79%     876B / 0B   1.72GB / 41MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   796.66%   1.98GiB / 251.3GiB   0.79%     876B / 0B   1.93GB / 41MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   799.06%   2.758GiB / 251.3GiB   1.10%     876B / 0B   2.11GB / 41MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   798.19%   2.743GiB / 251.3GiB   1.09%     876B / 0B   2.32GB / 41MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   801.14%   3.21GiB / 251.3GiB   1.28%     876B / 0B   2.74GB / 41MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   800.50%   3.124GiB / 251.3GiB   1.24%     876B / 0B   3.04GB / 41MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   801.64%   3.156GiB / 251.3GiB   1.26%     946B / 0B   3.34GB / 41MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   799.74%   3.153GiB / 251.3GiB   1.25%     946B / 0B   3.57GB / 45MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   783.40%   3.975GiB / 251.3GiB   1.58%     946B / 0B   3.85GB / 45MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.17%   3.983GiB / 251.3GiB   1.58%     946B / 0B   4.41GB / 50.7MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.01%   3.99GiB / 251.3GiB   1.59%     946B / 0B   4.93GB / 50.7MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+d6405d485039   quizzical_panini   796.26%   3.997GiB / 251.3GiB   1.59%     946B / 0B   5.32GB / 215MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+d6405d485039   quizzical_panini   797.28%   4.004GiB / 251.3GiB   1.59%     946B / 0B   5.68GB / 215MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+d6405d485039   quizzical_panini   799.56%   4.372GiB / 251.3GiB   1.74%     946B / 0B   6.14GB / 215MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+d6405d485039   quizzical_panini   799.75%   4.366GiB / 251.3GiB   1.74%     946B / 0B   6.95GB / 215MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+d6405d485039   quizzical_panini   799.85%   4.388GiB / 251.3GiB   1.75%     946B / 0B   7.75GB / 366MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+d6405d485039   quizzical_panini   803.08%   4.398GiB / 251.3GiB   1.75%     946B / 0B   8.16GB / 366MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+d6405d485039   quizzical_panini   799.08%   4.494GiB / 251.3GiB   1.79%     946B / 0B   8.81GB / 560MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+d6405d485039   quizzical_panini   796.64%   4.608GiB / 251.3GiB   1.83%     946B / 0B   9.72GB / 560MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+d6405d485039   quizzical_panini   809.11%   4.679GiB / 251.3GiB   1.86%     946B / 0B   10.3GB / 607MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+d6405d485039   quizzical_panini   795.98%   4.837GiB / 251.3GiB   1.92%     1.02kB / 0B   10.4GB / 681MB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.52%   4.837GiB / 251.3GiB   1.92%     1.02kB / 0B   10.4GB / 2.87GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   796.66%   4.872GiB / 251.3GiB   1.94%     1.02kB / 0B   10.6GB / 4.53GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+d6405d485039   quizzical_panini   797.46%   4.915GiB / 251.3GiB   1.96%     1.02kB / 0B   11.2GB / 4.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+d6405d485039   quizzical_panini   799.90%   5.023GiB / 251.3GiB   2.00%     1.02kB / 0B   11.9GB / 4.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   806.40%   5.057GiB / 251.3GiB   2.01%     1.02kB / 0B   12.3GB / 5.02GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.10%   5.351GiB / 251.3GiB   2.13%     1.02kB / 0B   13.1GB / 5.02GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   803.98%   5.386GiB / 251.3GiB   2.14%     1.02kB / 0B   13.7GB / 5.28GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.20%   5.512GiB / 251.3GiB   2.19%     1.02kB / 0B   14.5GB / 5.28GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.14%   5.523GiB / 251.3GiB   2.20%     1.02kB / 0B   15.3GB / 5.48GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   791.70%   5.695GiB / 251.3GiB   2.27%     1.02kB / 0B   15.6GB / 5.48GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.49%   5.685GiB / 251.3GiB   2.26%     1.02kB / 0B   16.5GB / 5.72GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   798.27%   5.65GiB / 251.3GiB   2.25%     1.02kB / 0B   17GB / 5.72GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.93%   5.703GiB / 251.3GiB   2.27%     1.02kB / 0B   17.7GB / 5.74GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   803.77%   6.02GiB / 251.3GiB   2.40%     1.02kB / 0B   18.4GB / 5.74GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   798.69%   6.378GiB / 251.3GiB   2.54%     1.02kB / 0B   19GB / 6.43GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.93%   6.394GiB / 251.3GiB   2.54%     1.02kB / 0B   19.9GB / 6.43GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   795.77%   5.993GiB / 251.3GiB   2.38%     1.02kB / 0B   20GB / 7.43GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   784.91%   6.06GiB / 251.3GiB   2.41%     1.02kB / 0B   20.1GB / 7.43GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   793.49%   6.062GiB / 251.3GiB   2.41%     1.02kB / 0B   20.1GB / 9.74GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   804.38%   6.117GiB / 251.3GiB   2.43%     1.02kB / 0B   20.1GB / 12.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   796.63%   6.097GiB / 251.3GiB   2.43%     1.02kB / 0B   20.3GB / 14GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   799.42%   6.133GiB / 251.3GiB   2.44%     1.02kB / 0B   21.1GB / 15GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   794.22%   6.272GiB / 251.3GiB   2.50%     1.02kB / 0B   21.5GB / 15.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.49%   6.305GiB / 251.3GiB   2.51%     1.02kB / 0B   22.3GB / 15.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.08%   6.487GiB / 251.3GiB   2.58%     1.02kB / 0B   22.8GB / 15.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   804.31%   6.296GiB / 251.3GiB   2.51%     1.02kB / 0B   23.4GB / 15.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.33%   6.695GiB / 251.3GiB   2.66%     1.02kB / 0B   24.1GB / 15.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.56%   6.868GiB / 251.3GiB   2.73%     1.02kB / 0B   24.7GB / 15.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.67%   6.881GiB / 251.3GiB   2.74%     1.02kB / 0B   25.3GB / 15.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.13%   6.419GiB / 251.3GiB   2.55%     1.09kB / 0B   25.6GB / 15.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   792.47%   6.452GiB / 251.3GiB   2.57%     1.09kB / 0B   25.9GB / 15.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   790.11%   6.473GiB / 251.3GiB   2.58%     1.09kB / 0B   25.9GB / 17.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   802.11%   6.917GiB / 251.3GiB   2.75%     1.09kB / 0B   26.2GB / 19.5GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.71%   7.044GiB / 251.3GiB   2.80%     1.09kB / 0B   26.8GB / 19.5GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.76%   7.014GiB / 251.3GiB   2.79%     1.09kB / 0B   27.5GB / 19.5GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.86%   7.14GiB / 251.3GiB   2.84%     1.09kB / 0B   28.1GB / 19.6GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.51%   7.105GiB / 251.3GiB   2.83%     1.09kB / 0B   28.6GB / 19.6GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   801.25%   6.743GiB / 251.3GiB   2.68%     1.09kB / 0B   29GB / 19.7GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.87%   7.204GiB / 251.3GiB   2.87%     1.09kB / 0B   29.7GB / 19.7GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   794.47%   6.884GiB / 251.3GiB   2.74%     1.09kB / 0B   29.7GB / 20.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.79%   7.27GiB / 251.3GiB   2.89%     1.09kB / 0B   30.1GB / 22.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.15%   7.382GiB / 251.3GiB   2.94%     1.09kB / 0B   30.6GB / 22.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   794.88%   7.467GiB / 251.3GiB   2.97%     1.09kB / 0B   31.2GB / 22.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   794.69%   7.518GiB / 251.3GiB   2.99%     1.09kB / 0B   31.7GB / 22.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.64%   7.549GiB / 251.3GiB   3.00%     1.09kB / 0B   32.3GB / 22.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.26%   7.124GiB / 251.3GiB   2.83%     1.09kB / 0B   32.6GB / 22.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.07%   7.13GiB / 251.3GiB   2.84%     1.09kB / 0B   32.6GB / 24.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   802.47%   7.239GiB / 251.3GiB   2.88%     1.09kB / 0B   33.1GB / 24.6GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   796.31%   7.877GiB / 251.3GiB   3.13%     1.09kB / 0B   33.7GB / 24.7GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   795.38%   7.659GiB / 251.3GiB   3.05%     1.09kB / 0B   34.1GB / 24.7GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.76%   7.557GiB / 251.3GiB   3.01%     1.09kB / 0B   34.6GB / 24.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   802.54%   7.535GiB / 251.3GiB   3.00%     1.09kB / 0B   35GB / 24.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.45%   7.973GiB / 251.3GiB   3.17%     1.09kB / 0B   35.7GB / 24.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   788.62%   7.622GiB / 251.3GiB   3.03%     1.09kB / 0B   35.8GB / 24.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.36%   7.989GiB / 251.3GiB   3.18%     1.09kB / 0B   36.1GB / 27.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.91%   8.11GiB / 251.3GiB   3.23%     1.09kB / 0B   36.6GB / 27.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   802.65%   8.073GiB / 251.3GiB   3.21%     1.09kB / 0B   37GB / 27.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.10%   8.041GiB / 251.3GiB   3.20%     1.09kB / 0B   37.5GB / 27.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   806.83%   7.712GiB / 251.3GiB   3.07%     1.09kB / 0B   37.9GB / 27.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   792.84%   8.088GiB / 251.3GiB   3.22%     1.09kB / 0B   38.5GB / 27.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   791.30%   8.051GiB / 251.3GiB   3.20%     1.09kB / 0B   38.6GB / 27.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.35%   8.353GiB / 251.3GiB   3.32%     1.09kB / 0B   38.9GB / 29.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.44%   8.264GiB / 251.3GiB   3.29%     1.09kB / 0B   39.4GB / 29.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.87%   8.292GiB / 251.3GiB   3.30%     1.09kB / 0B   39.5GB / 29.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.35%   8.816GiB / 251.3GiB   3.51%     1.09kB / 0B   39.5GB / 29.5GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.50%   9.033GiB / 251.3GiB   3.59%     1.09kB / 0B   39.5GB / 29.5GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.20%   9.301GiB / 251.3GiB   3.70%     1.09kB / 0B   39.5GB / 29.5GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   802.69%   9.509GiB / 251.3GiB   3.78%     1.09kB / 0B   39.5GB / 29.5GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.89%   9.243GiB / 251.3GiB   3.68%     1.09kB / 0B   39.6GB / 29.6GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.09%   9.495GiB / 251.3GiB   3.78%     1.09kB / 0B   39.9GB / 29.6GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.44%   9.497GiB / 251.3GiB   3.78%     1.09kB / 0B   40.4GB / 29.6GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.76%   9.542GiB / 251.3GiB   3.80%     1.09kB / 0B   40.8GB / 29.7GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.72%   9.478GiB / 251.3GiB   3.77%     1.09kB / 0B   41.4GB / 29.7GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.09%   9.633GiB / 251.3GiB   3.83%     1.09kB / 0B   41.8GB / 29.7GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   792.51%   9.557GiB / 251.3GiB   3.80%     1.09kB / 0B   41.9GB / 29.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   795.93%   9.846GiB / 251.3GiB   3.92%     1.09kB / 0B   42.1GB / 32.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.25%   9.884GiB / 251.3GiB   3.93%     1.09kB / 0B   42.6GB / 32.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.33%   9.709GiB / 251.3GiB   3.86%     1.09kB / 0B   43.1GB / 32.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.28%   9.943GiB / 251.3GiB   3.96%     1.09kB / 0B   43.7GB / 32.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.09%   9.972GiB / 251.3GiB   3.97%     1.09kB / 0B   44.1GB / 33.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.81%   10.01GiB / 251.3GiB   3.98%     1.09kB / 0B   44.5GB / 33.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O     PIDS
+d6405d485039   quizzical_panini   804.36%   9.905GiB / 251.3GiB   3.94%     1.09kB / 0B   45GB / 35GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   799.04%   9.845GiB / 251.3GiB   3.92%     1.09kB / 0B   45GB / 35.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   794.25%   10.11GiB / 251.3GiB   4.02%     1.09kB / 0B   45.4GB / 37.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   793.90%   10.19GiB / 251.3GiB   4.06%     1.09kB / 0B   45.8GB / 37.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.72%   10.11GiB / 251.3GiB   4.02%     1.09kB / 0B   46.3GB / 37.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.35%   9.987GiB / 251.3GiB   3.97%     1.09kB / 0B   46.7GB / 37.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.02%   10.28GiB / 251.3GiB   4.09%     1.09kB / 0B   47.3GB / 37.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.19%   10.38GiB / 251.3GiB   4.13%     1.09kB / 0B   47.7GB / 37.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   795.47%   10.25GiB / 251.3GiB   4.08%     1.09kB / 0B   48.3GB / 37.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   796.60%   10.25GiB / 251.3GiB   4.08%     1.09kB / 0B   48.7GB / 37.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   796.88%   10.17GiB / 251.3GiB   4.05%     1.09kB / 0B   48.9GB / 37.5GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.02%   10.19GiB / 251.3GiB   4.06%     1.09kB / 0B   48.9GB / 38.6GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.94%   10.33GiB / 251.3GiB   4.11%     1.09kB / 0B   49.3GB / 40.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   805.85%   10.21GiB / 251.3GiB   4.06%     1.09kB / 0B   49.7GB / 40.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.50%   10.46GiB / 251.3GiB   4.16%     1.16kB / 0B   50.2GB / 40.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   795.37%   10.62GiB / 251.3GiB   4.23%     1.16kB / 0B   50.6GB / 40.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.93%   10.51GiB / 251.3GiB   4.18%     1.16kB / 0B   51.1GB / 40.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.85%   10.56GiB / 251.3GiB   4.20%     1.16kB / 0B   51.5GB / 40.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.20%   10.8GiB / 251.3GiB   4.30%     1.16kB / 0B   51.9GB / 40.5GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   805.78%   10.6GiB / 251.3GiB   4.22%     1.16kB / 0B   52.4GB / 40.5GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.75%   10.98GiB / 251.3GiB   4.37%     1.16kB / 0B   52.9GB / 40.6GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   795.88%   10.74GiB / 251.3GiB   4.27%     1.16kB / 0B   53.1GB / 40.6GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.86%   10.73GiB / 251.3GiB   4.27%     1.16kB / 0B   53.1GB / 42.7GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   799.41%   10.82GiB / 251.3GiB   4.31%     1.16kB / 0B   53.5GB / 43GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O     PIDS
+d6405d485039   quizzical_panini   796.70%   10.9GiB / 251.3GiB   4.34%     1.16kB / 0B   54GB / 43GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   802.89%   10.77GiB / 251.3GiB   4.29%     1.16kB / 0B   54.3GB / 43GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   796.32%   10.96GiB / 251.3GiB   4.36%     1.16kB / 0B   54.8GB / 43.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   789.33%   11.05GiB / 251.3GiB   4.40%     1.16kB / 0B   55.3GB / 43.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.12%   11.15GiB / 251.3GiB   4.44%     1.16kB / 0B   55.7GB / 43.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.46%   11.07GiB / 251.3GiB   4.41%     1.16kB / 0B   56.1GB / 43.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   802.81%   11.13GiB / 251.3GiB   4.43%     1.16kB / 0B   56.4GB / 43.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   792.00%   11.17GiB / 251.3GiB   4.44%     1.16kB / 0B   56.4GB / 43.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.79%   11.32GiB / 251.3GiB   4.50%     1.16kB / 0B   56.7GB / 45.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   803.54%   11.22GiB / 251.3GiB   4.46%     1.16kB / 0B   57.1GB / 45.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.16%   11.46GiB / 251.3GiB   4.56%     1.16kB / 0B   57.6GB / 45.9GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.34%   11.58GiB / 251.3GiB   4.61%     1.16kB / 0B   57.9GB / 45.9GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   796.65%   11.32GiB / 251.3GiB   4.50%     1.16kB / 0B   58.3GB / 45.9GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.82%   11.37GiB / 251.3GiB   4.53%     1.16kB / 0B   58.7GB / 45.9GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   801.93%   11.84GiB / 251.3GiB   4.71%     1.16kB / 0B   59.2GB / 46GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   798.90%   11.98GiB / 251.3GiB   4.77%     1.16kB / 0B   59.6GB / 46GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   792.98%   11.53GiB / 251.3GiB   4.59%     1.16kB / 0B   59.8GB / 46GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   794.35%   12.01GiB / 251.3GiB   4.78%     1.16kB / 0B   59.9GB / 48GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   801.36%   11.74GiB / 251.3GiB   4.67%     1.16kB / 0B   60.2GB / 48GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   796.25%   11.74GiB / 251.3GiB   4.67%     1.16kB / 0B   60.7GB / 48GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O     PIDS
+d6405d485039   quizzical_panini   800.76%   11.98GiB / 251.3GiB   4.77%     1.16kB / 0B   61GB / 48GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   799.33%   11.93GiB / 251.3GiB   4.75%     1.16kB / 0B   61.5GB / 48GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   795.48%   12.28GiB / 251.3GiB   4.89%     1.16kB / 0B   61.9GB / 48GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.34%   11.86GiB / 251.3GiB   4.72%     1.16kB / 0B   62.1GB / 48.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   804.11%   12.06GiB / 251.3GiB   4.80%     1.16kB / 0B   62.2GB / 50GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   799.70%   11.92GiB / 251.3GiB   4.74%     1.16kB / 0B   62.6GB / 50GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O     PIDS
+d6405d485039   quizzical_panini   795.76%   12.27GiB / 251.3GiB   4.88%     1.16kB / 0B   63GB / 50GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.45%   12.21GiB / 251.3GiB   4.86%     1.16kB / 0B   63.3GB / 50.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.82%   12.18GiB / 251.3GiB   4.85%     1.16kB / 0B   63.8GB / 50.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.21%   12.3GiB / 251.3GiB   4.89%     1.16kB / 0B   64.1GB / 50.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.09%   12.18GiB / 251.3GiB   4.85%     1.16kB / 0B   64.5GB / 50.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.20%   12.24GiB / 251.3GiB   4.87%     1.16kB / 0B   64.9GB / 50.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   788.94%   12.24GiB / 251.3GiB   4.87%     1.16kB / 0B   65GB / 50.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   794.09%   12.25GiB / 251.3GiB   4.87%     1.16kB / 0B   65.1GB / 52.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.51%   12.24GiB / 251.3GiB   4.87%     1.16kB / 0B   65.6GB / 52.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   796.19%   12.52GiB / 251.3GiB   4.98%     1.16kB / 0B   65.9GB / 52.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   795.77%   12.65GiB / 251.3GiB   5.03%     1.16kB / 0B   66.3GB / 52.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.54%   12.6GiB / 251.3GiB   5.01%     1.16kB / 0B   66.7GB / 52.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   795.86%   12.68GiB / 251.3GiB   5.05%     1.16kB / 0B   67GB / 52.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   802.62%   12.54GiB / 251.3GiB   4.99%     1.16kB / 0B   67.3GB / 52.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   794.73%   12.72GiB / 251.3GiB   5.06%     1.16kB / 0B   67.9GB / 52.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.66%   12.55GiB / 251.3GiB   4.99%     1.16kB / 0B   68.1GB / 52.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.28%   12.62GiB / 251.3GiB   5.02%     1.16kB / 0B   68.6GB / 52.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   788.75%   12.65GiB / 251.3GiB   5.03%     1.16kB / 0B   68.6GB / 52.5GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   795.15%   12.76GiB / 251.3GiB   5.08%     1.16kB / 0B   68.7GB / 54.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.20%   13.04GiB / 251.3GiB   5.19%     1.16kB / 0B   69.2GB / 54.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.36%   12.99GiB / 251.3GiB   5.17%     1.16kB / 0B   69.6GB / 54.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   790.58%   13.25GiB / 251.3GiB   5.27%     1.16kB / 0B   69.9GB / 54.9GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   796.67%   12.97GiB / 251.3GiB   5.16%     1.16kB / 0B   70.3GB / 54.9GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   801.38%   12.75GiB / 251.3GiB   5.08%     1.16kB / 0B   70.7GB / 55GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   800.41%   13.06GiB / 251.3GiB   5.20%     1.16kB / 0B   71.1GB / 55GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   800.30%   13.1GiB / 251.3GiB   5.21%     1.16kB / 0B   71.5GB / 55GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   789.80%   12.8GiB / 251.3GiB   5.09%     1.16kB / 0B   71.5GB / 55GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   801.39%   13.17GiB / 251.3GiB   5.24%     1.16kB / 0B   71.7GB / 57GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d6405d485039   quizzical_panini   800.93%   13.24GiB / 251.3GiB   5.27%     1.16kB / 0B   72.2GB / 57GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.70%   13.2GiB / 251.3GiB   5.25%     1.16kB / 0B   72.6GB / 57.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   794.94%   12.91GiB / 251.3GiB   5.14%     1.16kB / 0B   72.9GB / 57.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.65%   12.95GiB / 251.3GiB   5.15%     1.16kB / 0B   73.3GB / 57.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.20%   13.21GiB / 251.3GiB   5.26%     1.16kB / 0B   73.7GB / 57.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.89%   13.39GiB / 251.3GiB   5.33%     1.16kB / 0B   73.8GB / 57.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   802.35%   14.21GiB / 251.3GiB   5.65%     1.16kB / 0B   73.8GB / 57.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.33%   15.09GiB / 251.3GiB   6.00%     1.16kB / 0B   73.8GB / 57.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.83%   15.95GiB / 251.3GiB   6.35%     1.16kB / 0B   73.8GB / 57.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.64%   16.34GiB / 251.3GiB   6.50%     1.16kB / 0B   73.8GB / 57.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.56%   17.14GiB / 251.3GiB   6.82%     1.16kB / 0B   73.8GB / 57.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.97%   17.92GiB / 251.3GiB   7.13%     1.16kB / 0B   73.8GB / 57.6GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.13%   18.68GiB / 251.3GiB   7.43%     1.16kB / 0B   73.8GB / 57.6GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   782.27%   18.6GiB / 251.3GiB   7.40%     1.16kB / 0B   73.8GB / 57.9GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   795.34%   18.57GiB / 251.3GiB   7.39%     1.16kB / 0B   73.8GB / 57.9GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.21%   18.58GiB / 251.3GiB   7.39%     1.16kB / 0B   73.8GB / 59.9GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   802.39%   18.48GiB / 251.3GiB   7.35%     1.16kB / 0B   73.8GB / 60.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.35%   18.61GiB / 251.3GiB   7.40%     1.16kB / 0B   73.8GB / 60.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.20%   18.62GiB / 251.3GiB   7.41%     1.16kB / 0B   73.8GB / 60.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   802.90%   18.62GiB / 251.3GiB   7.41%     1.16kB / 0B   73.8GB / 60.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   802.91%   18.62GiB / 251.3GiB   7.41%     1.16kB / 0B   73.8GB / 60.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.76%   18.63GiB / 251.3GiB   7.41%     1.16kB / 0B   73.8GB / 61.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.61%   18.65GiB / 251.3GiB   7.42%     1.16kB / 0B   73.8GB / 61.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.94%   18.7GiB / 251.3GiB   7.44%     1.16kB / 0B   73.8GB / 61.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.76%   18.71GiB / 251.3GiB   7.44%     1.16kB / 0B   73.8GB / 61.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.53%   18.71GiB / 251.3GiB   7.45%     1.16kB / 0B   73.8GB / 61.4GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   802.77%   18.54GiB / 251.3GiB   7.38%     1.16kB / 0B   73.8GB / 62.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   803.03%   18.71GiB / 251.3GiB   7.45%     1.16kB / 0B   73.8GB / 62.8GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.84%   18.71GiB / 251.3GiB   7.45%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   804.04%   18.71GiB / 251.3GiB   7.45%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   802.53%   18.73GiB / 251.3GiB   7.45%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   804.76%   18.68GiB / 251.3GiB   7.43%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.47%   18.69GiB / 251.3GiB   7.44%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.40%   18.71GiB / 251.3GiB   7.45%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.56%   18.73GiB / 251.3GiB   7.45%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.15%   18.81GiB / 251.3GiB   7.49%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.72%   18.65GiB / 251.3GiB   7.42%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   796.38%   18.77GiB / 251.3GiB   7.47%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   804.15%   18.77GiB / 251.3GiB   7.47%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.39%   18.82GiB / 251.3GiB   7.49%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.24%   18.83GiB / 251.3GiB   7.49%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.82%   18.82GiB / 251.3GiB   7.49%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.68%   18.78GiB / 251.3GiB   7.47%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.83%   18.8GiB / 251.3GiB   7.48%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   794.38%   18.85GiB / 251.3GiB   7.50%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.86%   18.84GiB / 251.3GiB   7.50%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   795.61%   18.87GiB / 251.3GiB   7.51%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.55%   18.73GiB / 251.3GiB   7.45%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.71%   18.87GiB / 251.3GiB   7.51%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   802.49%   18.64GiB / 251.3GiB   7.42%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.81%   18.86GiB / 251.3GiB   7.50%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   802.17%   18.91GiB / 251.3GiB   7.52%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.52%   18.91GiB / 251.3GiB   7.52%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.98%   18.91GiB / 251.3GiB   7.53%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.38%   18.91GiB / 251.3GiB   7.53%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   802.11%   18.91GiB / 251.3GiB   7.53%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.64%   18.8GiB / 251.3GiB   7.48%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.03%   18.87GiB / 251.3GiB   7.51%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.14%   18.75GiB / 251.3GiB   7.46%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.26%   18.87GiB / 251.3GiB   7.51%     1.16kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   803.11%   18.87GiB / 251.3GiB   7.51%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.74%   18.92GiB / 251.3GiB   7.53%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.49%   18.92GiB / 251.3GiB   7.53%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.48%   18.92GiB / 251.3GiB   7.53%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.51%   18.93GiB / 251.3GiB   7.53%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   803.13%   18.84GiB / 251.3GiB   7.50%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.78%   18.91GiB / 251.3GiB   7.52%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.58%   18.8GiB / 251.3GiB   7.48%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.64%   18.93GiB / 251.3GiB   7.53%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   802.03%   18.94GiB / 251.3GiB   7.54%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.99%   18.92GiB / 251.3GiB   7.53%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.62%   18.93GiB / 251.3GiB   7.53%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   795.80%   18.94GiB / 251.3GiB   7.54%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   796.80%   18.93GiB / 251.3GiB   7.53%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.01%   18.94GiB / 251.3GiB   7.54%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   796.94%   18.96GiB / 251.3GiB   7.54%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.75%   18.87GiB / 251.3GiB   7.51%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   795.97%   18.96GiB / 251.3GiB   7.55%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   796.76%   18.78GiB / 251.3GiB   7.47%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   794.07%   18.99GiB / 251.3GiB   7.56%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   796.00%   19GiB / 251.3GiB    7.56%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.17%   19.01GiB / 251.3GiB   7.56%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   792.32%   19.02GiB / 251.3GiB   7.57%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   794.23%   18.96GiB / 251.3GiB   7.54%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   795.32%   19.11GiB / 251.3GiB   7.60%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.72%   19.12GiB / 251.3GiB   7.61%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.78%   19.07GiB / 251.3GiB   7.59%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.40%   19.07GiB / 251.3GiB   7.59%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.89%   19.03GiB / 251.3GiB   7.57%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   794.55%   19.14GiB / 251.3GiB   7.62%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.51%   19.17GiB / 251.3GiB   7.63%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.62%   19.19GiB / 251.3GiB   7.64%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.50%   19.21GiB / 251.3GiB   7.64%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.49%   19.77GiB / 251.3GiB   7.87%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.97%   21.33GiB / 251.3GiB   8.49%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.81%   22.8GiB / 251.3GiB   9.07%     1.23kB / 0B   73.8GB / 63.1GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.10%   24.36GiB / 251.3GiB   9.69%     1.23kB / 0B   73.8GB / 63.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.04%   25.41GiB / 251.3GiB   10.11%    1.23kB / 0B   73.8GB / 63.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.50%   25.41GiB / 251.3GiB   10.11%    1.23kB / 0B   73.8GB / 63.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.52%   25.42GiB / 251.3GiB   10.11%    1.23kB / 0B   73.8GB / 63.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.62%   25.42GiB / 251.3GiB   10.12%    1.23kB / 0B   73.8GB / 63.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.06%   25.26GiB / 251.3GiB   10.05%    1.23kB / 0B   73.8GB / 63.2GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.23%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   802.33%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.64%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.35%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.12%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   795.49%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   794.59%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   795.25%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   796.45%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.51%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.02%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.01%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.55%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.56%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.78%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.93%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   796.86%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.85%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.41%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.55%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.98%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.02%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.99%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.50%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.35%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.18%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.97%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.19%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.02%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.02%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   796.96%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   793.90%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.21%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   796.22%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.81%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.48%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.71%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.78%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.35%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.68%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   795.72%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.45%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   796.06%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.36%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.92%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   794.86%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   802.71%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.39%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.85%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.72%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   796.24%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   794.62%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.22%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.21%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   802.21%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.56%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   795.96%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.39%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.01%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   802.21%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.95%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.72%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.19%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.55%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.69%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   796.52%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.35%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   802.88%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.35%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.36%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.45%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.35%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   802.08%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.82%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.13%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.91%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.03%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.18%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   802.41%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   802.08%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.56%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.04%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   802.33%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   796.20%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.71%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.37%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.54%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.18%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.73%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.93%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.36%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.19%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.64%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.99%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   802.40%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.70%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.18%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.20%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   802.57%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.72%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.72%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.37%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.62%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.97%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   798.71%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   797.34%   25.39GiB / 251.3GiB   10.10%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   796.73%   24.94GiB / 251.3GiB   9.92%     1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.59%   24.94GiB / 251.3GiB   9.92%     1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   801.32%   24.94GiB / 251.3GiB   9.92%     1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.12%   24.94GiB / 251.3GiB   9.92%     1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   799.54%   24.94GiB / 251.3GiB   9.92%     1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   800.93%   24.94GiB / 251.3GiB   9.92%     1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   99.91%    25.81GiB / 251.3GiB   10.27%    1.23kB / 0B   73.8GB / 63.3GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   94.01%    24.73GiB / 251.3GiB   9.84%     1.23kB / 0B   73.8GB / 65.6GB   10
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d6405d485039   quizzical_panini   100.37%   23.45GiB / 251.3GiB   9.33%     1.23kB / 0B   73.8GB / 65.6GB   10

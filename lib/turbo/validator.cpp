@@ -137,11 +137,14 @@ namespace turbo::validator {
         return it != end() ? &*it : nullptr;
     }
 
-    const snapshot *snapshot_set::best_exportable(const cardano::optional_point &immutable_tip) const
+    const snapshot *snapshot_set::best_exportable(const cardano::optional_point &immutable_tip, const bool exact) const
     {
         if (!immutable_tip)
             return nullptr;
-        const auto exportable = [&](const auto &snap) { return snap.exportable && snap.end_offset <= immutable_tip->end_offset; };
+        const auto exportable = [&](const auto &snap) {
+            return snap.exportable && snap.end_offset <= immutable_tip->end_offset
+                && (!exact || (snap.end_offset == immutable_tip->end_offset && snap.last_slot == immutable_tip->slot));
+        };
         return best(exportable);
     }
 
@@ -413,26 +416,41 @@ namespace turbo::validator {
             return {};
         }
 
-        std::string node_export(const std::filesystem::path &ledger_dir, const cardano::optional_point &immutable_tip, const int prio_base)
+        std::string node_export(const std::filesystem::path &ledger_dir, const cardano::optional_point &immutable_tip,
+            const int prio_base, const cardano::ledger::node_format format)
         {
-            if (const auto best_snap = _snapshots.best_exportable(immutable_tip); best_snap && best_snap->end_offset) {
+            std::string path;
+            visit_exportable_state(immutable_tip, format == cardano::ledger::node_format::v11_1_3,
+                [&](auto &state, const auto &tip) {
+                    path = (ledger_dir / fmt::format("{}_dt", tip.slot)).string();
+                    state.save_node(path, tip, prio_base, format);
+                });
+            return path;
+        }
+
+        void visit_exportable_state(const cardano::optional_point &immutable_tip, const bool exact, const export_visitor &visit)
+        {
+            if (const auto best_snap = _snapshots.best_exportable(immutable_tip, exact); best_snap && best_snap->end_offset) {
+                const auto snap_tip = _cr.find_block_by_offset(best_snap->end_offset - 1).point();
+                if (exact && (!immutable_tip || snap_tip.slot != immutable_tip->slot || snap_tip.hash != immutable_tip->hash
+                        || snap_tip.height != immutable_tip->height || snap_tip.end_offset != immutable_tip->end_offset))
+                    throw error("no exportable ledger state at the exact requested chain point");
                 logger::info("selected the ledger snapshot with end_offset {} last_slot {} for export",
                     best_snap->end_offset, cardano::slot { best_snap->last_slot, _cr.config() });
-                const auto path = (ledger_dir / fmt::format("{}_dt", best_snap->last_slot)).string();
                 if (best_snap->end_offset == _state.end_offset() && best_snap->last_slot == _state.last_slot()) {
-                    const auto snap_tip = _cr.find_block_by_offset(best_snap->end_offset - 1).point();
-                    _state.save_node(path, snap_tip, prio_base);
+                    visit(_state, snap_tip);
                 } else {
                     cardano::ledger::state snap_state {
                         _cr.config(), _cr.sched(), cardano::ledger::state::init_mode::empty
                     };
-                    snap_state.load_zpp(_storage_path("ledger", best_snap->end_offset));
-                    const auto snap_tip = _cr.find_block_by_offset(best_snap->end_offset - 1).point();
-                    snap_state.save_node(path, snap_tip, prio_base);
+                    load_snapshot(snap_state, *best_snap);
+                    if (snap_state.last_slot() != snap_tip.slot)
+                        throw error("loaded state does not match the requested slot");
+                    visit(snap_state, snap_tip);
                 }
-                return path;
+                return;
             }
-            throw error("do not have an exportable snapshot");
+            throw error(exact ? "no exportable ledger state at the exact requested chain point" : "do not have an exportable snapshot");
         }
 
         const cardano::ledger::state &state() const
@@ -1387,9 +1405,15 @@ namespace turbo::validator {
         return _impl->can_export(immutable_tip);
     }
 
-    std::string incremental::node_export(const std::filesystem::path &ledger_dir, const cardano::optional_point &immutable_tip, const int prio_base) const
+    std::string incremental::node_export(const std::filesystem::path &ledger_dir, const cardano::optional_point &immutable_tip,
+        const int prio_base, const cardano::ledger::node_format format) const
     {
-        return _impl->node_export(ledger_dir, immutable_tip, prio_base);
+        return _impl->node_export(ledger_dir, immutable_tip, prio_base, format);
+    }
+
+    void incremental::visit_exportable_state(const cardano::optional_point &tip, const bool exact, const export_visitor &visit) const
+    {
+        _impl->visit_exportable_state(tip, exact, visit);
     }
 
     cardano::optional_point incremental::core_tip() const

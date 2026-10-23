@@ -18,6 +18,12 @@
 
     void state::complete_pulsers()
     {
+        // Repair older saved updates that skipped likelihoods in zero-block epochs.
+        if (_rewards_ready && _blocks_before.empty() && _nonmyopic_next.empty()
+                && std::ranges::any_of(_go.pool_params, [this](const auto &pool) {
+                    return !_pbft_pools.contains(pool.first);
+                }))
+            _rewards_ready = false;
         if (_params.protocol_ver.major < 2 || _rewards_ready
                 || _epoch_slot <= _cfg.shelley_randomness_stabilization_window)
             return;

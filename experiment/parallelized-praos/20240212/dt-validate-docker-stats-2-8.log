@@ -1,0 +1,807 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O    PIDS
+8534b527ece8   hungry_davinci   802.63%   543.7MiB / 251.3GiB   0.21%     736B / 0B   198MB / 0B   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O    PIDS
+8534b527ece8   hungry_davinci   798.39%   586.6MiB / 251.3GiB   0.23%     736B / 0B   402MB / 0B   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+8534b527ece8   hungry_davinci   797.32%   647.6MiB / 251.3GiB   0.25%     806B / 0B   597MB / 40.9MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+8534b527ece8   hungry_davinci   798.32%   680.6MiB / 251.3GiB   0.26%     806B / 0B   817MB / 40.9MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.97%   890.5MiB / 251.3GiB   0.35%     806B / 0B   1.02GB / 40.9MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   804.01%   1.994GiB / 251.3GiB   0.79%     876B / 0B   1.26GB / 40.9MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.65%   2.014GiB / 251.3GiB   0.80%     876B / 0B   1.57GB / 40.9MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.56%   1.995GiB / 251.3GiB   0.79%     876B / 0B   1.74GB / 40.9MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.49%   1.97GiB / 251.3GiB   0.78%     876B / 0B   1.94GB / 40.9MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.19%   2.729GiB / 251.3GiB   1.09%     876B / 0B   2.11GB / 40.9MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+8534b527ece8   hungry_davinci   797.35%   2.746GiB / 251.3GiB   1.09%     876B / 0B   2.33GB / 410MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+8534b527ece8   hungry_davinci   798.42%   3.224GiB / 251.3GiB   1.28%     946B / 0B   2.74GB / 410MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+8534b527ece8   hungry_davinci   798.39%   3.175GiB / 251.3GiB   1.26%     946B / 0B   3.05GB / 410MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+8534b527ece8   hungry_davinci   798.20%   3.153GiB / 251.3GiB   1.25%     946B / 0B   3.35GB / 410MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+8534b527ece8   hungry_davinci   798.54%   3.171GiB / 251.3GiB   1.26%     946B / 0B   3.57GB / 410MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+8534b527ece8   hungry_davinci   785.84%   3.982GiB / 251.3GiB   1.58%     946B / 0B   3.85GB / 410MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+8534b527ece8   hungry_davinci   796.13%   3.968GiB / 251.3GiB   1.58%     946B / 0B   4.41GB / 410MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+8534b527ece8   hungry_davinci   799.07%   3.976GiB / 251.3GiB   1.58%     946B / 0B   4.94GB / 410MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+8534b527ece8   hungry_davinci   800.11%   3.982GiB / 251.3GiB   1.58%     946B / 0B   5.32GB / 410MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   800.21%   3.99GiB / 251.3GiB   1.59%     946B / 0B   5.7GB / 410MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+8534b527ece8   hungry_davinci   802.01%   4.348GiB / 251.3GiB   1.73%     946B / 0B   6.17GB / 410MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+8534b527ece8   hungry_davinci   796.43%   4.294GiB / 251.3GiB   1.71%     946B / 0B   6.97GB / 410MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+8534b527ece8   hungry_davinci   795.19%   4.339GiB / 251.3GiB   1.73%     946B / 0B   7.76GB / 425MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+8534b527ece8   hungry_davinci   798.37%   4.317GiB / 251.3GiB   1.72%     1.02kB / 0B   8.16GB / 425MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+8534b527ece8   hungry_davinci   794.46%   4.459GiB / 251.3GiB   1.77%     1.02kB / 0B   8.84GB / 610MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+8534b527ece8   hungry_davinci   800.17%   4.592GiB / 251.3GiB   1.83%     1.02kB / 0B   9.75GB / 610MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+8534b527ece8   hungry_davinci   808.83%   4.621GiB / 251.3GiB   1.84%     1.02kB / 0B   10.3GB / 657MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+8534b527ece8   hungry_davinci   793.14%   4.804GiB / 251.3GiB   1.91%     1.02kB / 0B   10.4GB / 731MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   794.91%   4.802GiB / 251.3GiB   1.91%     1.02kB / 0B   10.4GB / 2.76GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   796.02%   4.85GiB / 251.3GiB   1.93%     1.02kB / 0B   10.6GB / 4.41GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   796.06%   4.897GiB / 251.3GiB   1.95%     1.02kB / 0B   11.2GB / 4.68GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   795.23%   4.978GiB / 251.3GiB   1.98%     1.02kB / 0B   11.9GB / 4.68GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+8534b527ece8   hungry_davinci   802.41%   5.05GiB / 251.3GiB   2.01%     1.02kB / 0B   12.3GB / 4.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+8534b527ece8   hungry_davinci   795.43%   5.337GiB / 251.3GiB   2.12%     1.02kB / 0B   13.1GB / 4.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   803.67%   5.408GiB / 251.3GiB   2.15%     1.02kB / 0B   13.7GB / 5.16GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.09%   5.52GiB / 251.3GiB   2.20%     1.02kB / 0B   14.5GB / 5.16GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.98%   5.576GiB / 251.3GiB   2.22%     1.02kB / 0B   15.2GB / 5.35GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.51%   5.601GiB / 251.3GiB   2.23%     1.02kB / 0B   15.6GB / 5.35GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.80%   5.768GiB / 251.3GiB   2.30%     1.02kB / 0B   16.5GB / 5.58GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.96%   5.732GiB / 251.3GiB   2.28%     1.02kB / 0B   16.9GB / 5.58GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+8534b527ece8   hungry_davinci   797.82%   5.933GiB / 251.3GiB   2.36%     1.02kB / 0B   17.7GB / 5.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+8534b527ece8   hungry_davinci   797.46%   5.985GiB / 251.3GiB   2.38%     1.02kB / 0B   18.4GB / 5.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   796.81%   6.201GiB / 251.3GiB   2.47%     1.02kB / 0B   19GB / 6.31GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.16%   6.276GiB / 251.3GiB   2.50%     1.02kB / 0B   19.9GB / 6.31GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.33%   6.008GiB / 251.3GiB   2.39%     1.02kB / 0B   20.1GB / 6.59GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   793.76%   6.026GiB / 251.3GiB   2.40%     1.09kB / 0B   20.2GB / 7.53GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   792.19%   6.078GiB / 251.3GiB   2.42%     1.09kB / 0B   20.2GB / 7.53GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   793.60%   6.078GiB / 251.3GiB   2.42%     1.09kB / 0B   20.2GB / 10.2GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.61%   6.032GiB / 251.3GiB   2.40%     1.09kB / 0B   20.3GB / 14.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.77%   6.131GiB / 251.3GiB   2.44%     1.09kB / 0B   21.1GB / 15.4GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.10%   6.202GiB / 251.3GiB   2.47%     1.09kB / 0B   21.5GB / 15.4GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.01%   6.244GiB / 251.3GiB   2.48%     1.09kB / 0B   22.3GB / 15.5GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.60%   6.463GiB / 251.3GiB   2.57%     1.09kB / 0B   22.6GB / 15.5GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.28%   6.559GiB / 251.3GiB   2.61%     1.09kB / 0B   23.4GB / 15.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.00%   6.695GiB / 251.3GiB   2.66%     1.09kB / 0B   23.9GB / 15.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.70%   6.732GiB / 251.3GiB   2.68%     1.09kB / 0B   24.6GB / 15.7GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.57%   6.4GiB / 251.3GiB   2.55%     1.09kB / 0B   25.2GB / 15.7GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   803.09%   6.446GiB / 251.3GiB   2.57%     1.09kB / 0B   25.7GB / 15.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   794.59%   6.519GiB / 251.3GiB   2.59%     1.09kB / 0B   25.9GB / 15.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.30%   6.535GiB / 251.3GiB   2.60%     1.09kB / 0B   25.9GB / 17.4GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   804.25%   6.922GiB / 251.3GiB   2.75%     1.09kB / 0B   26.2GB / 19.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   793.45%   7.085GiB / 251.3GiB   2.82%     1.09kB / 0B   26.8GB / 19.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   790.44%   7.096GiB / 251.3GiB   2.82%     1.09kB / 0B   27.4GB / 19.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O     PIDS
+8534b527ece8   hungry_davinci   800.18%   7.208GiB / 251.3GiB   2.87%     1.09kB / 0B   28GB / 20GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   801.07%   6.708GiB / 251.3GiB   2.67%     1.09kB / 0B   28.4GB / 20GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   799.38%   6.792GiB / 251.3GiB   2.70%     1.09kB / 0B   29GB / 20.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.69%   6.854GiB / 251.3GiB   2.73%     1.09kB / 0B   29.7GB / 20.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   795.84%   6.904GiB / 251.3GiB   2.75%     1.09kB / 0B   29.7GB / 20.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.49%   7.412GiB / 251.3GiB   2.95%     1.09kB / 0B   30.1GB / 22.7GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.83%   7.418GiB / 251.3GiB   2.95%     1.09kB / 0B   30.5GB / 22.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   801.72%   7.577GiB / 251.3GiB   3.02%     1.09kB / 0B   31GB / 22.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   794.10%   7.592GiB / 251.3GiB   3.02%     1.09kB / 0B   31.5GB / 22.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.14%   7.653GiB / 251.3GiB   3.05%     1.09kB / 0B   32.1GB / 22.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   803.49%   7.218GiB / 251.3GiB   2.87%     1.09kB / 0B   32.5GB / 22.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   795.16%   7.3GiB / 251.3GiB   2.90%     1.09kB / 0B   32.7GB / 23.4GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   799.81%   7.387GiB / 251.3GiB   2.94%     1.09kB / 0B   33GB / 24.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   795.58%   7.626GiB / 251.3GiB   3.03%     1.09kB / 0B   33.6GB / 25.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   797.30%   7.493GiB / 251.3GiB   2.98%     1.09kB / 0B   34GB / 25.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   796.21%   7.827GiB / 251.3GiB   3.11%     1.09kB / 0B   34.6GB / 25.2GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   798.36%   7.483GiB / 251.3GiB   2.98%     1.09kB / 0B   35GB / 25.2GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.07%   8.05GiB / 251.3GiB   3.20%     1.09kB / 0B   35.5GB / 25.2GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   794.83%   7.623GiB / 251.3GiB   3.03%     1.09kB / 0B   35.8GB / 25.2GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   797.74%   7.783GiB / 251.3GiB   3.10%     1.09kB / 0B   35.9GB / 27GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.43%   7.649GiB / 251.3GiB   3.04%     1.09kB / 0B   36.3GB / 27.5GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.74%   7.916GiB / 251.3GiB   3.15%     1.09kB / 0B   36.9GB / 27.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.47%   8.115GiB / 251.3GiB   3.23%     1.09kB / 0B   37.4GB / 27.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   796.79%   8.249GiB / 251.3GiB   3.28%     1.09kB / 0B   37.9GB / 27.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.94%   8.283GiB / 251.3GiB   3.30%     1.09kB / 0B   38.4GB / 27.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.93%   8.366GiB / 251.3GiB   3.33%     1.09kB / 0B   38.4GB / 27.7GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.21%   8.881GiB / 251.3GiB   3.53%     1.16kB / 0B   38.4GB / 27.7GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.88%   9.086GiB / 251.3GiB   3.62%     1.16kB / 0B   38.4GB / 27.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.21%   9.373GiB / 251.3GiB   3.73%     1.16kB / 0B   38.4GB / 27.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.12%   9.167GiB / 251.3GiB   3.65%     1.16kB / 0B   38.4GB / 27.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   793.43%   9.165GiB / 251.3GiB   3.65%     1.16kB / 0B   38.5GB / 27.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.21%   9.333GiB / 251.3GiB   3.71%     1.16kB / 0B   38.6GB / 29.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   803.82%   9.42GiB / 251.3GiB   3.75%     1.16kB / 0B   39.1GB / 29.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   802.63%   9.575GiB / 251.3GiB   3.81%     1.16kB / 0B   39.6GB / 30GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   799.82%   9.634GiB / 251.3GiB   3.83%     1.16kB / 0B   40.1GB / 30GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.43%   9.782GiB / 251.3GiB   3.89%     1.16kB / 0B   40.6GB / 30.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   796.20%   9.696GiB / 251.3GiB   3.86%     1.16kB / 0B   41GB / 30.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   804.26%   9.809GiB / 251.3GiB   3.90%     1.16kB / 0B   41.4GB / 30.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.69%   9.573GiB / 251.3GiB   3.81%     1.16kB / 0B   41.8GB / 30.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.48%   9.582GiB / 251.3GiB   3.81%     1.16kB / 0B   41.8GB / 31.7GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.83%   9.82GiB / 251.3GiB   3.91%     1.16kB / 0B   42.3GB / 33.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.85%   9.716GiB / 251.3GiB   3.87%     1.16kB / 0B   42.8GB / 33.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.47%   9.869GiB / 251.3GiB   3.93%     1.16kB / 0B   43.2GB / 34.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.88%   9.947GiB / 251.3GiB   3.96%     1.16kB / 0B   43.6GB / 34.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.46%   9.981GiB / 251.3GiB   3.97%     1.16kB / 0B   44.1GB / 34.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   795.49%   10.07GiB / 251.3GiB   4.01%     1.16kB / 0B   44.5GB / 34.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   799.45%   10.21GiB / 251.3GiB   4.06%     1.16kB / 0B   45GB / 34.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   795.46%   9.96GiB / 251.3GiB   3.96%     1.16kB / 0B   45GB / 35.4GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   796.43%   10.27GiB / 251.3GiB   4.09%     1.16kB / 0B   45.4GB / 37GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   794.47%   10.22GiB / 251.3GiB   4.07%     1.16kB / 0B   45.8GB / 37GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.20%   10.33GiB / 251.3GiB   4.11%     1.16kB / 0B   46.3GB / 37.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.14%   10.4GiB / 251.3GiB   4.14%     1.16kB / 0B   46.9GB / 37.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.48%   10.39GiB / 251.3GiB   4.13%     1.16kB / 0B   47.2GB / 37.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   802.23%   10.15GiB / 251.3GiB   4.04%     1.16kB / 0B   47.6GB / 37.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.97%   10.4GiB / 251.3GiB   4.14%     1.16kB / 0B   48.2GB / 37.3GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.49%   10.43GiB / 251.3GiB   4.15%     1.16kB / 0B   48.6GB / 37.3GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.01%   10.32GiB / 251.3GiB   4.11%     1.16kB / 0B   48.9GB / 37.3GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   795.31%   10.34GiB / 251.3GiB   4.12%     1.16kB / 0B   48.9GB / 38GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   797.58%   10.39GiB / 251.3GiB   4.13%     1.16kB / 0B   49.2GB / 40GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   796.00%   10.53GiB / 251.3GiB   4.19%     1.16kB / 0B   49.7GB / 40GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   799.60%   10.62GiB / 251.3GiB   4.23%     1.16kB / 0B   50.1GB / 40GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   802.04%   10.76GiB / 251.3GiB   4.28%     1.16kB / 0B   50.5GB / 40GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   801.14%   10.69GiB / 251.3GiB   4.25%     1.16kB / 0B   51GB / 40.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.03%   10.95GiB / 251.3GiB   4.36%     1.16kB / 0B   51.5GB / 40.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.59%   10.8GiB / 251.3GiB   4.30%     1.16kB / 0B   51.8GB / 40.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.79%   10.98GiB / 251.3GiB   4.37%     1.16kB / 0B   52.3GB / 40.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.00%   11.24GiB / 251.3GiB   4.47%     1.16kB / 0B   52.8GB / 40.2GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   799.86%   10.88GiB / 251.3GiB   4.33%     1.16kB / 0B   53GB / 40.2GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   799.08%   10.88GiB / 251.3GiB   4.33%     1.16kB / 0B   53GB / 42.3GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.07%   11.09GiB / 251.3GiB   4.41%     1.16kB / 0B   53.4GB / 42.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.97%   11.03GiB / 251.3GiB   4.39%     1.16kB / 0B   53.8GB / 42.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.06%   11.11GiB / 251.3GiB   4.42%     1.16kB / 0B   54.3GB / 42.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.66%   11.21GiB / 251.3GiB   4.46%     1.16kB / 0B   54.6GB / 42.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   802.13%   11.11GiB / 251.3GiB   4.42%     1.16kB / 0B   55GB / 42.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   797.07%   11.16GiB / 251.3GiB   4.44%     1.16kB / 0B   55.5GB / 43GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   795.96%   11.21GiB / 251.3GiB   4.46%     1.16kB / 0B   55.9GB / 43GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   799.14%   11.13GiB / 251.3GiB   4.43%     1.16kB / 0B   56.4GB / 43GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   791.49%   11.23GiB / 251.3GiB   4.47%     1.16kB / 0B   56.5GB / 43GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.19%   11.22GiB / 251.3GiB   4.46%     1.16kB / 0B   56.5GB / 45.2GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   799.27%   11.34GiB / 251.3GiB   4.51%     1.16kB / 0B   57GB / 45.5GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.84%   11.45GiB / 251.3GiB   4.56%     1.16kB / 0B   57.4GB / 45.5GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   805.98%   11.38GiB / 251.3GiB   4.53%     1.16kB / 0B   57.8GB / 45.5GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.97%   11.8GiB / 251.3GiB   4.70%     1.16kB / 0B   58.2GB / 45.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.71%   11.88GiB / 251.3GiB   4.73%     1.16kB / 0B   58.6GB / 45.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   795.96%   11.97GiB / 251.3GiB   4.76%     1.16kB / 0B   59GB / 45.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.05%   12.05GiB / 251.3GiB   4.80%     1.16kB / 0B   59.4GB / 45.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.38%   11.67GiB / 251.3GiB   4.64%     1.16kB / 0B   59.7GB / 45.7GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.05%   11.61GiB / 251.3GiB   4.62%     1.16kB / 0B   59.7GB / 46.5GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.13%   11.85GiB / 251.3GiB   4.72%     1.16kB / 0B   60.1GB / 47.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   796.64%   12.02GiB / 251.3GiB   4.78%     1.16kB / 0B   60.4GB / 47.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   795.89%   12.02GiB / 251.3GiB   4.78%     1.16kB / 0B   60.8GB / 47.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.50%   11.94GiB / 251.3GiB   4.75%     1.16kB / 0B   61.2GB / 47.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.16%   12.29GiB / 251.3GiB   4.89%     1.16kB / 0B   61.7GB / 47.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   797.33%   12.27GiB / 251.3GiB   4.88%     1.16kB / 0B   62GB / 47.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   794.09%   11.9GiB / 251.3GiB   4.73%     1.16kB / 0B   62.2GB / 47.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   795.55%   12.23GiB / 251.3GiB   4.87%     1.16kB / 0B   62.4GB / 49.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   804.13%   12.13GiB / 251.3GiB   4.83%     1.16kB / 0B   62.7GB / 49.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.85%   12.02GiB / 251.3GiB   4.78%     1.16kB / 0B   63.1GB / 49.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.99%   12.17GiB / 251.3GiB   4.84%     1.16kB / 0B   63.5GB / 49.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.62%   12.13GiB / 251.3GiB   4.83%     1.16kB / 0B   63.9GB / 49.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   796.51%   12.03GiB / 251.3GiB   4.79%     1.16kB / 0B   64.3GB / 49.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.17%   12.13GiB / 251.3GiB   4.83%     1.16kB / 0B   64.7GB / 49.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   805.68%   12.15GiB / 251.3GiB   4.83%     1.16kB / 0B   65GB / 49.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   795.81%   12.13GiB / 251.3GiB   4.82%     1.16kB / 0B   65GB / 50.5GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   799.99%   12.18GiB / 251.3GiB   4.84%     1.16kB / 0B   65.4GB / 52GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   799.49%   12.2GiB / 251.3GiB   4.85%     1.16kB / 0B   65.6GB / 52GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   796.78%   12.41GiB / 251.3GiB   4.94%     1.16kB / 0B   66.1GB / 52GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   793.57%   12.5GiB / 251.3GiB   4.97%     1.16kB / 0B   66.4GB / 52.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   804.71%   12.5GiB / 251.3GiB   4.98%     1.16kB / 0B   66.8GB / 52.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.55%   12.6GiB / 251.3GiB   5.01%     1.16kB / 0B   67.2GB / 52.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.09%   12.79GiB / 251.3GiB   5.09%     1.16kB / 0B   67.3GB / 52.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   802.30%   13.6GiB / 251.3GiB   5.41%     1.16kB / 0B   67.3GB / 52.2GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.62%   14.42GiB / 251.3GiB   5.74%     1.16kB / 0B   67.3GB / 52.2GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   802.19%   15.03GiB / 251.3GiB   5.98%     1.16kB / 0B   67.3GB / 52.3GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.42%   15.73GiB / 251.3GiB   6.26%     1.16kB / 0B   67.3GB / 52.3GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   802.35%   16.53GiB / 251.3GiB   6.58%     1.16kB / 0B   67.3GB / 52.3GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.54%   17.31GiB / 251.3GiB   6.89%     1.16kB / 0B   67.3GB / 52.3GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   794.80%   17.69GiB / 251.3GiB   7.04%     1.16kB / 0B   67.5GB / 52.4GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.29%   17.61GiB / 251.3GiB   7.01%     1.16kB / 0B   67.7GB / 52.4GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   805.74%   17.63GiB / 251.3GiB   7.01%     1.16kB / 0B   68GB / 53.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   802.53%   17.54GiB / 251.3GiB   6.98%     1.23kB / 0B   68.4GB / 53.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   795.55%   17.46GiB / 251.3GiB   6.95%     1.23kB / 0B   68.6GB / 53.7GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.70%   17.57GiB / 251.3GiB   6.99%     1.23kB / 0B   68.6GB / 55.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.65%   17.82GiB / 251.3GiB   7.09%     1.23kB / 0B   69.1GB / 55.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.47%   17.94GiB / 251.3GiB   7.14%     1.23kB / 0B   69.5GB / 55.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.89%   18.02GiB / 251.3GiB   7.17%     1.23kB / 0B   69.8GB / 55.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.90%   17.72GiB / 251.3GiB   7.05%     1.23kB / 0B   70.2GB / 55.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   796.88%   17.69GiB / 251.3GiB   7.04%     1.23kB / 0B   70.6GB / 56.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   797.09%   18.13GiB / 251.3GiB   7.21%     1.23kB / 0B   71GB / 56.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.41%   17.97GiB / 251.3GiB   7.15%     1.23kB / 0B   71.4GB / 57.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.27%   17.86GiB / 251.3GiB   7.11%     1.23kB / 0B   71.6GB / 57.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   804.32%   17.86GiB / 251.3GiB   7.11%     1.23kB / 0B   71.6GB / 60.3GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+8534b527ece8   hungry_davinci   796.45%   18.17GiB / 251.3GiB   7.23%     1.23kB / 0B   72GB / 60.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.14%   18.15GiB / 251.3GiB   7.22%     1.23kB / 0B   72.4GB / 60.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.21%   17.92GiB / 251.3GiB   7.13%     1.23kB / 0B   72.8GB / 60.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.82%   18.21GiB / 251.3GiB   7.24%     1.23kB / 0B   73.1GB / 60.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.28%   18.16GiB / 251.3GiB   7.23%     1.23kB / 0B   73.4GB / 60.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   804.14%   18.07GiB / 251.3GiB   7.19%     1.23kB / 0B   73.8GB / 60.7GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   795.32%   18.12GiB / 251.3GiB   7.21%     1.23kB / 0B   73.8GB / 60.7GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.80%   18.05GiB / 251.3GiB   7.18%     1.23kB / 0B   73.8GB / 62.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.56%   18.04GiB / 251.3GiB   7.18%     1.23kB / 0B   73.8GB / 62.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.13%   18.04GiB / 251.3GiB   7.18%     1.23kB / 0B   73.8GB / 62.7GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.60%   18.09GiB / 251.3GiB   7.20%     1.23kB / 0B   73.8GB / 62.7GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.65%   18.1GiB / 251.3GiB   7.20%     1.23kB / 0B   73.8GB / 62.7GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.89%   18.11GiB / 251.3GiB   7.21%     1.23kB / 0B   73.8GB / 62.7GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.88%   18.11GiB / 251.3GiB   7.21%     1.23kB / 0B   73.8GB / 62.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.31%   18.15GiB / 251.3GiB   7.22%     1.23kB / 0B   73.8GB / 62.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   796.18%   18.19GiB / 251.3GiB   7.24%     1.23kB / 0B   73.8GB / 62.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.93%   18.19GiB / 251.3GiB   7.24%     1.23kB / 0B   73.8GB / 62.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.78%   18.21GiB / 251.3GiB   7.24%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.80%   18.21GiB / 251.3GiB   7.25%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.99%   18.22GiB / 251.3GiB   7.25%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.17%   18.18GiB / 251.3GiB   7.24%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.44%   18.13GiB / 251.3GiB   7.21%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.51%   18.21GiB / 251.3GiB   7.25%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   802.61%   18.21GiB / 251.3GiB   7.25%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   802.60%   18.22GiB / 251.3GiB   7.25%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.39%   18.22GiB / 251.3GiB   7.25%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.98%   18.22GiB / 251.3GiB   7.25%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.04%   18.27GiB / 251.3GiB   7.27%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.60%   18.28GiB / 251.3GiB   7.27%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.93%   18.28GiB / 251.3GiB   7.27%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.85%   18.28GiB / 251.3GiB   7.27%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.56%   18.33GiB / 251.3GiB   7.29%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.45%   18.17GiB / 251.3GiB   7.23%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   795.28%   18.34GiB / 251.3GiB   7.30%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.00%   18.35GiB / 251.3GiB   7.30%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.63%   18.44GiB / 251.3GiB   7.34%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.50%   18.4GiB / 251.3GiB   7.32%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.41%   18.39GiB / 251.3GiB   7.32%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.06%   18.41GiB / 251.3GiB   7.33%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.90%   18.27GiB / 251.3GiB   7.27%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   795.82%   18.44GiB / 251.3GiB   7.34%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.28%   18.31GiB / 251.3GiB   7.29%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.75%   18.5GiB / 251.3GiB   7.36%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.27%   18.5GiB / 251.3GiB   7.36%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.89%   18.46GiB / 251.3GiB   7.35%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.07%   18.41GiB / 251.3GiB   7.32%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.36%   18.46GiB / 251.3GiB   7.34%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.09%   18.45GiB / 251.3GiB   7.34%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.73%   18.25GiB / 251.3GiB   7.26%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   802.01%   18.36GiB / 251.3GiB   7.31%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   802.42%   18.27GiB / 251.3GiB   7.27%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.07%   18.43GiB / 251.3GiB   7.33%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.97%   18.48GiB / 251.3GiB   7.35%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.76%   18.41GiB / 251.3GiB   7.32%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   795.02%   18.44GiB / 251.3GiB   7.34%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.99%   18.36GiB / 251.3GiB   7.30%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.11%   18.5GiB / 251.3GiB   7.36%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.81%   18.45GiB / 251.3GiB   7.34%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.10%   18.46GiB / 251.3GiB   7.35%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.02%   18.52GiB / 251.3GiB   7.37%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.87%   18.47GiB / 251.3GiB   7.35%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.39%   18.48GiB / 251.3GiB   7.35%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.18%   18.48GiB / 251.3GiB   7.35%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.49%   19.44GiB / 251.3GiB   7.74%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.23%   20.64GiB / 251.3GiB   8.21%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.25%   21.69GiB / 251.3GiB   8.63%     1.23kB / 0B   73.8GB / 62.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.32%   22.9GiB / 251.3GiB   9.11%     1.23kB / 0B   73.8GB / 63.2GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   802.16%   24.03GiB / 251.3GiB   9.56%     1.23kB / 0B   73.8GB / 63.2GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.78%   24.04GiB / 251.3GiB   9.56%     1.23kB / 0B   73.8GB / 63.2GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.60%   24.05GiB / 251.3GiB   9.57%     1.23kB / 0B   73.8GB / 63.2GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.28%   24.11GiB / 251.3GiB   9.59%     1.23kB / 0B   73.8GB / 63.2GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   796.62%   24.12GiB / 251.3GiB   9.60%     1.23kB / 0B   73.8GB / 63.2GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   803.74%   23.96GiB / 251.3GiB   9.53%     1.23kB / 0B   73.8GB / 63.2GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   795.50%   24.09GiB / 251.3GiB   9.59%     1.23kB / 0B   73.8GB / 63.2GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.96%   23.98GiB / 251.3GiB   9.54%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   795.50%   24.11GiB / 251.3GiB   9.59%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.50%   24.12GiB / 251.3GiB   9.60%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.11%   24.15GiB / 251.3GiB   9.61%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.77%   24.15GiB / 251.3GiB   9.61%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.61%   24.14GiB / 251.3GiB   9.61%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.44%   24.15GiB / 251.3GiB   9.61%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.78%   24.02GiB / 251.3GiB   9.56%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.40%   24.18GiB / 251.3GiB   9.62%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.77%   24.18GiB / 251.3GiB   9.62%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.87%   24.23GiB / 251.3GiB   9.64%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   796.01%   24.23GiB / 251.3GiB   9.64%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.28%   24.19GiB / 251.3GiB   9.63%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.92%   24.28GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   802.02%   24.28GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   802.87%   24.29GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.59%   24.34GiB / 251.3GiB   9.69%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.35%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.68%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   802.20%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.69%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.02%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   802.04%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.85%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.35%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   802.05%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.35%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   802.38%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.18%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.15%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   802.20%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.55%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.51%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.11%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.72%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.86%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.69%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.68%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.51%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.38%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   802.05%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.68%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.84%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.18%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.51%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.02%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   802.37%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.71%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.32%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.68%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.19%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.88%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.71%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.18%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.02%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.52%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.96%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   802.20%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   802.21%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.38%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.48%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.35%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.52%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.02%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.52%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   802.54%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.71%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.12%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   796.92%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.52%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.18%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.19%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.38%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.87%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.18%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.85%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.60%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   802.04%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.51%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.52%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.78%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   802.55%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.35%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.85%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.13%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.88%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.19%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.35%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.55%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.37%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.53%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.57%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.83%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.57%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.70%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.06%   24.27GiB / 251.3GiB   9.66%     1.23kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.50%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.37%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.44%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.16%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   800.36%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.14%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.14%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.61%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.84%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.73%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.13%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   802.57%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.57%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.30%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.54%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.37%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.90%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.03%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.47%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.87%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   802.57%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.37%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.87%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   797.82%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   802.08%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.84%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.18%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.06%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   799.03%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.66%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.87%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.17%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   798.60%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   801.97%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   802.13%   23.85GiB / 251.3GiB   9.49%     1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   99.74%    25.89GiB / 251.3GiB   10.30%    1.3kB / 0B   73.8GB / 63.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+8534b527ece8   hungry_davinci   99.62%    23.36GiB / 251.3GiB   9.29%     1.3kB / 0B   73.8GB / 65.9GB   10
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS

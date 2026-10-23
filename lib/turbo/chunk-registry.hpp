@@ -384,7 +384,8 @@ namespace turbo {
 
         cardano::optional_slot can_export() const;
         void node_export(const std::filesystem::path &node_dir, const cardano::point &tip, bool ledger_only=false) const;
-        std::string node_export_ledger(const std::filesystem::path &ledger_dir, const cardano::optional_point &imm_tip, int prio=1000) const;
+        std::string node_export_ledger(const std::filesystem::path &ledger_dir, const cardano::optional_point &imm_tip, int prio=1000,
+            cardano::ledger::node_format format=cardano::ledger::node_format::legacy) const;
     private:
         friend const_iterator;
 

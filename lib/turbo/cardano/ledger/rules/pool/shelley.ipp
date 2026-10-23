@@ -21,14 +21,22 @@
         } else {
             const auto future_it = _future_pool_params.find(reg.pool_id);
             const auto vrf_belongs_to_pool = reg.params.vrf_vkey == active_it->second.params.vrf_vkey
-                || (future_it != _future_pool_params.end()
+                || (_params.protocol_ver.major > 11 && future_it != _future_pool_params.end()
                     && reg.params.vrf_vkey == future_it->second.params.vrf_vkey);
             if (pv11 && !vrf_belongs_to_pool && _pool_vrf_key_hashes.contains(reg.params.vrf_vkey)) [[unlikely]] {
                 throw error(fmt::format("pool {} tried to re-register an already registered VRF key {}", reg.pool_id, reg.params.vrf_vkey));
             }
             auto [f_it, f_created] = _future_pool_params.try_emplace(reg.pool_id, reg.params);
             if (pv11) {
-                if (f_created) {
+                if (_params.protocol_ver.major == 11) {
+                    // Conway POOL uses insert(1)/delete, not reference counting.
+                    // Re-registering the active key must not count it twice.
+                    if (f_created || f_it->second.params.vrf_vkey != reg.params.vrf_vkey) {
+                        if (!f_created)
+                            _pool_vrf_key_hashes.erase(f_it->second.params.vrf_vkey);
+                        _pool_vrf_key_hashes[reg.params.vrf_vkey] = 1;
+                    }
+                } else if (f_created) {
                     _add_pool_vrf_key_hash(reg.params.vrf_vkey);
                 } else if (f_it->second.params.vrf_vkey != reg.params.vrf_vkey) {
                     _remove_pool_vrf_key_hash(f_it->second.params.vrf_vkey);
@@ -81,8 +89,12 @@
     void state::_remove_pool_vrf_key_hash(const vrf_vkey &vrf)
     {
         const auto it = _pool_vrf_key_hashes.find(vrf);
-        if (it == _pool_vrf_key_hashes.end()) [[unlikely]]
+        if (it == _pool_vrf_key_hashes.end()) [[unlikely]] {
+            // PV11 may have erased a shared key when another pool changed VRF.
+            if (_params.protocol_ver.major == 11)
+                return;
             throw error(fmt::format("VRF key {} is missing from the registered-key occurrence map", vrf));
+        }
         if (it->second <= 1)
             _pool_vrf_key_hashes.erase(it);
         else

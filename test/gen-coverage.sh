@@ -6,90 +6,88 @@ usage()
 {
     cat <<'EOF'
 Usage:
-  bash test/gen-coverage.sh [--ledger-rules] [TEST_NAME [OUT_DIR [BUILD_DIR]]]
-  bash test/gen-coverage.sh [--ledger-rules] --cli [OUT_DIR [BUILD_DIR]] -- TADA_ARGUMENTS...
+  bash test/gen-coverage.sh [OPTIONS] test [FILTER]
+  bash test/gen-coverage.sh [OPTIONS] cli -- TADA_ARGUMENTS...
+
+Options (before test or cli):
+  --scope=all|cbor|ledger        Sources to report (default: all)
+  --out-dir=DIR                Report directory (default: tmp/coverage)
+  --build-dir=DIR              Coverage build directory (default: build-cov)
+  -h, --help                   Show this help
 
 Examples:
-  bash test/gen-coverage.sh 'sync::p2p'
-  bash test/gen-coverage.sh --ledger-rules '*' tmp/coverage-ledger build-cov
-  bash test/gen-coverage.sh --cli -- sync --max-slot=100000 tmp/sync-cov
-  bash test/gen-coverage.sh --cli tmp/coverage-sync build-cov -- sync --max-slot=100000 tmp/sync-cov
-
-The CLI workload must exit normally for LLVM to write its raw profile. Use a
-bounded command such as sync with --max-slot or --max-epoch.
-
---ledger-rules reports only production sources under cardano/ledger/rules,
-including implementation fragments compiled by the ledger, index, and txwit
-translation units. It also exports JSON, LCOV, and a text summary. The test
-selection is independent: use '*' to measure all existing tests, or select a
-Conway workload to distinguish Conway execution of shared rule code.
+  bash test/gen-coverage.sh test
+  bash test/gen-coverage.sh cli -- sync --max-slot=100000 tmp/sync-cov
+  bash test/gen-coverage.sh --scope=cbor cli -- test-cbor-dataset /path/to/dataset
+  bash test/gen-coverage.sh --scope=ledger cli -- sync --max-slot=100000 tmp/sync-cov
+  bash test/gen-coverage.sh --out-dir=tmp/coverage-p2p test 'sync::p2p'
 EOF
+}
+
+fail()
+{
+    echo "error: $*" >&2
+    exit 2
 }
 
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 SOURCE_DIR=$(cd -- "$SCRIPT_DIR/.." && pwd)
 cd -- "$SOURCE_DIR"
 
-MODE=test
-TEST_BIN=tada-test
+SCOPE=all
 OUT_DIR=tmp/coverage
 BUILD_DIR=build-cov
 LLVM_PROFDATA=${LLVM_PROFDATA:-llvm-profdata-21}
 LLVM_COV=${LLVM_COV:-llvm-cov-21}
-RUN_ARGS=()
-LEDGER_RULES=false
 
-if [[ ${1:-} == --ledger-rules ]]; then
-    LEDGER_RULES=true
+while (( $# )); do
+    case $1 in
+        --scope=|--out-dir=|--build-dir=) fail "${1%=} requires a nonempty value" ;;
+        --scope=*) SCOPE=${1#*=} ;;
+        --out-dir=*) OUT_DIR=${1#*=} ;;
+        --build-dir=*) BUILD_DIR=${1#*=} ;;
+        --scope|--out-dir|--build-dir) fail "use $1=VALUE" ;;
+        -h|--help) usage; exit 0 ;;
+        test|cli) break ;;
+        *) fail "unknown option or workload: $1 (see --help)" ;;
+    esac
     shift
-fi
+done
 
-if [[ ${1:-} == --help || ${1:-} == -h ]]; then
-    usage
-    exit 0
-elif [[ ${1:-} == --cli ]]; then
-    MODE=cli
-    TEST_BIN=tada
-    shift
-    if [[ ${1:-} != -- && -n ${1:-} ]]; then
-        OUT_DIR=$1
+case $SCOPE in
+    all|cbor|ledger) ;;
+    *) fail "unknown scope: $SCOPE" ;;
+esac
+case ${1:-} in
+    '') usage; exit 0 ;;
+    test)
         shift
-    fi
-    if [[ ${1:-} != -- && -n ${1:-} ]]; then
-        BUILD_DIR=$1
+        (( $# <= 1 )) || fail "test accepts one optional FILTER"
+        [[ ${1:-} != -* ]] || fail "options must precede test"
+        BIN_NAME=tada-test
+        RUN_ARGS=("${1:-*}")
+        ;;
+    cli)
         shift
-    fi
-    if [[ ${1:-} == -- ]]; then
+        [[ ${1:-} == -- ]] || fail "cli requires -- before TADA arguments"
         shift
-    fi
-    if (( $# == 0 )); then
-        usage >&2
-        exit 2
-    fi
-    RUN_ARGS=("$@")
-else
-    RUN_ARGS=("${1:-*}")
-    OUT_DIR=${2:-$OUT_DIR}
-    BUILD_DIR=${3:-$BUILD_DIR}
-    if (( $# > 3 )); then
-        usage >&2
-        exit 2
-    fi
-fi
+        (( $# )) || fail "cli requires TADA arguments after --"
+        BIN_NAME=tada
+        RUN_ARGS=("$@")
+        ;;
+    *) fail "choose a workload: test or cli (see --help)" ;;
+esac
 
-BIN_PATH="$BUILD_DIR/$TEST_BIN"
-if [[ ! -x $BIN_PATH ]]; then
-    echo "error: coverage executable is missing or not executable: $BIN_PATH" >&2
-    echo "configure and build the Coverage target first" >&2
-    exit 2
-fi
+BIN_PATH="$BUILD_DIR/$BIN_NAME"
+[[ -x $BIN_PATH ]] || fail "missing coverage executable: $BIN_PATH; build with CMAKE_BUILD_TYPE=Coverage first"
+for tool in "$LLVM_PROFDATA" "$LLVM_COV"; do
+    command -v -- "$tool" >/dev/null || fail "required tool not found: $tool"
+done
 
 mkdir -p -- "$OUT_DIR"
 REPORT_LOCK="$OUT_DIR/.gen-coverage.lock"
 if ! mkdir -- "$REPORT_LOCK" 2>/dev/null; then
-    echo "error: coverage report directory is already in use: $OUT_DIR" >&2
-    echo "use a different OUT_DIR, or remove $REPORT_LOCK after confirming no coverage run is active" >&2
-    exit 2
+    fail "cannot lock $OUT_DIR; use another directory or remove $REPORT_LOCK after confirming no run is active"
 fi
 release_report_lock()
 {
@@ -99,64 +97,65 @@ trap release_report_lock EXIT
 
 PROFILE_ROOT=${COVERAGE_PROFILE_DIR:-tmp/coverage-profiles}
 mkdir -p -- "$PROFILE_ROOT"
-PROFILE_DIR=$(mktemp -d "$PROFILE_ROOT/$TEST_BIN.XXXXXX")
-PROFILE_DATA="$PROFILE_DIR/$TEST_BIN.profdata"
-export LLVM_PROFILE_FILE="$PROFILE_DIR/%p-%m.profraw"
+PROFILE_DIR=$(mktemp -d "$PROFILE_ROOT/$BIN_NAME.XXXXXX")
+PROFILE_DIR=$(cd -- "$PROFILE_DIR" && pwd)
+PROFILE_DATA="$PROFILE_DIR/coverage.profdata"
+PROFILE_PATTERN="$PROFILE_DIR/%p-%m.profraw"
 
-echo "Running $MODE coverage workload: $BIN_PATH ${RUN_ARGS[*]}"
-"$BIN_PATH" "${RUN_ARGS[@]}"
+find "$SOURCE_DIR/lib/turbo" "$SOURCE_DIR/src" -type f \
+    \( -name '*.cpp' -o -name '*.hpp' -o -name '*.ipp' \) \
+    ! -name '*.test.cpp' ! -name '*.bench.cpp' ! -name '*.fuzz.cpp' \
+    ! -name 'run-test.cpp' -print0 |
+    LC_ALL=C sort -z > "$PROFILE_DIR/source-candidates.nul"
+
+REPORT_SOURCES=()
+while IFS= read -r -d '' source; do
+    relative_source=${source#"$SOURCE_DIR/"}
+    case "$SCOPE:$relative_source" in
+        all:*|cbor:lib/turbo/cbor/*|cbor:lib/turbo/*/cbor/*|\
+        cbor:lib/turbo/cardano/common/types.hpp|cbor:lib/turbo/cardano/common/types/base.hpp|\
+        ledger:lib/turbo/cardano/ledger/rules/*)
+            REPORT_SOURCES+=("$source")
+            ;;
+    esac
+done < "$PROFILE_DIR/source-candidates.nul"
+(( ${#REPORT_SOURCES[@]} )) || fail "no production sources found for scope: $SCOPE"
+printf '%s\n' "${REPORT_SOURCES[@]}" > "$OUT_DIR/sources.txt"
+
+{
+    printf 'working_directory: %q\nscope: %s\nbinary: %q\n' "$SOURCE_DIR" "$SCOPE" "$BIN_PATH"
+    printf 'profile_data: %q\nllvm_profdata: %q\nllvm_cov: %q\n' "$PROFILE_DATA" "$LLVM_PROFDATA" "$LLVM_COV"
+    printf 'command: LLVM_PROFILE_FILE=%q' "$PROFILE_PATTERN"
+    printf ' %q' "$BIN_PATH" "${RUN_ARGS[@]}"
+    printf '\n'
+} > "$OUT_DIR/run.txt"
+
+printf 'Running:'
+printf ' %q' "$BIN_PATH" "${RUN_ARGS[@]}"
+printf '\n'
+WORKLOAD_STATUS=0
+LLVM_PROFILE_FILE="$PROFILE_PATTERN" "$BIN_PATH" "${RUN_ARGS[@]}" || WORKLOAD_STATUS=$?
+printf 'workload_exit_status: %s\n' "$WORKLOAD_STATUS" >> "$OUT_DIR/run.txt"
 
 shopt -s nullglob
 RAW_PROFILES=("$PROFILE_DIR"/*.profraw)
 if (( ${#RAW_PROFILES[@]} == 0 )); then
     echo "error: the workload produced no raw LLVM profiles in $PROFILE_DIR" >&2
-    exit 1
+    exit "$(( WORKLOAD_STATUS == 0 ? 1 : WORKLOAD_STATUS ))"
+fi
+if (( WORKLOAD_STATUS != 0 )); then
+    echo "Workload exited with status $WORKLOAD_STATUS; reporting available profiles" >&2
 fi
 
 echo "Indexing ${#RAW_PROFILES[@]} raw profile(s) into $PROFILE_DATA"
 "$LLVM_PROFDATA" merge -sparse "${RAW_PROFILES[@]}" -o "$PROFILE_DATA"
 
-IGNORE_REGEX='3rdparty/'
-if [[ $MODE == test ]]; then
-    IGNORE_REGEX+='|lib/turbo/cli'
-fi
-if [[ $LEDGER_RULES == true ]]; then
-    IGNORE_REGEX+='|\.test\.cpp$|\.bench\.cpp$|\.fuzz\.cpp$'
-    # LLVM reports included .ipp definitions using their own source paths. Filter
-    # by that path, not by the object file which instantiates/compiles the rule.
-    # This also keeps inline rule helpers in the denominator.
-    RULE_ROOT="$SOURCE_DIR/lib/turbo/cardano/ledger/rules"
-    RULE_SOURCES=()
-    while IFS= read -r -d '' source; do
-        RULE_SOURCES+=("$source")
-    done < <(find "$RULE_ROOT" -type f \( -name '*.cpp' -o -name '*.hpp' -o -name '*.ipp' \) \
-        ! -name '*.test.cpp' ! -name '*.bench.cpp' ! -name '*.fuzz.cpp' -print0)
-    if (( ${#RULE_SOURCES[@]} == 0 )); then
-        echo "error: no production ledger rule sources found in $RULE_ROOT" >&2
-        exit 2
-    fi
-fi
-
-COV_ARGS=(show -show-branches=percent "-ignore-filename-regex=$IGNORE_REGEX")
-COV_ARGS+=(
-    -format=html
-    "-output-dir=$OUT_DIR"
-    "$BIN_PATH"
-    "-instr-profile=$PROFILE_DATA"
-)
-if [[ $LEDGER_RULES == true ]]; then
-    COV_ARGS+=("${RULE_SOURCES[@]}")
-fi
-
-echo "Generating coverage report into $OUT_DIR"
-"$LLVM_COV" "${COV_ARGS[@]}"
-if [[ $LEDGER_RULES == true ]]; then
-    EXPORT_ARGS=("$BIN_PATH" "-instr-profile=$PROFILE_DATA"
-        "-ignore-filename-regex=$IGNORE_REGEX" "${RULE_SOURCES[@]}")
-    "$LLVM_COV" export -format=text "${EXPORT_ARGS[@]}" > "$OUT_DIR/rules.json"
-    "$LLVM_COV" export -format=lcov "${EXPORT_ARGS[@]}" > "$OUT_DIR/rules.lcov"
-    "$LLVM_COV" report "${EXPORT_ARGS[@]}" > "$OUT_DIR/rules-summary.txt"
-    echo "Rule coverage exports: $OUT_DIR/rules.json, $OUT_DIR/rules.lcov, $OUT_DIR/rules-summary.txt"
-fi
+REPORT_ARGS=("$BIN_PATH" "-instr-profile=$PROFILE_DATA" "${REPORT_SOURCES[@]}")
+echo "Generating $SCOPE coverage report into $OUT_DIR"
+"$LLVM_COV" show "${REPORT_ARGS[@]}" -show-branches=percent -format=html "-output-dir=$OUT_DIR"
+"$LLVM_COV" export "${REPORT_ARGS[@]}" -format=text > "$OUT_DIR/coverage.json"
+"$LLVM_COV" export "${REPORT_ARGS[@]}" -format=lcov > "$OUT_DIR/coverage.lcov"
+"$LLVM_COV" report "${REPORT_ARGS[@]}" > "$OUT_DIR/summary.txt"
 echo "Coverage report: $OUT_DIR/index.html"
 echo "Raw and indexed profiles: $PROFILE_DIR"
+exit "$WORKLOAD_STATUS"

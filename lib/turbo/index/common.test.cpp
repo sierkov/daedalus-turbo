@@ -36,6 +36,16 @@ namespace {
 
 suite index_common_suite = [] {
     "index::common"_test = [] {
+        "merge comparison is strict and reversed"_test = [] {
+            const merge_item<index_item> first { { 1, 0 }, 0 };
+            const merge_item<index_item> equal { { 1, 0 }, 1 };
+            const merge_item<index_item> next { { 1, 1 }, 1 };
+            expect(!(first < first));
+            expect(!(first < equal));
+            expect(!(equal < first));
+            expect(next < first);
+            expect(!(first < next));
+        };
         "writer/reader"_test = [] {
             file::tmp idx_path { "index-writer-test" };
             size_t num_items = 0x39886;
@@ -116,6 +126,40 @@ suite index_common_suite = [] {
                 }
             }
             std::filesystem::remove(idx_path.path());
+        };
+
+        "search counts matches across full and partial final chunks"_test = [] {
+            for (const size_t num_matches: { 4, 5 }) {
+                for (const bool trailing_item: { false, true }) {
+                    file::tmp idx_path { "index-search-final-chunk" };
+                    {
+                        writer<index_item> idx { idx_path, 1, 2 };
+                        idx.emplace(uint64_t { 1 });
+                        // The matching run starts inside the first chunk.
+                        for (size_t i = 0; i < num_matches; ++i)
+                            idx.emplace(uint64_t { 2 }, static_cast<uint16_t>(i));
+                        if (trailing_item)
+                            idx.emplace(uint64_t { 3 });
+                    }
+                    reader<index_item> idx { idx_path };
+                    // One case also checks cache and cursor repositioning after EOF.
+                    const size_t repeats = num_matches == 4 && !trailing_item ? 2 : 1;
+                    for (size_t repeat = 0; repeat < repeats; ++repeat) {
+                        auto [count, item] = idx.find({ 2 });
+                        expect_equal(count, num_matches, "match count");
+                        for (size_t i = 0; i < num_matches; ++i) {
+                            if (i)
+                                expect(fatal(idx.read(item))) << "missing match " << i;
+                            expect_equal(item.offset, 2, "matched key");
+                            expect_equal(item.out_idx, i, "matched item");
+                        }
+                        expect_equal(idx.read(item), trailing_item, "item after matching run");
+                        if (trailing_item)
+                            expect_equal(item.offset, 3, "following key");
+                        expect(idx.eof());
+                    }
+                }
+            }
         };
 
         "multi-part indices work"_test = [] {

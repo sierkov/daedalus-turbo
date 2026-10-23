@@ -17,7 +17,7 @@ namespace turbo::cardano::ledger::alonzo {
         void _apply_alonzo_params(protocol_params &p) const;
         void _apply_param_update(const param_update &update) override;
         void _parse_protocol_params(protocol_params &params, cbor::zero2::value &values) const override;
-        void _params_to_cbor(era_encoder &enc, const protocol_params &params) const override;
+        void _params_to_cbor(era_encoder &enc, const protocol_params &params, node_format format) const override;
         void _param_update_to_cbor(era_encoder &enc, const param_update &update) const override;
     };
 }

@@ -111,7 +111,8 @@ namespace turbo::cardano::dijkstra {
             auto &it = items->array();
             while (!it.done()) {
                 auto tx = sub_transaction_t::from_cbor(it.read());
-                const auto hash = tx.body.hash.value_or(crypto::blake2b::digest<tx_hash>(tx.body.raw));
+                const auto &body = tx.body.value();
+                const auto hash = body.hash.value_or(crypto::blake2b::digest<tx_hash>(tx.body.original_cbor()));
                 if (!body_hashes.emplace(hash).second) [[unlikely]]
                     throw error("duplicate Dijkstra sub-transaction body");
                 res.emplace_back(std::move(tx));
@@ -256,7 +257,7 @@ namespace turbo::cardano::dijkstra {
                 for (auto &&proposal: *proposals) {
                     res.proposals.emplace_hint(
                         res.proposals.end(),
-                        gov_action_id_t { tx_id, numeric_cast<uint16_t>(proposal_idx++) },
+                        cardano::gov_action_id_t { tx_id, numeric_cast<uint16_t>(proposal_idx++) },
                         std::move(proposal));
                 }
             }

@@ -1,0 +1,571 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O     PIDS
+87f2b7c7f076   silly_pasteur   1588.89%   1.149GiB / 251.3GiB   0.46%     736B / 0B   1.93GB / 0B   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O     PIDS
+87f2b7c7f076   silly_pasteur   1592.47%   1.037GiB / 251.3GiB   0.41%     736B / 0B   3.76GB / 0B   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1593.91%   1.062GiB / 251.3GiB   0.42%     806B / 0B   5.13GB / 969MB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1601.22%   1.077GiB / 251.3GiB   0.43%     806B / 0B   6.09GB / 969MB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1596.52%   1.179GiB / 251.3GiB   0.47%     806B / 0B   7.87GB / 1.17GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1593.61%   1.338GiB / 251.3GiB   0.53%     876B / 0B   9.91GB / 1.17GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1583.89%   1.75GiB / 251.3GiB   0.70%     876B / 0B   12.1GB / 1.17GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1598.77%   2.138GiB / 251.3GiB   0.85%     876B / 0B   13.9GB / 1.17GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+87f2b7c7f076   silly_pasteur   1572.49%   2.546GiB / 251.3GiB   1.01%     876B / 0B   16GB / 1.17GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1591.93%   2.566GiB / 251.3GiB   1.02%     876B / 0B   17.9GB / 1.17GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1592.59%   2.925GiB / 251.3GiB   1.16%     876B / 0B   19.9GB / 1.2GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1596.01%   3.401GiB / 251.3GiB   1.35%     946B / 0B   21.8GB / 1.2GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1594.15%   3.416GiB / 251.3GiB   1.36%     946B / 0B   23.7GB / 1.2GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1593.35%   4.167GiB / 251.3GiB   1.66%     946B / 0B   25.6GB / 1.2GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1596.02%   4.484GiB / 251.3GiB   1.78%     946B / 0B   27.2GB / 1.73GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1593.80%   4.44GiB / 251.3GiB   1.77%     946B / 0B   29.1GB / 1.73GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1592.05%   4.397GiB / 251.3GiB   1.75%     946B / 0B   30.7GB / 3.38GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1597.23%   4.498GiB / 251.3GiB   1.79%     946B / 0B   32.4GB / 3.38GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+87f2b7c7f076   silly_pasteur   1597.77%   4.504GiB / 251.3GiB   1.79%     946B / 0B   34GB / 6.32GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1596.56%   4.618GiB / 251.3GiB   1.84%     946B / 0B   35.5GB / 6.32GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+87f2b7c7f076   silly_pasteur   1599.21%   4.615GiB / 251.3GiB   1.84%     946B / 0B   37GB / 6.32GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1600.00%   4.61GiB / 251.3GiB   1.83%     946B / 0B   38.6GB / 9.5GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1598.86%   4.563GiB / 251.3GiB   1.82%     946B / 0B   40.2GB / 9.5GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1601.57%   4.423GiB / 251.3GiB   1.76%     946B / 0B   41.7GB / 13.2GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1602.35%   4.52GiB / 251.3GiB   1.80%     946B / 0B   43.3GB / 13.2GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1599.42%   4.5GiB / 251.3GiB   1.79%     1.02kB / 0B   44.8GB / 17.1GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1602.45%   4.429GiB / 251.3GiB   1.76%     1.02kB / 0B   46.4GB / 17.1GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1601.11%   4.517GiB / 251.3GiB   1.80%     1.02kB / 0B   47.9GB / 20.8GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1596.15%   4.734GiB / 251.3GiB   1.88%     1.02kB / 0B   49.4GB / 20.8GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1593.96%   4.506GiB / 251.3GiB   1.79%     1.02kB / 0B   50.8GB / 24.2GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1602.02%   4.466GiB / 251.3GiB   1.78%     1.02kB / 0B   52.2GB / 24.2GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1595.44%   4.534GiB / 251.3GiB   1.80%     1.02kB / 0B   53.8GB / 27.1GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1602.07%   4.578GiB / 251.3GiB   1.82%     1.02kB / 0B   55.3GB / 27.1GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1600.92%   4.674GiB / 251.3GiB   1.86%     1.02kB / 0B   56.7GB / 30.2GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1602.67%   4.549GiB / 251.3GiB   1.81%     1.02kB / 0B   58.1GB / 30.2GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1592.72%   4.806GiB / 251.3GiB   1.91%     1.02kB / 0B   59.7GB / 32.2GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O     PIDS
+87f2b7c7f076   silly_pasteur   1593.64%   4.724GiB / 251.3GiB   1.88%     1.02kB / 0B   61GB / 33GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+87f2b7c7f076   silly_pasteur   1593.15%   5.262GiB / 251.3GiB   2.09%     1.02kB / 0B   62.5GB / 33GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1591.56%   5.411GiB / 251.3GiB   2.15%     1.02kB / 0B   63.9GB / 35.6GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1598.74%   5.213GiB / 251.3GiB   2.07%     1.02kB / 0B   65.2GB / 35.6GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1601.27%   5.323GiB / 251.3GiB   2.12%     1.02kB / 0B   66.5GB / 38.2GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1598.72%   5.44GiB / 251.3GiB   2.16%     1.02kB / 0B   67.8GB / 38.2GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1599.45%   5.216GiB / 251.3GiB   2.08%     1.02kB / 0B   69.1GB / 40.9GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1599.18%   5GiB / 251.3GiB     1.99%     1.02kB / 0B   70.4GB / 40.9GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1593.74%   5.323GiB / 251.3GiB   2.12%     1.02kB / 0B   71.8GB / 43.5GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1592.81%   5.3GiB / 251.3GiB   2.11%     1.02kB / 0B   73.2GB / 43.5GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1598.53%   5.35GiB / 251.3GiB   2.13%     1.02kB / 0B   74.6GB / 46.1GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+87f2b7c7f076   silly_pasteur   1600.27%   5.727GiB / 251.3GiB   2.28%     1.02kB / 0B   76GB / 46.1GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1597.57%   5.985GiB / 251.3GiB   2.38%     1.02kB / 0B   77.3GB / 48.5GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1598.07%   5.914GiB / 251.3GiB   2.35%     1.02kB / 0B   78.6GB / 48.5GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1525.65%   5.304GiB / 251.3GiB   2.11%     1.02kB / 0B   79.2GB / 50.7GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1676.75%   5.841GiB / 251.3GiB   2.32%     1.02kB / 0B   79.2GB / 50.7GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1655.10%   6.064GiB / 251.3GiB   2.41%     1.02kB / 0B   79.2GB / 50.8GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1627.68%   6.17GiB / 251.3GiB   2.46%     1.09kB / 0B   79.2GB / 53.1GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1634.45%   6.151GiB / 251.3GiB   2.45%     1.09kB / 0B   79.2GB / 53.1GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1586.80%   5.391GiB / 251.3GiB   2.14%     1.09kB / 0B   79.2GB / 55.4GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1615.75%   5.383GiB / 251.3GiB   2.14%     1.09kB / 0B   79.2GB / 55.4GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1625.65%   5.376GiB / 251.3GiB   2.14%     1.09kB / 0B   79.2GB / 57.6GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1592.77%   5.371GiB / 251.3GiB   2.14%     1.09kB / 0B   79.2GB / 57.6GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1607.73%   5.366GiB / 251.3GiB   2.14%     1.09kB / 0B   79.2GB / 59.8GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1642.75%   5.358GiB / 251.3GiB   2.13%     1.09kB / 0B   79.2GB / 59.8GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1619.83%   5.359GiB / 251.3GiB   2.13%     1.09kB / 0B   79.2GB / 62.2GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1629.07%   5.269GiB / 251.3GiB   2.10%     1.09kB / 0B   79.2GB / 62.2GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1610.93%   5.262GiB / 251.3GiB   2.09%     1.09kB / 0B   79.2GB / 68.9GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1592.21%   5.373GiB / 251.3GiB   2.14%     1.09kB / 0B   79.2GB / 68.9GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1569.24%   5.393GiB / 251.3GiB   2.15%     1.09kB / 0B   79.2GB / 71.7GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1570.44%   5.417GiB / 251.3GiB   2.16%     1.09kB / 0B   79.2GB / 76.9GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1532.00%   5.377GiB / 251.3GiB   2.14%     1.09kB / 0B   79.2GB / 76.9GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1477.21%   5.395GiB / 251.3GiB   2.15%     1.09kB / 0B   79.2GB / 83.8GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1587.14%   5.389GiB / 251.3GiB   2.14%     1.09kB / 0B   79.2GB / 83.8GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1600.94%   5.362GiB / 251.3GiB   2.13%     1.09kB / 0B   79.2GB / 91.2GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1589.62%   5.394GiB / 251.3GiB   2.15%     1.09kB / 0B   79.2GB / 91.2GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1581.94%   5.442GiB / 251.3GiB   2.17%     1.09kB / 0B   79.2GB / 98.7GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1572.17%   5.414GiB / 251.3GiB   2.15%     1.09kB / 0B   79.2GB / 98.7GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+87f2b7c7f076   silly_pasteur   1589.92%   5.393GiB / 251.3GiB   2.15%     1.09kB / 0B   79.2GB / 98.7GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1605.73%   5.376GiB / 251.3GiB   2.14%     1.09kB / 0B   79.2GB / 106GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1590.13%   5.359GiB / 251.3GiB   2.13%     1.09kB / 0B   79.2GB / 106GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1404.72%   5.395GiB / 251.3GiB   2.15%     1.09kB / 0B   79.2GB / 113GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1552.94%   5.405GiB / 251.3GiB   2.15%     1.09kB / 0B   79.2GB / 113GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1583.81%   5.411GiB / 251.3GiB   2.15%     1.09kB / 0B   79.2GB / 121GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1592.52%   5.396GiB / 251.3GiB   2.15%     1.09kB / 0B   79.2GB / 121GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1407.94%   5.347GiB / 251.3GiB   2.13%     1.09kB / 0B   79.2GB / 122GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1605.12%   6.121GiB / 251.3GiB   2.44%     1.09kB / 0B   79.2GB / 128GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1603.48%   7.051GiB / 251.3GiB   2.81%     1.09kB / 0B   79.2GB / 128GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1602.98%   7.902GiB / 251.3GiB   3.14%     1.09kB / 0B   79.2GB / 136GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1595.49%   8.684GiB / 251.3GiB   3.46%     1.09kB / 0B   79.2GB / 136GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1596.70%   9.41GiB / 251.3GiB   3.74%     1.09kB / 0B   79.2GB / 139GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1601.71%   9.707GiB / 251.3GiB   3.86%     1.09kB / 0B   79.2GB / 139GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1059.38%   9.735GiB / 251.3GiB   3.87%     1.09kB / 0B   79.2GB / 139GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1353.66%   9.824GiB / 251.3GiB   3.91%     1.09kB / 0B   79.2GB / 139GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1623.32%   9.824GiB / 251.3GiB   3.91%     1.09kB / 0B   79.2GB / 147GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1645.51%   9.84GiB / 251.3GiB   3.92%     1.09kB / 0B   79.2GB / 147GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1665.83%   9.945GiB / 251.3GiB   3.96%     1.09kB / 0B   79.2GB / 147GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1653.36%   9.986GiB / 251.3GiB   3.97%     1.09kB / 0B   79.2GB / 155GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1674.88%   10.06GiB / 251.3GiB   4.00%     1.09kB / 0B   79.2GB / 155GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1649.31%   10.12GiB / 251.3GiB   4.03%     1.09kB / 0B   79.2GB / 156GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1677.86%   10.2GiB / 251.3GiB   4.06%     1.09kB / 0B   79.2GB / 156GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1691.25%   10.24GiB / 251.3GiB   4.08%     1.09kB / 0B   79.2GB / 156GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1685.46%   10.29GiB / 251.3GiB   4.10%     1.09kB / 0B   79.2GB / 156GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1644.15%   10.36GiB / 251.3GiB   4.12%     1.09kB / 0B   79.2GB / 157GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1646.59%   10.39GiB / 251.3GiB   4.14%     1.09kB / 0B   79.2GB / 157GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1641.10%   10.43GiB / 251.3GiB   4.15%     1.09kB / 0B   79.2GB / 163GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1661.22%   10.44GiB / 251.3GiB   4.15%     1.09kB / 0B   79.2GB / 163GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1694.12%   10.49GiB / 251.3GiB   4.18%     1.09kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1654.62%   10.54GiB / 251.3GiB   4.19%     1.09kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1704.31%   10.58GiB / 251.3GiB   4.21%     1.09kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1647.71%   10.62GiB / 251.3GiB   4.22%     1.09kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1704.65%   10.68GiB / 251.3GiB   4.25%     1.09kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1651.96%   10.71GiB / 251.3GiB   4.26%     1.09kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1699.56%   10.77GiB / 251.3GiB   4.29%     1.09kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1656.48%   10.8GiB / 251.3GiB   4.30%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1688.02%   10.87GiB / 251.3GiB   4.32%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1659.61%   10.9GiB / 251.3GiB   4.34%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1668.03%   10.97GiB / 251.3GiB   4.36%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1675.86%   11GiB / 251.3GiB    4.38%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1659.33%   11GiB / 251.3GiB    4.38%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1698.56%   11.06GiB / 251.3GiB   4.40%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1664.59%   11.13GiB / 251.3GiB   4.43%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1678.02%   11.09GiB / 251.3GiB   4.41%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1696.36%   11.15GiB / 251.3GiB   4.44%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1696.68%   11.18GiB / 251.3GiB   4.45%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1679.57%   11.18GiB / 251.3GiB   4.45%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1626.62%   11.18GiB / 251.3GiB   4.45%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1616.54%   11.22GiB / 251.3GiB   4.46%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1614.23%   11.23GiB / 251.3GiB   4.47%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1616.94%   11.21GiB / 251.3GiB   4.46%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1626.10%   11.21GiB / 251.3GiB   4.46%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1624.46%   11.25GiB / 251.3GiB   4.48%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1621.16%   11.28GiB / 251.3GiB   4.49%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1536.60%   11.29GiB / 251.3GiB   4.49%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1201.57%   11.29GiB / 251.3GiB   4.49%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   845.04%   11.22GiB / 251.3GiB   4.46%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   501.73%   11.29GiB / 251.3GiB   4.49%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   476.47%   11.26GiB / 251.3GiB   4.48%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   739.64%   11.27GiB / 251.3GiB   4.48%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   988.41%   11.27GiB / 251.3GiB   4.49%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1390.16%   11.31GiB / 251.3GiB   4.50%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1562.94%   11.28GiB / 251.3GiB   4.49%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1245.65%   11.29GiB / 251.3GiB   4.49%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1003.71%   11.21GiB / 251.3GiB   4.46%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   708.00%   11.29GiB / 251.3GiB   4.49%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   470.21%   11.3GiB / 251.3GiB   4.50%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   389.50%   11.34GiB / 251.3GiB   4.51%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   328.70%   11.34GiB / 251.3GiB   4.51%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   544.16%   11.37GiB / 251.3GiB   4.52%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   100.28%   11.38GiB / 251.3GiB   4.53%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   235.10%   11.34GiB / 251.3GiB   4.51%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   338.67%   11.3GiB / 251.3GiB   4.50%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   545.59%   11.29GiB / 251.3GiB   4.49%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   731.00%   11.3GiB / 251.3GiB   4.50%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   894.05%   11.45GiB / 251.3GiB   4.56%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1131.20%   11.45GiB / 251.3GiB   4.56%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1451.71%   11.41GiB / 251.3GiB   4.54%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1644.95%   11.41GiB / 251.3GiB   4.54%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1415.26%   11.42GiB / 251.3GiB   4.54%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1228.97%   11.42GiB / 251.3GiB   4.54%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1159.44%   11.42GiB / 251.3GiB   4.54%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   960.14%   11.42GiB / 251.3GiB   4.54%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   902.01%   11.46GiB / 251.3GiB   4.56%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   567.99%   11.46GiB / 251.3GiB   4.56%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   228.63%   11.47GiB / 251.3GiB   4.56%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   207.66%   11.42GiB / 251.3GiB   4.54%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   199.31%   11.42GiB / 251.3GiB   4.55%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   224.88%   11.42GiB / 251.3GiB   4.55%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   253.54%   11.43GiB / 251.3GiB   4.55%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   285.07%   11.42GiB / 251.3GiB   4.54%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   326.39%   11.39GiB / 251.3GiB   4.53%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   394.63%   11.41GiB / 251.3GiB   4.54%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   412.68%   11.37GiB / 251.3GiB   4.53%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   525.18%   11.33GiB / 251.3GiB   4.51%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   642.76%   11.32GiB / 251.3GiB   4.50%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   815.49%   11.34GiB / 251.3GiB   4.51%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   892.35%   11.31GiB / 251.3GiB   4.50%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1015.96%   11.43GiB / 251.3GiB   4.55%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1142.19%   11.43GiB / 251.3GiB   4.55%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1245.80%   11.43GiB / 251.3GiB   4.55%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1323.77%   11.43GiB / 251.3GiB   4.55%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1430.07%   11.43GiB / 251.3GiB   4.55%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1505.42%   11.43GiB / 251.3GiB   4.55%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1578.01%   11.44GiB / 251.3GiB   4.55%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1614.93%   11.44GiB / 251.3GiB   4.55%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1438.45%   11.44GiB / 251.3GiB   4.55%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1298.28%   11.44GiB / 251.3GiB   4.55%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1142.26%   11.44GiB / 251.3GiB   4.55%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   988.51%   11.44GiB / 251.3GiB   4.55%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   878.49%   11.44GiB / 251.3GiB   4.55%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   620.77%   11.44GiB / 251.3GiB   4.55%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   407.65%   11.44GiB / 251.3GiB   4.55%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   214.29%   11.45GiB / 251.3GiB   4.55%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   190.93%   11.45GiB / 251.3GiB   4.55%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   212.82%   11.45GiB / 251.3GiB   4.55%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   274.82%   11.45GiB / 251.3GiB   4.55%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   309.36%   11.44GiB / 251.3GiB   4.55%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   380.05%   11.42GiB / 251.3GiB   4.54%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   438.23%   11.4GiB / 251.3GiB   4.54%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   497.17%   11.34GiB / 251.3GiB   4.51%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   661.65%   11.34GiB / 251.3GiB   4.51%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   788.97%   11.36GiB / 251.3GiB   4.52%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   233.04%   11.42GiB / 251.3GiB   4.55%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   144.42%   11.45GiB / 251.3GiB   4.56%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   791.39%   11.45GiB / 251.3GiB   4.56%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1134.18%   11.45GiB / 251.3GiB   4.56%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   875.89%   11.34GiB / 251.3GiB   4.51%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   278.94%   11.38GiB / 251.3GiB   4.53%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   100.21%   11.45GiB / 251.3GiB   4.56%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   655.06%   11.46GiB / 251.3GiB   4.56%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1083.36%   11.46GiB / 251.3GiB   4.56%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   972.70%   11.46GiB / 251.3GiB   4.56%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   392.72%   11.35GiB / 251.3GiB   4.52%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   130.28%   11.47GiB / 251.3GiB   4.56%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   442.29%   11.47GiB / 251.3GiB   4.56%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1014.30%   11.47GiB / 251.3GiB   4.56%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1212.08%   11.47GiB / 251.3GiB   4.57%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   674.17%   11.39GiB / 251.3GiB   4.53%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   240.73%   11.48GiB / 251.3GiB   4.57%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   100.19%   11.53GiB / 251.3GiB   4.59%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   508.22%   11.53GiB / 251.3GiB   4.59%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   910.91%   11.53GiB / 251.3GiB   4.59%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1168.81%   11.48GiB / 251.3GiB   4.57%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   924.58%   11.3GiB / 251.3GiB   4.50%     1.16kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   424.77%   11.42GiB / 251.3GiB   4.54%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   151.44%   11.47GiB / 251.3GiB   4.57%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   99.85%    11.49GiB / 251.3GiB   4.57%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   492.32%   11.54GiB / 251.3GiB   4.59%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   993.73%   11.54GiB / 251.3GiB   4.59%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1187.15%   11.54GiB / 251.3GiB   4.59%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   791.91%   11.38GiB / 251.3GiB   4.53%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   297.27%   11.42GiB / 251.3GiB   4.54%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   128.07%   11.54GiB / 251.3GiB   4.59%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   273.06%   11.54GiB / 251.3GiB   4.59%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   635.57%   11.54GiB / 251.3GiB   4.59%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1057.78%   11.54GiB / 251.3GiB   4.59%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1164.53%   11.54GiB / 251.3GiB   4.59%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   812.62%   11.36GiB / 251.3GiB   4.52%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   419.30%   11.42GiB / 251.3GiB   4.55%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   173.80%   11.53GiB / 251.3GiB   4.59%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   99.87%    11.54GiB / 251.3GiB   4.59%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   525.41%   11.55GiB / 251.3GiB   4.59%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1011.94%   11.55GiB / 251.3GiB   4.59%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1196.90%   11.55GiB / 251.3GiB   4.59%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   888.34%   11.36GiB / 251.3GiB   4.52%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   450.86%   11.42GiB / 251.3GiB   4.54%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   249.34%   11.43GiB / 251.3GiB   4.55%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   154.49%   11.54GiB / 251.3GiB   4.59%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   100.25%   11.55GiB / 251.3GiB   4.60%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   461.13%   11.55GiB / 251.3GiB   4.60%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   731.70%   11.55GiB / 251.3GiB   4.60%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1085.85%   11.55GiB / 251.3GiB   4.60%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1206.68%   11.55GiB / 251.3GiB   4.60%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   738.36%   11.4GiB / 251.3GiB   4.53%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   295.26%   11.44GiB / 251.3GiB   4.55%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   120.59%   11.56GiB / 251.3GiB   4.60%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   99.87%    11.56GiB / 251.3GiB   4.60%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   453.03%   11.56GiB / 251.3GiB   4.60%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   840.99%   11.56GiB / 251.3GiB   4.60%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1099.39%   11.56GiB / 251.3GiB   4.60%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1192.50%   11.56GiB / 251.3GiB   4.60%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   836.45%   11.37GiB / 251.3GiB   4.52%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   471.86%   11.44GiB / 251.3GiB   4.55%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   244.91%   11.49GiB / 251.3GiB   4.57%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   99.77%    11.56GiB / 251.3GiB   4.60%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   99.89%    11.56GiB / 251.3GiB   4.60%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   386.03%   11.56GiB / 251.3GiB   4.60%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   827.72%   11.56GiB / 251.3GiB   4.60%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1111.75%   11.57GiB / 251.3GiB   4.60%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1180.00%   11.57GiB / 251.3GiB   4.60%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   949.94%   11.57GiB / 251.3GiB   4.60%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   548.49%   11.44GiB / 251.3GiB   4.55%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   234.48%   11.48GiB / 251.3GiB   4.57%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   106.55%   11.57GiB / 251.3GiB   4.60%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   100.25%   11.57GiB / 251.3GiB   4.60%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   351.11%   11.57GiB / 251.3GiB   4.60%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   684.66%   11.57GiB / 251.3GiB   4.60%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1022.65%   11.57GiB / 251.3GiB   4.60%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1165.71%   11.57GiB / 251.3GiB   4.60%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   1147.59%   11.57GiB / 251.3GiB   4.60%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   804.69%   11.38GiB / 251.3GiB   4.53%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   490.90%   11.43GiB / 251.3GiB   4.55%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   287.59%   11.45GiB / 251.3GiB   4.55%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   167.24%   11.55GiB / 251.3GiB   4.59%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   100.17%   11.58GiB / 251.3GiB   4.61%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   183.24%   11.58GiB / 251.3GiB   4.61%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   496.53%   11.58GiB / 251.3GiB   4.61%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+87f2b7c7f076   silly_pasteur   498.27%   11.46GiB / 251.3GiB   4.56%     1.23kB / 0B   79.2GB / 164GB   18
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS

@@ -3,7 +3,6 @@
  * License: https://github.com/r2rationality/turbocardano/blob/main/LICENSE */
 
 #include <turbo/cardano/dijkstra/auxiliary-data.hpp>
-#include <turbo/cardano/dijkstra/transaction.hpp>
 
 namespace turbo::cardano::dijkstra {
     namespace {
@@ -11,10 +10,8 @@ namespace turbo::cardano::dijkstra {
         {
             enc.array_compact(scripts.size(), [&] {
                 for (const auto &script: scripts) {
-                    if (native)
-                    {
-                        const auto native_script = native_script_t::from_cbor(script.script());
-                        native_script.to_cbor(enc);
+                    if (native) {
+                        enc.raw_cbor(script.script());
                     } else {
                         enc.bytes(script.script());
                     }

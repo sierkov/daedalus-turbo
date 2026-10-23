@@ -14,14 +14,15 @@ namespace turbo::cardano::babbage::detail {
         if (tag.id() != 24) [[unlikely]]
             throw error(fmt::format("expected a tag with id 24 but got: {}", tag.id()));
         const auto script_data = tag.read().bytes();
-        cbor::zero2::decoder dec { script_data };
+        // The embedded CBOR has its own decoder; the returned script owns its payload.
+        cbor::zero2::decoder dec { script_data, cbor::zero2::decoder::create_chunk_storage(256) };
         auto script = decode_script(dec.read());
         if (!dec.done()) [[unlikely]]
             throw error("script_ref contains more than one CBOR value");
         return script;
     }
 
-    template<typename VALUE_DECODER, typename SCRIPT_DECODER>
+    template<typename DATUM = datum_option_t, typename VALUE_DECODER, typename SCRIPT_DECODER>
     tx_out_data transaction_output_map_from_cbor(
         cbor::zero2::value &v,
         VALUE_DECODER &&decode_value,
@@ -46,7 +47,7 @@ namespace turbo::cardano::babbage::detail {
             switch (id) {
                 case 0: address.emplace(item.bytes()); break;
                 case 1: value.emplace(decode_value(item)); break;
-                case 2: datum.emplace(datum_option_t::from_cbor(item)); break;
+                case 2: datum.emplace(DATUM::from_cbor(item)); break;
                 case 3: script_ref.emplace(script_ref_from_cbor(item, decode_script)); break;
                 default: std::unreachable();
             }

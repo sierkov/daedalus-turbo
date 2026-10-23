@@ -142,7 +142,10 @@ namespace turbo::cardano::ledger::conway {
         if (!_pending_drep_removals.empty()) [[unlikely]]
             throw error("finish certificates before saving Conway state");
         ser.add([&](auto) {
-            return zpp::serialize(_enact_state);
+            auto bytes = zpp::serialize(_enact_state);
+            // 1 fixed PV11 pool VRF rules; 2 also fixes the DRep payout snapshot.
+            bytes << zpp::serialize(uint8_t { 2 });
+            return bytes;
         });
         ser.add([&](auto) {
             return zpp::serialize(_ratify_state);
@@ -177,7 +180,14 @@ namespace turbo::cardano::ledger::conway {
         _certificate_tx.reset();
         _pending_drep_removals.clear();
         dec.add([&](const auto b) {
-            zpp::deserialize(_enact_state, b);
+            const auto consumed = zpp::deserialize(_enact_state, b);
+            const auto version = consumed < b.size() ? zpp::deserialize<uint8_t>(b.subbuf(consumed)) : 0;
+            if (version > 2)
+                throw error("unsupported Conway snapshot version");
+            // Pre-PV11 states remain valid replay bases. Older PV11 states can
+            // contain incorrect VRF counts or a DRep distribution missing payouts.
+            if (version < 2 && _enact_state.params.protocol_ver.major >= 11)
+                throw error("replay required: snapshot predates the PV11 VRF/DRep fixes");
         });
         dec.add([&](const auto b) {
             zpp::deserialize(_ratify_state, b);
@@ -205,5 +215,29 @@ namespace turbo::cardano::ledger::conway {
             zpp::deserialize(_ratify_ready, b);
         });
         babbage::state::from_zpp(dec);
+        dec.on_done([this] {
+            if (!_ratify_ready)
+                return;
+            // Older snapshots used incomplete parameter voting groups. Rebuild
+            // only the pending ratification result, using the saved frozen inputs;
+            // this does not replay blocks or recompute stake distributions.
+            const auto affected = std::any_of(
+                _pulsing_data.proposals.begin(), _pulsing_data.proposals.end(), [](const auto &entry) {
+                    const auto *change = std::get_if<gov_action_t::parameter_change_t>(
+                        &entry.second.proposal.action.val);
+                    return change && (change->update.min_pool_cost.has_value()
+                        || change->update.expansion_rate.has_value()
+                        || change->update.treasury_growth_rate.has_value()
+                        || change->update.pool_pledge_influence.has_value());
+                });
+            if (affected) {
+                _ratify_state = {};
+                _ratify_state.new_state = _enact_state;
+                // EPOCH updates this field after copying the enacted state.
+                _ratify_state.new_state.prev_params = _params_prev;
+                _ratify_ready = false;
+                _gov_finalize();
+            }
+        });
     }
 }

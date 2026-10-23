@@ -12,6 +12,8 @@ namespace turbo::cardano::conway {
 
     struct block_header: babbage::block_header {
         using babbage::block_header::block_header;
+
+        void to_cbor(era_encoder &enc) const { enc.raw_cbor(data_raw()); }
     };
 
     struct block_base: babbage::block_base {
@@ -37,11 +39,11 @@ namespace turbo::cardano::conway {
             const auto it = _meta.find(tx_idx);
             if (it == _meta.end())
                 return {};
-            return it->second.raw;
+            return it->second.original_cbor();
         }
         void to_cbor(era_encoder &) const;
     private:
-        babbage::block_header _hdr;
+        block_header _hdr;
         block_transactions_t _txs;
         auxiliary_data_dict_t _meta;
         invalid_tx_set _invalid_txs;

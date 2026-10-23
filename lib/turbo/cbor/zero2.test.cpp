@@ -18,6 +18,16 @@ suite cbor_zero2_test = [] {
             const auto data = uint8_vector::from_hex("");
             expect(throws([&] { parse(data); }));
         };
+        "fixed-size containers require every declared entry"_test = [] {
+            for (const auto hex: { "81", "8200", "A1", "A100", "A20000", "8181", "81A1", "A10081" }) {
+                const auto data = uint8_vector::from_hex(hex);
+                expect(throws([&] { parse(data).get().data_raw(); })) << hex;
+            }
+            for (const auto hex: { "80", "8100", "8180", "A0", "A10000", "A10080" }) {
+                const auto data = uint8_vector::from_hex(hex);
+                expect_equal(parse(data).get().data_raw(), data);
+            }
+        };
         "data_begin"_test = [] {
             const auto data = uint8_vector::from_hex("1B000000FFFFFFFFFF");
             expect(parse(data).get().data_begin() == data.data());
@@ -582,6 +592,114 @@ suite cbor_zero2_test = [] {
                 expect(v.is_null());
                 expect(v.type_byte() == 0xF6);
             }
+        };
+        "allocated chunked views"_test = [] {
+            const auto raw = uint8_vector::from_hex("835F424142424344FF7F624546624748FF07");
+            auto storage = decoder::create_chunk_storage();
+            buffer bytes {};
+            std::string_view text {};
+            {
+                decoder dec { raw, storage };
+                auto &root = dec.read();
+                auto &it = root.array();
+                auto &item = it.read();
+                bytes = item.bytes();
+                expect_equal(bytes, buffer { std::string_view { "ABCD" } });
+                expect_equal(item.data_raw(), buffer { raw }.subbuf(1, 8));
+                text = it.read().text();
+                expect_equal(text, std::string_view { "EFGH" });
+                expect_equal(it.read().uint(), 7);
+                expect(it.done());
+                expect_equal(root.data_raw(), buffer { raw });
+                expect(dec.done());
+            }
+            static_cast<void>(storage->allocate(65536));
+            expect_equal(bytes, buffer { std::string_view { "ABCD" } });
+            expect_equal(text, std::string_view { "EFGH" });
+        };
+        "chunked views without allocations"_test = [] {
+            const auto raw = uint8_vector::from_hex("5F4042414240FF7F6062434460FF5FFF7FFF");
+            auto storage = std::make_shared<std::pmr::monotonic_buffer_resource>(std::pmr::null_memory_resource());
+            decoder dec { raw, storage };
+            const auto bytes = dec.read().bytes();
+            expect(bytes.data() == raw.data() + 3);
+            expect_equal(bytes.size(), 2);
+            const auto text = dec.read().text();
+            expect(text.data() == reinterpret_cast<const char *>(raw.data() + 10));
+            expect_equal(text, std::string_view { "CD" });
+            expect(dec.read().bytes().empty());
+            expect(dec.read().text().empty());
+            expect(dec.done());
+        };
+        "chunked views require storage"_test = [] {
+            for (const auto hex: { "5FFF", "5F4100FF", "5F41004101FF", "7FFF", "7F6161FF", "7F61616162FF" }) {
+                const auto raw = uint8_vector::from_hex(hex);
+                decoder dec { raw };
+                expect(throws([&] {
+                    auto &v = dec.read();
+                    if (v.type() == major_type::bytes)
+                        static_cast<void>(v.bytes());
+                    else
+                        static_cast<void>(v.text());
+                }));
+            }
+        };
+        "chunked views allocate only the payload"_test = [] {
+            const auto raw = uint8_vector::from_hex("5F424142424344FF");
+            std::array<uint8_t, 4> memory {};
+            auto storage = std::make_shared<std::pmr::monotonic_buffer_resource>(
+                memory.data(), memory.size(), std::pmr::null_memory_resource()
+            );
+            decoder dec { raw, storage };
+            const auto bytes = dec.read().bytes();
+            expect(bytes.data() == memory.data());
+            expect_equal(bytes, buffer { std::string_view { "ABCD" } });
+            expect(dec.done());
+        };
+        "allocated chunked views accept the chunk limit"_test = [] {
+            uint8_vector raw {};
+            raw << 0x5F;
+            for (size_t i = 0; i < max_indefinite_string_chunks; ++i)
+                raw << 0x41 << 0x41;
+            raw << 0xFF;
+            decoder dec { raw, decoder::create_chunk_storage() };
+            expect_equal(max_indefinite_string_chunks, dec.read().bytes().size());
+            expect(dec.done());
+        };
+        "allocated chunked views enforce the chunk limit"_test = [] {
+            uint8_vector raw {};
+            raw << 0x5F;
+            for (size_t i = 0; i <= max_indefinite_string_chunks; ++i)
+                raw << 0x40;
+            raw << 0xFF;
+            decoder dec { raw, decoder::create_chunk_storage() };
+            expect(throws([&] { dec.read().bytes(); }));
+        };
+        "chunked reads reject malformed input"_test = [] {
+            for (const auto hex: { "5F4141", "5F414141", "5F6141FF", "5F5FFFFF" }) {
+                const auto raw = uint8_vector::from_hex(hex);
+                decoder dec { raw, decoder::create_chunk_storage() };
+                expect(throws([&] { dec.read().bytes(); }));
+            }
+        };
+        "chunked target reads require a break"_test = [] {
+            const auto raw_bytes = uint8_vector::from_hex("5F4141");
+            uint8_vector bytes {};
+            expect(throws<incomplete_error>([&] { parse(raw_bytes).get().to_bytes(bytes); }));
+            const auto raw_text = uint8_vector::from_hex("7F6141");
+            std::string text {};
+            expect(throws<incomplete_error>([&] { parse(raw_text).get().to_text(text); }));
+        };
+        "chunked PMR target reads"_test = [] {
+            const auto raw = uint8_vector::from_hex("5F424142424344FF7F624546624748FF");
+            decoder dec { raw };
+            std::pmr::vector<uint8_t> bytes { 0xFF };
+            dec.read().to_bytes(bytes);
+            expect_equal(buffer { bytes.data(), bytes.size() }, buffer { std::string_view { "ABCD" } });
+            std::pmr::string text { "previous" };
+            dec.read().to_text(text);
+            expect_equal(std::string_view { text }, std::string_view { "EFGH" });
+            expect(dec.done());
         };
         "chunked_text"_test = [] {
             {

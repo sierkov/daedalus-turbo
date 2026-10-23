@@ -549,7 +549,8 @@ namespace turbo::indexer {
     {
         const auto idx_dir = incremental::storage_dir(data_dir);
         indexer_map indexers {};
-        indexers.emplace(std::make_shared<index::stake_ref::indexer>(idx_dir, index_layout_t::stake_ref, sched));
+        indexers.emplace(std::make_shared<index::stake_ref::indexer<true>>(idx_dir, index_layout_t::stake_ref_script, sched));
+        indexers.emplace(std::make_shared<index::stake_ref::indexer<false>>(idx_dir, index_layout_t::stake_ref_key, sched));
         indexers.emplace(std::make_shared<index::pay_ref::indexer>(idx_dir, index_layout_t::pay_ref, sched));
         indexers.emplace(std::make_shared<index::tx::indexer>(idx_dir, index_layout_t::tx, sched));
         indexers.emplace(std::make_shared<index::txo_use::indexer>(idx_dir, index_layout_t::txo_use, sched));

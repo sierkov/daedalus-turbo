@@ -17,6 +17,22 @@
 #include <turbo/common/pool-allocator.hpp>
 
 namespace turbo {
+    // Hash-prefix partitions can contain several ordered key groups. Traversal
+    // finishes a group across all partitions before starting the next group.
+    // Multi-group specializations also supply group_begin(group), its least key.
+    template<typename K>
+    struct partitioned_map_key_traits {
+        static constexpr size_t num_groups = 1;
+
+        static size_t partition_idx(const K &key)
+        {
+            static_assert(sizeof(K) > 1);
+            return *reinterpret_cast<const uint8_t *>(&key);
+        }
+
+        static size_t iteration_group(const K &) { return 0; }
+    };
+
     namespace detail {
         template<typename K, typename V>
         using partitioned_map_default_partition = std::map<K, V, std::less<K>, pmr_pool_allocator_t<std::pair<const K, V>>>;
@@ -55,6 +71,7 @@ namespace turbo {
 
         using self_type = partitioned_map<K, V, Partition>;
         using key_type = K;
+        using key_traits = partitioned_map_key_traits<K>;
         using mapped_type = V;
         using partition_type = Partition;
         using allocator_type = typename partition_type::allocator_type;
@@ -76,8 +93,8 @@ namespace turbo {
 
             const_iterator() =default;
 
-            const_iterator(const self_type &ctr, size_t part_idx, partition_type::const_iterator part_it)
-                : _container { &ctr }, _part_idx { part_idx }, _part_it { part_it }
+            const_iterator(const self_type &ctr, size_t part_idx, partition_type::const_iterator part_it, size_t group = 0)
+                : _container { &ctr }, _part_idx { part_idx }, _part_it { part_it }, _group { group }
             {
                 _next_valid();
             }
@@ -87,6 +104,8 @@ namespace turbo {
                 if (_container != b._container)
                     return false;
                 if (_part_idx != b._part_idx)
+                    return false;
+                if (_group != b._group)
                     return false;
                 // special case for default initialized iterator
                 if (_container == nullptr || _part_idx == num_parts)
@@ -123,17 +142,22 @@ namespace turbo {
             const self_type *_container = nullptr;
             size_t _part_idx = num_parts;
             partition_type::const_iterator _part_it {};
+            size_t _group = 0;
 
             void _next_valid()
             {
-                while (_part_it == _container->partition(_part_idx).end()) {
-                    if (++_part_idx >= num_parts)
-                        break;
-                    _part_it = _container->partition(_part_idx).begin();
-                }
-                if (_part_idx >= num_parts) {
-                    _part_idx = num_parts - 1;
-                    _part_it = _container->partition(_part_idx).end();
+                while (_part_it == _container->partition(_part_idx).end()
+                        || key_traits::iteration_group(_part_it->first) != _group) {
+                    if (++_part_idx == num_parts) {
+                        if (_group + 1 == key_traits::num_groups) {
+                            _part_idx = num_parts - 1;
+                            _part_it = _container->partition(_part_idx).end();
+                            return;
+                        }
+                        ++_group;
+                        _part_idx = 0;
+                    }
+                    _part_it = _group_begin(_container->_parts[_part_idx], _group);
                 }
             }
         };
@@ -148,8 +172,8 @@ namespace turbo {
 
             iterator() =default;
 
-            iterator(self_type &ctr, size_t part_idx, partition_type::iterator part_it)
-                : _container { &ctr }, _part_idx { part_idx }, _part_it { part_it }
+            iterator(self_type &ctr, size_t part_idx, partition_type::iterator part_it, size_t group = 0)
+                : _container { &ctr }, _part_idx { part_idx }, _part_it { part_it }, _group { group }
             {
                 _next_valid();
             }
@@ -159,6 +183,8 @@ namespace turbo {
                 if (_container != b._container)
                     return false;
                 if (_part_idx != b._part_idx)
+                    return false;
+                if (_group != b._group)
                     return false;
                 // special case for default initialized iterator
                 if (_container == nullptr || _part_idx == num_parts)
@@ -195,32 +221,36 @@ namespace turbo {
             {
                 if (!_container)
                     return {};
-                return const_iterator { *_container, _part_idx, _part_it };
+                return const_iterator { *_container, _part_idx, _part_it, _group };
             }
         private:
             friend self_type;
             self_type *_container = nullptr;
             size_t _part_idx = num_parts;
             partition_type::iterator _part_it {};
+            size_t _group = 0;
 
             void _next_valid()
             {
-                while (_part_it == _container->partition(_part_idx).end()) {
-                    if (++_part_idx >= num_parts)
-                        break;
-                    _part_it = _container->partition(_part_idx).begin();
-                }
-                if (_part_idx >= num_parts) {
-                    _part_idx = num_parts - 1;
-                    _part_it = _container->partition(_part_idx).end();
+                while (_part_it == _container->partition(_part_idx).end()
+                        || key_traits::iteration_group(_part_it->first) != _group) {
+                    if (++_part_idx == num_parts) {
+                        if (_group + 1 == key_traits::num_groups) {
+                            _part_idx = num_parts - 1;
+                            _part_it = _container->partition(_part_idx).end();
+                            return;
+                        }
+                        ++_group;
+                        _part_idx = 0;
+                    }
+                    _part_it = _group_begin(_container->_parts[_part_idx], _group);
                 }
             }
         };
 
         static size_t partition_idx(const auto &k)
         {
-            static_assert(sizeof(K) > 1);
-            return *reinterpret_cast<const uint8_t *>(&k);
+            return key_traits::partition_idx(k);
         }
 
         static constexpr auto serialize(auto &archive, auto &self)
@@ -271,12 +301,12 @@ namespace turbo {
 
         const_iterator end() const
         {
-            return const_iterator { *this, num_parts - 1, _parts[num_parts - 1].cend() };;
+            return const_iterator { *this, num_parts - 1, _parts[num_parts - 1].cend(), key_traits::num_groups - 1 };
         }
 
         iterator end()
         {
-            return iterator { *this, num_parts - 1, _parts[num_parts - 1].end() };;
+            return iterator { *this, num_parts - 1, _parts[num_parts - 1].end(), key_traits::num_groups - 1 };
         }
 
         const_iterator cbegin() const
@@ -294,7 +324,7 @@ namespace turbo {
         {
             auto part_idx = partition_idx(k);
             auto [part_it, created] = _parts[part_idx].try_emplace(k, std::forward<A>(args)...);
-            return std::make_pair(iterator { *this, part_idx, std::move(part_it) }, created);
+            return std::make_pair(iterator { *this, part_idx, part_it, key_traits::iteration_group(part_it->first) }, created);
         }
 
         template<typename ...A>
@@ -302,7 +332,7 @@ namespace turbo {
         {
             const auto part_idx = partition_idx(k);
             auto [part_it, created] = _parts[part_idx].try_emplace(std::move(k), std::forward<A>(args)...);
-            return std::make_pair(iterator { *this, part_idx, std::move(part_it) }, created);
+            return std::make_pair(iterator { *this, part_idx, part_it, key_traits::iteration_group(part_it->first) }, created);
         }
 
         const_iterator find(const K &k) const
@@ -311,7 +341,7 @@ namespace turbo {
             auto &part = _parts[part_idx];
             auto part_it = part.find(k);
             if (part_it != part.end())
-                return const_iterator { *this, part_idx, part_it };
+                return const_iterator { *this, part_idx, part_it, key_traits::iteration_group(k) };
             return end();
         }
 
@@ -321,7 +351,7 @@ namespace turbo {
             auto &part = _parts[part_idx];
             auto part_it = part.find(k);
             if (part_it != part.end())
-                return iterator { *this, part_idx, part_it };
+                return iterator { *this, part_idx, part_it, key_traits::iteration_group(k) };
             return end();
         }
 
@@ -330,7 +360,7 @@ namespace turbo {
             auto end_it = end();
             if (it != end_it) {
                 auto &part = _parts[it._part_idx];
-                return iterator { *this, it._part_idx, part.erase(it._part_it) };
+                return iterator { *this, it._part_idx, part.erase(it._part_it), it._group };
             }
             return end_it;
         }
@@ -340,7 +370,7 @@ namespace turbo {
             const auto end_it = cend();
             if (it != end_it) {
                 auto &part = _parts[it._part_idx];
-                return iterator { *this, it._part_idx, part.erase(it._part_it) };
+                return iterator { *this, it._part_idx, part.erase(it._part_it), it._group };
             }
             return end();
         }
@@ -457,6 +487,15 @@ namespace turbo {
             return std::ranges::subrange<const_iterator>(begin(), end());
         }
     private:
+        static auto _group_begin(auto &part, const size_t group)
+        {
+            if constexpr (key_traits::num_groups > 1) {
+                if (group != 0)
+                    return part.lower_bound(key_traits::group_begin(group));
+            }
+            return part.begin();
+        }
+
         static partition_type _make_replacement(const partition_type &part)
         {
             if constexpr (requires(const allocator_type &alloc, const key_compare &comp) {

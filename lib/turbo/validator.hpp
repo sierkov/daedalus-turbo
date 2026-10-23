@@ -6,6 +6,7 @@
 
 #include <chrono>
 #include <turbo/indexer.hpp>
+#include <turbo/cardano/ledger/node-format.hpp>
 
 namespace turbo::cardano::ledger {
     struct state;
@@ -15,7 +16,8 @@ namespace turbo::validator {
     enum class validation_mode { turbo, full, none };
     static constexpr std::string_view validate_task{"validate"};
     static constexpr std::string_view validate_leaders_task{"validate-epoch"};
-    static constexpr uint64_t snapshot_format_version = 7;
+    // Protocol parameters now persist the Conway fields, previously omitted.
+    static constexpr uint64_t snapshot_format_version = 10;
 
     struct snapshot_policy {
         static constexpr auto catchup_interval = std::chrono::minutes { 10 };
@@ -79,7 +81,7 @@ namespace turbo::validator {
         using best_predicate_t = std::function<bool(const snapshot &)>;
 
         const snapshot *best(const best_predicate_t &pred) const;
-        const snapshot *best_exportable(const cardano::optional_point &immutable_tip) const;
+        const snapshot *best_exportable(const cardano::optional_point &immutable_tip, bool exact=false) const;
         const snapshot *at_offset(uint64_t end_offset) const;
     };
 
@@ -91,7 +93,11 @@ namespace turbo::validator {
         [[nodiscard]] cardano::amount unspent_reward(const cardano::stake_ident &id) const;
         [[nodiscard]] cardano::optional_point core_tip() const;
         [[nodiscard]] cardano::optional_slot can_export(const cardano::optional_point &immutable_tip) const;
-        std::string node_export(const std::filesystem::path &ledger_dir, const cardano::optional_point &immutable_tip, int prio=1000) const;
+        std::string node_export(const std::filesystem::path &ledger_dir, const cardano::optional_point &immutable_tip, int prio=1000,
+            cardano::ledger::node_format format=cardano::ledger::node_format::legacy) const;
+        using export_visitor = std::function<void(cardano::ledger::state &, const cardano::point &)>;
+        // Visit the matching live state or load a temporary historical state.
+        void visit_exportable_state(const cardano::optional_point &, bool exact, const export_visitor &) const;
         [[nodiscard]] const cardano::ledger::state &state() const;
         [[nodiscard]] const snapshot_set &snapshots() const;
         void load_snapshot(cardano::ledger::state &st, const snapshot &snap) const;

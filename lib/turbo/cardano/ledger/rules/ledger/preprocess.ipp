@@ -6,7 +6,7 @@
 // Audit: Ledger.Conway.Specification.Ledger.
 // Included at class scope by lib/turbo/txwit/validator.cpp.
 
-            void pre_aggregate_data(batch_info &part, const block_container &blk, const bool defer_signatures=false) const
+            void pre_aggregate_data(batch_info &part, const block_container &blk) const
             {
                 auto &stats = part.stats;
                 auto &max = part.max_stats;
@@ -167,10 +167,6 @@
                         if (const auto txo_it = part.utxos.find(txo.id); txo_it != part.utxos.end())
                             txo.data = txo_it->second;
                     });
-                    if (defer_signatures)
-                        part.signature_checks.emplace_back(&blk, &tx);
-                    else
-                        stats.wit_cnts += witnesses_ok_stage1(blk, tx);
                     size_t cert_idx = 0;
                     tx.foreach_cert([&](const auto &cert) {
                         if (std::holds_alternative<instant_reward_cert>(cert.val))

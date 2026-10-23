@@ -159,12 +159,13 @@ suite cardano_common_suite = [] {
             expect_equal(2, num_regs);
         };
         "stake_ident"_test = [] {
-            stake_ident i1 { cardano::key_hash::from_hex("41fbfce15acccb420982704c9e591f83ab3315c3314a18ecf65346e0"), false };
-            stake_ident i2 { cardano::key_hash::from_hex("41fbfce15acccb420982704c9e591f83ab3315c3314a18ecf65346e0"), true };
-            expect(i1 < i2);
-            expect(i1 == i1);
-            expect(i1 != i2);
-            const auto j2 = i2.to_json();
+            const stake_ident key { cardano::key_hash::from_hex("41fbfce15acccb420982704c9e591f83ab3315c3314a18ecf65346e0"), false };
+            const stake_ident script { key.hash, true };
+            expect(script < key);
+            expect(!(key < script));
+            expect(key == key);
+            expect(key != script);
+            const auto j2 = script.to_json();
             const auto j2_hash = to_lower(turbo::json::value_to<std::string>(j2.at("hash")));
             expect(j2_hash == "41fbfce15acccb420982704c9e591f83ab3315c3314a18ecf65346e0") << j2_hash;
             expect(j2.at("script").as_bool());

@@ -1,0 +1,421 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O    PIDS
+9e538ab0534b   thirsty_einstein   1598.02%   1.093GiB / 251.3GiB   0.44%     646B / 0B   408MB / 0B   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O    PIDS
+9e538ab0534b   thirsty_einstein   1596.65%   1.191GiB / 251.3GiB   0.47%     736B / 0B   821MB / 0B   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+9e538ab0534b   thirsty_einstein   1612.13%   1.681GiB / 251.3GiB   0.67%     806B / 0B   1.24GB / 103MB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O        PIDS
+9e538ab0534b   thirsty_einstein   1602.50%   2.43GiB / 251.3GiB   0.97%     806B / 0B   1.79GB / 103MB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+9e538ab0534b   thirsty_einstein   1597.88%   2.374GiB / 251.3GiB   0.94%     806B / 0B   2.2GB / 103MB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+9e538ab0534b   thirsty_einstein   1601.21%   3.123GiB / 251.3GiB   1.24%     876B / 0B   2.58GB / 103MB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+9e538ab0534b   thirsty_einstein   1602.30%   3.573GiB / 251.3GiB   1.42%     876B / 0B   3.31GB / 103MB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+9e538ab0534b   thirsty_einstein   1596.36%   3.523GiB / 251.3GiB   1.40%     876B / 0B   3.78GB / 103MB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+9e538ab0534b   thirsty_einstein   1598.70%   4.296GiB / 251.3GiB   1.71%     876B / 0B   4.78GB / 103MB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+9e538ab0534b   thirsty_einstein   1593.15%   4.273GiB / 251.3GiB   1.70%     876B / 0B   5.58GB / 103MB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+9e538ab0534b   thirsty_einstein   1609.58%   4.751GiB / 251.3GiB   1.89%     876B / 0B   6.71GB / 103MB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+9e538ab0534b   thirsty_einstein   1596.50%   4.775GiB / 251.3GiB   1.90%     876B / 0B   8.24GB / 103MB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+9e538ab0534b   thirsty_einstein   1595.81%   4.934GiB / 251.3GiB   1.96%     946B / 0B   9.38GB / 103MB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+9e538ab0534b   thirsty_einstein   1611.74%   5.253GiB / 251.3GiB   2.09%     946B / 0B   10.6GB / 103MB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+9e538ab0534b   thirsty_einstein   1600.80%   5.227GiB / 251.3GiB   2.08%     946B / 0B   10.7GB / 2.7GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1597.61%   5.286GiB / 251.3GiB   2.10%     946B / 0B   11.7GB / 3.39GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1603.18%   5.756GiB / 251.3GiB   2.29%     946B / 0B   12.8GB / 3.39GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1606.66%   5.804GiB / 251.3GiB   2.31%     946B / 0B   14.2GB / 3.39GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1601.66%   6.056GiB / 251.3GiB   2.41%     946B / 0B   15.6GB / 3.55GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+9e538ab0534b   thirsty_einstein   1600.15%   6.228GiB / 251.3GiB   2.48%     946B / 0B   17GB / 3.55GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1595.76%   6.501GiB / 251.3GiB   2.59%     946B / 0B   18.2GB / 3.82GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1600.73%   7.088GiB / 251.3GiB   2.82%     946B / 0B   19.7GB / 3.82GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+9e538ab0534b   thirsty_einstein   1603.67%   6.494GiB / 251.3GiB   2.58%     946B / 0B   20.6GB / 4.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+9e538ab0534b   thirsty_einstein   1586.66%   6.549GiB / 251.3GiB   2.61%     946B / 0B   20.6GB / 5.6GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1596.09%   6.744GiB / 251.3GiB   2.68%     946B / 0B   21.4GB / 10.2GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1597.38%   6.85GiB / 251.3GiB   2.73%     946B / 0B   22.4GB / 10.2GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1597.03%   7.538GiB / 251.3GiB   3.00%     1.02kB / 0B   23.7GB / 10.4GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1595.27%   7.043GiB / 251.3GiB   2.80%     1.02kB / 0B   24.6GB / 10.4GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1591.69%   6.852GiB / 251.3GiB   2.73%     1.02kB / 0B   25.5GB / 11.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1531.53%   6.906GiB / 251.3GiB   2.75%     1.02kB / 0B   25.5GB / 12.5GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1595.14%   7.622GiB / 251.3GiB   3.03%     1.02kB / 0B   26.7GB / 16.5GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1606.93%   7.86GiB / 251.3GiB   3.13%     1.02kB / 0B   27.8GB / 16.5GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1598.74%   7.808GiB / 251.3GiB   3.11%     1.02kB / 0B   28.9GB / 16.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1574.81%   6.966GiB / 251.3GiB   2.77%     1.02kB / 0B   29.7GB / 16.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1592.23%   8.026GiB / 251.3GiB   3.19%     1.02kB / 0B   30.5GB / 19.5GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1602.77%   8.01GiB / 251.3GiB   3.19%     1.02kB / 0B   31.5GB / 19.5GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1608.19%   8.025GiB / 251.3GiB   3.19%     1.02kB / 0B   32.7GB / 19.5GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+9e538ab0534b   thirsty_einstein   1590.84%   8.288GiB / 251.3GiB   3.30%     1.02kB / 0B   33GB / 21.7GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+9e538ab0534b   thirsty_einstein   1600.87%   7.66GiB / 251.3GiB   3.05%     1.02kB / 0B   34GB / 21.7GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+9e538ab0534b   thirsty_einstein   1596.38%   8.111GiB / 251.3GiB   3.23%     1.02kB / 0B   35.2GB / 22GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1547.71%   7.442GiB / 251.3GiB   2.96%     1.02kB / 0B   35.8GB / 22.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1597.46%   7.787GiB / 251.3GiB   3.10%     1.02kB / 0B   36.5GB / 24.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1599.80%   8.014GiB / 251.3GiB   3.19%     1.02kB / 0B   37.6GB / 24.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1589.91%   8.057GiB / 251.3GiB   3.21%     1.02kB / 0B   38.6GB / 24.4GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+9e538ab0534b   thirsty_einstein   1584.21%   8.158GiB / 251.3GiB   3.25%     1.02kB / 0B   39GB / 26.5GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1598.71%   8.452GiB / 251.3GiB   3.36%     1.02kB / 0B   40.1GB / 26.7GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1601.31%   7.918GiB / 251.3GiB   3.15%     1.02kB / 0B   40.9GB / 26.7GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1585.68%   7.968GiB / 251.3GiB   3.17%     1.02kB / 0B   41.7GB / 26.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1591.02%   8.545GiB / 251.3GiB   3.40%     1.02kB / 0B   42.3GB / 28.9GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1599.48%   8.237GiB / 251.3GiB   3.28%     1.02kB / 0B   43.3GB / 29.1GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1590.31%   8.546GiB / 251.3GiB   3.40%     1.02kB / 0B   44.3GB / 29.1GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+9e538ab0534b   thirsty_einstein   1571.69%   8.374GiB / 251.3GiB   3.33%     1.02kB / 0B   45GB / 29.2GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1594.27%   8.805GiB / 251.3GiB   3.50%     1.02kB / 0B   45.6GB / 31.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1603.34%   9.199GiB / 251.3GiB   3.66%     1.09kB / 0B   46.7GB / 31.4GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1599.89%   9.079GiB / 251.3GiB   3.61%     1.09kB / 0B   47.7GB / 31.4GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1597.76%   9.238GiB / 251.3GiB   3.68%     1.09kB / 0B   48.7GB / 31.6GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1538.51%   8.933GiB / 251.3GiB   3.55%     1.09kB / 0B   49.2GB / 31.6GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1603.59%   8.94GiB / 251.3GiB   3.56%     1.09kB / 0B   49.8GB / 34.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1589.60%   9.377GiB / 251.3GiB   3.73%     1.09kB / 0B   50.9GB / 34.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1591.73%   9.45GiB / 251.3GiB   3.76%     1.09kB / 0B   51.9GB / 34.5GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1598.94%   9.577GiB / 251.3GiB   3.81%     1.09kB / 0B   52.7GB / 34.5GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+9e538ab0534b   thirsty_einstein   1605.84%   9.727GiB / 251.3GiB   3.87%     1.09kB / 0B   53GB / 37.2GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1595.14%   9.387GiB / 251.3GiB   3.74%     1.09kB / 0B   53.8GB / 37.2GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1597.58%   9.739GiB / 251.3GiB   3.88%     1.09kB / 0B   54.7GB / 37.4GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1599.72%   9.899GiB / 251.3GiB   3.94%     1.09kB / 0B   55.8GB / 37.4GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1576.90%   9.602GiB / 251.3GiB   3.82%     1.09kB / 0B   56.1GB / 38.1GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1599.44%   9.833GiB / 251.3GiB   3.91%     1.09kB / 0B   56.6GB / 39.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+9e538ab0534b   thirsty_einstein   1595.04%   10.74GiB / 251.3GiB   4.27%     1.09kB / 0B   56.6GB / 40GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+9e538ab0534b   thirsty_einstein   1601.56%   11.87GiB / 251.3GiB   4.72%     1.09kB / 0B   56.6GB / 40GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1602.18%   12.87GiB / 251.3GiB   5.12%     1.09kB / 0B   56.6GB / 40.1GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1602.71%   13.38GiB / 251.3GiB   5.32%     1.09kB / 0B   56.6GB / 40.1GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1601.63%   12.03GiB / 251.3GiB   4.79%     1.09kB / 0B   56.6GB / 40.2GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1604.51%   12.22GiB / 251.3GiB   4.86%     1.09kB / 0B   57.6GB / 40.2GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1592.45%   12.36GiB / 251.3GiB   4.92%     1.09kB / 0B   58.4GB / 40.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1578.01%   13.06GiB / 251.3GiB   5.20%     1.09kB / 0B   59.5GB / 40.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+9e538ab0534b   thirsty_einstein   1574.56%   12.17GiB / 251.3GiB   4.84%     1.09kB / 0B   59.7GB / 41GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1603.24%   12.25GiB / 251.3GiB   4.87%     1.09kB / 0B   60.5GB / 42.5GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1594.06%   12.54GiB / 251.3GiB   4.99%     1.09kB / 0B   61.4GB / 42.7GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1599.40%   12.16GiB / 251.3GiB   4.84%     1.09kB / 0B   62.1GB / 42.7GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1602.40%   12.54GiB / 251.3GiB   4.99%     1.09kB / 0B   62.6GB / 44.6GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1601.61%   12.28GiB / 251.3GiB   4.89%     1.09kB / 0B   63.4GB / 44.6GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1587.59%   12.43GiB / 251.3GiB   4.95%     1.09kB / 0B   64.3GB / 44.6GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+9e538ab0534b   thirsty_einstein   1603.48%   12.4GiB / 251.3GiB   4.94%     1.09kB / 0B   65GB / 44.6GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1595.47%   12.49GiB / 251.3GiB   4.97%     1.09kB / 0B   65.5GB / 50.6GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1599.90%   12.61GiB / 251.3GiB   5.02%     1.09kB / 0B   66.3GB / 50.6GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1594.96%   12.7GiB / 251.3GiB   5.05%     1.09kB / 0B   67.2GB / 51.1GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1588.69%   12.71GiB / 251.3GiB   5.06%     1.09kB / 0B   68.1GB / 51.1GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1601.95%   12.81GiB / 251.3GiB   5.10%     1.09kB / 0B   68.3GB / 53.2GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1595.13%   13.17GiB / 251.3GiB   5.24%     1.09kB / 0B   69.3GB / 53.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1595.73%   13.63GiB / 251.3GiB   5.42%     1.09kB / 0B   70.1GB / 53.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+9e538ab0534b   thirsty_einstein   1594.26%   13.46GiB / 251.3GiB   5.36%     1.09kB / 0B   71GB / 53.4GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1594.69%   13.59GiB / 251.3GiB   5.41%     1.09kB / 0B   71.3GB / 55.2GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+9e538ab0534b   thirsty_einstein   1579.19%   13.61GiB / 251.3GiB   5.42%     1.09kB / 0B   72GB / 55.5GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1597.17%   13.17GiB / 251.3GiB   5.24%     1.09kB / 0B   72.9GB / 55.5GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1606.40%   13.56GiB / 251.3GiB   5.40%     1.09kB / 0B   73.8GB / 55.7GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1597.10%   13.12GiB / 251.3GiB   5.22%     1.09kB / 0B   73.8GB / 57.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1589.66%   13.08GiB / 251.3GiB   5.21%     1.09kB / 0B   73.8GB / 58.1GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1593.41%   13.08GiB / 251.3GiB   5.21%     1.09kB / 0B   73.8GB / 58.1GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1598.39%   13.09GiB / 251.3GiB   5.21%     1.09kB / 0B   73.8GB / 58.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1601.46%   13.19GiB / 251.3GiB   5.25%     1.09kB / 0B   73.8GB / 58.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1602.04%   13.19GiB / 251.3GiB   5.25%     1.09kB / 0B   73.8GB / 58.4GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1603.19%   13.2GiB / 251.3GiB   5.25%     1.09kB / 0B   73.8GB / 58.4GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1604.37%   13.12GiB / 251.3GiB   5.22%     1.09kB / 0B   73.8GB / 58.5GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1596.39%   13.13GiB / 251.3GiB   5.23%     1.09kB / 0B   73.8GB / 58.5GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1596.01%   13.09GiB / 251.3GiB   5.21%     1.09kB / 0B   73.8GB / 58.6GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1594.54%   13.27GiB / 251.3GiB   5.28%     1.09kB / 0B   73.8GB / 58.6GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1596.46%   13.28GiB / 251.3GiB   5.28%     1.09kB / 0B   73.8GB / 58.7GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1597.42%   13.27GiB / 251.3GiB   5.28%     1.16kB / 0B   73.8GB / 58.7GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1598.37%   13.29GiB / 251.3GiB   5.29%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1598.54%   13.29GiB / 251.3GiB   5.29%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1594.13%   13.32GiB / 251.3GiB   5.30%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1601.29%   13.39GiB / 251.3GiB   5.33%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1595.71%   13.41GiB / 251.3GiB   5.34%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1601.50%   13.43GiB / 251.3GiB   5.34%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1607.31%   13.3GiB / 251.3GiB   5.29%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1602.28%   13.38GiB / 251.3GiB   5.32%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1597.33%   13.44GiB / 251.3GiB   5.35%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1595.74%   13.49GiB / 251.3GiB   5.37%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1600.69%   13.41GiB / 251.3GiB   5.34%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1595.84%   13.5GiB / 251.3GiB   5.37%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1596.37%   13.51GiB / 251.3GiB   5.38%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1598.94%   13.52GiB / 251.3GiB   5.38%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1600.59%   13.52GiB / 251.3GiB   5.38%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1599.63%   13.52GiB / 251.3GiB   5.38%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1595.76%   13.42GiB / 251.3GiB   5.34%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1599.91%   13.38GiB / 251.3GiB   5.32%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1600.56%   13.53GiB / 251.3GiB   5.38%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1594.55%   13.52GiB / 251.3GiB   5.38%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1596.63%   13.52GiB / 251.3GiB   5.38%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1604.81%   13.52GiB / 251.3GiB   5.38%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1606.23%   13.43GiB / 251.3GiB   5.34%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1597.45%   13.43GiB / 251.3GiB   5.34%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1600.90%   13.53GiB / 251.3GiB   5.38%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1594.61%   13.61GiB / 251.3GiB   5.41%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1597.37%   13.61GiB / 251.3GiB   5.41%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1601.56%   13.54GiB / 251.3GiB   5.39%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1597.48%   13.56GiB / 251.3GiB   5.40%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1596.48%   13.61GiB / 251.3GiB   5.42%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1594.52%   13.61GiB / 251.3GiB   5.42%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1600.80%   13.44GiB / 251.3GiB   5.35%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1595.39%   13.61GiB / 251.3GiB   5.42%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1594.09%   13.57GiB / 251.3GiB   5.40%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1593.29%   13.56GiB / 251.3GiB   5.40%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1600.05%   13.56GiB / 251.3GiB   5.40%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1605.44%   13.57GiB / 251.3GiB   5.40%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1597.89%   13.61GiB / 251.3GiB   5.42%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1604.09%   13.46GiB / 251.3GiB   5.36%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1594.96%   13.54GiB / 251.3GiB   5.39%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1597.79%   13.59GiB / 251.3GiB   5.41%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1602.57%   13.72GiB / 251.3GiB   5.46%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1603.96%   13.57GiB / 251.3GiB   5.40%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1599.88%   13.64GiB / 251.3GiB   5.43%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1600.37%   13.64GiB / 251.3GiB   5.43%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1598.10%   13.58GiB / 251.3GiB   5.40%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1594.62%   13.57GiB / 251.3GiB   5.40%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1598.12%   13.47GiB / 251.3GiB   5.36%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1594.94%   13.68GiB / 251.3GiB   5.44%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1602.15%   13.69GiB / 251.3GiB   5.45%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1597.05%   13.64GiB / 251.3GiB   5.43%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1595.09%   13.67GiB / 251.3GiB   5.44%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1603.45%   13.7GiB / 251.3GiB   5.45%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1599.71%   13.68GiB / 251.3GiB   5.44%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1604.34%   13.69GiB / 251.3GiB   5.45%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1602.08%   13.69GiB / 251.3GiB   5.45%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1596.38%   13.7GiB / 251.3GiB   5.45%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1592.20%   13.59GiB / 251.3GiB   5.41%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1600.46%   13.77GiB / 251.3GiB   5.48%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1595.65%   13.7GiB / 251.3GiB   5.45%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1601.11%   13.65GiB / 251.3GiB   5.43%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1603.15%   13.77GiB / 251.3GiB   5.48%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1599.16%   13.65GiB / 251.3GiB   5.43%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1592.75%   16.02GiB / 251.3GiB   6.38%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1594.72%   19.06GiB / 251.3GiB   7.58%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1601.84%   22.05GiB / 251.3GiB   8.77%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1601.31%   22.55GiB / 251.3GiB   8.97%     1.16kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1601.04%   22.46GiB / 251.3GiB   8.94%     1.16kB / 0B   73.8GB / 59.7GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1601.92%   22.57GiB / 251.3GiB   8.98%     1.16kB / 0B   73.8GB / 59.7GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1601.56%   22.55GiB / 251.3GiB   8.97%     1.16kB / 0B   73.8GB / 60.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1596.27%   22.54GiB / 251.3GiB   8.97%     1.16kB / 0B   73.8GB / 60.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1603.28%   22.59GiB / 251.3GiB   8.99%     1.16kB / 0B   73.8GB / 60.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1605.58%   22.65GiB / 251.3GiB   9.01%     1.16kB / 0B   73.8GB / 60.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1598.37%   22.65GiB / 251.3GiB   9.01%     1.16kB / 0B   73.8GB / 60.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1604.73%   22.69GiB / 251.3GiB   9.03%     1.16kB / 0B   73.8GB / 60.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1602.40%   22.64GiB / 251.3GiB   9.01%     1.16kB / 0B   73.8GB / 60.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1595.30%   22.69GiB / 251.3GiB   9.03%     1.16kB / 0B   73.8GB / 60.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1604.48%   22.64GiB / 251.3GiB   9.01%     1.16kB / 0B   73.8GB / 60.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1595.04%   22.65GiB / 251.3GiB   9.01%     1.16kB / 0B   73.8GB / 60.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1591.67%   22.69GiB / 251.3GiB   9.03%     1.16kB / 0B   73.8GB / 60.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1605.14%   22.64GiB / 251.3GiB   9.01%     1.16kB / 0B   73.8GB / 60.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1602.68%   22.48GiB / 251.3GiB   8.95%     1.16kB / 0B   73.8GB / 60.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1602.96%   22.69GiB / 251.3GiB   9.03%     1.16kB / 0B   73.8GB / 60.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1601.89%   22.64GiB / 251.3GiB   9.01%     1.16kB / 0B   73.8GB / 60.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1601.93%   22.7GiB / 251.3GiB   9.03%     1.16kB / 0B   73.8GB / 60.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1605.63%   22.74GiB / 251.3GiB   9.05%     1.16kB / 0B   73.8GB / 60.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1600.79%   22.85GiB / 251.3GiB   9.09%     1.16kB / 0B   73.8GB / 60.3GB   18
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   906.40%   22.85GiB / 251.3GiB   9.09%     1.16kB / 0B   73.8GB / 60.3GB   18
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   862.66%   22.8GiB / 251.3GiB   9.07%     1.16kB / 0B   73.8GB / 60.3GB   18
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   972.83%   22.76GiB / 251.3GiB   9.06%     1.16kB / 0B   73.8GB / 60.3GB   18
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   854.17%   22.76GiB / 251.3GiB   9.06%     1.16kB / 0B   73.8GB / 60.3GB   18
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   828.33%   22.76GiB / 251.3GiB   9.06%     1.16kB / 0B   73.8GB / 60.3GB   18
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   894.49%   22.77GiB / 251.3GiB   9.06%     1.16kB / 0B   73.8GB / 60.3GB   18
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   816.59%   22.72GiB / 251.3GiB   9.04%     1.16kB / 0B   73.8GB / 60.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1056.66%   22.67GiB / 251.3GiB   9.02%     1.16kB / 0B   73.8GB / 60.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1235.12%   22.69GiB / 251.3GiB   9.03%     1.16kB / 0B   73.8GB / 60.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1228.93%   22.74GiB / 251.3GiB   9.05%     1.16kB / 0B   73.8GB / 60.3GB   18
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   1167.87%   22.73GiB / 251.3GiB   9.04%     1.16kB / 0B   73.8GB / 60.3GB   18
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   250.90%   23.37GiB / 251.3GiB   9.30%     1.16kB / 0B   73.8GB / 60.3GB   18
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   99.67%    24.03GiB / 251.3GiB   9.56%     1.16kB / 0B   73.8GB / 60.8GB   18
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+9e538ab0534b   thirsty_einstein   100.22%   22.31GiB / 251.3GiB   8.88%     1.16kB / 0B   73.8GB / 62.6GB   18
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS

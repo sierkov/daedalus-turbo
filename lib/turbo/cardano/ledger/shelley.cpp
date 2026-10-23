@@ -67,6 +67,7 @@ namespace turbo::cardano::ledger::shelley {
 
     void vrf_state::from_cbor(cbor::zero2::value &v)
     {
+        _nonce_previous_epoch.reset();
         decode_versioned(v, [&](auto &dv1) {
             auto &it = dv1.array();
             _slot_last = decode_versioned(it.read(), [](auto &dv) {
@@ -104,14 +105,20 @@ namespace turbo::cardano::ledger::shelley {
     void vrf_state::from_zpp(parallel_decoder &dec)
     {
         dec.add([&](const auto b) {
-            zpp::deserialize(*this, b);
+            const auto consumed = zpp::deserialize(*this, b);
+            _nonce_previous_epoch.reset();
+            if (consumed < b.size())
+                zpp::deserialize(_nonce_previous_epoch, b.subbuf(consumed));
         });
     }
 
     void vrf_state::to_zpp(zpp_encoder &ser) const
     {
         ser.add([&](auto) {
-            return zpp::serialize(*this);
+            auto bytes = zpp::serialize(*this);
+            // Keep the old payload intact; older snapshots have no extension.
+            bytes << zpp::serialize(_nonce_previous_epoch);
+            return bytes;
         });
     }
 
@@ -149,6 +156,7 @@ namespace turbo::cardano::ledger::shelley {
     {
         //logger::debug("vrf::state::finish_epoch: {}", extra_entropy);
         const auto prev_epoch_nonce = _nonce_epoch;
+        _nonce_previous_epoch = _nonce_epoch;
         if (_prev_epoch_lab_prev_hash) {
             if (extra_entropy) {
                 _nonce_epoch = vrf_nonce_accumulate(vrf_nonce_accumulate(_nonce_candidate, *_prev_epoch_lab_prev_hash), extra_entropy.value());

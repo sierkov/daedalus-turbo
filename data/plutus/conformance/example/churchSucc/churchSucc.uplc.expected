@@ -1,1 +1,0 @@
-(program 1.0.0 (lam n (delay (lam z (lam f [ f [ [ (force n) z ] f ] ])))))

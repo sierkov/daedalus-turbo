@@ -1,0 +1,41 @@
+[2024-02-14 18:18:21 +01:00] [1:1] [dt] [debug] run truncate
+[2024-02-14 18:18:21 +01:00] [1:1] [dt] [debug] detected CPU cores: 48
+[2024-02-14 18:18:21 +01:00] [1:1] [dt] [debug] detected physical RAM: 257341 MiB
+[2024-02-14 18:18:21 +01:00] [1:1] [dt] [debug] storage capacity: 3779046793216 free: 3685047115776 available: 3493005561856 checked: 3253 GiB
+[2024-02-14 18:18:21 +01:00] [1:1] [dt] [info] scheduler started, worker count: 24
+[2024-02-14 18:18:21 +01:00] [1:1] [dt] [trace] before RLIMIT_NOFILE to cur: 1048576 max: 1048576
+[2024-02-14 18:18:22 +01:00] [1:1] [dt] [info] chunk_registry has data up to offset 165574696316
+[2024-02-14 18:18:22 +01:00] [1:1] [dt] [debug] timer 'chunk-registry load state from /data/cardano/compressed/state.json' finished in 0.123 secs
+[2024-02-14 18:18:22 +01:00] [1:1] [dt] [info] indices have data up to offset 165574696316
+[2024-02-14 18:18:25 +01:00] [1:1] [dt] [info] validator snapshot has data up to offset: 165574696316
+[2024-02-14 18:18:25 +01:00] [1:1] [dt] [debug] scheduler process_ok started tasks: 0
+[2024-02-14 18:18:25 +01:00] [1:1] [dt] [debug] scheduler process_ok done remaining tasks: 0 success: true
+[2024-02-14 18:18:25 +01:00] [1:1] [dt] [debug] timer 'truncate indices to max offset 165574696316' finished in 0.000 secs
+[2024-02-14 18:18:25 +01:00] [1:1] [dt] [debug] timer 'validator::truncate' finished in 0.000 secs
+[2024-02-14 18:18:25 +01:00] [1:1] [dt] [debug] chunk-registry data size: 165574696316 num chunks: 5368 num deletable chunks: 0
+[2024-02-14 18:18:25 +01:00] [1:1] [dt] [trace] timer 'chunk-registry init state' finished in 3.316 secs
+[2024-02-14 18:18:25 +01:00] [1:1] [dt] [info] truncating blockchain data from 165574696316 to 164729146996 bytes
+[2024-02-14 18:18:25 +01:00] [1:1] [dt] [info] validator's closest snapshot is for epoch 459 and end_offset: 160087339570
+[2024-02-14 18:18:28 +01:00] [1:1] [dt] [debug] timer 'truncate chunk registry to size 160087339570' finished in 0.087 secs
+[2024-02-14 18:18:28 +01:00] [1:1] [dt] [trace] truncate index slice slice-0160087339570-0165574696316
+[2024-02-14 18:18:29 +01:00] [1:1] [dt] [debug] scheduler process_ok started tasks: 0
+[2024-02-14 18:18:29 +01:00] [1:1] [dt] [debug] scheduler process_ok done remaining tasks: 0 success: true
+[2024-02-14 18:18:29 +01:00] [1:1] [dt] [debug] timer 'truncate indices to max offset 160087339570' finished in 0.061 secs
+[2024-02-14 18:18:29 +01:00] [1:1] [dt] [debug] timer 'validator::truncate' finished in 3.771 secs
+[2024-02-14 18:18:29 +01:00] [1:1] [dt] [trace] on_epoch_merge epoch: 459 start_offset: 159048694071 end_offset: 160087339570
+[2024-02-14 18:18:29 +01:00] [1:1] [dt] [trace] scheduled merge tasks for /data/cardano/index/block-meta/index-epoch-459-0159048694071-0160087339570
+[2024-02-14 18:18:29 +01:00] [1:1] [dt] [trace] scheduled merge tasks for /data/cardano/index/pay-ref/index-epoch-459-0159048694071-0160087339570
+[2024-02-14 18:18:29 +01:00] [1:1] [dt] [trace] scheduled merge tasks for /data/cardano/index/stake-ref/index-epoch-459-0159048694071-0160087339570
+[2024-02-14 18:18:29 +01:00] [1:1] [dt] [trace] scheduled merge tasks for /data/cardano/index/tx/index-epoch-459-0159048694071-0160087339570
+[2024-02-14 18:18:29 +01:00] [1:1] [dt] [trace] scheduled merge tasks for /data/cardano/index/txo/index-epoch-459-0159048694071-0160087339570
+[2024-02-14 18:18:29 +01:00] [1:1] [dt] [trace] scheduled merge tasks for /data/cardano/index/txo-use/index-epoch-459-0159048694071-0160087339570
+[2024-02-14 18:18:29 +01:00] [1:1] [dt] [debug] timer 'chunk_registry::save_state' finished in 0.028 secs
+[2024-02-14 18:18:29 +01:00] [1:1] [dt] [debug] scheduler process_ok started tasks: 6
+[2024-02-14 18:18:29 +01:00] [1:1] [dt] [debug] scheduler process_ok done remaining tasks: 0 success: true
+[2024-02-14 18:18:29 +01:00] [1:1] [dt] [trace] _schedule_final_merge force: true epoch_slices: 0 _merge_next_offset: 165574696316 _target_offset: std::nullopt
+[2024-02-14 18:18:29 +01:00] [1:1] [dt] [debug] scheduler process_ok started tasks: 0
+[2024-02-14 18:18:29 +01:00] [1:1] [dt] [debug] scheduler process_ok done remaining tasks: 0 success: true
+[2024-02-14 18:18:29 +01:00] [1:1] [dt] [debug] timer 'indexer::save_state' finished in 0.028 secs
+[2024-02-14 18:18:29 +01:00] [1:1] [dt] [debug] timer 'validator::remove_updated_chunks' finished in 0.000 secs
+[2024-02-14 18:18:29 +01:00] [1:1] [dt] [debug] timer 'validator::save_state' finished in 0.028 secs
+[2024-02-14 18:18:29 +01:00] [1:1] [dt] [debug] timer 'run truncate' finished in 7.713 secs

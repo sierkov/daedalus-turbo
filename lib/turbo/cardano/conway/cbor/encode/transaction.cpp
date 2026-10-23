@@ -3,7 +3,6 @@
  * Copyright (c) 2024-2026 R2 Rationality OÜ (info at r2rationality dot com)
  * License: https://github.com/r2rationality/turbocardano/blob/main/LICENSE */
 
-#include <turbo/cardano/conway/cbor/encode/transaction-witness-set.hpp>
 #include <turbo/cardano/conway/transaction.hpp>
 
 namespace turbo::cardano::conway {
@@ -21,11 +20,11 @@ namespace turbo::cardano::conway {
 
     void tx::body_to_cbor(era_encoder &enc) const
     {
-        _body.to_cbor(enc);
+        enc.raw_cbor(raw());
     }
 
     void tx::witnesses_to_cbor(era_encoder &enc) const
     {
-        detail::transaction_witness_set_to_cbor(enc, _wits, _redeemers);
+        enc.raw_cbor(witness_raw());
     }
 }

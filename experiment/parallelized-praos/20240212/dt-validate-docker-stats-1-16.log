@@ -1,0 +1,419 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O    PIDS
+6ca018e00d37   romantic_merkle   1596.62%   1.087GiB / 251.3GiB   0.43%     736B / 0B   406MB / 0B   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O    PIDS
+6ca018e00d37   romantic_merkle   1594.65%   1.158GiB / 251.3GiB   0.46%     736B / 0B   822MB / 0B   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1605.34%   1.68GiB / 251.3GiB   0.67%     806B / 0B   1.24GB / 98.2MB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1600.58%   2.406GiB / 251.3GiB   0.96%     806B / 0B   1.79GB / 98.2MB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+6ca018e00d37   romantic_merkle   1594.54%   2.385GiB / 251.3GiB   0.95%     806B / 0B   2.2GB / 98.2MB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1594.82%   3.238GiB / 251.3GiB   1.29%     876B / 0B   2.61GB / 98.2MB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1599.09%   3.654GiB / 251.3GiB   1.45%     876B / 0B   3.29GB / 98.2MB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1601.27%   3.578GiB / 251.3GiB   1.42%     876B / 0B   3.81GB / 98.2MB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1596.77%   4.276GiB / 251.3GiB   1.70%     876B / 0B   4.81GB / 98.2MB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1595.39%   4.25GiB / 251.3GiB   1.69%     876B / 0B   5.59GB / 98.2MB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1598.52%   4.729GiB / 251.3GiB   1.88%     876B / 0B   6.73GB / 1.06GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1593.61%   4.719GiB / 251.3GiB   1.88%     876B / 0B   8.25GB / 1.06GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1588.67%   4.886GiB / 251.3GiB   1.94%     946B / 0B   9.43GB / 2.48GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1593.68%   5.222GiB / 251.3GiB   2.08%     946B / 0B   10.6GB / 2.48GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1589.23%   5.237GiB / 251.3GiB   2.08%     946B / 0B   10.9GB / 5.07GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1591.51%   5.312GiB / 251.3GiB   2.11%     946B / 0B   11.8GB / 5.52GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1593.24%   5.86GiB / 251.3GiB   2.33%     946B / 0B   13.1GB / 5.52GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1603.40%   5.87GiB / 251.3GiB   2.34%     946B / 0B   14.4GB / 5.52GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1603.69%   5.98GiB / 251.3GiB   2.38%     946B / 0B   15.5GB / 5.52GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1603.27%   6.28GiB / 251.3GiB   2.50%     946B / 0B   17.1GB / 5.52GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1593.38%   6.647GiB / 251.3GiB   2.64%     946B / 0B   18.7GB / 5.52GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1587.51%   6.584GiB / 251.3GiB   2.62%     946B / 0B   19.3GB / 5.53GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1531.96%   6.452GiB / 251.3GiB   2.57%     946B / 0B   19.3GB / 7.14GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1592.17%   6.651GiB / 251.3GiB   2.65%     946B / 0B   20.3GB / 11.1GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1596.10%   6.55GiB / 251.3GiB   2.61%     946B / 0B   21.5GB / 11.1GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1592.67%   7.003GiB / 251.3GiB   2.79%     946B / 0B   22.6GB / 11.5GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1596.18%   7.041GiB / 251.3GiB   2.80%     1.02kB / 0B   23.6GB / 11.5GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1602.86%   7.746GiB / 251.3GiB   3.08%     1.02kB / 0B   24.9GB / 11.7GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1549.23%   6.703GiB / 251.3GiB   2.67%     1.02kB / 0B   25.4GB / 11.7GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1602.18%   6.908GiB / 251.3GiB   2.75%     1.02kB / 0B   25.6GB / 16.5GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1603.78%   7.74GiB / 251.3GiB   3.08%     1.02kB / 0B   26.7GB / 17.3GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1602.39%   7.73GiB / 251.3GiB   3.08%     1.02kB / 0B   28.2GB / 17.6GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1586.84%   6.825GiB / 251.3GiB   2.72%     1.02kB / 0B   28.7GB / 17.6GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1599.62%   7.06GiB / 251.3GiB   2.81%     1.02kB / 0B   29.3GB / 20.5GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1592.01%   7.602GiB / 251.3GiB   3.02%     1.02kB / 0B   30.6GB / 20.5GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1587.26%   7.344GiB / 251.3GiB   2.92%     1.02kB / 0B   31.6GB / 20.5GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1548.73%   7.037GiB / 251.3GiB   2.80%     1.02kB / 0B   32.2GB / 20.5GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1586.28%   8.101GiB / 251.3GiB   3.22%     1.02kB / 0B   33.2GB / 23GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1596.46%   8.309GiB / 251.3GiB   3.31%     1.02kB / 0B   34.3GB / 23GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1601.67%   8.268GiB / 251.3GiB   3.29%     1.02kB / 0B   35.3GB / 23.2GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1587.78%   8.153GiB / 251.3GiB   3.24%     1.02kB / 0B   35.6GB / 25.3GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1599.44%   7.481GiB / 251.3GiB   2.98%     1.02kB / 0B   36.6GB / 25.5GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1595.90%   8.051GiB / 251.3GiB   3.20%     1.02kB / 0B   37.7GB / 25.5GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1575.40%   7.599GiB / 251.3GiB   3.02%     1.02kB / 0B   38.3GB / 25.6GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1598.54%   8.205GiB / 251.3GiB   3.26%     1.02kB / 0B   39GB / 27.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1609.25%   8.043GiB / 251.3GiB   3.20%     1.02kB / 0B   40GB / 27.9GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1607.62%   7.89GiB / 251.3GiB   3.14%     1.02kB / 0B   40.9GB / 27.9GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1556.72%   7.984GiB / 251.3GiB   3.18%     1.02kB / 0B   41.5GB / 28.1GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1597.56%   8.592GiB / 251.3GiB   3.42%     1.02kB / 0B   42.4GB / 30.2GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1593.14%   8.689GiB / 251.3GiB   3.46%     1.02kB / 0B   43.4GB / 30.3GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1580.53%   8.607GiB / 251.3GiB   3.42%     1.02kB / 0B   44.4GB / 30.3GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1588.01%   8.315GiB / 251.3GiB   3.31%     1.02kB / 0B   44.6GB / 32.1GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1598.33%   9.279GiB / 251.3GiB   3.69%     1.02kB / 0B   45.7GB / 32.6GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1592.12%   9.054GiB / 251.3GiB   3.60%     1.09kB / 0B   46.7GB / 32.7GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1599.69%   8.861GiB / 251.3GiB   3.53%     1.09kB / 0B   47.6GB / 32.7GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1598.56%   8.746GiB / 251.3GiB   3.48%     1.09kB / 0B   48.4GB / 32.9GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1595.01%   9.317GiB / 251.3GiB   3.71%     1.09kB / 0B   49GB / 35.2GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1595.70%   9.283GiB / 251.3GiB   3.69%     1.09kB / 0B   49.8GB / 35.4GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1602.82%   9.505GiB / 251.3GiB   3.78%     1.09kB / 0B   50.8GB / 35.4GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1593.87%   9.531GiB / 251.3GiB   3.79%     1.09kB / 0B   51.8GB / 35.5GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1563.56%   9.103GiB / 251.3GiB   3.62%     1.09kB / 0B   52.2GB / 36.2GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1602.01%   9.677GiB / 251.3GiB   3.85%     1.09kB / 0B   52.8GB / 38.3GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1597.75%   10.02GiB / 251.3GiB   3.99%     1.09kB / 0B   52.8GB / 38.3GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1598.42%   11.17GiB / 251.3GiB   4.44%     1.09kB / 0B   52.8GB / 38.5GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1598.25%   12.2GiB / 251.3GiB   4.85%     1.09kB / 0B   52.8GB / 38.5GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1595.79%   12.55GiB / 251.3GiB   4.99%     1.09kB / 0B   52.8GB / 38.6GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1601.96%   10.91GiB / 251.3GiB   4.34%     1.09kB / 0B   53.3GB / 38.6GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1610.09%   10.88GiB / 251.3GiB   4.33%     1.09kB / 0B   54GB / 38.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1598.21%   11.09GiB / 251.3GiB   4.41%     1.09kB / 0B   55GB / 38.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1604.23%   10.96GiB / 251.3GiB   4.36%     1.09kB / 0B   55.9GB / 38.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1604.56%   11.01GiB / 251.3GiB   4.38%     1.09kB / 0B   56.1GB / 41.2GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1597.93%   11.28GiB / 251.3GiB   4.49%     1.09kB / 0B   57.2GB / 41.3GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1607.46%   11.52GiB / 251.3GiB   4.58%     1.09kB / 0B   57.9GB / 41.3GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1583.68%   12.08GiB / 251.3GiB   4.81%     1.09kB / 0B   58.9GB / 41.4GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1548.96%   11.25GiB / 251.3GiB   4.48%     1.09kB / 0B   59.2GB / 42GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1605.08%   12.16GiB / 251.3GiB   4.84%     1.09kB / 0B   60.1GB / 43.6GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1598.91%   11.73GiB / 251.3GiB   4.67%     1.09kB / 0B   60.8GB / 43.6GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1609.41%   11.67GiB / 251.3GiB   4.65%     1.09kB / 0B   61.7GB / 45.6GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1590.52%   12.33GiB / 251.3GiB   4.91%     1.09kB / 0B   62.1GB / 48.6GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1594.26%   11.74GiB / 251.3GiB   4.67%     1.09kB / 0B   62.9GB / 48.6GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1591.13%   11.88GiB / 251.3GiB   4.73%     1.09kB / 0B   63.8GB / 49.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1596.40%   11.75GiB / 251.3GiB   4.68%     1.09kB / 0B   64.5GB / 49.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1598.60%   11.99GiB / 251.3GiB   4.77%     1.09kB / 0B   65GB / 51.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1593.13%   12.09GiB / 251.3GiB   4.81%     1.09kB / 0B   65.8GB / 51.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1593.05%   12.13GiB / 251.3GiB   4.82%     1.09kB / 0B   66.8GB / 51.9GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1599.55%   11.96GiB / 251.3GiB   4.76%     1.09kB / 0B   67.4GB / 51.9GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1593.20%   12.22GiB / 251.3GiB   4.86%     1.09kB / 0B   67.8GB / 53.9GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1598.45%   12.44GiB / 251.3GiB   4.95%     1.09kB / 0B   68.7GB / 54.1GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1606.51%   13.11GiB / 251.3GiB   5.22%     1.09kB / 0B   69.5GB / 54.2GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1596.65%   12.65GiB / 251.3GiB   5.03%     1.09kB / 0B   70.3GB / 54.2GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1566.70%   12.4GiB / 251.3GiB   4.93%     1.09kB / 0B   70.8GB / 54.3GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1604.13%   13.16GiB / 251.3GiB   5.23%     1.09kB / 0B   71.5GB / 56.3GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1601.97%   13GiB / 251.3GiB    5.17%     1.09kB / 0B   72.4GB / 56.4GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1591.97%   13.14GiB / 251.3GiB   5.23%     1.09kB / 0B   73.2GB / 56.4GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1559.41%   12.66GiB / 251.3GiB   5.04%     1.09kB / 0B   73.4GB / 56.6GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1607.38%   12.67GiB / 251.3GiB   5.04%     1.09kB / 0B   73.8GB / 58.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1603.29%   12.74GiB / 251.3GiB   5.07%     1.09kB / 0B   73.8GB / 59.4GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1599.20%   12.71GiB / 251.3GiB   5.06%     1.09kB / 0B   73.8GB / 59.4GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1604.35%   12.72GiB / 251.3GiB   5.06%     1.09kB / 0B   73.8GB / 59.5GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1606.30%   12.72GiB / 251.3GiB   5.06%     1.09kB / 0B   73.8GB / 59.5GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1594.31%   12.73GiB / 251.3GiB   5.06%     1.09kB / 0B   73.8GB / 59.6GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1597.62%   12.73GiB / 251.3GiB   5.07%     1.09kB / 0B   73.8GB / 59.6GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1595.51%   12.8GiB / 251.3GiB   5.09%     1.09kB / 0B   73.8GB / 59.7GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1595.27%   12.83GiB / 251.3GiB   5.11%     1.09kB / 0B   73.8GB / 59.7GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1597.13%   12.82GiB / 251.3GiB   5.10%     1.09kB / 0B   73.8GB / 59.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1606.09%   12.83GiB / 251.3GiB   5.11%     1.09kB / 0B   73.8GB / 59.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1596.63%   12.83GiB / 251.3GiB   5.11%     1.09kB / 0B   73.8GB / 59.9GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1594.54%   12.8GiB / 251.3GiB   5.09%     1.09kB / 0B   73.8GB / 59.9GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1594.98%   12.8GiB / 251.3GiB   5.09%     1.09kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1598.49%   12.87GiB / 251.3GiB   5.12%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1597.75%   12.94GiB / 251.3GiB   5.15%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1604.27%   12.9GiB / 251.3GiB   5.13%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1595.25%   12.97GiB / 251.3GiB   5.16%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1596.00%   13GiB / 251.3GiB    5.17%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1598.21%   12.87GiB / 251.3GiB   5.12%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1597.98%   12.99GiB / 251.3GiB   5.17%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1599.89%   13.01GiB / 251.3GiB   5.18%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1586.77%   13.08GiB / 251.3GiB   5.20%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1597.97%   13.08GiB / 251.3GiB   5.20%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1596.51%   13.06GiB / 251.3GiB   5.20%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1603.09%   13.06GiB / 251.3GiB   5.20%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1607.70%   13.06GiB / 251.3GiB   5.20%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1597.28%   13.08GiB / 251.3GiB   5.20%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1597.63%   13.08GiB / 251.3GiB   5.20%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1599.42%   12.92GiB / 251.3GiB   5.14%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1597.95%   13.1GiB / 251.3GiB   5.21%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1603.05%   13.12GiB / 251.3GiB   5.22%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1600.25%   13.03GiB / 251.3GiB   5.19%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1596.90%   13.11GiB / 251.3GiB   5.22%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1597.85%   13.11GiB / 251.3GiB   5.22%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1597.07%   13.1GiB / 251.3GiB   5.21%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1597.10%   13.12GiB / 251.3GiB   5.22%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1602.87%   13.09GiB / 251.3GiB   5.21%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1597.02%   13.07GiB / 251.3GiB   5.20%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1594.05%   12.83GiB / 251.3GiB   5.11%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1591.99%   12.84GiB / 251.3GiB   5.11%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1594.56%   12.88GiB / 251.3GiB   5.13%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1599.04%   12.87GiB / 251.3GiB   5.12%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1603.99%   12.91GiB / 251.3GiB   5.14%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1601.42%   12.9GiB / 251.3GiB   5.13%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1597.30%   12.93GiB / 251.3GiB   5.15%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1594.06%   12.98GiB / 251.3GiB   5.17%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1598.03%   12.99GiB / 251.3GiB   5.17%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1601.86%   12.99GiB / 251.3GiB   5.17%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1603.38%   12.81GiB / 251.3GiB   5.10%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1596.25%   12.93GiB / 251.3GiB   5.14%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1603.97%   12.93GiB / 251.3GiB   5.15%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1601.48%   12.95GiB / 251.3GiB   5.15%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1590.23%   12.78GiB / 251.3GiB   5.09%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1600.79%   12.95GiB / 251.3GiB   5.15%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1596.03%   12.96GiB / 251.3GiB   5.16%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1598.61%   13GiB / 251.3GiB    5.17%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1592.92%   13GiB / 251.3GiB    5.17%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1594.94%   12.96GiB / 251.3GiB   5.16%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1602.49%   12.97GiB / 251.3GiB   5.16%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1602.05%   13GiB / 251.3GiB    5.17%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1592.05%   13.02GiB / 251.3GiB   5.18%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1601.33%   13.06GiB / 251.3GiB   5.20%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1594.86%   13.08GiB / 251.3GiB   5.20%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1589.66%   13.09GiB / 251.3GiB   5.21%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1599.04%   13.08GiB / 251.3GiB   5.20%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1602.34%   15.18GiB / 251.3GiB   6.04%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1605.26%   17.8GiB / 251.3GiB   7.08%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1598.27%   20.41GiB / 251.3GiB   8.12%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+6ca018e00d37   romantic_merkle   1598.44%   21.4GiB / 251.3GiB   8.52%     1.16kB / 0B   73.8GB / 60GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1597.79%   21.39GiB / 251.3GiB   8.51%     1.16kB / 0B   73.8GB / 60.9GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1597.18%   21.4GiB / 251.3GiB   8.51%     1.16kB / 0B   73.8GB / 60.9GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1599.96%   21.32GiB / 251.3GiB   8.48%     1.16kB / 0B   73.8GB / 61.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1600.72%   21.35GiB / 251.3GiB   8.50%     1.16kB / 0B   73.8GB / 61.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1603.24%   21.35GiB / 251.3GiB   8.50%     1.16kB / 0B   73.8GB / 61.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1596.81%   21.4GiB / 251.3GiB   8.52%     1.16kB / 0B   73.8GB / 61.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1596.76%   21.4GiB / 251.3GiB   8.52%     1.16kB / 0B   73.8GB / 61.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1596.51%   21.21GiB / 251.3GiB   8.44%     1.16kB / 0B   73.8GB / 61.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1588.02%   21.44GiB / 251.3GiB   8.53%     1.16kB / 0B   73.8GB / 61.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1599.09%   21.39GiB / 251.3GiB   8.51%     1.16kB / 0B   73.8GB / 61.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1603.90%   21.44GiB / 251.3GiB   8.53%     1.16kB / 0B   73.8GB / 61.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1592.46%   21.45GiB / 251.3GiB   8.53%     1.16kB / 0B   73.8GB / 61.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1604.04%   21.45GiB / 251.3GiB   8.53%     1.16kB / 0B   73.8GB / 61.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1594.00%   21.45GiB / 251.3GiB   8.53%     1.16kB / 0B   73.8GB / 61.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1597.02%   21.37GiB / 251.3GiB   8.50%     1.16kB / 0B   73.8GB / 61.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1598.23%   21.37GiB / 251.3GiB   8.50%     1.16kB / 0B   73.8GB / 61.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1595.74%   21.23GiB / 251.3GiB   8.45%     1.16kB / 0B   73.8GB / 61.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1597.69%   21.35GiB / 251.3GiB   8.50%     1.16kB / 0B   73.8GB / 61.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1594.04%   21.43GiB / 251.3GiB   8.53%     1.16kB / 0B   73.8GB / 61.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1602.63%   21.51GiB / 251.3GiB   8.56%     1.16kB / 0B   73.8GB / 61.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1601.11%   21.51GiB / 251.3GiB   8.56%     1.16kB / 0B   73.8GB / 61.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1587.34%   21.46GiB / 251.3GiB   8.54%     1.16kB / 0B   73.8GB / 61.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1592.77%   21.36GiB / 251.3GiB   8.50%     1.16kB / 0B   73.8GB / 61.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1591.95%   21.38GiB / 251.3GiB   8.51%     1.16kB / 0B   73.8GB / 61.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1597.24%   21.43GiB / 251.3GiB   8.53%     1.16kB / 0B   73.8GB / 61.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1600.59%   21.48GiB / 251.3GiB   8.55%     1.16kB / 0B   73.8GB / 61.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1594.92%   21.4GiB / 251.3GiB   8.52%     1.16kB / 0B   73.8GB / 61.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1597.21%   21.43GiB / 251.3GiB   8.53%     1.16kB / 0B   73.8GB / 61.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1593.54%   21.38GiB / 251.3GiB   8.51%     1.16kB / 0B   73.8GB / 61.8GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1589.50%   21.49GiB / 251.3GiB   8.55%     1.16kB / 0B   73.8GB / 61.9GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1601.24%   21.44GiB / 251.3GiB   8.53%     1.16kB / 0B   73.8GB / 61.9GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1596.53%   21.5GiB / 251.3GiB   8.56%     1.16kB / 0B   73.8GB / 61.9GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1244.88%   21.45GiB / 251.3GiB   8.54%     1.16kB / 0B   73.8GB / 61.9GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1041.49%   21.47GiB / 251.3GiB   8.54%     1.16kB / 0B   73.8GB / 61.9GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1243.37%   21.53GiB / 251.3GiB   8.57%     1.16kB / 0B   73.8GB / 61.9GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1234.24%   21.53GiB / 251.3GiB   8.57%     1.16kB / 0B   73.8GB / 61.9GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1243.14%   21.43GiB / 251.3GiB   8.53%     1.16kB / 0B   73.8GB / 61.9GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1233.56%   21.44GiB / 251.3GiB   8.53%     1.16kB / 0B   73.8GB / 61.9GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1240.40%   21.51GiB / 251.3GiB   8.56%     1.16kB / 0B   73.8GB / 61.9GB   18
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   1225.29%   21.51GiB / 251.3GiB   8.56%     1.16kB / 0B   73.8GB / 61.9GB   18
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   303.95%   22.15GiB / 251.3GiB   8.82%     1.16kB / 0B   73.8GB / 61.9GB   18
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   99.89%    22.78GiB / 251.3GiB   9.06%     1.16kB / 0B   73.8GB / 61.9GB   18
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+6ca018e00d37   romantic_merkle   100.22%   21.06GiB / 251.3GiB   8.38%     1.16kB / 0B   73.8GB / 64.2GB   18
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS

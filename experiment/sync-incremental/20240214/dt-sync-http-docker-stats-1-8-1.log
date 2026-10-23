@@ -1,0 +1,24 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O     PIDS
+af4275605d17   eager_hawking   199.76%   2.188GiB / 251.3GiB   0.87%     736B / 0B   2.35GB / 0B   11
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+af4275605d17   eager_hawking   44.71%    1.743GiB / 251.3GiB   0.69%     30.5MB / 217kB   2.35GB / 16.4kB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+af4275605d17   eager_hawking   546.54%   2.097GiB / 251.3GiB   0.83%     147MB / 991kB   2.87GB / 97.1MB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+af4275605d17   eager_hawking   776.52%   2.138GiB / 251.3GiB   0.85%     147MB / 991kB   11.1GB / 97.1MB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+af4275605d17   eager_hawking   789.28%   2.195GiB / 251.3GiB   0.87%     147MB / 991kB   19.6GB / 97.1MB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+af4275605d17   eager_hawking   802.32%   2.289GiB / 251.3GiB   0.91%     147MB / 991kB   26.8GB / 97.1MB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+af4275605d17   eager_hawking   802.53%   2.408GiB / 251.3GiB   0.96%     147MB / 991kB   31.5GB / 97.1MB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+af4275605d17   eager_hawking   420.63%   3.101GiB / 251.3GiB   1.23%     147MB / 991kB   32.6GB / 97.1MB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+af4275605d17   eager_hawking   191.80%   2.368GiB / 251.3GiB   0.94%     147MB / 991kB   32.6GB / 2.66GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+af4275605d17   eager_hawking   218.16%   3.333GiB / 251.3GiB   1.33%     147MB / 991kB   32.6GB / 2.67GB   12
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0

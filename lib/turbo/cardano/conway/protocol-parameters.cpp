@@ -50,6 +50,9 @@ namespace turbo::cardano {
         res |= min_fee_b.has_value();
         res |= key_deposit.has_value();
         res |= pool_deposit.has_value();
+        res |= expansion_rate.has_value();
+        res |= treasury_growth_rate.has_value();
+        res |= min_pool_cost.has_value();
         res |= lovelace_per_utxo_byte.has_value();
         res |= ex_unit_prices.has_value();
         res |= min_fee_ref_script_cost_per_byte.has_value();
@@ -62,7 +65,7 @@ namespace turbo::cardano {
         bool res = false;
         res |= e_max.has_value();
         res |= n_opt.has_value();
-        res |= expansion_rate.has_value();
+        res |= pool_pledge_influence.has_value();
         res |= max_collateral_pct.has_value();
         res |= plutus_cost_models.has_value();
         res |= max_pledge_leverage.has_value();

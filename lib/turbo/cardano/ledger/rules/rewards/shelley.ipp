@@ -34,17 +34,11 @@
         const uint64_t total_reward_pool = expansion + _delta_fees;
         const uint64_t treasury_rewards = static_cast<uint64_t>(rational_from_r64(_params_prev.treasury_growth_rate) * total_reward_pool);
         _reward_pot = total_reward_pool - treasury_rewards;
-        uint64_t pool_rewards_filtered = 0;
         const uint64_t total_stake = _total_stake(_reserves);
-        if (!_blocks_before.empty()) {
-            const auto &pools_active = _blocks_before;
-            {
-                timer t2 { fmt::format("compute per-pool rewards for epoch {}", _epoch), logger::level::trace };
-                pool_rewards_filtered = _compute_pool_rewards_parallel(pools_active, _reward_pot, total_stake);
-            }
-            logger::trace("epoch {} total stake {} treasury: {} reserves: {} rewards pot: {} block-producing pools: {} reward pools: {} rewards attributed: {}",
-                _epoch, total_stake, _treasury, _reserves, _reward_pot, pools_active.size(), _go.pool_params.size(), pool_rewards_filtered);
-        }
+        // Zero-block epochs still update the likelihoods of registered pools.
+        const auto pool_rewards_filtered = _compute_pool_rewards_parallel(_blocks_before, _reward_pot, total_stake);
+        logger::trace("epoch {} total stake {} treasury: {} reserves: {} rewards pot: {} block-producing pools: {} reward pools: {} rewards attributed: {}",
+            _epoch, total_stake, _treasury, _reserves, _reward_pot, _blocks_before.size(), _go.pool_params.size(), pool_rewards_filtered);
         _delta_treasury = treasury_rewards;
         _delta_reserves = treasury_rewards + pool_rewards_filtered - _delta_fees;
         logger::debug("epoch {} deltaR ({}) = deltaT ({}) + poolRewards ({}) - deltaF {}",
@@ -180,6 +174,8 @@
     {
         const std::string task_group = fmt::format("ledger-state:compute-rewards:epoch-{}", _epoch);
         const auto [init_total, init_filtered] = _rewards_prepare_pools(pools_active, staking_reward_pot, total_stake);
+        if (pools_active.empty())
+            return 0; // Likelihoods are ready; no member-reward tasks are needed.
         std::atomic_uint64_t total = init_total;
         std::atomic_uint64_t filtered = init_filtered;
         _sched.wait_all(task_group,

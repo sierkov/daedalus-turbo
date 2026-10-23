@@ -1,0 +1,24 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O     PIDS
+925cc032139f   elated_merkle   200.69%   2.136GiB / 251.3GiB   0.85%     646B / 0B   2.35GB / 0B   11
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+925cc032139f   elated_merkle   16.46%    1.671GiB / 251.3GiB   0.66%     18.6MB / 117kB   2.35GB / 16.4kB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O        PIDS
+925cc032139f   elated_merkle   574.11%   2.089GiB / 251.3GiB   0.83%     147MB / 832kB   3.06GB / 145MB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O        PIDS
+925cc032139f   elated_merkle   781.14%   2.133GiB / 251.3GiB   0.85%     147MB / 832kB   11.3GB / 145MB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O        PIDS
+925cc032139f   elated_merkle   794.41%   2.194GiB / 251.3GiB   0.87%     147MB / 832kB   19.9GB / 145MB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O      PIDS
+925cc032139f   elated_merkle   802.01%   2.289GiB / 251.3GiB   0.91%     147MB / 832kB   27GB / 145MB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O         BLOCK I/O        PIDS
+925cc032139f   elated_merkle   800.05%   2.41GiB / 251.3GiB   0.96%     147MB / 832kB   31.7GB / 145MB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O        PIDS
+925cc032139f   elated_merkle   277.09%   3.332GiB / 251.3GiB   1.33%     147MB / 832kB   32.6GB / 145MB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+925cc032139f   elated_merkle   210.53%   2.581GiB / 251.3GiB   1.03%     147MB / 832kB   32.6GB / 2.71GB   12
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+925cc032139f   elated_merkle   199.76%   4.224GiB / 251.3GiB   1.68%     147MB / 832kB   32.6GB / 2.72GB   12
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0

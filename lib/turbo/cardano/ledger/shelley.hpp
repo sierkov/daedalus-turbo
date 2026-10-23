@@ -7,6 +7,7 @@
 #include <turbo/cardano/common/cert.hpp>
 #include <turbo/cardano/common/common.hpp>
 #include <turbo/cardano/ledger/types.hpp>
+#include <turbo/cardano/ledger/node-format.hpp>
 #include <turbo/cardano/shelley/block.hpp>
 #include <turbo/index/vrf.hpp>
 #include <turbo/parallel/encoder.hpp>
@@ -35,7 +36,7 @@ namespace turbo::cardano::ledger::shelley {
         virtual ~vrf_state() =default;
 
         virtual void from_cbor(cbor::zero2::value &v);
-        virtual void to_cbor(cbor_encoder &) const;
+        virtual void to_cbor(cbor_encoder &, node_format format=node_format::legacy) const;
         virtual void from_zpp(parallel_decoder &);
         virtual void to_zpp(zpp_encoder &) const;
 
@@ -60,6 +61,11 @@ namespace turbo::cardano::ledger::shelley {
             return _nonce_epoch;
         }
 
+        const std::optional<vrf_nonce> &nonce_previous_epoch() const
+        {
+            return _nonce_previous_epoch;
+        }
+
         const vrf_nonce &uc_leader() const
         {
             return _nonce_uc_leader;
@@ -78,6 +84,7 @@ namespace turbo::cardano::ledger::shelley {
         void clear()
         {
             _nonce_epoch = _nonce_genesis;
+            _nonce_previous_epoch = _nonce_genesis;
             _nonce_evolving = _nonce_genesis;
             _nonce_candidate = _nonce_genesis;
             _lab_prev_hash = vrf_nonce {};
@@ -92,6 +99,8 @@ namespace turbo::cardano::ledger::shelley {
         const vrf_nonce _nonce_uc_leader = vrf_nonce::from_hex("12dd0a6a7d0e222a97926da03adb5a7768d31cc7c5c2bd6828e14a7d25fa3a60");
         const vrf_nonce _nonce_genesis;
         vrf_nonce _nonce_epoch { _nonce_genesis };
+        // Export metadata absent from legacy CBOR/ZPP; not part of legacy equality.
+        std::optional<vrf_nonce> _nonce_previous_epoch { _nonce_genesis };
         vrf_nonce _nonce_evolving { _nonce_genesis };
         vrf_nonce _nonce_candidate { _nonce_genesis };
         vrf_nonce _lab_prev_hash {};
@@ -107,7 +116,7 @@ namespace turbo::cardano::ledger::shelley {
         virtual ~state();
 
         virtual point from_cbor(cbor::zero2::value &v);
-        virtual void to_cbor(cbor_encoder &) const;
+        virtual void to_cbor(cbor_encoder &, node_format format=node_format::legacy) const;
         virtual void from_zpp(parallel_decoder &);
         virtual void to_zpp(zpp_encoder &) const;
 
@@ -265,14 +274,14 @@ namespace turbo::cardano::ledger::shelley {
         virtual void _parse_protocol_params(protocol_params &params, cbor::zero2::value &values) const;
         virtual void _compute_rewards();
 
-        virtual void _account_to_cbor(const account_info &acc, era_encoder &enc) const;
+        virtual void _account_to_cbor(const account_info &acc, era_encoder &enc, node_format format) const;
         virtual void _donations_to_cbor(era_encoder &) const;
         virtual void _delegation_gov_to_cbor(era_encoder &enc) const;
         virtual void _param_update_to_cbor(era_encoder &enc, const param_update &update) const;
-        virtual void _params_to_cbor(era_encoder &enc, const protocol_params &params) const;
-        virtual void _protocol_state_to_cbor(era_encoder &) const;
+        virtual void _params_to_cbor(era_encoder &enc, const protocol_params &params, node_format format) const;
+        virtual void _protocol_state_to_cbor(era_encoder &, node_format format) const;
         virtual void _stake_pointer_stake_to_cbor(era_encoder &) const;
-        virtual void _stake_pointers_to_cbor(era_encoder &) const;
+        virtual void _stake_pointers_to_cbor(era_encoder &, node_format format) const;
         virtual void _process_block_updates(block_update_list &&);
         virtual void _process_timed_update(tx_out_ref_list &, uint64_t &, timed_update_t &&);
         virtual std::pair<tx_out_ref_list, uint64_t> _process_timed_updates(timed_update_list &&);
@@ -309,12 +318,12 @@ namespace turbo::cardano::ledger::shelley {
         void _node_save_params_alonzo(era_encoder &enc, const protocol_params &params) const;
         void _node_save_params_babbage(era_encoder &enc, const protocol_params &params) const;
         void _node_save_eras(cbor_encoder &ser, const point &tip) const;
-        void _node_save_ledger(cbor_encoder &ser) const;
-        void _node_save_ledger_delegation(cbor_encoder &ser) const;
-        void _node_save_ledger_utxo(cbor_encoder &ser) const;
+        void _node_save_ledger(cbor_encoder &ser, node_format format) const;
+        void _node_save_ledger_delegation(cbor_encoder &ser, node_format format) const;
+        void _node_save_ledger_utxo(cbor_encoder &ser, node_format format) const;
         void _node_save_state(cbor_encoder &ser) const;
-        void _node_save_snapshots(cbor_encoder &ser) const;
-        void _node_save_state_before(cbor_encoder &ser) const;
+        void _node_save_snapshots(cbor_encoder &ser, node_format format) const;
+        void _node_save_state_before(cbor_encoder &ser, node_format format) const;
         void _node_save_vrf_state(cbor_encoder &ser, const point &) const;
 
         uint64_t _retire_avvm_balance();

@@ -21,6 +21,8 @@ namespace turbo::cardano::dijkstra {
         {
             auto &it = v.array();
             vrf_cert result { it.read().bytes(), it.read().bytes() };
+            if (result.result.size() != sizeof(vrf_result)) [[unlikely]]
+                throw error("Dijkstra VRF output must contain exactly 64 bytes");
             if (!it.done()) [[unlikely]]
                 throw error("unexpected trailing Dijkstra VRF certificate elements");
             return result;
@@ -50,44 +52,37 @@ namespace turbo::cardano::dijkstra {
         return res;
     }
 
-    block_header::body_t::body_t(cbor::zero2::value &v, const cardano::config &cfg)
+    block_header::block_header(const uint64_t era, cbor::zero2::value &v, const cardano::config &cfg):
+        block_header_base { era, cfg }
     {
-        auto &it = v.array();
-        block_number = it.read().uint();
-        slot = it.read().uint();
+        auto &header_it = v.array();
+        auto &body = header_it.read();
+        auto &it = body.array();
+        _block_number = it.read().uint();
+        _slot = it.read().uint();
         auto &previous = it.read();
-        prev_hash_is_null = previous.is_null();
-        prev_hash = prev_hash_from_cbor(previous, cfg);
-        issuer_vkey = it.read().bytes();
-        vrf_vkey = it.read().bytes();
-        nonce_vrf = vrf_cert_from_cbor(it.read());
-        body_size = numeric_cast<uint32_t>(it.read().uint());
-        body_hash = it.read().bytes();
-        op_cert = operational_cert_from_cbor(it.read());
-        node_ver = protocol_version_from_cbor(it.read());
-        contains_leios_certificate = it.read().boolean();
+        if (!previous.is_null())
+            _prev_hash.emplace(previous.bytes());
+        else
+            static_cast<void>(previous.special());
+        _issuer_vkey = it.read().bytes();
+        _vrf_vkey = it.read().bytes();
+        _nonce_vrf = vrf_cert_from_cbor(it.read());
+        _body_size = numeric_cast<uint32_t>(it.read().uint());
+        _body_hash = it.read().bytes();
+        _op_cert = operational_cert_from_cbor(it.read());
+        _node_ver = protocol_version_from_cbor(it.read());
+        _contains_leios_certificate = it.read().boolean();
         auto &announcement = it.read();
         if (!announcement.is_null())
-            eb_announcement.emplace(eb_announcement_t::from_cbor(announcement));
+            _eb_announcement.emplace(eb_announcement_t::from_cbor(announcement));
         else
             static_cast<void>(announcement.special());
         if (!it.done()) [[unlikely]]
             throw error("unexpected trailing Dijkstra header body elements");
-        raw = v.data_raw();
-    }
-
-    block_header::block_header(const uint64_t era, cbor::zero2::value &v, const cardano::config &cfg):
-        block_header { era, v.array(), v, cfg }
-    {
-    }
-
-    block_header::block_header(const uint64_t era, cbor::zero2::array_reader &it,
-            cbor::zero2::value &v, const cardano::config &cfg):
-        block_header_base { era, cfg },
-        _body { it.read(), cfg },
-        _signature { it.read().bytes() }
-    {
-        if (!it.done()) [[unlikely]]
+        _body_raw = body.data_raw();
+        _signature = header_it.read().bytes();
+        if (!header_it.done()) [[unlikely]]
             throw error("unexpected trailing Dijkstra header elements");
         _raw = v.data_raw();
     }

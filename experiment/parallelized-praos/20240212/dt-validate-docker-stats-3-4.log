@@ -1,0 +1,1688 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O    PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.80%   262.3MiB / 251.3GiB   0.10%     736B / 0B   109MB / 0B   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT   MEM %     NET I/O     BLOCK I/O    PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.79%   308MiB / 251.3GiB   0.12%     736B / 0B   218MB / 0B   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.38%   334.3MiB / 251.3GiB   0.13%     806B / 0B   315MB / 19.8MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.05%   365.7MiB / 251.3GiB   0.14%     806B / 0B   426MB / 19.8MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.37%   337.3MiB / 251.3GiB   0.13%     806B / 0B   527MB / 19.8MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.73%   384.2MiB / 251.3GiB   0.15%     876B / 0B   622MB / 19.8MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT   MEM %     NET I/O     BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.32%   401MiB / 251.3GiB   0.16%     876B / 0B   726MB / 19.8MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.05%   442.4MiB / 251.3GiB   0.17%     876B / 0B   825MB / 19.8MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.23%   451.2MiB / 251.3GiB   0.18%     876B / 0B   917MB / 19.8MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT   MEM %     NET I/O     BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.41%   597MiB / 251.3GiB   0.23%     876B / 0B   1.02GB / 19.8MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.45%   868.4MiB / 251.3GiB   0.34%     876B / 0B   1.11GB / 19.8MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.49%   1.697GiB / 251.3GiB   0.68%     876B / 0B   1.24GB / 19.8MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.96%   1.665GiB / 251.3GiB   0.66%     946B / 0B   1.39GB / 19.8MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.27%   1.704GiB / 251.3GiB   0.68%     946B / 0B   1.53GB / 19.8MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.39%   1.658GiB / 251.3GiB   0.66%     946B / 0B   1.62GB / 21.2MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.79%   1.659GiB / 251.3GiB   0.66%     946B / 0B   1.72GB / 21.2MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.27%   1.663GiB / 251.3GiB   0.66%     946B / 0B   1.81GB / 21.3MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   393.07%   2.44GiB / 251.3GiB   0.97%     946B / 0B   1.93GB / 21.3MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.83%   2.436GiB / 251.3GiB   0.97%     946B / 0B   2.03GB / 22.9MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.03%   2.443GiB / 251.3GiB   0.97%     946B / 0B   2.13GB / 22.9MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.33%   2.448GiB / 251.3GiB   0.97%     946B / 0B   2.24GB / 25.6MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   394.66%   2.752GiB / 251.3GiB   1.09%     946B / 0B   2.35GB / 25.6MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT   MEM %     NET I/O     BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.66%   2.8GiB / 251.3GiB   1.11%     946B / 0B   2.58GB / 99.6MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.15%   2.88GiB / 251.3GiB   1.15%     946B / 0B   2.72GB / 99.6MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.85%   2.844GiB / 251.3GiB   1.13%     946B / 0B   2.92GB / 194MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.31%   2.846GiB / 251.3GiB   1.13%     946B / 0B   3.05GB / 194MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.53%   2.847GiB / 251.3GiB   1.13%     1.02kB / 0B   3.18GB / 196MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.85%   2.849GiB / 251.3GiB   1.13%     1.02kB / 0B   3.35GB / 196MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.45%   2.849GiB / 251.3GiB   1.13%     1.02kB / 0B   3.46GB / 199MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.36%   2.851GiB / 251.3GiB   1.13%     1.02kB / 0B   3.57GB / 199MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.59%   3.528GiB / 251.3GiB   1.40%     1.02kB / 0B   3.67GB / 334MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.07%   3.641GiB / 251.3GiB   1.45%     1.02kB / 0B   3.91GB / 334MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.93%   3.646GiB / 251.3GiB   1.45%     1.02kB / 0B   4.23GB / 334MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.46%   3.66GiB / 251.3GiB   1.46%     1.02kB / 0B   4.47GB / 334MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.37%   3.664GiB / 251.3GiB   1.46%     1.02kB / 0B   4.76GB / 508MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.99%   3.668GiB / 251.3GiB   1.46%     1.02kB / 0B   4.98GB / 508MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.14%   3.672GiB / 251.3GiB   1.46%     1.02kB / 0B   5.17GB / 529MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.43%   3.675GiB / 251.3GiB   1.46%     1.02kB / 0B   5.36GB / 529MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.54%   3.679GiB / 251.3GiB   1.46%     1.02kB / 0B   5.51GB / 529MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.89%   3.692GiB / 251.3GiB   1.47%     1.02kB / 0B   5.81GB / 529MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.62%   3.928GiB / 251.3GiB   1.56%     1.02kB / 0B   5.9GB / 568MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   395.11%   4.158GiB / 251.3GiB   1.65%     1.02kB / 0B   6.25GB / 568MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.22%   4.164GiB / 251.3GiB   1.66%     1.02kB / 0B   6.7GB / 607MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.67%   4.169GiB / 251.3GiB   1.66%     1.02kB / 0B   7.09GB / 607MB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.18%   4.174GiB / 251.3GiB   1.66%     1.02kB / 0B   7.52GB / 1.08GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.77%   4.18GiB / 251.3GiB   1.66%     1.02kB / 0B   7.92GB / 1.08GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   405.41%   4.185GiB / 251.3GiB   1.67%     1.02kB / 0B   8.14GB / 1.23GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   395.21%   4.279GiB / 251.3GiB   1.70%     1.02kB / 0B   8.25GB / 1.23GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.21%   4.286GiB / 251.3GiB   1.71%     1.02kB / 0B   8.6GB / 1.37GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.13%   4.315GiB / 251.3GiB   1.72%     1.02kB / 0B   8.99GB / 1.37GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.48%   4.335GiB / 251.3GiB   1.73%     1.02kB / 0B   9.45GB / 1.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.92%   4.36GiB / 251.3GiB   1.73%     1.02kB / 0B   9.93GB / 1.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   406.91%   4.367GiB / 251.3GiB   1.74%     1.02kB / 0B   10.3GB / 1.87GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   402.06%   4.488GiB / 251.3GiB   1.79%     1.09kB / 0B   10.3GB / 1.87GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.88%   4.593GiB / 251.3GiB   1.83%     1.09kB / 0B   10.3GB / 2.59GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.18%   4.619GiB / 251.3GiB   1.84%     1.09kB / 0B   10.3GB / 2.59GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.31%   4.612GiB / 251.3GiB   1.84%     1.09kB / 0B   10.3GB / 4.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.03%   4.581GiB / 251.3GiB   1.82%     1.09kB / 0B   10.4GB / 5.62GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.32%   4.611GiB / 251.3GiB   1.83%     1.09kB / 0B   10.4GB / 6.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.41%   4.647GiB / 251.3GiB   1.85%     1.09kB / 0B   10.7GB / 6.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.71%   4.722GiB / 251.3GiB   1.88%     1.09kB / 0B   11.1GB / 6.29GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.15%   4.819GiB / 251.3GiB   1.92%     1.09kB / 0B   11.5GB / 6.29GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.75%   4.859GiB / 251.3GiB   1.93%     1.09kB / 0B   11.8GB / 6.42GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.88%   4.895GiB / 251.3GiB   1.95%     1.09kB / 0B   12.1GB / 6.42GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.69%   4.975GiB / 251.3GiB   1.98%     1.09kB / 0B   12.2GB / 6.56GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.17%   5.131GiB / 251.3GiB   2.04%     1.09kB / 0B   12.5GB / 6.56GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.93%   5.212GiB / 251.3GiB   2.07%     1.09kB / 0B   12.9GB / 6.65GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.40%   5.235GiB / 251.3GiB   2.08%     1.09kB / 0B   13.3GB / 6.65GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   402.92%   5.277GiB / 251.3GiB   2.10%     1.09kB / 0B   13.6GB / 6.65GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.28%   5.291GiB / 251.3GiB   2.11%     1.09kB / 0B   13.8GB / 6.65GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.22%   5.362GiB / 251.3GiB   2.13%     1.09kB / 0B   14.2GB / 6.91GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.67%   5.376GiB / 251.3GiB   2.14%     1.09kB / 0B   14.6GB / 6.91GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.20%   5.43GiB / 251.3GiB   2.16%     1.09kB / 0B   14.9GB / 7.34GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   404.50%   5.517GiB / 251.3GiB   2.20%     1.09kB / 0B   15.1GB / 7.34GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   404.42%   5.574GiB / 251.3GiB   2.22%     1.09kB / 0B   15.4GB / 7.47GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.67%   5.638GiB / 251.3GiB   2.24%     1.09kB / 0B   15.7GB / 7.47GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.83%   5.767GiB / 251.3GiB   2.29%     1.09kB / 0B   16.1GB / 8.12GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.64%   5.769GiB / 251.3GiB   2.30%     1.09kB / 0B   16.5GB / 8.12GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.98%   5.798GiB / 251.3GiB   2.31%     1.09kB / 0B   16.7GB / 8.67GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.06%   5.817GiB / 251.3GiB   2.31%     1.09kB / 0B   16.9GB / 8.67GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.66%   5.978GiB / 251.3GiB   2.38%     1.09kB / 0B   17.3GB / 9.16GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.61%   6.055GiB / 251.3GiB   2.41%     1.09kB / 0B   17.7GB / 9.16GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.02%   6.093GiB / 251.3GiB   2.42%     1.09kB / 0B   17.9GB / 9.75GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.64%   6.116GiB / 251.3GiB   2.43%     1.09kB / 0B   18.3GB / 9.75GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.01%   6.137GiB / 251.3GiB   2.44%     1.09kB / 0B   18.4GB / 10.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.61%   6.266GiB / 251.3GiB   2.49%     1.09kB / 0B   18.7GB / 10.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.72%   6.389GiB / 251.3GiB   2.54%     1.09kB / 0B   19.1GB / 10.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.60%   6.568GiB / 251.3GiB   2.61%     1.09kB / 0B   19.5GB / 10.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.11%   6.406GiB / 251.3GiB   2.55%     1.09kB / 0B   19.9GB / 11GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.94%   6.42GiB / 251.3GiB   2.55%     1.09kB / 0B   20.1GB / 11.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.19%   6.415GiB / 251.3GiB   2.55%     1.09kB / 0B   20.1GB / 11.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.83%   6.436GiB / 251.3GiB   2.56%     1.09kB / 0B   20.1GB / 11.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   395.87%   6.459GiB / 251.3GiB   2.57%     1.09kB / 0B   20.1GB / 11.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   404.30%   6.441GiB / 251.3GiB   2.56%     1.09kB / 0B   20.1GB / 14.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.27%   6.443GiB / 251.3GiB   2.56%     1.09kB / 0B   20.1GB / 15.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.05%   6.443GiB / 251.3GiB   2.56%     1.09kB / 0B   20.1GB / 16GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.11%   6.474GiB / 251.3GiB   2.58%     1.09kB / 0B   20.1GB / 16GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.40%   6.473GiB / 251.3GiB   2.58%     1.09kB / 0B   20.2GB / 18.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.59%   6.493GiB / 251.3GiB   2.58%     1.09kB / 0B   20.6GB / 18.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.54%   6.531GiB / 251.3GiB   2.60%     1.09kB / 0B   21GB / 19.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.92%   6.526GiB / 251.3GiB   2.60%     1.09kB / 0B   21.2GB / 19.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.58%   6.527GiB / 251.3GiB   2.60%     1.09kB / 0B   21.2GB / 19.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.24%   6.569GiB / 251.3GiB   2.61%     1.09kB / 0B   21.5GB / 19.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.44%   6.721GiB / 251.3GiB   2.67%     1.09kB / 0B   21.9GB / 19.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.56%   6.751GiB / 251.3GiB   2.69%     1.09kB / 0B   22.1GB / 19.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   402.03%   6.749GiB / 251.3GiB   2.69%     1.09kB / 0B   22.3GB / 19.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.38%   6.844GiB / 251.3GiB   2.72%     1.09kB / 0B   22.5GB / 19.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.27%   6.846GiB / 251.3GiB   2.72%     1.16kB / 0B   22.8GB / 19.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.57%   6.946GiB / 251.3GiB   2.76%     1.16kB / 0B   23.2GB / 19.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.71%   6.828GiB / 251.3GiB   2.72%     1.16kB / 0B   23.3GB / 19.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.94%   7.123GiB / 251.3GiB   2.83%     1.16kB / 0B   23.6GB / 19.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.29%   7.159GiB / 251.3GiB   2.85%     1.16kB / 0B   23.9GB / 19.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.32%   7.297GiB / 251.3GiB   2.90%     1.16kB / 0B   24GB / 19.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.39%   7.692GiB / 251.3GiB   3.06%     1.16kB / 0B   24GB / 20.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.18%   7.92GiB / 251.3GiB   3.15%     1.16kB / 0B   24GB / 20.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.16%   8.166GiB / 251.3GiB   3.25%     1.16kB / 0B   24.2GB / 20.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.19%   8.294GiB / 251.3GiB   3.30%     1.16kB / 0B   24.5GB / 20.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.38%   7.961GiB / 251.3GiB   3.17%     1.16kB / 0B   24.7GB / 21GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O     PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.53%   8.254GiB / 251.3GiB   3.28%     1.16kB / 0B   25GB / 21GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.06%   8.371GiB / 251.3GiB   3.33%     1.16kB / 0B   25.4GB / 21.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   396.66%   8.113GiB / 251.3GiB   3.23%     1.16kB / 0B   25.4GB / 21.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.72%   8.135GiB / 251.3GiB   3.24%     1.16kB / 0B   25.4GB / 22.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.16%   8.133GiB / 251.3GiB   3.24%     1.16kB / 0B   25.4GB / 23.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.18%   8.126GiB / 251.3GiB   3.23%     1.16kB / 0B   25.4GB / 25GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.30%   8.13GiB / 251.3GiB   3.24%     1.16kB / 0B   25.4GB / 25.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.05%   8.17GiB / 251.3GiB   3.25%     1.16kB / 0B   25.6GB / 26.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.47%   8.326GiB / 251.3GiB   3.31%     1.16kB / 0B   25.9GB / 26.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.42%   8.478GiB / 251.3GiB   3.37%     1.16kB / 0B   26.3GB / 27.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.03%   8.497GiB / 251.3GiB   3.38%     1.16kB / 0B   26.4GB / 27.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.60%   8.642GiB / 251.3GiB   3.44%     1.16kB / 0B   26.7GB / 27.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.17%   8.263GiB / 251.3GiB   3.29%     1.16kB / 0B   26.9GB / 27.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.19%   8.445GiB / 251.3GiB   3.36%     1.16kB / 0B   27.3GB / 27.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.70%   8.413GiB / 251.3GiB   3.35%     1.16kB / 0B   27.6GB / 27.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.29%   8.443GiB / 251.3GiB   3.36%     1.16kB / 0B   27.7GB / 27.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.46%   8.546GiB / 251.3GiB   3.40%     1.16kB / 0B   28.1GB / 27.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.42%   8.355GiB / 251.3GiB   3.32%     1.16kB / 0B   28.2GB / 27.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   395.27%   8.642GiB / 251.3GiB   3.44%     1.16kB / 0B   28.4GB / 27.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.06%   8.618GiB / 251.3GiB   3.43%     1.16kB / 0B   28.7GB / 27.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.31%   8.414GiB / 251.3GiB   3.35%     1.16kB / 0B   28.9GB / 27.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.24%   8.426GiB / 251.3GiB   3.35%     1.16kB / 0B   28.9GB / 28GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.93%   8.434GiB / 251.3GiB   3.36%     1.16kB / 0B   28.9GB / 29GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.82%   8.632GiB / 251.3GiB   3.43%     1.16kB / 0B   29GB / 30.6GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.97%   8.719GiB / 251.3GiB   3.47%     1.16kB / 0B   29.3GB / 30.6GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.44%   8.542GiB / 251.3GiB   3.40%     1.16kB / 0B   29.5GB / 30.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.01%   8.819GiB / 251.3GiB   3.51%     1.16kB / 0B   29.8GB / 30.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.35%   8.589GiB / 251.3GiB   3.42%     1.16kB / 0B   30GB / 30.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   403.05%   8.612GiB / 251.3GiB   3.43%     1.16kB / 0B   30.1GB / 30.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.46%   8.815GiB / 251.3GiB   3.51%     1.16kB / 0B   30.4GB / 30.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.83%   8.851GiB / 251.3GiB   3.52%     1.16kB / 0B   30.7GB / 30.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.63%   8.988GiB / 251.3GiB   3.58%     1.16kB / 0B   30.8GB / 30.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.84%   9.042GiB / 251.3GiB   3.60%     1.16kB / 0B   31.1GB / 30.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.78%   8.811GiB / 251.3GiB   3.51%     1.16kB / 0B   31.2GB / 30.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.83%   9.026GiB / 251.3GiB   3.59%     1.16kB / 0B   31.5GB / 30.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   396.35%   8.945GiB / 251.3GiB   3.56%     1.16kB / 0B   31.8GB / 30.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   392.88%   9.157GiB / 251.3GiB   3.64%     1.16kB / 0B   31.9GB / 30.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.92%   9.138GiB / 251.3GiB   3.64%     1.16kB / 0B   32.2GB / 30.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.07%   8.957GiB / 251.3GiB   3.56%     1.16kB / 0B   32.4GB / 31.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.83%   8.972GiB / 251.3GiB   3.57%     1.16kB / 0B   32.4GB / 31.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.96%   8.959GiB / 251.3GiB   3.57%     1.16kB / 0B   32.4GB / 33.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   396.00%   9.255GiB / 251.3GiB   3.68%     1.16kB / 0B   32.5GB / 33.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.02%   9.263GiB / 251.3GiB   3.69%     1.16kB / 0B   32.8GB / 33.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.00%   8.99GiB / 251.3GiB   3.58%     1.16kB / 0B   33GB / 33.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.51%   9.236GiB / 251.3GiB   3.68%     1.16kB / 0B   33.2GB / 33.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.82%   9.262GiB / 251.3GiB   3.69%     1.16kB / 0B   33.4GB / 33.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.00%   9.325GiB / 251.3GiB   3.71%     1.16kB / 0B   33.4GB / 33.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.24%   9.667GiB / 251.3GiB   3.85%     1.16kB / 0B   33.4GB / 33.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.84%   10GiB / 251.3GiB    3.98%     1.16kB / 0B   33.4GB / 33.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.67%   10.4GiB / 251.3GiB   4.14%     1.16kB / 0B   33.4GB / 33.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.69%   10.81GiB / 251.3GiB   4.30%     1.16kB / 0B   33.4GB / 33.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.47%   10.87GiB / 251.3GiB   4.33%     1.16kB / 0B   33.6GB / 33.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.79%   11.14GiB / 251.3GiB   4.43%     1.16kB / 0B   33.8GB / 33.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.63%   10.89GiB / 251.3GiB   4.33%     1.16kB / 0B   34GB / 33.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.06%   11.15GiB / 251.3GiB   4.44%     1.16kB / 0B   34.2GB / 34.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.14%   11.15GiB / 251.3GiB   4.44%     1.16kB / 0B   34.5GB / 34.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   402.60%   10.91GiB / 251.3GiB   4.34%     1.16kB / 0B   34.5GB / 34.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.05%   10.96GiB / 251.3GiB   4.36%     1.16kB / 0B   34.8GB / 34.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.31%   11.01GiB / 251.3GiB   4.38%     1.16kB / 0B   35GB / 34.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.49%   11.02GiB / 251.3GiB   4.38%     1.16kB / 0B   35GB / 34.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O     PIDS
+d4f33195fc7a   eloquent_zhukovsky   402.94%   11.02GiB / 251.3GiB   4.39%     1.16kB / 0B   35GB / 36GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O     PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.70%   11.02GiB / 251.3GiB   4.39%     1.16kB / 0B   35GB / 37GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.83%   11.21GiB / 251.3GiB   4.46%     1.16kB / 0B   35.3GB / 37.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.73%   11.28GiB / 251.3GiB   4.49%     1.16kB / 0B   35.7GB / 37.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.40%   11.35GiB / 251.3GiB   4.52%     1.16kB / 0B   35.8GB / 38.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.21%   11.33GiB / 251.3GiB   4.51%     1.16kB / 0B   36.1GB / 38.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.49%   11.29GiB / 251.3GiB   4.49%     1.16kB / 0B   36.2GB / 38.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.32%   11.4GiB / 251.3GiB   4.54%     1.16kB / 0B   36.4GB / 38.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.46%   11.36GiB / 251.3GiB   4.52%     1.16kB / 0B   36.7GB / 38.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.70%   11.45GiB / 251.3GiB   4.56%     1.16kB / 0B   36.8GB / 38.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.37%   11.32GiB / 251.3GiB   4.50%     1.16kB / 0B   37.1GB / 38.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.14%   11.34GiB / 251.3GiB   4.51%     1.16kB / 0B   37.3GB / 38.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.90%   11.52GiB / 251.3GiB   4.58%     1.16kB / 0B   37.5GB / 38.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.76%   11.33GiB / 251.3GiB   4.51%     1.16kB / 0B   37.7GB / 38.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.63%   11.57GiB / 251.3GiB   4.60%     1.16kB / 0B   37.9GB / 38.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.12%   11.67GiB / 251.3GiB   4.64%     1.16kB / 0B   38GB / 38.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.93%   11.57GiB / 251.3GiB   4.60%     1.16kB / 0B   38.2GB / 38.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.15%   11.71GiB / 251.3GiB   4.66%     1.16kB / 0B   38.4GB / 38.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.43%   11.64GiB / 251.3GiB   4.63%     1.16kB / 0B   38.4GB / 39.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.25%   11.65GiB / 251.3GiB   4.64%     1.16kB / 0B   38.4GB / 39.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.38%   11.81GiB / 251.3GiB   4.70%     1.16kB / 0B   38.5GB / 41.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.72%   11.63GiB / 251.3GiB   4.63%     1.16kB / 0B   38.7GB / 41.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   402.30%   11.8GiB / 251.3GiB   4.70%     1.16kB / 0B   38.9GB / 41.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.22%   11.81GiB / 251.3GiB   4.70%     1.16kB / 0B   39.1GB / 41.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.17%   11.85GiB / 251.3GiB   4.72%     1.16kB / 0B   39.3GB / 41.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.84%   11.85GiB / 251.3GiB   4.71%     1.16kB / 0B   39.6GB / 41.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.98%   11.9GiB / 251.3GiB   4.73%     1.16kB / 0B   39.7GB / 41.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.11%   12GiB / 251.3GiB    4.77%     1.16kB / 0B   39.9GB / 41.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.65%   11.87GiB / 251.3GiB   4.72%     1.16kB / 0B   40.2GB / 41.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.92%   12.09GiB / 251.3GiB   4.81%     1.16kB / 0B   40.3GB / 41.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.34%   12GiB / 251.3GiB    4.77%     1.16kB / 0B   40.5GB / 41.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.57%   11.89GiB / 251.3GiB   4.73%     1.16kB / 0B   40.8GB / 41.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   393.98%   12.01GiB / 251.3GiB   4.78%     1.16kB / 0B   40.9GB / 41.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.82%   12.19GiB / 251.3GiB   4.85%     1.16kB / 0B   41GB / 41.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.57%   12.77GiB / 251.3GiB   5.08%     1.16kB / 0B   41GB / 41.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.23%   13.35GiB / 251.3GiB   5.31%     1.16kB / 0B   41GB / 41.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.33%   13.93GiB / 251.3GiB   5.54%     1.16kB / 0B   41GB / 42.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.91%   14.41GiB / 251.3GiB   5.73%     1.16kB / 0B   41.2GB / 42.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   403.56%   14.29GiB / 251.3GiB   5.69%     1.16kB / 0B   41.2GB / 42.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.10%   14.31GiB / 251.3GiB   5.69%     1.16kB / 0B   41.2GB / 42.6GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.27%   14.32GiB / 251.3GiB   5.70%     1.23kB / 0B   41.2GB / 43.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.31%   14.32GiB / 251.3GiB   5.70%     1.23kB / 0B   41.3GB / 44.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.21%   14.43GiB / 251.3GiB   5.74%     1.23kB / 0B   41.6GB / 44.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.05%   14.39GiB / 251.3GiB   5.72%     1.23kB / 0B   41.8GB / 44.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.36%   14.34GiB / 251.3GiB   5.71%     1.23kB / 0B   41.8GB / 44.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.22%   14.44GiB / 251.3GiB   5.74%     1.23kB / 0B   42.1GB / 44.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.31%   14.58GiB / 251.3GiB   5.80%     1.23kB / 0B   42.3GB / 44.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.24%   14.52GiB / 251.3GiB   5.78%     1.23kB / 0B   42.5GB / 45GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   402.28%   14.6GiB / 251.3GiB   5.81%     1.23kB / 0B   42.6GB / 45GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.27%   14.49GiB / 251.3GiB   5.77%     1.23kB / 0B   42.8GB / 45.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.28%   14.49GiB / 251.3GiB   5.77%     1.23kB / 0B   43GB / 45.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   396.20%   14.7GiB / 251.3GiB   5.85%     1.23kB / 0B   43.2GB / 45.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   395.23%   14.73GiB / 251.3GiB   5.86%     1.23kB / 0B   43.4GB / 45.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.85%   14.65GiB / 251.3GiB   5.83%     1.23kB / 0B   43.6GB / 45.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.74%   14.71GiB / 251.3GiB   5.85%     1.23kB / 0B   43.7GB / 45.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.99%   14.86GiB / 251.3GiB   5.91%     1.23kB / 0B   43.9GB / 45.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.31%   14.72GiB / 251.3GiB   5.86%     1.23kB / 0B   44.1GB / 45.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.08%   14.65GiB / 251.3GiB   5.83%     1.23kB / 0B   44.2GB / 46GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.50%   14.88GiB / 251.3GiB   5.92%     1.23kB / 0B   44.5GB / 46GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.21%   14.78GiB / 251.3GiB   5.88%     1.23kB / 0B   44.7GB / 46GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.59%   15.09GiB / 251.3GiB   6.01%     1.23kB / 0B   44.7GB / 46GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.15%   15.4GiB / 251.3GiB   6.13%     1.23kB / 0B   44.7GB / 46.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.18%   15.72GiB / 251.3GiB   6.25%     1.23kB / 0B   44.7GB / 46.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.68%   16GiB / 251.3GiB    6.37%     1.23kB / 0B   44.8GB / 46.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   395.30%   15.97GiB / 251.3GiB   6.35%     1.23kB / 0B   44.8GB / 46.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.85%   15.99GiB / 251.3GiB   6.36%     1.23kB / 0B   44.8GB / 46.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.57%   15.96GiB / 251.3GiB   6.35%     1.23kB / 0B   44.8GB / 49GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O     PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.83%   16.08GiB / 251.3GiB   6.40%     1.23kB / 0B   45GB / 49GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.69%   16.34GiB / 251.3GiB   6.50%     1.23kB / 0B   45.2GB / 49GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.82%   16.17GiB / 251.3GiB   6.43%     1.23kB / 0B   45.4GB / 49.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.95%   16.36GiB / 251.3GiB   6.51%     1.23kB / 0B   45.5GB / 49.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.59%   16.25GiB / 251.3GiB   6.47%     1.23kB / 0B   45.7GB / 49.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   396.78%   16.16GiB / 251.3GiB   6.43%     1.23kB / 0B   46GB / 49.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.68%   16.31GiB / 251.3GiB   6.49%     1.23kB / 0B   46.2GB / 49.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.44%   16.12GiB / 251.3GiB   6.42%     1.23kB / 0B   46.4GB / 49.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.86%   16.09GiB / 251.3GiB   6.40%     1.23kB / 0B   46.6GB / 49.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.53%   16.23GiB / 251.3GiB   6.46%     1.23kB / 0B   46.7GB / 49.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   396.86%   16.14GiB / 251.3GiB   6.42%     1.23kB / 0B   46.8GB / 49.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.87%   16.23GiB / 251.3GiB   6.46%     1.23kB / 0B   47.1GB / 49.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.30%   16.29GiB / 251.3GiB   6.48%     1.23kB / 0B   47.3GB / 49.6GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.76%   16.43GiB / 251.3GiB   6.54%     1.23kB / 0B   47.3GB / 49.6GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.58%   16.56GiB / 251.3GiB   6.59%     1.23kB / 0B   47.3GB / 49.6GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.24%   16.7GiB / 251.3GiB   6.65%     1.23kB / 0B   47.3GB / 49.6GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.40%   16.85GiB / 251.3GiB   6.70%     1.23kB / 0B   47.3GB / 50.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.62%   16.86GiB / 251.3GiB   6.71%     1.23kB / 0B   47.4GB / 50.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.29%   17.06GiB / 251.3GiB   6.79%     1.23kB / 0B   47.6GB / 50.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.00%   16.95GiB / 251.3GiB   6.74%     1.23kB / 0B   47.8GB / 50.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.37%   17.01GiB / 251.3GiB   6.77%     1.23kB / 0B   48GB / 50.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.84%   16.94GiB / 251.3GiB   6.74%     1.23kB / 0B   48.2GB / 50.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.99%   17.03GiB / 251.3GiB   6.78%     1.23kB / 0B   48.3GB / 51GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.70%   17.02GiB / 251.3GiB   6.77%     1.23kB / 0B   48.5GB / 51GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.00%   17.01GiB / 251.3GiB   6.77%     1.23kB / 0B   48.8GB / 51GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.58%   17.02GiB / 251.3GiB   6.77%     1.23kB / 0B   48.8GB / 51GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.08%   17.02GiB / 251.3GiB   6.77%     1.23kB / 0B   48.8GB / 52.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   404.07%   17.02GiB / 251.3GiB   6.77%     1.23kB / 0B   48.8GB / 53.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.73%   17.01GiB / 251.3GiB   6.77%     1.23kB / 0B   48.9GB / 53.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.06%   16.98GiB / 251.3GiB   6.76%     1.23kB / 0B   49GB / 53.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.79%   17.19GiB / 251.3GiB   6.84%     1.23kB / 0B   49.3GB / 53.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.60%   17.06GiB / 251.3GiB   6.79%     1.23kB / 0B   49.5GB / 53.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.19%   17.07GiB / 251.3GiB   6.79%     1.23kB / 0B   49.7GB / 53.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.82%   17.21GiB / 251.3GiB   6.85%     1.23kB / 0B   49.8GB / 53.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.41%   17.18GiB / 251.3GiB   6.84%     1.23kB / 0B   49.9GB / 53.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.25%   17.3GiB / 251.3GiB   6.89%     1.23kB / 0B   49.9GB / 54GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.24%   17.43GiB / 251.3GiB   6.93%     1.23kB / 0B   49.9GB / 54GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.16%   17.55GiB / 251.3GiB   6.98%     1.23kB / 0B   49.9GB / 54GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.09%   17.72GiB / 251.3GiB   7.05%     1.23kB / 0B   49.9GB / 54GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.27%   17.76GiB / 251.3GiB   7.07%     1.23kB / 0B   50.1GB / 54GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.46%   17.73GiB / 251.3GiB   7.06%     1.23kB / 0B   50.3GB / 54GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.00%   17.82GiB / 251.3GiB   7.09%     1.23kB / 0B   50.5GB / 54.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.33%   17.72GiB / 251.3GiB   7.05%     1.23kB / 0B   50.7GB / 54.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.67%   17.8GiB / 251.3GiB   7.08%     1.23kB / 0B   50.9GB / 54.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.47%   17.76GiB / 251.3GiB   7.07%     1.23kB / 0B   51GB / 54.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.53%   17.91GiB / 251.3GiB   7.13%     1.23kB / 0B   51.2GB / 54.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.14%   17.86GiB / 251.3GiB   7.11%     1.23kB / 0B   51.4GB / 54.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   395.02%   17.91GiB / 251.3GiB   7.13%     1.23kB / 0B   51.6GB / 55GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.69%   17.88GiB / 251.3GiB   7.12%     1.23kB / 0B   51.7GB / 55GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.35%   17.94GiB / 251.3GiB   7.14%     1.23kB / 0B   51.9GB / 55.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.61%   17.9GiB / 251.3GiB   7.12%     1.23kB / 0B   52.1GB / 55.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.93%   17.88GiB / 251.3GiB   7.11%     1.23kB / 0B   52.3GB / 55.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.03%   17.89GiB / 251.3GiB   7.12%     1.23kB / 0B   52.3GB / 55.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.99%   17.9GiB / 251.3GiB   7.12%     1.23kB / 0B   52.3GB / 56.6GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.25%   17.89GiB / 251.3GiB   7.12%     1.23kB / 0B   52.3GB / 57.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.80%   17.91GiB / 251.3GiB   7.13%     1.23kB / 0B   52.5GB / 58.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.56%   18.06GiB / 251.3GiB   7.19%     1.23kB / 0B   52.5GB / 58.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.47%   18.2GiB / 251.3GiB   7.24%     1.23kB / 0B   52.5GB / 58.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.33%   18.34GiB / 251.3GiB   7.30%     1.23kB / 0B   52.5GB / 58.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.58%   18.48GiB / 251.3GiB   7.35%     1.23kB / 0B   52.5GB / 58.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.43%   18.65GiB / 251.3GiB   7.42%     1.23kB / 0B   52.5GB / 58.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.38%   18.78GiB / 251.3GiB   7.47%     1.23kB / 0B   52.7GB / 58.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.19%   18.75GiB / 251.3GiB   7.46%     1.23kB / 0B   52.9GB / 58.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.11%   18.76GiB / 251.3GiB   7.47%     1.23kB / 0B   53GB / 58.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.72%   18.76GiB / 251.3GiB   7.47%     1.23kB / 0B   53.2GB / 58.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.82%   18.74GiB / 251.3GiB   7.46%     1.23kB / 0B   53.4GB / 58.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.48%   18.75GiB / 251.3GiB   7.46%     1.23kB / 0B   53.6GB / 58.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.20%   18.82GiB / 251.3GiB   7.49%     1.23kB / 0B   53.8GB / 58.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   396.23%   18.83GiB / 251.3GiB   7.49%     1.23kB / 0B   54GB / 58.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.94%   18.78GiB / 251.3GiB   7.47%     1.23kB / 0B   54.2GB / 58.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.32%   18.86GiB / 251.3GiB   7.51%     1.23kB / 0B   54.3GB / 58.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.63%   18.92GiB / 251.3GiB   7.53%     1.23kB / 0B   54.4GB / 58.6GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.90%   18.99GiB / 251.3GiB   7.56%     1.23kB / 0B   54.7GB / 58.6GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.62%   18.99GiB / 251.3GiB   7.56%     1.23kB / 0B   54.9GB / 58.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.48%   18.97GiB / 251.3GiB   7.55%     1.23kB / 0B   55GB / 58.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.01%   18.99GiB / 251.3GiB   7.55%     1.23kB / 0B   55.2GB / 59.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.43%   19.04GiB / 251.3GiB   7.57%     1.23kB / 0B   55.5GB / 59.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.80%   19.01GiB / 251.3GiB   7.56%     1.23kB / 0B   55.7GB / 59.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.85%   19.02GiB / 251.3GiB   7.57%     1.23kB / 0B   55.7GB / 59.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   396.99%   19.03GiB / 251.3GiB   7.57%     1.23kB / 0B   55.7GB / 60.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   404.77%   19.08GiB / 251.3GiB   7.59%     1.23kB / 0B   55.8GB / 61.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.09%   19.12GiB / 251.3GiB   7.61%     1.23kB / 0B   55.8GB / 62GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.44%   19.25GiB / 251.3GiB   7.66%     1.23kB / 0B   55.8GB / 62GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.18%   19.38GiB / 251.3GiB   7.71%     1.23kB / 0B   55.8GB / 62GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.08%   19.52GiB / 251.3GiB   7.77%     1.23kB / 0B   55.8GB / 62GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.40%   19.65GiB / 251.3GiB   7.82%     1.23kB / 0B   55.8GB / 62GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.98%   19.74GiB / 251.3GiB   7.85%     1.23kB / 0B   55.8GB / 62GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.73%   19.81GiB / 251.3GiB   7.88%     1.23kB / 0B   56.1GB / 62.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.85%   19.68GiB / 251.3GiB   7.83%     1.23kB / 0B   56.3GB / 62.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.84%   19.84GiB / 251.3GiB   7.90%     1.23kB / 0B   56.4GB / 62.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.21%   19.83GiB / 251.3GiB   7.89%     1.23kB / 0B   56.5GB / 62.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   402.21%   19.89GiB / 251.3GiB   7.91%     1.23kB / 0B   56.7GB / 62.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.24%   19.96GiB / 251.3GiB   7.94%     1.23kB / 0B   56.9GB / 62.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.72%   19.94GiB / 251.3GiB   7.93%     1.23kB / 0B   57.1GB / 62.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.12%   19.94GiB / 251.3GiB   7.94%     1.23kB / 0B   57.2GB / 62.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.42%   20GiB / 251.3GiB    7.96%     1.23kB / 0B   57.5GB / 62.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.83%   20.01GiB / 251.3GiB   7.96%     1.23kB / 0B   57.7GB / 62.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.01%   20.1GiB / 251.3GiB   8.00%     1.23kB / 0B   57.7GB / 62.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.68%   20.22GiB / 251.3GiB   8.05%     1.23kB / 0B   57.9GB / 62.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.95%   20.01GiB / 251.3GiB   7.96%     1.23kB / 0B   58.1GB / 62.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.61%   20.22GiB / 251.3GiB   8.05%     1.23kB / 0B   58.3GB / 62.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.11%   20.24GiB / 251.3GiB   8.05%     1.23kB / 0B   58.5GB / 62.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.35%   20.22GiB / 251.3GiB   8.05%     1.23kB / 0B   58.7GB / 62.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.40%   20.32GiB / 251.3GiB   8.09%     1.23kB / 0B   59GB / 62.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.89%   20.22GiB / 251.3GiB   8.05%     1.23kB / 0B   59.2GB / 63GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.61%   20.1GiB / 251.3GiB   8.00%     1.23kB / 0B   59.2GB / 63GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.21%   20.08GiB / 251.3GiB   7.99%     1.23kB / 0B   59.2GB / 64.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.08%   20.12GiB / 251.3GiB   8.00%     1.23kB / 0B   59.2GB / 65.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.96%   20.23GiB / 251.3GiB   8.05%     1.23kB / 0B   59.2GB / 65.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.74%   20.33GiB / 251.3GiB   8.09%     1.23kB / 0B   59.2GB / 65.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.50%   20.44GiB / 251.3GiB   8.13%     1.23kB / 0B   59.2GB / 65.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.66%   20.55GiB / 251.3GiB   8.18%     1.23kB / 0B   59.2GB / 65.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.00%   20.66GiB / 251.3GiB   8.22%     1.23kB / 0B   59.2GB / 65.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.27%   20.73GiB / 251.3GiB   8.25%     1.23kB / 0B   59.3GB / 65.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.82%   20.94GiB / 251.3GiB   8.33%     1.23kB / 0B   59.5GB / 65.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.95%   20.78GiB / 251.3GiB   8.27%     1.23kB / 0B   59.6GB / 65.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.52%   20.84GiB / 251.3GiB   8.29%     1.23kB / 0B   59.8GB / 65.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.09%   21.02GiB / 251.3GiB   8.36%     1.23kB / 0B   60GB / 65.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.50%   20.99GiB / 251.3GiB   8.35%     1.23kB / 0B   60.1GB / 65.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.88%   21.02GiB / 251.3GiB   8.36%     1.23kB / 0B   60.3GB / 65.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.09%   21.07GiB / 251.3GiB   8.38%     1.23kB / 0B   60.6GB / 65.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   402.29%   20.95GiB / 251.3GiB   8.33%     1.23kB / 0B   60.6GB / 65.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.41%   20.97GiB / 251.3GiB   8.34%     1.23kB / 0B   60.9GB / 65.6GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.37%   21.11GiB / 251.3GiB   8.40%     1.23kB / 0B   61.1GB / 65.6GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.13%   21.18GiB / 251.3GiB   8.43%     1.23kB / 0B   61.2GB / 65.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.03%   21.16GiB / 251.3GiB   8.42%     1.23kB / 0B   61.4GB / 65.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.34%   20.96GiB / 251.3GiB   8.34%     1.23kB / 0B   61.5GB / 65.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.11%   20.98GiB / 251.3GiB   8.35%     1.23kB / 0B   61.6GB / 65.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.33%   20.99GiB / 251.3GiB   8.35%     1.23kB / 0B   61.6GB / 66.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.83%   20.99GiB / 251.3GiB   8.35%     1.23kB / 0B   61.6GB / 67.6GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.84%   21.09GiB / 251.3GiB   8.39%     1.23kB / 0B   61.8GB / 68GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   395.81%   21.24GiB / 251.3GiB   8.45%     1.23kB / 0B   62.1GB / 68GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.32%   21.09GiB / 251.3GiB   8.39%     1.23kB / 0B   62.1GB / 68GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.66%   21.19GiB / 251.3GiB   8.43%     1.23kB / 0B   62.1GB / 68GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.09%   21.29GiB / 251.3GiB   8.47%     1.23kB / 0B   62.1GB / 68GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.11%   21.38GiB / 251.3GiB   8.51%     1.23kB / 0B   62.1GB / 68GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.36%   21.48GiB / 251.3GiB   8.55%     1.23kB / 0B   62.1GB / 68GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.51%   21.58GiB / 251.3GiB   8.59%     1.23kB / 0B   62.1GB / 68GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.74%   21.61GiB / 251.3GiB   8.60%     1.23kB / 0B   62.1GB / 68.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.40%   21.83GiB / 251.3GiB   8.68%     1.23kB / 0B   62.3GB / 68.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.33%   21.75GiB / 251.3GiB   8.66%     1.23kB / 0B   62.5GB / 68.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.39%   21.83GiB / 251.3GiB   8.68%     1.23kB / 0B   62.6GB / 68.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.71%   21.9GiB / 251.3GiB   8.71%     1.23kB / 0B   62.8GB / 68.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   402.24%   21.89GiB / 251.3GiB   8.71%     1.23kB / 0B   63GB / 68.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.31%   21.87GiB / 251.3GiB   8.70%     1.23kB / 0B   63.1GB / 68.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.88%   21.88GiB / 251.3GiB   8.71%     1.23kB / 0B   63.2GB / 68.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.72%   21.93GiB / 251.3GiB   8.73%     1.23kB / 0B   63.4GB / 68.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.38%   21.97GiB / 251.3GiB   8.74%     1.23kB / 0B   63.6GB / 68.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.75%   22GiB / 251.3GiB    8.75%     1.23kB / 0B   63.8GB / 68.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.94%   22.03GiB / 251.3GiB   8.76%     1.23kB / 0B   64.1GB / 68.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.51%   22GiB / 251.3GiB    8.75%     1.23kB / 0B   64.3GB / 68.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.35%   22.05GiB / 251.3GiB   8.77%     1.23kB / 0B   64.5GB / 68.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.69%   22.09GiB / 251.3GiB   8.79%     1.23kB / 0B   64.8GB / 68.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.08%   22.03GiB / 251.3GiB   8.77%     1.23kB / 0B   64.8GB / 68.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.40%   22.02GiB / 251.3GiB   8.76%     1.23kB / 0B   64.8GB / 70.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.78%   22.03GiB / 251.3GiB   8.77%     1.23kB / 0B   64.9GB / 71GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.17%   22.11GiB / 251.3GiB   8.80%     1.23kB / 0B   64.9GB / 71.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.32%   22.19GiB / 251.3GiB   8.83%     1.23kB / 0B   64.9GB / 71.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.57%   22.28GiB / 251.3GiB   8.86%     1.23kB / 0B   64.9GB / 71.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.53%   22.36GiB / 251.3GiB   8.90%     1.23kB / 0B   64.9GB / 71.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.16%   22.44GiB / 251.3GiB   8.93%     1.23kB / 0B   64.9GB / 71.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.24%   22.52GiB / 251.3GiB   8.96%     1.23kB / 0B   64.9GB / 71.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.57%   22.56GiB / 251.3GiB   8.98%     1.23kB / 0B   64.9GB / 71.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.20%   22.56GiB / 251.3GiB   8.98%     1.23kB / 0B   65.1GB / 71.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.00%   22.6GiB / 251.3GiB   8.99%     1.23kB / 0B   65.3GB / 71.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   396.12%   22.6GiB / 251.3GiB   8.99%     1.23kB / 0B   65.5GB / 71.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   402.32%   22.57GiB / 251.3GiB   8.98%     1.23kB / 0B   65.5GB / 71.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.52%   22.61GiB / 251.3GiB   9.00%     1.23kB / 0B   65.7GB / 71.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.48%   22.71GiB / 251.3GiB   9.04%     1.23kB / 0B   65.9GB / 71.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.90%   22.73GiB / 251.3GiB   9.04%     1.23kB / 0B   66.1GB / 71.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.10%   22.73GiB / 251.3GiB   9.04%     1.23kB / 0B   66.2GB / 71.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.73%   22.74GiB / 251.3GiB   9.05%     1.23kB / 0B   66.4GB / 71.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.02%   22.79GiB / 251.3GiB   9.07%     1.23kB / 0B   66.5GB / 71.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.16%   22.77GiB / 251.3GiB   9.06%     1.23kB / 0B   66.7GB / 71.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.30%   22.93GiB / 251.3GiB   9.12%     1.23kB / 0B   66.9GB / 71.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.11%   22.94GiB / 251.3GiB   9.13%     1.23kB / 0B   67.1GB / 71.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.12%   22.85GiB / 251.3GiB   9.09%     1.23kB / 0B   67.3GB / 71.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.36%   22.93GiB / 251.3GiB   9.13%     1.23kB / 0B   67.6GB / 71.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.68%   22.93GiB / 251.3GiB   9.13%     1.23kB / 0B   67.9GB / 71.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.56%   22.82GiB / 251.3GiB   9.08%     1.23kB / 0B   68GB / 72.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.98%   22.82GiB / 251.3GiB   9.08%     1.23kB / 0B   68GB / 72.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O     PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.66%   22.82GiB / 251.3GiB   9.08%     1.23kB / 0B   68GB / 74GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.24%   22.85GiB / 251.3GiB   9.09%     1.23kB / 0B   68GB / 74.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.40%   22.93GiB / 251.3GiB   9.13%     1.23kB / 0B   68GB / 74.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.09%   23.01GiB / 251.3GiB   9.16%     1.23kB / 0B   68GB / 74.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.76%   23.09GiB / 251.3GiB   9.19%     1.23kB / 0B   68GB / 74.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.67%   23.17GiB / 251.3GiB   9.22%     1.23kB / 0B   68GB / 74.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.19%   23.25GiB / 251.3GiB   9.25%     1.23kB / 0B   68GB / 74.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.67%   23.34GiB / 251.3GiB   9.29%     1.23kB / 0B   68GB / 74.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.13%   23.42GiB / 251.3GiB   9.32%     1.23kB / 0B   68.1GB / 74.6GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.09%   23.36GiB / 251.3GiB   9.29%     1.23kB / 0B   68.3GB / 74.6GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.69%   23.62GiB / 251.3GiB   9.40%     1.23kB / 0B   68.4GB / 74.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.81%   23.57GiB / 251.3GiB   9.38%     1.23kB / 0B   68.5GB / 74.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.16%   23.52GiB / 251.3GiB   9.36%     1.23kB / 0B   68.7GB / 74.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.81%   23.6GiB / 251.3GiB   9.39%     1.3kB / 0B   68.9GB / 74.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.36%   23.59GiB / 251.3GiB   9.39%     1.3kB / 0B   69.1GB / 74.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   394.46%   23.54GiB / 251.3GiB   9.37%     1.3kB / 0B   69.2GB / 74.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.07%   23.63GiB / 251.3GiB   9.40%     1.3kB / 0B   69.4GB / 74.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.16%   23.7GiB / 251.3GiB   9.43%     1.3kB / 0B   69.6GB / 74.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.05%   23.53GiB / 251.3GiB   9.36%     1.3kB / 0B   69.7GB / 74.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.85%   23.88GiB / 251.3GiB   9.50%     1.3kB / 0B   69.9GB / 74.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.65%   23.68GiB / 251.3GiB   9.42%     1.3kB / 0B   70.1GB / 75GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   396.49%   23.88GiB / 251.3GiB   9.50%     1.3kB / 0B   70.3GB / 75GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.76%   23.75GiB / 251.3GiB   9.45%     1.3kB / 0B   70.5GB / 75.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.04%   23.66GiB / 251.3GiB   9.41%     1.3kB / 0B   70.6GB / 75.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.59%   23.67GiB / 251.3GiB   9.42%     1.3kB / 0B   70.6GB / 75.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.78%   23.68GiB / 251.3GiB   9.42%     1.3kB / 0B   70.6GB / 76.4GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.43%   23.63GiB / 251.3GiB   9.40%     1.3kB / 0B   70.7GB / 77.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.70%   23.97GiB / 251.3GiB   9.54%     1.3kB / 0B   70.9GB / 77.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.43%   23.79GiB / 251.3GiB   9.47%     1.3kB / 0B   71.1GB / 77.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.63%   24.01GiB / 251.3GiB   9.55%     1.3kB / 0B   71.2GB / 77.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.52%   23.86GiB / 251.3GiB   9.49%     1.3kB / 0B   71.3GB / 77.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.57%   23.94GiB / 251.3GiB   9.53%     1.3kB / 0B   71.3GB / 77.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.13%   24.02GiB / 251.3GiB   9.56%     1.3kB / 0B   71.3GB / 77.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.47%   24.1GiB / 251.3GiB   9.59%     1.3kB / 0B   71.3GB / 77.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.09%   24.19GiB / 251.3GiB   9.62%     1.3kB / 0B   71.3GB / 77.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.61%   24.27GiB / 251.3GiB   9.66%     1.3kB / 0B   71.3GB / 77.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.87%   24.35GiB / 251.3GiB   9.69%     1.3kB / 0B   71.3GB / 77.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.56%   24.59GiB / 251.3GiB   9.79%     1.3kB / 0B   71.4GB / 77.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   402.48%   24.43GiB / 251.3GiB   9.72%     1.3kB / 0B   71.5GB / 77.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.64%   24.44GiB / 251.3GiB   9.73%     1.3kB / 0B   71.6GB / 77.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.56%   24.69GiB / 251.3GiB   9.82%     1.3kB / 0B   71.8GB / 78.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O       PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.21%   24.79GiB / 251.3GiB   9.87%     1.3kB / 0B   72GB / 78.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.36%   24.58GiB / 251.3GiB   9.78%     1.3kB / 0B   72.2GB / 78.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.65%   24.68GiB / 251.3GiB   9.82%     1.3kB / 0B   72.3GB / 78.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.45%   24.64GiB / 251.3GiB   9.80%     1.3kB / 0B   72.5GB / 78.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.01%   24.65GiB / 251.3GiB   9.81%     1.3kB / 0B   72.6GB / 78.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.69%   24.73GiB / 251.3GiB   9.84%     1.3kB / 0B   72.7GB / 78.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.01%   24.63GiB / 251.3GiB   9.80%     1.3kB / 0B   72.9GB / 78.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.85%   24.64GiB / 251.3GiB   9.80%     1.3kB / 0B   73.1GB / 78.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.44%   24.64GiB / 251.3GiB   9.81%     1.3kB / 0B   73.2GB / 78.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.53%   24.74GiB / 251.3GiB   9.84%     1.3kB / 0B   73.4GB / 78.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.33%   24.76GiB / 251.3GiB   9.85%     1.3kB / 0B   73.7GB / 78.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.60%   24.68GiB / 251.3GiB   9.82%     1.3kB / 0B   73.8GB / 78.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   403.23%   24.69GiB / 251.3GiB   9.82%     1.3kB / 0B   73.8GB / 79.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   403.35%   24.68GiB / 251.3GiB   9.82%     1.3kB / 0B   73.8GB / 80.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.76%   24.74GiB / 251.3GiB   9.84%     1.3kB / 0B   73.8GB / 81.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.20%   24.81GiB / 251.3GiB   9.87%     1.3kB / 0B   73.8GB / 81.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.09%   24.88GiB / 251.3GiB   9.90%     1.3kB / 0B   73.8GB / 81.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.18%   24.95GiB / 251.3GiB   9.93%     1.3kB / 0B   73.8GB / 81.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.92%   25.02GiB / 251.3GiB   9.96%     1.3kB / 0B   73.8GB / 81.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.68%   25.1GiB / 251.3GiB   9.99%     1.3kB / 0B   73.8GB / 81.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.16%   25.17GiB / 251.3GiB   10.02%    1.3kB / 0B   73.8GB / 81.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.68%   25.24GiB / 251.3GiB   10.05%    1.3kB / 0B   73.8GB / 81.1GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.99%   25.25GiB / 251.3GiB   10.05%    1.3kB / 0B   73.8GB / 81.3GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.63%   25.25GiB / 251.3GiB   10.05%    1.3kB / 0B   73.8GB / 81.5GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.35%   25.25GiB / 251.3GiB   10.05%    1.3kB / 0B   73.8GB / 81.6GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   402.45%   25.27GiB / 251.3GiB   10.06%    1.3kB / 0B   73.8GB / 81.6GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.90%   25.08GiB / 251.3GiB   9.98%     1.3kB / 0B   73.8GB / 81.6GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.16%   25.28GiB / 251.3GiB   10.06%    1.3kB / 0B   73.8GB / 81.6GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.66%   25.28GiB / 251.3GiB   10.06%    1.3kB / 0B   73.8GB / 81.6GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.25%   25.29GiB / 251.3GiB   10.06%    1.3kB / 0B   73.8GB / 81.6GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.58%   25.37GiB / 251.3GiB   10.09%    1.3kB / 0B   73.8GB / 81.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.25%   25.45GiB / 251.3GiB   10.13%    1.3kB / 0B   73.8GB / 81.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.48%   25.53GiB / 251.3GiB   10.16%    1.3kB / 0B   73.8GB / 81.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.57%   25.6GiB / 251.3GiB   10.19%    1.3kB / 0B   73.8GB / 81.7GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.21%   25.68GiB / 251.3GiB   10.22%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.41%   25.76GiB / 251.3GiB   10.25%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.91%   25.84GiB / 251.3GiB   10.28%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   402.33%   25.87GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.70%   25.69GiB / 251.3GiB   10.22%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.86%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.68%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.51%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.8GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.27%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.71%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.35%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.35%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.11%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.03%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.02%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.60%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.19%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.59%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.36%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.28%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.19%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.18%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.26%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.84%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.94%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.67%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.86%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.26%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.34%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.43%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.02%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.18%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.43%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.94%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.05%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.03%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.51%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.54%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.86%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.43%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.43%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.86%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.86%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.43%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.35%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.11%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.09%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.76%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.03%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.68%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.51%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.77%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.95%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.35%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.60%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.60%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.11%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.46%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.51%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.43%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.60%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.94%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.43%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.59%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.28%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.71%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.31%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.34%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.86%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.85%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.94%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.17%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.58%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.70%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.02%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.43%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.34%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.27%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.71%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.11%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.51%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.20%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.43%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.71%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.51%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.02%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.71%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.03%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.86%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.27%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.26%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.60%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.78%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.77%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.68%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.51%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.63%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.01%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.60%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.76%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.78%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.06%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.35%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.76%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.28%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.86%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.03%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.26%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.51%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.77%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.26%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.19%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.59%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.34%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.94%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.27%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.79%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.86%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.51%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.79%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.34%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.51%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.19%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.21%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.94%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.18%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.43%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.31%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.94%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.86%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.59%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.02%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.43%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.94%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.10%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.51%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.78%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.18%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.51%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.53%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.52%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.51%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.43%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.86%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.60%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.86%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.60%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.34%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.20%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.20%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.51%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.10%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.35%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.68%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.68%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.94%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.03%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.76%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.85%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.11%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.68%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.51%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.70%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.18%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.11%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.51%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.54%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.18%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.76%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.26%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.51%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.77%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.26%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.34%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.02%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.26%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.51%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.02%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.27%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.00%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.59%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.57%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   397.81%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.35%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.03%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.85%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.18%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.10%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.26%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.26%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.43%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.54%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.86%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.43%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.34%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.51%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.43%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.28%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.77%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.86%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.34%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.03%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.03%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.11%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.43%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.03%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.77%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.60%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.51%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.68%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.03%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.71%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.59%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.67%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.94%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.86%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.43%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.94%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.26%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.19%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.51%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.34%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.34%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.10%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.69%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.51%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.35%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.71%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.77%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.26%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.60%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.03%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.42%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.19%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.68%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.03%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.86%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.10%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.68%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.26%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.94%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.86%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.68%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.59%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.03%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.78%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.18%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.26%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.68%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.94%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.43%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.34%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.43%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.11%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.02%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.51%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.87%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.03%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.95%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.43%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.87%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.94%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.69%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.10%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.52%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.79%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.78%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.35%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.20%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.20%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.03%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.29%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   398.87%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.20%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.11%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.11%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.60%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.76%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.86%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.37%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.43%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.51%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.87%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.68%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.44%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.13%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.43%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.27%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.69%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.77%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.87%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.79%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.60%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.60%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.03%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.72%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.94%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.35%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.68%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.43%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.03%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.95%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.19%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.60%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.35%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.88%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.74%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.28%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.20%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.11%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.81%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.18%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.19%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.44%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.13%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.44%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.80%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.87%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.27%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.19%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.60%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.43%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.59%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.87%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.04%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.43%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.19%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.29%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.50%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.87%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.18%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.36%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.49%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.52%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.12%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   399.36%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   401.28%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.78%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   400.87%   25.85GiB / 251.3GiB   10.29%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   120.34%   26.51GiB / 251.3GiB   10.55%    1.3kB / 0B   73.8GB / 81.9GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   87.55%    25.54GiB / 251.3GiB   10.16%    1.3kB / 0B   73.8GB / 84.2GB   6
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+d4f33195fc7a   eloquent_zhukovsky   99.92%    25.25GiB / 251.3GiB   10.05%    1.3kB / 0B   73.8GB / 84.2GB   6

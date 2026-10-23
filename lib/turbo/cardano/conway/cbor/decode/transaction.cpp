@@ -12,13 +12,13 @@ namespace turbo::cardano::conway {
             throw error{"conway::transaction_t rejects indefinite array encoding!"};
         auto &it = v.array();
         transaction_t res {
-            transaction_body_t::from_cbor(it.read()),
-            transaction_witness_set_t::from_cbor(it.read()),
+            decoded_cbor_t<transaction_body_t>::from_cbor(it.read()),
+            decoded_cbor_t<transaction_witness_set_t>::from_cbor(it.read()),
             it.read().boolean()
         };
         auto &auxiliary_data = it.read();
         if (!auxiliary_data.is_null())
-            res.auxiliary_data.emplace(auxiliary_data_t::from_cbor(auxiliary_data));
+            res.auxiliary_data.emplace(decoded_cbor_t<auxiliary_data_t>::from_cbor(auxiliary_data));
         else
             static_cast<void>(auxiliary_data.special());
         if (!it.done()) [[unlikely]]

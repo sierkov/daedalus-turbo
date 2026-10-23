@@ -5,6 +5,7 @@
 //
 
 #include "sha1.h"
+#include "unaligned.h"
 
 // big endian architectures need #define __BYTE_ORDER __BIG_ENDIAN
 #ifndef _MSC_VER
@@ -84,16 +85,18 @@ void SHA1::processBlock(const void* data)
   uint32_t d = m_hash[3];
   uint32_t e = m_hash[4];
 
-  // data represented as 16x 32-bit words
-  const uint32_t* input = (uint32_t*) data;
+  const uint8_t* input = (const uint8_t*) data;
   // convert to big endian
   uint32_t words[80];
   for (int i = 0; i < 16; i++)
+  {
+    const uint32_t inputWord = hash_library_detail::loadUnaligned<uint32_t>(input + i * sizeof(uint32_t));
 #if defined(__BYTE_ORDER) && (__BYTE_ORDER != 0) && (__BYTE_ORDER == __BIG_ENDIAN)
-    words[i] = input[i];
+    words[i] = inputWord;
 #else
-    words[i] = swap(input[i]);
+    words[i] = swap(inputWord);
 #endif
+  }
 
   // extend to 80 words
   for (int i = 16; i < 80; i++)

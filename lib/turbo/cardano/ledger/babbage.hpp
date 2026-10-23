@@ -10,7 +10,7 @@ namespace turbo::cardano::ledger::babbage {
     struct vrf_state: alonzo::vrf_state {
         vrf_state(alonzo::vrf_state &&);
         void from_cbor(cbor::zero2::value &v) override;
-        void to_cbor(cbor_encoder &) const override;
+        void to_cbor(cbor_encoder &, node_format format=node_format::legacy) const override;
     };
 
     struct state: alonzo::state {
@@ -19,7 +19,7 @@ namespace turbo::cardano::ledger::babbage {
         void _apply_babbage_params(protocol_params &p) const;
         void _apply_param_update(const param_update &update) override;
         void _parse_protocol_params(protocol_params &params, cbor::zero2::value &values) const override;
-        void _params_to_cbor(era_encoder &enc, const protocol_params &params) const override;
+        void _params_to_cbor(era_encoder &enc, const protocol_params &params, node_format format) const override;
     };
 }
 

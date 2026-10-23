@@ -20,19 +20,33 @@ namespace turbo::cardano {
     {
         if (v.indefinite()) [[unlikely]]
             throw error{"gov_action_id_t rejects indefinite array encoding in pre-dijkstra eras!"};
-        auto &it = v.array();
-        return { it.read().bytes(), numeric_cast<uint16_t>(it.read().uint()) };
+        return from_cbor(v.array());
+    }
+
+    gov_action_id_t gov_action_id_t::from_cbor(cbor::zero2::array_reader &it)
+    {
+        gov_action_id_t res { it.read().bytes(), numeric_cast<decltype(idx)>(it.read().uint()) };
+        if (!it.done()) [[unlikely]]
+            throw error("unexpected trailing governance action id elements");
+        return res;
     }
 
     anchor_t anchor_t::from_cbor(cbor::zero2::value &v)
     {
         if (v.indefinite()) [[unlikely]]
             throw error{"anchor_t rejects indefinite array encoding in pre-dijkstra eras!"};
-        auto &it = v.array();
+        return from_cbor(v.array());
+    }
+
+    anchor_t anchor_t::from_cbor(cbor::zero2::array_reader &it)
+    {
         const auto url = it.read().text();
         if (url.size() > 128U) [[unlikely]]
             throw error{"anhor_t::url must be <= 128 bytes but got: {}", url.size()};
-        return {std::string{url}, it.read().bytes()};
+        anchor_t res { std::string { url }, it.read().bytes() };
+        if (!it.done()) [[unlikely]]
+            throw error("unexpected trailing anchor elements");
+        return res;
     }
 
     constitution_t constitution_t::from_cbor(cbor::zero2::value &v)

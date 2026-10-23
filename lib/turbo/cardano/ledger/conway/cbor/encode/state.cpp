@@ -39,14 +39,8 @@ namespace turbo::cardano::ledger::conway {
         enc.uint(deposited);
         enc.tag(258);
         enc.array_compact(delegs.size(), [&] {
-            const auto encode_delegs = [&](const bool script) {
-                for (const auto &deleg: delegs) {
-                    if (deleg.script == script)
-                        deleg.to_cbor(enc);
-                }
-            };
-            encode_delegs(true);
-            encode_delegs(false);
+            for (const auto &deleg: delegs)
+                deleg.to_cbor(enc);
         });
     }
 
@@ -54,16 +48,10 @@ namespace turbo::cardano::ledger::conway {
     {
         enc.array(2);
         enc.map_compact(members.size(), [&] {
-            const auto encode_members = [&](const bool script) {
-                for (const auto &[cred, epoch]: members) {
-                    if (cred.script == script) {
-                        cred.to_cbor(enc);
-                        enc.uint(epoch);
-                    }
-                }
-            };
-            encode_members(true);
-            encode_members(false);
+            for (const auto &[cred, epoch]: members) {
+                cred.to_cbor(enc);
+                enc.uint(epoch);
+            }
         });
         threshold.to_cbor(enc);
     }
@@ -72,40 +60,23 @@ namespace turbo::cardano::ledger::conway {
     {
         enc.array(7);
         id.to_cbor(enc);
-        {
-            auto k_enc { enc }, s_enc { enc };
-            size_t k_cnt = 0, s_cnt = 0;
+        // GovActionState stores Vote integers, not transaction [vote, anchor] pairs.
+        enc.map_compact(committee_votes.size(), [&] {
             for (const auto &[cred, vote]: committee_votes) {
-                auto &my_enc = cred.script ? s_enc : k_enc;
-                auto &my_cnt = cred.script ? s_cnt : k_cnt;
-                cred.to_cbor(my_enc);
-                vote.to_cbor(my_enc);
-                ++my_cnt;
+                cred.to_cbor(enc);
+                enc.uint(static_cast<uint8_t>(vote.vote));
             }
-            enc.map_compact(k_cnt + s_cnt, [&] {
-                enc << s_enc;
-                enc << k_enc;
-            });
-        }
-        {
-            auto k_enc { enc }, s_enc { enc };
-            size_t k_cnt = 0, s_cnt = 0;
+        });
+        enc.map_compact(drep_votes.size(), [&] {
             for (const auto &[cred, vote]: drep_votes) {
-                auto &my_enc = cred.script ? s_enc : k_enc;
-                auto &my_cnt = cred.script ? s_cnt : k_cnt;
-                cred.to_cbor(my_enc);
-                vote.to_cbor(my_enc);
-                ++my_cnt;
+                cred.to_cbor(enc);
+                enc.uint(static_cast<uint8_t>(vote.vote));
             }
-            enc.map_compact(k_cnt + s_cnt, [&] {
-                enc << s_enc;
-                enc << k_enc;
-            });
-        }
+        });
         enc.map_compact(pool_votes.size(), [&] {
             for (const auto &[id, vote]: pool_votes) {
                 enc.bytes(id);
-                vote.to_cbor(enc);
+                enc.uint(static_cast<uint8_t>(vote.vote));
             }
         });
         proposal.to_cbor(enc);
@@ -167,12 +138,12 @@ namespace turbo::cardano::ledger::conway {
         enc.uint(_donations);
     }
 
-    void state::_params_to_cbor(era_encoder &enc, const protocol_params &params) const
+    void state::_params_to_cbor(era_encoder &enc, const protocol_params &params, const node_format) const
     {
         conway::protocol_params_to_cbor(enc, params);
     }
 
-    void state::_protocol_state_to_cbor(era_encoder &enc) const
+    void state::_protocol_state_to_cbor(era_encoder &enc, const node_format format) const
     {
         if (!_ratify_ready)
             throw error("complete governance ratification before encoding the ledger state");
@@ -194,12 +165,20 @@ namespace turbo::cardano::ledger::conway {
         }
         _enact_state.committee.to_cbor(enc);
         _enact_state.constitution.to_cbor(enc);
-        _params_to_cbor(enc, _params);
-        _params_to_cbor(enc, _params_prev);
-        if (_ratify_state.new_state.params != _params) {
+        _params_to_cbor(enc, _params, format);
+        _params_to_cbor(enc, _params_prev, format);
+        // Node records a future update when a parameter or hard-fork action was
+        // ratified, even if it leaves the parameter values unchanged.
+        const bool has_param_update = std::any_of(
+            _ratify_state.enacted.begin(), _ratify_state.enacted.end(), [](const auto &entry) {
+                const auto &action = entry.second.proposal.action.val;
+                return std::holds_alternative<gov_action_t::parameter_change_t>(action)
+                    || std::holds_alternative<gov_action_t::hard_fork_init_t>(action);
+            });
+        if (has_param_update) {
             enc.array(2);
             enc.uint(1);
-            _params_to_cbor(enc, _ratify_state.new_state.params);
+            _params_to_cbor(enc, _ratify_state.new_state.params, format);
         } else {
             enc.array(1).uint(0);
         }
@@ -227,21 +206,12 @@ namespace turbo::cardano::ledger::conway {
                         enc.uint(power);
                     }
                 });
-                {
-                    auto k_enc { enc }, s_enc { enc };
-                    size_t k_cnt = 0, s_cnt = 0;
-                    for (auto &[drep_id, info]: _pulsing_data.drep_state) {
-                        auto &my_enc = drep_id.script ? s_enc : k_enc;
-                        auto &my_cnt = drep_id.script ? s_cnt : k_cnt;
-                        drep_id.to_cbor(my_enc);
-                        info.to_cbor(my_enc);
-                        ++my_cnt;
+                enc.map_compact(_pulsing_data.drep_state.size(), [&] {
+                    for (const auto &[drep_id, info]: _pulsing_data.drep_state) {
+                        drep_id.to_cbor(enc);
+                        info.to_cbor(enc);
                     }
-                    enc.map_compact(k_cnt + s_cnt, [&] {
-                        enc << s_enc;
-                        enc << k_enc;
-                    });
-                }
+                });
                 enc.map_compact(_pulsing_data.pool_voting_power.size(), [&] {
                     for (const auto &[pool_id, stake]: _pulsing_data.pool_voting_power) {
                         enc.bytes(pool_id);
@@ -253,7 +223,7 @@ namespace turbo::cardano::ledger::conway {
         }
     }
 
-    void state::_stake_pointers_to_cbor(era_encoder &enc) const
+    void state::_stake_pointers_to_cbor(era_encoder &enc, const node_format) const
     {
         enc.map(0);
     }
@@ -263,9 +233,21 @@ namespace turbo::cardano::ledger::conway {
         enc.map(0);
     }
 
-    void state::_account_to_cbor(const account_info &acc, era_encoder &enc) const
+    void state::_account_to_cbor(const account_info &acc, era_encoder &enc, const node_format format) const
     {
         enc.array(4);
+        if (format == node_format::v11_1_3) {
+            enc.uint(acc.reward).uint(acc.deposit);
+            if (acc.deleg)
+                enc.bytes(*acc.deleg);
+            else
+                enc.s_null();
+            if (acc.vote_deleg)
+                acc.vote_deleg->to_cbor(enc);
+            else
+                enc.s_null();
+            return;
+        }
         enc.array(1)
             .array(2).uint(acc.reward).uint(acc.deposit);
         enc.tag(258).array(0);
@@ -280,25 +262,16 @@ namespace turbo::cardano::ledger::conway {
     {
         enc.array(3);
         enc.map_compact(_drep_state.size(), [&] {
-            auto k_enc { enc };
             for (const auto &[drep_id, info]: _drep_state) {
-                auto &my_enc = drep_id.script ? enc : k_enc;
-                drep_id.to_cbor(my_enc);
-                info.to_cbor(my_enc);
+                drep_id.to_cbor(enc);
+                info.to_cbor(enc);
             }
-            enc << k_enc;
         });
         enc.map_compact(_committee_hot_keys.size(), [&] {
-            const auto encode_hot_keys = [&](const bool script) {
-                for (const auto &[cold_id, hot_id]: _committee_hot_keys) {
-                    if (cold_id.script == script) {
-                        cold_id.to_cbor(enc);
-                        hot_id.to_cbor(enc);
-                    }
-                }
-            };
-            encode_hot_keys(true);
-            encode_hot_keys(false);
+            for (const auto &[cold_id, hot_id]: _committee_hot_keys) {
+                cold_id.to_cbor(enc);
+                hot_id.to_cbor(enc);
+            }
         });
         enc.uint(_num_dormant_epochs);
     }

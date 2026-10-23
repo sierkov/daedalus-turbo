@@ -1,0 +1,30 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O     PIDS
+9a907e7094e8   dazzling_dewdney   199.78%   2.195GiB / 251.3GiB   0.87%     736B / 0B   2.34GB / 0B   27
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+9a907e7094e8   dazzling_dewdney   12.09%    1.581GiB / 251.3GiB   0.63%     1.66MB / 29.1kB   2.34GB / 98.3kB   28
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+9a907e7094e8   dazzling_dewdney   764.62%   2.716GiB / 251.3GiB   1.08%     268MB / 1.73MB   2.34GB / 172kB   28
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+9a907e7094e8   dazzling_dewdney   1096.44%   3.234GiB / 251.3GiB   1.29%     516MB / 3.42MB   2.34GB / 172kB   28
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+9a907e7094e8   dazzling_dewdney   996.74%   3.295GiB / 251.3GiB   1.31%     779MB / 5.29MB   2.34GB / 1.21GB   28
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+9a907e7094e8   dazzling_dewdney   1558.27%   3.202GiB / 251.3GiB   1.27%     902MB / 6.13MB   2.34GB / 1.21GB   28
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O       PIDS
+9a907e7094e8   dazzling_dewdney   1489.30%   3.289GiB / 251.3GiB   1.31%     902MB / 6.13MB   14GB / 1.58GB   28
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+9a907e7094e8   dazzling_dewdney   1542.75%   3.459GiB / 251.3GiB   1.38%     902MB / 6.13MB   26.8GB / 1.58GB   28
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+9a907e7094e8   dazzling_dewdney   536.61%   4.512GiB / 251.3GiB   1.80%     902MB / 6.13MB   31.9GB / 1.58GB   28
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+9a907e7094e8   dazzling_dewdney   203.45%   3.657GiB / 251.3GiB   1.46%     902MB / 6.13MB   31.9GB / 4.14GB   28
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+9a907e7094e8   dazzling_dewdney   1321.83%   3.737GiB / 251.3GiB   1.49%     902MB / 6.13MB   31.9GB / 4.14GB   28
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+9a907e7094e8   dazzling_dewdney   1314.65%   3.572GiB / 251.3GiB   1.42%     902MB / 6.13MB   31.9GB / 4.14GB   28
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+9a907e7094e8   dazzling_dewdney   200.58%   5.747GiB / 251.3GiB   2.29%     902MB / 6.13MB   31.9GB / 4.14GB   28
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0

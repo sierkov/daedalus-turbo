@@ -5,6 +5,7 @@
  * License: https://github.com/r2rationality/turbocardano/blob/main/LICENSE */
 
 #include <turbo/cardano/babbage/auxiliary-data.hpp>
+#include <turbo/cardano/common/cbor/decoded.hpp>
 
 namespace turbo::cardano::conway {
     using babbage::auxiliary_data_array_t;
@@ -32,7 +33,6 @@ namespace turbo::cardano::conway {
         using value_type = std::variant<metadata_t, auxiliary_data_array_t, auxiliary_data_map_t>;
 
         value_type value;
-        buffer raw {}; // original bytes for the ledger hash and charged size
 
         static auxiliary_data_t from_cbor(cbor::zero2::value &);
         void to_cbor(era_encoder &) const;
@@ -43,7 +43,7 @@ namespace turbo::cardano::conway {
         }
     };
 
-    using auxiliary_data_dict_base_t = flat_map<uint64_t, auxiliary_data_t>;
+    using auxiliary_data_dict_base_t = flat_map<uint64_t, decoded_cbor_t<auxiliary_data_t>>;
 
     struct auxiliary_data_dict_t: auxiliary_data_dict_base_t {
         using base_type = auxiliary_data_dict_base_t;

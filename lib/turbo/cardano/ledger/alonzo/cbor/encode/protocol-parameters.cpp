@@ -6,9 +6,9 @@
 #include <turbo/cardano/ledger/alonzo.hpp>
 
 namespace turbo::cardano::ledger::alonzo {
-    void state::_params_to_cbor(era_encoder &enc, const protocol_params &params) const
+    void state::_params_to_cbor(era_encoder &enc, const protocol_params &params, const node_format format) const
     {
-        enc.array(25);
+        enc.array(format == node_format::v11_1_3 ? 24 : 25);
         enc.uint(params.min_fee_a);
         enc.uint(params.min_fee_b);
         enc.uint(params.max_block_body_size);
@@ -26,6 +26,8 @@ namespace turbo::cardano::ledger::alonzo {
             enc.array(1).uint(0);
         else
             enc.array(2).uint(1).bytes(*params.extra_entropy);
+        if (format == node_format::v11_1_3)
+            enc.array(2);
         enc.uint(params.protocol_ver.major);
         enc.uint(params.protocol_ver.minor);
         enc.uint(params.min_pool_cost);
@@ -72,4 +74,3 @@ namespace turbo::cardano::ledger::alonzo {
         enc << my_enc;
     }
 }
-

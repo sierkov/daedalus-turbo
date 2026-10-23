@@ -35,7 +35,11 @@ namespace turbo::cardano {
     {
         if (v.indefinite()) [[unlikely]]
             throw error{"ex_unit_prices rejects indefinite array encoding in pre-dijkstra eras!"};
-        auto &it = v.array();
+        return from_cbor(v.array());
+    }
+
+    ex_unit_prices ex_unit_prices::from_cbor(cbor::zero2::array_reader &it)
+    {
         ex_unit_prices res { decltype(mem)::from_cbor(it.read()), decltype(steps)::from_cbor(it.read()) };
         if (!it.done()) [[unlikely]]
             throw error("unexpected trailing ex_unit_prices elements");
@@ -46,7 +50,11 @@ namespace turbo::cardano {
     {
         if (v.indefinite()) [[unlikely]]
             throw error{"ex_units rejects indefinite array encoding in pre-dijkstra eras!"};
-        auto &it = v.array();
+        return from_cbor(v.array());
+    }
+
+    ex_units ex_units::from_cbor(cbor::zero2::array_reader &it)
+    {
         ex_units res {
             it.read().uint(),
             it.read().uint()

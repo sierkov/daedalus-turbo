@@ -58,36 +58,27 @@
         if (!has_stake(stake_id)) [[unlikely]]
             throw error("vote delegation requires a registered credential");
         const auto preserve_incorrect_delegation = _params.protocol_ver.bootstrap_phase();
+        const auto credential_drep = std::holds_alternative<credential_t>(drep.val);
         auto new_drep_it = _drep_state.end();
-        if (std::holds_alternative<credential_t>(drep.val))
+        if (credential_drep)
             new_drep_it = _drep_state.find(std::get<credential_t>(drep.val));
+        if (credential_drep && new_drep_it == _drep_state.end() && !preserve_incorrect_delegation) [[unlikely]]
+            throw error(fmt::format("delegate_vote: {} delegating to an unknown drep credential: {}",
+                stake_id, std::get<credential_t>(drep.val)));
         auto &acc = detail::map_nice_at(_accounts, stake_id);
         if (acc.vote_deleg && std::holds_alternative<credential_t>(acc.vote_deleg->val)) {
             const auto &old_cred = std::get<credential_t>(acc.vote_deleg->val);
             auto old_drep_it = _drep_state.find(old_cred);
             if (old_drep_it != _drep_state.end()
-                    && (!preserve_incorrect_delegation || new_drep_it == _drep_state.end())) {
+                    && (!preserve_incorrect_delegation || !credential_drep)) {
                 old_drep_it->second.delegs.erase(stake_id);
             }
         }
         // Re-delegation can target the same DRep, so insert after removing the old link.
-        if (std::holds_alternative<credential_t>(drep.val)) {
-            if (new_drep_it == _drep_state.end()) [[unlikely]] {
-                if (!preserve_incorrect_delegation) [[unlikely]] {
-                    throw error(fmt::format(
-                        "delegate_vote: {} delegating to an unknown drep credential: {}",
-                        stake_id,
-                        std::get<credential_t>(drep.val)));
-                }
-                logger::debug(
-                    "delegate_vote: {} to an unknown DRep {} - ignoring in protocol ver: {} ",
-                    stake_id,
-                    std::get<credential_t>(drep.val),
-                    _params.protocol_ver);
-            } else {
-                new_drep_it->second.delegs.emplace(stake_id);
-            }
-        }
+        // PV9 retains the old reverse link even for an unregistered credential.
+        // The forward delegation is always recorded, including unknown PV9 DReps.
+        if (new_drep_it != _drep_state.end())
+            new_drep_it->second.delegs.emplace(stake_id);
         acc.vote_deleg = drep;
     }
 

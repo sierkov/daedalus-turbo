@@ -6,6 +6,7 @@
 #include <turbo/cardano/common/config.hpp>
 #include <turbo/cardano/common/types.hpp>
 #include <turbo/common/test.hpp>
+#include <turbo/zpp.hpp>
 
 namespace {
     using namespace turbo;
@@ -14,6 +15,104 @@ namespace {
 
 suite cardano_type_test = [] {
     "cardano::type"_test = [] {
+        "Conway protocol parameters survive snapshots and affect equality"_test = [] {
+            const protocol_params defaults {};
+            const auto check = [&](const auto member, const auto &value) {
+                auto params = defaults;
+                params.*member = value;
+                expect(params != defaults);
+                const auto bytes = turbo::zpp::serialize(params);
+                const auto restored = turbo::zpp::deserialize<protocol_params>(bytes);
+                // Check the field directly so an equality omission cannot hide data loss.
+                expect(restored.*member == value);
+                expect(restored == params);
+            };
+            auto pool_thresholds = defaults.pool_voting_thresholds;
+            pool_thresholds.committee_normal = { 3, 5 };
+            check(&protocol_params::pool_voting_thresholds, pool_thresholds);
+            auto drep_thresholds = defaults.drep_voting_thresholds;
+            drep_thresholds.pp_governance_group = { 4, 5 };
+            check(&protocol_params::drep_voting_thresholds, drep_thresholds);
+            check(&protocol_params::committee_min_size, uint16_t { 5 });
+            check(&protocol_params::committee_max_term_length, uint32_t { 100 });
+            check(&protocol_params::gov_action_lifetime, uint32_t { 8 });
+            check(&protocol_params::gov_action_deposit, uint64_t { 123 });
+            check(&protocol_params::drep_deposit, uint64_t { 456 });
+            check(&protocol_params::drep_activity, uint32_t { 30 });
+            check(&protocol_params::min_fee_ref_script_cost_per_byte, rational_u64 { 17, 1 });
+        };
+        "credential ordering and index encoding"_test = [] {
+            static_assert(sizeof(credential_t::index_key_type) == 29);
+            credential_t script { {}, true }, key { {}, false };
+            script.hash.fill(0xff);
+            expect(script < key);
+            expect(!(key < script));
+            expect(script != key);
+            expect(script.index_key() < key.index_key());
+            for (const bool is_script: { true, false }) {
+                credential_t id { {}, is_script };
+                for (size_t i = 0; i < id.hash.size(); ++i)
+                    id.hash[i] = static_cast<uint8_t>(i * 7);
+                const auto bytes = id.index_key();
+                expect(bytes[0] == (is_script ? 0 : 1));
+                expect(std::equal(id.hash.begin(), id.hash.end(), bytes.begin() + 1));
+                expect(credential_t::from_index_key(bytes) == id);
+                era_encoder enc { era_t::conway };
+                id.to_cbor(enc);
+                expect(enc.cbor()[1] == (is_script ? 1 : 0));
+                auto parsed = cbor::zero2::parse(enc.cbor());
+                expect(credential_t::from_cbor(parsed.get()) == id);
+            }
+            credential_t::index_key_type invalid {};
+            invalid[0] = 2;
+            expect(throws([&] { credential_t::from_index_key(invalid); }));
+            expect(throws([] { credential_t::from_index_key(buffer {}); }));
+        };
+        "reward address ordering and equality"_test = [] {
+            const auto address = [](const uint8_t header, const uint8_t hash_prefix) {
+                byte_array<29> bytes {};
+                bytes[0] = header;
+                bytes[1] = hash_prefix;
+                return reward_id_t { bytes };
+            };
+            // Hash extremes ensure kind and network take precedence over hash bytes.
+            const std::array expected {
+                address(0xf0, 0), address(0xf0, 255), address(0xe0, 0),
+                address(0xf1, 0)
+            };
+            map_t<reward_id_t, size_t> accounts {};
+            for (size_t i = expected.size(); i-- > 0;)
+                accounts.emplace(expected[i], i);
+            for (size_t i = 0; i < expected.size(); ++i) {
+                expect(accounts.nth_or_die(i).first == expected[i]);
+                expect_equal(accounts.at(expected[i]), i);
+            }
+            // Adjacent pairs isolate hash, kind, and network precedence.
+            for (size_t i = 1; i < expected.size(); ++i) {
+                const auto &a = expected[i - 1];
+                const auto &b = expected[i];
+                expect(a < b);
+                expect(b > a);
+                expect(a <= b);
+                expect(b >= a);
+                expect(a != b);
+                expect((a <=> b) == std::strong_ordering::less);
+                expect((b <=> a) == std::strong_ordering::greater);
+            }
+            const auto same = expected[0];
+            expect(same == expected[0]);
+            expect(!(same < expected[0]));
+            expect(!(same > expected[0]));
+            expect(same <= expected[0]);
+            expect(same >= expected[0]);
+            expect((same <=> expected[0]) == std::strong_ordering::equal);
+            const credential_t script { expected[0].hash(), true };
+            expect(expected[0] == script);
+            expect(expected[3] == script); // Credential comparison ignores network.
+            expect(expected[0] != expected[3]); // Address equality includes network.
+            expect(!(expected[1] == script)); // Different hash.
+            expect(!(expected[2] == script)); // Same hash, different kind.
+        };
         "protocol point equality"_test = [] {
             const optional_point2 origin {};
             const optional_point2 zero { point2 {} };
@@ -21,6 +120,18 @@ suite cardano_type_test = [] {
             expect_equal(zero, optional_point2 { point2 {} });
             expect(origin != zero);
             expect(zero != optional_point2 { 1, block_hash {} });
+        };
+        "DRep order differs from credential order"_test = [] {
+            credential_t script { {}, true }, key { {}, false };
+            key.hash.fill(0xff);
+            const drep_t key_drep { key }, script_drep { script };
+            const drep_t abstain { drep_t::abstain_t {} };
+            const drep_t no_confidence { drep_t::no_confidence_t {} };
+            expect(script < key);
+            expect(key_drep < script_drep);
+            expect(!(script_drep < key_drep));
+            expect(script_drep < abstain);
+            expect(abstain < no_confidence);
         };
         "protocol tips distinguish origin from a concrete zero point"_test = [] {
             const auto origin_bytes = uint8_vector::from_hex("828000"); // [[], 0]

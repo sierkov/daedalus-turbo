@@ -8,7 +8,7 @@ for iter in `seq 1 3`; do
         echo "kernel caches flushed, starting monitoring and logging processes"
         bash -c "while true; do docker stats --no-stream >> /data/cardano/dt-validate-docker-stats-$iter-$threads.log; sleep 1; done" &
         echo "starting the benchmark"
-        docker run --cpus $threads --rm -v /data/cardano:/data/cardano dt /bin/bash -c "sudo chown -R dev:dev /data; DT_LOG=/data/cardano/dt-validate-$iter-$threads.log DT_WORKERS=$threads ./dt revalidate /data/cardano"
+        docker run --cpus $threads --rm -v /data/cardano:/data/cardano dt /bin/bash -c "sudo chown -R dev:dev /data; TURBO_LOG_PATH=/data/cardano/dt-validate-$iter-$threads.log TURBO_WORKERS=$threads ./dt revalidate /data/cardano"
         echo "stopping monitoring and logging processes"
         jobs -p | xargs -r kill
     done

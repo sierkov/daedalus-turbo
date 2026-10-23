@@ -1,0 +1,507 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O     PIDS
+f3fa51e71228   festive_mccarthy   3135.37%   2.477GiB / 251.3GiB   0.99%     736B / 0B   2.32GB / 0B   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O     PIDS
+f3fa51e71228   festive_mccarthy   3173.83%   2.748GiB / 251.3GiB   1.09%     736B / 0B   4.77GB / 0B   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   3206.88%   2.771GiB / 251.3GiB   1.10%     806B / 0B   6.25GB / 880MB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   3190.63%   2.956GiB / 251.3GiB   1.18%     806B / 0B   9.49GB / 880MB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   3199.19%   3.501GiB / 251.3GiB   1.39%     806B / 0B   12.7GB / 1.8GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O      PIDS
+f3fa51e71228   festive_mccarthy   3159.79%   4.372GiB / 251.3GiB   1.74%     876B / 0B   16GB / 1.8GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   3195.08%   4.713GiB / 251.3GiB   1.88%     876B / 0B   19.1GB / 1.8GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   3193.11%   5.692GiB / 251.3GiB   2.26%     876B / 0B   22.1GB / 1.8GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   3210.16%   5.96GiB / 251.3GiB   2.37%     876B / 0B   25.1GB / 1.8GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   3179.26%   7.412GiB / 251.3GiB   2.95%     876B / 0B   28.1GB / 1.8GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   3183.75%   7.255GiB / 251.3GiB   2.89%     876B / 0B   30.9GB / 1.82GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   3194.53%   7.469GiB / 251.3GiB   2.97%     876B / 0B   33.5GB / 1.82GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+f3fa51e71228   festive_mccarthy   3183.05%   7.624GiB / 251.3GiB   3.03%     946B / 0B   36GB / 1.82GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   3202.33%   7.268GiB / 251.3GiB   2.89%     946B / 0B   38.5GB / 1.82GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+f3fa51e71228   festive_mccarthy   3208.68%   6.926GiB / 251.3GiB   2.76%     946B / 0B   41GB / 2.51GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   3206.33%   7.136GiB / 251.3GiB   2.84%     946B / 0B   43.6GB / 2.51GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+f3fa51e71228   festive_mccarthy   3184.66%   6.901GiB / 251.3GiB   2.75%     946B / 0B   46GB / 6.73GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   3207.43%   7.128GiB / 251.3GiB   2.84%     946B / 0B   48.5GB / 6.73GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   3206.02%   6.956GiB / 251.3GiB   2.77%     946B / 0B   50.9GB / 6.73GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   3185.12%   6.952GiB / 251.3GiB   2.77%     946B / 0B   53.2GB / 12.5GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   3186.09%   7.155GiB / 251.3GiB   2.85%     946B / 0B   55.6GB / 12.5GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+f3fa51e71228   festive_mccarthy   3206.86%   6.951GiB / 251.3GiB   2.77%     946B / 0B   58GB / 18.8GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   3188.60%   6.886GiB / 251.3GiB   2.74%     946B / 0B   60.2GB / 18.8GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   3192.80%   7.641GiB / 251.3GiB   3.04%     946B / 0B   62.7GB / 24.5GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   3193.33%   8.294GiB / 251.3GiB   3.30%     946B / 0B   64.8GB / 24.5GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+f3fa51e71228   festive_mccarthy   3194.10%   8.073GiB / 251.3GiB   3.21%     946B / 0B   67GB / 29.6GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+f3fa51e71228   festive_mccarthy   3196.26%   7.51GiB / 251.3GiB   2.99%     1.02kB / 0B   69GB / 29.6GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   3182.42%   7.029GiB / 251.3GiB   2.80%     1.02kB / 0B   71.1GB / 31.9GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   3206.67%   7.595GiB / 251.3GiB   3.02%     1.02kB / 0B   73.3GB / 34.3GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   3196.35%   7.804GiB / 251.3GiB   3.11%     1.02kB / 0B   75.6GB / 34.3GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   3174.45%   8.483GiB / 251.3GiB   3.38%     1.02kB / 0B   77.7GB / 38.5GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   2866.08%   7.019GiB / 251.3GiB   2.79%     1.02kB / 0B   79.2GB / 38.5GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   2614.00%   8.188GiB / 251.3GiB   3.26%     1.02kB / 0B   79.2GB / 42.8GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   2672.93%   8.841GiB / 251.3GiB   3.52%     1.02kB / 0B   79.2GB / 42.8GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   2400.32%   9.28GiB / 251.3GiB   3.69%     1.02kB / 0B   79.2GB / 46.8GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   2475.21%   9.765GiB / 251.3GiB   3.89%     1.02kB / 0B   79.2GB / 46.8GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   2670.32%   10.49GiB / 251.3GiB   4.17%     1.02kB / 0B   79.2GB / 50.4GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   2673.46%   11.28GiB / 251.3GiB   4.49%     1.02kB / 0B   79.2GB / 50.4GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   2954.05%   12.32GiB / 251.3GiB   4.90%     1.02kB / 0B   79.2GB / 54.3GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   2873.29%   13.15GiB / 251.3GiB   5.23%     1.02kB / 0B   79.2GB / 54.3GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   2701.51%   14.21GiB / 251.3GiB   5.65%     1.02kB / 0B   79.2GB / 57.7GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   99.71%    14.04GiB / 251.3GiB   5.59%     1.02kB / 0B   79.2GB / 57.7GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   100.18%   13.87GiB / 251.3GiB   5.52%     1.02kB / 0B   79.2GB / 59.9GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   100.19%   13.69GiB / 251.3GiB   5.45%     1.02kB / 0B   79.2GB / 61.4GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   99.76%    13.5GiB / 251.3GiB   5.37%     1.02kB / 0B   79.2GB / 61.4GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   100.10%   13.31GiB / 251.3GiB   5.30%     1.02kB / 0B   79.2GB / 72.6GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   100.11%   13.1GiB / 251.3GiB   5.21%     1.02kB / 0B   79.2GB / 72.6GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   99.06%    12.88GiB / 251.3GiB   5.12%     1.02kB / 0B   79.2GB / 83.2GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   99.79%    12.63GiB / 251.3GiB   5.03%     1.02kB / 0B   79.2GB / 83.2GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   109.52%   8.869GiB / 251.3GiB   3.53%     1.02kB / 0B   79.2GB / 84.9GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   2627.31%   7.845GiB / 251.3GiB   3.12%     1.02kB / 0B   79.2GB / 94.5GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+f3fa51e71228   festive_mccarthy   2579.06%   7.89GiB / 251.3GiB   3.14%     1.02kB / 0B   79.2GB / 94.5GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   3132.11%   7.915GiB / 251.3GiB   3.15%     1.02kB / 0B   79.2GB / 106GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   2540.95%   7.87GiB / 251.3GiB   3.13%     1.02kB / 0B   79.2GB / 106GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   2757.39%   7.869GiB / 251.3GiB   3.13%     1.02kB / 0B   79.2GB / 107GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   2377.28%   7.88GiB / 251.3GiB   3.14%     1.09kB / 0B   79.2GB / 107GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   3100.89%   7.724GiB / 251.3GiB   3.07%     1.09kB / 0B   79.2GB / 107GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   2784.79%   7.714GiB / 251.3GiB   3.07%     1.09kB / 0B   79.2GB / 107GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   2307.49%   7.679GiB / 251.3GiB   3.06%     1.09kB / 0B   79.2GB / 107GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   2653.41%   7.759GiB / 251.3GiB   3.09%     1.09kB / 0B   79.2GB / 107GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   2815.42%   7.718GiB / 251.3GiB   3.07%     1.09kB / 0B   79.2GB / 107GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   2406.84%   7.681GiB / 251.3GiB   3.06%     1.09kB / 0B   79.2GB / 107GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   3209.95%   8.363GiB / 251.3GiB   3.33%     1.09kB / 0B   79.2GB / 107GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   3200.97%   9.771GiB / 251.3GiB   3.89%     1.09kB / 0B   79.2GB / 107GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   3191.72%   10.92GiB / 251.3GiB   4.34%     1.09kB / 0B   79.2GB / 108GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1597.56%   11.09GiB / 251.3GiB   4.41%     1.09kB / 0B   79.2GB / 120GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   2426.93%   11.2GiB / 251.3GiB   4.45%     1.09kB / 0B   79.2GB / 120GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   3264.69%   11.19GiB / 251.3GiB   4.45%     1.09kB / 0B   79.2GB / 129GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   3248.37%   11.12GiB / 251.3GiB   4.43%     1.09kB / 0B   79.2GB / 129GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   3271.53%   11.17GiB / 251.3GiB   4.45%     1.09kB / 0B   79.2GB / 132GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   3264.28%   11.24GiB / 251.3GiB   4.47%     1.09kB / 0B   79.2GB / 132GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   3278.22%   11.31GiB / 251.3GiB   4.50%     1.09kB / 0B   79.2GB / 134GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   3263.81%   11.35GiB / 251.3GiB   4.52%     1.09kB / 0B   79.2GB / 144GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   3290.97%   11.42GiB / 251.3GiB   4.54%     1.09kB / 0B   79.2GB / 144GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   3271.32%   11.45GiB / 251.3GiB   4.56%     1.09kB / 0B   79.2GB / 149GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   3278.84%   11.48GiB / 251.3GiB   4.57%     1.09kB / 0B   79.2GB / 149GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   3268.10%   11.5GiB / 251.3GiB   4.58%     1.09kB / 0B   79.2GB / 149GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   3273.17%   11.53GiB / 251.3GiB   4.59%     1.09kB / 0B   79.2GB / 149GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   3281.18%   11.55GiB / 251.3GiB   4.59%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   3279.41%   11.59GiB / 251.3GiB   4.61%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   3264.55%   11.63GiB / 251.3GiB   4.63%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   3275.49%   11.66GiB / 251.3GiB   4.64%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   3295.01%   11.72GiB / 251.3GiB   4.66%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   3119.66%   11.75GiB / 251.3GiB   4.67%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1055.03%   11.76GiB / 251.3GiB   4.68%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1063.51%   11.82GiB / 251.3GiB   4.70%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1555.43%   11.86GiB / 251.3GiB   4.72%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   2033.15%   11.91GiB / 251.3GiB   4.74%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   890.51%   11.91GiB / 251.3GiB   4.74%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1454.09%   11.93GiB / 251.3GiB   4.75%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1358.08%   12GiB / 251.3GiB    4.77%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1053.31%   11.97GiB / 251.3GiB   4.76%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1365.66%   11.98GiB / 251.3GiB   4.77%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1334.75%   12.06GiB / 251.3GiB   4.80%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   297.17%   12.1GiB / 251.3GiB   4.81%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1614.55%   12.14GiB / 251.3GiB   4.83%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1409.80%   12.14GiB / 251.3GiB   4.83%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   99.81%    12.21GiB / 251.3GiB   4.86%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1219.51%   12.25GiB / 251.3GiB   4.87%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   2062.22%   12.26GiB / 251.3GiB   4.88%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1018.87%   12.19GiB / 251.3GiB   4.85%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.17%   12.31GiB / 251.3GiB   4.90%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   967.41%   12.31GiB / 251.3GiB   4.90%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   2026.15%   12.31GiB / 251.3GiB   4.90%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1669.37%   12.32GiB / 251.3GiB   4.90%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   848.79%   12.22GiB / 251.3GiB   4.86%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   107.36%   12.32GiB / 251.3GiB   4.90%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   224.01%   12.33GiB / 251.3GiB   4.91%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   882.40%   12.33GiB / 251.3GiB   4.91%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1515.52%   12.34GiB / 251.3GiB   4.91%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   2097.88%   12.34GiB / 251.3GiB   4.91%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1737.92%   12.35GiB / 251.3GiB   4.91%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1242.18%   12.35GiB / 251.3GiB   4.91%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   663.12%   12.27GiB / 251.3GiB   4.88%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.70%   12.34GiB / 251.3GiB   4.91%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   99.81%    12.36GiB / 251.3GiB   4.92%     1.09kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   585.18%   12.36GiB / 251.3GiB   4.92%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1039.95%   12.37GiB / 251.3GiB   4.92%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1431.65%   12.39GiB / 251.3GiB   4.93%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   671.86%   12.4GiB / 251.3GiB   4.94%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   398.53%   12.41GiB / 251.3GiB   4.94%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   469.21%   12.43GiB / 251.3GiB   4.94%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   550.24%   12.43GiB / 251.3GiB   4.95%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   575.55%   12.44GiB / 251.3GiB   4.95%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   654.63%   12.44GiB / 251.3GiB   4.95%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   200.89%   12.44GiB / 251.3GiB   4.95%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   99.86%    12.45GiB / 251.3GiB   4.95%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   99.79%    12.45GiB / 251.3GiB   4.95%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.19%   12.45GiB / 251.3GiB   4.95%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.17%   12.45GiB / 251.3GiB   4.95%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.25%   12.45GiB / 251.3GiB   4.95%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.15%   12.45GiB / 251.3GiB   4.95%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.19%   12.45GiB / 251.3GiB   4.95%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   99.77%    12.45GiB / 251.3GiB   4.95%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   99.80%    12.45GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.26%   12.45GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.24%   12.46GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   120.84%   12.46GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   122.94%   12.46GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   125.74%   12.46GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   133.68%   12.46GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   99.87%    12.46GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   99.88%    12.46GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   99.86%    12.46GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.15%   12.46GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   99.86%    12.46GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   99.88%    12.46GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   99.84%    12.46GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.17%   12.46GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.30%   12.47GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.28%   12.47GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.25%   12.47GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.15%   12.47GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.23%   12.47GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   99.83%    12.47GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.23%   12.47GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.25%   12.48GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.25%   12.48GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.13%   12.48GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.30%   12.48GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.13%   12.48GiB / 251.3GiB   4.97%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.19%   12.48GiB / 251.3GiB   4.97%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   99.86%    12.48GiB / 251.3GiB   4.97%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   99.90%    12.48GiB / 251.3GiB   4.97%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   99.73%    12.48GiB / 251.3GiB   4.97%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.15%   12.48GiB / 251.3GiB   4.97%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.15%   12.47GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   99.83%    12.47GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   99.83%    12.47GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.21%   12.46GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   331.22%   12.48GiB / 251.3GiB   4.97%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1381.91%   12.48GiB / 251.3GiB   4.97%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1107.18%   12.34GiB / 251.3GiB   4.91%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   99.83%    12.46GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   376.03%   12.49GiB / 251.3GiB   4.97%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1329.37%   12.49GiB / 251.3GiB   4.97%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1135.15%   12.31GiB / 251.3GiB   4.90%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.50%   12.41GiB / 251.3GiB   4.94%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   119.58%   12.49GiB / 251.3GiB   4.97%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1333.19%   12.5GiB / 251.3GiB   4.97%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1352.78%   12.5GiB / 251.3GiB   4.97%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   119.78%   12.39GiB / 251.3GiB   4.93%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   99.75%    12.51GiB / 251.3GiB   4.98%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1125.90%   12.51GiB / 251.3GiB   4.98%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1365.64%   12.51GiB / 251.3GiB   4.98%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   575.14%   12.4GiB / 251.3GiB   4.93%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.21%   12.51GiB / 251.3GiB   4.98%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   498.23%   12.52GiB / 251.3GiB   4.98%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1350.18%   12.52GiB / 251.3GiB   4.98%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1317.66%   12.52GiB / 251.3GiB   4.98%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   124.32%   12.4GiB / 251.3GiB   4.93%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.19%   12.52GiB / 251.3GiB   4.98%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   661.94%   12.52GiB / 251.3GiB   4.98%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1333.74%   12.52GiB / 251.3GiB   4.98%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1146.40%   12.34GiB / 251.3GiB   4.91%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   104.97%   12.41GiB / 251.3GiB   4.94%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.19%   12.52GiB / 251.3GiB   4.98%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   690.42%   12.53GiB / 251.3GiB   4.98%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1391.16%   12.53GiB / 251.3GiB   4.98%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1256.11%   12.34GiB / 251.3GiB   4.91%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   103.34%   12.43GiB / 251.3GiB   4.95%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.21%   12.53GiB / 251.3GiB   4.99%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   977.13%   12.53GiB / 251.3GiB   4.99%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1333.72%   12.53GiB / 251.3GiB   4.99%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   826.59%   12.39GiB / 251.3GiB   4.93%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.17%   12.5GiB / 251.3GiB   4.97%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   171.00%   12.53GiB / 251.3GiB   4.99%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1353.63%   12.53GiB / 251.3GiB   4.99%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1360.35%   12.53GiB / 251.3GiB   4.99%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   733.46%   12.4GiB / 251.3GiB   4.93%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   99.83%    12.5GiB / 251.3GiB   4.97%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   99.77%    12.54GiB / 251.3GiB   4.99%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1056.75%   12.54GiB / 251.3GiB   4.99%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1351.53%   12.54GiB / 251.3GiB   4.99%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1039.39%   12.37GiB / 251.3GiB   4.92%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   99.81%    12.46GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   99.85%    12.54GiB / 251.3GiB   4.99%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   810.72%   12.54GiB / 251.3GiB   4.99%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1352.15%   12.54GiB / 251.3GiB   4.99%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1134.49%   12.35GiB / 251.3GiB   4.92%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   117.18%   12.43GiB / 251.3GiB   4.95%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   99.83%    12.54GiB / 251.3GiB   4.99%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   655.62%   12.54GiB / 251.3GiB   4.99%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1421.61%   12.55GiB / 251.3GiB   4.99%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1276.26%   12.55GiB / 251.3GiB   4.99%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   202.36%   12.42GiB / 251.3GiB   4.94%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.13%   12.53GiB / 251.3GiB   4.99%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   165.09%   12.56GiB / 251.3GiB   5.00%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1217.25%   12.56GiB / 251.3GiB   5.00%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1393.88%   12.56GiB / 251.3GiB   5.00%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   975.61%   12.39GiB / 251.3GiB   4.93%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.17%   12.46GiB / 251.3GiB   4.96%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.21%   12.56GiB / 251.3GiB   5.00%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   536.62%   12.56GiB / 251.3GiB   5.00%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1364.16%   12.56GiB / 251.3GiB   5.00%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1357.87%   12.57GiB / 251.3GiB   5.00%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   677.50%   12.43GiB / 251.3GiB   4.95%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   99.88%    12.51GiB / 251.3GiB   4.98%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   99.81%    12.58GiB / 251.3GiB   5.00%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   500.28%   12.58GiB / 251.3GiB   5.00%     1.16kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1346.68%   12.58GiB / 251.3GiB   5.01%     1.23kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1354.37%   12.58GiB / 251.3GiB   5.01%     1.23kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1019.34%   12.38GiB / 251.3GiB   4.93%     1.23kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   148.00%   12.45GiB / 251.3GiB   4.96%     1.23kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   99.83%    12.56GiB / 251.3GiB   5.00%     1.23kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   99.81%    12.59GiB / 251.3GiB   5.01%     1.23kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   727.51%   12.59GiB / 251.3GiB   5.01%     1.23kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1342.80%   12.59GiB / 251.3GiB   5.01%     1.23kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   1356.07%   12.59GiB / 251.3GiB   5.01%     1.23kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   963.39%   12.41GiB / 251.3GiB   4.94%     1.23kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   102.98%   12.47GiB / 251.3GiB   4.96%     1.23kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+f3fa51e71228   festive_mccarthy   100.15%   12.48GiB / 251.3GiB   4.97%     1.23kB / 0B   79.2GB / 157GB   34
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS

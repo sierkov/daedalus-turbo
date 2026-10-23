@@ -6,13 +6,48 @@
 #include <turbo/cardano/conway/transaction.hpp>
 #include <turbo/cardano/dijkstra/auxiliary-data.hpp>
 
-namespace turbo::plutus {
-    struct allocator;
-}
-
 namespace turbo::cardano::dijkstra {
     using transaction_inputs_t = conway::transaction_inputs_t;
-    using voting_procedures_t = conway::voting_procedures_t;
+
+    struct ex_units: cardano::ex_units {
+        static ex_units from_cbor(cbor::zero2::value &);
+    };
+
+    struct ex_unit_prices: cardano::ex_unit_prices {
+        static ex_unit_prices from_cbor(cbor::zero2::value &);
+    };
+
+    struct anchor_t: cardano::anchor_t {
+        static anchor_t from_cbor(cbor::zero2::value &);
+    };
+
+    struct optional_anchor_t: cardano::optional_anchor_t {
+        static optional_anchor_t from_cbor(cbor::zero2::value &);
+    };
+
+    struct gov_action_id_t: cardano::gov_action_id_t {
+        static gov_action_id_t from_cbor(cbor::zero2::value &);
+    };
+
+    struct optional_gov_action_id_t: cardano::optional_gov_action_id_t {
+        static optional_gov_action_id_t from_cbor(cbor::zero2::value &);
+    };
+
+    struct constitution_t: cardano::constitution_t {
+        static constitution_t from_cbor(cbor::zero2::value &);
+    };
+
+    struct voting_procedure_t: cardano::voting_procedure_t {
+        static voting_procedure_t from_cbor(cbor::zero2::value &);
+    };
+
+    struct voting_procedures_t: conway::voting_procedures_t {
+        static voting_procedures_t from_cbor(cbor::zero2::value &);
+    };
+
+    struct datum_option_t: cardano::datum_option_t {
+        static datum_option_t from_cbor(cbor::zero2::value &);
+    };
 
     struct value_t {
         output_value_t value {};
@@ -107,15 +142,8 @@ namespace turbo::cardano::dijkstra {
         void to_cbor(era_encoder &) const;
     };
 
-    struct plutus_data_t {
-        uint8_vector raw {};
-
-        static plutus_data_t from_cbor(cbor::zero2::value &);
-        void to_cbor(era_encoder &) const;
-        void to_cbor(era_encoder &, plutus::allocator &) const;
-
-        bool operator==(const plutus_data_t &) const =default;
-    };
+    // Plutus data has the same wire grammar and borrowed lifetime in both eras.
+    using plutus_data_t = conway::plutus_data_t;
 
     using optional_plutus_data_t = nil_optional_t<plutus_data_t>;
     using required_top_level_guards_t = map_t<credential_t, optional_plutus_data_t>;
@@ -190,9 +218,9 @@ namespace turbo::cardano::dijkstra {
     };
 
     struct sub_transaction_t {
-        sub_transaction_body_t body {};
-        transaction_witness_set_t witnesses {};
-        std::optional<auxiliary_data_t> auxiliary_data {};
+        decoded_cbor_t<sub_transaction_body_t> body;
+        decoded_cbor_t<transaction_witness_set_t> witnesses;
+        std::optional<decoded_cbor_t<auxiliary_data_t>> auxiliary_data {};
 
         static sub_transaction_t from_cbor(cbor::zero2::value &);
         void to_cbor(era_encoder &) const;
@@ -207,9 +235,9 @@ namespace turbo::cardano::dijkstra {
     };
 
     struct transaction_t {
-        transaction_body_t body {};
-        transaction_witness_set_t witnesses {};
-        std::optional<auxiliary_data_t> auxiliary_data {};
+        decoded_cbor_t<transaction_body_t> body;
+        decoded_cbor_t<transaction_witness_set_t> witnesses;
+        std::optional<decoded_cbor_t<auxiliary_data_t>> auxiliary_data {};
 
         static transaction_t from_cbor(cbor::zero2::value &);
         void to_cbor(era_encoder &) const;
@@ -248,7 +276,7 @@ namespace turbo::cardano::dijkstra {
         void to_cbor(era_encoder &) const;
     private:
         transaction_body_t _body {};
-        std::optional<auxiliary_data_t> _auxiliary_data {};
+        buffer _auxiliary_data_raw {};
         buffer _raw {};
     };
 }

@@ -5,6 +5,7 @@
 //
 
 #include "keccak.h"
+#include "unaligned.h"
 #include <algorithm>
 #include <cstring>
 #include <stdexcept>
@@ -77,10 +78,10 @@ inline uint64_t little_endian(const uint64_t val) noexcept
 void Keccak::processBlock(const void* data)
 {
 
-  const uint64_t* data64 = (const uint64_t*) data;
+  const uint8_t* bytes = (const uint8_t*) data;
   // mix data into state
   for (unsigned int i = 0; i < m_blockSize / 8; i++) {
-    m_hash[i] ^= little_endian(data64[i]);
+    m_hash[i] ^= little_endian(hash_library_detail::loadUnaligned<uint64_t>(bytes + i * sizeof(uint64_t)));
   }
 
   // re-compute state

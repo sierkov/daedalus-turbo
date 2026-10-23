@@ -1,0 +1,809 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O    PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.52%   543.9MiB / 251.3GiB   0.21%     736B / 0B   198MB / 0B   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O    PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.78%   606.6MiB / 251.3GiB   0.24%     736B / 0B   402MB / 0B   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.95%   628.8MiB / 251.3GiB   0.24%     806B / 0B   597MB / 40.9MB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.14%   667.6MiB / 251.3GiB   0.26%     806B / 0B   817MB / 40.9MB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.74%   863.7MiB / 251.3GiB   0.34%     806B / 0B   1.02GB / 40.9MB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   808.02%   1.998GiB / 251.3GiB   0.80%     876B / 0B   1.26GB / 40.9MB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.66%   2.014GiB / 251.3GiB   0.80%     876B / 0B   1.56GB / 40.9MB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.84%   1.986GiB / 251.3GiB   0.79%     876B / 0B   1.73GB / 40.9MB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.25%   1.995GiB / 251.3GiB   0.79%     876B / 0B   1.93GB / 40.9MB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.48%   2.778GiB / 251.3GiB   1.11%     876B / 0B   2.11GB / 40.9MB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.82%   2.745GiB / 251.3GiB   1.09%     946B / 0B   2.33GB / 40.9MB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.06%   3.234GiB / 251.3GiB   1.29%     946B / 0B   2.73GB / 40.9MB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.50%   3.198GiB / 251.3GiB   1.27%     946B / 0B   3.04GB / 40.9MB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.47%   3.17GiB / 251.3GiB   1.26%     946B / 0B   3.28GB / 40.9MB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.04%   3.231GiB / 251.3GiB   1.29%     946B / 0B   3.57GB / 44.8MB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.90%   3.911GiB / 251.3GiB   1.56%     946B / 0B   3.86GB / 44.8MB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.03%   3.916GiB / 251.3GiB   1.56%     946B / 0B   4.41GB / 50.5MB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.40%   3.923GiB / 251.3GiB   1.56%     946B / 0B   4.94GB / 50.5MB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.26%   3.929GiB / 251.3GiB   1.56%     946B / 0B   5.33GB / 215MB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.27%   3.938GiB / 251.3GiB   1.57%     946B / 0B   5.7GB / 215MB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.04%   4.332GiB / 251.3GiB   1.72%     946B / 0B   6.14GB / 215MB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.52%   4.325GiB / 251.3GiB   1.72%     946B / 0B   6.96GB / 215MB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.61%   4.337GiB / 251.3GiB   1.73%     1.02kB / 0B   7.77GB / 365MB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.12%   4.351GiB / 251.3GiB   1.73%     1.02kB / 0B   8.16GB / 365MB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.09%   4.426GiB / 251.3GiB   1.76%     1.02kB / 0B   8.82GB / 555MB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.11%   4.518GiB / 251.3GiB   1.80%     1.02kB / 0B   9.75GB / 555MB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+5c1fcf1d9dc5   upbeat_yonath   812.07%   4.592GiB / 251.3GiB   1.83%     1.02kB / 0B   10.3GB / 603MB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.18%   4.753GiB / 251.3GiB   1.89%     1.02kB / 0B   10.4GB / 678MB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.49%   4.747GiB / 251.3GiB   1.89%     1.02kB / 0B   10.4GB / 2.87GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.19%   4.794GiB / 251.3GiB   1.91%     1.02kB / 0B   10.6GB / 4.53GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.73%   4.828GiB / 251.3GiB   1.92%     1.02kB / 0B   11.2GB / 4.8GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.10%   4.945GiB / 251.3GiB   1.97%     1.02kB / 0B   11.9GB / 4.8GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   802.86%   5.036GiB / 251.3GiB   2.00%     1.02kB / 0B   12.3GB / 5.02GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.96%   5.257GiB / 251.3GiB   2.09%     1.02kB / 0B   13.1GB / 5.02GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   806.57%   5.251GiB / 251.3GiB   2.09%     1.02kB / 0B   13.7GB / 5.27GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.32%   5.399GiB / 251.3GiB   2.15%     1.02kB / 0B   14.4GB / 5.27GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.61%   5.474GiB / 251.3GiB   2.18%     1.02kB / 0B   15.3GB / 5.47GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.16%   5.474GiB / 251.3GiB   2.18%     1.02kB / 0B   15.6GB / 5.47GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.57%   5.656GiB / 251.3GiB   2.25%     1.02kB / 0B   16.5GB / 5.72GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   805.26%   5.521GiB / 251.3GiB   2.20%     1.02kB / 0B   17GB / 5.72GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   802.36%   5.81GiB / 251.3GiB   2.31%     1.02kB / 0B   17.7GB / 5.74GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.04%   5.903GiB / 251.3GiB   2.35%     1.02kB / 0B   18.5GB / 5.74GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.10%   5.99GiB / 251.3GiB   2.38%     1.02kB / 0B   19GB / 6.43GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.75%   6.269GiB / 251.3GiB   2.49%     1.02kB / 0B   19.9GB / 6.43GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.82%   5.993GiB / 251.3GiB   2.38%     1.02kB / 0B   20.3GB / 7.3GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   794.64%   6.028GiB / 251.3GiB   2.40%     1.02kB / 0B   20.4GB / 7.31GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   790.64%   6.078GiB / 251.3GiB   2.42%     1.09kB / 0B   20.4GB / 8.29GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   780.98%   6.076GiB / 251.3GiB   2.42%     1.09kB / 0B   20.4GB / 9.86GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   793.49%   6.056GiB / 251.3GiB   2.41%     1.09kB / 0B   20.4GB / 13.6GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   791.97%   6.111GiB / 251.3GiB   2.43%     1.09kB / 0B   21GB / 15.1GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.68%   6.154GiB / 251.3GiB   2.45%     1.09kB / 0B   21.5GB / 15.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.13%   6.307GiB / 251.3GiB   2.51%     1.09kB / 0B   22.3GB / 15.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.95%   6.491GiB / 251.3GiB   2.58%     1.09kB / 0B   22.7GB / 15.3GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.59%   6.53GiB / 251.3GiB   2.60%     1.09kB / 0B   23.4GB / 15.3GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.29%   6.694GiB / 251.3GiB   2.66%     1.09kB / 0B   23.9GB / 15.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   791.53%   6.908GiB / 251.3GiB   2.75%     1.09kB / 0B   24.7GB / 15.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.01%   6.383GiB / 251.3GiB   2.54%     1.09kB / 0B   25.1GB / 15.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.01%   6.372GiB / 251.3GiB   2.54%     1.09kB / 0B   25.8GB / 15.5GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   792.47%   6.391GiB / 251.3GiB   2.54%     1.09kB / 0B   26GB / 15.5GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.02%   6.401GiB / 251.3GiB   2.55%     1.09kB / 0B   26GB / 16.8GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.54%   6.755GiB / 251.3GiB   2.69%     1.09kB / 0B   26.2GB / 19GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.86%   6.979GiB / 251.3GiB   2.78%     1.09kB / 0B   26.7GB / 19.6GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.55%   7.053GiB / 251.3GiB   2.81%     1.09kB / 0B   27.3GB / 19.6GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.04%   7.038GiB / 251.3GiB   2.80%     1.09kB / 0B   28GB / 19.7GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.47%   6.557GiB / 251.3GiB   2.61%     1.09kB / 0B   28.4GB / 19.7GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.45%   6.845GiB / 251.3GiB   2.72%     1.09kB / 0B   29GB / 19.8GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.34%   6.849GiB / 251.3GiB   2.73%     1.09kB / 0B   29.6GB / 19.8GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   793.78%   6.77GiB / 251.3GiB   2.69%     1.09kB / 0B   29.8GB / 19.9GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.44%   7.306GiB / 251.3GiB   2.91%     1.09kB / 0B   30GB / 22.3GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.57%   7.435GiB / 251.3GiB   2.96%     1.09kB / 0B   30.5GB / 22.5GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   795.59%   7.384GiB / 251.3GiB   2.94%     1.09kB / 0B   31GB / 22.5GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   795.93%   7.418GiB / 251.3GiB   2.95%     1.09kB / 0B   31.5GB / 22.5GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.73%   7.316GiB / 251.3GiB   2.91%     1.09kB / 0B   32.1GB / 22.5GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.47%   7.634GiB / 251.3GiB   3.04%     1.09kB / 0B   32.6GB / 22.5GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.36%   7.121GiB / 251.3GiB   2.83%     1.09kB / 0B   32.6GB / 23.1GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.78%   7.48GiB / 251.3GiB   2.98%     1.09kB / 0B   33.1GB / 24.6GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.60%   7.635GiB / 251.3GiB   3.04%     1.09kB / 0B   33.6GB / 24.8GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.25%   7.35GiB / 251.3GiB   2.92%     1.09kB / 0B   34GB / 24.8GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.34%   7.617GiB / 251.3GiB   3.03%     1.09kB / 0B   34.6GB / 24.9GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.97%   7.813GiB / 251.3GiB   3.11%     1.09kB / 0B   35.1GB / 24.9GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.27%   7.86GiB / 251.3GiB   3.13%     1.09kB / 0B   35.6GB / 24.9GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.10%   7.48GiB / 251.3GiB   2.98%     1.09kB / 0B   35.8GB / 24.9GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.29%   7.606GiB / 251.3GiB   3.03%     1.09kB / 0B   35.9GB / 26.9GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.42%   7.924GiB / 251.3GiB   3.15%     1.09kB / 0B   36.4GB / 27.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.47%   7.792GiB / 251.3GiB   3.10%     1.09kB / 0B   36.9GB / 27.3GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   803.14%   7.718GiB / 251.3GiB   3.07%     1.09kB / 0B   37.3GB / 27.3GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   802.00%   7.747GiB / 251.3GiB   3.08%     1.09kB / 0B   37.9GB / 27.3GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.05%   8.12GiB / 251.3GiB   3.23%     1.09kB / 0B   38.4GB / 27.3GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.22%   7.927GiB / 251.3GiB   3.15%     1.09kB / 0B   38.7GB / 27.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.48%   7.928GiB / 251.3GiB   3.15%     1.09kB / 0B   38.7GB / 29.1GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.33%   8.111GiB / 251.3GiB   3.23%     1.09kB / 0B   39.1GB / 29.5GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.43%   8.53GiB / 251.3GiB   3.39%     1.09kB / 0B   39.1GB / 29.5GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.32%   8.921GiB / 251.3GiB   3.55%     1.16kB / 0B   39.1GB / 29.6GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.57%   9.142GiB / 251.3GiB   3.64%     1.16kB / 0B   39.1GB / 29.6GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.42%   9.394GiB / 251.3GiB   3.74%     1.16kB / 0B   39.1GB / 29.6GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   802.93%   9.294GiB / 251.3GiB   3.70%     1.16kB / 0B   39.1GB / 29.6GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.67%   9.454GiB / 251.3GiB   3.76%     1.16kB / 0B   39.2GB / 29.7GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.27%   9.333GiB / 251.3GiB   3.71%     1.16kB / 0B   39.7GB / 29.7GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.55%   9.682GiB / 251.3GiB   3.85%     1.16kB / 0B   40.3GB / 29.8GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.86%   9.548GiB / 251.3GiB   3.80%     1.16kB / 0B   40.7GB / 29.8GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.65%   9.785GiB / 251.3GiB   3.89%     1.16kB / 0B   41.2GB / 29.8GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.24%   9.65GiB / 251.3GiB   3.84%     1.16kB / 0B   41.6GB / 29.8GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   793.35%   9.458GiB / 251.3GiB   3.76%     1.16kB / 0B   41.9GB / 29.8GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.54%   9.459GiB / 251.3GiB   3.76%     1.16kB / 0B   41.9GB / 31.7GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.81%   9.827GiB / 251.3GiB   3.91%     1.16kB / 0B   42.5GB / 32GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   802.61%   9.772GiB / 251.3GiB   3.89%     1.16kB / 0B   42.9GB / 33GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.61%   9.842GiB / 251.3GiB   3.92%     1.16kB / 0B   43.4GB / 33GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   795.27%   9.855GiB / 251.3GiB   3.92%     1.16kB / 0B   43.8GB / 33.1GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.86%   9.724GiB / 251.3GiB   3.87%     1.16kB / 0B   44.2GB / 33.1GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.51%   9.851GiB / 251.3GiB   3.92%     1.16kB / 0B   44.7GB / 34.8GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   793.41%   9.901GiB / 251.3GiB   3.94%     1.16kB / 0B   44.9GB / 34.8GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.65%   10.04GiB / 251.3GiB   4.00%     1.16kB / 0B   45.1GB / 37GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.33%   10.21GiB / 251.3GiB   4.06%     1.16kB / 0B   45.6GB / 37GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.47%   10.23GiB / 251.3GiB   4.07%     1.16kB / 0B   46.1GB / 37GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.93%   10.29GiB / 251.3GiB   4.10%     1.16kB / 0B   46.6GB / 37GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.50%   10.16GiB / 251.3GiB   4.04%     1.16kB / 0B   47GB / 37.1GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   803.23%   10.24GiB / 251.3GiB   4.07%     1.16kB / 0B   47.4GB / 37.1GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.77%   10.51GiB / 251.3GiB   4.18%     1.16kB / 0B   48GB / 37.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   803.47%   10.19GiB / 251.3GiB   4.05%     1.16kB / 0B   48.3GB / 37.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.12%   10.5GiB / 251.3GiB   4.18%     1.16kB / 0B   48.9GB / 37.3GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   791.81%   10.25GiB / 251.3GiB   4.08%     1.16kB / 0B   49.1GB / 37.3GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   789.51%   10.3GiB / 251.3GiB   4.10%     1.16kB / 0B   49.1GB / 37.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   795.32%   10.56GiB / 251.3GiB   4.20%     1.16kB / 0B   49.4GB / 37.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   803.21%   10.37GiB / 251.3GiB   4.13%     1.16kB / 0B   49.7GB / 37.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   795.97%   10.61GiB / 251.3GiB   4.22%     1.16kB / 0B   50.3GB / 37.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.64%   10.73GiB / 251.3GiB   4.27%     1.16kB / 0B   50.8GB / 37.5GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.59%   10.75GiB / 251.3GiB   4.28%     1.16kB / 0B   51.2GB / 37.5GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.48%   10.76GiB / 251.3GiB   4.28%     1.16kB / 0B   51.7GB / 37.5GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.63%   10.84GiB / 251.3GiB   4.31%     1.16kB / 0B   52.1GB / 37.5GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.51%   10.92GiB / 251.3GiB   4.35%     1.16kB / 0B   52.5GB / 37.6GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.90%   10.68GiB / 251.3GiB   4.25%     1.16kB / 0B   52.7GB / 37.6GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   802.91%   10.68GiB / 251.3GiB   4.25%     1.16kB / 0B   52.7GB / 37.7GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.28%   10.72GiB / 251.3GiB   4.27%     1.16kB / 0B   53.1GB / 37.7GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.26%   10.67GiB / 251.3GiB   4.24%     1.16kB / 0B   53.7GB / 40.1GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.33%   11.01GiB / 251.3GiB   4.38%     1.16kB / 0B   54.1GB / 40.1GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   804.14%   10.95GiB / 251.3GiB   4.36%     1.16kB / 0B   54.4GB / 40.5GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.23%   11.08GiB / 251.3GiB   4.41%     1.16kB / 0B   54.9GB / 40.5GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.05%   11.19GiB / 251.3GiB   4.45%     1.16kB / 0B   55.3GB / 40.6GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.60%   11GiB / 251.3GiB    4.38%     1.16kB / 0B   55.7GB / 40.6GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.50%   11.17GiB / 251.3GiB   4.44%     1.16kB / 0B   56.2GB / 40.7GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   807.65%   11.24GiB / 251.3GiB   4.47%     1.16kB / 0B   56.5GB / 40.7GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.51%   11.26GiB / 251.3GiB   4.48%     1.16kB / 0B   56.5GB / 41.7GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   795.63%   11.31GiB / 251.3GiB   4.50%     1.16kB / 0B   56.8GB / 43.3GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.51%   11.29GiB / 251.3GiB   4.49%     1.16kB / 0B   57.2GB / 45.6GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.25%   11.33GiB / 251.3GiB   4.51%     1.16kB / 0B   57.6GB / 45.6GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.49%   11.69GiB / 251.3GiB   4.65%     1.16kB / 0B   58GB / 45.6GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.33%   11.51GiB / 251.3GiB   4.58%     1.16kB / 0B   58.4GB / 45.7GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   802.23%   11.74GiB / 251.3GiB   4.67%     1.16kB / 0B   58.8GB / 45.7GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.50%   11.74GiB / 251.3GiB   4.67%     1.16kB / 0B   59.2GB / 45.8GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.35%   11.65GiB / 251.3GiB   4.64%     1.16kB / 0B   59.6GB / 45.8GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   789.32%   11.54GiB / 251.3GiB   4.59%     1.16kB / 0B   59.7GB / 45.8GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.98%   11.84GiB / 251.3GiB   4.71%     1.16kB / 0B   60GB / 47.7GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   794.24%   11.84GiB / 251.3GiB   4.71%     1.16kB / 0B   60.3GB / 47.8GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   803.26%   11.66GiB / 251.3GiB   4.64%     1.16kB / 0B   60.7GB / 47.8GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.89%   12.09GiB / 251.3GiB   4.81%     1.16kB / 0B   61.2GB / 47.8GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   794.92%   12.22GiB / 251.3GiB   4.86%     1.16kB / 0B   61.6GB / 47.8GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   795.60%   11.99GiB / 251.3GiB   4.77%     1.16kB / 0B   61.9GB / 47.9GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   803.37%   11.9GiB / 251.3GiB   4.74%     1.16kB / 0B   62.2GB / 47.9GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.24%   12.22GiB / 251.3GiB   4.86%     1.16kB / 0B   62.3GB / 49.5GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.47%   12.26GiB / 251.3GiB   4.88%     1.16kB / 0B   62.6GB / 49.8GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.92%   12.16GiB / 251.3GiB   4.84%     1.16kB / 0B   63GB / 49.8GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.73%   12.28GiB / 251.3GiB   4.89%     1.16kB / 0B   63.4GB / 49.8GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   804.69%   12.14GiB / 251.3GiB   4.83%     1.16kB / 0B   63.8GB / 49.9GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.05%   12.25GiB / 251.3GiB   4.87%     1.16kB / 0B   64.2GB / 49.9GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   793.44%   12.33GiB / 251.3GiB   4.91%     1.16kB / 0B   64.6GB / 49.9GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.86%   12.26GiB / 251.3GiB   4.88%     1.16kB / 0B   64.9GB / 49.9GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.90%   12.28GiB / 251.3GiB   4.89%     1.16kB / 0B   64.9GB / 50.8GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.49%   12.28GiB / 251.3GiB   4.89%     1.16kB / 0B   65.3GB / 52GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   805.92%   12.29GiB / 251.3GiB   4.89%     1.16kB / 0B   65.6GB / 52GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.79%   12.35GiB / 251.3GiB   4.91%     1.16kB / 0B   66.1GB / 52GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.11%   12.62GiB / 251.3GiB   5.02%     1.16kB / 0B   66.5GB / 52.1GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.76%   12.55GiB / 251.3GiB   4.99%     1.16kB / 0B   66.8GB / 52.1GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.93%   12.57GiB / 251.3GiB   5.00%     1.16kB / 0B   67.2GB / 52.1GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.13%   12.69GiB / 251.3GiB   5.05%     1.16kB / 0B   67.5GB / 52.1GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.35%   12.73GiB / 251.3GiB   5.06%     1.16kB / 0B   68GB / 52.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.24%   12.69GiB / 251.3GiB   5.05%     1.16kB / 0B   68.3GB / 52.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   802.12%   12.66GiB / 251.3GiB   5.04%     1.16kB / 0B   68.5GB / 52.3GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   792.88%   12.66GiB / 251.3GiB   5.04%     1.16kB / 0B   68.5GB / 52.8GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.18%   12.75GiB / 251.3GiB   5.07%     1.16kB / 0B   68.9GB / 54.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.96%   12.67GiB / 251.3GiB   5.04%     1.16kB / 0B   69.2GB / 54.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.32%   12.93GiB / 251.3GiB   5.14%     1.16kB / 0B   69.6GB / 54.5GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.79%   13.25GiB / 251.3GiB   5.27%     1.16kB / 0B   70GB / 54.5GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   795.89%   13.01GiB / 251.3GiB   5.18%     1.16kB / 0B   70.3GB / 54.5GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.08%   13.33GiB / 251.3GiB   5.31%     1.16kB / 0B   70.7GB / 54.5GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.94%   13.31GiB / 251.3GiB   5.30%     1.16kB / 0B   71.1GB / 54.6GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.62%   13.31GiB / 251.3GiB   5.30%     1.23kB / 0B   71.6GB / 54.6GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   792.01%   12.97GiB / 251.3GiB   5.16%     1.23kB / 0B   71.6GB / 54.7GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.00%   13.35GiB / 251.3GiB   5.31%     1.23kB / 0B   71.8GB / 56.8GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.93%   13.13GiB / 251.3GiB   5.23%     1.23kB / 0B   72.1GB / 56.9GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.50%   13.98GiB / 251.3GiB   5.56%     1.23kB / 0B   72.1GB / 56.9GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.99%   14.81GiB / 251.3GiB   5.89%     1.23kB / 0B   72.1GB / 56.9GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.34%   15.68GiB / 251.3GiB   6.24%     1.23kB / 0B   72.1GB / 56.9GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.40%   16.06GiB / 251.3GiB   6.39%     1.23kB / 0B   72.1GB / 57GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.75%   16.89GiB / 251.3GiB   6.72%     1.23kB / 0B   72.1GB / 57GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.05%   17.67GiB / 251.3GiB   7.03%     1.23kB / 0B   72.1GB / 57GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.74%   18.43GiB / 251.3GiB   7.33%     1.23kB / 0B   72.1GB / 57GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.78%   18.75GiB / 251.3GiB   7.46%     1.23kB / 0B   72.1GB / 57.1GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.12%   18.87GiB / 251.3GiB   7.51%     1.23kB / 0B   72.3GB / 57.1GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.04%   18.82GiB / 251.3GiB   7.49%     1.23kB / 0B   72.7GB / 57.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.81%   18.76GiB / 251.3GiB   7.46%     1.23kB / 0B   73GB / 57.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.15%   18.88GiB / 251.3GiB   7.51%     1.23kB / 0B   73.3GB / 57.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   794.40%   18.91GiB / 251.3GiB   7.52%     1.23kB / 0B   73.8GB / 57.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   792.57%   18.89GiB / 251.3GiB   7.52%     1.23kB / 0B   73.8GB / 57.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   803.62%   18.89GiB / 251.3GiB   7.52%     1.23kB / 0B   73.8GB / 59.1GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.80%   18.89GiB / 251.3GiB   7.52%     1.23kB / 0B   73.8GB / 60.3GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.00%   18.9GiB / 251.3GiB   7.52%     1.23kB / 0B   73.8GB / 60.3GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.54%   18.91GiB / 251.3GiB   7.52%     1.23kB / 0B   73.8GB / 60.3GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.71%   18.74GiB / 251.3GiB   7.46%     1.23kB / 0B   73.8GB / 60.3GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.66%   18.87GiB / 251.3GiB   7.51%     1.23kB / 0B   73.8GB / 60.3GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.54%   18.93GiB / 251.3GiB   7.53%     1.23kB / 0B   73.8GB / 61.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   805.16%   18.93GiB / 251.3GiB   7.53%     1.23kB / 0B   73.8GB / 61.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.94%   18.94GiB / 251.3GiB   7.54%     1.23kB / 0B   73.8GB / 62.1GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.51%   18.94GiB / 251.3GiB   7.54%     1.23kB / 0B   73.8GB / 62.1GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.14%   18.94GiB / 251.3GiB   7.54%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.20%   18.79GiB / 251.3GiB   7.48%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.38%   18.98GiB / 251.3GiB   7.55%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   802.20%   19GiB / 251.3GiB    7.56%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.49%   19.02GiB / 251.3GiB   7.57%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.83%   19.02GiB / 251.3GiB   7.57%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.29%   19.08GiB / 251.3GiB   7.59%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   795.11%   19.09GiB / 251.3GiB   7.60%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.69%   19.08GiB / 251.3GiB   7.59%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.06%   19.08GiB / 251.3GiB   7.59%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.08%   18.94GiB / 251.3GiB   7.54%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.61%   19.04GiB / 251.3GiB   7.58%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   802.36%   19.05GiB / 251.3GiB   7.58%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.09%   19.1GiB / 251.3GiB   7.60%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.16%   19.1GiB / 251.3GiB   7.60%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.17%   19.1GiB / 251.3GiB   7.60%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.40%   19.11GiB / 251.3GiB   7.60%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.23%   19.11GiB / 251.3GiB   7.60%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   794.36%   19.11GiB / 251.3GiB   7.60%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.95%   18.97GiB / 251.3GiB   7.55%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   795.58%   19.13GiB / 251.3GiB   7.61%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.43%   19.08GiB / 251.3GiB   7.59%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   802.79%   19.09GiB / 251.3GiB   7.60%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.18%   19.09GiB / 251.3GiB   7.60%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.35%   19.1GiB / 251.3GiB   7.60%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.51%   19.12GiB / 251.3GiB   7.61%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.00%   19.09GiB / 251.3GiB   7.59%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.60%   19.12GiB / 251.3GiB   7.61%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.02%   19.01GiB / 251.3GiB   7.57%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.02%   19.16GiB / 251.3GiB   7.62%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.14%   19.16GiB / 251.3GiB   7.62%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.60%   19.17GiB / 251.3GiB   7.63%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.29%   19.17GiB / 251.3GiB   7.63%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.56%   19.15GiB / 251.3GiB   7.62%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   793.83%   19.16GiB / 251.3GiB   7.62%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.75%   19.16GiB / 251.3GiB   7.62%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.25%   19.17GiB / 251.3GiB   7.63%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.95%   19.03GiB / 251.3GiB   7.57%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.34%   19.18GiB / 251.3GiB   7.63%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.15%   19.2GiB / 251.3GiB   7.64%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.23%   19.22GiB / 251.3GiB   7.65%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.90%   19.22GiB / 251.3GiB   7.65%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.00%   19.23GiB / 251.3GiB   7.65%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.83%   19.23GiB / 251.3GiB   7.65%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.14%   19.15GiB / 251.3GiB   7.62%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.83%   19.24GiB / 251.3GiB   7.66%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   802.59%   19.08GiB / 251.3GiB   7.59%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.25%   19.25GiB / 251.3GiB   7.66%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.03%   19.26GiB / 251.3GiB   7.66%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.36%   19.26GiB / 251.3GiB   7.67%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   803.67%   19.27GiB / 251.3GiB   7.67%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.78%   19.28GiB / 251.3GiB   7.67%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.30%   19.3GiB / 251.3GiB   7.68%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.92%   19.31GiB / 251.3GiB   7.68%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   795.50%   19.32GiB / 251.3GiB   7.69%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.94%   19.32GiB / 251.3GiB   7.69%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.51%   19.33GiB / 251.3GiB   7.69%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   802.84%   19.33GiB / 251.3GiB   7.69%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.85%   19.34GiB / 251.3GiB   7.69%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.02%   19.4GiB / 251.3GiB   7.72%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   804.04%   19.41GiB / 251.3GiB   7.72%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.64%   19.36GiB / 251.3GiB   7.70%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.02%   19.36GiB / 251.3GiB   7.70%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.60%   19.26GiB / 251.3GiB   7.66%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.93%   19.42GiB / 251.3GiB   7.73%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.52%   19.83GiB / 251.3GiB   7.89%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.90%   21.38GiB / 251.3GiB   8.51%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.94%   22.81GiB / 251.3GiB   9.07%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   802.11%   24.37GiB / 251.3GiB   9.70%     1.23kB / 0B   73.8GB / 62.2GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.79%   25.52GiB / 251.3GiB   10.15%    1.23kB / 0B   73.8GB / 62.3GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   802.50%   25.52GiB / 251.3GiB   10.16%    1.23kB / 0B   73.8GB / 62.3GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.51%   25.52GiB / 251.3GiB   10.16%    1.23kB / 0B   73.8GB / 62.3GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.16%   25.53GiB / 251.3GiB   10.16%    1.23kB / 0B   73.8GB / 62.3GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.30%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.3GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.67%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.3GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.82%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.52%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.15%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.78%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.65%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.86%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.13%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.18%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.02%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.32%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.72%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.62%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   802.55%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.75%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.35%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.82%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.65%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.74%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.78%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.27%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.45%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   802.22%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.31%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.19%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.02%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.38%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.79%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.36%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.19%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   802.05%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.18%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.12%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.02%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.02%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   802.05%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.85%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.43%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.66%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.58%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.52%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.46%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.86%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.59%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.12%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.08%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.36%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.19%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.59%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.19%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.81%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.98%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.35%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.11%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.39%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.29%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.55%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.15%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.69%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.82%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.71%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.43%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.80%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.48%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.39%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   802.55%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.35%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.03%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.72%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.52%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.92%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.48%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.89%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.36%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   803.08%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.34%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.38%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.20%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.21%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.81%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.74%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.39%   25.58GiB / 251.3GiB   10.18%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.22%   25.5GiB / 251.3GiB   10.15%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.60%   25.5GiB / 251.3GiB   10.15%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.94%   25.5GiB / 251.3GiB   10.15%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.83%   25.5GiB / 251.3GiB   10.15%    1.23kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.88%   25.5GiB / 251.3GiB   10.15%    1.3kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.40%   25.5GiB / 251.3GiB   10.15%    1.3kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.71%   25.5GiB / 251.3GiB   10.15%    1.3kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.37%   25.5GiB / 251.3GiB   10.15%    1.3kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.37%   25.5GiB / 251.3GiB   10.15%    1.3kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.73%   25.5GiB / 251.3GiB   10.15%    1.3kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.97%   25.5GiB / 251.3GiB   10.15%    1.3kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   797.60%   25.5GiB / 251.3GiB   10.15%    1.3kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   802.40%   25.5GiB / 251.3GiB   10.15%    1.3kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.76%   25.5GiB / 251.3GiB   10.15%    1.3kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.58%   25.5GiB / 251.3GiB   10.15%    1.3kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.53%   25.5GiB / 251.3GiB   10.15%    1.3kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   800.76%   25.5GiB / 251.3GiB   10.15%    1.3kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.98%   25.5GiB / 251.3GiB   10.15%    1.3kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.15%   25.5GiB / 251.3GiB   10.15%    1.3kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   802.08%   25.5GiB / 251.3GiB   10.15%    1.3kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.42%   25.5GiB / 251.3GiB   10.15%    1.3kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.36%   25.5GiB / 251.3GiB   10.15%    1.3kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.38%   25.5GiB / 251.3GiB   10.15%    1.3kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   802.56%   25.5GiB / 251.3GiB   10.15%    1.3kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT    MEM %     NET I/O      BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   798.54%   25.5GiB / 251.3GiB   10.15%    1.3kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.93%   25.45GiB / 251.3GiB   10.13%    1.3kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.20%   25.37GiB / 251.3GiB   10.10%    1.3kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.69%   25.37GiB / 251.3GiB   10.10%    1.3kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.69%   25.37GiB / 251.3GiB   10.10%    1.3kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   799.20%   25.37GiB / 251.3GiB   10.10%    1.3kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   801.95%   25.37GiB / 251.3GiB   10.10%    1.3kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   796.77%   25.37GiB / 251.3GiB   10.10%    1.3kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   99.78%    27.09GiB / 251.3GiB   10.78%    1.3kB / 0B   73.8GB / 62.4GB   10
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O      BLOCK I/O         PIDS
+5c1fcf1d9dc5   upbeat_yonath   99.70%    25.09GiB / 251.3GiB   9.98%     1.3kB / 0B   73.8GB / 64.7GB   10
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS

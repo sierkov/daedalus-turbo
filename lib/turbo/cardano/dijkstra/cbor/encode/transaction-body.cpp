@@ -2,24 +2,10 @@
  * Copyright (c) 2024-2026 R2 Rationality OÜ (info at r2rationality dot com)
  * License: https://github.com/r2rationality/turbocardano/blob/main/LICENSE */
 
-#include <turbo/cardano/babbage/cbor/encode/transaction-output.hpp>
 #include <turbo/cardano/dijkstra/transaction.hpp>
-#include <turbo/plutus/types.hpp>
 
 namespace turbo::cardano::dijkstra {
     namespace {
-        void native_script_to_cbor(era_encoder &enc, const buffer raw)
-        {
-            native_script_t::from_cbor(raw).to_cbor(enc);
-        }
-
-        void output_to_cbor(
-            era_encoder &enc, plutus::allocator &alloc, const tx_out_data &output)
-        {
-            babbage::detail::transaction_output_to_cbor_semantic(
-                enc, output, alloc, native_script_to_cbor);
-        }
-
         void inputs_to_cbor(era_encoder &enc, const input_set &inputs)
         {
             enc.tag(258);
@@ -30,19 +16,20 @@ namespace turbo::cardano::dijkstra {
         }
 
         void outputs_to_cbor(
-            era_encoder &enc, plutus::allocator &alloc, const tx_output_list &outputs)
+            era_encoder &enc, const tx_output_list &outputs)
         {
             enc.array_compact(outputs.size(), [&] {
                 for (const auto &output: outputs)
-                    output_to_cbor(enc, alloc, output);
+                    output.to_cbor(enc);
             });
         }
 
         void withdrawals_to_cbor(era_encoder &enc, const withdrawal_map &withdrawals)
         {
             enc.map_compact(withdrawals.size(), [&] {
-                for (const auto &[account, amount]: withdrawals)
+                for (const auto &[account, amount]: withdrawals) {
                     enc.bytes(account).uint(amount);
+                }
             });
         }
 
@@ -58,39 +45,6 @@ namespace turbo::cardano::dijkstra {
                                 enc.uint(numeric_cast<uint64_t>(amount));
                             else
                                 enc.nint(numeric_cast<uint64_t>(-(amount + 1)));
-                        }
-                    });
-                }
-            });
-        }
-
-        void voting_procedure_to_cbor(era_encoder &enc, const voting_procedure_t &procedure)
-        {
-            enc.array(2).uint(static_cast<uint8_t>(procedure.vote));
-            procedure.anchor.to_cbor(enc);
-        }
-
-        void votes_to_cbor(era_encoder &enc, const conway::vote_set &votes)
-        {
-            size_t voter_count = 0;
-            const voter_t *previous = nullptr;
-            for (const auto &vote: votes) {
-                if (!previous || (*previous <=> vote.voter) != std::strong_ordering::equal) {
-                    ++voter_count;
-                    previous = &vote.voter;
-                }
-            }
-            enc.map_compact(voter_count, [&] {
-                for (auto it = votes.begin(); it != votes.end();) {
-                    const auto voter = it->voter;
-                    auto end = it;
-                    while (end != votes.end() && (end->voter <=> voter) == std::strong_ordering::equal)
-                        ++end;
-                    enc.array(2).uint(static_cast<uint8_t>(voter.type)).bytes(voter.hash);
-                    enc.map_compact(std::distance(it, end), [&] {
-                        for (; it != end; ++it) {
-                            it->action_id.to_cbor(enc);
-                            voting_procedure_to_cbor(enc, it->voting_procedure);
                         }
                     });
                 }
@@ -119,14 +73,13 @@ namespace turbo::cardano::dijkstra {
         }
 
         void required_guards_to_cbor(
-            era_encoder &enc, plutus::allocator &alloc,
-            const required_top_level_guards_t &guards)
+            era_encoder &enc, const required_top_level_guards_t &guards)
         {
             enc.map_compact(guards.size(), [&] {
                 for (const auto &[credential, data]: guards) {
                     credential.to_cbor(enc);
                     if (data)
-                        data->to_cbor(enc, alloc);
+                        data->to_cbor(enc);
                     else
                         enc.s_null();
                 }
@@ -145,8 +98,7 @@ namespace turbo::cardano::dijkstra {
 
         template<typename BODY>
         void body_to_cbor(
-            era_encoder &enc, plutus::allocator &alloc,
-            const BODY &body)
+            era_encoder &enc, const BODY &body)
         {
             constexpr bool top_level = std::is_same_v<BODY, transaction_body_t>;
             if (body.network_id && *body.network_id > 1) [[unlikely]]
@@ -193,11 +145,11 @@ namespace turbo::cardano::dijkstra {
                     inputs_to_cbor(enc, body.ref_inputs);
                 }
                 enc.uint(1);
-                outputs_to_cbor(enc, alloc, body.outputs);
+                outputs_to_cbor(enc, body.outputs);
                 if constexpr (top_level) {
                     if (body.collateral_return) {
                         enc.uint(16);
-                        output_to_cbor(enc, alloc, *body.collateral_return);
+                        body.collateral_return->to_cbor(enc);
                     }
                     if (body.collateral_value)
                         enc.uint(17).uint(*body.collateral_value);
@@ -234,7 +186,7 @@ namespace turbo::cardano::dijkstra {
                     enc.uint(15).uint(*body.network_id);
                 if (!body.votes.empty()) {
                     enc.uint(19);
-                    votes_to_cbor(enc, body.votes);
+                    conway::voting_procedures_t::to_cbor(enc, body.votes);
                 }
                 if (!body.proposals.empty()) {
                     enc.uint(20);
@@ -255,7 +207,7 @@ namespace turbo::cardano::dijkstra {
                 }
                 if (!body.required_top_level_guards.empty()) {
                     enc.uint(24);
-                    required_guards_to_cbor(enc, alloc, body.required_top_level_guards);
+                    required_guards_to_cbor(enc, body.required_top_level_guards);
                 }
                 if (!body.direct_deposits.empty()) {
                     enc.uint(25);
@@ -277,13 +229,11 @@ namespace turbo::cardano::dijkstra {
 
     void transaction_body_t::to_cbor(era_encoder &enc) const
     {
-        plutus::allocator alloc {};
-        body_to_cbor(enc, alloc, *this);
+        body_to_cbor(enc, *this);
     }
 
     void sub_transaction_body_t::to_cbor(era_encoder &enc) const
     {
-        plutus::allocator alloc {};
-        body_to_cbor(enc, alloc, *this);
+        body_to_cbor(enc, *this);
     }
 }

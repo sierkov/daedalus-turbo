@@ -135,6 +135,39 @@ suite validator_suite = [] {
             cr.accept_anything_or_throw({}, *chain.tip, [&] { cr.add_buffer(0, uint8_vector { chain.data }); });
             expect_equal(cr.valid_end_offset(), chain.data.size());
         };
+        "maintenance reconstructs a missing ledger with the full-validation result"_test = [] {
+            const auto chain = gen_chain({ .height=3 });
+            for (const bool continuous: { false, true }) {
+                const file::tmp_directory dir { "validator-turbo-reconstruction" };
+                file_remover remover;
+                const chunk_registry_settings_t settings {
+                    .continuous=continuous, .ccfg=chain.cardano_cfg, .fr=remover
+                };
+                cardano::ledger::state expected { chain.cardano_cfg, scheduler::get(), cardano::ledger::state::init_mode::empty };
+                cardano::optional_point target;
+                {
+                    chunk_registry cr { dir.path(), settings };
+                    cr.validation(validator::validation_mode::full);
+                    cr.accept_anything_or_throw({}, *chain.tip, [&] {
+                        cr.add_buffer(0, uint8_vector { chain.data });
+                    });
+                    cr.save_state();
+                    target = cr.tip();
+                    cr.validator().load_snapshot(expected, *cr.validator().snapshots().rbegin());
+                }
+                // Retain stored blocks/indexes but leave no usable ledger snapshot.
+                json::save_pretty(dir.path() + "/validate/state.json", json::array {});
+                chunk_registry recovered { dir.path(), settings };
+                expect_equal(recovered.tip(), target);
+                expect_equal(recovered.valid_end_offset(), target->end_offset);
+                expect(recovered.validation(validator::validation_mode::none)
+                    == (continuous ? validator::validation_mode::full : validator::validation_mode::none));
+                expect(fatal(!recovered.validator().snapshots().empty()));
+                cardano::ledger::state actual { chain.cardano_cfg, scheduler::get(), cardano::ledger::state::init_mode::empty };
+                recovered.validator().load_snapshot(actual, *recovered.validator().snapshots().rbegin());
+                expect(actual == expected);
+            }
+        };
         "snapshots recover a newer stored tail in either mode"_test = [] {
             for (const bool continuous: { false, true }) {
                 const file::tmp_directory dir { "validator-live-recovery" };
@@ -795,15 +828,26 @@ suite validator_suite = [] {
             for (const auto &snap: { oldest, rollback, newest })
                 snapshots.emplace(validator::snapshot::from_json(snap.to_json()));
             expect(snapshots.best_exportable(immutable_tip) == snapshots.at_offset(newest.end_offset));
+            expect(snapshots.best_exportable(immutable_tip, true) == snapshots.at_offset(newest.end_offset));
+            auto wrong_slot = immutable_tip;
+            ++wrong_slot->slot;
+            expect(!snapshots.best_exportable(wrong_slot, true));
             expect(!snapshots.best_exportable({}));
             auto before_export = immutable_tip;
             before_export->end_offset = oldest.end_offset - 1;
             expect(!snapshots.best_exportable(before_export));
             before_export->end_offset = oldest.end_offset;
             expect(snapshots.best_exportable(before_export) == snapshots.at_offset(oldest.end_offset));
+            before_export->slot = oldest.last_slot;
+            // Later saved states must not hide an exact historical export.
+            expect(snapshots.best_exportable(before_export, true) == snapshots.at_offset(oldest.end_offset));
+            auto wrong_offset = before_export;
+            ++wrong_offset->end_offset;
+            expect(!snapshots.best_exportable(wrong_offset, true));
 
             snapshots.erase(newest);
             expect(snapshots.best_exportable(immutable_tip) == snapshots.at_offset(rollback.end_offset));
+            expect(!snapshots.best_exportable(immutable_tip, true));
             snapshots.erase(oldest);
             oldest.exportable = false;
             snapshots.emplace(oldest);

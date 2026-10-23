@@ -1,0 +1,24 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME                  CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O     PIDS
+24c8a16ade00   charming_lichterman   199.72%   2.203GiB / 251.3GiB   0.88%     736B / 0B   2.35GB / 0B   11
+CONTAINER ID   NAME                  CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O         PIDS
+24c8a16ade00   charming_lichterman   52.33%    1.75GiB / 251.3GiB   0.70%     35.2MB / 246kB   2.35GB / 16.4kB   12
+CONTAINER ID   NAME                  CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+24c8a16ade00   charming_lichterman   634.68%   2.095GiB / 251.3GiB   0.83%     147MB / 994kB   3.49GB / 91.4MB   12
+CONTAINER ID   NAME                  CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+24c8a16ade00   charming_lichterman   775.06%   2.137GiB / 251.3GiB   0.85%     147MB / 994kB   11.5GB / 91.4MB   12
+CONTAINER ID   NAME                  CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+24c8a16ade00   charming_lichterman   784.75%   2.191GiB / 251.3GiB   0.87%     147MB / 994kB   20.1GB / 91.4MB   12
+CONTAINER ID   NAME                  CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+24c8a16ade00   charming_lichterman   800.33%   2.289GiB / 251.3GiB   0.91%     147MB / 994kB   27.2GB / 91.4MB   12
+CONTAINER ID   NAME                  CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+24c8a16ade00   charming_lichterman   803.99%   2.414GiB / 251.3GiB   0.96%     147MB / 994kB   31.6GB / 91.4MB   12
+CONTAINER ID   NAME                  CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+24c8a16ade00   charming_lichterman   355.37%   3.663GiB / 251.3GiB   1.46%     147MB / 994kB   32.5GB / 91.4MB   12
+CONTAINER ID   NAME                  CPU %     MEM USAGE / LIMIT    MEM %     NET I/O         BLOCK I/O         PIDS
+24c8a16ade00   charming_lichterman   214.40%   2.59GiB / 251.3GiB   1.03%     147MB / 994kB   32.5GB / 2.66GB   12
+CONTAINER ID   NAME                  CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+24c8a16ade00   charming_lichterman   199.97%   3.973GiB / 251.3GiB   1.58%     147MB / 994kB   32.5GB / 2.66GB   12
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0

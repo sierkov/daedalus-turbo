@@ -125,6 +125,7 @@ namespace turbo::cardano {
         }
 
         static anchor_t from_cbor(cbor::zero2::value &);
+        static anchor_t from_cbor(cbor::zero2::array_reader &);
         static anchor_t from_json(const json::value &);
         void to_cbor(era_encoder &) const;
 
@@ -254,6 +255,7 @@ namespace turbo::cardano {
         }
 
         static gov_action_id_t from_cbor(cbor::zero2::value &v);
+        static gov_action_id_t from_cbor(cbor::zero2::array_reader &);
         void to_cbor(era_encoder &) const;
 
         bool operator==(const gov_action_id_t &o) const noexcept

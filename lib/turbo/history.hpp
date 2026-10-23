@@ -128,11 +128,11 @@ namespace turbo {
                 self.total_withdrawals, self.full_history);
         }
 
-        template<typename IDX>
-        bool find_incoming_txos(index::reader_multi<IDX> &ref_idx)
+        template<typename Reader>
+        bool find_incoming_txos(Reader &ref_idx)
         {
             timer t { "find referenced tx outputs", logger::level::debug };
-            IDX search_item { id };
+            typename Reader::value_type search_item { id };
             auto [ ref_count, ref_item ] = ref_idx.find(search_item);
             for (size_t i = 0; i < ref_count; i++) {
                 auto it = transactions.emplace_hint(transactions.end(), static_cast<uint64_t>(ref_item.offset), transaction { .size=ref_item.size });
@@ -304,7 +304,8 @@ namespace turbo {
 
         reconstructor(chunk_registry &cr):
             _cr { cr },
-            _stake_ref_idx { _cr.indexer().reader_paths("stake-ref") },
+            _stake_ref_idx { _cr.indexer().reader_paths(index::stake_ref::script_index_name),
+                _cr.indexer().reader_paths(index::stake_ref::key_index_name) },
             _pay_ref_idx { _cr.indexer().reader_paths("pay-ref") },
             _tx_idx { _cr.indexer().reader_paths("tx") },
             _txo_use_idx { _cr.indexer().reader_paths("txo-use") }
@@ -341,13 +342,13 @@ namespace turbo {
         }
     private:
         chunk_registry &_cr;
-        index::reader_multi<index::stake_ref::item> _stake_ref_idx;
+        index::stake_ref::reader _stake_ref_idx;
         index::reader_multi<index::pay_ref::item> _pay_ref_idx;
         index::reader_multi<index::tx::item> _tx_idx;
         index::reader_multi_mt<index::txo_use::item> _txo_use_idx;
 
-        template<typename IDX, typename ID>
-        const history<ID> _history(index::reader_multi<IDX> &ref_idx, const ID &id)
+        template<typename Reader, typename ID>
+        const history<ID> _history(Reader &ref_idx, const ID &id)
         {
             timer t { "history reconstruction", logger::level::debug };
             progress_guard pg { "fetch incoming txos", "find spent txos", "load spent txo data" };

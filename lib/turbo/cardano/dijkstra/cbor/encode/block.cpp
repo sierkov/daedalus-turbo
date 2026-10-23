@@ -18,6 +18,11 @@ namespace turbo::cardano::dijkstra {
         });
     }
 
+    void block::body_to_cbor(era_encoder &enc) const
+    {
+        enc.raw_cbor(_body_raw);
+    }
+
     void block::to_cbor(era_encoder &enc) const
     {
         enc.array(2);

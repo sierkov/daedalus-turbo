@@ -6,6 +6,7 @@
 
 #include <turbo/common/mutex.hpp>
 #include <turbo/cardano/ledger/shelley.hpp>
+#include <turbo/cardano/ledger/node-format.hpp>
 #include <turbo/cardano/ledger/subchain.hpp>
 #include <turbo/cardano/ledger/updates.hpp>
 #include <turbo/common/format.hpp>
@@ -26,10 +27,10 @@ namespace turbo::cardano::ledger {
 
         void load_zpp(const std::string &path);
         void save_zpp(const std::string &path, std::unique_ptr<subchain_list> tmp_sc={});
-        cbor_encoder to_cbor(const point &tip, int prio=1000);
+        cbor_encoder to_cbor(const point &tip, int prio=1000, node_format format=node_format::legacy);
         point deserialize_node(buffer data);
         point load_node(const std::string &path);
-        void save_node(const std::string &path, const point &tip, int prio=1000);
+        void save_node(const std::string &path, const point &tip, int prio=1000, node_format format=node_format::legacy);
 
         void track_era(uint64_t era, uint64_t slot);
         void process_cert(const cert_t &, const cert_loc_t &);
@@ -315,8 +316,8 @@ namespace turbo::cardano::ledger {
 
         void _deserialize_node_ledger_state(cbor::zero2::value &);
         point _deserialize_node_vrf_state(cbor::zero2::value &);
-        void _serialize_node_state(cbor_encoder &ser, const point &tip) const;
-        void _serialize_node_vrf_state(cbor_encoder &ser, const point &tip) const;
+        void _serialize_node_state(cbor_encoder &ser, const point &tip, node_format) const;
+        void _serialize_node_vrf_state(cbor_encoder &ser, const point &tip, node_format format) const;
         void _transition_ledger_era(uint64_t from_era, uint64_t to_era);
         void _transition_vrf_era(uint64_t from_era, uint64_t to_era);
         void _transition_era(uint64_t from_era, uint64_t to_era);

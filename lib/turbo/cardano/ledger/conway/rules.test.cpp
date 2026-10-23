@@ -27,7 +27,10 @@ namespace {
         using state::_epoch;
         using state::_treasury;
         using state::_gov_make_pulsing_snapshot;
+        using state::_gov_enact;
         using state::_params;
+        using state::_params_prev;
+        using state::_protocol_state_to_cbor;
         using state::_proposals;
         using state::_deposited;
         using state::_drep_state;
@@ -35,8 +38,8 @@ namespace {
         using state::_pulsing_data;
         using state::_pool_default_vote;
         using state::_snapshot_pool_default_votes;
-        using state::_compute_drep_voting_power;
         using state::_compute_pool_voting_power;
+        using state::rotate_snapshots;
         using state::delegate_vote;
         using state::delegate_stake;
 
@@ -112,7 +115,76 @@ suite cardano_ledger_conway_rules_suite = [] {
         }
     };
 
-    "CERTS defers DRep cleanup until the final registration domain"_test = [] {
+    "PV9 retains delegation to a DRep removed earlier in the transaction"_test = [] {
+        gap_test_state st {};
+        st._params.protocol_ver = { 9, 0 };
+        const stake_ident account = gap_reward(1), drep = gap_reward(2);
+        const cert_loc_t loc { 0, 1, 0 };
+        st.seed(account);
+        st.process_cert(reg_drep_cert { drep, st._params.drep_deposit, {} }, loc);
+        st.delegate_vote(account, drep_t { drep }, loc);
+        st.process_cert(unreg_drep_cert { drep, st._params.drep_deposit }, loc);
+        expect(!st._accounts.at(account).vote_deleg.has_value());
+        st.delegate_vote(account, drep_t { drep }, loc);
+        st.finish_transaction();
+        const auto &deleg = st._accounts.at(account).vote_deleg;
+        expect(deleg.has_value());
+        if (deleg)
+            expect(*deleg == drep_t { drep });
+        expect(!st.has_drep(drep));
+    };
+
+    "PV9 preserves stale reverse delegations to unknown credentials"_test = [] {
+        for (const bool predefined: { false, true }) {
+            gap_test_state st {};
+            st._params.protocol_ver = { 9, 0 };
+            const stake_ident account = gap_reward(1), old = gap_reward(2), unknown = gap_reward(3);
+            const cert_loc_t loc { 0, 1, 0 };
+            st.seed(account);
+            st.process_cert(reg_drep_cert { old, st._params.drep_deposit, {} }, loc);
+            st.delegate_vote(account, drep_t { old }, loc);
+            const auto target = predefined ? drep_t {} : drep_t { unknown };
+            st.delegate_vote(account, target, loc);
+            expect(st._accounts.at(account).vote_deleg == array_optional_t<drep_t> { target });
+            expect(st._drep_state.at(old).delegs.contains(account) == !predefined);
+            st.process_cert(unreg_drep_cert { old, st._params.drep_deposit }, loc);
+            st.finish_transaction();
+            // Historical deregistration clears even an account that now points elsewhere.
+            expect(st._accounts.at(account).vote_deleg.has_value() == predefined);
+        }
+    };
+
+    "PV9 and PV10 DRep re-registration does not restore delegations"_test = [] {
+        for (const auto major: { 9U, 10U }) {
+            gap_test_state st {};
+            st._params.protocol_ver.major = major;
+            const stake_ident account = gap_reward(1), drep = gap_reward(2);
+            const cert_loc_t loc { 0, 1, 0 };
+            st.seed(account);
+            st.process_cert(reg_drep_cert { drep, st._params.drep_deposit, {} }, loc);
+            st.delegate_vote(account, drep_t { drep }, loc);
+            st.process_cert(unreg_drep_cert { drep, st._params.drep_deposit }, loc);
+            st.process_cert(reg_drep_cert { drep, st._params.drep_deposit, {} }, loc);
+            st.finish_transaction();
+            expect(!st._accounts.at(account).vote_deleg.has_value());
+            expect(st._drep_state.at(drep).delegs.empty());
+        }
+    };
+
+    "PV10 rejects unknown DReps without changing the existing delegation"_test = [] {
+        gap_test_state st {};
+        st._params.protocol_ver = { 10, 0 };
+        const stake_ident account = gap_reward(1), old = gap_reward(2), unknown = gap_reward(3);
+        const cert_loc_t loc { 0, 1, 0 };
+        st.seed(account);
+        st.process_cert(reg_drep_cert { old, st._params.drep_deposit, {} }, loc);
+        st.delegate_vote(account, drep_t { old }, loc);
+        expect(throws([&] { st.delegate_vote(account, drep_t { unknown }, loc); }));
+        expect(st._accounts.at(account).vote_deleg == array_optional_t<drep_t> { drep_t { old } });
+        expect(st._drep_state.at(old).delegs.contains(account));
+    };
+
+    "PV11 CERTS defers DRep cleanup until the final registration domain"_test = [] {
         gap_test_state st {};
         const stake_ident account = gap_reward(1), drep = gap_reward(2);
         const cert_loc_t first { 0, 1, 0 }, next { 0, 2, 0 };
@@ -238,16 +310,39 @@ suite cardano_ledger_conway_rules_suite = [] {
         expect(st._pool_default_vote(pool_hash {}) == pool_default_vote_t::no_confidence);
     };
 
-    "RATIFY stake uses pre-payout rewards and mark pool delegations"_test = [] {
+    "Conway DRep snapshots include pool deposit refunds"_test = [] {
+        for (const auto major: { 9U, 10U, 11U }) {
+            gap_test_state st {};
+            st._params.protocol_ver.major = major;
+            st._params.pool_deposit = 500'000'000;
+            st._ratify_state.new_state.params = st._params;
+            const auto reward_id = gap_reward(1);
+            const stake_ident id = reward_id;
+            st.seed(id, 50);
+            st._accounts.at(id).stake = 100;
+            pool_params pool {};
+            pool.reward_id = reward_id;
+            st.register_pool({ pool_hash {}, pool });
+            st.delegate_stake(id, pool_hash {});
+            st.delegate_vote(id, drep_t {}, {});
+            st.retire_pool(pool_hash {}, 1);
+            // The epoch transition must freeze DRep power after refunding the pool deposit.
+            st.start_epoch({ 1 });
+            expect_equal(st.params().protocol_ver.major, major);
+            expect_equal(st._accounts.at(id).mark_stake, 150);
+            expect_equal(st._accounts.at(id).reward, 500'000'050);
+            expect_equal(st._pulsing_data.drep_voting_power.at(drep_t {}), 500'000'150);
+            // Later rewards must not change the frozen distribution.
+            st._accounts.at(id).reward += 17;
+            expect_equal(st._pulsing_data.drep_voting_power.at(drep_t {}), 500'000'150);
+        }
+    };
+
+    "RATIFY pool proposal deposits use mark pool delegations"_test = [] {
         gap_test_state st {};
         const stake_ident id = gap_reward(1);
         st.seed(id);
         auto &acc = st._accounts.at(id);
-        acc.stake = 100;
-        acc.mark_stake = 100;
-        acc.reward = 50; // boundary payout not in the input reward map
-        acc.vote_deleg = drep_t {};
-        expect(st._compute_drep_voting_power().at(drep_t {}) == 100_u);
         acc.mark_deleg = pool_hash {};
         acc.deleg.reset(); // retired by POOLREAP after mark was captured
         st._mark.pool_params.try_emplace(pool_hash {}, pool_params {});
@@ -257,14 +352,65 @@ suite cardano_ledger_conway_rules_suite = [] {
         expect(st._compute_pool_voting_power().get(pool_hash {}) == 7_u);
     };
 
-    "EPOCH expired retained proposals do not start dormancy"_test = [] {
+    "PV11 DRep snapshots count returned and pending proposal deposits once"_test = [] {
         gap_test_state st {};
-        st._proposals[gov_action_id_t {}].expires_after = 0;
-        st.start_epoch(1);
-        expect(st.num_dormant_epochs() == 0_u);
-        st._proposals.clear();
-        st.start_epoch(2);
-        expect(st.num_dormant_epochs() == 1_u);
+        const stake_ident id = gap_reward(1);
+        st.seed(id, 50);
+        auto &acc = st._accounts.at(id);
+        acc.stake = 100;
+        acc.vote_deleg = drep_t {};
+        constexpr uint64_t deposit = 100'000'000'000;
+        const gov_action_id_t removed {};
+        auto pending = removed;
+        ++pending.idx;
+        for (const auto &gid: { removed, pending }) {
+            auto &action = st._proposals[gid];
+            action.proposal.return_addr = id;
+            action.proposal.deposit = deposit;
+            st._deposited += deposit;
+        }
+        st._ratify_state.new_state.params = st._params;
+        st._ratify_state.expired.emplace(removed);
+        st.rotate_snapshots();
+        st._gov_enact();
+        st._gov_make_pulsing_snapshot(true);
+        expect_equal(acc.mark_stake, 150);
+        expect_equal(acc.reward, 50 + deposit);
+        expect(!st._proposals.contains(removed));
+        expect(st._proposals.contains(pending));
+        expect_equal(st._pulsing_data.drep_voting_power.at(drep_t {}), 150 + 2 * deposit);
+        acc.reward += 17;
+        expect_equal(st._pulsing_data.drep_voting_power.at(drep_t {}), 150 + 2 * deposit);
+    };
+
+    "PV9 and PV10 dormancy ignores expired proposals and extends DRep expiry"_test = [] {
+        for (const auto major: { 9U, 10U, 11U }) {
+            for (const int expires: { -1, 0, 1, 2 }) {
+                gap_test_state st {};
+                st._params.protocol_ver.major = major;
+                st._ratify_state.new_state.params = st._params;
+                st._ratify_ready = true; // Retain the proposal through the boundary.
+                const stake_ident account = gap_reward(1), drep = gap_reward(2);
+                st.seed(account);
+                st.process_cert(reg_drep_cert { drep, st._params.drep_deposit, {} }, {});
+                const auto old_expiry = st._drep_state.at(drep).expire_epoch;
+                if (expires >= 0) {
+                    auto &proposal = st._proposals[gov_action_id_t {}];
+                    proposal.proposal.action.val = gov_action_t::info_action_t {};
+                    proposal.expires_after = static_cast<uint64_t>(expires);
+                }
+                st.start_epoch(1);
+                const uint64_t dormant = expires < 0 || (major < 11 && expires < 1) ? 1 : 0;
+                expect_equal(st.num_dormant_epochs(), dormant);
+                if (major < 11) {
+                    auto proposal = st.proposal_for(account);
+                    proposal.id.tx_id[0] = 1;
+                    st.process_proposal(proposal, { slot::from_epoch(1, cardano::config::get()), 0, 0 });
+                    expect_equal(st.num_dormant_epochs(), 0);
+                    expect_equal(st._drep_state.at(drep).expire_epoch, old_expiry + dormant);
+                }
+            }
+        }
     };
 
     "Conway frozen inputs survive pulser serialization"_test = [] {
@@ -317,6 +463,149 @@ suite cardano_ledger_conway_rules_suite = [] {
         restored.complete_pulsers();
         expect(restored._ratify_state.expired.contains(expired_id));
         expect(restored._proposals.contains(expired_id));
+    };
+
+    "RATIFY parameter updates use the required DRep group thresholds"_test = [] {
+        // ConwayPParams assigns rho, tau and minPoolCost to EconomicGroup,
+        // and a0 to TechnicalGroup. Mixed updates require the highest threshold.
+        const std::vector<std::pair<param_update_t, uint64_t>> cases {
+            { param_update_t { .min_pool_cost = 75'000'000 }, 60 },
+            { param_update_t { .expansion_rate = rational_u64 { 1, 100 } }, 60 },
+            { param_update_t { .treasury_growth_rate = rational_u64 { 1, 10 } }, 60 },
+            { param_update_t { .pool_pledge_influence = rational_u64 { 1, 2 } }, 80 },
+            { param_update_t { .max_transaction_size = 16384, .min_pool_cost = 75'000'000 }, 90 }
+        };
+        const stake_ident yes_id = gap_reward(1), no_id = gap_reward(2);
+        for (const auto &[update, threshold]: cases) {
+            gap_test_state st {};
+            st._epoch = 661;
+            st._ratify_state.new_state.params = st._params;
+            auto &thresholds = st._ratify_state.new_state.params.drep_voting_thresholds;
+            thresholds.pp_economic_group = { 60, 100 };
+            thresholds.pp_technical_group = { 80, 100 };
+            thresholds.pp_network_group = { 90, 100 };
+            for (const auto &id: { yes_id, no_id })
+                st._drep_state[id].expire_epoch = 666;
+            st._pulsing_data.drep_state = st._drep_state;
+            gov_action_state_t action {};
+            gov_action_t::parameter_change_t change {};
+            change.update = update;
+            action.proposal.action.val = change;
+            action.drep_votes.emplace(yes_id, voting_procedure_t { vote_t::yes });
+            action.drep_votes.emplace(no_id, voting_procedure_t { vote_t::no });
+            for (const uint64_t yes: { uint64_t { 0 }, threshold - 1, threshold, uint64_t { 100 } }) {
+                st._pulsing_data.drep_voting_power[drep_t { yes_id }] = yes;
+                st._pulsing_data.drep_voting_power[drep_t { no_id }] = 100 - yes;
+                expect(st.dreps_accepted(action) == (yes >= threshold));
+            }
+        }
+    };
+
+    "future parameters retain a ratified no-op parameter update"_test = [] {
+        for (const bool ratified: { false, true }) {
+            gap_test_state st {};
+            st._ratify_ready = true;
+            st._ratify_state.new_state.params = st._params;
+            if (ratified) {
+                gov_action_state_t action {};
+                gov_action_t::parameter_change_t change {};
+                change.update.min_pool_cost = st._params.min_pool_cost;
+                action.proposal.action.val = change;
+                st._ratify_state.enacted.emplace_back(gov_action_id_t {}, action);
+            }
+            era_encoder enc { era_t::conway };
+            st._protocol_state_to_cbor(enc, ledger::node_format::v11_1_3);
+            auto parsed = cbor::zero2::parse(enc.cbor());
+            auto &fields = parsed.get().array();
+            const auto current = fields.skip(3).read().data_raw();
+            auto &future = fields.skip(1).read().array();
+            expect_equal(future.read().uint(), ratified ? 1 : 0);
+            if (ratified)
+                expect_equal(future.read().data_raw(), current);
+            expect(future.done());
+        }
+    };
+
+    "snapshot loading repairs pending parameter ratification from frozen votes"_test = [] {
+        const gov_action_id_t gid {};
+        const stake_ident yes_id = gap_reward(1), no_id = gap_reward(2);
+        for (const uint64_t yes: { 0, 60 }) {
+            gap_test_state st {};
+            st._epoch = 661;
+            st._treasury = 999;
+            st._params.min_pool_cost = 170'000'000;
+            st._params.committee_min_size = 0;
+            st._params.drep_voting_thresholds.pp_economic_group = { 60, 100 };
+            st._params_prev = st._params;
+            st._params_prev.min_pool_cost = 340'000'000;
+            st._enact_state.params = st._params;
+            st._enact_state.committee = committee_t { {}, { 0, 1 } };
+            gov_action_state_t action {};
+            action.proposed_in = 660;
+            action.expires_after = 666;
+            gov_action_t::parameter_change_t change {};
+            change.update.min_pool_cost = 75'000'000;
+            action.proposal.action.val = change;
+            action.drep_votes.emplace(yes_id, voting_procedure_t { vote_t::yes });
+            action.drep_votes.emplace(no_id, voting_procedure_t { vote_t::no });
+            st._pulsing_data.proposals.emplace_back(gid, action);
+            st._pulsing_data.treasury = 123;
+            for (const auto &id: { yes_id, no_id })
+                st._drep_state[id].expire_epoch = 666;
+            st._pulsing_data.drep_state = st._drep_state;
+            st._pulsing_data.drep_voting_power[drep_t { yes_id }] = yes;
+            st._pulsing_data.drep_voting_power[drep_t { no_id }] = 100 - yes;
+
+            // The old zero threshold ratified this action even with no yes votes.
+            st._ratify_state.new_state = st._enact_state;
+            st._ratify_state.new_state.params.min_pool_cost = 75'000'000;
+            st._ratify_state.new_state.prev_actions.param_updates = gid;
+            st._ratify_state.enacted.emplace_back(gid, action);
+            st._ratify_ready = true;
+            // Subsequent live changes must not affect the saved ratification inputs.
+            st._proposals.emplace(gid, action);
+            st._proposals.at(gid).drep_votes.at(yes_id).vote = vote_t::no;
+            st._proposals.at(gid).drep_votes.at(no_id).vote = vote_t::yes;
+            for (auto &[id, info]: st._drep_state) {
+                static_cast<void>(id);
+                info.expire_epoch = 660;
+            }
+
+            const file::tmp path { "conway-parameter-ratification.zpp" };
+            const auto save = [&](const gap_test_state &source) {
+                ledger::zpp_encoder enc {};
+                source.to_zpp(enc);
+                enc.run(scheduler::get(), "encode-parameter-ratification");
+                enc.save(path.path(), true);
+            };
+            save(st);
+            // Reload the repaired result too: accepted actions must not accumulate.
+            for (size_t reload = 0; reload < 2; ++reload) {
+                gap_test_state restored {};
+                ledger::parallel_decoder dec { path.path() };
+                restored.from_zpp(dec);
+                dec.run(scheduler::get(), "decode-parameter-ratification");
+                const bool accepted = yes >= 60;
+                expect(restored._ratify_ready);
+                expect_equal(restored._ratify_state.enacted.size(), accepted ? 1 : 0);
+                expect(restored._ratify_state.expired.empty());
+                expect_equal(restored._ratify_state.new_state.params.min_pool_cost,
+                    accepted ? 75'000'000 : 170'000'000);
+                expect_equal(restored._ratify_state.new_state.prev_params.min_pool_cost, 340'000'000);
+                expect(restored._ratify_state.new_state.prev_actions.param_updates.has_value() == accepted);
+                expect_equal(restored._params.min_pool_cost, 170'000'000);
+                expect_equal(restored._treasury, 999);
+                expect(restored._proposals.contains(gid));
+                era_encoder enc { era_t::conway };
+                restored._protocol_state_to_cbor(enc, ledger::node_format::v11_1_3);
+                auto parsed = cbor::zero2::parse(enc.cbor());
+                auto &fields = parsed.get().array();
+                fields.skip(5); // FuturePParams: the field that differed at epoch 661.
+                expect_equal(fields.read().array().read().uint(), accepted ? 1 : 0);
+                if (reload == 0)
+                    save(restored);
+            }
+        }
     };
 
     "ratification uses frozen treasury regardless of completion time"_test = [] {

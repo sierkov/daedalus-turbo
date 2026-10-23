@@ -35,6 +35,23 @@ suite plutus_context_suite = [] {
             ctx.prepare();
             expect(throws([&] { ctx.set_script_purposes({}); }));
         };
+        "withdrawal redeemer indices follow ledger account order"_test = [] {
+            const auto key0 = reward_id_t::from_hex<reward_id_t>("E0" + std::string(56, '0'));
+            const auto script0 = reward_id_t::from_hex<reward_id_t>("F0" + std::string(56, 'F'));
+            const auto script1 = reward_id_t::from_hex<reward_id_t>("F1" + std::string(56, '2'));
+            storage::block_info block {};
+            block.era = 7;
+            cbor::encoder body {}, witnesses {};
+            body.map(4).uint(0).array(0).uint(1).array(0).uint(2).uint(0);
+            body.uint(5).map(3);
+            for (const auto &account: { script1, key0, script0 })
+                body.bytes(account).uint(1);
+            witnesses.map(0);
+            context ctx { std::move(body.cbor()), std::move(witnesses.cbor()), block };
+            expect(ctx.redeemer_script({ redeemer_tag::reward, 0 }) == script_hash { script0.hash() });
+            // The network-0 key occupies index 1, before the network-1 script.
+            expect(ctx.redeemer_script({ redeemer_tag::reward, 2 }) == script_hash { script1.hash() });
+        };
         "total redeemer budget"_test = [] {
             const context::redeemer_map redeemers {
                 { redeemer_id { redeemer_tag::spend, 0 },

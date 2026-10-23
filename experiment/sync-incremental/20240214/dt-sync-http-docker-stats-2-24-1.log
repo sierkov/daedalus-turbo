@@ -1,0 +1,42 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O     PIDS
+5d559fde7162   cranky_knuth   199.67%   2.186GiB / 251.3GiB   0.87%     736B / 0B   2.35GB / 0B   27
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5d559fde7162   cranky_knuth   5.80%     1.592GiB / 251.3GiB   0.63%     5.82MB / 53.6kB   2.35GB / 16.4kB   28
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+5d559fde7162   cranky_knuth   0.58%     1.597GiB / 251.3GiB   0.64%     11.1MB / 88.3kB   2.35GB / 81.9kB   28
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+5d559fde7162   cranky_knuth   3.14%     1.601GiB / 251.3GiB   0.64%     15.6MB / 181kB   2.35GB / 81.9kB   28
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT   MEM %     NET I/O         BLOCK I/O         PIDS
+5d559fde7162   cranky_knuth   376.26%   2.1GiB / 251.3GiB   0.84%     112MB / 555kB   2.35GB / 17.9MB   28
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+5d559fde7162   cranky_knuth   0.16%     1.982GiB / 251.3GiB   0.79%     112MB / 555kB   2.35GB / 17.9MB   28
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+5d559fde7162   cranky_knuth   0.17%     1.982GiB / 251.3GiB   0.79%     112MB / 555kB   2.35GB / 17.9MB   28
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+5d559fde7162   cranky_knuth   0.16%     1.982GiB / 251.3GiB   0.79%     112MB / 555kB   2.35GB / 17.9MB   28
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+5d559fde7162   cranky_knuth   0.16%     1.981GiB / 251.3GiB   0.79%     112MB / 555kB   2.35GB / 17.9MB   28
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+5d559fde7162   cranky_knuth   0.17%     1.981GiB / 251.3GiB   0.79%     112MB / 555kB   2.35GB / 17.9MB   28
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+5d559fde7162   cranky_knuth   0.17%     1.981GiB / 251.3GiB   0.79%     112MB / 555kB   2.35GB / 17.9MB   28
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+5d559fde7162   cranky_knuth   0.17%     1.981GiB / 251.3GiB   0.79%     112MB / 555kB   2.35GB / 17.9MB   28
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+5d559fde7162   cranky_knuth   0.17%     1.981GiB / 251.3GiB   0.79%     112MB / 555kB   2.35GB / 17.9MB   28
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+5d559fde7162   cranky_knuth   26.64%    2.023GiB / 251.3GiB   0.81%     131MB / 668kB   2.35GB / 17.9MB   28
+CONTAINER ID   NAME           CPU %      MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+5d559fde7162   cranky_knuth   1453.46%   2.443GiB / 251.3GiB   0.97%     157MB / 796kB   11.2GB / 17.9MB   28
+CONTAINER ID   NAME           CPU %      MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O        PIDS
+5d559fde7162   cranky_knuth   1490.54%   2.612GiB / 251.3GiB   1.04%     157MB / 796kB   25.2GB / 594MB   28
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT    MEM %     NET I/O         BLOCK I/O        PIDS
+5d559fde7162   cranky_knuth   739.66%   3.15GiB / 251.3GiB   1.25%     157MB / 796kB   32.6GB / 594MB   28
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+5d559fde7162   cranky_knuth   188.70%   2.847GiB / 251.3GiB   1.13%     157MB / 797kB   32.6GB / 3.16GB   28
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT    MEM %     NET I/O         BLOCK I/O         PIDS
+5d559fde7162   cranky_knuth   200.63%   4.47GiB / 251.3GiB   1.78%     157MB / 797kB   32.6GB / 3.16GB   28
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0

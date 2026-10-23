@@ -1,0 +1,471 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O    PIDS
+fe001872fb43   mystifying_stonebraker   1585.52%   1.88GiB / 755.1GiB   0.25%     646B / 0B   410MB / 0B   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O    PIDS
+fe001872fb43   mystifying_stonebraker   1593.86%   1.972GiB / 755.1GiB   0.26%     736B / 0B   843MB / 0B   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1602.31%   2.023GiB / 755.1GiB   0.27%     806B / 0B   1.27GB / 104MB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1602.13%   2.103GiB / 755.1GiB   0.28%     806B / 0B   1.87GB / 104MB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1603.23%   2.093GiB / 755.1GiB   0.28%     806B / 0B   2.26GB / 104MB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1592.76%   2.227GiB / 755.1GiB   0.29%     806B / 0B   2.91GB / 104MB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1602.23%   2.212GiB / 755.1GiB   0.29%     876B / 0B   3.38GB / 104MB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O     PIDS
+fe001872fb43   mystifying_stonebraker   1592.99%   2.154GiB / 755.1GiB   0.29%     876B / 0B   4GB / 104MB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1590.17%   2.171GiB / 755.1GiB   0.29%     876B / 0B   5.22GB / 104MB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1592.65%   2.185GiB / 755.1GiB   0.29%     876B / 0B   6.05GB / 104MB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+fe001872fb43   mystifying_stonebraker   1589.86%   2.206GiB / 755.1GiB   0.29%     876B / 0B   7.9GB / 104MB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1589.30%   2.228GiB / 755.1GiB   0.30%     876B / 0B   9.75GB / 104MB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1596.86%   2.248GiB / 755.1GiB   0.30%     876B / 0B   11.8GB / 776MB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1595.77%   2.344GiB / 755.1GiB   0.31%     876B / 0B   13.7GB / 776MB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1597.42%   2.54GiB / 755.1GiB   0.34%     946B / 0B   15.8GB / 5.39GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1592.92%   2.628GiB / 755.1GiB   0.35%     946B / 0B   17.9GB / 5.39GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1598.65%   3.043GiB / 755.1GiB   0.40%     946B / 0B   19.9GB / 5.39GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1598.71%   3.314GiB / 755.1GiB   0.44%     946B / 0B   21.9GB / 5.39GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1597.74%   2.891GiB / 755.1GiB   0.38%     946B / 0B   23.7GB / 5.39GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1595.03%   3.558GiB / 755.1GiB   0.47%     946B / 0B   25.6GB / 5.39GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1596.64%   3.805GiB / 755.1GiB   0.50%     946B / 0B   27.5GB / 5.39GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1592.02%   3.866GiB / 755.1GiB   0.51%     946B / 0B   29.2GB / 5.39GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1592.62%   3.684GiB / 755.1GiB   0.49%     946B / 0B   30.9GB / 5.39GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1599.05%   3.751GiB / 755.1GiB   0.50%     946B / 0B   32.5GB / 5.39GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O      PIDS
+fe001872fb43   mystifying_stonebraker   1591.91%   3.796GiB / 755.1GiB   0.50%     946B / 0B   34.2GB / 6GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O      PIDS
+fe001872fb43   mystifying_stonebraker   1595.71%   3.945GiB / 755.1GiB   0.52%     946B / 0B   35.8GB / 6GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1589.64%   3.838GiB / 755.1GiB   0.51%     946B / 0B   37.4GB / 8.99GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1598.58%   3.721GiB / 755.1GiB   0.49%     946B / 0B   38.9GB / 8.99GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1591.87%   3.674GiB / 755.1GiB   0.49%     946B / 0B   40.6GB / 12.9GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1598.57%   3.537GiB / 755.1GiB   0.47%     1.02kB / 0B   42.1GB / 12.9GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1592.74%   3.583GiB / 755.1GiB   0.47%     1.02kB / 0B   43.7GB / 14.6GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1591.20%   3.495GiB / 755.1GiB   0.46%     1.02kB / 0B   45.4GB / 17.2GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1588.27%   3.613GiB / 755.1GiB   0.48%     1.02kB / 0B   46.9GB / 17.2GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+fe001872fb43   mystifying_stonebraker   1590.58%   3.456GiB / 755.1GiB   0.46%     1.02kB / 0B   48.4GB / 21GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O     PIDS
+fe001872fb43   mystifying_stonebraker   1593.31%   3.636GiB / 755.1GiB   0.48%     1.02kB / 0B   50GB / 21GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1592.32%   3.41GiB / 755.1GiB   0.45%     1.02kB / 0B   51.5GB / 24.6GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1594.42%   3.42GiB / 755.1GiB   0.45%     1.02kB / 0B   53.1GB / 24.6GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1590.03%   3.505GiB / 755.1GiB   0.46%     1.02kB / 0B   54.7GB / 27.7GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1598.92%   3.687GiB / 755.1GiB   0.49%     1.02kB / 0B   56.2GB / 27.7GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1596.58%   3.529GiB / 755.1GiB   0.47%     1.02kB / 0B   57.7GB / 31.1GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1596.93%   3.519GiB / 755.1GiB   0.47%     1.02kB / 0B   59.3GB / 31.1GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1590.47%   3.473GiB / 755.1GiB   0.46%     1.02kB / 0B   60.8GB / 34.1GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1593.79%   3.631GiB / 755.1GiB   0.48%     1.02kB / 0B   62.4GB / 34.1GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+fe001872fb43   mystifying_stonebraker   1591.27%   4.075GiB / 755.1GiB   0.54%     1.02kB / 0B   63.8GB / 37GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+fe001872fb43   mystifying_stonebraker   1590.42%   3.867GiB / 755.1GiB   0.51%     1.02kB / 0B   65.2GB / 37GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1589.85%   3.959GiB / 755.1GiB   0.52%     1.02kB / 0B   66.5GB / 39.7GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1588.50%   3.968GiB / 755.1GiB   0.53%     1.02kB / 0B   67.8GB / 39.7GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1590.45%   3.725GiB / 755.1GiB   0.49%     1.02kB / 0B   69.1GB / 39.7GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1593.14%   3.54GiB / 755.1GiB   0.47%     1.02kB / 0B   70.5GB / 42.7GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+fe001872fb43   mystifying_stonebraker   1593.74%   3.815GiB / 755.1GiB   0.51%     1.02kB / 0B   72GB / 42.7GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1598.76%   3.774GiB / 755.1GiB   0.50%     1.02kB / 0B   73.4GB / 45.5GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1597.35%   3.643GiB / 755.1GiB   0.48%     1.02kB / 0B   74.8GB / 45.5GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1596.72%   4.287GiB / 755.1GiB   0.57%     1.02kB / 0B   76.1GB / 48.2GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1590.78%   4.182GiB / 755.1GiB   0.55%     1.02kB / 0B   77.4GB / 48.2GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1589.63%   4.084GiB / 755.1GiB   0.54%     1.02kB / 0B   78.6GB / 50.8GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1549.21%   3.573GiB / 755.1GiB   0.47%     1.02kB / 0B   79.6GB / 50.8GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1554.65%   10.1GiB / 755.1GiB   1.34%     1.02kB / 0B   79.6GB / 53.1GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1610.24%   12.1GiB / 755.1GiB   1.60%     1.02kB / 0B   79.6GB / 53.1GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1613.16%   13.04GiB / 755.1GiB   1.73%     1.02kB / 0B   79.6GB / 55.6GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1595.78%   13.98GiB / 755.1GiB   1.85%     1.02kB / 0B   79.6GB / 55.6GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+fe001872fb43   mystifying_stonebraker   1608.45%   15.2GiB / 755.1GiB   2.01%     1.09kB / 0B   79.6GB / 58GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+fe001872fb43   mystifying_stonebraker   1600.02%   16.53GiB / 755.1GiB   2.19%     1.09kB / 0B   79.6GB / 58GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1603.09%   18.34GiB / 755.1GiB   2.43%     1.09kB / 0B   79.6GB / 60.3GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1594.44%   20.1GiB / 755.1GiB   2.66%     1.09kB / 0B   79.6GB / 60.3GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1608.14%   21.83GiB / 755.1GiB   2.89%     1.09kB / 0B   79.6GB / 62.6GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1591.27%   24.02GiB / 755.1GiB   3.18%     1.09kB / 0B   79.6GB / 62.6GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1599.66%   25.59GiB / 755.1GiB   3.39%     1.09kB / 0B   79.6GB / 62.6GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1593.11%   28.08GiB / 755.1GiB   3.72%     1.09kB / 0B   79.6GB / 65.2GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   1598.61%   29.58GiB / 755.1GiB   3.92%     1.09kB / 0B   79.6GB / 67.3GB   18
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   99.86%    29.76GiB / 755.1GiB   3.94%     1.09kB / 0B   79.6GB / 67.3GB   18
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   100.23%   29.62GiB / 755.1GiB   3.92%     1.09kB / 0B   79.6GB / 74.9GB   18
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   99.86%    29.5GiB / 755.1GiB   3.91%     1.09kB / 0B   79.6GB / 74.9GB   18
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   99.84%    29.37GiB / 755.1GiB   3.89%     1.09kB / 0B   79.6GB / 81.9GB   18
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   100.24%   29.24GiB / 755.1GiB   3.87%     1.09kB / 0B   79.6GB / 81.9GB   18
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+fe001872fb43   mystifying_stonebraker   99.82%    29.11GiB / 755.1GiB   3.86%     1.09kB / 0B   79.6GB / 88GB   18
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O       PIDS
+fe001872fb43   mystifying_stonebraker   99.85%    29GiB / 755.1GiB    3.84%     1.09kB / 0B   79.6GB / 88GB   18
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   99.92%    28.89GiB / 755.1GiB   3.83%     1.09kB / 0B   79.6GB / 94.2GB   18
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+fe001872fb43   mystifying_stonebraker   99.83%    28.74GiB / 755.1GiB   3.81%     1.09kB / 0B   79.6GB / 94.2GB   18
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   99.84%    28.58GiB / 755.1GiB   3.79%     1.09kB / 0B   79.6GB / 100GB   18
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   100.22%   28.44GiB / 755.1GiB   3.77%     1.09kB / 0B   79.6GB / 100GB   18
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   99.79%    28.26GiB / 755.1GiB   3.74%     1.09kB / 0B   79.6GB / 105GB   18
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   99.80%    28.11GiB / 755.1GiB   3.72%     1.09kB / 0B   79.6GB / 105GB   18
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   99.85%    27.93GiB / 755.1GiB   3.70%     1.09kB / 0B   79.6GB / 105GB   18
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   100.18%   27.76GiB / 755.1GiB   3.68%     1.09kB / 0B   79.6GB / 105GB   18
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   99.87%    27.59GiB / 755.1GiB   3.65%     1.09kB / 0B   79.6GB / 105GB   18
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   99.86%    27.43GiB / 755.1GiB   3.63%     1.09kB / 0B   79.6GB / 105GB   18
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   99.85%    27.29GiB / 755.1GiB   3.61%     1.09kB / 0B   79.6GB / 105GB   18
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   100.24%   27.16GiB / 755.1GiB   3.60%     1.09kB / 0B   79.6GB / 106GB   18
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   100.19%   26.97GiB / 755.1GiB   3.57%     1.09kB / 0B   79.6GB / 106GB   18
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   99.82%    26.78GiB / 755.1GiB   3.55%     1.09kB / 0B   79.6GB / 107GB   18
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   99.87%    26.62GiB / 755.1GiB   3.53%     1.09kB / 0B   79.6GB / 107GB   18
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   100.22%   26.47GiB / 755.1GiB   3.51%     1.09kB / 0B   79.6GB / 108GB   18
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   99.84%    26.31GiB / 755.1GiB   3.48%     1.09kB / 0B   79.6GB / 108GB   18
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   99.83%    26.15GiB / 755.1GiB   3.46%     1.09kB / 0B   79.6GB / 108GB   18
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   100.21%   25.91GiB / 755.1GiB   3.43%     1.09kB / 0B   79.6GB / 108GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1447.00%   25.64GiB / 755.1GiB   3.40%     1.09kB / 0B   79.7GB / 109GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1587.26%   25.44GiB / 755.1GiB   3.37%     1.09kB / 0B   79.7GB / 109GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1491.43%   25.46GiB / 755.1GiB   3.37%     1.09kB / 0B   79.7GB / 110GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1552.85%   25.48GiB / 755.1GiB   3.37%     1.09kB / 0B   79.7GB / 110GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1568.94%   25.44GiB / 755.1GiB   3.37%     1.09kB / 0B   79.7GB / 110GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1587.31%   25.42GiB / 755.1GiB   3.37%     1.09kB / 0B   79.7GB / 110GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1577.21%   25.45GiB / 755.1GiB   3.37%     1.09kB / 0B   79.7GB / 111GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1571.29%   25.43GiB / 755.1GiB   3.37%     1.09kB / 0B   79.7GB / 111GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1570.90%   25.43GiB / 755.1GiB   3.37%     1.09kB / 0B   79.7GB / 112GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1548.37%   25.46GiB / 755.1GiB   3.37%     1.09kB / 0B   79.7GB / 112GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1603.62%   25.44GiB / 755.1GiB   3.37%     1.09kB / 0B   79.7GB / 113GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1599.62%   25.42GiB / 755.1GiB   3.37%     1.09kB / 0B   79.7GB / 113GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1517.84%   25.43GiB / 755.1GiB   3.37%     1.09kB / 0B   79.7GB / 114GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1111.89%   25.42GiB / 755.1GiB   3.37%     1.09kB / 0B   79.7GB / 114GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1564.55%   25.46GiB / 755.1GiB   3.37%     1.09kB / 0B   79.7GB / 128GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1595.77%   25.46GiB / 755.1GiB   3.37%     1.09kB / 0B   79.7GB / 132GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1577.27%   25.52GiB / 755.1GiB   3.38%     1.09kB / 0B   79.7GB / 138GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1586.80%   25.44GiB / 755.1GiB   3.37%     1.09kB / 0B   79.7GB / 146GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1555.48%   25.46GiB / 755.1GiB   3.37%     1.09kB / 0B   79.7GB / 155GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1575.49%   25.45GiB / 755.1GiB   3.37%     1.09kB / 0B   79.7GB / 160GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1532.23%   25.46GiB / 755.1GiB   3.37%     1.09kB / 0B   79.7GB / 163GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1555.38%   25.45GiB / 755.1GiB   3.37%     1.09kB / 0B   79.7GB / 172GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1546.25%   25.44GiB / 755.1GiB   3.37%     1.09kB / 0B   79.7GB / 176GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1511.85%   25.43GiB / 755.1GiB   3.37%     1.09kB / 0B   79.7GB / 182GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1539.25%   25.42GiB / 755.1GiB   3.37%     1.09kB / 0B   79.7GB / 187GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1561.96%   25.43GiB / 755.1GiB   3.37%     1.09kB / 0B   80.4GB / 188GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O      PIDS
+fe001872fb43   mystifying_stonebraker   1589.40%   25.5GiB / 755.1GiB   3.38%     1.09kB / 0B   81GB / 188GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1562.43%   25.56GiB / 755.1GiB   3.39%     1.09kB / 0B   82.1GB / 188GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1578.19%   25.65GiB / 755.1GiB   3.40%     1.09kB / 0B   82.6GB / 188GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1586.85%   25.75GiB / 755.1GiB   3.41%     1.09kB / 0B   83.3GB / 188GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1594.93%   25.87GiB / 755.1GiB   3.43%     1.16kB / 0B   83.5GB / 188GB   18
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   960.12%   25.96GiB / 755.1GiB   3.44%     1.16kB / 0B   83.5GB / 188GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1435.39%   26.04GiB / 755.1GiB   3.45%     1.16kB / 0B   83.5GB / 188GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1601.02%   25.6GiB / 755.1GiB   3.39%     1.16kB / 0B   83.5GB / 188GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1600.36%   25.6GiB / 755.1GiB   3.39%     1.16kB / 0B   83.5GB / 188GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1576.08%   24.3GiB / 755.1GiB   3.22%     1.16kB / 0B   83.5GB / 188GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1598.85%   24.12GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 188GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1604.54%   24.12GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 188GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1594.80%   24.12GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 188GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1597.11%   24.12GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 189GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1593.14%   24.12GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 189GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1604.75%   24.12GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 191GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1603.09%   24.12GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 191GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1596.10%   24.12GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 194GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1596.22%   24.12GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 194GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1595.85%   24.12GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1603.57%   24.12GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1596.93%   24.12GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1603.28%   24.12GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1597.63%   24.12GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1600.08%   24.12GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1597.56%   24.12GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1599.44%   24.12GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1603.67%   24.12GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1610.97%   24.12GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1601.58%   24.16GiB / 755.1GiB   3.20%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1605.99%   24.16GiB / 755.1GiB   3.20%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1604.30%   24.16GiB / 755.1GiB   3.20%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1605.43%   24.14GiB / 755.1GiB   3.20%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1604.90%   24.12GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1597.87%   24.12GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1612.78%   24.12GiB / 755.1GiB   3.19%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1584.27%   24.16GiB / 755.1GiB   3.20%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1592.04%   24.16GiB / 755.1GiB   3.20%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1592.27%   24.16GiB / 755.1GiB   3.20%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1598.39%   24.16GiB / 755.1GiB   3.20%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1602.79%   24.16GiB / 755.1GiB   3.20%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1614.57%   24.17GiB / 755.1GiB   3.20%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1601.14%   24.17GiB / 755.1GiB   3.20%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1600.27%   24.17GiB / 755.1GiB   3.20%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1584.90%   24.17GiB / 755.1GiB   3.20%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1608.61%   24.17GiB / 755.1GiB   3.20%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1593.05%   24.17GiB / 755.1GiB   3.20%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1594.84%   24.17GiB / 755.1GiB   3.20%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1601.11%   24.17GiB / 755.1GiB   3.20%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1590.38%   24.17GiB / 755.1GiB   3.20%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1600.07%   24.23GiB / 755.1GiB   3.21%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1605.40%   24.36GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1602.44%   24.36GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1602.00%   24.36GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1597.11%   24.36GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1595.42%   24.3GiB / 755.1GiB   3.22%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1603.43%   24.36GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1595.37%   24.36GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1602.67%   24.36GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1597.73%   24.32GiB / 755.1GiB   3.22%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1587.53%   24.36GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1595.37%   24.3GiB / 755.1GiB   3.22%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1604.66%   24.36GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1596.12%   24.36GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1604.87%   24.36GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1604.74%   24.32GiB / 755.1GiB   3.22%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1593.08%   24.36GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1595.49%   24.32GiB / 755.1GiB   3.22%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1598.45%   24.4GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1598.22%   24.41GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1598.47%   24.42GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1605.21%   24.36GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1593.35%   24.42GiB / 755.1GiB   3.23%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1594.67%   24.44GiB / 755.1GiB   3.24%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1597.00%   24.57GiB / 755.1GiB   3.25%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1607.35%   24.64GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1596.23%   24.64GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1594.48%   24.65GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1603.22%   24.6GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1589.54%   24.67GiB / 755.1GiB   3.27%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1603.82%   24.68GiB / 755.1GiB   3.27%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1607.04%   24.55GiB / 755.1GiB   3.25%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1602.86%   24.69GiB / 755.1GiB   3.27%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1602.13%   24.55GiB / 755.1GiB   3.25%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1601.76%   24.69GiB / 755.1GiB   3.27%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1609.72%   24.69GiB / 755.1GiB   3.27%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1599.84%   24.55GiB / 755.1GiB   3.25%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1598.39%   24.69GiB / 755.1GiB   3.27%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1601.03%   24.62GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1602.65%   24.63GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1604.26%   24.64GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1604.99%   24.5GiB / 755.1GiB   3.24%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1601.87%   24.64GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1607.69%   24.65GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1603.27%   24.65GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1599.11%   24.65GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1596.22%   24.63GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1600.55%   24.65GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1596.53%   24.65GiB / 755.1GiB   3.27%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1596.30%   24.58GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1595.79%   24.66GiB / 755.1GiB   3.27%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1605.81%   24.66GiB / 755.1GiB   3.27%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1602.15%   24.6GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1598.51%   24.6GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1595.59%   24.46GiB / 755.1GiB   3.24%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1173.02%   24.6GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1137.44%   24.6GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1144.71%   24.6GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1154.53%   24.6GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   1113.26%   24.49GiB / 755.1GiB   3.24%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   269.87%   25.71GiB / 755.1GiB   3.40%     1.16kB / 0B   83.5GB / 196GB   18
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   98.55%    24.61GiB / 755.1GiB   3.26%     1.16kB / 0B   83.5GB / 198GB   18
+CONTAINER ID   NAME                     CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+fe001872fb43   mystifying_stonebraker   100.25%   24.23GiB / 755.1GiB   3.21%     1.16kB / 0B   83.5GB / 198GB   18
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS

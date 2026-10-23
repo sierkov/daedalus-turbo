@@ -41,7 +41,7 @@ namespace turbo::index {
         bool operator<(const merge_item& v) const noexcept
         {
             // priority queue returns the greatest element but we need the smallest!
-            return !(val < v.val);
+            return v.val < val;
         }
     };
 
@@ -74,10 +74,15 @@ namespace turbo::index {
                 _num_parts { num_partitions }, _chunk_size { chunk_size },
                 _os { _path + ".tmp" }
         {
+            if (!_num_parts || !_chunk_size)
+                throw error("index partition count and chunk size must be nonzero");
             if (_num_parts > max_parts) [[unlikely]]
                 throw error(fmt::format("num_partitions: {} is greater than the pre-configured maximum: {}!", _num_parts, max_parts));
-            for (auto &buf: _bufs)
-                buf.resize(chunk_size);
+            if constexpr (requires { T::index_format; T::index_partitions; }) {
+                if (_num_parts != T::index_partitions)
+                    throw error("incorrect partition count for the index format");
+                set_meta("format", buffer { T::index_format });
+            }
         }
 
         writer(writer<T> &&w)
@@ -106,12 +111,16 @@ namespace turbo::index {
                 throw error(fmt::format("writer::emplace_part {} has already been commited!", _path));
             auto &cnt = _cnts.at(part_id);
             auto &buf = _bufs.at(part_id);
-            T &item = buf.at(cnt % _chunk_size);
-            new (&item) T { std::forward<A>(args)... };
+            // Sparse streams need no full-size buffer for every hash prefix.
+            const auto pos = cnt % _chunk_size;
+            if (pos == buf.size())
+                buf.emplace_back(std::forward<A>(args)...);
+            else
+                buf[pos] = T { std::forward<A>(args)... };
             cnt++;
             if (cnt % _chunk_size == 0)
                 _flush_part(part_id);
-            return item;
+            return buf[pos];
         }
 
         template<typename ...A>
@@ -243,8 +252,6 @@ namespace turbo::index {
         sorting_writer(const std::string &path, size_t num_partitions = 1)
             : _bufs(num_partitions), _writer { path, num_partitions }
         {
-            for (auto &buf: _bufs)
-                buf.reserve(1024);
         }
 
         ~sorting_writer()
@@ -347,6 +354,13 @@ namespace turbo::index {
                 _meta[name] = std::move(data);
                 meta_cnt--;
             }
+            // Validate before reading any type-dependent chunk metadata.
+            if constexpr (requires { T::index_format; T::index_partitions; }) {
+                const auto format = _meta.find("format");
+                if (format == _meta.end() || format->second.str() != T::index_format
+                        || _num_parts != T::index_partitions)
+                    throw error(fmt::format("incompatible index {}: rebuild indexes in validation mode", _path));
+            }
             _cnts.resize(_num_parts);
             _is.read(_cnts.data(), sizeof(_cnts[0]) * _num_parts);
             _chunk_lists.resize(_num_parts);
@@ -399,10 +413,12 @@ namespace turbo::index {
 
         bool eof(thread_data &t) const
         {
+            if (t.single_part_idx != max_parts)
+                return eof_part(t.single_part_idx, t);
             for (size_t p = 0; p < _num_parts; ++p) {
-                if (eof_part(p, t)) return true;
+                if (!eof_part(p, t)) return false;
             }
-            return false;
+            return true;
         }
 
         find_result find(const T &search_item, thread_data &t) const
@@ -437,15 +453,18 @@ namespace turbo::index {
                 }
                 if (match_size > 0) {
                     if (multi_match) {
-                        match_size += (chunk_it_end - chunk_it - 1) * _chunk_size;
+                        // Count actual records: the partition's last chunk may be short.
+                        size_t match_end = _cnts.at(part_idx);
                         if (chunk_it_end != chunk_list.end()) {
                             size_t new_cache_chunk_idx = chunk_it_end - chunk_list.begin();
                             auto &cache = t.caches.at(t_part_idx);
                             if (new_cache_chunk_idx != cache_chunk_idx || cache.size() == 0)
                                 _load_cache(part_idx, new_cache_chunk_idx, t);
                             auto it = std::upper_bound(cache.begin(), cache.end(), search_item, comp);
-                            match_size += it - cache.begin();
+                            match_end = new_cache_chunk_idx * _chunk_size + (it - cache.begin());
                         }
+                        const auto match_begin = t.offsets.at(t_part_idx) - 1;
+                        match_size = match_end - match_begin;
                     }
                     t.next_part_idx = part_idx;
                 }
@@ -671,8 +690,8 @@ namespace turbo::index {
             t.data.reserve(_readers.size());
             for (const auto &reader: _readers) {
                 t.data.emplace_back(std::make_unique<typename reader_mt<T>::thread_data>(reader->init_thread(part_no)));
-                t.read_part_queue.emplace_back();
             }
+            t.read_part_queue.resize(part_no == max_parts ? max_parts : 1);
             t.matches.resize(_readers.size());
             return t;
         }
@@ -825,6 +844,7 @@ namespace turbo::index {
 
     template<class T>
     struct reader_multi {
+        using value_type = T;
         reader_multi(const std::span<const std::string> &paths)
             : _reader { paths }, _data { _reader.init_thread() }
         {

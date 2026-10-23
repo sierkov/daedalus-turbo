@@ -1,0 +1,312 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O    PIDS
+eb88422f5d14   inspiring_jones   2404.04%   1.494GiB / 251.3GiB   0.59%     736B / 0B   615MB / 0B   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O     PIDS
+eb88422f5d14   inspiring_jones   2408.20%   1.725GiB / 251.3GiB   0.69%     736B / 0B   1.18GB / 0B   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+eb88422f5d14   inspiring_jones   2375.74%   3.005GiB / 251.3GiB   1.20%     806B / 0B   1.92GB / 152MB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+eb88422f5d14   inspiring_jones   2399.62%   2.912GiB / 251.3GiB   1.16%     806B / 0B   2.41GB / 152MB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+eb88422f5d14   inspiring_jones   2383.87%   4.279GiB / 251.3GiB   1.70%     806B / 0B   3.48GB / 152MB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+eb88422f5d14   inspiring_jones   2412.33%   4.629GiB / 251.3GiB   1.84%     876B / 0B   4.48GB / 152MB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+eb88422f5d14   inspiring_jones   2410.60%   4.636GiB / 251.3GiB   1.84%     876B / 0B   5.69GB / 152MB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+eb88422f5d14   inspiring_jones   2398.29%   5.052GiB / 251.3GiB   2.01%     876B / 0B   7.57GB / 152MB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+eb88422f5d14   inspiring_jones   2403.31%   5.234GiB / 251.3GiB   2.08%     876B / 0B   9.28GB / 152MB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O      PIDS
+eb88422f5d14   inspiring_jones   2392.93%   5.643GiB / 251.3GiB   2.25%     876B / 0B   11GB / 152MB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2326.45%   5.674GiB / 251.3GiB   2.26%     876B / 0B   11.6GB / 3.19GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2294.51%   6.392GiB / 251.3GiB   2.54%     876B / 0B   13.4GB / 3.19GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2334.24%   6.724GiB / 251.3GiB   2.68%     946B / 0B   15.3GB / 3.19GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+eb88422f5d14   inspiring_jones   2320.96%   6.916GiB / 251.3GiB   2.75%     946B / 0B   17GB / 3.19GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O      PIDS
+eb88422f5d14   inspiring_jones   2337.69%   7.738GiB / 251.3GiB   3.08%     946B / 0B   19GB / 3.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2256.46%   7.347GiB / 251.3GiB   2.92%     946B / 0B   19.8GB / 3.21GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2234.46%   7.634GiB / 251.3GiB   3.04%     946B / 0B   20.4GB / 8.75GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2329.02%   7.514GiB / 251.3GiB   2.99%     946B / 0B   21.6GB / 8.75GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2310.49%   8.351GiB / 251.3GiB   3.32%     946B / 0B   23.4GB / 9.31GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2296.49%   8.13GiB / 251.3GiB   3.24%     946B / 0B   25.2GB / 9.31GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O       PIDS
+eb88422f5d14   inspiring_jones   2213.19%   7.64GiB / 251.3GiB   3.04%     946B / 0B   26GB / 9.93GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2335.32%   9.046GiB / 251.3GiB   3.60%     946B / 0B   26.6GB / 13.9GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2326.27%   8.995GiB / 251.3GiB   3.58%     946B / 0B   28.1GB / 15.3GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2277.38%   9.218GiB / 251.3GiB   3.67%     946B / 0B   29.6GB / 15.3GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+eb88422f5d14   inspiring_jones   2324.32%   9.342GiB / 251.3GiB   3.72%     946B / 0B   30.1GB / 19GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O       PIDS
+eb88422f5d14   inspiring_jones   2338.64%   8.222GiB / 251.3GiB   3.27%     946B / 0B   31.4GB / 19GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2248.20%   8.2GiB / 251.3GiB   3.26%     1.02kB / 0B   32.3GB / 19.9GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2350.14%   9.845GiB / 251.3GiB   3.92%     1.02kB / 0B   33.9GB / 21.5GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2354.30%   8.99GiB / 251.3GiB   3.58%     1.02kB / 0B   35.2GB / 21.6GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2274.16%   8.498GiB / 251.3GiB   3.38%     1.02kB / 0B   35.9GB / 23.4GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+eb88422f5d14   inspiring_jones   2323.99%   9.314GiB / 251.3GiB   3.71%     1.02kB / 0B   37.4GB / 24GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+eb88422f5d14   inspiring_jones   2341.61%   8.694GiB / 251.3GiB   3.46%     1.02kB / 0B   38.4GB / 24GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2366.75%   9.305GiB / 251.3GiB   3.70%     1.02kB / 0B   39.4GB / 26.1GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2306.81%   9.204GiB / 251.3GiB   3.66%     1.02kB / 0B   40.6GB / 26.4GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2353.95%   9.411GiB / 251.3GiB   3.74%     1.02kB / 0B   41.8GB / 26.4GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2295.81%   10.1GiB / 251.3GiB   4.02%     1.02kB / 0B   41.8GB / 27.1GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+eb88422f5d14   inspiring_jones   2298.38%   11.39GiB / 251.3GiB   4.53%     1.02kB / 0B   42GB / 28.6GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2295.24%   10.19GiB / 251.3GiB   4.06%     1.02kB / 0B   42.6GB / 28.8GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2334.93%   10.31GiB / 251.3GiB   4.10%     1.02kB / 0B   43.8GB / 28.8GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+eb88422f5d14   inspiring_jones   2330.04%   10.7GiB / 251.3GiB   4.26%     1.02kB / 0B   45.1GB / 29GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2361.06%   11.06GiB / 251.3GiB   4.40%     1.02kB / 0B   45.9GB / 31.1GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2286.06%   11.47GiB / 251.3GiB   4.56%     1.02kB / 0B   47.4GB / 31.3GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2353.49%   10.83GiB / 251.3GiB   4.31%     1.02kB / 0B   48.5GB / 31.3GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2312.76%   10.88GiB / 251.3GiB   4.33%     1.02kB / 0B   48.9GB / 33.7GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2299.32%   11.88GiB / 251.3GiB   4.73%     1.02kB / 0B   50.5GB / 34.1GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2295.46%   12.03GiB / 251.3GiB   4.79%     1.02kB / 0B   51.8GB / 34.3GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+eb88422f5d14   inspiring_jones   2316.40%   11.97GiB / 251.3GiB   4.76%     1.02kB / 0B   53GB / 34.3GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+eb88422f5d14   inspiring_jones   2304.29%   12.19GiB / 251.3GiB   4.85%     1.02kB / 0B   53.6GB / 37GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+eb88422f5d14   inspiring_jones   2380.83%   11.92GiB / 251.3GiB   4.74%     1.02kB / 0B   54.9GB / 37GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+eb88422f5d14   inspiring_jones   2331.12%   11.71GiB / 251.3GiB   4.66%     1.02kB / 0B   56GB / 39.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2342.92%   11.91GiB / 251.3GiB   4.74%     1.02kB / 0B   56.5GB / 41.5GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+eb88422f5d14   inspiring_jones   2342.21%   12.7GiB / 251.3GiB   5.05%     1.02kB / 0B   58GB / 42.5GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2371.40%   13.25GiB / 251.3GiB   5.27%     1.09kB / 0B   59.1GB / 42.5GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2238.54%   12.17GiB / 251.3GiB   4.84%     1.09kB / 0B   59.9GB / 42.6GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2353.64%   13.09GiB / 251.3GiB   5.21%     1.09kB / 0B   60.9GB / 44.7GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2333.39%   12.61GiB / 251.3GiB   5.02%     1.09kB / 0B   61.9GB / 44.9GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2294.84%   13.39GiB / 251.3GiB   5.33%     1.09kB / 0B   62.8GB / 46.8GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2361.72%   13.15GiB / 251.3GiB   5.23%     1.09kB / 0B   63.9GB / 46.9GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2327.60%   13.03GiB / 251.3GiB   5.18%     1.09kB / 0B   65.1GB / 46.9GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2354.98%   13.41GiB / 251.3GiB   5.34%     1.09kB / 0B   65.7GB / 49.1GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2351.40%   13.15GiB / 251.3GiB   5.23%     1.09kB / 0B   66.8GB / 49.1GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+eb88422f5d14   inspiring_jones   2292.75%   13.51GiB / 251.3GiB   5.37%     1.09kB / 0B   68GB / 49.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2293.08%   13.55GiB / 251.3GiB   5.39%     1.09kB / 0B   68.6GB / 51.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2308.98%   14.03GiB / 251.3GiB   5.58%     1.09kB / 0B   69.8GB / 51.5GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+eb88422f5d14   inspiring_jones   2373.95%   14.42GiB / 251.3GiB   5.74%     1.09kB / 0B   71GB / 51.5GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2324.33%   13.52GiB / 251.3GiB   5.38%     1.09kB / 0B   71.5GB / 52.5GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2299.48%   14.29GiB / 251.3GiB   5.69%     1.09kB / 0B   72.7GB / 53.7GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2358.69%   14.22GiB / 251.3GiB   5.66%     1.09kB / 0B   73.8GB / 53.8GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2328.84%   13.6GiB / 251.3GiB   5.41%     1.09kB / 0B   73.8GB / 56.1GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2376.24%   13.59GiB / 251.3GiB   5.41%     1.09kB / 0B   73.8GB / 56.3GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2363.39%   13.69GiB / 251.3GiB   5.45%     1.09kB / 0B   73.8GB / 56.3GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2390.27%   13.69GiB / 251.3GiB   5.45%     1.09kB / 0B   73.8GB / 56.5GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2335.09%   13.68GiB / 251.3GiB   5.45%     1.09kB / 0B   73.8GB / 56.5GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2365.90%   13.73GiB / 251.3GiB   5.46%     1.09kB / 0B   73.8GB / 56.7GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2341.61%   13.67GiB / 251.3GiB   5.44%     1.09kB / 0B   73.8GB / 56.7GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2387.21%   13.75GiB / 251.3GiB   5.47%     1.09kB / 0B   73.8GB / 56.8GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2329.52%   13.75GiB / 251.3GiB   5.47%     1.09kB / 0B   73.8GB / 56.8GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+eb88422f5d14   inspiring_jones   2381.78%   13.76GiB / 251.3GiB   5.48%     1.09kB / 0B   73.8GB / 57GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+eb88422f5d14   inspiring_jones   2328.90%   13.76GiB / 251.3GiB   5.48%     1.09kB / 0B   73.8GB / 57GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2373.12%   13.77GiB / 251.3GiB   5.48%     1.09kB / 0B   73.8GB / 57.1GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2318.94%   13.78GiB / 251.3GiB   5.48%     1.09kB / 0B   73.8GB / 57.1GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2359.67%   13.72GiB / 251.3GiB   5.46%     1.09kB / 0B   73.8GB / 57.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2375.37%   13.78GiB / 251.3GiB   5.48%     1.09kB / 0B   73.8GB / 57.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2329.41%   13.79GiB / 251.3GiB   5.49%     1.09kB / 0B   73.8GB / 57.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2359.75%   13.79GiB / 251.3GiB   5.49%     1.09kB / 0B   73.8GB / 57.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2371.06%   13.79GiB / 251.3GiB   5.49%     1.09kB / 0B   73.8GB / 57.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2318.33%   13.79GiB / 251.3GiB   5.49%     1.09kB / 0B   73.8GB / 57.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2368.47%   13.79GiB / 251.3GiB   5.49%     1.09kB / 0B   73.8GB / 57.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2361.04%   13.78GiB / 251.3GiB   5.48%     1.09kB / 0B   73.8GB / 57.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2313.20%   13.79GiB / 251.3GiB   5.49%     1.09kB / 0B   73.8GB / 57.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2360.41%   13.99GiB / 251.3GiB   5.57%     1.09kB / 0B   73.8GB / 57.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2293.73%   15.55GiB / 251.3GiB   6.19%     1.09kB / 0B   73.8GB / 57.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2306.67%   17.3GiB / 251.3GiB   6.88%     1.09kB / 0B   73.8GB / 57.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2293.65%   19.08GiB / 251.3GiB   7.59%     1.09kB / 0B   73.8GB / 57.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2306.63%   20.59GiB / 251.3GiB   8.19%     1.09kB / 0B   73.8GB / 57.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2295.03%   20.64GiB / 251.3GiB   8.21%     1.09kB / 0B   73.8GB / 57.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2331.00%   20.52GiB / 251.3GiB   8.17%     1.09kB / 0B   73.8GB / 58.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2357.22%   20.44GiB / 251.3GiB   8.13%     1.09kB / 0B   73.8GB / 58.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2349.44%   20.5GiB / 251.3GiB   8.16%     1.09kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2343.37%   20.47GiB / 251.3GiB   8.14%     1.09kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2335.90%   20.42GiB / 251.3GiB   8.13%     1.09kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2350.38%   20.41GiB / 251.3GiB   8.12%     1.09kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2366.38%   20.46GiB / 251.3GiB   8.14%     1.09kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2317.90%   20.37GiB / 251.3GiB   8.11%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2340.27%   20.25GiB / 251.3GiB   8.06%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2369.83%   20.3GiB / 251.3GiB   8.08%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2360.44%   20.47GiB / 251.3GiB   8.15%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2344.54%   20.47GiB / 251.3GiB   8.15%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2339.88%   20.54GiB / 251.3GiB   8.17%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2345.61%   20.49GiB / 251.3GiB   8.15%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2336.02%   20.49GiB / 251.3GiB   8.15%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2329.16%   20.43GiB / 251.3GiB   8.13%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2330.97%   20.38GiB / 251.3GiB   8.11%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2324.44%   20.4GiB / 251.3GiB   8.12%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2334.62%   20.3GiB / 251.3GiB   8.08%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2355.31%   20.17GiB / 251.3GiB   8.02%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2340.50%   20.22GiB / 251.3GiB   8.04%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2353.24%   20.35GiB / 251.3GiB   8.10%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2351.17%   20.25GiB / 251.3GiB   8.06%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2344.16%   20.3GiB / 251.3GiB   8.08%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2351.22%   20.21GiB / 251.3GiB   8.04%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2344.23%   20.21GiB / 251.3GiB   8.04%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2333.88%   20.26GiB / 251.3GiB   8.06%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2341.14%   20.12GiB / 251.3GiB   8.01%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2354.80%   20.16GiB / 251.3GiB   8.02%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2355.79%   20.27GiB / 251.3GiB   8.06%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2337.77%   20.22GiB / 251.3GiB   8.05%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2334.09%   20.17GiB / 251.3GiB   8.03%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2349.49%   20.2GiB / 251.3GiB   8.04%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2341.95%   20.15GiB / 251.3GiB   8.02%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   2345.20%   20.2GiB / 251.3GiB   8.04%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   1677.31%   20.1GiB / 251.3GiB   8.00%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   1239.58%   20.1GiB / 251.3GiB   8.00%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   1239.99%   20.05GiB / 251.3GiB   7.98%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   1260.59%   20.1GiB / 251.3GiB   8.00%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   1177.71%   20.1GiB / 251.3GiB   8.00%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   1300.24%   20.09GiB / 251.3GiB   7.99%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   1254.33%   20.2GiB / 251.3GiB   8.04%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   1294.82%   20.08GiB / 251.3GiB   7.99%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   1287.64%   20.17GiB / 251.3GiB   8.03%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   1232.53%   20.09GiB / 251.3GiB   7.99%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   1274.35%   20.19GiB / 251.3GiB   8.03%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   1123.17%   20.05GiB / 251.3GiB   7.98%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   1270.99%   20.29GiB / 251.3GiB   8.08%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   1157.57%   20.35GiB / 251.3GiB   8.10%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   1133.68%   20.11GiB / 251.3GiB   8.00%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   1261.76%   20.25GiB / 251.3GiB   8.06%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   1271.97%   20.25GiB / 251.3GiB   8.06%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   992.75%   20.37GiB / 251.3GiB   8.10%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   971.62%   20.32GiB / 251.3GiB   8.09%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   1262.94%   20.22GiB / 251.3GiB   8.05%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   1191.05%   20.22GiB / 251.3GiB   8.05%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   99.93%    20.81GiB / 251.3GiB   8.28%     1.16kB / 0B   73.8GB / 60.2GB   26
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   88.08%    19.86GiB / 251.3GiB   7.90%     1.16kB / 0B   73.8GB / 62.5GB   26
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+eb88422f5d14   inspiring_jones   100.29%   19.34GiB / 251.3GiB   7.70%     1.16kB / 0B   73.8GB / 62.5GB   26

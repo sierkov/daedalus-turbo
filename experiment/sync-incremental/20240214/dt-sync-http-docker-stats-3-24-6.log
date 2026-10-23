@@ -1,0 +1,30 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O     PIDS
+a70e527e76c2   charming_elion   200.19%   2.194GiB / 251.3GiB   0.87%     736B / 0B   2.34GB / 0B   27
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+a70e527e76c2   charming_elion   12.05%    1.598GiB / 251.3GiB   0.64%     19MB / 124kB   2.34GB / 98.3kB   28
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+a70e527e76c2   charming_elion   835.05%   3.048GiB / 251.3GiB   1.21%     312MB / 2.36MB   2.34GB / 66.8MB   28
+CONTAINER ID   NAME             CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+a70e527e76c2   charming_elion   1119.56%   3.309GiB / 251.3GiB   1.32%     580MB / 4.67MB   2.34GB / 66.8MB   28
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O         PIDS
+a70e527e76c2   charming_elion   941.97%   3.41GiB / 251.3GiB   1.36%     846MB / 6.96MB   2.34GB / 66.8MB   28
+CONTAINER ID   NAME             CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+a70e527e76c2   charming_elion   1953.64%   3.248GiB / 251.3GiB   1.29%     903MB / 7.35MB   2.34GB / 66.8MB   28
+CONTAINER ID   NAME             CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+a70e527e76c2   charming_elion   1504.88%   3.356GiB / 251.3GiB   1.34%     903MB / 7.35MB   15.5GB / 998MB   28
+CONTAINER ID   NAME             CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+a70e527e76c2   charming_elion   1557.19%   3.531GiB / 251.3GiB   1.40%     903MB / 7.35MB   28.1GB / 998MB   28
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+a70e527e76c2   charming_elion   412.35%   4.527GiB / 251.3GiB   1.80%     903MB / 7.35MB   31.9GB / 3.51GB   28
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+a70e527e76c2   charming_elion   204.24%   3.698GiB / 251.3GiB   1.47%     903MB / 7.35MB   31.9GB / 6.07GB   28
+CONTAINER ID   NAME             CPU %      MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O         PIDS
+a70e527e76c2   charming_elion   1353.82%   3.75GiB / 251.3GiB   1.49%     903MB / 7.35MB   31.9GB / 6.07GB   28
+CONTAINER ID   NAME             CPU %      MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+a70e527e76c2   charming_elion   1289.97%   3.852GiB / 251.3GiB   1.53%     903MB / 7.35MB   31.9GB / 6.07GB   28
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+a70e527e76c2   charming_elion   199.79%   6.346GiB / 251.3GiB   2.53%     903MB / 7.35MB   31.9GB / 6.07GB   28
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0

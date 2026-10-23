@@ -1,0 +1,902 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O     PIDS
+8679f2ad5868   laughing_lumiere   7.61%     8.648MiB / 251.3GiB   0.00%     78.7kB / 16.9kB   16.8MB / 0B   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O     PIDS
+8679f2ad5868   laughing_lumiere   4.00%     10.2MiB / 251.3GiB   0.00%     1.65MB / 112kB   16.8MB / 0B   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   769.56%   424.9MiB / 251.3GiB   0.17%     127MB / 983kB   17.6MB / 6.42MB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   805.30%   541.8MiB / 251.3GiB   0.21%     406MB / 3.13MB   17.7MB / 6.42MB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.67%   601.8MiB / 251.3GiB   0.23%     673MB / 5.2MB   17.7MB / 947MB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.37%   647.3MiB / 251.3GiB   0.25%     942MB / 7.34MB   17.7MB / 947MB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   800.56%   632.1MiB / 251.3GiB   0.25%     1.21GB / 9.49MB   17.7MB / 947MB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   804.06%   692.7MiB / 251.3GiB   0.27%     1.48GB / 11.7MB   17.7MB / 947MB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   803.42%   616.3MiB / 251.3GiB   0.24%     1.7GB / 13.1MB   17.7MB / 947MB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   800.95%   680.2MiB / 251.3GiB   0.26%     1.9GB / 14.3MB   17.7MB / 947MB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.16%   728.9MiB / 251.3GiB   0.28%     2.11GB / 15.6MB   17.7MB / 947MB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   804.40%   763.7MiB / 251.3GiB   0.30%     2.33GB / 17MB   17.7MB / 947MB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   805.09%   737.9MiB / 251.3GiB   0.29%     2.58GB / 18.6MB   17.7MB / 947MB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   805.10%   761.4MiB / 251.3GiB   0.30%     2.86GB / 20.6MB   17.7MB / 947MB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   805.35%   825.4MiB / 251.3GiB   0.32%     3.12GB / 22.6MB   17.7MB / 947MB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.76%   897.4MiB / 251.3GiB   0.35%     3.39GB / 24.6MB   17.7MB / 947MB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   801.05%   962.6MiB / 251.3GiB   0.37%     3.66GB / 26.6MB   17.7MB / 1.11GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   801.72%   846.2MiB / 251.3GiB   0.33%     3.94GB / 28.7MB   17.7MB / 1.11GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   802.02%   790.1MiB / 251.3GiB   0.31%     4.21GB / 30.8MB   17.7MB / 2.26GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   801.76%   851.4MiB / 251.3GiB   0.33%     4.47GB / 32.8MB   17.8MB / 2.26GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT   MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   801.97%   899MiB / 251.3GiB   0.35%     4.74GB / 34.8MB   17.8MB / 3.45GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   803.41%   916.2MiB / 251.3GiB   0.36%     5GB / 36.7MB   17.8MB / 3.45GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   802.12%   929.7MiB / 251.3GiB   0.36%     5.26GB / 38.6MB   17.8MB / 4.36GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   809.05%   1006MiB / 251.3GiB   0.39%     5.52GB / 40.5MB   17.8MB / 4.36GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   802.25%   1.391GiB / 251.3GiB   0.55%     5.78GB / 42.2MB   17.8MB / 5.37GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   805.56%   1.435GiB / 251.3GiB   0.57%     6.06GB / 44.3MB   17.8MB / 5.37GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   807.21%   1.479GiB / 251.3GiB   0.59%     6.33GB / 46.5MB   17.8MB / 6.58GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   795.96%   1.62GiB / 251.3GiB   0.64%     6.6GB / 48.5MB   17.8MB / 6.58GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   802.71%   1.671GiB / 251.3GiB   0.66%     6.88GB / 50.8MB   17.8MB / 7.93GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   801.62%   1.719GiB / 251.3GiB   0.68%     7.15GB / 53MB   17.8MB / 7.93GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   799.42%   1.762GiB / 251.3GiB   0.70%     7.41GB / 55.1MB   17.8MB / 9.24GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   801.32%   1.906GiB / 251.3GiB   0.76%     7.69GB / 57.3MB   17.8MB / 9.24GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   805.37%   1.898GiB / 251.3GiB   0.76%     7.95GB / 59.4MB   17.8MB / 9.24GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   803.26%   1.918GiB / 251.3GiB   0.76%     8.01GB / 59.7MB   17.8MB / 10.7GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   801.74%   2.128GiB / 251.3GiB   0.85%     8.1GB / 60MB   17.9MB / 10.7GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   802.24%   2.281GiB / 251.3GiB   0.91%     8.2GB / 60.3MB   17.9MB / 12.1GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   802.27%   2.525GiB / 251.3GiB   1.00%     8.3GB / 60.6MB   17.9MB / 12.1GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   802.75%   2.802GiB / 251.3GiB   1.11%     8.4GB / 60.9MB   17.9MB / 13.3GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   801.99%   2.84GiB / 251.3GiB   1.13%     8.5GB / 61.2MB   17.9MB / 13.3GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   800.33%   3.076GiB / 251.3GiB   1.22%     8.6GB / 61.5MB   17.9MB / 14.7GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   799.28%   3.186GiB / 251.3GiB   1.27%     8.69GB / 61.7MB   17.9MB / 14.7GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   797.09%   3.223GiB / 251.3GiB   1.28%     8.79GB / 62MB   17.9MB / 16.1GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   799.30%   3.432GiB / 251.3GiB   1.37%     8.9GB / 62.3MB   17.9MB / 16.1GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   799.50%   3.547GiB / 251.3GiB   1.41%     9GB / 62.6MB   17.9MB / 20.6GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   799.48%   3.637GiB / 251.3GiB   1.45%     9.11GB / 62.9MB   17.9MB / 20.6GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+8679f2ad5868   laughing_lumiere   807.01%   3.931GiB / 251.3GiB   1.56%     9.38GB / 65.1MB   17.9MB / 21GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   803.75%   4.269GiB / 251.3GiB   1.70%     9.64GB / 67.3MB   17.9MB / 22.1GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   802.27%   4.344GiB / 251.3GiB   1.73%     9.91GB / 69.5MB   17.9MB / 22.1GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+8679f2ad5868   laughing_lumiere   802.83%   4.027GiB / 251.3GiB   1.60%     10.2GB / 71.7MB   18MB / 22.8GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+8679f2ad5868   laughing_lumiere   802.43%   4.058GiB / 251.3GiB   1.61%     10.4GB / 74.1MB   18MB / 22.8GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+8679f2ad5868   laughing_lumiere   804.16%   4.274GiB / 251.3GiB   1.70%     10.7GB / 76.2MB   18MB / 24.3GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O       PIDS
+8679f2ad5868   laughing_lumiere   801.72%   4.224GiB / 251.3GiB   1.68%     11GB / 78.5MB   18MB / 24.3GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+8679f2ad5868   laughing_lumiere   802.67%   4.297GiB / 251.3GiB   1.71%     11.3GB / 80.7MB   18MB / 25.8GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+8679f2ad5868   laughing_lumiere   812.44%   4.307GiB / 251.3GiB   1.71%     11.5GB / 82.9MB   18MB / 25.8GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+8679f2ad5868   laughing_lumiere   804.82%   4.305GiB / 251.3GiB   1.71%     11.6GB / 83.1MB   18MB / 27.6GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   801.78%   4.268GiB / 251.3GiB   1.70%     11.6GB / 83.1MB   18.2MB / 27.6GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   801.21%   4.268GiB / 251.3GiB   1.70%     11.6GB / 83.1MB   18.2MB / 29.4GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   799.08%   4.267GiB / 251.3GiB   1.70%     11.6GB / 83.1MB   18.2MB / 29.4GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   799.59%   4.267GiB / 251.3GiB   1.70%     11.6GB / 83.1MB   18.2MB / 31.8GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   799.09%   4.267GiB / 251.3GiB   1.70%     11.6GB / 83.1MB   18.2MB / 31.8GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   799.56%   4.267GiB / 251.3GiB   1.70%     11.6GB / 83.1MB   18.2MB / 34.7GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   798.84%   4.267GiB / 251.3GiB   1.70%     11.6GB / 83.1MB   18.2MB / 34.7GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   801.22%   4.267GiB / 251.3GiB   1.70%     11.6GB / 83.1MB   18.2MB / 36.1GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+8679f2ad5868   laughing_lumiere   799.09%   4.267GiB / 251.3GiB   1.70%     11.6GB / 83.1MB   18.2MB / 37GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+8679f2ad5868   laughing_lumiere   802.06%   4.267GiB / 251.3GiB   1.70%     11.6GB / 83.1MB   18.2MB / 37GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   805.08%   4.432GiB / 251.3GiB   1.76%     11.6GB / 83.5MB   18.2MB / 39.2GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   802.32%   4.644GiB / 251.3GiB   1.85%     11.9GB / 85.2MB   18.2MB / 39.2GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   800.93%   4.603GiB / 251.3GiB   1.83%     12.2GB / 87MB   18.2MB / 40.2GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   802.34%   4.703GiB / 251.3GiB   1.87%     12.5GB / 88.9MB   18.2MB / 40.2GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   806.58%   4.776GiB / 251.3GiB   1.90%     12.7GB / 90.8MB   18.2MB / 40.2GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   801.95%   4.599GiB / 251.3GiB   1.83%     13GB / 92.7MB   18.2MB / 40.2GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   802.76%   4.383GiB / 251.3GiB   1.74%     13.3GB / 94.6MB   18.2MB / 40.2GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   797.52%   4.385GiB / 251.3GiB   1.74%     13.6GB / 96.5MB   18.2MB / 40.2GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   805.84%   4.402GiB / 251.3GiB   1.75%     13.8GB / 98.5MB   18.2MB / 40.2GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   807.19%   4.416GiB / 251.3GiB   1.76%     14.1GB / 100MB   18.2MB / 40.2GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   800.73%   4.388GiB / 251.3GiB   1.75%     14.4GB / 102MB   18.2MB / 40.2GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   803.20%   4.795GiB / 251.3GiB   1.91%     14.6GB / 104MB   18.2MB / 40.2GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   807.04%   5.227GiB / 251.3GiB   2.08%     14.9GB / 106MB   18.2MB / 40.2GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   808.66%   5.31GiB / 251.3GiB   2.11%     15.2GB / 108MB   18.2MB / 40.2GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   805.35%   5.307GiB / 251.3GiB   2.11%     15.5GB / 110MB   18.2MB / 41.8GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   803.02%   5.996GiB / 251.3GiB   2.39%     15.7GB / 112MB   18.2MB / 41.8GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   804.36%   6.101GiB / 251.3GiB   2.43%     16GB / 114MB   18.2MB / 44.1GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   805.62%   6.266GiB / 251.3GiB   2.49%     16.3GB / 116MB   18.2MB / 44.1GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   805.10%   6.112GiB / 251.3GiB   2.43%     16.6GB / 118MB   18.2MB / 46.3GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   807.13%   5.772GiB / 251.3GiB   2.30%     16.8GB / 120MB   18.2MB / 46.3GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   803.12%   5.726GiB / 251.3GiB   2.28%     17.1GB / 121MB   18.2MB / 50.9GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   804.23%   5.892GiB / 251.3GiB   2.34%     17.4GB / 123MB   18.2MB / 52.7GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   801.75%   5.901GiB / 251.3GiB   2.35%     17.6GB / 125MB   18.2MB / 52.7GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT   MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   802.13%   5.9GiB / 251.3GiB   2.35%     17.9GB / 127MB   18.2MB / 54.7GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   800.13%   5.96GiB / 251.3GiB   2.37%     18.2GB / 129MB   18.2MB / 54.7GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   803.09%   5.973GiB / 251.3GiB   2.38%     18.4GB / 131MB   18.2MB / 56.8GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   806.10%   6.084GiB / 251.3GiB   2.42%     18.7GB / 132MB   18.2MB / 56.8GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   802.05%   6.144GiB / 251.3GiB   2.44%     19GB / 134MB   18.2MB / 57.9GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   806.27%   6.347GiB / 251.3GiB   2.53%     19.2GB / 136MB   18.2MB / 57.9GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   805.78%   6.679GiB / 251.3GiB   2.66%     19.5GB / 138MB   18.2MB / 59.2GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   803.18%   6.659GiB / 251.3GiB   2.65%     19.8GB / 140MB   18.2MB / 59.2GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   800.24%   6.781GiB / 251.3GiB   2.70%     19.8GB / 140MB   18.2MB / 60.5GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   799.20%   6.576GiB / 251.3GiB   2.62%     19.9GB / 140MB   18.2MB / 60.5GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   800.30%   6.879GiB / 251.3GiB   2.74%     20GB / 141MB   18.2MB / 65.5GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   800.02%   6.895GiB / 251.3GiB   2.74%     20.1GB / 141MB   18.2MB / 65.5GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   793.19%   6.563GiB / 251.3GiB   2.61%     20.2GB / 141MB   18.2MB / 66.6GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   802.06%   6.641GiB / 251.3GiB   2.64%     20.3GB / 142MB   18.2MB / 67.7GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   800.79%   7.053GiB / 251.3GiB   2.81%     20.4GB / 142MB   18.2MB / 67.7GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   803.60%   7.147GiB / 251.3GiB   2.84%     20.5GB / 142MB   18.2MB / 68.8GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   797.84%   7.005GiB / 251.3GiB   2.79%     20.6GB / 142MB   18.2MB / 68.8GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   799.26%   7.482GiB / 251.3GiB   2.98%     20.7GB / 143MB   18.2MB / 72.5GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   798.95%   8.05GiB / 251.3GiB   3.20%     20.8GB / 143MB   18.2MB / 72.5GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   799.04%   8.855GiB / 251.3GiB   3.52%     20.9GB / 143MB   18.2MB / 73.7GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   802.87%   8.778GiB / 251.3GiB   3.49%     21.2GB / 145MB   18.2MB / 73.7GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   802.50%   8.828GiB / 251.3GiB   3.51%     21.4GB / 147MB   18.2MB / 74.2GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   804.47%   8.665GiB / 251.3GiB   3.45%     21.7GB / 149MB   18.2MB / 74.2GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   801.82%   8.625GiB / 251.3GiB   3.43%     22GB / 150MB   18.2MB / 74.7GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   805.74%   8.588GiB / 251.3GiB   3.42%     22.2GB / 152MB   18.2MB / 74.7GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   805.73%   9.02GiB / 251.3GiB   3.59%     22.5GB / 154MB   18.2MB / 77.3GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   805.64%   9.086GiB / 251.3GiB   3.62%     22.8GB / 156MB   18.2MB / 77.3GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   805.53%   9.138GiB / 251.3GiB   3.64%     23.1GB / 157MB   18.2MB / 77.7GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   811.30%   8.873GiB / 251.3GiB   3.53%     23.3GB / 159MB   18.2MB / 77.7GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   803.22%   9.142GiB / 251.3GiB   3.64%     23.3GB / 159MB   18.2MB / 78.2GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   800.76%   9.16GiB / 251.3GiB   3.64%     23.3GB / 159MB   18.2MB / 78.2GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT   MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   798.17%   9.2GiB / 251.3GiB   3.66%     23.3GB / 159MB   18.2MB / 79.6GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   791.40%   9.003GiB / 251.3GiB   3.58%     23.3GB / 159MB   18.2MB / 79.6GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   801.08%   9.016GiB / 251.3GiB   3.59%     23.3GB / 159MB   18.2MB / 81.1GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   799.55%   9.311GiB / 251.3GiB   3.70%     23.3GB / 159MB   18.2MB / 81.1GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   797.29%   9.428GiB / 251.3GiB   3.75%     23.3GB / 159MB   18.2MB / 83.3GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   797.67%   9.23GiB / 251.3GiB   3.67%     23.3GB / 159MB   18.2MB / 84.3GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   802.54%   9.467GiB / 251.3GiB   3.77%     23.3GB / 159MB   18.2MB / 84.3GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   801.03%   9.699GiB / 251.3GiB   3.86%     23.3GB / 159MB   18.2MB / 85.5GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   800.18%   9.604GiB / 251.3GiB   3.82%     23.3GB / 159MB   18.2MB / 85.5GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   802.22%   9.63GiB / 251.3GiB   3.83%     23.5GB / 160MB   18.2MB / 86.7GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   802.41%   9.695GiB / 251.3GiB   3.86%     23.7GB / 162MB   18.2MB / 86.7GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   806.10%   9.552GiB / 251.3GiB   3.80%     24GB / 164MB   18.2MB / 87.2GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   804.14%   9.878GiB / 251.3GiB   3.93%     24.3GB / 166MB   18.2MB / 87.2GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   803.19%   9.709GiB / 251.3GiB   3.86%     24.5GB / 168MB   18.2MB / 87.3GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   804.23%   9.848GiB / 251.3GiB   3.92%     24.8GB / 170MB   18.2MB / 87.3GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   804.42%   9.644GiB / 251.3GiB   3.84%     25.1GB / 172MB   18.2MB / 89.6GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   804.15%   9.985GiB / 251.3GiB   3.97%     25.3GB / 174MB   18.2MB / 89.6GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   801.66%   9.905GiB / 251.3GiB   3.94%     25.6GB / 176MB   18.2MB / 90.7GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   804.15%   10.01GiB / 251.3GiB   3.98%     25.8GB / 179MB   18.2MB / 90.7GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   806.96%   10.85GiB / 251.3GiB   4.32%     26.1GB / 181MB   18.2MB / 91.7GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   805.64%   11.98GiB / 251.3GiB   4.77%     26.4GB / 183MB   18.2MB / 91.7GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   804.23%   12.43GiB / 251.3GiB   4.95%     26.6GB / 185MB   18.2MB / 92.8GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   802.93%   12.64GiB / 251.3GiB   5.03%     26.9GB / 187MB   18.2MB / 92.8GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   802.05%   12.58GiB / 251.3GiB   5.01%     27.2GB / 189MB   18.2MB / 94.8GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   801.74%   12.78GiB / 251.3GiB   5.09%     27.4GB / 191MB   18.2MB / 94.8GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   805.70%   12.6GiB / 251.3GiB   5.01%     27.7GB / 193MB   18.2MB / 96.8GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   805.21%   12.74GiB / 251.3GiB   5.07%     28GB / 195MB   18.2MB / 96.8GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   801.71%   12.75GiB / 251.3GiB   5.07%     28.2GB / 197MB   18.2MB / 97.7GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   801.63%   12.83GiB / 251.3GiB   5.11%     28.5GB / 199MB   18.2MB / 98.8GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8679f2ad5868   laughing_lumiere   802.50%   12.85GiB / 251.3GiB   5.12%     28.8GB / 201MB   18.2MB / 98.8GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   804.17%   12.84GiB / 251.3GiB   5.11%     29GB / 203MB   18.2MB / 101GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   804.07%   12.73GiB / 251.3GiB   5.06%     29.3GB / 206MB   18.2MB / 101GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   804.78%   12.92GiB / 251.3GiB   5.14%     29.6GB / 208MB   18.2MB / 103GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   803.40%   13.04GiB / 251.3GiB   5.19%     29.8GB / 210MB   18.2MB / 103GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   804.36%   12.97GiB / 251.3GiB   5.16%     30.1GB / 212MB   18.2MB / 105GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.04%   12.94GiB / 251.3GiB   5.15%     30.4GB / 214MB   18.2MB / 105GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   803.44%   12.89GiB / 251.3GiB   5.13%     30.6GB / 216MB   18.2MB / 107GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   804.73%   13.08GiB / 251.3GiB   5.20%     30.9GB / 218MB   18.2MB / 107GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   805.64%   12.95GiB / 251.3GiB   5.15%     31.2GB / 220MB   18.2MB / 109GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   806.64%   13.09GiB / 251.3GiB   5.21%     31.4GB / 222MB   18.2MB / 109GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.72%   13.07GiB / 251.3GiB   5.20%     31.5GB / 223MB   18.2MB / 111GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   795.74%   13.07GiB / 251.3GiB   5.20%     31.5GB / 223MB   18.2MB / 111GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.45%   13.31GiB / 251.3GiB   5.30%     31.5GB / 223MB   18.2MB / 113GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.19%   13.42GiB / 251.3GiB   5.34%     31.5GB / 223MB   18.2MB / 113GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   797.58%   13.42GiB / 251.3GiB   5.34%     31.5GB / 223MB   18.2MB / 113GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.69%   13.48GiB / 251.3GiB   5.36%     31.5GB / 223MB   18.2MB / 115GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   797.52%   13.3GiB / 251.3GiB   5.29%     31.5GB / 223MB   18.2MB / 115GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   797.79%   13.4GiB / 251.3GiB   5.33%     31.5GB / 223MB   18.2MB / 117GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   800.49%   13.43GiB / 251.3GiB   5.34%     31.5GB / 223MB   18.2MB / 117GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   797.83%   13.33GiB / 251.3GiB   5.31%     31.5GB / 223MB   18.2MB / 119GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.92%   13.06GiB / 251.3GiB   5.20%     31.5GB / 223MB   18.2MB / 119GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   803.55%   13.11GiB / 251.3GiB   5.22%     31.5GB / 223MB   18.2MB / 121GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   803.03%   13.4GiB / 251.3GiB   5.33%     31.8GB / 225MB   18.2MB / 121GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   805.94%   13.42GiB / 251.3GiB   5.34%     32GB / 227MB   18.2MB / 122GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   803.92%   13.19GiB / 251.3GiB   5.25%     32.3GB / 229MB   18.2MB / 122GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   803.45%   13.19GiB / 251.3GiB   5.25%     32.6GB / 231MB   18.2MB / 123GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.20%   13.12GiB / 251.3GiB   5.22%     32.8GB / 233MB   18.2MB / 123GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   803.64%   13.15GiB / 251.3GiB   5.23%     33.1GB / 235MB   18.2MB / 124GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   806.85%   13.55GiB / 251.3GiB   5.39%     33.4GB / 237MB   18.2MB / 124GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   806.41%   14.13GiB / 251.3GiB   5.62%     33.6GB / 239MB   18.2MB / 125GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   804.83%   14.18GiB / 251.3GiB   5.64%     33.9GB / 242MB   18.2MB / 125GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   807.55%   14.27GiB / 251.3GiB   5.68%     34GB / 242MB   18.2MB / 126GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.73%   14.31GiB / 251.3GiB   5.69%     34GB / 242MB   18.2MB / 126GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.67%   14.34GiB / 251.3GiB   5.71%     34GB / 242MB   18.2MB / 127GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   795.61%   14.54GiB / 251.3GiB   5.79%     34GB / 242MB   18.2MB / 127GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.04%   14.62GiB / 251.3GiB   5.82%     34GB / 242MB   18.2MB / 127GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   797.95%   14.56GiB / 251.3GiB   5.79%     34GB / 242MB   18.2MB / 129GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   797.53%   14.81GiB / 251.3GiB   5.89%     34GB / 242MB   18.2MB / 129GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.76%   14.71GiB / 251.3GiB   5.85%     34GB / 242MB   18.2MB / 131GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O        BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.86%   14.8GiB / 251.3GiB   5.89%     34GB / 242MB   18.2MB / 131GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   800.76%   15.07GiB / 251.3GiB   6.00%     34GB / 242MB   18.2MB / 134GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   800.93%   15.36GiB / 251.3GiB   6.11%     34GB / 242MB   18.2MB / 134GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O        BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   796.72%   15.4GiB / 251.3GiB   6.13%     34GB / 242MB   18.2MB / 135GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.95%   15.39GiB / 251.3GiB   6.12%     34.2GB / 244MB   18.2MB / 135GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   806.23%   15.57GiB / 251.3GiB   6.19%     34.5GB / 246MB   18.2MB / 137GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   804.44%   15.5GiB / 251.3GiB   6.17%     34.8GB / 248MB   18.2MB / 137GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O        BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   800.79%   15.4GiB / 251.3GiB   6.13%     35GB / 250MB   18.2MB / 139GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.94%   15.83GiB / 251.3GiB   6.30%     35.3GB / 253MB   18.2MB / 139GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   803.40%   15.92GiB / 251.3GiB   6.34%     35.6GB / 255MB   18.2MB / 139GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.92%   15.58GiB / 251.3GiB   6.20%     35.8GB / 257MB   18.2MB / 139GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   804.19%   15.89GiB / 251.3GiB   6.32%     36.1GB / 259MB   18.2MB / 140GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.83%   15.9GiB / 251.3GiB   6.33%     36.4GB / 261MB   18.2MB / 140GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.71%   15.98GiB / 251.3GiB   6.36%     36.6GB / 263MB   18.2MB / 141GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.62%   15.85GiB / 251.3GiB   6.31%     36.9GB / 266MB   18.2MB / 141GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   805.76%   16.04GiB / 251.3GiB   6.38%     37.2GB / 268MB   18.2MB / 141GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT   MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.97%   16GiB / 251.3GiB    6.37%     37.4GB / 270MB   18.2MB / 141GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.51%   15.61GiB / 251.3GiB   6.21%     37.4GB / 270MB   18.2MB / 143GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.66%   15.62GiB / 251.3GiB   6.22%     37.4GB / 270MB   18.2MB / 143GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.81%   15.62GiB / 251.3GiB   6.22%     37.4GB / 270MB   18.2MB / 144GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.75%   15.74GiB / 251.3GiB   6.26%     37.4GB / 270MB   18.2MB / 145GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.66%   15.95GiB / 251.3GiB   6.35%     37.4GB / 270MB   18.2MB / 145GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.78%   16.17GiB / 251.3GiB   6.44%     37.4GB / 270MB   18.2MB / 147GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   803.58%   16.21GiB / 251.3GiB   6.45%     37.4GB / 270MB   18.2MB / 147GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.47%   16.21GiB / 251.3GiB   6.45%     37.4GB / 270MB   18.2MB / 149GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.09%   16.21GiB / 251.3GiB   6.45%     37.4GB / 270MB   18.2MB / 149GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.95%   16.24GiB / 251.3GiB   6.46%     37.4GB / 270MB   18.2MB / 151GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   797.45%   16.22GiB / 251.3GiB   6.45%     37.4GB / 270MB   18.2MB / 151GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   794.33%   16.19GiB / 251.3GiB   6.44%     37.4GB / 270MB   18.2MB / 153GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   800.92%   16.28GiB / 251.3GiB   6.48%     37.4GB / 270MB   18.2MB / 153GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.45%   16.31GiB / 251.3GiB   6.49%     37.4GB / 270MB   18.2MB / 156GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.99%   16.25GiB / 251.3GiB   6.47%     37.4GB / 270MB   18.2MB / 156GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.33%   16.51GiB / 251.3GiB   6.57%     37.4GB / 270MB   18.2MB / 156GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   815.94%   16.76GiB / 251.3GiB   6.67%     37.4GB / 270MB   18.2MB / 156GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.19%   17.03GiB / 251.3GiB   6.77%     37.4GB / 270MB   18.2MB / 156GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.44%   17.15GiB / 251.3GiB   6.82%     37.4GB / 270MB   18.2MB / 156GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   794.82%   17.14GiB / 251.3GiB   6.82%     37.4GB / 270MB   18.2MB / 156GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.60%   17.22GiB / 251.3GiB   6.85%     37.4GB / 270MB   18.2MB / 156GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.95%   17.24GiB / 251.3GiB   6.86%     37.4GB / 270MB   18.2MB / 158GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   800.48%   17.29GiB / 251.3GiB   6.88%     37.4GB / 270MB   18.2MB / 159GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   800.25%   17.37GiB / 251.3GiB   6.91%     37.4GB / 270MB   18.2MB / 159GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   800.55%   17.35GiB / 251.3GiB   6.91%     37.4GB / 270MB   18.2MB / 159GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   800.09%   17.38GiB / 251.3GiB   6.92%     37.4GB / 270MB   18.2MB / 159GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.88%   17.47GiB / 251.3GiB   6.95%     37.4GB / 270MB   18.2MB / 161GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.78%   17.57GiB / 251.3GiB   6.99%     37.4GB / 270MB   18.2MB / 161GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.15%   17.73GiB / 251.3GiB   7.05%     37.4GB / 270MB   18.2MB / 161GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   797.84%   17.9GiB / 251.3GiB   7.12%     37.4GB / 270MB   18.2MB / 161GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   797.84%   18.06GiB / 251.3GiB   7.19%     37.4GB / 270MB   18.2MB / 161GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.99%   18.24GiB / 251.3GiB   7.26%     37.4GB / 270MB   18.2MB / 161GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.18%   18.38GiB / 251.3GiB   7.31%     37.4GB / 270MB   18.2MB / 162GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.84%   18.39GiB / 251.3GiB   7.32%     37.4GB / 270MB   18.2MB / 162GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.98%   18.45GiB / 251.3GiB   7.34%     37.4GB / 270MB   18.2MB / 164GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   800.24%   18.51GiB / 251.3GiB   7.37%     37.4GB / 270MB   18.2MB / 164GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.18%   18.5GiB / 251.3GiB   7.36%     37.4GB / 270MB   18.2MB / 164GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   800.79%   18.56GiB / 251.3GiB   7.39%     37.4GB / 270MB   18.2MB / 164GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.66%   18.63GiB / 251.3GiB   7.41%     37.4GB / 270MB   18.2MB / 166GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   796.83%   18.77GiB / 251.3GiB   7.47%     37.4GB / 270MB   18.2MB / 166GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   808.92%   18.63GiB / 251.3GiB   7.41%     37.4GB / 270MB   18.2MB / 166GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   805.21%   18.79GiB / 251.3GiB   7.48%     37.4GB / 270MB   18.2MB / 166GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.19%   18.84GiB / 251.3GiB   7.50%     37.4GB / 270MB   18.2MB / 166GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.46%   18.95GiB / 251.3GiB   7.54%     37.4GB / 270MB   18.2MB / 166GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT   MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   800.95%   19GiB / 251.3GiB    7.56%     37.4GB / 270MB   18.2MB / 167GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   803.10%   19.31GiB / 251.3GiB   7.68%     37.4GB / 270MB   18.2MB / 167GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.76%   19.37GiB / 251.3GiB   7.71%     37.4GB / 270MB   18.2MB / 169GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.13%   19.31GiB / 251.3GiB   7.68%     37.4GB / 270MB   18.2MB / 169GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.40%   19.21GiB / 251.3GiB   7.64%     37.4GB / 270MB   18.2MB / 169GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.28%   19.04GiB / 251.3GiB   7.58%     37.4GB / 270MB   18.2MB / 169GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.86%   19.21GiB / 251.3GiB   7.64%     37.4GB / 270MB   18.2MB / 169GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   800.78%   19.23GiB / 251.3GiB   7.65%     37.4GB / 270MB   18.2MB / 169GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.82%   19.31GiB / 251.3GiB   7.68%     37.4GB / 270MB   18.2MB / 171GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.48%   19.31GiB / 251.3GiB   7.68%     37.4GB / 270MB   18.2MB / 172GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.61%   19.31GiB / 251.3GiB   7.68%     37.4GB / 270MB   18.2MB / 172GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.91%   19.31GiB / 251.3GiB   7.68%     37.4GB / 270MB   18.2MB / 172GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.72%   19.36GiB / 251.3GiB   7.70%     37.4GB / 270MB   18.2MB / 172GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.41%   19.39GiB / 251.3GiB   7.72%     37.4GB / 270MB   18.2MB / 174GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.59%   19.4GiB / 251.3GiB   7.72%     37.4GB / 270MB   18.2MB / 174GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.80%   19.4GiB / 251.3GiB   7.72%     37.4GB / 270MB   18.2MB / 174GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.87%   19.4GiB / 251.3GiB   7.72%     37.4GB / 270MB   18.2MB / 174GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   797.87%   19.35GiB / 251.3GiB   7.70%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.66%   19.63GiB / 251.3GiB   7.81%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.82%   19.99GiB / 251.3GiB   7.95%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.26%   20.34GiB / 251.3GiB   8.09%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.03%   20.67GiB / 251.3GiB   8.22%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   800.50%   21.03GiB / 251.3GiB   8.37%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.88%   21.34GiB / 251.3GiB   8.49%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.82%   21.38GiB / 251.3GiB   8.51%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.68%   21.39GiB / 251.3GiB   8.51%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.41%   21.45GiB / 251.3GiB   8.53%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   800.17%   21.45GiB / 251.3GiB   8.54%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.08%   21.41GiB / 251.3GiB   8.52%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.98%   21.42GiB / 251.3GiB   8.52%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.31%   21.43GiB / 251.3GiB   8.53%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.01%   21.48GiB / 251.3GiB   8.55%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   800.82%   21.48GiB / 251.3GiB   8.55%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.25%   21.33GiB / 251.3GiB   8.49%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.86%   21.55GiB / 251.3GiB   8.58%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.82%   21.57GiB / 251.3GiB   8.58%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.82%   21.57GiB / 251.3GiB   8.58%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   800.47%   21.57GiB / 251.3GiB   8.58%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.83%   21.58GiB / 251.3GiB   8.59%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.86%   21.53GiB / 251.3GiB   8.57%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.63%   21.63GiB / 251.3GiB   8.61%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.79%   21.65GiB / 251.3GiB   8.61%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   800.12%   21.67GiB / 251.3GiB   8.62%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.05%   21.68GiB / 251.3GiB   8.63%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.03%   21.68GiB / 251.3GiB   8.63%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.22%   21.68GiB / 251.3GiB   8.63%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.47%   21.69GiB / 251.3GiB   8.63%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.79%   21.53GiB / 251.3GiB   8.57%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.11%   21.72GiB / 251.3GiB   8.64%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.78%   21.76GiB / 251.3GiB   8.66%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.90%   21.8GiB / 251.3GiB   8.67%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.95%   21.82GiB / 251.3GiB   8.68%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.39%   21.83GiB / 251.3GiB   8.69%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.47%   21.85GiB / 251.3GiB   8.69%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   800.78%   21.85GiB / 251.3GiB   8.69%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.45%   21.86GiB / 251.3GiB   8.70%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.39%   21.86GiB / 251.3GiB   8.70%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.67%   21.87GiB / 251.3GiB   8.70%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.83%   21.87GiB / 251.3GiB   8.70%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.07%   21.68GiB / 251.3GiB   8.63%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.25%   21.86GiB / 251.3GiB   8.70%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.48%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.74%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.31%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.48%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.59%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.84%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.14%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.91%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.07%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.50%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.24%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.51%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.24%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.82%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   803.00%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.58%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.35%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.15%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.12%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.24%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   800.52%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.44%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.58%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.31%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   803.01%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.82%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.25%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.68%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.57%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.42%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.96%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.01%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.67%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   797.75%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.91%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.24%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.33%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.67%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.07%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.25%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.34%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.49%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.24%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.24%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.65%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.08%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.79%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   803.20%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.40%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.08%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.44%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.76%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.13%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.74%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   800.95%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.26%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.24%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.32%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.59%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.75%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.40%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.15%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.24%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.50%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.40%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.14%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.42%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.24%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.40%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.02%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   800.71%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.18%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.58%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.06%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.92%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.14%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.08%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.02%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.51%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.08%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.81%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.17%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.59%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.07%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   803.07%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.42%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.80%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.49%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   803.01%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.60%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.12%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.30%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.10%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.96%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.91%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.51%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.75%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.59%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.47%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.68%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   797.91%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.60%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.75%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.08%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.02%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   797.92%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.51%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.92%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.25%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.87%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.80%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.49%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.10%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.51%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.68%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.15%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.92%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.42%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.52%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.41%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.25%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.49%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.08%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.65%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.41%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.16%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.58%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   798.92%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.10%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.68%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   801.12%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.32%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.83%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.66%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   799.26%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.74%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   802.35%   21.92GiB / 251.3GiB   8.72%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   200.44%   22.4GiB / 251.3GiB   8.92%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   200.30%   21.35GiB / 251.3GiB   8.50%     37.4GB / 270MB   18.2MB / 175GB   12
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8679f2ad5868   laughing_lumiere   99.85%    20.95GiB / 251.3GiB   8.34%     37.4GB / 270MB   18.2MB / 175GB   10

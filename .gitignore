@@ -1,8 +1,9 @@
-data
+/log/*
+!/log/.keep
+/tmp/*
+!/tmp/.keep
 node_modules
-tmp
 out
-log
 vcpkg_installed
 .vs
 .vscode
@@ -19,11 +20,11 @@ ui/dt-explorer-*
 **/*.app
 **/*.dmg
 **/.secret
+**/*-secret.*
 **/.gdbinit
 **/*.exe
 **/*.torrent
 **/*.prof
-**/*.log
 **/*.o
 **/*.out
 **/*.ipynb

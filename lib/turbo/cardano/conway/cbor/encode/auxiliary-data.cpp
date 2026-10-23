@@ -3,7 +3,6 @@
  * Copyright (c) 2024-2026 R2 Rationality OÜ (info at r2rationality dot com)
  * License: https://github.com/r2rationality/turbocardano/blob/main/LICENSE */
 
-#include <turbo/cardano/allegra/block.hpp>
 #include <turbo/cardano/conway/auxiliary-data.hpp>
 
 namespace turbo::cardano::conway {
@@ -14,8 +13,7 @@ namespace turbo::cardano::conway {
             enc.array_compact(scripts.size(), [&] {
                 for (const auto &script: scripts) {
                     if (native) {
-                        const auto native_script = allegra::native_script_t::from_cbor(script.script());
-                        native_script.to_cbor(enc);
+                        enc.raw_cbor(script.script());
                     } else {
                         enc.bytes(script.script());
                     }

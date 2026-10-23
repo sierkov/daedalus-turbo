@@ -1,0 +1,148 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O     PIDS
+ac48ff1b3ce5   nervous_wescoff   200.65%   2.221GiB / 251.3GiB   0.88%     646B / 0B   2.53GB / 0B   11
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+ac48ff1b3ce5   nervous_wescoff   20.38%    1.803GiB / 251.3GiB   0.72%     209kB / 11.9kB   2.54GB / 360kB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+ac48ff1b3ce5   nervous_wescoff   801.29%   2.453GiB / 251.3GiB   0.98%     181MB / 1.19MB   2.54GB / 590kB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+ac48ff1b3ce5   nervous_wescoff   800.70%   2.795GiB / 251.3GiB   1.11%     456MB / 3.06MB   2.54GB / 590kB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   799.94%   2.56GiB / 251.3GiB   1.02%     727MB / 4.92MB   2.54GB / 1.27GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   805.14%   2.653GiB / 251.3GiB   1.06%     972MB / 6.47MB   2.54GB / 1.27GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   798.85%   2.823GiB / 251.3GiB   1.12%     1.23GB / 8.23MB   2.54GB / 1.66GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   802.62%   2.647GiB / 251.3GiB   1.05%     1.5GB / 10.1MB   2.54GB / 1.66GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   802.34%   2.862GiB / 251.3GiB   1.14%     1.76GB / 11.8MB   2.54GB / 1.66GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   800.75%   2.853GiB / 251.3GiB   1.14%     2.03GB / 13.7MB   2.54GB / 1.66GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   802.09%   2.763GiB / 251.3GiB   1.10%     2.3GB / 15.5MB   2.54GB / 1.66GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O        PIDS
+ac48ff1b3ce5   nervous_wescoff   783.46%   2.757GiB / 251.3GiB   1.10%     2.57GB / 17.4MB   3.3GB / 1.66GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   736.62%   2.805GiB / 251.3GiB   1.12%     2.84GB / 19.3MB   10.8GB / 1.66GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   741.48%   2.863GiB / 251.3GiB   1.14%     3.1GB / 21.3MB   18.9GB / 1.66GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   807.06%   3.011GiB / 251.3GiB   1.20%     3.37GB / 23.3MB   24.4GB / 1.66GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   806.12%   3.158GiB / 251.3GiB   1.26%     3.64GB / 25.3MB   28.3GB / 1.66GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   802.80%   3.835GiB / 251.3GiB   1.53%     3.91GB / 27.1MB   28.4GB / 1.87GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O        PIDS
+ac48ff1b3ce5   nervous_wescoff   797.89%   5.001GiB / 251.3GiB   1.99%     4.17GB / 28.9MB   28.4GB / 3.6GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   801.78%   3.631GiB / 251.3GiB   1.44%     4.43GB / 30.6MB   28.4GB / 5.69GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   800.89%   3.859GiB / 251.3GiB   1.54%     4.7GB / 32.4MB   28.4GB / 5.69GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   802.04%   4.209GiB / 251.3GiB   1.67%     4.91GB / 33.9MB   28.4GB / 7.02GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   797.76%   4.275GiB / 251.3GiB   1.70%     4.91GB / 33.9MB   28.4GB / 7.02GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   798.14%   4.494GiB / 251.3GiB   1.79%     4.91GB / 33.9MB   28.4GB / 10.1GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   798.89%   4.709GiB / 251.3GiB   1.87%     4.91GB / 33.9MB   28.4GB / 10.1GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+ac48ff1b3ce5   nervous_wescoff   798.79%   4.319GiB / 251.3GiB   1.72%     4.91GB / 33.9MB   28.4GB / 12GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+ac48ff1b3ce5   nervous_wescoff   797.18%   4.256GiB / 251.3GiB   1.69%     4.91GB / 33.9MB   28.4GB / 12GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   800.54%   4.652GiB / 251.3GiB   1.85%     4.91GB / 33.9MB   28.4GB / 13.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   796.22%   4.742GiB / 251.3GiB   1.89%     4.91GB / 33.9MB   28.4GB / 13.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   814.94%   7.411GiB / 251.3GiB   2.95%     4.91GB / 33.9MB   28.4GB / 14.7GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   798.71%   9.999GiB / 251.3GiB   3.98%     4.91GB / 33.9MB   28.4GB / 14.7GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+ac48ff1b3ce5   nervous_wescoff   801.41%   12.55GiB / 251.3GiB   5.00%     4.91GB / 33.9MB   28.4GB / 16GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+ac48ff1b3ce5   nervous_wescoff   798.02%   15.19GiB / 251.3GiB   6.04%     4.91GB / 33.9MB   28.4GB / 16GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   801.35%   15.95GiB / 251.3GiB   6.35%     4.91GB / 33.9MB   28.4GB / 17.2GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   799.46%   18.43GiB / 251.3GiB   7.34%     4.91GB / 33.9MB   28.4GB / 17.2GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   801.57%   15.97GiB / 251.3GiB   6.36%     4.91GB / 33.9MB   28.4GB / 17.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   800.25%   16.33GiB / 251.3GiB   6.50%     4.91GB / 33.9MB   28.4GB / 17.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   802.18%   16.17GiB / 251.3GiB   6.43%     4.91GB / 33.9MB   28.4GB / 17.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   802.19%   16.18GiB / 251.3GiB   6.44%     4.91GB / 33.9MB   28.4GB / 18.6GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   799.05%   16.07GiB / 251.3GiB   6.39%     4.91GB / 33.9MB   28.4GB / 18.6GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   798.01%   16.17GiB / 251.3GiB   6.43%     4.91GB / 33.9MB   28.4GB / 19.4GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   800.10%   16.05GiB / 251.3GiB   6.39%     4.91GB / 33.9MB   28.4GB / 19.4GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   801.20%   16.08GiB / 251.3GiB   6.40%     4.91GB / 33.9MB   28.4GB / 19.7GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   795.64%   16.14GiB / 251.3GiB   6.42%     4.91GB / 33.9MB   28.4GB / 19.7GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   800.60%   16.29GiB / 251.3GiB   6.48%     4.91GB / 33.9MB   28.4GB / 19.9GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   798.84%   16.48GiB / 251.3GiB   6.56%     4.91GB / 33.9MB   28.4GB / 19.9GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   802.12%   16.66GiB / 251.3GiB   6.63%     4.91GB / 33.9MB   28.4GB / 20.1GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   799.08%   16.86GiB / 251.3GiB   6.71%     4.91GB / 33.9MB   28.4GB / 20.1GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   799.10%   16.98GiB / 251.3GiB   6.75%     4.91GB / 33.9MB   28.4GB / 22.6GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   800.68%   19.52GiB / 251.3GiB   7.77%     4.91GB / 33.9MB   28.4GB / 22.6GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   817.14%   17.03GiB / 251.3GiB   6.78%     4.91GB / 33.9MB   28.4GB / 22.7GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   809.50%   17.05GiB / 251.3GiB   6.79%     4.91GB / 33.9MB   28.4GB / 22.7GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   802.49%   17.08GiB / 251.3GiB   6.80%     4.91GB / 33.9MB   28.4GB / 22.7GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   798.29%   17.08GiB / 251.3GiB   6.80%     4.91GB / 33.9MB   28.4GB / 22.7GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   797.97%   17.08GiB / 251.3GiB   6.80%     4.91GB / 33.9MB   28.4GB / 24.7GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   798.53%   16.92GiB / 251.3GiB   6.73%     4.91GB / 33.9MB   28.4GB / 24.7GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   801.53%   17.19GiB / 251.3GiB   6.84%     4.91GB / 33.9MB   28.4GB / 25.2GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   802.66%   17.35GiB / 251.3GiB   6.90%     4.91GB / 33.9MB   28.4GB / 25.2GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   799.13%   17.5GiB / 251.3GiB   6.96%     4.91GB / 33.9MB   28.4GB / 25.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   798.08%   17.66GiB / 251.3GiB   7.03%     4.91GB / 33.9MB   28.4GB / 25.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   799.10%   17.76GiB / 251.3GiB   7.07%     4.91GB / 33.9MB   28.4GB / 25.7GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   802.52%   19.35GiB / 251.3GiB   7.70%     4.91GB / 33.9MB   28.4GB / 25.7GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   802.49%   17.8GiB / 251.3GiB   7.08%     4.91GB / 33.9MB   28.4GB / 28.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   798.76%   17.8GiB / 251.3GiB   7.08%     4.91GB / 33.9MB   28.4GB / 28.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   798.42%   17.8GiB / 251.3GiB   7.08%     4.91GB / 33.9MB   28.4GB / 28.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   803.53%   17.8GiB / 251.3GiB   7.08%     4.91GB / 33.9MB   28.4GB / 28.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   798.92%   17.8GiB / 251.3GiB   7.08%     4.91GB / 33.9MB   28.4GB / 28.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   799.25%   17.76GiB / 251.3GiB   7.07%     4.91GB / 33.9MB   28.4GB / 28.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   802.19%   17.76GiB / 251.3GiB   7.07%     4.91GB / 33.9MB   28.4GB / 28.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   798.11%   17.74GiB / 251.3GiB   7.06%     4.91GB / 33.9MB   28.4GB / 28.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   798.32%   17.74GiB / 251.3GiB   7.06%     4.91GB / 33.9MB   28.4GB / 28.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   799.76%   17.73GiB / 251.3GiB   7.06%     4.91GB / 33.9MB   28.4GB / 28.3GB   12
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+ac48ff1b3ce5   nervous_wescoff   200.52%   19.32GiB / 251.3GiB   7.69%     4.91GB / 33.9MB   28.4GB / 28.3GB   12
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0

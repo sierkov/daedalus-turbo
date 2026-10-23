@@ -1,0 +1,17 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O     PIDS
+1e61f04bea15   epic_archimedes   200.42%   2.05GiB / 251.3GiB   0.82%     736B / 0B   2.35GB / 0B   27
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+1e61f04bea15   epic_archimedes   41.49%    1.588GiB / 251.3GiB   0.63%     1.27MB / 25.4kB   2.35GB / 16.4kB   28
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+1e61f04bea15   epic_archimedes   940.53%   2.552GiB / 251.3GiB   1.02%     147MB / 832kB   3.67GB / 53.7MB   28
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+1e61f04bea15   epic_archimedes   1497.84%   2.698GiB / 251.3GiB   1.07%     147MB / 832kB   18.6GB / 53.7MB   28
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+1e61f04bea15   epic_archimedes   1561.21%   2.897GiB / 251.3GiB   1.15%     147MB / 832kB   31.4GB / 53.7MB   28
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT    MEM %     NET I/O         BLOCK I/O         PIDS
+1e61f04bea15   epic_archimedes   199.84%   5.31GiB / 251.3GiB   2.11%     147MB / 832kB   32.6GB / 53.7MB   28
+CONTAINER ID   NAME              CPU %      MEM USAGE / LIMIT    MEM %     NET I/O         BLOCK I/O         PIDS
+1e61f04bea15   epic_archimedes   1070.03%   3.35GiB / 251.3GiB   1.33%     147MB / 832kB   32.6GB / 3.17GB   28
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS

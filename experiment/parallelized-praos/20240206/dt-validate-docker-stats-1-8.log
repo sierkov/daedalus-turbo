@@ -1,0 +1,843 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O    PIDS
+7cb7893054f1   agitated_dirac   800.75%   964.6MiB / 755.1GiB   0.12%     646B / 0B   201MB / 0B   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O    PIDS
+7cb7893054f1   agitated_dirac   801.14%   1018MiB / 755.1GiB   0.13%     736B / 0B   407MB / 0B   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.13%   1.014GiB / 755.1GiB   0.13%     806B / 0B   604MB / 45.1MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.35%   1.054GiB / 755.1GiB   0.14%     806B / 0B   849MB / 45.1MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   797.65%   1.063GiB / 755.1GiB   0.14%     806B / 0B   1.06GB / 45.1MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   801.08%   1.073GiB / 755.1GiB   0.14%     876B / 0B   1.33GB / 45.1MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   800.41%   1.095GiB / 755.1GiB   0.14%     876B / 0B   1.64GB / 45.1MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   800.82%   1.097GiB / 755.1GiB   0.15%     876B / 0B   1.8GB / 45.1MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   797.84%   1.098GiB / 755.1GiB   0.15%     876B / 0B   1.99GB / 45.1MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   798.69%   1.099GiB / 755.1GiB   0.15%     876B / 0B   2.16GB / 45.1MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   796.12%   1.102GiB / 755.1GiB   0.15%     876B / 0B   2.41GB / 45.1MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   800.93%   1.21GiB / 755.1GiB   0.16%     946B / 0B   2.81GB / 45.1MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   800.49%   1.205GiB / 755.1GiB   0.16%     946B / 0B   3.15GB / 45.1MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   797.37%   1.146GiB / 755.1GiB   0.15%     946B / 0B   3.44GB / 45.1MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   797.99%   1.149GiB / 755.1GiB   0.15%     946B / 0B   3.63GB / 62.9MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   798.04%   1.157GiB / 755.1GiB   0.15%     946B / 0B   4.13GB / 62.9MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.88%   1.165GiB / 755.1GiB   0.15%     946B / 0B   4.68GB / 145MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   795.46%   1.173GiB / 755.1GiB   0.16%     946B / 0B   5.31GB / 145MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   796.48%   1.18GiB / 755.1GiB   0.16%     946B / 0B   5.76GB / 240MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   795.24%   1.187GiB / 755.1GiB   0.16%     946B / 0B   6.23GB / 240MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT   MEM %     NET I/O     BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   794.27%   1.2GiB / 755.1GiB   0.16%     946B / 0B   7.18GB / 359MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   795.05%   1.209GiB / 755.1GiB   0.16%     946B / 0B   8.15GB / 359MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O     BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   794.81%   1.22GiB / 755.1GiB   0.16%     946B / 0B   9.05GB / 454MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O      PIDS
+7cb7893054f1   agitated_dirac   798.44%   1.231GiB / 755.1GiB   0.16%     946B / 0B   10GB / 454MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   796.25%   1.243GiB / 755.1GiB   0.16%     946B / 0B   11.1GB / 791MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   795.56%   1.288GiB / 755.1GiB   0.17%     1.02kB / 0B   12.1GB / 791MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.41%   1.267GiB / 755.1GiB   0.17%     1.02kB / 0B   12.9GB / 986MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.30%   1.376GiB / 755.1GiB   0.18%     1.02kB / 0B   13.9GB / 986MB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   794.98%   1.477GiB / 755.1GiB   0.20%     1.02kB / 0B   14.9GB / 1.64GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+7cb7893054f1   agitated_dirac   795.98%   1.437GiB / 755.1GiB   0.19%     1.02kB / 0B   16GB / 1.64GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+7cb7893054f1   agitated_dirac   796.34%   1.454GiB / 755.1GiB   0.19%     1.02kB / 0B   17GB / 2.27GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+7cb7893054f1   agitated_dirac   798.85%   1.453GiB / 755.1GiB   0.19%     1.02kB / 0B   18GB / 2.27GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   796.58%   1.543GiB / 755.1GiB   0.20%     1.02kB / 0B   19.1GB / 3.12GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+7cb7893054f1   agitated_dirac   799.54%   1.531GiB / 755.1GiB   0.20%     1.02kB / 0B   20GB / 3.12GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   797.87%   1.979GiB / 755.1GiB   0.26%     1.02kB / 0B   21.1GB / 4.39GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   800.40%   1.637GiB / 755.1GiB   0.22%     1.02kB / 0B   21.9GB / 4.39GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   796.41%   1.673GiB / 755.1GiB   0.22%     1.02kB / 0B   22.9GB / 5.75GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   795.88%   1.683GiB / 755.1GiB   0.22%     1.02kB / 0B   23.8GB / 5.75GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   799.47%   1.807GiB / 755.1GiB   0.24%     1.02kB / 0B   24.8GB / 7.09GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   797.67%   2.131GiB / 755.1GiB   0.28%     1.02kB / 0B   25.7GB / 7.09GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   796.16%   2.197GiB / 755.1GiB   0.29%     1.02kB / 0B   26.6GB / 8.61GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   799.32%   2.217GiB / 755.1GiB   0.29%     1.02kB / 0B   27.5GB / 8.61GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   795.82%   2.156GiB / 755.1GiB   0.29%     1.02kB / 0B   28.4GB / 10.5GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   796.95%   2.152GiB / 755.1GiB   0.29%     1.02kB / 0B   29.3GB / 10.5GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   797.68%   2.079GiB / 755.1GiB   0.28%     1.02kB / 0B   30.1GB / 12.3GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+7cb7893054f1   agitated_dirac   796.30%   2.046GiB / 755.1GiB   0.27%     1.02kB / 0B   31GB / 12.3GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   797.55%   2.161GiB / 755.1GiB   0.29%     1.02kB / 0B   31.9GB / 14.3GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   797.17%   2.243GiB / 755.1GiB   0.30%     1.02kB / 0B   32.7GB / 14.3GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   797.54%   2.147GiB / 755.1GiB   0.28%     1.02kB / 0B   33.5GB / 16.4GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   797.25%   2.057GiB / 755.1GiB   0.27%     1.02kB / 0B   34.3GB / 16.4GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   795.90%   2.201GiB / 755.1GiB   0.29%     1.02kB / 0B   35.1GB / 18.3GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   799.92%   2.271GiB / 755.1GiB   0.30%     1.09kB / 0B   35.8GB / 18.3GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   797.26%   2.167GiB / 755.1GiB   0.29%     1.09kB / 0B   36.6GB / 18.5GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+7cb7893054f1   agitated_dirac   796.73%   2.339GiB / 755.1GiB   0.31%     1.09kB / 0B   37.5GB / 20GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+7cb7893054f1   agitated_dirac   800.08%   2.177GiB / 755.1GiB   0.29%     1.09kB / 0B   38.2GB / 20GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+7cb7893054f1   agitated_dirac   796.63%   2.095GiB / 755.1GiB   0.28%     1.09kB / 0B   39GB / 21.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   796.55%   2.233GiB / 755.1GiB   0.30%     1.09kB / 0B   39.9GB / 21.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   797.75%   2.05GiB / 755.1GiB   0.27%     1.09kB / 0B   40.6GB / 23.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   799.64%   2.015GiB / 755.1GiB   0.27%     1.09kB / 0B   41.5GB / 23.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   799.20%   2.09GiB / 755.1GiB   0.28%     1.09kB / 0B   42.3GB / 25.3GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+7cb7893054f1   agitated_dirac   800.49%   2.152GiB / 755.1GiB   0.28%     1.09kB / 0B   43GB / 25.3GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   796.69%   2.216GiB / 755.1GiB   0.29%     1.09kB / 0B   43.9GB / 26.7GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   800.50%   2.098GiB / 755.1GiB   0.28%     1.09kB / 0B   44.7GB / 26.7GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   800.44%   2.172GiB / 755.1GiB   0.29%     1.09kB / 0B   45.4GB / 28.2GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   798.56%   2.048GiB / 755.1GiB   0.27%     1.09kB / 0B   46.2GB / 28.2GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+7cb7893054f1   agitated_dirac   796.78%   2.186GiB / 755.1GiB   0.29%     1.09kB / 0B   47GB / 29.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   797.01%   2.172GiB / 755.1GiB   0.29%     1.09kB / 0B   47.7GB / 29.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   796.07%   2.065GiB / 755.1GiB   0.27%     1.09kB / 0B   48.5GB / 31.3GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   797.36%   2.214GiB / 755.1GiB   0.29%     1.09kB / 0B   49.3GB / 31.3GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+7cb7893054f1   agitated_dirac   797.63%   2.254GiB / 755.1GiB   0.30%     1.09kB / 0B   50GB / 32.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   800.01%   2.152GiB / 755.1GiB   0.28%     1.09kB / 0B   50.8GB / 32.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   799.19%   2.115GiB / 755.1GiB   0.28%     1.09kB / 0B   51.7GB / 34.2GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   796.54%   2.104GiB / 755.1GiB   0.28%     1.09kB / 0B   52.4GB / 34.2GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   797.01%   2.132GiB / 755.1GiB   0.28%     1.09kB / 0B   53.2GB / 35.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+7cb7893054f1   agitated_dirac   796.99%   2.199GiB / 755.1GiB   0.29%     1.09kB / 0B   54GB / 35.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   799.98%   2.209GiB / 755.1GiB   0.29%     1.09kB / 0B   54.8GB / 36.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   796.54%   2.118GiB / 755.1GiB   0.28%     1.09kB / 0B   55.5GB / 36.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   796.88%   2.242GiB / 755.1GiB   0.30%     1.09kB / 0B   56.3GB / 38.3GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   796.63%   2.197GiB / 755.1GiB   0.29%     1.09kB / 0B   57.1GB / 38.3GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   796.59%   2.141GiB / 755.1GiB   0.28%     1.09kB / 0B   57.9GB / 39.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   799.48%   2.101GiB / 755.1GiB   0.28%     1.09kB / 0B   58.6GB / 39.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   799.18%   2.121GiB / 755.1GiB   0.28%     1.09kB / 0B   59.4GB / 40.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   799.37%   2.098GiB / 755.1GiB   0.28%     1.09kB / 0B   60.2GB / 40.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   800.53%   2.209GiB / 755.1GiB   0.29%     1.09kB / 0B   60.9GB / 42.4GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   795.56%   2.236GiB / 755.1GiB   0.30%     1.09kB / 0B   61.7GB / 42.4GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   796.95%   2.45GiB / 755.1GiB   0.32%     1.09kB / 0B   62.5GB / 43.7GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   800.91%   2.417GiB / 755.1GiB   0.32%     1.09kB / 0B   63.2GB / 43.7GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   800.98%   2.5GiB / 755.1GiB   0.33%     1.09kB / 0B   63.9GB / 45.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   799.60%   2.616GiB / 755.1GiB   0.35%     1.09kB / 0B   64.6GB / 45.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   796.75%   2.284GiB / 755.1GiB   0.30%     1.09kB / 0B   65.3GB / 46.4GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   797.02%   2.387GiB / 755.1GiB   0.32%     1.09kB / 0B   65.9GB / 46.4GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   796.90%   2.552GiB / 755.1GiB   0.34%     1.09kB / 0B   66.6GB / 47.7GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   800.28%   2.415GiB / 755.1GiB   0.32%     1.09kB / 0B   67.2GB / 47.7GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   799.75%   2.499GiB / 755.1GiB   0.33%     1.09kB / 0B   67.9GB / 48.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   797.13%   2.39GiB / 755.1GiB   0.32%     1.09kB / 0B   68.5GB / 48.9GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   796.11%   2.34GiB / 755.1GiB   0.31%     1.09kB / 0B   69.2GB / 50.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   795.61%   2.218GiB / 755.1GiB   0.29%     1.09kB / 0B   69.9GB / 50.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   797.18%   2.275GiB / 755.1GiB   0.30%     1.09kB / 0B   70.6GB / 51.3GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   799.97%   2.346GiB / 755.1GiB   0.31%     1.09kB / 0B   71.3GB / 51.3GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   799.82%   2.451GiB / 755.1GiB   0.32%     1.09kB / 0B   72.1GB / 52.5GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   799.98%   2.338GiB / 755.1GiB   0.31%     1.09kB / 0B   72.7GB / 52.5GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   796.85%   2.391GiB / 755.1GiB   0.32%     1.09kB / 0B   73.4GB / 53.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   799.63%   2.343GiB / 755.1GiB   0.31%     1.09kB / 0B   74.2GB / 53.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+7cb7893054f1   agitated_dirac   798.53%   2.369GiB / 755.1GiB   0.31%     1.09kB / 0B   74.9GB / 55GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+7cb7893054f1   agitated_dirac   799.88%   2.602GiB / 755.1GiB   0.34%     1.09kB / 0B   75.6GB / 55GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   801.11%   2.766GiB / 755.1GiB   0.37%     1.09kB / 0B   76.2GB / 56.3GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   800.65%   2.672GiB / 755.1GiB   0.35%     1.09kB / 0B   76.8GB / 56.3GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   800.27%   2.699GiB / 755.1GiB   0.36%     1.09kB / 0B   77.4GB / 57.5GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   799.72%   2.718GiB / 755.1GiB   0.36%     1.09kB / 0B   78.1GB / 57.5GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   799.23%   2.575GiB / 755.1GiB   0.34%     1.09kB / 0B   78.7GB / 58.7GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   796.70%   2.493GiB / 755.1GiB   0.33%     1.16kB / 0B   79.3GB / 58.7GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   791.52%   3.885GiB / 755.1GiB   0.51%     1.16kB / 0B   79.6GB / 59.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   802.05%   7.891GiB / 755.1GiB   1.05%     1.16kB / 0B   79.6GB / 59.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+7cb7893054f1   agitated_dirac   798.39%   10.22GiB / 755.1GiB   1.35%     1.16kB / 0B   79.6GB / 61GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+7cb7893054f1   agitated_dirac   799.77%   11.12GiB / 755.1GiB   1.47%     1.16kB / 0B   79.6GB / 61GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   802.44%   11.72GiB / 755.1GiB   1.55%     1.16kB / 0B   79.6GB / 61.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   799.07%   12.11GiB / 755.1GiB   1.60%     1.16kB / 0B   79.6GB / 62.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   802.99%   12.69GiB / 755.1GiB   1.68%     1.16kB / 0B   79.6GB / 62.1GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   802.01%   13.04GiB / 755.1GiB   1.73%     1.16kB / 0B   79.6GB / 63.7GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   798.38%   13.5GiB / 755.1GiB   1.79%     1.16kB / 0B   79.6GB / 63.7GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+7cb7893054f1   agitated_dirac   798.13%   14.03GiB / 755.1GiB   1.86%     1.16kB / 0B   79.6GB / 65GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+7cb7893054f1   agitated_dirac   799.99%   14.61GiB / 755.1GiB   1.93%     1.16kB / 0B   79.6GB / 65GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   798.99%   15.13GiB / 755.1GiB   2.00%     1.16kB / 0B   79.6GB / 66.3GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   801.01%   15.88GiB / 755.1GiB   2.10%     1.16kB / 0B   79.6GB / 66.3GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   800.22%   16.71GiB / 755.1GiB   2.21%     1.16kB / 0B   79.6GB / 68.5GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   804.57%   17.65GiB / 755.1GiB   2.34%     1.16kB / 0B   79.6GB / 68.5GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   802.70%   18.51GiB / 755.1GiB   2.45%     1.16kB / 0B   79.6GB / 72.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   799.35%   19.16GiB / 755.1GiB   2.54%     1.16kB / 0B   79.6GB / 72.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   800.64%   20.03GiB / 755.1GiB   2.65%     1.16kB / 0B   79.6GB / 76.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   800.91%   20.89GiB / 755.1GiB   2.77%     1.16kB / 0B   79.6GB / 76.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   803.00%   21.94GiB / 755.1GiB   2.91%     1.16kB / 0B   79.6GB / 76.8GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   797.16%   22.93GiB / 755.1GiB   3.04%     1.16kB / 0B   79.6GB / 81.2GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   799.67%   23.68GiB / 755.1GiB   3.14%     1.16kB / 0B   79.6GB / 81.2GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   797.83%   24.51GiB / 755.1GiB   3.25%     1.16kB / 0B   79.6GB / 85.4GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   799.04%   25.76GiB / 755.1GiB   3.41%     1.16kB / 0B   79.6GB / 85.4GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   801.24%   26.82GiB / 755.1GiB   3.55%     1.16kB / 0B   79.6GB / 89.2GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   799.47%   27.33GiB / 755.1GiB   3.62%     1.16kB / 0B   79.6GB / 89.2GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O       PIDS
+7cb7893054f1   agitated_dirac   383.90%   28.07GiB / 755.1GiB   3.72%     1.16kB / 0B   79.6GB / 93GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O       PIDS
+7cb7893054f1   agitated_dirac   100.23%   27.9GiB / 755.1GiB   3.70%     1.16kB / 0B   79.6GB / 93GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   99.78%    27.72GiB / 755.1GiB   3.67%     1.16kB / 0B   79.6GB / 96.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O         PIDS
+7cb7893054f1   agitated_dirac   99.81%    27.56GiB / 755.1GiB   3.65%     1.16kB / 0B   79.6GB / 96.6GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   99.84%    27.4GiB / 755.1GiB   3.63%     1.16kB / 0B   79.6GB / 100GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   99.81%    27.23GiB / 755.1GiB   3.61%     1.16kB / 0B   79.6GB / 100GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   100.24%   27.11GiB / 755.1GiB   3.59%     1.16kB / 0B   79.6GB / 103GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   99.82%    26.95GiB / 755.1GiB   3.57%     1.16kB / 0B   79.6GB / 103GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   99.82%    26.75GiB / 755.1GiB   3.54%     1.16kB / 0B   79.6GB / 104GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   99.82%    26.56GiB / 755.1GiB   3.52%     1.16kB / 0B   79.6GB / 107GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   100.27%   26.41GiB / 755.1GiB   3.50%     1.16kB / 0B   79.6GB / 107GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   99.82%    26.25GiB / 755.1GiB   3.48%     1.16kB / 0B   79.6GB / 109GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   99.83%    26.1GiB / 755.1GiB   3.46%     1.16kB / 0B   79.6GB / 109GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   100.18%   25.9GiB / 755.1GiB   3.43%     1.16kB / 0B   79.6GB / 111GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   99.83%    25.71GiB / 755.1GiB   3.41%     1.16kB / 0B   79.6GB / 111GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   795.56%   24.79GiB / 755.1GiB   3.28%     1.16kB / 0B   79.7GB / 111GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   783.35%   23.6GiB / 755.1GiB   3.13%     1.16kB / 0B   79.7GB / 111GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   803.86%   23.58GiB / 755.1GiB   3.12%     1.16kB / 0B   79.7GB / 111GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   782.81%   23.64GiB / 755.1GiB   3.13%     1.16kB / 0B   79.7GB / 111GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   792.14%   23.61GiB / 755.1GiB   3.13%     1.16kB / 0B   79.7GB / 112GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   796.08%   23.62GiB / 755.1GiB   3.13%     1.16kB / 0B   79.7GB / 112GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.50%   23.58GiB / 755.1GiB   3.12%     1.16kB / 0B   79.7GB / 112GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   796.67%   23.62GiB / 755.1GiB   3.13%     1.16kB / 0B   79.7GB / 112GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   787.55%   23.61GiB / 755.1GiB   3.13%     1.16kB / 0B   79.7GB / 113GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   800.91%   23.64GiB / 755.1GiB   3.13%     1.16kB / 0B   79.7GB / 113GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   792.38%   23.6GiB / 755.1GiB   3.13%     1.16kB / 0B   79.7GB / 114GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   792.28%   23.01GiB / 755.1GiB   3.05%     1.16kB / 0B   79.7GB / 114GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   792.32%   22.21GiB / 755.1GiB   2.94%     1.16kB / 0B   79.7GB / 115GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   796.70%   22.25GiB / 755.1GiB   2.95%     1.16kB / 0B   79.7GB / 115GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   796.35%   22.21GiB / 755.1GiB   2.94%     1.16kB / 0B   79.7GB / 119GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   799.96%   22.23GiB / 755.1GiB   2.94%     1.16kB / 0B   79.7GB / 119GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   792.13%   22.22GiB / 755.1GiB   2.94%     1.16kB / 0B   79.7GB / 125GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   793.93%   22.21GiB / 755.1GiB   2.94%     1.16kB / 0B   79.7GB / 125GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   800.58%   22.19GiB / 755.1GiB   2.94%     1.16kB / 0B   79.7GB / 127GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.19%   22.19GiB / 755.1GiB   2.94%     1.16kB / 0B   79.7GB / 127GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   807.29%   22.21GiB / 755.1GiB   2.94%     1.16kB / 0B   79.7GB / 131GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   800.54%   22.16GiB / 755.1GiB   2.93%     1.16kB / 0B   79.7GB / 132GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   802.99%   22.15GiB / 755.1GiB   2.93%     1.16kB / 0B   79.7GB / 132GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   793.67%   22.17GiB / 755.1GiB   2.94%     1.16kB / 0B   79.7GB / 136GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   792.23%   22.12GiB / 755.1GiB   2.93%     1.16kB / 0B   79.7GB / 136GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   790.19%   21.1GiB / 755.1GiB   2.79%     1.16kB / 0B   79.7GB / 139GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   793.07%   21.15GiB / 755.1GiB   2.80%     1.16kB / 0B   79.7GB / 139GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.35%   21.15GiB / 755.1GiB   2.80%     1.16kB / 0B   79.7GB / 146GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.15%   21.16GiB / 755.1GiB   2.80%     1.16kB / 0B   79.7GB / 148GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   789.96%   21.12GiB / 755.1GiB   2.80%     1.16kB / 0B   79.7GB / 154GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   792.61%   21.19GiB / 755.1GiB   2.81%     1.16kB / 0B   79.7GB / 154GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.94%   21.15GiB / 755.1GiB   2.80%     1.16kB / 0B   79.7GB / 160GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   791.50%   21.1GiB / 755.1GiB   2.79%     1.16kB / 0B   79.7GB / 164GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   802.46%   21.14GiB / 755.1GiB   2.80%     1.16kB / 0B   79.7GB / 170GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   795.91%   21.11GiB / 755.1GiB   2.80%     1.16kB / 0B   79.7GB / 173GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   799.86%   21.15GiB / 755.1GiB   2.80%     1.16kB / 0B   79.7GB / 176GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   787.11%   21.12GiB / 755.1GiB   2.80%     1.16kB / 0B   79.7GB / 179GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   799.96%   21.14GiB / 755.1GiB   2.80%     1.16kB / 0B   79.7GB / 182GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   790.82%   21.12GiB / 755.1GiB   2.80%     1.16kB / 0B   79.7GB / 185GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   799.57%   21.15GiB / 755.1GiB   2.80%     1.16kB / 0B   79.7GB / 187GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   789.51%   21.11GiB / 755.1GiB   2.80%     1.16kB / 0B   79.7GB / 190GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   787.67%   21.12GiB / 755.1GiB   2.80%     1.16kB / 0B   79.7GB / 192GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   792.47%   21.11GiB / 755.1GiB   2.80%     1.16kB / 0B   79.7GB / 194GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   804.27%   21.13GiB / 755.1GiB   2.80%     1.16kB / 0B   79.7GB / 195GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.47%   21.09GiB / 755.1GiB   2.79%     1.16kB / 0B   79.7GB / 198GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   789.63%   21.15GiB / 755.1GiB   2.80%     1.16kB / 0B   79.7GB / 198GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   803.93%   21.08GiB / 755.1GiB   2.79%     1.16kB / 0B   79.7GB / 203GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O      PIDS
+7cb7893054f1   agitated_dirac   778.54%   21.1GiB / 755.1GiB   2.79%     1.16kB / 0B   80GB / 204GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   796.76%   21.13GiB / 755.1GiB   2.80%     1.16kB / 0B   80.3GB / 204GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   779.74%   21.15GiB / 755.1GiB   2.80%     1.16kB / 0B   80.8GB / 204GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   777.84%   21.19GiB / 755.1GiB   2.81%     1.16kB / 0B   81.2GB / 204GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   797.78%   21.23GiB / 755.1GiB   2.81%     1.16kB / 0B   81.6GB / 204GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   784.09%   21.28GiB / 755.1GiB   2.82%     1.16kB / 0B   82.2GB / 204GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   789.56%   21.32GiB / 755.1GiB   2.82%     1.16kB / 0B   82.5GB / 204GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   795.73%   21.37GiB / 755.1GiB   2.83%     1.16kB / 0B   82.8GB / 204GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   790.04%   21.42GiB / 755.1GiB   2.84%     1.16kB / 0B   83.2GB / 204GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   797.62%   21.47GiB / 755.1GiB   2.84%     1.16kB / 0B   83.3GB / 204GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   800.97%   21.53GiB / 755.1GiB   2.85%     1.16kB / 0B   83.4GB / 204GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   797.63%   21.61GiB / 755.1GiB   2.86%     1.16kB / 0B   83.5GB / 204GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   490.86%   21.65GiB / 755.1GiB   2.87%     1.16kB / 0B   83.5GB / 204GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.58%   21.69GiB / 755.1GiB   2.87%     1.16kB / 0B   83.5GB / 206GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   724.91%   21.72GiB / 755.1GiB   2.88%     1.16kB / 0B   83.5GB / 206GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   800.72%   20.22GiB / 755.1GiB   2.68%     1.16kB / 0B   83.5GB / 210GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   803.33%   20.22GiB / 755.1GiB   2.68%     1.16kB / 0B   83.5GB / 210GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   791.54%   20.22GiB / 755.1GiB   2.68%     1.16kB / 0B   83.5GB / 210GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   799.26%   20.22GiB / 755.1GiB   2.68%     1.16kB / 0B   83.5GB / 210GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.10%   20.22GiB / 755.1GiB   2.68%     1.16kB / 0B   83.5GB / 210GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   797.97%   20.23GiB / 755.1GiB   2.68%     1.16kB / 0B   83.5GB / 210GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   797.36%   20.28GiB / 755.1GiB   2.69%     1.16kB / 0B   83.5GB / 210GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   805.55%   20.31GiB / 755.1GiB   2.69%     1.16kB / 0B   83.5GB / 210GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   796.74%   20.36GiB / 755.1GiB   2.70%     1.16kB / 0B   83.5GB / 210GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   802.22%   20.4GiB / 755.1GiB   2.70%     1.16kB / 0B   83.5GB / 210GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.13%   20.41GiB / 755.1GiB   2.70%     1.16kB / 0B   83.5GB / 211GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.38%   20.43GiB / 755.1GiB   2.71%     1.16kB / 0B   83.5GB / 211GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   800.19%   20.48GiB / 755.1GiB   2.71%     1.16kB / 0B   83.5GB / 211GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   799.13%   20.52GiB / 755.1GiB   2.72%     1.23kB / 0B   83.5GB / 211GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   799.04%   20.52GiB / 755.1GiB   2.72%     1.23kB / 0B   83.5GB / 211GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   797.24%   20.57GiB / 755.1GiB   2.72%     1.23kB / 0B   83.5GB / 211GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   794.39%   20.57GiB / 755.1GiB   2.72%     1.23kB / 0B   83.5GB / 211GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   791.38%   20.62GiB / 755.1GiB   2.73%     1.23kB / 0B   83.5GB / 211GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   793.92%   20.62GiB / 755.1GiB   2.73%     1.23kB / 0B   83.5GB / 211GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.12%   20.63GiB / 755.1GiB   2.73%     1.23kB / 0B   83.5GB / 211GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   796.21%   20.66GiB / 755.1GiB   2.74%     1.23kB / 0B   83.5GB / 211GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   799.69%   20.72GiB / 755.1GiB   2.74%     1.23kB / 0B   83.5GB / 211GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   803.59%   20.73GiB / 755.1GiB   2.75%     1.23kB / 0B   83.5GB / 211GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   793.11%   20.74GiB / 755.1GiB   2.75%     1.23kB / 0B   83.5GB / 211GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   799.05%   20.77GiB / 755.1GiB   2.75%     1.23kB / 0B   83.5GB / 211GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   804.35%   20.74GiB / 755.1GiB   2.75%     1.23kB / 0B   83.5GB / 211GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   797.49%   20.77GiB / 755.1GiB   2.75%     1.23kB / 0B   83.5GB / 211GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.84%   20.77GiB / 755.1GiB   2.75%     1.23kB / 0B   83.5GB / 211GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   808.97%   20.77GiB / 755.1GiB   2.75%     1.23kB / 0B   83.5GB / 211GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   795.63%   20.79GiB / 755.1GiB   2.75%     1.23kB / 0B   83.5GB / 211GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.69%   20.81GiB / 755.1GiB   2.76%     1.23kB / 0B   83.5GB / 211GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.52%   20.81GiB / 755.1GiB   2.76%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   806.36%   20.81GiB / 755.1GiB   2.76%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   793.82%   20.83GiB / 755.1GiB   2.76%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   804.04%   20.86GiB / 755.1GiB   2.76%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.00%   20.87GiB / 755.1GiB   2.76%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   800.15%   20.87GiB / 755.1GiB   2.76%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   792.82%   20.88GiB / 755.1GiB   2.77%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   799.66%   20.9GiB / 755.1GiB   2.77%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   794.98%   20.91GiB / 755.1GiB   2.77%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   804.41%   20.93GiB / 755.1GiB   2.77%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.51%   20.96GiB / 755.1GiB   2.78%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   796.04%   20.98GiB / 755.1GiB   2.78%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   808.59%   20.97GiB / 755.1GiB   2.78%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   792.61%   21GiB / 755.1GiB    2.78%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   799.33%   21.01GiB / 755.1GiB   2.78%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.17%   21.02GiB / 755.1GiB   2.78%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   795.10%   21.02GiB / 755.1GiB   2.78%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   806.63%   21.03GiB / 755.1GiB   2.78%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   789.24%   21.03GiB / 755.1GiB   2.78%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.74%   20.99GiB / 755.1GiB   2.78%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   795.75%   21.1GiB / 755.1GiB   2.79%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   802.51%   21.2GiB / 755.1GiB   2.81%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   791.61%   21.25GiB / 755.1GiB   2.81%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   806.35%   21.21GiB / 755.1GiB   2.81%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   794.77%   21.26GiB / 755.1GiB   2.82%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   800.97%   21.27GiB / 755.1GiB   2.82%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   797.31%   21.21GiB / 755.1GiB   2.81%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   802.50%   21.28GiB / 755.1GiB   2.82%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   794.35%   21.27GiB / 755.1GiB   2.82%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.77%   21.3GiB / 755.1GiB   2.82%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   800.22%   21.29GiB / 755.1GiB   2.82%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   795.80%   21.25GiB / 755.1GiB   2.81%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.85%   21.33GiB / 755.1GiB   2.82%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   805.33%   21.33GiB / 755.1GiB   2.82%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   793.92%   21.27GiB / 755.1GiB   2.82%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   800.95%   21.35GiB / 755.1GiB   2.83%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   797.85%   21.36GiB / 755.1GiB   2.83%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.47%   21.36GiB / 755.1GiB   2.83%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   807.24%   21.36GiB / 755.1GiB   2.83%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   793.15%   21.34GiB / 755.1GiB   2.83%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.70%   21.39GiB / 755.1GiB   2.83%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   803.52%   21.38GiB / 755.1GiB   2.83%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   793.88%   21.35GiB / 755.1GiB   2.83%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   803.79%   21.34GiB / 755.1GiB   2.83%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   800.81%   21.41GiB / 755.1GiB   2.84%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   797.29%   21.42GiB / 755.1GiB   2.84%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   800.78%   21.43GiB / 755.1GiB   2.84%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.81%   21.51GiB / 755.1GiB   2.85%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   803.35%   21.65GiB / 755.1GiB   2.87%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   809.08%   21.67GiB / 755.1GiB   2.87%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   799.00%   21.68GiB / 755.1GiB   2.87%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   797.09%   21.56GiB / 755.1GiB   2.86%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   805.91%   21.58GiB / 755.1GiB   2.86%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   800.21%   21.72GiB / 755.1GiB   2.88%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   805.99%   21.73GiB / 755.1GiB   2.88%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   806.01%   21.75GiB / 755.1GiB   2.88%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   799.02%   21.76GiB / 755.1GiB   2.88%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.99%   21.63GiB / 755.1GiB   2.86%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   806.76%   21.65GiB / 755.1GiB   2.87%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.30%   21.79GiB / 755.1GiB   2.89%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.75%   21.81GiB / 755.1GiB   2.89%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.12%   21.81GiB / 755.1GiB   2.89%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   802.15%   21.82GiB / 755.1GiB   2.89%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.16%   21.83GiB / 755.1GiB   2.89%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   791.98%   21.81GiB / 755.1GiB   2.89%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   790.34%   21.78GiB / 755.1GiB   2.88%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.31%   21.72GiB / 755.1GiB   2.88%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   800.00%   21.88GiB / 755.1GiB   2.90%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   797.79%   21.89GiB / 755.1GiB   2.90%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   796.46%   21.9GiB / 755.1GiB   2.90%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   799.61%   21.92GiB / 755.1GiB   2.90%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   805.92%   21.92GiB / 755.1GiB   2.90%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   803.99%   21.92GiB / 755.1GiB   2.90%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   806.00%   21.93GiB / 755.1GiB   2.90%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   792.64%   21.94GiB / 755.1GiB   2.91%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   794.75%   21.87GiB / 755.1GiB   2.90%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.41%   21.83GiB / 755.1GiB   2.89%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   800.18%   21.98GiB / 755.1GiB   2.91%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   797.54%   21.99GiB / 755.1GiB   2.91%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   794.98%   22GiB / 755.1GiB    2.91%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   803.28%   22.03GiB / 755.1GiB   2.92%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   805.42%   22.03GiB / 755.1GiB   2.92%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   800.97%   22.04GiB / 755.1GiB   2.92%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   803.53%   22.05GiB / 755.1GiB   2.92%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   795.39%   22.07GiB / 755.1GiB   2.92%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   796.30%   21.94GiB / 755.1GiB   2.91%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   799.51%   22.1GiB / 755.1GiB   2.93%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.85%   22.11GiB / 755.1GiB   2.93%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   799.67%   22.12GiB / 755.1GiB   2.93%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   794.36%   21.98GiB / 755.1GiB   2.91%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.35%   22.14GiB / 755.1GiB   2.93%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   805.91%   22.15GiB / 755.1GiB   2.93%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   792.71%   22.14GiB / 755.1GiB   2.93%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   797.80%   22.18GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   804.21%   22.19GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   797.07%   22.19GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   791.85%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   802.23%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.21%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.54%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.64%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   799.75%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   797.99%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.89%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   800.21%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   800.28%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   796.82%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   799.04%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.66%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.11%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.86%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.61%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.88%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.24%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   795.62%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   800.64%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.56%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   800.68%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   799.02%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   799.03%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.56%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   802.22%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.14%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   799.14%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   802.35%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.21%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   799.14%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.72%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.83%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.10%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.36%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.92%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   802.49%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.43%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   799.41%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   799.04%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.72%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.11%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   797.92%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   797.79%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.90%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.73%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.85%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.65%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.28%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.14%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   802.24%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.67%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.16%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.92%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   799.29%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   802.24%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.57%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   799.28%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.99%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   799.86%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.67%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.43%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   802.24%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   802.11%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.92%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.81%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   799.17%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.99%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.57%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.13%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.68%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.00%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   801.48%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   800.75%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   798.78%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   799.17%   22.2GiB / 755.1GiB   2.94%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   326.92%   22.99GiB / 755.1GiB   3.05%     1.23kB / 0B   83.5GB / 212GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   99.19%    22.81GiB / 755.1GiB   3.02%     1.23kB / 0B   83.5GB / 214GB   10
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O        PIDS
+7cb7893054f1   agitated_dirac   99.87%    21.62GiB / 755.1GiB   2.86%     1.23kB / 0B   83.5GB / 214GB   10
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS

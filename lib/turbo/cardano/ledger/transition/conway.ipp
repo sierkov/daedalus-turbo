@@ -13,7 +13,7 @@
         }
     {
         _apply_conway_params(_params);
-        _params_prev = _params;
+        _apply_conway_params(_params_prev);
         // The wrapper transitions from Babbage to Conway after the epoch boundary has
         // already been processed. Count that first Conway epoch as dormant here; no
         // Conway governance proposals can exist before the era starts.

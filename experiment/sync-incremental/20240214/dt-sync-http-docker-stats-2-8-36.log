@@ -1,0 +1,136 @@
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+               --        0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O     PIDS
+8b7309ee5339   epic_mestorf   199.76%   2.129GiB / 251.3GiB   0.85%     646B / 0B   2.53GB / 0B   11
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O        PIDS
+8b7309ee5339   epic_mestorf   64.50%    1.803GiB / 251.3GiB   0.72%     99.7kB / 6.49kB   2.53GB / 147kB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8b7309ee5339   epic_mestorf   763.54%   2.446GiB / 251.3GiB   0.97%     173MB / 1.25MB   2.54GB / 705kB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O        PIDS
+8b7309ee5339   epic_mestorf   802.36%   2.736GiB / 251.3GiB   1.09%     445MB / 3.41MB   2.54GB / 705kB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   801.58%   2.604GiB / 251.3GiB   1.04%     711MB / 5.48MB   2.54GB / 1.31GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   801.40%   2.726GiB / 251.3GiB   1.08%     978MB / 7.62MB   2.54GB / 1.31GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   802.21%   2.892GiB / 251.3GiB   1.15%     1.24GB / 9.67MB   2.54GB / 1.76GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   806.35%   2.582GiB / 251.3GiB   1.03%     1.51GB / 11.9MB   2.54GB / 1.76GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   800.39%   2.924GiB / 251.3GiB   1.16%     1.78GB / 14MB   2.54GB / 1.76GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   803.25%   2.909GiB / 251.3GiB   1.16%     2.05GB / 16MB   2.54GB / 1.76GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   802.23%   2.729GiB / 251.3GiB   1.09%     2.32GB / 18.2MB   2.54GB / 1.76GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   803.81%   2.744GiB / 251.3GiB   1.09%     2.6GB / 20.3MB   2.54GB / 1.76GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   746.19%   2.856GiB / 251.3GiB   1.14%     2.87GB / 22.5MB   5.41GB / 1.76GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   741.79%   2.901GiB / 251.3GiB   1.15%     3.14GB / 24.7MB   13.1GB / 1.76GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   782.81%   2.98GiB / 251.3GiB   1.19%     3.41GB / 27.2MB   20.5GB / 1.76GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   806.42%   3.11GiB / 251.3GiB   1.24%     3.68GB / 29.5MB   25.5GB / 1.76GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   806.43%   3.443GiB / 251.3GiB   1.37%     3.95GB / 31.8MB   28.4GB / 1.92GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   804.97%   4.003GiB / 251.3GiB   1.59%     4.23GB / 34.1MB   28.4GB / 1.92GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O        PIDS
+8b7309ee5339   epic_mestorf   790.37%   3.464GiB / 251.3GiB   1.38%     4.29GB / 34.6MB   28.4GB / 5.8GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O        PIDS
+8b7309ee5339   epic_mestorf   798.74%   3.847GiB / 251.3GiB   1.53%     4.38GB / 34.9MB   28.4GB / 5.8GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   795.89%   3.778GiB / 251.3GiB   1.50%     4.48GB / 35.2MB   28.4GB / 7.15GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   803.41%   4.348GiB / 251.3GiB   1.73%     4.58GB / 35.5MB   28.4GB / 7.15GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   802.87%   4.515GiB / 251.3GiB   1.80%     4.68GB / 35.8MB   28.4GB / 8.48GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   803.99%   4.128GiB / 251.3GiB   1.64%     4.78GB / 36.1MB   28.4GB / 8.48GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   800.09%   4.561GiB / 251.3GiB   1.81%     4.88GB / 36.4MB   28.4GB / 12.2GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT    MEM %     NET I/O          BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   798.77%   4.22GiB / 251.3GiB   1.68%     4.9GB / 36.4MB   28.4GB / 12.2GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   798.15%   4.232GiB / 251.3GiB   1.68%     4.9GB / 36.4MB   28.4GB / 13.4GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   796.12%   4.578GiB / 251.3GiB   1.82%     4.9GB / 36.4MB   28.4GB / 13.4GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   800.33%   6.834GiB / 251.3GiB   2.72%     4.9GB / 36.4MB   28.4GB / 14.8GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   800.56%   9.808GiB / 251.3GiB   3.90%     4.9GB / 36.4MB   28.4GB / 14.8GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   798.70%   12.41GiB / 251.3GiB   4.94%     4.95GB / 36.7MB   28.4GB / 15.7GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   798.21%   15.03GiB / 251.3GiB   5.98%     4.95GB / 36.7MB   28.4GB / 15.7GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   798.66%   16.46GiB / 251.3GiB   6.55%     4.95GB / 36.7MB   28.4GB / 16.2GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   804.85%   15.93GiB / 251.3GiB   6.34%     4.95GB / 36.7MB   28.4GB / 16.2GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   797.59%   16.31GiB / 251.3GiB   6.49%     4.95GB / 36.7MB   28.4GB / 16.7GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   798.53%   15.91GiB / 251.3GiB   6.33%     4.95GB / 36.7MB   28.4GB / 16.7GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   798.41%   16.34GiB / 251.3GiB   6.50%     4.95GB / 36.7MB   28.4GB / 17.2GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   799.33%   16.32GiB / 251.3GiB   6.49%     4.95GB / 36.7MB   28.4GB / 17.2GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   798.27%   16.26GiB / 251.3GiB   6.47%     4.95GB / 36.7MB   28.4GB / 19.3GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   802.09%   16.19GiB / 251.3GiB   6.44%     4.95GB / 36.7MB   28.4GB / 19.5GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   798.63%   16.22GiB / 251.3GiB   6.46%     4.95GB / 36.7MB   28.4GB / 19.5GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   801.84%   16.21GiB / 251.3GiB   6.45%     4.95GB / 36.7MB   28.4GB / 19.6GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   802.86%   16.3GiB / 251.3GiB   6.49%     4.95GB / 36.7MB   28.4GB / 19.6GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   802.67%   16.49GiB / 251.3GiB   6.56%     4.95GB / 36.7MB   28.4GB / 19.8GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   803.31%   16.67GiB / 251.3GiB   6.63%     4.95GB / 36.7MB   28.4GB / 19.8GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+8b7309ee5339   epic_mestorf   799.24%   16.87GiB / 251.3GiB   6.71%     4.95GB / 36.7MB   28.4GB / 20GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+8b7309ee5339   epic_mestorf   802.16%   17.08GiB / 251.3GiB   6.79%     4.95GB / 36.7MB   28.4GB / 20GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   799.21%   18.18GiB / 251.3GiB   7.23%     4.95GB / 36.7MB   28.4GB / 22.6GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   803.18%   17.14GiB / 251.3GiB   6.82%     4.95GB / 36.7MB   28.4GB / 22.6GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   802.82%   17.16GiB / 251.3GiB   6.83%     4.95GB / 36.7MB   28.4GB / 22.6GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   798.80%   17.16GiB / 251.3GiB   6.83%     4.95GB / 36.7MB   28.4GB / 22.6GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   799.02%   17.16GiB / 251.3GiB   6.83%     4.95GB / 36.7MB   28.4GB / 22.7GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   802.58%   17.16GiB / 251.3GiB   6.83%     4.95GB / 36.7MB   28.4GB / 22.7GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   799.48%   17.16GiB / 251.3GiB   6.83%     4.95GB / 36.7MB   28.4GB / 24.9GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   798.09%   18.48GiB / 251.3GiB   7.35%     4.95GB / 36.7MB   28.4GB / 24.9GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   798.88%   17.2GiB / 251.3GiB   6.84%     4.95GB / 36.7MB   28.4GB / 24.9GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   798.26%   17.2GiB / 251.3GiB   6.84%     4.95GB / 36.7MB   28.4GB / 25.1GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   799.60%   17.2GiB / 251.3GiB   6.84%     4.95GB / 36.7MB   28.4GB / 25.1GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   799.16%   17.2GiB / 251.3GiB   6.84%     4.95GB / 36.7MB   28.4GB / 25.2GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   802.86%   17.2GiB / 251.3GiB   6.84%     4.95GB / 36.7MB   28.4GB / 25.2GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   799.16%   17.2GiB / 251.3GiB   6.84%     4.95GB / 36.7MB   28.4GB / 25.4GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O         PIDS
+8b7309ee5339   epic_mestorf   799.09%   17.2GiB / 251.3GiB   6.84%     4.95GB / 36.7MB   28.4GB / 25.4GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O       PIDS
+8b7309ee5339   epic_mestorf   799.15%   17.2GiB / 251.3GiB   6.84%     4.95GB / 36.7MB   28.4GB / 28GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O       PIDS
+8b7309ee5339   epic_mestorf   803.35%   17.2GiB / 251.3GiB   6.84%     4.95GB / 36.7MB   28.4GB / 28GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O       PIDS
+8b7309ee5339   epic_mestorf   802.57%   17.2GiB / 251.3GiB   6.84%     4.95GB / 36.7MB   28.4GB / 28GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+8b7309ee5339   epic_mestorf   575.80%   17.54GiB / 251.3GiB   6.98%     4.95GB / 36.7MB   28.4GB / 28GB   12
+CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O       PIDS
+8b7309ee5339   epic_mestorf   178.34%   17.18GiB / 251.3GiB   6.84%     4.95GB / 36.7MB   28.4GB / 28GB   10

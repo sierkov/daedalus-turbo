@@ -3,26 +3,11 @@
  * Copyright (c) 2024-2026 R2 Rationality OÜ (info at r2rationality dot com)
  * License: https://github.com/r2rationality/turbocardano/blob/main/LICENSE */
 
-#include <turbo/cardano/allegra/block.hpp>
-#include <turbo/cardano/babbage/cbor/encode/transaction-output.hpp>
 #include <turbo/cardano/conway/cbor/decode/full/transaction-body.hpp>
 #include <turbo/cardano/conway/transaction.hpp>
-#include <turbo/plutus/types.hpp>
 
 namespace turbo::cardano::conway {
     namespace {
-        void native_script_to_cbor(era_encoder &enc, const buffer raw)
-        {
-            allegra::native_script_t::from_cbor(raw).to_cbor(enc);
-        }
-
-        void output_to_cbor(
-            era_encoder &enc, plutus::allocator &alloc, const tx_out_data &output)
-        {
-            babbage::detail::transaction_output_to_cbor_semantic(
-                enc, output, alloc, native_script_to_cbor);
-        }
-
         void inputs_to_cbor(era_encoder &enc, const input_set &inputs)
         {
             enc.tag(258);
@@ -33,19 +18,20 @@ namespace turbo::cardano::conway {
         }
 
         void outputs_to_cbor(
-            era_encoder &enc, plutus::allocator &alloc, const tx_output_list &outputs)
+            era_encoder &enc, const tx_output_list &outputs)
         {
             enc.array_compact(outputs.size(), [&] {
                 for (const auto &output: outputs)
-                    output_to_cbor(enc, alloc, output);
+                    output.to_cbor(enc);
             });
         }
 
         void withdrawals_to_cbor(era_encoder &enc, const withdrawal_map &withdrawals)
         {
             enc.map_compact(withdrawals.size(), [&] {
-                for (const auto &[account, amount]: withdrawals)
+                for (const auto &[account, amount]: withdrawals) {
                     enc.bytes(account).uint(amount);
+                }
             });
         }
 
@@ -68,7 +54,7 @@ namespace turbo::cardano::conway {
         }
 
         void body_to_cbor(
-            era_encoder &enc, plutus::allocator &alloc,
+            era_encoder &enc,
             const full::transaction_body_t &full_body)
         {
             const auto &body = full_body.value;
@@ -108,10 +94,10 @@ namespace turbo::cardano::conway {
                     inputs_to_cbor(enc, body.ref_inputs);
                 }
                 enc.uint(1);
-                outputs_to_cbor(enc, alloc, body.outputs);
+                outputs_to_cbor(enc, body.outputs);
                 if (body.collateral_return) {
                     enc.uint(16);
-                    output_to_cbor(enc, alloc, *body.collateral_return);
+                    body.collateral_return->to_cbor(enc);
                 }
                 if (body.collateral_value)
                     enc.uint(17).uint(*body.collateral_value);
@@ -169,21 +155,39 @@ namespace turbo::cardano::conway {
 
     void voting_procedures_t::to_cbor(era_encoder &enc) const
     {
-        size_t voter_count = 0;
-        const voter_t *previous = nullptr;
-        for (const auto &item: *this) {
-            if (!previous || (*previous <=> item.voter) != std::strong_ordering::equal) {
-                ++voter_count;
-                previous = &item.voter;
-            }
+        to_cbor(enc, *this);
+    }
+
+    void voting_procedures_t::to_cbor(era_encoder &enc, const vote_set &votes)
+    {
+        using iterator = decltype(votes.begin());
+        std::vector<std::pair<iterator, iterator>> groups {};
+        for (auto it = votes.begin(); it != votes.end();) {
+            auto begin = it++;
+            while (it != votes.end() && (it->voter <=> begin->voter) == std::strong_ordering::equal)
+                ++it;
+            groups.emplace_back(begin, it);
         }
-        enc.map_compact(voter_count, [&] {
-            for (auto it = begin(); it != end();) {
-                const auto voter = it->voter;
-                auto voter_end = it;
-                while (voter_end != end()
-                        && (voter_end->voter <=> voter) == std::strong_ordering::equal)
-                    ++voter_end;
+        const auto rank = [](const voter_t::type_t type) {
+            switch (type) {
+                case voter_t::const_comm_script: return 0;
+                case voter_t::const_comm_key: return 1;
+                case voter_t::drep_script: return 2;
+                case voter_t::drep_key: return 3;
+                case voter_t::pool_key: return 4;
+                default: throw error("unsupported voter type");
+            }
+        };
+        std::ranges::sort(groups, [&](const auto &a, const auto &b) {
+            const auto &av = a.first->voter;
+            const auto &bv = b.first->voter;
+            if (av.type != bv.type)
+                return rank(av.type) < rank(bv.type);
+            return av.hash < bv.hash;
+        });
+        enc.map_compact(groups.size(), [&] {
+            for (auto [it, voter_end]: groups) {
+                const auto &voter = it->voter;
                 enc.array(2).uint(static_cast<uint8_t>(voter.type)).bytes(voter.hash);
                 enc.map_compact(std::distance(it, voter_end), [&] {
                     for (; it != voter_end; ++it) {
@@ -206,8 +210,7 @@ namespace turbo::cardano::conway {
 
     void full::transaction_body_t::to_cbor(era_encoder &enc) const
     {
-        plutus::allocator alloc {};
-        body_to_cbor(enc, alloc, *this);
+        body_to_cbor(enc, *this);
     }
 
     void transaction_body_t::to_cbor(era_encoder &enc) const

@@ -78,6 +78,12 @@ namespace turbo::parallel {
             std::filesystem::rename(tmp_path, path);
         }
 
+        template<typename F>
+        void for_each_buffer(F &&sink) const
+        {
+            for (const auto &buf: _buffers) sink(buffer { buf });
+        }
+
         [[nodiscard]] uint8_vector flat() const
         {
             uint8_vector res {};

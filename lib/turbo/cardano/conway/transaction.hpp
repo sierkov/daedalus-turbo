@@ -37,6 +37,7 @@ namespace turbo::cardano::conway {
     struct voting_procedures_t: vote_set {
         using vote_set::vote_set;
         static voting_procedures_t from_cbor(cbor::zero2::value &);
+        static void to_cbor(era_encoder &, const vote_set &);
         void to_cbor(era_encoder &) const;
     };
 
@@ -68,6 +69,18 @@ namespace turbo::cardano::conway {
 
         static script_t from_cbor(cbor::zero2::value &);
         void to_cbor(era_encoder &) const;
+    };
+
+    // Wire Plutus data borrows the complete CBOR item, including chunk headers.
+    // The input storage must outlive this object and its copies.
+    // The allocating plutus::data tree is only needed when evaluating the data.
+    struct plutus_data_t {
+        static plutus_data_t from_cbor(cbor::zero2::value &);
+        buffer original_cbor() const { return _raw; }
+        void to_cbor(era_encoder &enc) const { enc.raw_cbor(_raw); }
+    private:
+        explicit plutus_data_t(buffer raw): _raw { raw } {}
+        buffer _raw;
     };
 
     struct value_t {
@@ -148,10 +161,10 @@ namespace turbo::cardano::conway {
     };
 
     struct transaction_t {
-        transaction_body_t body {};
-        transaction_witness_set_t witnesses {};
+        decoded_cbor_t<transaction_body_t> body;
+        decoded_cbor_t<transaction_witness_set_t> witnesses;
         bool valid = true;
-        std::optional<auxiliary_data_t> auxiliary_data {};
+        std::optional<decoded_cbor_t<auxiliary_data_t>> auxiliary_data {};
 
         static transaction_t from_cbor(cbor::zero2::value &);
         void to_cbor(era_encoder &) const;

@@ -5,6 +5,7 @@
 //
 
 #include "sha3.h"
+#include "unaligned.h"
 
 // big endian architectures need #define __BYTE_ORDER __BIG_ENDIAN
 #if !defined(_WIN32) && !defined(__APPLE__)
@@ -99,10 +100,10 @@ void SHA3::processBlock(const void* data)
 #define LITTLEENDIAN(x) (x)
 #endif
 
-  const uint64_t* data64 = (const uint64_t*) data;
+  const uint8_t* bytes = (const uint8_t*) data;
   // mix data into state
   for (unsigned int i = 0; i < m_blockSize / 8; i++)
-    m_hash[i] ^= LITTLEENDIAN(data64[i]);
+    m_hash[i] ^= LITTLEENDIAN(hash_library_detail::loadUnaligned<uint64_t>(bytes + i * sizeof(uint64_t)));
 
   // re-compute state
   for (unsigned int round = 0; round < Rounds; round++)
